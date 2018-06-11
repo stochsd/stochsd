@@ -2299,15 +2299,19 @@ class baseTool {
 		
 	}
 	static mouse_down(x,y) {
+		// Is triggered when mouse goes down for this tool
 	}
 	static mouse_move(x,y) {
+		// Is triggered when mouse moves
 	}
 	static mouse_up(x,y) {
+		// Is triggered when mouse goes up for this tool
 	}
 	static enter_tool() {
-		
+		// Is triggered when the tool is selected
 	}
 	static leave_tool() {
+		// Is triggered when the tool is deselected
 	}
 }
 class RunTool extends baseTool {
