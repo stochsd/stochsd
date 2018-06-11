@@ -2618,7 +2618,7 @@ class MouseTool extends BaseTool {
 	}
 }
 
-class TwoPointer_tool extends BaseTool {
+class TwoPointerTool extends BaseTool {
 	static init() {
 		this.primitive=null;
 		this.current_connection=null;
@@ -2682,7 +2682,7 @@ class TwoPointer_tool extends BaseTool {
 		last_clicked_element = null;
 	}
 }
-class FlowTool extends TwoPointer_tool {
+class FlowTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Flow", null,null);
 		setNonNegative(this.primitive,false);
@@ -2715,7 +2715,7 @@ function cleanUnconnectedLinks() {
 	}
 }
 
-class LinkTool extends TwoPointer_tool {
+class LinkTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
 		this.current_connection=new LinkVisual(this.primitive.id,this.get_type(),[x,y]);
@@ -2729,7 +2729,7 @@ class LinkTool extends TwoPointer_tool {
 }
 LinkTool.init();
 
-class RectangleTool extends TwoPointer_tool {
+class RectangleTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
 		this.current_connection=new RectangleVisual(this.primitive.id,this.get_type(),[x,y]);
@@ -2740,7 +2740,7 @@ class RectangleTool extends TwoPointer_tool {
 }
 RectangleTool.init();
 
-class LineTool extends TwoPointer_tool {
+class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
 		this.current_connection=new LineVisual(this.primitive.id,this.get_type(),[x,y]);
@@ -2751,7 +2751,7 @@ class LineTool extends TwoPointer_tool {
 }
 LineTool.init();
 
-class TableTool extends TwoPointer_tool {
+class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
 		this.current_connection=new TableVisual(this.primitive.id,this.get_type(),[x,y]);
@@ -2772,7 +2772,7 @@ class TableTool extends TwoPointer_tool {
 }
 TableTool.init();
 
-class DiagramTool extends TwoPointer_tool {
+class DiagramTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
 		this.current_connection=new DiagramVisual(this.primitive.id,this.get_type(),[x,y]);
@@ -2793,7 +2793,7 @@ class DiagramTool extends TwoPointer_tool {
 }
 DiagramTool.init();
 
-class TextAreaTool extends TwoPointer_tool {
+class TextAreaTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		let primitive_name = findFreeName(type_basename["text"]);
 		this.primitive = createConnector(primitive_name, "TextArea", null,null);
@@ -2809,7 +2809,7 @@ class TextAreaTool extends TwoPointer_tool {
 }
 DiagramTool.init();
 
-class XyPlotTool extends TwoPointer_tool {
+class XyPlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "XyPlot", null,null);
 		this.current_connection=new XyPlotVisual(this.primitive.id,this.get_type(),[x,y]);
