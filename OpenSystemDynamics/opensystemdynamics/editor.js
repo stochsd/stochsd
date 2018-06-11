@@ -2298,45 +2298,45 @@ class BaseTool {
 	static init() {
 		
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouse_move(x,y) {
+	static mouseMove(x,y) {
 		// Is triggered when mouse moves
 	}
-	static mouse_up(x,y) {
+	static mouseUp(x,y) {
 		// Is triggered when mouse goes up for this tool
 	}
-	static enter_tool() {
+	static enterTool() {
 		// Is triggered when the tool is selected
 	}
-	static leave_tool() {
+	static leaveTool() {
 		// Is triggered when the tool is deselected
 	}
 }
 class RunTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		RunResults.runPauseSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
 class StepTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		RunResults.stepSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
 class ResetTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		RunResults.resetSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
 class TextTool extends BaseTool {
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["text"]);
@@ -2351,7 +2351,7 @@ class NumberboxTool extends BaseTool {
 		this.targetPrimitive=null;
 		this.numberboxable_primitives=["stock","variable","converter","flow"];
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["text"]);
@@ -2363,7 +2363,7 @@ class NumberboxTool extends BaseTool {
 		
 		ToolBox.setTool("mouse");
 	}
-	static enter_tool() {
+	static enterTool() {
 		var selected_ids=Object.keys(get_selected_root_objects());
 		if(selected_ids.length!=1) {
 			xAlert("You must first select exactly one primitive to watch");
@@ -2383,7 +2383,7 @@ class NumberboxTool extends BaseTool {
 NumberboxTool.init();
 
 class DeleteTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		var selected_ids=Object.keys(get_selected_root_objects());
 		if(selected_ids.length==0) {
 			xAlert("You must select at least one primitive to delete");
@@ -2398,7 +2398,7 @@ class DeleteTool extends BaseTool {
 DeleteTool.init();
 
 class UndoTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		History.doUndo();
 		ToolBox.setTool("mouse");
 	}
@@ -2406,7 +2406,7 @@ class UndoTool extends BaseTool {
 UndoTool.init();
 
 class RedoTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		History.doRedo();
 		ToolBox.setTool("mouse");
 	}
@@ -2414,7 +2414,7 @@ class RedoTool extends BaseTool {
 RedoTool.init();
 
 class StockTool extends BaseTool {
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["stock"]);
@@ -2425,14 +2425,14 @@ class StockTool extends BaseTool {
 }
 
 class RotateNameTool extends BaseTool {
-	static enter_tool() {
+	static enterTool() {
 		var object_array = get_selected_objects();
 		for(var node_id in object_array) {
 			rotate_name(node_id);
 		}
 		ToolBox.setTool("mouse");
 	}
-	static leave_tool() {
+	static leaveTool() {
 		History.storeUndoState();
 	}
 }
@@ -2442,7 +2442,7 @@ class GhostTool extends BaseTool {
 		this.id_to_ghost=null;
 		this.ghostable_primitives=["stock","variable","converter"];
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		var source = findID(this.id_to_ghost);
 		var ghost=makeGhost(source,[x,y]);
@@ -2452,7 +2452,7 @@ class GhostTool extends BaseTool {
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 		ToolBox.setTool("mouse");
 	}
-	static enter_tool() {
+	static enterTool() {
 		var selected_ids=get_selected_ids();
 		if(selected_ids.length!=1) {
 			errorPopUp("You must first select exactly one primitive to ghost");
@@ -2476,7 +2476,7 @@ class GhostTool extends BaseTool {
 GhostTool.init();
 
 class ConverterTool extends BaseTool {
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["converter"]);
@@ -2487,7 +2487,7 @@ class ConverterTool extends BaseTool {
 }
 
 class VariableTool extends BaseTool {
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["variable"]);
@@ -2519,7 +2519,7 @@ class MouseTool extends BaseTool {
 			return null;
 		}
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		mousedown_x=x;
 		mousedown_y=y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
@@ -2547,7 +2547,7 @@ class MouseTool extends BaseTool {
 		// Reset it for use next time
 		last_click_object_clicked = false;
 	}
-	static mouse_move(x,y) {
+	static mouseMove(x,y) {
 		var diff_x=x-mousedown_x;
 		var diff_y=y-mousedown_y;
 		mousedown_x=x;
@@ -2600,7 +2600,7 @@ class MouseTool extends BaseTool {
 			update_all_objects();
 		}
 	}
-	static mouse_up(x,y) {
+	static mouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor=this.get_single_selected_anchor();
 		if(selectedAnchor) {
@@ -2638,7 +2638,7 @@ class TwoPointer_tool extends BaseTool {
 	static create_TwoPointer_end() {
 		// Override this
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		unselect_all();
 		var start_element=find_element_under(x,y);
 		var primitive_name = findFreeName(type_basename[this.get_type()]);
@@ -2649,7 +2649,7 @@ class TwoPointer_tool extends BaseTool {
 		}
 		this.current_connection.set_name(primitive_name);
 	}
-	static mouse_move(x,y) {
+	static mouseMove(x,y) {
 		if(this.current_connection==null) {
 			return;
 		}
@@ -2657,8 +2657,8 @@ class TwoPointer_tool extends BaseTool {
 		this.current_connection.endy=y;
 		this.current_connection.update();
 	}
-	static mouse_up(x,y) {
-		this.mouse_move(x,y);
+	static mouseUp(x,y) {
+		this.mouseMove(x,y);
 		if(this.current_connection.end_anchor==null) {
 			this.current_connection.create_dummy_end_anchor();
 		}
@@ -2678,7 +2678,7 @@ class TwoPointer_tool extends BaseTool {
 		last_clicked_element = null;
 		ToolBox.setTool("mouse");
 	}
-	static leave_tool() {
+	static leaveTool() {
 		last_clicked_element = null;
 	}
 }
@@ -2760,9 +2760,9 @@ class TableTool extends TwoPointer_tool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouse_down(x,y)
+		super.mouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -2781,9 +2781,9 @@ class DiagramTool extends TwoPointer_tool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouse_down(x,y)
+		super.mouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -2818,9 +2818,9 @@ class XyPlotTool extends TwoPointer_tool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouse_down(x,y) {
+	static mouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouse_down(x,y)
+		super.mouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -3242,7 +3242,7 @@ function mousedown_handler(event) {
 	var x=event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
-	current_tool.mouse_down(x,y);
+	current_tool.mouseDown(x,y);
 }
 function mousemove_handler(event) {
 	var offset = $(svgplane).offset();
@@ -3255,7 +3255,7 @@ function mousemove_handler(event) {
 	if(!mouseisdown) {
 		return;
 	}
-	current_tool.mouse_move(x,y);
+	current_tool.mouseMove(x,y);
 }
 function find_elements_under(in_x,in_y) {
 	var offset = $(svgplane).offset();
@@ -3306,7 +3306,7 @@ function mouseup_handler(event) {
 	var x=event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	
-	current_tool.mouse_up(x,y);
+	current_tool.mouseUp(x,y);
 	mouseisdown=false;
 	History.storeUndoState();
 }
@@ -3352,9 +3352,9 @@ class ToolBox {
 			$(".toolButton").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
-			current_tool.leave_tool();
+			current_tool.leaveTool();
 			current_tool=this.tools[toolName];
-			current_tool.enter_tool();
+			current_tool.enterTool();
 		} else {
 			errorPopUp("The tool "+toolName+" does not exist");
 		}
@@ -3467,21 +3467,21 @@ $(document).ready(function() {
 			return;
 		}
 		if(event.keyCode == keyboard["delete"]) {
-			DeleteTool.enter_tool();
+			DeleteTool.enterTool();
 		}
 		
 		if(event.ctrlKey) {
 			if(event.keyCode == keyboard["1"]) {
 				event.preventDefault();
-				RunTool.enter_tool();
+				RunTool.enterTool();
 			}
 			if(event.keyCode == keyboard["2"]) {
 				event.preventDefault();
-				StepTool.enter_tool();
+				StepTool.enterTool();
 			}
 			if(event.keyCode == keyboard["3"]) {
 				event.preventDefault();
-				ResetTool.enter_tool();
+				ResetTool.enterTool();
 			}
 			if(event.keyCode == keyboard["O"]){
 				event.preventDefault();
