@@ -2862,7 +2862,7 @@ function attach_selected_anchor(selectedAnchor) {
 	return true;
 }
 
-var current_tool = MouseTool;
+var currentTool = MouseTool;
 
 class CoordRect {
 	constructor() {
@@ -3239,10 +3239,10 @@ function mousedown_handler(event) {
 	do_global_log("mousedown_handler");
 	mouseisdown=true;
 	var offset = $(svgplane).offset();
-	var x=event.pageX-offset.left;
+	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
-	current_tool.mouseDown(x,y);
+	currentTool.mouseDown(x,y);
 }
 function mousemove_handler(event) {
 	var offset = $(svgplane).offset();
@@ -3255,7 +3255,7 @@ function mousemove_handler(event) {
 	if(!mouseisdown) {
 		return;
 	}
-	current_tool.mouseMove(x,y);
+	currentTool.mouseMove(x,y);
 }
 function find_elements_under(in_x,in_y) {
 	var offset = $(svgplane).offset();
@@ -3303,10 +3303,10 @@ function mouseup_handler(event) {
 	// does not work to store UndoState here, because mouseup_handler happens even when we are outside the svg (click buttons etc)
 	do_global_log("mouseup_handler");
 	var offset = $(svgplane).offset();
-	var x=event.pageX-offset.left;
+	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	
-	current_tool.mouseUp(x,y);
+	currentTool.mouseUp(x,y);
 	mouseisdown=false;
 	History.storeUndoState();
 }
@@ -3352,9 +3352,9 @@ class ToolBox {
 			$(".toolButton").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
-			current_tool.leaveTool();
-			current_tool=this.tools[toolName];
-			current_tool.enterTool();
+			currentTool.leaveTool();
+			currentTool=this.tools[toolName];
+			currentTool.enterTool();
 		} else {
 			errorPopUp("The tool "+toolName+" does not exist");
 		}
