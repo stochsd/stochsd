@@ -985,7 +985,7 @@ class OnePointer extends BaseObject{
 	}
 }
 
-class primitivec extends OnePointer {
+class BasePrimitive extends OnePointer {
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 	}
@@ -1097,7 +1097,7 @@ class AnchorPoint extends OnePointer{
 	}
 }
 
-class TextVisual extends primitivec{
+class TextVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.name_centered=true;
@@ -1141,7 +1141,7 @@ function pointDistance(point1,point2) {
 	return distance;
 }
 
-class StockVisual extends primitivec{
+class StockVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.mountPoints=[[0,-15],[0,15],[-20,0],[20,0]];
@@ -1156,7 +1156,7 @@ class StockVisual extends primitivec{
 	}
 }
 
-class NumberboxVisual extends primitivec{
+class NumberboxVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.name_centered=true;
@@ -1231,7 +1231,7 @@ class NumberboxVisual extends primitivec{
 	}
 }
 
-class VariableVisual extends primitivec{
+class VariableVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.component45 = Math.pow((Math.pow(15,2)/2),0.5);; // The x and y component of a line going out 45 degrees with the length 15
@@ -1247,7 +1247,7 @@ class VariableVisual extends primitivec{
 	}
 }
 
-class ConverterVisual extends primitivec{
+class ConverterVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.mountPoints=[[-20,0],[20,0],[0,-15],[0,15]];

@@ -73,16 +73,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="446.89569"
+       x="437.52069"
        y="646.87665"
        id="text4142"><tspan
          sodipodi:role="line"
          id="tspan4144"
-         x="446.89569"
+         x="437.52069"
          y="646.87665"
-         style="font-size:13.87812805px;line-height:1.25">primitivec</tspan><tspan
+         style="font-size:13.87812805px;line-height:1.25">BasePrimitive</tspan><tspan
          sodipodi:role="line"
-         x="446.89569"
+         x="437.52069"
          y="664.2243"
          id="tspan4148"
          style="font-size:13.87812805px;line-height:1.25">+position</tspan></text>
@@ -116,11 +116,11 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="227.2583"
+       x="220.56187"
        y="744.67883"
        id="text4142-5-7-5"><tspan
          sodipodi:role="line"
-         x="227.2583"
+         x="220.56187"
          y="744.67883"
          id="tspan4196-6"
          style="font-size:13.87812805px;line-height:1.25">FlowVisual</tspan></text>
@@ -297,7 +297,7 @@
          id="tspan857"
          x="611.38397"
          y="756.46936"
-         style="stroke-width:0.9375"></tspan></text>
+         style="stroke-width:0.9375" /></text>
     <text
        id="text863"
        y="853.42883"
