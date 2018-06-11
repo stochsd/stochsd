@@ -1,0 +1,166 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+var stocres_view=`
+            <div style="border:1">
+            <fieldset style="margin: 5px">
+            	<div id="stocres_param_locked_message">
+					\'Result quantity\', \'SkipOnCondition\' and \'Send Seed\' are locked until the Reset-button is pressed!
+				</div>
+				<table >
+					<tr>
+						<td>
+								<fieldset id="stocres_fieldset_adddel" class="mediumheight">
+								<legend>Result quantity</legend>
+                                <p style="vertical-align: middle;text-align:center">
+                                    <input style="width: 100%" id="txt_varname" size="10" class="txt_varname medium" type="text"><br/>
+                                    <button style="margin-top: 5px" id="stocres_cmd_add" class="cmd_add">Add</button>&nbsp;
+                                    <button style="margin-top: 5px" id="stocres_cmd_del" class="cmd_del">Del</button>
+                                </p>
+                                </fieldset>
+						</td>
+						<td>
+									   <fieldset class="mediumheight">
+                                        <legend>Confidence Level&nbsp;
+                                        <button data-help-text-id="ci_help_content" class="cmd_help">?</button>
+                                        </legend>
+                                        <p>
+                                        <input class="opt_2_sided" style="width: auto" type="radio" name="opt_2_sided">1-sided
+                                        <input class="opt_2_sided" style="width: auto" id="chk_2_sided" type="radio" name="opt_2_sided" checked>2-sided
+                                        </p>
+                                        <p>
+                                        1-α <input id="txt_conf_level" class="small" type="text" value="95">%
+                                        <label id="txt_lambda"></label>
+                                        <!--<label>λ <input id="txt_lambda" class="small" type="text" value=""></label>-->
+                                        
+                                    </fieldset>
+						</td>
+						<td style="position: relative">
+							   <fieldset class="mediumheight">
+									<legend>Percentile</legend>
+									<br/>
+									<input id="txt_percentile_level" value="50" style="width: 40px" size="5" type="text">%<br/>
+								</fieldset>
+						</td>
+					</tr>
+				</table>
+                <table id="tbl_vars" class="datatable datatable_smallfont" cellspacing="0">
+                    <thead>
+                        <tr class="head">
+                            <th></th>
+                            <th style="width: 50px">Name</th>
+                            <th style="width: 40px">Avg</th>
+                            <th style="width: 40px">Std.Dev</th>
+                            <th style="width: 70px">Conf.Int(Avg)</th>
+                            <th style="width: 40px">Min</th>
+                            <th style="width: 40px">Max</th>
+                            <th style="width: 40px">Last</th>
+                            <th style="width: 60px">Percentile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </fieldset>
+            </div>
+            <!--hr/-->
+			<fieldset>
+				<span class="flexbox">
+					<table>
+						<tr>
+							<td>Requested Simulations</td>
+							<td><input id="txt_num_runs" size="4" class="mediumsmall txt_num_runs" type="text" value="100"></td>
+						</tr>
+						<tr>
+							<td>Actual Simulation</td>
+							<td><input type="text" readonly="readonly" class="mediumsmall" id="stocres_txt_current_runs"></td>
+						</tr>
+					</table>
+				</span>
+			</fieldset>
+			<fieldset id="stocres_special_settings" style="position: relative;">
+                <legend>Special features</legend>
+                <span class="flexbox">
+					<span>
+						<input id="stocres_chk_skiponcondition" type="checkbox">SkipOnCondition
+						<button data-help-text-id="stocres_skiponcondition_help_content" class="cmd_help">?</button><br/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<var id="stocres_txt_skiponcondition_info"></var><br/>
+						
+						<label class="chk_showgui_container" style="margin-right: auto; margin-left: auto;" class="nowrap">
+							<input id="chk_showgui" type="checkbox" class="chk_showgui">Show simulations
+						</label>
+						
+					</span>
+					<span>
+						<input id="chk_sendseed" type="checkbox">Send Seed
+						<button data-help-text-id="stocres_sendseed_help_content" class="cmd_help">?</button><br/>
+					</span>
+					<span>
+						<fieldset id="div_sendseed" style="vertical-align:text-top; visibility: hidden">
+						<table>
+							<tr style="display: none"><!-- seed name is invisible, and is always "seed". This might change later-->
+								<td>Seed Name </td><td><input class="mediumsmall" id="txt_seed_name" type="text" value="seed"/></td>
+							</tr><tr>
+								<td>Seed-of-Seeds </td><td><input class="mediumsmall" id="txt_seed_value" type="text" value="123"/></td>
+							</tr><tr>
+								<td>Actual Seed </td><td><input class="mediumsmall" id="txt_seed_actual" type="text" value="" ReadOnly="ReadOnly"/></td>
+							</tr>
+						</table>
+						</fieldset>
+					</span>
+				</span>
+			</fieldset>
+			<fieldset>
+					<button style="width: 64px" id="stocres_cmd_runhalt" class="cmd_runhalt">Run</button>
+					<button id="stocres_cmd_reset" class="cmd_reset">Reset</button>
+					<button class="cmd_print">Print</button>
+					<span>Status <input type="text" class="status_field medium" readonly="readonly" id="stocres_txt_status"></span>
+					<input id="stocres_eformat_checkbox" class="e_format_checkbox" type="checkbox">E-format
+			</fieldset>
+			<table style="width: 100%">
+			<tr>
+			<td>
+				<fieldset>
+					<legend>Diagram</legend>
+					<p class="nowrap">
+					<button id="stocres_cmd_histogram">Histogram (<img src="img/cross.png"/>)</button>
+					<button id="stocres_cmd_scatterplot">Scatter Plot (<img src="img/cross.png"/><img src="img/cross.png"/>)</button>
+					</p>
+				</fieldset>
+			</td><td>
+				<fieldset>
+					<legend>Export to</legend>
+					<p class="nowrap">
+					<input type="checkbox" name="sorted" id="do_sort">Sort by (<img src="img/cross.png"/>)
+					<button id="stocres_cmd_export_txt">Text file (.txt)</button>
+					</p>
+				</fieldset>
+			</td>
+			</tr>
+			</table>
+			    <fieldset style="margin-top: 5px">
+                    Exec. time: <var id="lbl_exec_time">0</var>.&nbsp;&nbsp;&nbsp;&nbsp;
+					Estimated time left: <var id="lbl_est_time_left">0</var>.
+                    <var id="current_time">2014-06-07 12:11</var><br/>
+					<table WIDTH="100%"><tr><!-- http://stackoverflow.com/questions/1260122/expand-div-to-take-remaining-width table to make the URL input take up the remaining space-->
+					<td><p style="white-space: nowrap">Free text</p></td>
+					<td WIDTH="100%"><input id="stocres_free_text" style="width: 100%" type="text"/></input></td>
+<td class="nowrap"><p style="white-space: nowrap">DT = <span id="stocres_lbl_timestep" class="lbl_timestep" style="display: inline"></span></p></td>
+                    </tr>
+					</table>
+                </fieldset>
+                
+                
+            <div class="debugdiv">
+                <hr>
+                Debug:<br>
+                <button onclick="storted_export_txt()" class="sorted_export_txt">Sorted export .txt</button><br/>
+                <button onclick="sortdataset()">Sort data set</button><br/>
+                <button onclick="makedataset()">Make data set</button><br/>
+                <button id="cmd_panelside" class="cmd_panelside" onclick="panelswitchside()">To left</button>
+            </div>`;

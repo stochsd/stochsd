@@ -1,0 +1,358 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+.ui-dialog-title {
+	color: white !important;
+}
+
+.chk_showgui_container {
+	display: none;
+}
+
+* {
+	font-size: 12px;
+}
+
+th.objetive_title {
+	border: 1px solid #b9bb94 !important;
+	background-color: white !important;
+	padding-right: 3px;
+}
+
+td.objective_value {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+#txt_model_file {
+	background-color: white;
+}
+#stocres_param_locked_message {
+	font-weight: bold;
+	display: none;
+	text-align: center;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+.app_header {
+	color: white;
+	font-size: 18px;
+}
+
+input.status_field {
+	font-weight: bold;
+}
+
+button.cmd_help {
+	vertical-align: top;
+	font-size: 8px;
+	height: 20px;
+	width: 20px;
+	padding: 0px;
+}
+
+.locked_message {
+	font-weight: bold;
+	display: none;
+	text-align: center;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+#optim_chk_minimise:checked {
+color: #f3f3f3;
+background       : rgb(255,0,0) !important;
+}
+
+.highlighted_parameter {
+	background-color: red !important;
+}
+
+.titlefont {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+fieldset.disabled {
+	background-color: lightgray;
+}
+
+.help_title{
+	display: none;
+}
+
+.center {
+	margin-left:auto !important;
+	margin-right:auto !important;
+}
+
+#txt_model_file {
+    font-size: 14px;
+    color: black;
+}
+
+.alignleft {
+    text-align: left;
+}
+
+.alignright {
+    text-align: right;
+}
+
+.small_icon {
+    height: 22px;
+    position: absolute;
+    left: 1px;
+    top: 1px;
+}
+
+img.icon {
+    display: block;
+    margin-bottom: 10px;
+    width: 40px;
+    height: 40px;    
+    margin-left: 10px;
+}
+
+legend {
+ white-space="nowrap"
+}
+
+fieldset.mediumheight {
+	height: 65px;
+}
+
+fieldset.bigheight {
+	height: 100px;
+}
+
+fieldset {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+
+#current_time {
+	position: absolute;
+	right: 20px;
+}
+
+.current_time {
+    white-space: nowrap;	
+}
+
+.confint {
+    white-space: nowrap;
+}
+
+input {
+    background-color: #f2f3ad;
+}
+
+input[readonly="readonly"] {
+    background-color: rgb(235, 235, 228);
+}
+
+.title_color {
+    background-color: 4c4cf6;
+    height: 24px;
+}
+
+.gui_background {
+    background-color: e0e0e0 !important;
+}
+
+#dragborder {
+    background-size:10px 40px;
+    background-color: #222;
+    width: 10px;
+}
+
+p {
+    white-space:nowrap;
+    margin: 0px;
+}
+
+.flexbox {
+    margin-right: 10px; justify-content:space-between; display: flex; flex-flow: row;
+}
+
+/* default width*/
+input {
+    width: 40px;
+}
+
+input[type="radio"] {
+    width: auto;
+}
+
+.small {
+    width: 40px;
+}
+
+.mediumsmall {
+	width: 60px;
+}
+
+.medium {
+    width: 80px;
+}
+
+.mediumbig {
+    width: 120px;
+}
+
+input.expand {
+    width: 100%;
+}
+
+input.largesmall {
+    font-size: 12px;
+    width: 160px;
+}
+
+input.large {
+    font-size: 12px;
+    width: 270px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+input[type="checkbox"] {
+    width: auto;
+}
+
+label {
+    white-space: nowrap;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.w40 {
+    width: 40px;
+}
+
+.w120 {
+    width: 120px;
+}
+
+var {
+    font-style: normal;
+}
+
+#fieldset_sendset {
+    display: none;
+}
+input[type="file"] {
+    width: auto;
+    background-color: auto;
+}
+
+.ui-widget-content {
+    background-color: auto !important;
+}
+
+.noqueryui_format .ui-widget-header {
+    background: unset;
+}
+
+.noqueryui_format .ui-widget-content {
+	border: unset;
+	background: unset;
+	color: unset;
+}
+
+.noqueryui_format .ui-widget-content .ui-state-default a {
+    color:  #777;
+    font-weight: none;
+}
+
+.noqueryui_format .ui-widget-content .ui-tabs-active a {
+    color: #eb8f00 !important;
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+.varname_data {
+    color: black !important;
+    font-size: 12 !important;
+    font-family: Verdana !important;
+    font-weight: bold !important;
+}
+
+.result_data {
+    color: black !important;
+    font-size: 12 !important;
+    font-family: Verdana !important;
+    font-weight: none !important;
+}
+.fieldheight {
+    height: 50px;
+}
+hr {
+    border-top:1px solid black; 
+    border-bottom:1px solid gray; 
+    height: 0px;
+}
+
+.help_content {
+    margin-bottom: 10px;
+}
+
+.h60 {
+    height: 60px;
+}
+
+.h70 {
+    height: 70px;
+}
+
+.h80 {
+    height: 80px;
+}
+
+.title_color.print_mode {
+    background-color: white !important;
+    border: 1px solid black;
+}
+
+#txt_model_file.print_mode {     
+    background-color: white !important;
+}
+
+#stocsd_div_filemanager.print_mode {
+    border: 2px solid black;
+}
+
+#app_area.print_mode {
+    border: 2px solid black;
+}
+
+.debugdiv { /* deprecated*/
+    display: none;
+}
+
+.debug_visible {
+    display: none;
+}
+
+.debug_visible.debug_active {
+    visibility: visible;
+}

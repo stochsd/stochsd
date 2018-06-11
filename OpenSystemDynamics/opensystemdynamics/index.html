@@ -1,0 +1,419 @@
+<!--
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	
+    <title></title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script type="text/javascript" src="settings.js"></script>
+	<script type="text/javascript" src="debug.js"></script>
+	<!-- environment.js determines whatever to use web or NWJS. Must be executed early to work -->
+	<script type="text/javascript" src="environment.js"></script>
+	<script type="text/javascript" src="../js/Localization.js"></script>
+	<script type="text/javascript" src="../js/Variables.js"></script>
+	<script type="text/javascript" src="../js/Utilities.js"></script>	
+	<script type="text/javascript" src="../js/API/API.js"></script>
+	<script type="text/javascript" src="../js/mxShim.js"></script>
+	<script type="text/javascript" src="../js/Sanitize.js"></script>
+	<script type="text/javascript" src="../js/Updater.js"></script>
+	<script type="text/javascript" src="../tests/ModelTests.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/OO.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/unitsStructure.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/units.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/SimpleCalc.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/antlr3-all-min.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/output/FormulaLexer.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/output/FormulaParser.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/rand.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/random.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/formula.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/calc/functions.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/Functions.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/Classes.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/Primitives.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/TaskScheduler.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/Simulator.js"></script>
+	<script type="text/javascript" src="../js/SimulationEngine/Modeler.js"></script>
+	<script type="text/javascript" src="../resources/RedBlackNode.js"></script> 
+	<script type="text/javascript" src="../resources/RedBlackTree.js"></script> 
+	<script type="text/javascript" src="../resources/graph.js"></script>
+	<script type="text/javascript" src="newAPI.js"></script>
+	<script src="makexml.js"></script>
+	<script type="text/javascript" src="imc.js"></script>
+	
+	<style>
+		.hideUnlessNwjs {
+			display: none !important;
+		}
+		button {
+			cursor: pointer;
+			font-size: 14px;
+		}
+
+		button:hover {
+			background-color: #ccc;
+		}
+		svg {
+				border-width: 0px;
+		}
+		svg * {
+		  -webkit-user-select: none;  /* Chrome all / Safari all */
+		  -moz-user-select: none;     /* Firefox all */
+		  -ms-user-select: none;      /* IE 10+ */
+		  user-select: none;          /* Likely future */
+		}
+
+		@media print
+		{    
+			#topPanel
+			{
+				display: none !important;
+			}
+		}
+		body {
+			overflow:hidden;
+		}
+		.toolBoxSeparator {
+			display: inline-block;
+			width: 5px;
+			/*width: 20px;*/
+		}
+		button.pressed {
+			background-color: #777;
+		}
+		.toolButton {
+			padding: 0px;
+			margin: 0px;
+			
+			width: 30px;
+			height:  30px;
+
+			/*
+			width: 40px;
+			height:  40px;
+			*/
+		}
+		.toolSupplement {
+			padding: 0px;
+			margin: 0px;
+			
+			width: 30px;
+			height:  30px;
+			display: inline-block;
+			vertical-align: text-bottom;
+		}
+		button svg {
+			border-width: 0px;
+		}
+		.fileToolBox {
+			margin-bottom: 5px;
+		}
+		table {
+			border-collapse: collapse;
+			border: 1px solid black;
+		}
+		td.text {
+			text-align: left;		
+		}
+		td,th {
+			border: 1px solid black;
+		}
+		td {
+			text-align: right;			
+		}
+		input[type="text"] {
+			width: 50px;
+			text-align: right;
+		}
+		input[type="text"].textInput {
+			text-align: left !important;
+		}
+		/* Overlays */
+		.ui-widget-overlay {
+			background: #000000;
+			opacity: 0.3 !important;
+		}
+		button.toolButton img {
+			width: 100%; height: 100%; display: inline
+		}
+		.primitiveSettings .nameField, .primitiveSettings .valueField {
+			width: 200px;
+		}
+		.accordion div {
+			width: 200px;
+		}
+		
+		.table{
+		  display: table;
+		  width:100%;
+		}
+		  .table-row{
+			display: table-row;
+		  }
+		.table-cell {
+		  display: table-cell;
+		  padding:2px;
+		  /*border: black 1px solid;*/ /*Turn on for debuggning */
+		}
+		.accordionCluster div {
+			width: 300px;
+		}
+		h3.equationListHeader {
+			margin: 5px 0px 0px 0px;
+		}
+		
+		.accordionCluster ul {
+			padding: 0px;
+			margin: 0px;
+		}
+		
+		.ui-accordion-content {
+			padding-top: 20px !important;
+			padding-bottom: 20px !important;
+		}
+		.functionHelp {
+			color: black;
+		}
+		.functionHelp:hover {
+			color: black;
+			text-shadow:0px 0px 1px black;
+		}
+		.linkedReference {
+			color: black;
+		}
+		.linkedReference:hover {
+			color: black;
+			text-shadow:0px 0px 1px black;
+		}
+		.macroText {
+			width: 600px;
+			height: 400px;
+		}
+	</style>
+	<script src="libsvg.js"></script>
+	<script src="jquery-1.8.3.min.js"></script>
+    <script class="include" type="text/javascript" src="jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
+	<link class="include" rel="stylesheet" type="text/css" href="jquery.jqplot.1.0.9/jquery.jqplot.min.css" />
+	
+	<script type="text/javascript" src="jquery.jqplot.1.0.9/plugins/jqplot.canvasTextRenderer.js"></script>
+	<script type="text/javascript" src="jquery.jqplot.1.0.9/plugins/jqplot.canvasAxisLabelRenderer.js"></script>
+<!--
+	<script src="jquery-1.10.2.min.js"></script>
+-->
+	<link rel="stylesheet" href="jquery-ui-1.12.1/jquery-ui.css">
+	<link rel="stylesheet" href="emenu.css">
+	<script src="jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="emenu.js"></script>
+	<script src="editor.js"></script>
+	</head>
+	<body>
+			<div id="coverEverythingDiv" style="position: absolute; left: 0px; top: 0px; width: 1100px; height: 900px; background-color: white;z-index:6;">
+	<div id="topPanel"> <!-- This panel is hidden when printing-->
+		<div class="fileToolBox">
+			<div class="eMenu">
+			  <button class="menuButton">File</button>
+			  <div class="menuContent">
+				<span>
+					<button id="btn_new" title="Reset">New</button>	
+				</span>
+				<span>
+					<button id="btn_load" title="Open (Ctrl-O)"><u>O</u>pen</button>
+				</span>
+				<span>
+					<button id="btn_save" title="Save (Ctrl-S)"><u>S</u>ave</button>
+				</span>
+				<span>
+					<button id="btn_save_as" style="display: none;">Save as ...</button>
+				</span>
+			  </div>
+			</div>
+			
+			<div class="eMenu hideUnlessNwjs">
+			  <button class="menuButton">View</button>
+			  <div class="menuContent">
+				<span>
+					<button id="btn_zoom_in" title="Zoom in (Ctrl+)">Zoom in (Ctrl +)</span></button>
+				</span>
+				<span>
+					<button id="btn_zoom_out" title="Zoom out (Ctrl-)">Zoom out (Ctrl -)</button>
+				</span>
+				<span>
+					<button id="btn_zoom_reset" title="Reset zoom (Ctrl 0)">Reset zoom (Ctrl 0)</button>
+				</span>
+			  </div>
+			</div>
+			
+			<div class="eMenu">
+			  <button class="menuButton">Print</button>
+			  <div class="menuContent">
+				<span>
+					<button id="btn_print_model">Print Diagram</button>
+				</span>
+				<span>
+					<button id="btn_equation_list">Print Equations</button>
+				</span>
+			  </div>
+			</div>
+		<button id="btn_simulation_settings">Simulation Settings</button>
+		<button id="btn_macro">Macros</button>
+				
+
+
+			<div style="display: none;" class="eMenu pluginMenu">
+			  <button class="menuButton">Tools</button>
+			  <div class="menuContent">
+				<span>
+					<button class="btn_load_plugin" data-plugin-name="optim">Optim</button>	
+				</span>
+				<span>
+					<button class="btn_load_plugin" data-plugin-name="sensi">Sensi</button>
+				</span>
+				<span>
+					<button class="btn_load_plugin" data-plugin-name="stocres">StatRes</button>
+				</span>
+				<span>
+					<button class="btn_load_plugin" data-plugin-name="parmest">ParmVar</button>
+				</span>
+				<span>
+					<button class="btn_load_plugin" data-plugin-name="none">Hide</button>	
+				</span>
+			  </div>
+			</div>
+			
+			<div class="eMenu">
+			  <button class="menuButton">Help</button>
+			  <div class="menuContent">
+				<span>
+					<button id="btn_about">About</button>	
+				</span>
+				<span>
+					<a target="_blank" href="../doc/Manual.pdf"><button id="btn_manual">Manual</button></a>
+				</span>
+				<span>
+					<button id="btn_debug" style="display: none;">Debug log</button>
+				</span>
+				<span>
+					<button id="btn_restart">Restart and clear model</button>
+				</span>
+				
+				<span style=>
+					<button id="btn_preserve_restart">Restart and keep model</button>
+				</span>
+			  </div>
+			</div>
+		</div>
+		
+		</div> <!-- End of topPanel -->
+		
+		<div class="toolPanel"> <!--toolPanel-->
+		<button id="btn_mouse" title="Mouse" class="toolButton" data-tool="mouse">
+			<img src="graphics/mouse.svg"/>
+		</button>
+		<button id="btn_delete" title="Delete" class="toolButton" data-tool="delete">
+			<img src="graphics/delete.svg"/>
+		</button>
+		<button id="btn_undo" title="Undo" class="toolButton" data-tool="undo">
+			<img src="graphics/undo.svg"/>
+		</button>
+		<button id="btn_redo" title="Redo" class="toolButton" data-tool="redo">
+			<img src="graphics/redo.svg"/>
+		</button>
+		<div class="toolBoxSeparator">
+		</div>
+		<button id="btn_stock" title="Stock" class="toolButton" data-tool="stock">
+			<img src="graphics/stock.svg"/>
+		</button>
+		<button id="btn_variable" title="Variable" class="toolButton" data-tool="variable">
+			<img src="graphics/variable.svg"/>
+		</button>
+		<button id="btn_converter" title="Converter" class="toolButton" data-tool="converter">
+			<img src="graphics/converter.svg"/>
+		</button>
+		<button id="btn_flow" title="Flow" class="toolButton" data-tool="flow">
+			<img src="graphics/flow.svg"/>
+		</button>
+		<button id="btn_link" title="Link" class="toolButton" data-tool="link">
+			<img src="graphics/link.svg"/>
+		</button>
+		<button id="btn_ghost" title="Ghost" class="toolButton" data-tool="ghost">
+			<img src="graphics/ghost.svg"/>
+		</button>
+		<div class="toolBoxSeparator">
+		</div>
+		<button id="btn_rotatename" title="Rotate name" class="toolButton" data-tool="rotatename">
+			<img src="graphics/rotate_name.svg"/>
+		</button>
+		<button id="btn_text" title="Text" class="toolButton" data-tool="text">
+			<img src="graphics/text.svg"/>
+		</button>
+		<button id="btn_rectangle" title="Frame" class="toolButton" data-tool="rectangle">
+			<img src="graphics/rectangle.svg"/>
+		</button>
+		<button id="btn_line" title="Line" class="toolButton" data-tool="line">
+			<img src="graphics/line.svg"/>
+		</button>
+		<div class="toolBoxSeparator">
+		</div>
+		<button id="btn_numberbox" title="Number box" class="toolButton" data-tool="numberbox">
+			<img src="graphics/numberbox.svg"/>
+		</button>
+		<button id="btn_table" title="Table" class="toolButton" data-tool="table">
+			<img src="graphics/table.svg"/>
+		</button>
+		<button id="btn_diagram" title="Time diagram" class="toolButton" data-tool="diagram">
+			<img src="graphics/diagram.svg"/>
+		</button>
+		<button id="btn_xyplot" title="Scatter plot" class="toolButton" data-tool="xyplot">
+			<img src="graphics/xyplot.svg"/>
+		</button>
+		<div class="toolBoxSeparator">
+		</div>
+		<div id="runControllerArea" style="display: inline-block;">
+			<div id="runStatusBarOuter" class="toolSupplement" style="background: #F0F0F0; height: 16px; width: 100%; margin: 0; padding: 0; border: 0;height: 22px;">
+				<div id="runStatusBar" class="toolSupplement" style="text-align: center; white-space: nowrap; position: relative; left: 0px; top: 0px; background: #aaeeaa; height: 16px; width: 0px; margin: 0; padding: 0; border: 0;height: 22px;">
+					<div id="runStatusBarText" style="text-align: center; width: 98px; font-size: 15px; height: 22px;">
+						0
+					</div>
+				</div>
+			</div>
+			<br/>
+			<button id="btn_run" title="Run/Halt (Ctrl-1)" class="toolButton" data-tool="run">
+				<img id="imgRunPauseTool" src="graphics/run.svg"/>
+			</button>
+			<button id="btn_step" title="Step (Ctrl-2)" class="toolButton" data-tool="step">
+				<img src="graphics/step.svg"/>
+			</button>
+			<button style="display: none" id="btn_clearrun" title="Clear run" class="toolButton" data-tool="clearrun">
+				<img src="graphics/clearrun.svg"/>
+			</button>
+			<button id="btn_reset" title="Reset (Ctrl-3)" class="toolButton" data-tool="reset">
+				<img src="graphics/reset.svg"/>
+			</button>
+			</div> <!-- End of toolPanel -->
+		</div>
+		<br/>
+		<br/>
+
+        <!-- Working area -->
+		<div id="svgplanebackground" style="overflow: scroll; border-width: 1px; border-color: black; border-style: solid; position: absolute; z-index: 3; width: 1024px; height: 768px; display: inline-block; ">
+			<div id="svgBlockOverlay" style="position: absolute; left: 0px; top: 0px; display: none; z-index: 110; width: 100%; height: 100%; background-color: red; opacity: 0;">
+			</div>
+			<svg draggable="false" id="svgplane" width="2000" height="1379" style="position: absolute; left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
+			</svg>
+		</div>
+
+	
+	
+
+
+	</div>
+</body>
+</html>

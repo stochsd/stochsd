@@ -1,0 +1,56 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+.histogram {
+    position: absolute;
+}
+.histogram div {
+    position: absolute;
+}
+
+.dialog fieldset {
+    position: absolute;
+}
+
+.dialog button {
+    position: absolute;
+    width: 100px;
+}
+
+p.label {
+    position: absolute;
+}
+
+.dialog .chart {
+    top: 0px;
+    left: 80px;
+}
+.dialog .minbox {
+    left: 10px;
+    top: 250px;
+}
+
+.dialog .maxbox {
+    left: 680px;
+    top: 250px;
+}
+
+.dialog button.model_shortcut {
+    position: relative;
+}
+
+.model_shortcut {
+    width: 100px;
+}
+
+button.openbutton {
+    height: 50px;
+}
+
+
+

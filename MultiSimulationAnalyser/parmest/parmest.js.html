@@ -1,0 +1,362 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+var parmest_view=`
+<fieldset id="parmest_param_input" style="margin: 5px">
+	<div class="locked_message" id="parmest_param_locked_message">
+		This frame, Seed-of-Seeds and SkipOnCondition are locked until the Reset-button is pressed!
+    </div>
+    <table>
+        <tbody><tr>
+            <td>
+                    <fieldset class="bigheight">
+                    <legend><b>1. ESTIMATION of Parameters</b></legend>
+                    <table>
+                        <tr>
+                            <td>Param. Name</td>
+                            <td>Start</td>
+                            <td>Init. Step</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="txt_varname mediumbig" size="10" id="parmest_txt_varname" data-name="Param.Name"><br>
+                            </td>
+                            <td>
+                                <input type="text" class="req_float txt_varname mediumsmall" size="10" id="parmest_txt_start"><br>
+                            </td>
+                            <td>
+                                <input type="text" class="req_float txt_varname mediumsmall" size="10" id="parmest_txt_step"><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <button id="parmest_btn_add" style="margin-top: 5px">Add</button>&nbsp;
+                                <button id="parmest_btn_del" style="margin-top: 5px">Del</button>
+                            </td>
+                        </tr>
+                    </table>
+                    </fieldset>
+            </td>
+            <td style="position: relative">
+                   <fieldset class="bigheight">
+                        <legend>Objective Function</legend>
+                        <table>
+                            <tr>
+                                <td>Name</td><td colspan="2"><input data-name="Objective Function" id="parmest_txt_objfunc" class="varname_data mediumbig" type="text"></td>
+                            </tr>
+                            <tr>
+                                <td>Value</td><td colspan="2"><input id="parmest_txt_objfunc_value" value="" readonly="readonly" class="result_data mediumbig" type="text"></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+            </td>
+
+        </tr>
+    </tbody></table>
+    <table cellspacing="0" class="datatable" id="parmest_tbl_vars">
+        <thead>
+            <tr class="head">
+                <th></th>
+                <th class="mediumbig col0">Parameter</th>
+                <th class="mediumsmall col1">Start</th>
+                <th class="mediumsmall col2">Step</th>
+                <th class="mediumsmall col3">Actual</th>
+                <th class="mediumsmall col4">Span</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</fieldset>
+
+
+<fieldset>
+    <span class="flexbox">
+    <span>
+     <table>
+        <tr class="nowrap">
+            <td>
+                Required Accuracy
+            </td>
+            <td>
+                <input tabindex="6" id="parmest_txt_req_error" class="medium req_float" type="text">
+            </td>
+		</tr><tr class="nowrap">
+			<td>
+                Actual Accuracy
+            </td>
+            <td>
+                <input id="parmest_txt_actual_error" class="medium" readonly="readonly" type="text">
+            </td>
+		</tr>
+		</table>
+    </span>
+    <span style="margin-left: auto; margin-right: auto">
+		<table>
+			<tr class="nowrap">
+				<td>Max Iterations</td>
+				<td><input value="200" id="parmest_txt_maxiter" class="req_int mediumsmall" type="text"></td>
+			</tr>
+			<tr class="nowrap">
+				<td>\No. Iterations</td>
+				<td><input id="parmest_lbl_iters" class="mediumsmall" readonly="readonly" type="text"></td>
+			</tr>
+			<tr class="nowrap">
+				<td>No. Simulations</td>
+				<td><input id="parmest_lbl_nsim" class="mediumsmall" readonly="readonly" type="text"></td>
+			</tr>
+		</table>
+    </span>
+    </span>
+    </fieldset>
+<fieldset>
+
+
+           <fieldset class="hidden"<!--style="display: inline-block"-->>
+                <legend>Error Type</legend>
+                <input id="parmest_chk_error_absolute" checked="checked" name="abs_or_rel" type="radio">Absolute</input>
+                <input id="parmest_chk_error_relative" name="abs_or_rel" type="radio">Relative</input>
+            </fieldset>
+    <fieldset>
+        <p class="flexbox">
+                <span>Requested Estimates 
+                    <input class="req_int mediumsmall" id="parmest_txt_num_estimates" type="text">
+                    <!--input value="200" id="parmest_txt_maxiter" class="mediumsmall" type="text"-->Actual Estimate 
+                    <input class="reg_int mediumsmall" readonly="readonly" id="parmest_txt_actual_estimate" type="text">
+                    <!--input id="parmest_lbl_iters" class="mediumsmall" readonly="readonly" type="text"-->
+                </span>
+                <!--span>No. Simulations <input id="parmest_lbl_nsim" class="mediumsmall" readonly="readonly" type="text"></span-->
+        </p>
+    </fieldset>
+
+                        
+
+
+
+
+
+<fieldset id="parmest_div_sendseed">
+    <!--p class="flexbox"-->
+            <span class="hidden">Seed Name:<input class="medium" id="parmest_txt_seed_name" type="text" value="seed"/></span>
+            <span>Seed-of-Seeds <input class="req_float medium" id="parmest_txt_seed_value" type="text" value="123"/></span>
+            <span>&nbsp;&nbsp;Actual Seed <input class="medium" id="parmest_txt_seed_actual" type="text" value="" ReadOnly="ReadOnly"/></span>
+			<button class="cmd_help" data-help-text-id="ci_help_seed_of_seeds">?</button>
+    <!--/p-->
+</fieldset>
+<fieldset id="parmest_special_feature">
+    <legend>Special feature</legend>
+		<label class="chk_showgui_container" style="margin-right: auto; margin-left: auto;" class="nowrap">
+			<input     id="parmest_chk_showgui" type="checkbox" class="chk_showgui">Show simulations
+		</label>
+		<input id="parmest_chk_skiponcondition" type="checkbox">SkipOnCondition
+		<button data-help-text-id="parmest_skiponcondition_help_content" class="cmd_help">?</button> <var id="parmest_txt_skiponcondition_info"></var><br/>
+</fieldset>
+<fieldset>
+<p class="flexbox">
+    <span>
+    <button id="parmest_cmd_run">Run</button>
+    <button id="parmest_cmd_reset">Reset</button>
+    <button onclick="cmd_print_click()">Print</button>
+    <button class="debug_visible" id="parmest_cmd_log">Log</button></span>
+    <span>Status <input id="parmest_txt_status" readonly="readonly" class="status_field largesmall" type="text"></span><span><input class="e_format_checkbox" type="checkbox">E-format</span>
+
+</p>
+</fieldset>
+<hr/>
+<fieldset style="margin: 5px">
+<legend><b>2. STATISTICS of Parameter estimates</b></legend>
+				<table >
+					<tr>
+						<td>
+									   <fieldset class="fieldheight">
+                                        <legend>Confidence Level&nbsp;<button data-help-text-id="ci_help_content" class="cmd_help">?</button></legend>
+                                        <p>
+                                        <input id="parmest_chk_1_sided" class="opt_2_sided" style="width: auto" type="radio" name="parmest_opt_2_sided">1-sided
+                                        <input id="parmest_chk_2_sided" class="opt_2_sided" style="width: auto" type="radio" name="parmest_opt_2_sided" checked>2-sided
+
+                                        1-α <input class="req_float mediumsmall" data-min="0.01" data-max="99.99" id="parmest_txt_conf_level" type="text" value="95">%
+                                        <label id="parmest_txt_lambda">λ: 1.644</label>
+                                        <!--<label>λ <input id="parmest_txt_lambda" class="small" type="text" value=""></label>-->
+                                        </p>
+                                    </fieldset>
+						</td>
+						<td style="position: relative">
+							   <fieldset class="fieldheight">
+									<legend>Percentile</legend>
+									<input data-min="0" class="req_float" data-max="100" id="parmest_txt_percentile_level" value="50" style="width: 40px" size="5" type="text">%<br/>
+								</fieldset>
+						</td>
+					</tr>
+				</table>
+                <table id="parmest_tbl_vars2" class="datatable datatable_smallfont" cellspacing="0">
+                    <thead>
+                        <tr class="head">
+                            <th></th>
+                            <th style="width: 50px">Name</th>
+                            <th style="width: 40px">Avg</th>
+                            <th style="width: 40px">Std.Dev</th>
+                            <th style="width: 70px">Conf.Int(Avg)</th>
+                            <th style="width: 40px">Min</th>
+                            <th style="width: 40px">Max</th>
+                            <th style="width: 40px">Last</th>
+                            <th style="width: 60px">Percentile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+</fieldset>
+
+			<table style="width: 100%">
+			<tr>
+			<td>
+				<fieldset>
+					<legend>Diagram</legend>
+					<p class="nowrap">
+					<button id="parmest_cmd_histogram">Histogram (<img src="img/cross.png"/>)</button>
+					<button id="parmest_cmd_scatterplot"cmd_scatterplot_click()">Scatter Plot (<img src="img/cross.png"/><img src="img/cross.png"/>)</button>
+					</p>
+				</fieldset>
+			</td><td>
+				<fieldset>
+					<legend>Export to</legend>
+					<p class="nowrap">
+					<input type="checkbox" name="sorted" id="parmest_do_sort">Sort by (<img src="img/cross.png"/>)
+					<button id="parmest_cmd_export_txt">Text file (.txt)</button>
+					</p>
+				</fieldset>
+			</td>
+			</tr>
+			</table>
+<hr/>
+<fieldset style="margin-top: 5px">
+    <span class="flexbox">
+			<span class="nowrap">Exec. time: <var id="parmest_lbl_exec_time">0 sec</var></span>
+			<span class="nowrap">Estimated time left: <var id="parmest_lbl_est_time_left">0 sec</var></span>
+            <span class="current_time">2014-06-07 12:11</span>
+    </span>
+    <table>
+    <tr>
+        <td>
+            <p style="white-space: nowrap">Free text</p>
+        </td>
+        <td WIDTH="100%">
+            <input style="width: 100%" type="text" id= "parmest_txt_freetext" /></input>
+        </td>
+        <td class="nowrap">
+            <p style="white-space: nowrap">DT = <span id="parmest_lbl_timestep" class="lbl_timestep" style="display: inline"></span></p>
+        </td>
+        </td>
+        </tr>
+    </table>
+</fieldset>
+<span style="display: none">
+	<input id="parmest_chk_post_analysis" type="checkbox">Post Analysis&nbsp;<button data-help-text-id="parmest_postanalysis_help" class="cmd_help">?</button>
+	<br/>
+	<div id="parmest_div_post_analysis" class="hidden">
+	<table id="parmest_tbl_vars3" class="datatable datatable_smallfont" cellspacing="0">
+		<thead>
+			<tr class="head">
+				<th class="nowrap">Parameter</th>
+				<th class="nowrap">Model</th>
+				<th class="w40 nowrap">System</th>
+				<th class="nowrap">Diff</th>
+				<th>P-value</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	</div>
+	<button onclick="export_debug()">Export debug</button>
+</span>
+
+
+
+
+
+
+<button class="debug_visible" id="cmd_parmest_test">Load</button>
+
+<div style="display: none" class="gui_background" id="frm_parmest_log" title="Stockres IM Log">
+	<div id="parmest_console" style="font-size: 13px; width: 100%; height: 100%; overflow-y: scroll">
+	</div>
+<button id="parmest_cmd_export_log" style="width: 150px" class="center">Export txt</button>
+</div>
+
+<div class="hidden" id="parmest_help">
+    After optimisation or parameter estimation (using e.g. Optim),<br/>
+    you may ask how accurate the estimation of the parameters were.<br/>
+    With other words you want confidence intervals around your<br/>
+    parameter estimates. This can be achieved by using ParmVar on<br/>
+    a stochastic version of the model used for the<br/>
+    optimisation or parameter estimation. <br/>
+    <br/>
+    WARNING: This requires that the expected value of the<br/>
+    objective function of the stochastic model is the same as <br/>
+    the value of that from the deterministic model (and that the<br/>
+     parameters of the two models have the same values).<br/>
+   <br/>
+    ParmVar fits a DETERMINISTIC MODEL to a STOCHASTIC MODEL<br/>
+    a specified number of times. The Model file should be written<br/>
+    in StochSD according to a certain layout. An example of<br/>
+     such a Model File is shown <a href="#" data-help-text-id="help_model" class="cmd_help">here</a>.<br/>
+    <br/>
+        To use ParmVar you have to:  <br/>
+           1. Select the file of the StochSD Model. <br/>
+           2. Specify each Parameter and Add it:<br/>
+		  &nbsp;&nbsp;&nbsp;a. Type Name of the Parameter of the DETERMINISTIC MODEL. <br/>
+          &nbsp;&nbsp;&nbsp;b. Type Start value of the parameter. <br/>
+          &nbsp;&nbsp;&nbsp;c. Type Init.Step of the parameter. <br/>
+          &nbsp;&nbsp;&nbsp;d. Press the Add button. <br/>
+           3. Enter the Name of the Objective Function. <br/>
+           4. Enter Requested Accuracy (e.g. 0.01). <br/>
+        [  5. Enter Max Iterations (Default=200). ]<br/>
+        [  6. Enter Requested Estimates (Default=100). ]<br/>
+           7. Press the Run button. <br/>
+        [  8. When DONE, the procedure may continue after change of Requested Estimates. ]<br/>
+        [  You can also Halt and/or Reset the procedure. ]<br/>
+</div>
+<div id="help_model" class="hidden">
+Before using ParmVar, the parameters of a DETERMINISTIC MODEL are usually<br/>
+fitted to the OUTPUT of a SYSTEM UNDER STUDY, e.g. described by a table.<br/>
+(This could have been done with Optim).Then a corresponding STOCHASTIC MODEL<br/>
+ is created, and the estimated parameter values are assigned to the parameters<br/>
+of this model. The results from the STOCHASTIC MODEL will hen vary. <br/>
+The task of the DETERMINISTIC MODEL is now to estimate the parameters <br/>
+ for different behaviours of the STOCHASTIC MODEL and present<br/>
+ these estimates as statistical results.<br/>
+ <br/>
+The MODEL FILE must consist of the following parts (See figure below):    <br/>
+<br/>
+A) A STOCHASTIC MODEL with the same structure and corresponding parameters<br/>
+(here X0_s and T_s) as for the DETERMINISTIC MODEL earlier used for the<br/>
+parameter estimation with Optim.    <br/>
+<br/>
+B) The DETERMINISTIC MODEL with parameters (here X0 and T) will now be<br/>
+fitted to the STOCHASTIC MODEL.<br/>
+  <br/>
+C) An OBJECTIVE FUNCTION (here V) to compare the DETERMINISTIC MODEL to<br/>
+STOCHASTIC MODEL. V is initiated to zero and will accumulate the squared<br/>
+difference: &Delta;t&middot;(X_s-X)&sup2; for each time-step. V is to be minimised with<br/>
+respect to the parameters, just as with Optim. (But here it is performed<br/>
+many times to allow the stochastic model to display its varying behaviour.)<br/>
+<img style="width: 500px" src="img/ParmEst_model.png"/>
+</div>
+<div class="hidden" id="parmest_postanalysis_help">
+    ParmVar presupposes that the average behaviour of the stochastic model<br/>
+    is the same as the behaviour of the corresponding deterministic model.</br>
+    One way to test this is to compare the parameter estimates obtained by<br/>
+    the deterministic model with the true parameter values of the stochastic model. <br/>
+    <br/>
+    If a true parameter is within the 90%-2-sided confidence interval of the estimated parameter<br/>
+    then the difference field becomes green.<br/>
+    In 90 - 95% it becomes yellow,<br/>
+    in 95 - 99% it becomes orange,<br/>
+    and above 99% it becomes red.<br/>
+</div>`;

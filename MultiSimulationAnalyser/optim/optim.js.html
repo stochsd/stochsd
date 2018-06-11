@@ -1,0 +1,190 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+var optim_view=`
+<fieldset id="optim_param_input" style="margin: 5px">
+	<div class="locked_message" id="optim_param_locked_message">
+		This frame is locked until the Reset-button is pressed!
+    </div>
+    <table>
+        <tbody><tr>
+            <td>
+                    <fieldset class="bigheight">
+                    <legend>Parameters</legend>
+                    <table>
+                        <tr>
+                            <td>Param. Name</td>
+                            <td>Start</td>
+                            <td>Init. Step</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input tabindex="1" type="text" data-name="Param.Name" class="txt_varname mediumbig varname_data" size="10" id="optim_txt_varname"><br>
+                            </td>
+                            <td>
+                                <input tabindex="2" type="text" class="txt_varname mediumsmall" size="10" id="optim_txt_start"><br>
+                            </td>
+                            <td>
+                                <input tabindex="3" type="text" class="txt_varname mediumsmall" size="10" id="optim_txt_step"><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <button tabindex="4" id="optim_btn_add" style="margin-top: 5px">Add</button>&nbsp;
+                                <button id="optim_btn_del" style="margin-top: 5px">Del</button>
+                            </td>
+                        </tr>
+                    </table>
+                    </fieldset>
+            </td>
+            <td style="position: relative">
+                   <fieldset class="bigheight">
+                        <legend>Objective Function</legend>
+                        <table>
+                            <tr>
+                                <td>Name</td><td colspan="2"><input tabindex="5" id="optim_txt_objfunc" data-name="Objective Function" class="varname_data mediumbig" type="text"></td>
+                            </tr>
+                            <tr>
+                                <td>Value</td><td colspan="2"><input id="optim_txt_objfunc_value" value="" readonly="readonly" class="result_data mediumbig" type="text"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+									<span class="nowrap">
+										<input checked="checked" id="optim_chk_minimise" name="max_or_min" type="radio">Minimise</input>
+										<input id="optim_chk_maximise" name="max_or_min" type="radio">Maximise</input>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+            </td>
+
+        </tr>
+    </tbody></table>
+    <table cellspacing="0" class="datatable" id="optim_tbl_vars">
+        <thead>
+            <tr class="head">
+                <th></th>
+                <th class="mediumbig col0">Parameter</th>
+                <th class="mediumsmall col1">Start</th>
+                <th class="mediumsmall col2">Step</th>
+                <th class="mediumsmall col3">Actual</th>
+                <th class="mediumsmall col4">Span</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</fieldset>
+<fieldset>
+    <span class="flexbox">
+    <span>
+     <table>
+        <tr class="nowrap">
+            <td>
+                Required Accuracy
+            </td>
+            <td>
+                <input tabindex="6" id="optim_txt_req_error" class="medium" type="text">
+            </td>
+		</tr><tr class="nowrap">
+			<td>
+                Actual Accuracy
+            </td>
+            <td>
+                <input id="optim_txt_actual_error" class="medium" readonly="readonly" type="text">
+            </td>
+		</tr>
+		</table>
+    </span>
+    <span style="margin-left: auto; margin-right: auto">
+		<table>
+			<tr class="nowrap">
+				<td>Max Iterations</td>
+				<td><input value="200" id="optim_txt_maxiter" class="mediumsmall" type="text"></td>
+			</tr>
+			<tr class="nowrap">
+				<td>\No. Iterations</td>
+				<td><input id="optim_lbl_iters" class="mediumsmall" readonly="readonly" type="text"></td>
+			</tr>
+			<tr class="nowrap">
+				<td>No. Simulations</td>
+				<td><input id="optim_lbl_nsim" class="mediumsmall" readonly="readonly" type="text"></td>
+			</tr>
+		</table>
+    </span>
+    </span>
+</fieldset>
+<fieldset id="optim_div_sendseed">
+<legend>Special features</legend>
+    <span>
+		<input id="optim_chk_sendseed" type="checkbox">Lock Seed&nbsp;
+	</span>
+	<span id="optim_span_sendseed">
+		<span>
+			<input class="medium" id="optim_txt_seed_value" type="text" value="123"/>
+			(Only required for stochastic models.)
+		</span>
+    </span><br/>
+	<label class="nowrap chk_showgui_container" style="margin-right: auto; margin-left: auto;">
+			<input type="checkbox" class="chk_showgui" id="optim_chk_showgui" style="margin-left: 0px;">Show Simulations
+	</label>
+</fieldset>
+<fieldset>
+<p class="flexbox">
+    <span>
+    <button tabindex="7" id="optim_cmd_optimise">Optimise</button>
+    <button id="optim_cmd_reset">Reset</button>
+    <button onclick="cmd_print_click()">Print</button>
+    <button class="debug_visible" id="optim_cmd_log">Log</button></span>
+    <span>Status <input id="optim_txt_status" readonly="readonly" class="status_field largesmall" type="text"></span><span><input id="optim_eformat_checkbox" class="e_format_checkbox" type="checkbox">E-format</span>
+
+</p>
+</fieldset>
+<fieldset style="margin-top: 5px">
+    <table WIDTH="100%"><tr><!-- http://stackoverflow.com/questions/1260122/expand-div-to-take-remaining-width table to make the URL input take up the remaining space-->
+    <tr>
+        <td>
+            <p class="nowrap">Exec. time: <var id="optim_lbl_exec_time">0 sec</var>.</p>
+        </td>
+        <td WIDTH="100%">
+        </td>
+        <td>
+            <var class="current_time">2014-06-07 12:11</var>
+        </td>
+    </tr>
+    </table>
+    <table>
+    <tr>
+        <td>
+            <p style="white-space: nowrap">Free text</p>
+        </td>
+        <td WIDTH="100%">
+            <input id="optim_txt_freetext" class="txt_freetext" style="width: 100%" type="text"/></input>
+        </td>
+        <td class="nowrap">
+            <p style="white-space: nowrap">DT = <span id="optim_lbl_timestep" class="lbl_timestep" style="display: inline"></span></p>
+        </td>
+        </td>
+        </tr>
+    </table>
+</fieldset>
+
+<button class="debug_visible" id="cmd_optim_test">Load</button>
+
+<div style="display: none" class="gui_background" id="frm_optim_log" title="Stockres IM Log">
+	<div id="optim_console" style="font-size: 13px; width: 100%; height: 100%; overflow-y: scroll">
+		<!--The help content is loaded here-->
+	</div>
+</div>
+<fieldset style="display: none">
+                <legend>Accuracy Type</legend>
+                <input id="optim_chk_error_absolute" checked="checked" name="optim_abs_or_rel" type="radio">Absolute</input>
+                <input id="optim_chk_error_relative" name="optim_abs_or_rel" type="radio">Relative</input>
+</fieldset>
+`;

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+
+    <link class="include" rel="stylesheet" type="text/css" href="../jquery.jqplot.min.css" />
+    <script class="include" type="text/javascript" src="../../jquery-1.8.3.min.js"></script>
+    <script class="include" type="text/javascript" src="../jquery.jqplot.min.js"></script>
+   
+</head>
+<body>
+<div id="chart1" style="height:300px; width:500px;"></div>
+
+<script class="code" type="text/javascript">
+$(document).ready(function(){
+  var cosPoints = []; 
+  for (var i=0; i<2*Math.PI; i+=0.1){ 
+     cosPoints.push([i, Math.cos(i)]); 
+  } 
+  var plot1 = $.jqplot('chart1', [cosPoints], {  
+      series:[{showMarker:false}],
+      axes:{
+        xaxis:{
+          label:'Angle (radians)'
+        },
+        yaxis:{
+          label:'Cosine'
+        }
+      }
+  });
+});
+
+
+
+</script>
+
+
+
+</body>
+
+
+</html>

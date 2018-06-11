@@ -1,0 +1,35 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+
+.eMenu {
+	display: inline-block;
+	position: relative;
+	z-index: 1000;
+}
+
+.eMenu .menuContent {
+	position: absolute;
+	display: none;
+	min-width: 100px;
+	z-index: 1001;
+}
+
+.eMenu .menuContent span {
+	display: block;
+}
+
+.eMenu .menuContent span {
+	background-color: #ffffff;
+}
+
+.eMenu .menuContent button {
+	width: 100%;
+	text-align: left;
+	white-space: nowrap;
+}

@@ -1,0 +1,45 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+/* We only color rows that have the head class*/
+table.datatable thead tr.head th
+{ border-bottom: 2px solid #6699CC;
+border-left: 1px solid #6699CC;
+background-color: #BEC8D1;
+text-align: left;
+text-indent: 5px;
+border: 1px #6699CC solid;
+color: #404040; }
+
+
+table.datatable tr td {
+    border: 1px solid #B9BB94;
+}
+
+table.datatable
+{ text-align: center;
+font-family: Verdana;
+font-weight: normal;
+color: #404040;
+border-collapse: collapse;
+border-spacing: 0px; }
+
+table.datatable tbody tr {
+    background-color: #fafafa;
+    border: 1px #6699CC solid;
+}
+
+table.datatable_smallfont {
+font-size: 11px;
+}
+
+table.datatable_smallfont thead tr.head th {
+    font-size: 11px;
+    font-family: Verdana;
+    font-weight: bold;
+}

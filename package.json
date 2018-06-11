@@ -1,0 +1,7 @@
+{
+	"name": "StocSD",
+	"main": "index.html",
+	"window": {
+		"icon": "icons/stochsd.png"
+	}
+}

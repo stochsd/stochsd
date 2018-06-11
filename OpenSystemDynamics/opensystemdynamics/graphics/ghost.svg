@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg11302"
+   viewBox="0 0 99.999999 99.999996"
+   version="1.0"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="ghost.svg"
+   width="100"
+   height="100">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     id="namedview3353"
+     showgrid="false"
+     inkscape:zoom="3.0330724"
+     inkscape:cx="72.985001"
+     inkscape:cy="71.194716"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11302" />
+  <defs
+     id="defs11304">
+    <filter
+       id="filter11999"
+       y="-0.17114"
+       width="1.3796"
+       x="-0.18982001"
+       height="1.3423001">
+      <feGaussianBlur
+         id="feGaussianBlur12001"
+         stdDeviation="9.8117979"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <path
+     inkscape:connector-curvature="0"
+     d="m 85.385896,43.649161 c 0,4.762885 0.779888,41.139073 -0.974859,45.233483 -1.754748,4.122259 -8.634471,-10.194245 -11.726168,-7.074695 -3.11955,3.119551 -4.233676,6.016276 -8.355939,7.771023 -4.122263,1.726894 -8.63447,-7.993848 -13.397356,-7.993848 -4.762885,0 -9.275092,9.720742 -13.397356,7.993848 -4.122263,-1.754747 -4.846444,-3.147403 -7.965994,-6.266954 -3.119552,-3.11955 -10.612043,9.832159 -12.36679,5.709892 -1.726894,-4.122263 -0.724181,-40.609864 -0.724181,-45.372749 0,-18.995835 15.430633,-34.4264698 34.454321,-34.4264698 19.023688,0 34.454322,15.4306348 34.454322,34.4264698 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:1.86454415"
+     id="path18423" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 46.699283,39.060305 a 9.3878973,9.6987384 0 1 1 -18.773011,0 9.3878973,9.6987384 0 1 1 18.773011,0 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:1.39265645"
+     id="path18427" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 80.272057,39.806498 a 9.3878973,9.6987384 0 1 1 -18.773009,0 9.3878973,9.6987384 0 1 1 18.773009,0 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:1.39265645"
+     id="path18429" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 40.742704,40.524249 a 2.9673447,2.8486063 0 1 1 -5.90236,0 2.9673447,2.8486063 0 1 1 5.90236,0 z"
+     style="fill:#000000"
+     id="path18431" />
+  <metadata
+     id="metadata3351">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2008-10-25T16:48:57</dc:date>
+        <dc:description>Made for a pacman game</dc:description>
+        <dc:source>https://openclipart.org/detail/19717/ghost-by-mbtwms</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>mbtwms</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>computer game</rdf:li>
+            <rdf:li>ghost</rdf:li>
+            <rdf:li>how i did it</rdf:li>
+            <rdf:li>pacman</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     inkscape:connector-curvature="0"
+     d="m 74.217179,41.33759 a 2.9673447,2.8486063 0 1 1 -5.902357,0 2.9673447,2.8486063 0 1 1 5.902357,0 z"
+     style="fill:#000000"
+     id="path18431-8" />
+</svg>

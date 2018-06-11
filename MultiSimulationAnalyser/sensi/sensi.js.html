@@ -1,0 +1,154 @@
+/*
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+*/
+var sensi_view=`
+<fieldset id ="sensi_param_input"  style="margin: 5px">
+	<div class="locked_message" id="sensi_param_locked_message">
+		Sensi is locked while running!
+    </div>
+    <table>
+        <tbody><tr>
+            <td>
+                    <fieldset class="h70">
+                    <legend>Parameters</legend>
+                    <table>
+                        <tr>
+                            <td>Param. Name</td>
+                            <td>Value</td>
+                            <td>Increment</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input data-name="Param. Name" type="text" class="txt_varname mediumbig varname_data" size="10" id="sensi_txt_varname"><br>
+                            </td>
+                            <td>
+                                <input type="text" class="req_float txt_varname mediumsmall" size="10" id="sensi_txt_value"><br>
+                            </td>
+                            <td>
+                                <input type="text" class="req_float txt_varname medium" size="10" id="sensi_txt_increment"><br>
+                            </td>
+                        </tr>
+                        <tr>
+							<td><button id="sensi_btn_var_add">Add</button></td>
+                        </tr>
+                    </table>
+                    </fieldset>
+            </td>
+            <td style="position: relative">
+                   <fieldset class="h70">
+                        <legend>Objective Function</legend>
+                        <table>
+                            <tr>
+                                <td>Name</td><td></td>
+                            </tr>
+                            <tr>
+                                <td><input data-name="Objective Function" id="sensi_txt_objfunc" class="varname_data mediumbig" type="text"></td>
+                            </tr>
+                            <tr>
+								<td><button id="sensi_btn_obj_add">Add</button></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+            </td>
+
+        </tr>
+    </tbody></table>
+<div id="sensi_table_target">
+    <!--<table cellspacing="0" class="datatable" id="sensi_tbl_vars">
+        <thead>
+            <tr class="head">
+                <th></th>
+                <th class="mediumbig nowrap">Parameter</th>
+                <th class="mediumsmall nowrap">Best value</th>
+                <th class="mediumsmall nowrap">Increment</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>-->
+</div>
+<button id="sensi_cmd_delete">Del</button>
+</fieldset>
+<!--fieldset id="sensi_div_sendseed">
+    <span><input id="sensi_chk_sendseed" type="checkbox">Lock Seed</span>
+    <span id="sensi_span_sendseed">
+    <span><input class="medium" id="sensi_txt_seed_value" type="text" value="123"/></span>
+    </span>
+</fieldset-->
+<fieldset id="sensi_special_settings" style="position: relative;">
+	<legend>Special features</legend>
+	<span class="flexbox">
+		<span class="chk_showgui_container">
+			<label style="margin-right: auto; margin-left: auto;" class="nowrap">
+				<input     id="sensi_chk_showgui" type="checkbox" class="chk_showgui">Show simulations
+			</label>
+		</span>
+		<span>
+			<input id="sensi_chk_sendseed" type="checkbox">Send Seed
+			<button data-help-text-id="sensi_sendseed_help_content" class="cmd_help">?</button><br/>
+		</span>
+		<span>
+			<fieldset id="sensi_div_sendseed" style="vertical-align:text-top; visibility: hidden">
+			<table>
+				<tr>
+					<td>Seed-of-Seeds </td><td><input class="mediumbig" id="sensi_txt_seed_value" type="text" value="123"/></td>
+				</tr><tr>
+					<td>Actual Seed </td><td><input class="mediumbig" id="sensi_txt_seed_actual" type="text" value="" ReadOnly="ReadOnly"/></td>
+				</tr>
+			</table>
+			</fieldset>
+		</span>
+	</span>
+</fieldset>
+<fieldset id="sensi_div_sensitivity">
+    <legend>Sensitivity</legend>
+    <input id="sensi_chk_absolute" checked="checked" name="sensi_abs_or_rel" type="radio">Absolute</input>
+    <input id="sensi_chk_relative" name="sensi_abs_or_rel" type="radio">Relative</input>
+	<button data-help-text-id="sensitivity_help" class="cmd_help">?</button><br/>
+</fieldset>
+<fieldset>
+<p class="flexbox">
+    <span>
+    <button id="sensi_cmd_run">Run</button>
+	<button id="sensi_cmd_reset">Reset</button>
+    <button onclick="cmd_print_click()">Print</button>
+    <span>Status <input class="status_field medium" id="sensi_txt_status" readonly="readonly" type="text"></span><span><input class="e_format_checkbox" type="checkbox">E-format</span>
+
+</p>
+</fieldset>
+<fieldset style="margin-top: 5px">
+    <table WIDTH="100%"><tr><!-- http://stackoverflow.com/questions/1260122/expand-div-to-take-remaining-width table to make the URL input take up the remaining space-->
+    <tr>
+        <td>
+            <p class="nowrap">Exec. time: <var id="sensi_lbl_exec_time">0 sec</var></p>
+        </td>
+        <td WIDTH="100%">
+        </td>
+        <td>
+            <var class="current_time">2014-06-07 12:11</var>
+        </td>
+    </tr>
+    </table>
+    <table>
+    <tr>
+        <td>
+            <p style="white-space: nowrap">Free text</p>
+        </td>
+        <td WIDTH="100%">
+            <input style="width: 100%" type="text"/></input>
+        </td>
+        <td class="nowrap">
+            <p style="white-space: nowrap">DT = <span class="lbl_timestep" style="display: inline"></span></p>
+        </td>
+        </td>
+        </tr>
+    </table>
+</fieldset>
+<button class="debug_visible" id="sensi_cmd_load">Load</button>
+`;
