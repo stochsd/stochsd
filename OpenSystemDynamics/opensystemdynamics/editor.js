@@ -2294,7 +2294,7 @@ class LinkVisual extends BaseConnection{
 	}
 }
 
-class baseTool {
+class BaseTool {
 	static init() {
 		
 	}
@@ -2314,28 +2314,28 @@ class baseTool {
 		// Is triggered when the tool is deselected
 	}
 }
-class RunTool extends baseTool {
+class RunTool extends BaseTool {
 	static enter_tool() {
 		RunResults.runPauseSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
-class StepTool extends baseTool {
+class StepTool extends BaseTool {
 	static enter_tool() {
 		RunResults.stepSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
-class ResetTool extends baseTool {
+class ResetTool extends BaseTool {
 	static enter_tool() {
 		RunResults.resetSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
-class TextTool extends baseTool {
+class TextTool extends BaseTool {
 	static mouse_down(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
@@ -2346,7 +2346,7 @@ class TextTool extends baseTool {
 	}
 }
 
-class NumberboxTool extends baseTool {
+class NumberboxTool extends BaseTool {
 	static init() {
 		this.targetPrimitive=null;
 		this.numberboxable_primitives=["stock","variable","converter","flow"];
@@ -2382,7 +2382,7 @@ class NumberboxTool extends baseTool {
 }
 NumberboxTool.init();
 
-class DeleteTool extends baseTool {
+class DeleteTool extends BaseTool {
 	static enter_tool() {
 		var selected_ids=Object.keys(get_selected_root_objects());
 		if(selected_ids.length==0) {
@@ -2397,7 +2397,7 @@ class DeleteTool extends baseTool {
 }
 DeleteTool.init();
 
-class UndoTool extends baseTool {
+class UndoTool extends BaseTool {
 	static enter_tool() {
 		History.doUndo();
 		ToolBox.setTool("mouse");
@@ -2405,7 +2405,7 @@ class UndoTool extends baseTool {
 }
 UndoTool.init();
 
-class RedoTool extends baseTool {
+class RedoTool extends BaseTool {
 	static enter_tool() {
 		History.doRedo();
 		ToolBox.setTool("mouse");
@@ -2413,7 +2413,7 @@ class RedoTool extends baseTool {
 }
 RedoTool.init();
 
-class StockTool extends baseTool {
+class StockTool extends BaseTool {
 	static mouse_down(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
@@ -2424,7 +2424,7 @@ class StockTool extends baseTool {
 	}
 }
 
-class RotateNameTool extends baseTool {
+class RotateNameTool extends BaseTool {
 	static enter_tool() {
 		var object_array = get_selected_objects();
 		for(var node_id in object_array) {
@@ -2437,7 +2437,7 @@ class RotateNameTool extends baseTool {
 	}
 }
 
-class GhostTool extends baseTool {
+class GhostTool extends BaseTool {
 	static init() {
 		this.id_to_ghost=null;
 		this.ghostable_primitives=["stock","variable","converter"];
@@ -2475,7 +2475,7 @@ class GhostTool extends baseTool {
 }
 GhostTool.init();
 
-class ConverterTool extends baseTool {
+class ConverterTool extends BaseTool {
 	static mouse_down(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
@@ -2486,7 +2486,7 @@ class ConverterTool extends baseTool {
 	}
 }
 
-class VariableTool extends baseTool {
+class VariableTool extends BaseTool {
 	static mouse_down(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
@@ -2497,7 +2497,7 @@ class VariableTool extends baseTool {
 	}
 }
 
-class MouseTool extends baseTool {
+class MouseTool extends BaseTool {
 	static get_single_selected_anchor() {
 		// Check if we selected only 1 anchor element. Return that anchor else return null
 		
@@ -2618,7 +2618,7 @@ class MouseTool extends baseTool {
 	}
 }
 
-class TwoPointer_tool extends baseTool {
+class TwoPointer_tool extends BaseTool {
 	static init() {
 		this.primitive=null;
 		this.current_connection=null;
