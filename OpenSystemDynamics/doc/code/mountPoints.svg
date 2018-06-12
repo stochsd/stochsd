@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg951"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="mountPoints.svg">
+  <defs
+     id="defs945" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="519.49936"
+     inkscape:cy="286.74034"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-nodes="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata948">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#133165;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1500"
+       cx="40.085262"
+       cy="191.44426"
+       r="39.021351" />
+    <g
+       id="g1508"
+       style="fill:#d40000;stroke:#d40000"
+       transform="translate(-27.046597,-27.214286)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1502"
+         d="m 64.569077,216.26966 5.386162,5.38616"
+         style="fill:#d40000;stroke:#d40000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         style="fill:#d40000;stroke:#d40000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 69.955239,216.26966 -5.386162,5.38616"
+         id="path1504"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(5.6483444,-123.03125)"
+       id="g1520"
+       style="fill:#0000ff;stroke:#0000ff">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1516"
+         d="m 64.569077,216.26966 5.386162,5.38616"
+         style="fill:#0000ff;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         style="fill:#0000ff;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 69.955239,216.26966 -5.386162,5.38616"
+         id="path1518"
+         inkscape:connector-curvature="0" />
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 40.185917,191.68637 72.869046,95.893044"
+       id="path1522"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="6.722641"
+       y="192.90303"
+       id="text1526"><tspan
+         sodipodi:role="line"
+         id="tspan1524"
+         x="6.722641"
+         y="192.90303"
+         style="font-size:4.23333311px;fill:#d40000;stroke-width:0.26458332">[xCenter, yCenter]</tspan></text>
+    <text
+       id="text1530"
+       y="150.21147"
+       x="25.499958"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332"
+         y="150.21147"
+         x="25.499958"
+         id="tspan1528"
+         sodipodi:role="line">[xEdge, yEdge]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="40.184719"
+       y="95.782967"
+       id="text1534"><tspan
+         sodipodi:role="line"
+         id="tspan1532"
+         x="40.184719"
+         y="95.782967"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">[xTarget, yTarget]</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1538"
+       d="M 40.145489,191.2581 H 72.906111 V 95.611854 Z"
+       style="fill:none;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <g
+       id="g1514"
+       transform="translate(-14.519995,-64.223527)"
+       style="stroke:#008000">
+      <path
+         style="fill:none;stroke:#008000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 64.569077,216.26966 5.386162,5.38616"
+         id="path1510"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path1512"
+         d="m 69.955239,216.26966 -5.386162,5.38616"
+         style="fill:none;stroke:#008000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <path
+       style="fill:none;stroke:#008000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 40.17169,191.3421 H 52.599722 V 154.72617 Z"
+       id="path1536"
+       inkscape:connector-curvature="0" />
+    <text
+       id="text1544"
+       y="153.9913"
+       x="170.59666"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="153.9913"
+         x="170.59666"
+         id="tspan1542"
+         sodipodi:role="line">dYTarget</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="142.25223"
+       y="198.88049"
+       id="text1548"><tspan
+         sodipodi:role="line"
+         id="tspan1546"
+         x="142.25223"
+         y="198.88049"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">dXTarget</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1552"
+       d="m 108.54183,191.3421 h 12.42803 v -36.61593 z"
+       style="fill:none;stroke:#008000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 134.46072,191.2581 h 32.76062 V 95.611854 Z"
+       id="path1554"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="100.97071"
+       y="173.21286"
+       id="text1562"><tspan
+         sodipodi:role="line"
+         id="tspan1560"
+         x="100.97071"
+         y="173.21286"
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332">rEdge</tspan></text>
+    <text
+       id="text1566"
+       y="196.4653"
+       x="109.45652"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332"
+         y="196.4653"
+         x="109.45652"
+         id="tspan1564"
+         sodipodi:role="line">dXEdge</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="122.41908"
+       y="174.28194"
+       id="text1570"><tspan
+         sodipodi:role="line"
+         id="tspan1568"
+         x="122.41908"
+         y="174.28194"
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332">dYEdge</tspan></text>
+    <text
+       id="text1574"
+       y="147.50546"
+       x="134.45554"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="147.50546"
+         x="134.45554"
+         id="tspan1572"
+         sodipodi:role="line">rTarget</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="115.48685"
+       y="254.15733"
+       id="text1582"><tspan
+         sodipodi:role="line"
+         id="tspan1580"
+         x="115.48685"
+         y="254.15733"
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332">dXEdge</tspan></text>
+    <text
+       id="text1586"
+       y="253.70857"
+       x="148.93414"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332"
+         y="253.70857"
+         x="148.93414"
+         id="tspan1584"
+         sodipodi:role="line">rEdge</tspan></text>
+    <text
+       id="text1590"
+       y="251.26424"
+       x="132.33806"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="251.26424"
+         x="132.33806"
+         id="tspan1588"
+         sodipodi:role="line">dXTarget</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="133.42381"
+       y="257.71957"
+       id="text1594"><tspan
+         sodipodi:role="line"
+         id="tspan1592"
+         x="133.42381"
+         y="257.71957"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">rTarget</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 132.85521,252.90527 h 13.70164"
+       id="path1596"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="128.83922"
+       y="254.88966"
+       id="text1600"><tspan
+         sodipodi:role="line"
+         id="tspan1598"
+         x="128.83922"
+         y="254.88966"
+         style="stroke-width:0.26458332">=</tspan></text>
+    <text
+       id="text1604"
+       y="269.13272"
+       x="116.39266"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332"
+         y="269.13272"
+         x="116.39266"
+         id="tspan1602"
+         sodipodi:role="line">dYEdge</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="149.83994"
+       y="268.68396"
+       id="text1608"><tspan
+         sodipodi:role="line"
+         id="tspan1606"
+         x="149.83994"
+         y="268.68396"
+         style="font-size:4.23333311px;fill:#008000;stroke-width:0.26458332">rEdge</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="133.24385"
+       y="266.23962"
+       id="text1612"><tspan
+         sodipodi:role="line"
+         id="tspan1610"
+         x="133.24385"
+         y="266.23962"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">dYTarget</tspan></text>
+    <text
+       id="text1616"
+       y="272.69495"
+       x="134.32961"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="272.69495"
+         x="134.32961"
+         id="tspan1614"
+         sodipodi:role="line">rTarget</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1618"
+       d="m 133.76101,267.88071 h 13.70164"
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       id="text1622"
+       y="269.86505"
+       x="129.74501"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.26458332"
+         y="269.86505"
+         x="129.74501"
+         id="tspan1620"
+         sodipodi:role="line">=</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1624"
+       width="56.751064"
+       height="66.20047"
+       x="111.00925"
+       y="211.27536" />
+    <text
+       id="text1628"
+       y="218.47246"
+       x="150.50731"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#d40000;stroke-width:0.26458332"
+         y="218.47246"
+         x="150.50731"
+         id="tspan1626"
+         sodipodi:role="line">xCenter</tspan></text>
+    <text
+       id="text1632"
+       y="218.4023"
+       x="113.69007"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="218.4023"
+         x="113.69007"
+         id="tspan1630"
+         sodipodi:role="line">dXTarget</tspan></text>
+    <text
+       id="text1636"
+       y="218.42165"
+       x="133.27936"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="218.42165"
+         x="133.27936"
+         id="tspan1634"
+         sodipodi:role="line">xTarget</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="129.49208"
+       y="219.03328"
+       id="text1640"><tspan
+         sodipodi:role="line"
+         id="tspan1638"
+         x="129.49208"
+         y="219.03328"
+         style="stroke-width:0.26458332">=</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="146.99823"
+       y="218.86121"
+       id="text1644"><tspan
+         sodipodi:role="line"
+         id="tspan1642"
+         x="146.99823"
+         y="218.86121"
+         style="stroke-width:0.26458332">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="150.50731"
+       y="223.57513"
+       id="text1648"><tspan
+         sodipodi:role="line"
+         id="tspan1646"
+         x="150.50731"
+         y="223.57513"
+         style="font-size:4.23333311px;fill:#d40000;stroke-width:0.26458332">yCenter</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="113.69007"
+       y="223.50497"
+       id="text1652"><tspan
+         sodipodi:role="line"
+         id="tspan1650"
+         x="113.69007"
+         y="223.50497"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">dYTarget</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="133.27936"
+       y="223.52432"
+       id="text1656"><tspan
+         sodipodi:role="line"
+         id="tspan1654"
+         x="133.27936"
+         y="223.52432"
+         style="font-size:4.23333311px;fill:#0000ff;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">yTarget</tspan></text>
+    <text
+       id="text1660"
+       y="224.13596"
+       x="129.49208"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.26458332"
+         y="224.13596"
+         x="129.49208"
+         id="tspan1658"
+         sodipodi:role="line">=</tspan></text>
+    <text
+       id="text1664"
+       y="223.96388"
+       x="146.99823"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.26458332"
+         y="223.96388"
+         x="146.99823"
+         id="tspan1662"
+         sodipodi:role="line">-</tspan></text>
+    <text
+       id="text1668"
+       y="232.70584"
+       x="150.50731"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#d40000;stroke-width:0.26458332"
+         y="232.70584"
+         x="150.50731"
+         id="tspan1666"
+         sodipodi:role="line">xCenter</tspan></text>
+    <text
+       id="text1672"
+       y="232.63568"
+       x="115.22688"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="232.63568"
+         x="115.22688"
+         id="tspan1670"
+         sodipodi:role="line">dXEdge</tspan></text>
+    <text
+       id="text1676"
+       y="232.65503"
+       x="134.34843"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       xml:space="preserve"><tspan
+         style="font-size:4.23333311px;fill:#008000;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+         y="232.65503"
+         x="134.34843"
+         id="tspan1674"
+         sodipodi:role="line">xEdge</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="129.49208"
+       y="233.26666"
+       id="text1680"><tspan
+         sodipodi:role="line"
+         id="tspan1678"
+         x="129.49208"
+         y="233.26666"
+         style="stroke-width:0.26458332">=</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="146.99823"
+       y="233.09459"
+       id="text1684"><tspan
+         sodipodi:role="line"
+         id="tspan1682"
+         x="146.99823"
+         y="233.09459"
+         style="stroke-width:0.26458332">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#d40000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="150.50731"
+       y="239.32042"
+       id="text1688"><tspan
+         sodipodi:role="line"
+         id="tspan1686"
+         x="150.50731"
+         y="239.32042"
+         style="font-size:4.23333311px;fill:#d40000;stroke-width:0.26458332">yCenter</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="115.22688"
+       y="239.25026"
+       id="text1692"><tspan
+         sodipodi:role="line"
+         id="tspan1690"
+         x="115.22688"
+         y="239.25026"
+         style="font-size:4.23333311px;fill:#008000;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">dYEdge</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       x="134.34843"
+       y="239.26961"
+       id="text1696"><tspan
+         sodipodi:role="line"
+         id="tspan1694"
+         x="134.34843"
+         y="239.26961"
+         style="font-size:4.23333311px;fill:#008000;stroke:#0000ff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">yEdge</tspan></text>
+    <text
+       id="text1700"
+       y="239.88124"
+       x="129.49208"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.26458332"
+         y="239.88124"
+         x="129.49208"
+         id="tspan1698"
+         sodipodi:role="line">=</tspan></text>
+    <text
+       id="text1704"
+       y="239.70918"
+       x="146.99823"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.64444447px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.26458332"
+         y="239.70918"
+         x="146.99823"
+         id="tspan1702"
+         sodipodi:role="line">-</tspan></text>
+  </g>
+</svg>
