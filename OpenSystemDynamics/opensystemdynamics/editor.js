@@ -1141,6 +1141,15 @@ function pointDistance(point1,point2) {
 	return distance;
 }
 
+function safeDivision(nominator, denominator) { 
+	// Make sure division by Zero does not happen 
+	if (denominator == 0) {
+		return 9999999; 
+	} else {
+		return nominator/denominator;
+	}
+}
+
 class StockVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
@@ -1234,16 +1243,34 @@ class NumberboxVisual extends BasePrimitive{
 class VariableVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
-		this.component45 = Math.pow((Math.pow(15,2)/2),0.5);; // The x and y component of a line going out 45 degrees with the length 15
-		this.mountPoints=[[0,-15],[0,15],[-15,0],[15,0],[-this.component45,-this.component45],[this.component45,-this.component45],[this.component45,this.component45],[-this.component45,this.component45]];
+		this.component45 = Math.pow((Math.pow(this.radius,2)/2),0.5);; // The x and y component of a line going out 45 degrees with the length 15
+		this.mountPoints=[[0,-this.getRadius()],[0,this.getRadius()],[-this.getRadius(),0],[this.getRadius(),0],[-this.component45,-this.component45],[this.component45,-this.component45],[this.component45,this.component45],[-this.component45,this.component45]];
 	}
-	getImage() {
+
+	getRadius() {
+		return 15;
+	}
+
+	getImage () {
 		return [
-			svg_circle(0,0,15,"black","white","element"),
+			svg_circle(0,0,this.getRadius(),"black","white","element"),
 			svg_text(0,0,"variable","name_element"),
 			svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
-			svg_circle(0,0,15,"red","none","selector")
+			svg_circle(0,0,this.getRadius(),"red","none","selector")
 		];
+	}
+
+	get_mount_pos([xTarget, yTarget]) {
+		// See "docs/mountPoints.svg" for math explanation 
+		const [xCenter, yCenter] = this.get_pos();
+		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const dXTarget = xTarget - xCenter;
+		const dYTarget = yTarget - yCenter;
+		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
+		const dYEdge = safeDivision(dYTarget*this.getRadius(), rTarget);
+		const xEdge = dXEdge + xCenter; 
+		const yEdge = dYEdge + yCenter;
+		return [xEdge, yEdge]; 
 	}
 }
 
@@ -1487,7 +1514,7 @@ class BaseConnection extends TwoPointer{
 		super.clean();
 	}
 	update() {
-		// This function is simular to TwoPointer update but it takes attachments into account
+		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
 		// start_anchor is null if we are currently creating the connection
@@ -2620,9 +2647,9 @@ class MouseTool extends BaseTool {
 
 class TwoPointerTool extends BaseTool {
 	static init() {
-		this.primitive=null;
-		this.current_connection=null;
-		this.type="flow";
+		this.primitive = null; // The primitive in Insight Maker engine we are creating
+		this.current_connection = null; // The visual we are working on right now
+		this.type = "flow";
 	}
 	static set_type() {
 		
@@ -2653,8 +2680,8 @@ class TwoPointerTool extends BaseTool {
 		if(this.current_connection==null) {
 			return;
 		}
-		this.current_connection.endx=x;
-		this.current_connection.endy=y;
+		this.current_connection.endx = x;
+		this.current_connection.endy = y;
 		this.current_connection.update();
 	}
 	static mouseUp(x,y) {
