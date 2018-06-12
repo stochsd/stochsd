@@ -1150,11 +1150,44 @@ function safeDivision(nominator, denominator) {
 	}
 }
 
+function sign(value) {
+	if (value < 0) {
+		return -1;
+	} else {
+		return 1;
+	}
+}
+
 class StockVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
 		this.mountPoints=[[0,-15],[0,15],[-20,0],[20,0]];
 	}
+
+	getSize() {
+		return [40, 30];
+	}
+
+	get_mount_pos([xTarget, yTarget]) {
+		// See "docs/code/mountPoints.svg" for math explanation 
+		const [xCenter, yCenter] = this.get_pos();
+		const [width, height] = this.getSize();
+		const boxSlope = safeDivision(height, width);
+		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
+		let xEdge;
+		let yEdge; 
+		if (-boxSlope < targetSlope && targetSlope < boxSlope) {
+			const xSign = sign(xTarget-xCenter) // -1 if target left of box and 1 if target right of box 
+			xEdge = xSign*(width/2) + xCenter
+			yEdge = xSign*(width/2)*targetSlope + yCenter  
+		} else {
+			const ySign = sign(yTarget-yCenter) // -1 if target above box and 1 if target below box
+			xEdge = ySign*safeDivision(height/2, targetSlope) + xCenter
+			yEdge = ySign*(height/2) + yCenter 
+		}
+		return [xEdge, yEdge];
+	}
+
 	getImage() {
 		return [
 		svg_rect(-20,-15,40,30,"black","white","element"),
@@ -1259,7 +1292,7 @@ class VariableVisual extends BasePrimitive{
 	}
 
 	get_mount_pos([xTarget, yTarget]) {
-		// See "docs/mountPoints.svg" for math explanation 
+		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
 		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
