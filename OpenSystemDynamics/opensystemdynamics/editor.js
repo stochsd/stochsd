@@ -1161,7 +1161,6 @@ function sign(value) {
 class StockVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
-		this.mountPoints=[[0,-15],[0,15],[-20,0],[20,0]];
 	}
 
 	getSize() {
@@ -1177,13 +1176,13 @@ class StockVisual extends BasePrimitive{
 		let xEdge;
 		let yEdge; 
 		if (-boxSlope < targetSlope && targetSlope < boxSlope) {
-			const xSign = sign(xTarget-xCenter) // -1 if target left of box and 1 if target right of box 
-			xEdge = xSign*(width/2) + xCenter
-			yEdge = xSign*(width/2)*targetSlope + yCenter  
+			const xSign = sign(xTarget-xCenter); // -1 if target left of box and 1 if target right of box 
+			xEdge = xSign * (width/2) + xCenter;
+			yEdge = xSign * (width/2) * targetSlope + yCenter;
 		} else {
-			const ySign = sign(yTarget-yCenter) // -1 if target above box and 1 if target below box
-			xEdge = ySign*safeDivision(height/2, targetSlope) + xCenter
-			yEdge = ySign*(height/2) + yCenter 
+			const ySign = sign(yTarget-yCenter); // -1 if target above box and 1 if target below box
+			xEdge = ySign * safeDivision(height/2, targetSlope) + xCenter;
+			yEdge = ySign * (height/2) + yCenter;
 		}
 		return [xEdge, yEdge];
 	}
