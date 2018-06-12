@@ -1243,9 +1243,7 @@ class NumberboxVisual extends BasePrimitive{
 class VariableVisual extends BasePrimitive{
 	constructor(id,type,pos,extras) {
 		super(id,type,pos,extras);
-		this.component45 = Math.pow((Math.pow(this.radius,2)/2),0.5);; // The x and y component of a line going out 45 degrees with the length 15
-		this.mountPoints=[[0,-this.getRadius()],[0,this.getRadius()],[-this.getRadius(),0],[this.getRadius(),0],[-this.component45,-this.component45],[this.component45,-this.component45],[this.component45,this.component45],[-this.component45,this.component45]];
-	}
+	}	
 
 	getRadius() {
 		return 15;
