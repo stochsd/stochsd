@@ -1543,37 +1543,6 @@ class BaseConnection extends TwoPointer{
 		this.triggerAttachEvents();
 		super.clean();
 	}
-	update() {
-		// This function is similar to TwoPointer::update but it takes attachments into account
-		
-		// Get start position from attach
-		// start_anchor is null if we are currently creating the connection
-		// start_attach is null if we are not attached to anything
-		
-		let connectionCenter = this.get_pos();
-		
-		if(this.start_attach!=null && this.start_anchor!=null) {
-			if(this.start_attach.get_pos) {
-				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.get_mount_pos(connectionCenter);
-				// If start point have moved reset b1
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.set_pos(newPos);
-				}
-			}
-		}
-		if(this.end_attach!=null && this.end_anchor!=null) {
-			if(this.end_attach.get_pos) {
-				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.get_mount_pos(connectionCenter);
-				// If end point have moved reset b2
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.set_pos(newPos);
-				}
-			}
-		}
-		super.update();
-	}
 	updateGraphics() {			
 
 	}
@@ -1631,6 +1600,38 @@ class FlowVisual extends BaseConnection {
 		$(this.group).dblclick(() => {
 			this.double_click(this.id);
 		});
+	}
+
+	update() {
+		// This function is similar to TwoPointer::update but it takes attachments into account
+		
+		// Get start position from attach
+		// start_anchor is null if we are currently creating the connection
+		// start_attach is null if we are not attached to anything
+		
+		let connectionCenter = this.get_pos();
+		
+		if(this.start_attach!=null && this.start_anchor!=null) {
+			if(this.start_attach.get_pos) {
+				let oldPos = this.start_anchor.get_pos();
+				let newPos = this.start_attach.get_mount_pos(connectionCenter);
+				// If start point have moved reset b1
+				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+					this.start_anchor.set_pos(newPos);
+				}
+			}
+		}
+		if(this.end_attach!=null && this.end_anchor!=null) {
+			if(this.end_attach.get_pos) {
+				let oldPos = this.end_anchor.get_pos();
+				let newPos = this.end_attach.get_mount_pos(connectionCenter);
+				// If end point have moved reset b2
+				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+					this.end_anchor.set_pos(newPos);
+				}
+			}
+		}
+		super.update();
 	}
 	
 	updateGraphics() {
@@ -2348,6 +2349,38 @@ class LinkVisual extends BaseConnection{
 		// Update the lines to fit the bezier anchors
 		this.afterAnchorUpdate(anchorTypeEnum.bezier1);
 		this.afterAnchorUpdate(anchorTypeEnum.bezier2);	
+	}
+	update() {
+		// This function is similar to TwoPointer::update but it takes attachments into account
+		
+		// Get start position from attach
+		// start_anchor is null if we are currently creating the connection
+		// start_attach is null if we are not attached to anything
+		
+		//console.log(this.b1_anchor.get_pos());
+		//let connectionCenter = this.b1_anchor.get_pos();
+		
+		if(this.start_attach!=null && this.start_anchor!=null) {
+			if(this.start_attach.get_pos) {
+				let oldPos = this.start_anchor.get_pos();
+				let newPos = this.start_attach.get_mount_pos(this.b1_anchor.get_pos());
+				// If start point have moved reset b1
+				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+					this.start_anchor.set_pos(newPos);
+				}
+			}
+		}
+		if(this.end_attach!=null && this.end_anchor!=null) {
+			if(this.end_attach.get_pos) {
+				let oldPos = this.end_anchor.get_pos();
+				let newPos = this.end_attach.get_mount_pos(this.b2_anchor.get_pos());
+				// If end point have moved reset b2
+				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+					this.end_anchor.set_pos(newPos);
+				}
+			}
+		}
+		super.update();
 	}
 }
 
