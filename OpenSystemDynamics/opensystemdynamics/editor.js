@@ -2397,6 +2397,9 @@ class BaseTool {
 	static mouseUp(x,y) {
 		// Is triggered when mouse goes up for this tool
 	}
+	static rightMouseDown(x,y) {
+		// Is triggered when right mouse is clicked for this tool 
+	}
 	static enterTool() {
 		// Is triggered when the tool is selected
 	}
@@ -2810,6 +2813,11 @@ class RiverTool extends TwoPointerTool {
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
+
+	static rightMouseDown(x,y) {
+		do_global_log("Right mouse on: "+x+", "+y);
+	}
+
 	static get_type() {
 		return "flow";
 	}
@@ -3348,13 +3356,24 @@ function update_name_pos(node_id) {
 }
 
 function mouseDownHandler(event) {
+	console.log("Mouse event");
+	console.log(event);
 	do_global_log("mouseDownHandler");
-	mouseisdown=true;
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
-	currentTool.mouseDown(x,y);
+	switch (event.which) {
+		case 1:
+			// if left mouse button down
+			mouseisdown = true;
+			currentTool.mouseDown(x,y);	
+			break;
+		case 3: 
+			// if right mouse button down
+			currentTool.rightMouseDown(x,y);
+			break;
+	}
 }
 function mouseMoveHandler(event) {
 	var offset = $(svgplane).offset();
@@ -3370,6 +3389,10 @@ function mouseMoveHandler(event) {
 	currentTool.mouseMove(x,y);
 }
 function mouseUpHandler(event) {
+	if (event.which != 1) {
+		do_global_log("Button other then left mouse was released up");
+		return;
+	}
 	if(!mouseisdown) {
 		return;
 	}
@@ -3383,9 +3406,7 @@ function mouseUpHandler(event) {
 	mouseisdown=false;
 	History.storeUndoState();
 }
-function rightMouseHandler(event) {
-	alert("Now in rightMouseHandler");
-}
+
 function find_elements_under(in_x,in_y) {
 	var offset = $(svgplane).offset();
 	var x= in_x+offset.left-window.scrollX;
@@ -3630,7 +3651,6 @@ $(document).ready(function() {
 	$(svgplane).mousedown(mouseDownHandler);
 	svgplane.addEventListener('contextmenu', function(event) {
 		event.preventDefault();
-		rightMouseHandler(event);
 		return false;
 	}, false);
 	// the mousemove and mouseup event needs to be attached to the html to allow swipping the mouse outside
