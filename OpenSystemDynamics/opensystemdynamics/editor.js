@@ -7,6 +7,7 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
 
 */
 
+// Dialoge window handlers 
 var equationEditor;
 var converterDialog;
 var simulationSettings;
@@ -28,10 +29,10 @@ Mail: Ekir.Gustafsson@gmail.com.
 `;
 
 
-var ghost_image='<path inkscape:connector-curvature="0"     d="m 6.8787701,-1.172115 c 0,0.94923948 0.1554403,8.1989876 -0.1943007,9.0150008 C 6.3347285,8.6644488 4.9635227,5.8111805 4.3473135,6.4329047 3.7255523,7.0546289 3.5034948,7.6319441 2.6818813,7.9816633 1.8602682,8.3258325 0.96093505,6.3884958 0.0116386,6.3884958 c -0.94929616,0 -1.8486295,1.9373367 -2.6702428,1.5931675 C -3.4802173,7.6319441 -3.6245546,7.3543882 -4.2463158,6.7326641 -4.8680773,6.1109399 -6.3614144,8.6922061 -6.7111551,7.870641 -7.0553443,7.0490771 -6.8554926,-0.22287552 -6.8554926,-1.172115 c 0,-3.7858565 3.0754975,-6.8611709 6.8671312,-6.8611709 3.7916334,0 6.8671315,3.0753144 6.8671315,6.8611709 z"     style="fill:#ffffff;stroke:#000000;stroke-width:0.7"     id="path18423" />';
+const ghost_image='<path inkscape:connector-curvature="0"     d="m 6.8787701,-1.172115 c 0,0.94923948 0.1554403,8.1989876 -0.1943007,9.0150008 C 6.3347285,8.6644488 4.9635227,5.8111805 4.3473135,6.4329047 3.7255523,7.0546289 3.5034948,7.6319441 2.6818813,7.9816633 1.8602682,8.3258325 0.96093505,6.3884958 0.0116386,6.3884958 c -0.94929616,0 -1.8486295,1.9373367 -2.6702428,1.5931675 C -3.4802173,7.6319441 -3.6245546,7.3543882 -4.2463158,6.7326641 -4.8680773,6.1109399 -6.3614144,8.6922061 -6.7111551,7.870641 -7.0553443,7.0490771 -6.8554926,-0.22287552 -6.8554926,-1.172115 c 0,-3.7858565 3.0754975,-6.8611709 6.8671312,-6.8611709 3.7916334,0 6.8671315,3.0753144 6.8671315,6.8611709 z"     style="fill:#ffffff;stroke:#000000;stroke-width:0.7"     id="path18423" />';
+
 // This values are not used by stochsd, as primitives cannot be resized in stochsd
 // They are only used for exporting the model to Insight Maker
-
 type_size={};
 type_size["stock"]=[80,60];
 type_size["variable"]=[60,60];
@@ -48,23 +49,21 @@ type_basename["text"]="Text";
 
 last_connection=null;
 
-var last_click_object_clicked=false;
-var last_clicked_element = null; // Points to the object we last clicked
+// Stores Visual objects and connections
 var connection_array = {};
 var object_array = {};
+
+// Stores state related to mouse
+var last_click_object_clicked=false;
+var last_clicked_element = null; // Points to the object we last clicked
 var mouseisdown = false;
 var mousedown_x=0;
 var mousedown_y=0;
-
 var lastMouseX = 0;
-var lastMouseY = 0;	
-
-var converter_xml = '<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Created with Inkscape (http://www.inkscape.org/) --><svg   xmlns:dc="http://purl.org/dc/elements/1.1/"   xmlns:cc="http://creativecommons.org/ns#"   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"   xmlns:svg="http://www.w3.org/2000/svg"   xmlns="http://www.w3.org/2000/svg"   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"   width="100mm"   height="100mm"   viewBox="0 0 354.33071 354.33071"   id="svg3335"   version="1.1"   inkscape:version="0.91 r13725"   sodipodi:docname="converter.svg">  <defs     id="defs3337" />  <sodipodi:namedview     id="base"     pagecolor="#ffffff"     bordercolor="#666666"     borderopacity="1.0"     inkscape:pageopacity="0.0"     inkscape:pageshadow="2"     inkscape:zoom="0.35"     inkscape:cx="-215"     inkscape:cy="520"     inkscape:document-units="px"     inkscape:current-layer="layer1"     showgrid="false"     inkscape:window-width="1280"     inkscape:window-height="706"     inkscape:window-x="-8"     inkscape:window-y="-8"     inkscape:window-maximized="1" />  <metadata     id="metadata3340">    <rdf:RDF>      <cc:Work         rdf:about="">        <dc:format>image/svg+xml</dc:format>        <dc:type           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />        <dc:title></dc:title>      </cc:Work>    </rdf:RDF>  </metadata>  <g     inkscape:label="Layer 1"     inkscape:groupmode="layer"     id="layer1"     transform="translate(0,-698.0315)">    <path       style="fill:#800000;fill-rule:evenodd;stroke:#000000;stroke-width:0.65248114px;stroke-LineVisualap:butt;stroke-linejoin:miter;stroke-opacity:1"       d="m 16.912678,869.54033 88.301582,-90.64114 174.8011,-3.85707 63.07256,84.85554 -84.69745,96.42677 -182.009375,1.9285 z"       id="path3343"       inkscape:connector-curvature="0" />  </g></svg>';
-
-
+var lastMouseY = 0;
 var empty_click_down = false;
 
-
+// Stores log for the global log
 var global_log = "";
 
 
