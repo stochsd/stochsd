@@ -1741,7 +1741,7 @@ class TableVisual extends htmlTwoPointer {
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
-				mousedown_handler(event);
+				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
@@ -1804,7 +1804,7 @@ class htmlOverlayTwoPointer extends TwoPointer {
 		$(this.targetElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
-				mousedown_handler(event);
+				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
@@ -3347,8 +3347,8 @@ function update_name_pos(node_id) {
 	}
 }
 
-function mousedown_handler(event) {
-	do_global_log("mousedown_handler");
+function mouseDownHandler(event) {
+	do_global_log("mouseDownHandler");
 	mouseisdown=true;
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
@@ -3356,7 +3356,7 @@ function mousedown_handler(event) {
 	do_global_log("x:"+x+" y:"+y);
 	currentTool.mouseDown(x,y);
 }
-function mousemove_handler(event) {
+function mouseMoveHandler(event) {
 	var offset = $(svgplane).offset();
 	var x=event.pageX-offset.left;
 	var y = event.pageY-offset.top;
@@ -3368,6 +3368,23 @@ function mousemove_handler(event) {
 		return;
 	}
 	currentTool.mouseMove(x,y);
+}
+function mouseUpHandler(event) {
+	if(!mouseisdown) {
+		return;
+	}
+	// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
+	do_global_log("mouseUpHandler");
+	var offset = $(svgplane).offset();
+	var x = event.pageX-offset.left;
+	var y = event.pageY-offset.top;
+	
+	currentTool.mouseUp(x,y);
+	mouseisdown=false;
+	History.storeUndoState();
+}
+function rightMouseHandler(event) {
+	alert("Now in rightMouseHandler");
 }
 function find_elements_under(in_x,in_y) {
 	var offset = $(svgplane).offset();
@@ -3408,20 +3425,6 @@ function find_element_under(x,y) {
 	}
 }
 
-function mouseup_handler(event) {
-	if(!mouseisdown) {
-		return;
-	}
-	// does not work to store UndoState here, because mouseup_handler happens even when we are outside the svg (click buttons etc)
-	do_global_log("mouseup_handler");
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
-	
-	currentTool.mouseUp(x,y);
-	mouseisdown=false;
-	History.storeUndoState();
-}
 function stochsd_clear_sync() {
 	var root_object_array=get_root_objects();
 	for(var id in root_object_array) {
@@ -3430,7 +3433,6 @@ function stochsd_clear_sync() {
 		}
 	}
 }
-
 
 class ToolBox {
 	static init() {
@@ -3625,15 +3627,15 @@ $(document).ready(function() {
 		environment.keyDown(event);
 	});
 	
-	$(svgplane).mousedown(mousedown_handler);
-	svgplane.addEventListener('contextmenu', function(ev) {
-		ev.preventDefault();
-		alert('success!');
+	$(svgplane).mousedown(mouseDownHandler);
+	svgplane.addEventListener('contextmenu', function(event) {
+		event.preventDefault();
+		rightMouseHandler(event);
 		return false;
 	}, false);
 	// the mousemove and mouseup event needs to be attached to the html to allow swipping the mouse outside
-	$("html").mousemove(mousemove_handler);
-	$("html").mouseup(mouseup_handler);
+	$("html").mousemove(mouseMoveHandler);
+	$("html").mouseup(mouseUpHandler);
 	ToolBox.setTool("mouse");
 	$("#btn_new").click(function() {
 		saveChangedAlert(function() {
