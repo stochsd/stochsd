@@ -2388,7 +2388,7 @@ class BaseTool {
 	static init() {
 		
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
 	static mouseMove(x,y) {
@@ -2429,7 +2429,7 @@ class ResetTool extends BaseTool {
 }
 
 class TextTool extends BaseTool {
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["text"]);
@@ -2444,7 +2444,7 @@ class NumberboxTool extends BaseTool {
 		this.targetPrimitive=null;
 		this.numberboxable_primitives=["stock","variable","converter","flow"];
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["text"]);
@@ -2507,7 +2507,7 @@ class RedoTool extends BaseTool {
 RedoTool.init();
 
 class StockTool extends BaseTool {
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["stock"]);
@@ -2535,7 +2535,7 @@ class GhostTool extends BaseTool {
 		this.id_to_ghost=null;
 		this.ghostable_primitives=["stock","variable","converter"];
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		var source = findID(this.id_to_ghost);
 		var ghost=makeGhost(source,[x,y]);
@@ -2569,7 +2569,7 @@ class GhostTool extends BaseTool {
 GhostTool.init();
 
 class ConverterTool extends BaseTool {
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["converter"]);
@@ -2580,7 +2580,7 @@ class ConverterTool extends BaseTool {
 }
 
 class VariableTool extends BaseTool {
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["variable"]);
@@ -2612,7 +2612,7 @@ class MouseTool extends BaseTool {
 			return null;
 		}
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		mousedown_x=x;
 		mousedown_y=y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
@@ -2731,7 +2731,7 @@ class TwoPointerTool extends BaseTool {
 	static create_TwoPointer_end() {
 		// Override this
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		unselect_all();
 		var start_element=find_element_under(x,y);
 		var primitive_name = findFreeName(type_basename[this.get_type()]);
@@ -2880,9 +2880,9 @@ class TableTool extends TwoPointerTool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouseDown(x,y)
+		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -2901,9 +2901,9 @@ class DiagramTool extends TwoPointerTool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouseDown(x,y)
+		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -2938,9 +2938,9 @@ class XyPlotTool extends TwoPointerTool {
 		this.initialSelectedIds=[];
 		super.init();
 	}
-	static mouseDown(x,y) {
+	static leftMouseDown(x,y) {
 		this.initialSelectedIds=Object.keys(get_selected_root_objects());
-		super.mouseDown(x,y)
+		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
@@ -3367,7 +3367,7 @@ function mouseDownHandler(event) {
 		case 1:
 			// if left mouse button down
 			mouseisdown = true;
-			currentTool.mouseDown(x,y);	
+			currentTool.leftMouseDown(x,y);	
 			break;
 		case 3: 
 			// if right mouse button down
