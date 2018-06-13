@@ -3626,6 +3626,11 @@ $(document).ready(function() {
 	});
 	
 	$(svgplane).mousedown(mousedown_handler);
+	svgplane.addEventListener('contextmenu', function(ev) {
+		ev.preventDefault();
+		alert('success!');
+		return false;
+	}, false);
 	// the mousemove and mouseup event needs to be attached to the html to allow swipping the mouse outside
 	$("html").mousemove(mousemove_handler);
 	$("html").mouseup(mouseup_handler);
