@@ -1658,6 +1658,12 @@ class RiverVisual extends BaseConnection {
 		super(id,type,pos);
 		this.mountPoints=[[-15,15],[15,15],[0,30],[0,-10]];
 		this.rotatePosList=[[0,48],[25,18],[0,-30],[-25,18]];
+		this.anchorPoints=[];
+	}
+
+	createAnchorPoint(x,y) {
+		let newAnchor = new AnchorPoint(this.id+".point"+this.anchorPoints.length,"dummy_anchor",[x, y],anchorTypeEnum.bezier1);
+		this.anchorPoints.push(newAnchor);
 	}
 	
 	updateLength() {
@@ -2902,13 +2908,14 @@ class RiverTool extends TwoPointerTool {
 			this.primitive.setAttribute("RotateName",rotateName);
 		}		
 		
-		this.current_connection=new RiverVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new RiverVisual(this.primitive.id,this.get_type(),[x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
 
 	static rightMouseDown(x,y) {
 		do_global_log("Right mouse on: "+x+", "+y);
+		this.current_connection.createAnchorPoint(x,y);
 	}
 
 	static get_type() {
