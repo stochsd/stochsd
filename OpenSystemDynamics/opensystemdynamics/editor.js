@@ -1320,6 +1320,36 @@ class ConverterVisual extends BasePrimitive{
 			svg_text(0,0,"variable","name_element"),
 		];
 	}
+
+	get_mount_pos([xTarget, yTarget]) {
+		// See "docs/code/mountPoints.svg" for math explanation 
+		const [xCenter, yCenter] = this.get_pos();
+		const hexSlope = safeDivision(15.0, 10);  // placement of corner is at (10,15)
+		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
+		let xEdgeRel; 	// Relative x Position to center of Visual object.
+		let yEdgeRel; 	// Relative y Position to center of Visual object.  
+		console.log("hexSlope");
+		console.log(hexSlope);
+		console.log("targetSlope");
+		console.log(targetSlope);
+		if (hexSlope < targetSlope || targetSlope < -hexSlope) {
+			const ySign = sign(yTarget - yCenter); 	// -1 if target above hexagon and 1 if target below hexagon 
+			xEdgeRel = ySign*safeDivision(15, targetSlope);
+			yEdgeRel = ySign*15; 
+		} else if(0 < targetSlope && targetSlope < hexSlope){
+			const xSign = sign(xTarget - xCenter); // -1 if target left of hexagon and 1 if target right of hexagon
+			xEdgeRel = xSign*safeDivision(30, (3/2)+targetSlope);
+			yEdgeRel = xEdgeRel*targetSlope;
+		} else {
+			const xSign = sign(xTarget - xCenter); // -1 if target left of hexagon and 1 if target right of hexagon
+			xEdgeRel = xSign*safeDivision(30, (3/2)-targetSlope);
+			yEdgeRel = xEdgeRel*targetSlope;
+		}
+		const xEdge = xEdgeRel + xCenter;
+		const yEdge = yEdgeRel + yCenter;
+		return [xEdge, yEdge];
+	}
+
 	attachEvent() {
 		do_global_log("this primitive");
 		do_global_log(this.primitive);
@@ -3456,8 +3486,8 @@ function update_name_pos(node_id) {
 }
 
 function mouseDownHandler(event) {
-	console.log("Mouse event");
-	console.log(event);
+	// console.log("Mouse event");
+	// console.log(event);
 	do_global_log("mouseDownHandler");
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
