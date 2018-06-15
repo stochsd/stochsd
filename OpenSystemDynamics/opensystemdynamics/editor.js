@@ -750,7 +750,7 @@ class BaseObject {
 
 	}
 
-	get_mount_pos(closeToPoint) {
+	getMountPos(closeToPoint) {
 		let pos = this.get_pos();
 		
 		// Check if we only have one mount point
@@ -1170,7 +1170,7 @@ class StockVisual extends BasePrimitive{
 		return [40, 30];
 	}
 
-	get_mount_pos([xTarget, yTarget]) {
+	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
 		const [width, height] = this.getSize();
@@ -1293,7 +1293,7 @@ class VariableVisual extends BasePrimitive{
 		];
 	}
 
-	get_mount_pos([xTarget, yTarget]) {
+	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
 		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
@@ -1321,7 +1321,7 @@ class ConverterVisual extends BasePrimitive{
 		];
 	}
 
-	get_mount_pos([xTarget, yTarget]) {
+	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
 		const hexSlope = safeDivision(15.0, 10);  // placement of corner is at (10,15)
@@ -1647,7 +1647,7 @@ class FlowVisual extends BaseConnection {
 		if(this.start_attach!=null && this.start_anchor!=null) {
 			if(this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.get_mount_pos(connectionCenter);
+				let newPos = this.start_attach.getMountPos(connectionCenter);
 				// If start point have moved reset b1
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -1657,7 +1657,7 @@ class FlowVisual extends BaseConnection {
 		if(this.end_attach!=null && this.end_anchor!=null) {
 			if(this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.get_mount_pos(connectionCenter);
+				let newPos = this.end_attach.getMountPos(connectionCenter);
 				// If end point have moved reset b2
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -1741,7 +1741,7 @@ class RiverVisual extends BaseConnection {
 		if(this.start_attach!=null && this.start_anchor!=null) {
 			if(this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.get_mount_pos(connectionCenter);
+				let newPos = this.start_attach.getMountPos(connectionCenter);
 				// If start point have moved reset b1
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -1751,7 +1751,7 @@ class RiverVisual extends BaseConnection {
 		if(this.end_attach!=null && this.end_anchor!=null) {
 			if(this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.get_mount_pos(connectionCenter);
+				let newPos = this.end_attach.getMountPos(connectionCenter);
 				// If end point have moved reset b2
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -2492,7 +2492,7 @@ class LinkVisual extends BaseConnection{
 		if(this.start_attach!=null && this.start_anchor!=null) {
 			if(this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.get_mount_pos(this.b1_anchor.get_pos());
+				let newPos = this.start_attach.getMountPos(this.b1_anchor.get_pos());
 				// If start point have moved reset b1
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -2502,7 +2502,7 @@ class LinkVisual extends BaseConnection{
 		if(this.end_attach!=null && this.end_anchor!=null) {
 			if(this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.get_mount_pos(this.b2_anchor.get_pos());
+				let newPos = this.end_attach.getMountPos(this.b2_anchor.get_pos());
 				// If end point have moved reset b2
 				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -3091,7 +3091,7 @@ function attach_selected_anchor(selectedAnchor) {
 
 	// Find unselected stock element
 	for(var i=0;i<elements_under.length;i++) {
-		if(!elements_under[i].is_selected() && ("get_mount_pos" in elements_under[i]) && elements_under[i] != parentConnection) {
+		if(!elements_under[i].is_selected() && ("getMountPos" in elements_under[i]) && elements_under[i] != parentConnection) {
 			attach_to=elements_under[i]; 
 		}
 	}
