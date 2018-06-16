@@ -1705,9 +1705,9 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	makeGraphics() {
-		this.arrowPath=svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
 		this.updateLength();
-		this.arrowhead=svg_group([this.arrowPath]);
+		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 
 		this.name_element = svg_text(0,0,"variable","name_element");
@@ -1721,7 +1721,7 @@ class RiverVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group=svg_group([this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.arrowhead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
