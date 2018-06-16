@@ -138,16 +138,16 @@ function svg_text(x, y, text, markclass, extra_attributes) {
 }
 
 // Drawing primitive for drawing svg rects
-function svg_rect(x, y, width, height, stroke, fill,markclass) {
+function svg_rect(x, y, width, height, stroke, fill, markclass) {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); //Create a path in SVG's namespace
-	newElement.setAttribute("class",markclass); //Set path's data
-	newElement.setAttribute("x",x); //Set path's data
-	newElement.setAttribute("y",y); //Set path's data	
-	newElement.setAttribute("width",width); //Set path's data
-	newElement.setAttribute("height",height); //Set path's data
-	newElement.setAttribute("fill",fill);
-	newElement.setAttribute("stroke",stroke);
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); // Create a path in SVG's namespace
+	newElement.setAttribute("class",markclass); // Set path's data
+	newElement.setAttribute("x", x); // Set path's data
+	newElement.setAttribute("y", y); // Set path's data	
+	newElement.setAttribute("width", width); // Set path's data
+	newElement.setAttribute("height", height); // Set path's data
+	newElement.setAttribute("fill", fill);
+	newElement.setAttribute("stroke", stroke);
 	svgplane.appendChild(newElement);
 	return newElement;
 }
