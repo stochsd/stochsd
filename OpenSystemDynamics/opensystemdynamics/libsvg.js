@@ -297,7 +297,7 @@ function svgThickLine(pointlist, width, color) {
 	return newElement;
 }
 
-class flowArrow {
+class svgsFlowArrow {
 	constructor(points) {
 		this.points = points;
 		this.outerLine = svgThickLine(this.points, 7, "black");
