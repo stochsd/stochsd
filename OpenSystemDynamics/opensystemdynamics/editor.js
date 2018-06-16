@@ -1705,6 +1705,9 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	makeGraphics() {
+
+
+		// ----- Erik's code below ------
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
 		this.updateLength();
 		this.arrowhead = svg_group([this.arrowPath]);

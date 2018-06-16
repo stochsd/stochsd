@@ -238,3 +238,113 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	svgplane.appendChild(newElement);
 	return newElement;
 }
+
+function svgArrowHead(pos, stroke, directionVector) {
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	newElement.setAttribute("stroke", stroke);
+	newElement.setAttribute("fill", "white");
+	newElement.points = [0,0]; 
+
+	newElement.newPos = function (pos, directionVector) {
+		let points = [[12, -3],[12, -7], [0,0], [12, 7],[12, 3]];
+		let sine = sin([0,0], directionVector);
+		let cosine = cos([0,0], directionVector);
+		points = rotatePoints(points, sine, cosine);
+		points = tranlatePoints(points, pos);
+		this.points = points;
+	};
+	newElement.newPos(pos, directionVector);
+
+	newElement.update = function () {
+		var points = this.points;
+		let d = "M"+points[0][0]+","+points[0][1];
+		for (i = 1; i < this.points.length; i++) {
+			d += "L"+points[i][0]+","+points[i][1]+" ";
+		}
+		// d += "Z";
+		this.setAttribute("d", d);
+	};
+
+	newElement.update();
+	svgplane.appendChild(newElement);
+	// newElement.update();
+	return newElement;
+}
+
+function svgThickLine(pointlist, width, color) {
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	newElement.points = pointlist
+	newElement.setAttribute("stroke", color);
+	newElement.setAttribute("fill", "transparent");
+	newElement.setAttribute("stroke-width", width.toString());
+	
+	newElement.setPoints = function (points) {
+		this.points = points;
+		this.update();
+	}
+	
+	newElement.update = function () {
+		let points = this.points;
+		let d = "M"+points[0][0]+","+points[0][1];
+		for (i = 1; i < this.points.length; i++) {
+			d += "L"+points[i][0]+","+points[i][1]+" ";
+		}
+		// d += "Z";
+		this.setAttribute("d", d);
+	}
+	newElement.update();
+	svgplane.appendChild(newElement);
+	return newElement;
+}
+
+class flowArrow {
+	constructor(points) {
+		this.points = points;
+		this.outerLine = svgThickLine(this.points, 7, "black");
+		this.innerLine = svgThickLine(this.points, 5, "white");
+		this.arrow = svgArrowHead(points[points.length-1], "black", this.getDirection());
+		this.setPoints(points);
+	}
+
+
+	setPoints(points) {
+		this.points = points;
+		this.outerLine.setPoints(this.shortenLastPoint(12));
+		this.innerLine.setPoints(this.shortenLastPoint(11));
+		this.arrow.newPos(points[points.length-1], this.getDirection());
+	}
+
+	shortenLastPoint(shortenAmount) {
+		let points = this.points.slice();
+		if (points.length < 2) {
+			return points;
+		} else {
+			let last = points[points.length-1];
+			let sndlast = points[points.length-2];
+			let sine = sin(last, sndlast);
+			let cosine = cos(last, sndlast);
+			let newLast = rotate([shortenAmount, 0], sine, cosine);
+			newLast = translate(newLast, last);
+			points[points.length-1] = newLast;
+			return points;
+		}
+	}
+
+	update() {
+		this.outerLine.update();
+		this.innerLine.update();
+		this.arrow.update();
+	}
+
+	getDirection() {
+		let len = this.points.length;
+		if (len < 2) {
+			return [0,0];
+		} else {
+			let p1 = this.points[len-1];
+			let p2 = this.points[len-2];
+			return [p2[0]-p1[0], p2[1]-p1[1]];
+		}
+	} 
+}
+
