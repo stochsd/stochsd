@@ -1686,9 +1686,10 @@ class FlowVisual extends BaseConnection {
 class RiverVisual extends BaseConnection {
 	constructor(id,type,pos) {
 		super(id,type,pos);
-		this.mountPoints=[[-15,15],[15,15],[0,30],[0,-10]];
-		this.rotatePosList=[[0,48],[25,18],[0,-30],[-25,18]];
-		this.anchorPoints=[];
+		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
+		this.rotatePosList = [[0,48],[25,18],[0,-30],[-25,18]];
+		this.anchorPoints = [];
+		this.flowcore2;
 	}
 
 	createAnchorPoint(x,y) {
@@ -1705,8 +1706,7 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	makeGraphics() {
-
-
+		
 		// ----- Erik's code below ------
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
 		this.updateLength();
