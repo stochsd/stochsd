@@ -110,32 +110,29 @@ function svg_path(dstring,stroke,fill , markclass) {
 	return newElement;
 }
 
-
-
 // Drawing primitive for drawing svg rects
-function svg_text(x, y, text ,markclass,extra_attributes) {
+function svg_text(x, y, text, markclass, extra_attributes) {
 	
 	/* example
-	 * <text class="svgtext" x="400" y="35" font-family="Verdana" font-size="35">
-    Hello, out there
-</text>
+	 * 	<text class="svgtext" x="400" y="35" font-family="Verdana" font-size="35">
+    		Hello, out there
+		</text>
 	*/
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'text'); //Create a path in SVG's namespace
-	newElement.setAttribute("class",markclass); //Set path's data
-	newElement.setAttribute("x",x); //Set path's data
-	newElement.setAttribute("y",y); //Set path's data
-	newElement.innerHTML=text;
-	newElement.setAttribute("text-anchor","middle");
-	newElement.setAttribute("style","font-size: "+Settings.primitiveFontSize+"px");
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'text'); // Create a path in SVG's namespace
+	newElement.setAttribute("class",markclass); // Set path's data
+	newElement.setAttribute("x", x); // Set path's data
+	newElement.setAttribute("y", y); // Set path's data
+	newElement.innerHTML = text;
+	newElement.setAttribute("text-anchor", "middle");
+	newElement.setAttribute("style", "font-size: "+Settings.primitiveFontSize+"px");
 	
 	// Is set last so it can override default attributes
-	if(extra_attributes!=undefined) {
+	if(extra_attributes != undefined) {
 		for(var key in extra_attributes) {
-			newElement.setAttribute(key,extra_attributes[key]); //Set path's data
+			newElement.setAttribute(key, extra_attributes[key]); // Set path's data
 		}
 	}
-	
 	svgplane.appendChild(newElement);
 	return newElement;
 }
