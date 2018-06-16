@@ -157,15 +157,8 @@ function svg_foreignobject(x, y, width, height, innerHTML) {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	// foreignObject tag must be cammel case to work which is wierd
 	
-
-
-
-	
-	
 	// Using a tag on top might be better http://stackoverflow.com/questions/6538918/can-i-embed-html-into-an-html5-svg-fragment
 	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject'); //Create a path in SVG's namespace
-
-
 
 	let cutDiv = document.createElement("div");
 	// This div is nessecary to avoid overflow in some browsers
@@ -196,8 +189,7 @@ function svg_foreignobject(x, y, width, height, innerHTML) {
 	newElement.contentDiv = contentDiv;
 	newElement.scrollDiv = scrollDiv;
 	newElement.innerDiv = innerDiv;
-	
-	
+		
 	newElement.setAttribute("x",x); //Set path's data
 	newElement.setAttribute("y",y); //Set path's data	
 	newElement.setAttribute("width",width); //Set path's data
@@ -208,11 +200,11 @@ function svg_foreignobject(x, y, width, height, innerHTML) {
 
 // Drawing primitive for drawing svg circles
 function svg_circle(cx, cy, r, stroke, fill,markclass) {
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); //Create a path in SVG's namespace
-	newElement.setAttribute("class",markclass); //Set path's data
-	newElement.setAttribute("cx",cx); //Set path's data
-	newElement.setAttribute("cy",cy); //Set path's data
-	newElement.setAttribute("r",r); //Set path's data
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); // Create a path in SVG's namespace
+	newElement.setAttribute("class",markclass); // Set path's data
+	newElement.setAttribute("cx",cx); // Set path's data
+	newElement.setAttribute("cy",cy); // Set path's data
+	newElement.setAttribute("r",r); // Set path's data
 	newElement.setAttribute("fill",fill);
 	newElement.setAttribute("stroke",stroke);
 	newElement.setAttribute("data-attr","selected");
@@ -226,11 +218,11 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	if(dasharray!=undefined && dasharray!="") {
 		newElement.setAttribute("stroke-dasharray",dasharray);
 	}
-	newElement.setAttribute("class",markclass); //Set path's data
-	newElement.setAttribute("x1",x1); //Set path's data
-	newElement.setAttribute("y1",y1); //Set path's data
-	newElement.setAttribute("x2",x2); //Set path's data
-	newElement.setAttribute("y2",y2); //Set path's data
+	newElement.setAttribute("class",markclass); // Set path's data
+	newElement.setAttribute("x1",x1); // Set path's data
+	newElement.setAttribute("y1",y1); // Set path's data
+	newElement.setAttribute("x2",x2); // Set path's data
+	newElement.setAttribute("y2",y2); // Set path's data
 	newElement.setAttribute("fill",fill);
 	newElement.setAttribute("stroke",stroke);
 	newElement.setAttribute("data-attr","selected");
@@ -239,7 +231,7 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	// Is set last so it can override default attributes
 	if(extra_attributes!=undefined) {
 		for(var key in extra_attributes) {
-			newElement.setAttribute(key,extra_attributes[key]); //Set path's data
+			newElement.setAttribute(key,extra_attributes[key]); // Set path's data
 		}
 	}
 	
