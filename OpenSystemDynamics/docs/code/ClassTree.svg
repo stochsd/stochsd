@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="517.20425"
-     inkscape:cy="398.98267"
+     inkscape:zoom="1.979899"
+     inkscape:cx="343.54781"
+     inkscape:cy="402.83425"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -137,14 +137,16 @@
          style="font-size:11.82534218px;line-height:1.25;stroke-width:0.85208482px">LinkVisual</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.85208482px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 258.23575,654.58889 -37.73517,41.9956"
+       d="m 261.0768,651.74784 -40.57622,44.83665"
        id="path4236"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.85208482px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 267.36523,654.58889 18.25895,38.95244"
+       d="m 275.88839,651.74784 9.73579,41.79349"
        id="path4238"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.85208482px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 305.10042,599.81201 265.53934,633.8954"
@@ -728,6 +730,22 @@
        style="fill:none;stroke:#000000;stroke-width:1.69686854px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 748.71602,731.75416 h 22.71175"
        id="path1263"
+       inkscape:connector-curvature="0" />
+    <text
+       id="text947"
+       y="712.42181"
+       x="109.50841"
+       style="font-style:normal;font-weight:normal;font-size:10.22501755px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.85208482px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:11.82534218px;line-height:1.25;stroke-width:0.85208482px"
+         id="tspan945"
+         y="712.42181"
+         x="109.50841"
+         sodipodi:role="line">RiverVisual</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.9375px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 241.01608,652.2471 -96.12232,46.40388"
+       id="path949"
        inkscape:connector-curvature="0" />
   </g>
 </svg>
