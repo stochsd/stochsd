@@ -14,7 +14,7 @@ function tranlatePoints(points, translation) {
 
 function distance(point1, point2) {
 	const dx = point2[0]-point1[0];
-	const dy = point2[0]-point2[0];
+	const dy = point2[1]-point1[1];
 	return Math.sqrt(dx*dx + dy*dy);
 }
 
