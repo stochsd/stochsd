@@ -1676,8 +1676,16 @@ class RiverVisual extends BaseConnection {
 		super(id, type, pos);
 		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
 		this.rotatePosList = [[0,48],[25,18],[0,-30],[-25,18]];
-		this.anchorPoints = [];
-		this.flowcore2;
+		
+		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
+		this.anchorPoints = []; 
+		console.log("constructor RiverVisual is run");
+		console.log(this.anchorPoints);
+
+		// List of all cooridnates for path including start and end. TYPE: [[x,y]]
+		this.pathPoints = []; 
+
+		this.outerPath;
 	}
 
 	createAnchorPoint(x, y) {
@@ -1695,6 +1703,9 @@ class RiverVisual extends BaseConnection {
 	
 	makeGraphics() {
 		
+		this.outerPath = svgWidePath(7, "black");
+		this.anchorPoints = [];
+
 		// ----- Erik's code below ------
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
 		this.updateLength();
@@ -1718,6 +1729,16 @@ class RiverVisual extends BaseConnection {
 		$(this.group).dblclick(() => {
 			this.double_click(this.id);
 		});
+	}
+
+	updatePathPoints() {
+		let points = [];
+		// points.push(this.start_anchor.get_pos())
+		for (i = 0; i < this.anchorPoints.length; i++) {
+			points.push(this.anchorPoints[i].get_pos());
+		}
+		// points.push(this.end_anchor.get_pos());
+		this.pathPoints = points;
 	}
 
 	update() {
@@ -1750,6 +1771,10 @@ class RiverVisual extends BaseConnection {
 			}
 		}
 		super.update();
+		// ----- Eriks code above
+		this.updatePathPoints();
+		this.outerPath.setPoints(this.pathPoints);
+		this.outerPath.update();
 	}
 	
 	updateGraphics() {
