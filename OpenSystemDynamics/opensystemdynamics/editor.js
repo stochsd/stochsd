@@ -1685,7 +1685,9 @@ class RiverVisual extends BaseConnection {
 		// List of all cooridnates for path including start and end. TYPE: [[x,y]]
 		this.pathPoints = []; 
 
-		this.outerPath;
+		this.outerPath; // Black path
+		this.innerPath; // White path
+		this.arrowHeadPath; // Head of Magnus Arrow
 	}
 
 	createAnchorPoint(x, y) {
@@ -1704,6 +1706,8 @@ class RiverVisual extends BaseConnection {
 	makeGraphics() {
 		
 		this.outerPath = svgWidePath(7, "black");
+		this.innerPath = svgWidePath(5, "white");
+		this.arrowHeadPath = svgArrowHead("black", [1,0]);
 		this.anchorPoints = [];
 
 		// ----- Erik's code below ------
@@ -1731,13 +1735,41 @@ class RiverVisual extends BaseConnection {
 		});
 	}
 
+	getDirection() {
+		// This function is used to determine which way the arrowHead should aim 
+		let len = this.pathPoints.length;
+		if (len < 2) {
+			return [0,0];
+		} else {
+			let p1 = this.pathPoints[len-1];
+			let p2 = this.pathPoints[len-2];
+			return [p2[0]-p1[0], p2[1]-p1[1]];
+		}
+	} 
+
+	shortenLastPoint(shortenAmount) {
+		let points = this.pathPoints.slice();
+		if (points.length < 2) {
+			return points;
+		} else {
+			let last = points[points.length-1];
+			let sndlast = points[points.length-2];
+			let sine = sin(last, sndlast);
+			let cosine = cos(last, sndlast);
+			let newLast = rotate([shortenAmount, 0], sine, cosine);
+			newLast = translate(newLast, last);
+			points[points.length-1] = newLast;
+			return points;
+		}
+	}
+
 	updatePathPoints() {
 		let points = [];
-		// points.push(this.start_anchor.get_pos())
+		points.push([this.startx, this.starty] )
 		for (i = 0; i < this.anchorPoints.length; i++) {
 			points.push(this.anchorPoints[i].get_pos());
 		}
-		// points.push(this.end_anchor.get_pos());
+		points.push([this.endx, this.endy]);
 		this.pathPoints = points;
 	}
 
@@ -1771,10 +1803,15 @@ class RiverVisual extends BaseConnection {
 			}
 		}
 		super.update();
-		// ----- Eriks code above
+		// ----- Eriks code above -----^
+		// ----- Magnus code below ----v
 		this.updatePathPoints();
-		this.outerPath.setPoints(this.pathPoints);
+		this.outerPath.setPoints(this.shortenLastPoint(12));
+		this.innerPath.setPoints(this.shortenLastPoint(12));
+		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
 		this.outerPath.update();
+		this.innerPath.update();
+		this.arrowHeadPath.update();
 	}
 	
 	updateGraphics() {
