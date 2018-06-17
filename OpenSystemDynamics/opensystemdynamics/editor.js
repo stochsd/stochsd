@@ -28,44 +28,42 @@ StochSD was developed by Erik Gustafsson, dept. of Signals and Systems, Uppsala 
 Mail: Ekir.Gustafsson@gmail.com.
 `;
 
-
-const ghost_image='<path inkscape:connector-curvature="0"     d="m 6.8787701,-1.172115 c 0,0.94923948 0.1554403,8.1989876 -0.1943007,9.0150008 C 6.3347285,8.6644488 4.9635227,5.8111805 4.3473135,6.4329047 3.7255523,7.0546289 3.5034948,7.6319441 2.6818813,7.9816633 1.8602682,8.3258325 0.96093505,6.3884958 0.0116386,6.3884958 c -0.94929616,0 -1.8486295,1.9373367 -2.6702428,1.5931675 C -3.4802173,7.6319441 -3.6245546,7.3543882 -4.2463158,6.7326641 -4.8680773,6.1109399 -6.3614144,8.6922061 -6.7111551,7.870641 -7.0553443,7.0490771 -6.8554926,-0.22287552 -6.8554926,-1.172115 c 0,-3.7858565 3.0754975,-6.8611709 6.8671312,-6.8611709 3.7916334,0 6.8671315,3.0753144 6.8671315,6.8611709 z"     style="fill:#ffffff;stroke:#000000;stroke-width:0.7"     id="path18423" />';
+const ghost_image = '<path inkscape:connector-curvature="0"     d="m 6.8787701,-1.172115 c 0,0.94923948 0.1554403,8.1989876 -0.1943007,9.0150008 C 6.3347285,8.6644488 4.9635227,5.8111805 4.3473135,6.4329047 3.7255523,7.0546289 3.5034948,7.6319441 2.6818813,7.9816633 1.8602682,8.3258325 0.96093505,6.3884958 0.0116386,6.3884958 c -0.94929616,0 -1.8486295,1.9373367 -2.6702428,1.5931675 C -3.4802173,7.6319441 -3.6245546,7.3543882 -4.2463158,6.7326641 -4.8680773,6.1109399 -6.3614144,8.6922061 -6.7111551,7.870641 -7.0553443,7.0490771 -6.8554926,-0.22287552 -6.8554926,-1.172115 c 0,-3.7858565 3.0754975,-6.8611709 6.8671312,-6.8611709 3.7916334,0 6.8671315,3.0753144 6.8671315,6.8611709 z"     style="fill:#ffffff;stroke:#000000;stroke-width:0.7"     id="path18423" />';
 
 // This values are not used by stochsd, as primitives cannot be resized in stochsd
 // They are only used for exporting the model to Insight Maker
-type_size={};
-type_size["stock"]=[80,60];
-type_size["variable"]=[60,60];
-type_size["converter"]=[80,60];
-type_size["text"]=[120,60];
+type_size = {};
+type_size["stock"] = [80,60];
+type_size["variable"] = [60,60];
+type_size["converter"] = [80,60];
+type_size["text"] = [120,60];
 
-type_basename={};
-type_basename["stock"]="Stock";
-type_basename["variable"]="Variable";
-type_basename["flow"]="Flow";
-type_basename["link"]="Link";
-type_basename["converter"]="Converter";
-type_basename["text"]="Text";
+type_basename = {};
+type_basename["stock"] = "Stock";
+type_basename["variable"] = "Variable";
+type_basename["flow"] = "Flow";
+type_basename["link"] = "Link";
+type_basename["converter"] = "Converter";
+type_basename["text"] = "Text";
 
-last_connection=null;
+last_connection = null;
 
 // Stores Visual objects and connections
 var connection_array = {};
 var object_array = {};
 
 // Stores state related to mouse
-var last_click_object_clicked=false;
+var last_click_object_clicked = false;
 var last_clicked_element = null; // Points to the object we last clicked
 var mouseisdown = false;
-var mousedown_x=0;
-var mousedown_y=0;
+var mousedown_x = 0;
+var mousedown_y = 0;
 var lastMouseX = 0;
 var lastMouseY = 0;
 var empty_click_down = false;
 
 // Stores log for the global log
 var global_log = "";
-
 
 function applicationReload() {
 	environment.reloadingStarted = true;
@@ -83,7 +81,7 @@ function restoreAfterRestart() {
 	do_global_log("restoring");
 	let reloadPending = localStorage.getItem("reloadPending");
 	
-	if(reloadPending == null) {
+	if (reloadPending == null) {
 		// No reload is pending
 		do_global_log("nothing pending to restore");
 		return;
@@ -122,9 +120,9 @@ class History {
 		
 		
 		// Add to undo history if it is different then previus state
-		if(this.lastUndoState != undoState) {
+		if (this.lastUndoState != undoState) {
 			this.undoStates.push(undoState);
-			this.undoIndex=this.undoStates.length-1;
+			this.undoIndex = this.undoStates.length-1;
 			this.lastUndoState = undoState;
 			
 			this.unsavedChanges = true;
@@ -132,15 +130,15 @@ class History {
 	}
 	
 	static forceCustomUndoState(newState) {
-		this.undoStates=[];
+		this.undoStates = [];
 		this.undoStates.push(newState);
-		this.undoIndex=0;
+		this.undoIndex = 0;
 		this.lastUndoState = newState;
 		this.unsavedChanges = false;
 	}
 	
 	static doUndo() {
-		if(this.undoIndex > 0) {
+		if (this.undoIndex > 0) {
 			this.undoIndex --;
 			this.restoreUndoState();	
 		} else {
@@ -149,7 +147,7 @@ class History {
 	}
 	
 	static doRedo() {
-		if(this.undoIndex < this.undoStates.length-1) {
+		if (this.undoIndex < this.undoStates.length-1) {
 			this.undoIndex ++;
 			this.restoreUndoState();
 		} else {
@@ -181,7 +179,7 @@ class History {
 		localStorage.setItem("undoState_length",this.undoStates.length);
 		
 		for(let i in this.undoStates) {
-			let state=this.undoStates[i];
+			let state = this.undoStates[i];
 			localStorage.setItem("undoState_"+i,state);
 		}
 		
@@ -191,7 +189,7 @@ class History {
 	static fromLocalStorage() {
 		this.clearUndoHistory();
 		let undoState_length = localStorage.getItem("undoState_length");
-		for(let i = 0;i < undoState_length; i++) {
+		for(let i = 0; i < undoState_length; i++) {
 			let state = localStorage.getItem("undoState_"+i);
 			this.undoStates.push(state);
 		}
@@ -213,9 +211,9 @@ function showPluginMenu() {
 }
 
 function sendToParentFrame(returnobj,target) {
-	results={};
-	results.target=target;
-	results.returnobj=returnobj;
+	results = {};
+	results.target = target;
+	results.returnobj = returnobj;
 	parent.postMessage(JSON.stringify(results), "*");
 }
 
@@ -236,8 +234,8 @@ function quitQuestion() {
 }
 
 function makeKeyboardCodes() {
-	let keyboard={};
-	for(let tkey=0;tkey<=255;tkey++) {
+	let keyboard = {};
+	for(let tkey = 0; tkey <= 255; tkey++) {
 		keyboard[String.fromCharCode(tkey)] = tkey;
 	}
 	//~ alert(key["B"]);
@@ -268,11 +266,11 @@ function updateWindowSize() {
 
 }
 
-defaultAttributeChangeHandler=function(primitive,attributeName,value) {
+defaultAttributeChangeHandler = function(primitive,attributeName,value) {
 	let id = getID(primitive);
 	let type = getType(primitive);
 	let visualObject = get_object(id);
-	if(visualObject) {
+	if (visualObject) {
 		visualObject.attributeChangeHandler(attributeName,value);
 	}
 	
@@ -282,11 +280,11 @@ defaultAttributeChangeHandler=function(primitive,attributeName,value) {
 		break;
 	}
 	//~ do_global_log("tjohej "+type+" "+attributeName);
-	if(type=="Numberbox" && attributeName=="Target") {
+	if (type == "Numberbox" && attributeName == "Target") {
 		let visualObject = get_object(id);
 		// render() can only be done when the numberbox is fully loaded
 		// Therefor we have to check that visualObject is not null
-		if(visualObject) {
+		if (visualObject) {
 			visualObject.render();
 		}
 	}
@@ -295,11 +293,10 @@ defaultAttributeChangeHandler=function(primitive,attributeName,value) {
 defaultPositionChangeHandler = function(primitive) {
 	let newPosition = getCenterPosition(primitive)
 	let visualObject = object_array[getID(primitive)];
-	if(visualObject) {
+	if (visualObject) {
 		visualObject.set_pos(newPosition);
 	}
 }
-
 
 defaultPrimitiveCreatedHandler = function(primitive) {
 	syncVisual(primitive);
@@ -323,10 +320,10 @@ PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat)
 // Add the StocSD macro-script to the beggning of the Macro
 function appendStochSDMacros() {
 	var macros = getMacros();
-	if(macros===undefined) {
-		macros="";
+	if (macros === undefined) {
+		macros = "";
 	}
-	if(macros.substring(0, sdsMacros.length) != sdsMacros) {
+	if (macros.substring(0, sdsMacros.length) != sdsMacros) {
 		macros = sdsMacros+"\n\n\n"+macros;
 		setMacros(macros);
 	}
@@ -343,11 +340,11 @@ let showMacros = function() {
 };
 
 function getLinkedPrimitives(primitive) {
-	let result=[];
+	let result = [];
 	let allLinks = primitives("Link");
 	for(let link of allLinks) {
-		if(link.target == primitive) {
-			if(link.source != null) {
+		if (link.target == primitive) {
+			if (link.source != null) {
 				result.push(link.source);
 			}
 		}
@@ -488,8 +485,8 @@ function getFunctionHelpData() {
 	helpData = helpData.sort(function(a, b){
 		var categoryA = a[0];
 		var categoryB = b[0];
-		if(categoryA < categoryB) return -1;
-		if(categoryA > categoryB) return 1;
+		if (categoryA < categoryB) return -1;
+		if (categoryA > categoryB) return 1;
 		return 0;
 	});
 	return helpData;
@@ -513,7 +510,7 @@ function sdsLoadFunctions() {
         return new Material(simulate.timeEnd.toNum().value);
 	});
     defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x){
-        var dt=simulate.timeStep.toNum().value;
+        var dt = simulate.timeStep.toNum().value;
         
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
@@ -580,10 +577,10 @@ function makePrimitiveName(primitiveName)  {
 function stripBrackets(primitiveName) {
 	let cutFrom = primitiveName.lastIndexOf("[")+1;
 	let cutTo = primitiveName.indexOf("]");
-	if(cutFrom==-1) {
+	if (cutFrom == -1) {
 		cutFrom = 0;
 	}
-	if(cutTo==-1) {
+	if (cutTo == -1) {
 		cutTo = primitiveName.length;
 	}
 	return primitiveName.slice(cutFrom,cutTo);
@@ -594,7 +591,7 @@ function formatFunction(functionName) {
 }
 
 function checkedHtmlAttribute(value) {
-	if(value) {
+	if (value) {
 		return ' checked="checked" ';
 	} else {
 		return ' ';
@@ -615,46 +612,42 @@ function stocsd_format(number, tdecimals) {
 	// Since the numbers automaticly goes to e-format when low enought
 	
 	// Used when e.g. the actuall error is reseted to null
-	if(number == null) {
+	if (number == null) {
 		return "";
 	}
     
     // If we force e-format we just convert here and return
-    if(stocsd_eformat) {
+    if (stocsd_eformat) {
         return number.toExponential(2).toUpperCase();
     }
 	
 	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if(number == 0) {
+    if (number == 0) {
 		return "0";
 	}
 	
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
 	
-	if(Math.abs(number)<Math.pow(10,(-tdecimals))) {
+	if (Math.abs(number)<Math.pow(10,(-tdecimals))) {
         return number.toExponential(2).toUpperCase();
 	}
 	//Check if the number is to big to be view ed in the field
-	if(Math.abs(number)>Math.pow(10,tdecimals)) {
+	if (Math.abs(number)>Math.pow(10,tdecimals)) {
         return number.toExponential(2).toUpperCase();
 	}
-	
 	
 	// Else format it as a regular number, and remove ending zeros
 	var stringified = number.toFixed(tdecimals).toUpperCase();
 	
-	
-
-
 	// Find the length of stringified, where the ending zeros have been removed
 	var i = stringified.length;
-	while(stringified.charAt(i-1)=='0') {
-		i=i-1;
+	while(stringified.charAt(i-1) == '0') {
+		i = i-1;
 		// If we find a dot. Stop removing decimals
-		if(stringified.charAt(i-1)=='.') {
-			i=i-1;
+		if (stringified.charAt(i-1) == '.') {
+			i = i-1;
 			break;
 		}
 	}
@@ -664,7 +657,7 @@ function stocsd_format(number, tdecimals) {
 }
 
 function get_parent_id(id) {
-	var parent_id=id.toString().split(".")[0];
+	var parent_id = id.toString().split(".")[0];
 	//~ do_global_log("x flowa "+parent_id);
 	return parent_id;
 }
@@ -674,9 +667,9 @@ function get_parent(child) {
 }
 
 function is_family(id1,id2) {
-	var parent_id1=id1.toString().split(".")[0];
-	var parent_id2=id2.toString().split(".")[0];
-	if(parent_id1==parent_id2) {
+	var parent_id1 = id1.toString().split(".")[0];
+	var parent_id2 = id2.toString().split(".")[0];
+	if (parent_id1 == parent_id2) {
 		return true;
 	} else {
 		return false;
@@ -685,15 +678,15 @@ function is_family(id1,id2) {
 
 // Get a list of all children for a parent
 function getChildren(parentId) {
-	var result={}
+	var result = {}
 	for(var key in object_array) {
-		if(get_parent_id(key)==parentId && key!=parentId) {
-			result[key]=object_array[key];
+		if (get_parent_id(key) == parentId && key != parentId) {
+			result[key] = object_array[key];
 		}
 	}
 	for(var key in connection_array) {
-		if(get_parent_id(key)==parentId && key!=parentId) {
-			result[key]=connection_array[key];
+		if (get_parent_id(key) == parentId && key != parentId) {
+			result[key] = connection_array[key];
 		}
 	}
 	return result;
@@ -707,46 +700,43 @@ function hasSelectedChildren(parentId) {
 	// Find the children
 	let children = getChildren(parentId);
 	for(let id in children) {
-		if(children[id].is_selected()) {
+		if (children[id].is_selected()) {
 			return true;
 		}
 	}
 	return false;
 }
 
-
-
 function default_double_click(id) {
 	var primitive_type = getType(findID(id));
-	if(primitive_type=="Ghost") {
+	if (primitive_type == "Ghost") {
 		// If we click on a ghost change id to point to source
-		id=findID(id).getAttribute("Source");
+		id = findID(id).getAttribute("Source");
 	}
 	equationEditor.open(id,".valueField");
 }
 
-
 function calc_distance(xdiff,ydiff) {
-	return Math.sqrt((xdiff*xdiff)+(ydiff*ydiff));
+	return Math.sqrt((xdiff*xdiff) + (ydiff*ydiff));
 }
 
 class BaseObject {
 	constructor(id,type,pos) {
-		this.id=id;
-		this.type=type;
-		this.selected=false;
-		this.name_radius=30;
-		this.superClass="baseobject";
+		this.id = id;
+		this.type = type;
+		this.selected = false;
+		this.name_radius = 30;
+		this.superClass = "baseobject";
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
 		
-		this.element_array=[];
-		this.selector_array=[];
-		this.group=null;
-		this.mountPoints=[[0,0]];
+		this.element_array = [];
+		this.selector_array = [];
+		this.group = null;
+		this.mountPoints = [[0,0]];
 		
-		this.rotatePosList=[[0,this.name_radius+8],[this.name_radius,0],[0,-this.name_radius],[-this.name_radius,0]];
+		this.rotatePosList = [[0,this.name_radius+8],[this.name_radius,0],[0,-this.name_radius],[-this.name_radius,0]];
 
 	}
 
@@ -754,17 +744,17 @@ class BaseObject {
 		let pos = this.get_pos();
 		
 		// Check if we only have one mount point
-		if(this.mountPoints==1) {
+		if (this.mountPoints == 1) {
 			return [pos[0]+this.mountPoints[0],pos[1]+this.mountPoints[1]];
 		}
 		
 		// Else calculate the closest one
-		let closedFoundPoint=this.mountPoints[0];
+		let closedFoundPoint = this.mountPoints[0];
 		let closedFoundDistance = pointDistance(positionSum(this.mountPoints[0],pos),closeToPoint);
 		for(let mp of this.mountPoints) {
 			let tmpDistance = pointDistance(positionSum(mp,pos),closeToPoint);
-			if(tmpDistance < closedFoundDistance) {
-				closedFoundDistance=tmpDistance;
+			if (tmpDistance < closedFoundDistance) {
+				closedFoundDistance = tmpDistance;
 				closedFoundPoint = mp;
 			}
 		}
@@ -784,7 +774,7 @@ class BaseObject {
 			}
 		
 			// Get the connections this object has before we clean it
-			var connection_array=find_connections(this);
+			var connection_array = find_connections(this);
 			
 			// Do the cleaning
 			for(var i in this.selector_array) {
@@ -801,7 +791,7 @@ class BaseObject {
 	afterNameChange() {
 		// Do nothing. this method is supposed to be overriden by subclasses
 	}
-	afterMove(diff_x,diff_y) {
+	afterMove(diff_x, diff_y) {
 		// Override this		
 	}
 	attachEvent() {
@@ -816,32 +806,30 @@ class BaseObject {
 	set name_pos(value) {
 		//~ alert("name pos for "+this.id+" "+getStackTrace());
 		//~ do_global_log("updating name pos to "+value);
-		this._name_pos=Number(value);
-		if(this.primitive) {
+		this._name_pos = Number(value);
+		if (this.primitive) {
 			this.primitive.setAttribute("RotateName",value.toString());
 		}
 	}
 	
 	name_double_click() {
 		//~ alert("hahaha");
-
-		
 					
-		if(this.is_ghost) {
+		if (this.is_ghost) {
 			errorPopUp("You must rename a ghost by renaming the original.");
 			return;
 		}
-		let id=get_parent_id(this.id)
+		let id = get_parent_id(this.id)
 		equationEditor.open(id,".nameField");
 		event.stopPropagation();
 	}
 	
 	set_name(new_name) {
-			if(this.name_element==null) {
+			if (this.name_element == null) {
 				do_global_log("Element has no name");
 				return;
 			}
-			this.name_element.innerHTML=makePrimitiveName(new_name);
+			this.name_element.innerHTML = makePrimitiveName(new_name);
 	}
 	
 	attributeChangeHandler(attributeName, value) {
@@ -850,46 +838,46 @@ class BaseObject {
 }
 
 class OnePointer extends BaseObject{
-	constructor(id,type,pos,extras=false) {
+	constructor(id, type, pos, extras = false) {
 		super(id,type,pos);
-		this.id=id;
-		this.type=type;
+		this.id = id;
+		this.type = type;
 
-		this.element_array=[];
-		this.selector_array=[];
-		this.ghost_array=[];
-		this.group=null;
-		this.superClass="OnePointer";
+		this.element_array = [];
+		this.selector_array = [];
+		this.ghost_array = [];
+		this.group = null;
+		this.superClass = "OnePointer";
 		var element_array = this.getImage();
-		if(element_array==false) {
+		if (element_array == false) {
 			alert("getImage() must be overriden to add graphics to this object");
 		}
-		this.draggable=true; // Default value, change it afterwords if you want
-		this.name_centered=false;
-		this.pos=pos;
-		this.element_array=element_array;
+		this.draggable = true; // Default value, change it afterwords if you want
+		this.name_centered = false;
+		this.pos = pos;
+		this.element_array = element_array;
 		// Set selector element
 		this.selector_array = [];
 		
-		this.is_ghost=false; // Default value
+		this.is_ghost = false; // Default value
 		
-		if(extras!=false) {
+		if (extras != false) {
 			do_global_log("has extras");
-			if("is_ghost" in extras) {
-				this.is_ghost=extras["is_ghost"];
+			if ("is_ghost" in extras) {
+				this.is_ghost = extras["is_ghost"];
 			}
 		}
 		do_global_log("is ghost "+this.is_ghost);
 		
 		for(var key in element_array) {
-			if(element_array[key].getAttribute("class")=="selector") {
+			if (element_array[key].getAttribute("class") == "selector") {
 				this.selector_array.push(element_array[key]);
 			}
 		}
 		
-		if(!this.is_ghost) {
+		if (!this.is_ghost) {
 			for(var key in element_array) {
-				if(element_array[key].getAttribute("class")=="ghost") {
+				if (element_array[key].getAttribute("class") == "ghost") {
 					element_array[key].setAttribute("visibility","hidden");
 				}
 			}
@@ -899,17 +887,17 @@ class OnePointer extends BaseObject{
 		// Set name element
 		this.name_element = null;
 		for(var key in element_array) {
-			if(element_array[key].getAttribute("class")=="name_element") {
+			if (element_array[key].getAttribute("class") == "name_element") {
 				this.name_element = element_array[key];
 				$(this.name_element).dblclick((event) => {
 					this.name_double_click();
 				});
 			}
 		}
-		this.group=svg_group(this.element_array);
+		this.group = svg_group(this.element_array);
 		this.group.setAttribute("class","testgroup");
 		this.group.setAttribute("node_id",id);
-		object_array[id]=this;
+		object_array[id] = this;
 		this.update();
 
 		
@@ -920,7 +908,7 @@ class OnePointer extends BaseObject{
 			});
 		}
 		$(this.group).dblclick((event) => {
-			if(!$(event.target).hasClass("name_element")) {
+			if (!$(event.target).hasClass("name_element")) {
 				this.double_click(this.id);
 			}
 		});
@@ -933,14 +921,14 @@ class OnePointer extends BaseObject{
 		
 		// Handled for when attribute changes in corresponding SimpleNode
 		this.changeAttributeHandler = (attribute,value) => {
-			if(attribute=="name") {
+			if (attribute == "name") {
 				this.set_name(value);
 			}
 		}
 	}
 	
 	set_pos(pos) {
-		if(pos[0]==this.pos[0] && pos[1]==this.pos[1]) {
+		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
 			return;
@@ -958,13 +946,13 @@ class OnePointer extends BaseObject{
 	}
 	
 	select() {
-		this.selected=true;
+		this.selected = true;
 		for(var i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility","visible");
 		}
 	}
 	unselect() {
-		this.selected=false;
+		this.selected = false;
 		for(var i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility","hidden");
 		}
@@ -1007,21 +995,21 @@ const anchorTypeEnum = {
 class AnchorPoint extends OnePointer{
 	constructor(id,type,pos,anchorType) {
 		super(id,type,pos);
-		this.anchorType=anchorType;
+		this.anchorType = anchorType;
 	}
 	isAttached() {
 		let parentId = get_parent_id(this.id);
 		let parent = get_object(parentId);
 		switch(this.anchorType) {
 			case anchorTypeEnum.start:
-				if(parent.start_attach) {
+				if (parent.start_attach) {
 					return true;
 				} else {
 					return false;
 				}
 			break;
 			case anchorTypeEnum.end:
-				if(parent.end_attach) {
+				if (parent.end_attach) {
 					return true;
 				} else {
 					return false;
@@ -1033,16 +1021,16 @@ class AnchorPoint extends OnePointer{
 		}
 	}
 	setAnchorType(anchorType) {
-		this.anchorType=anchorType;
+		this.anchorType = anchorType;
 	}
 	getAnchorType() {
 		return this.anchorType;
 	}
 	setVisible(newVisible) {
-		if(newVisible) {
+		if (newVisible) {
 			for(let element of this.element_array) {
 				// Show all elements except for selectors
-				if(element.getAttribute("class")!="selector") {
+				if (element.getAttribute("class") != "selector") {
 					element.setAttribute("visibility","visible");
 				}
 			}
@@ -1066,7 +1054,7 @@ class AnchorPoint extends OnePointer{
 		this.afterUpdatePosition();
 	}
 	unselect() {
-		this.selected=false;
+		this.selected = false;
 		super.unselect();
 	}
 	getImage() {
@@ -1081,17 +1069,17 @@ class AnchorPoint extends OnePointer{
 		let parentId = get_parent_id(this.id);
 		let parent = get_object(parentId);
 		
-		if(parent.type=="link") {
+		if (parent.type == "link") {
 			switch(this.anchorType) {
 				case anchorTypeEnum.start:
 				{
-					let oldPos=parent.b1_anchor.get_pos();
+					let oldPos = parent.b1_anchor.get_pos();
 					parent.b1_anchor.set_pos([oldPos[0]+diff_x,oldPos[1]+diff_y]);
 				}
 				break;
 				case anchorTypeEnum.end:
 				{
-					let oldPos=parent.b2_anchor.get_pos();
+					let oldPos = parent.b2_anchor.get_pos();
 					parent.b2_anchor.set_pos([oldPos[0]+diff_x,oldPos[1]+diff_y]);
 				}
 				break;			
@@ -1101,16 +1089,16 @@ class AnchorPoint extends OnePointer{
 }
 
 class TextVisual extends BasePrimitive{
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
-		this.name_centered=true;
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
+		this.name_centered = true;
 		update_name_pos(id);
 		this.setSelectionSizeToText();
 	}
 	setSelectionSizeToText() {
-		var boundingRect=this.name_element.getBoundingClientRect();
-		var rect=this.selector_array[0];
-		var margin=10;
+		var boundingRect = this.name_element.getBoundingClientRect();
+		var rect = this.selector_array[0];
+		var margin = 10;
 		rect.setAttribute("width",boundingRect.width+margin*2);
 		rect.setAttribute("height",boundingRect.height+margin*2);
 		rect.setAttribute("x",-boundingRect.width/2-margin);
@@ -1162,8 +1150,8 @@ function sign(value) {
 }
 
 class StockVisual extends BasePrimitive{
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
 	}
 
 	getSize() {
@@ -1201,9 +1189,9 @@ class StockVisual extends BasePrimitive{
 }
 
 class NumberboxVisual extends BasePrimitive{
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
-		this.name_centered=true;
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
+		this.name_centered = true;
 		update_name_pos(id);
 		this.setSelectionSizeToText();
 		
@@ -1213,11 +1201,11 @@ class NumberboxVisual extends BasePrimitive{
 		RunResults.subscribeRun(this.runHandler);
 	}
 	setSelectionSizeToText() {
-		var boundingRect=this.name_element.getBoundingClientRect();
-		var elementRect=this.element_array[0];
-		var selectorRect=this.selector_array[0];
-		var marginX=10;
-		var marginY=2;
+		var boundingRect = this.name_element.getBoundingClientRect();
+		var elementRect = this.element_array[0];
+		var selectorRect = this.selector_array[0];
+		var marginX = 10;
+		var marginY = 2;
 		for(let rect of [elementRect,selectorRect]) {
 			rect.setAttribute("width",boundingRect.width+marginX*2);
 			rect.setAttribute("height",boundingRect.height+marginY*2);
@@ -1226,7 +1214,7 @@ class NumberboxVisual extends BasePrimitive{
 		}
 	}
 	render() {
-		if(this.targetPrimitive == null) {
+		if (this.targetPrimitive == null) {
 			this.name_element.innerHTML = "-";
 			this.setSelectionSizeToText();
 			return;		
@@ -1235,12 +1223,12 @@ class NumberboxVisual extends BasePrimitive{
 		let primitiveName = "";
 		let lastValue = RunResults.getLastValue(this.targetPrimitive);
 		let imPrimtiive = findID(this.targetPrimitive);
-		if(imPrimtiive) {
+		if (imPrimtiive) {
 			primitiveName += makePrimitiveName(getName(imPrimtiive));
 		} else {
 			primitiveName += "Unkown primitive";
 		}
-		if(lastValue) {
+		if (lastValue) {
 			valueString += stocsd_format(lastValue,3);
 		} else {
 			valueString += "?";
@@ -1276,8 +1264,8 @@ class NumberboxVisual extends BasePrimitive{
 }
 
 class VariableVisual extends BasePrimitive{
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
 	}	
 
 	getRadius() {
@@ -1308,9 +1296,9 @@ class VariableVisual extends BasePrimitive{
 }
 
 class ConverterVisual extends BasePrimitive{
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
-		this.mountPoints=[[-20,0],[20,0],[0,-15],[0,15]];
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
+		this.mountPoints = [[-20,0],[20,0],[0,-15],[0,15]];
 	}
 	getImage() {
 		return [
@@ -1336,7 +1324,7 @@ class ConverterVisual extends BasePrimitive{
 			const ySign = sign(yTarget - yCenter); 	// -1 if target above hexagon and 1 if target below hexagon 
 			xEdgeRel = ySign*safeDivision(15, targetSlope);
 			yEdgeRel = ySign*15; 
-		} else if(0 < targetSlope && targetSlope < hexSlope){
+		} else if (0 < targetSlope && targetSlope < hexSlope){
 			const xSign = sign(xTarget - xCenter); // -1 if target left of hexagon and 1 if target right of hexagon
 			xEdgeRel = xSign*safeDivision(30, (3/2)+targetSlope);
 			yEdgeRel = xEdgeRel*targetSlope;
@@ -1355,7 +1343,7 @@ class ConverterVisual extends BasePrimitive{
 		do_global_log(this.primitive);
 		let linkedPrimitives = getLinkedPrimitives(this.primitive);
 		do_global_log(linkedPrimitives);
-		if(linkedPrimitives.length > 0) {
+		if (linkedPrimitives.length > 0) {
 			do_global_log("choose yes");
 			this.primitive.value.setAttribute("Source", linkedPrimitives[0].id);
 		} else {
@@ -1373,27 +1361,27 @@ class ConverterVisual extends BasePrimitive{
 }
 
 class TwoPointer extends BaseObject{
-	constructor(id,type,pos) {
-		super(id,type,pos);
-		this.id=id;
-		this.type=type;
-		this.selected=false;
-		this.start_anchor=null;
-		this.end_anchor=null;
-		this.startx=pos[0];
-		this.starty=pos[1];
-		this.endx=pos[0];
-		this.endy=pos[1];
-		this.length=0;
-		this.superClass="TwoPointer";
-		connection_array[this.id]=this;
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.id = id;
+		this.type = type;
+		this.selected = false;
+		this.start_anchor = null;
+		this.end_anchor = null;
+		this.startx = pos[0];
+		this.starty = pos[1];
+		this.endx = pos[0];
+		this.endy = pos[1];
+		this.length = 0;
+		this.superClass = "TwoPointer";
+		connection_array[this.id] = this;
 		
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event){
-			var node_id=this.getAttribute("node_id");
+			var node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id,event);
 		});
-		last_connection=this;
+		last_connection = this;
 		this.update();
 	}
 	
@@ -1405,11 +1393,11 @@ class TwoPointer extends BaseObject{
 	}
 	
 	get_pos() {
-		return [(this.startx+this.endx)/2,(this.starty+this.endy)/2];
+		return [(this.startx + this.endx)/2,(this.starty + this.endy)/2];
 	}
 	
 	getMinX() {
-		if(this.startx<this.endx) {
+		if (this.startx < this.endx) {
 			return this.startx;
 		} else {
 			return this.endx;
@@ -1417,7 +1405,7 @@ class TwoPointer extends BaseObject{
 	}
 
 	getMinY() {
-		if(this.starty<this.endy) {
+		if (this.starty < this.endy) {
 			return this.starty;
 		} else {
 			return this.endy;
@@ -1425,21 +1413,21 @@ class TwoPointer extends BaseObject{
 	}
 	
 	getWidth() {
-		return Math.abs(this.startx-this.endx);
+		return Math.abs(this.startx - this.endx);
 	}
 
 	getHeight() {
-		return Math.abs(this.starty-this.endy);
+		return Math.abs(this.starty - this.endy);
 	}
 
 	unselect() {
-		this.selected=false;
+		this.selected = false;
 		for(var anchor of get_anchors(this.id)) {
 			anchor.setVisible(false);
 		}
 	}
 	select() {
-		this.selected=true;
+		this.selected = true;
 		for(var anchor of get_anchors(this.id)) {
 			anchor.select();
 			anchor.setVisible(true);
@@ -1454,35 +1442,35 @@ class TwoPointer extends BaseObject{
 	
 	update() {
 		// Get start position from anchor
-		if(this.start_anchor!=null) {
-				if(this.start_anchor.get_pos) {
-					var start_pos=this.start_anchor.get_pos();
-					this.startx=start_pos[0];
-					this.starty=start_pos[1];
+		if (this.start_anchor != null) {
+				if (this.start_anchor.get_pos) {
+					var start_pos = this.start_anchor.get_pos();
+					this.startx = start_pos[0];
+					this.starty = start_pos[1];
 				} else {
 					do_global_log("No start position");
 				}
 			}
 			
 			// Get end position from anchor
-			if(this.end_anchor!=null) {
-				if(this.end_anchor.get_pos) {
-					var end_pos=this.end_anchor.get_pos();
-					this.endx=end_pos[0];
-					this.endy=end_pos[1];
+			if (this.end_anchor != null) {
+				if (this.end_anchor.get_pos) {
+					var end_pos = this.end_anchor.get_pos();
+					this.endx = end_pos[0];
+					this.endy = end_pos[1];
 				} else {
 					do_global_log("No end position");
 				}
 			}
-			let xdiff = (this.endx-this.startx);
-			let ydiff = (this.endy-this.starty);
+			let xdiff = (this.endx - this.startx);
+			let ydiff = (this.endy - this.starty);
 			
 			// Force minimum size on TwoPointers
 			const minWidth = 10;
 			const minHeight = 10;
-			if(this.getWidth() < minWidth && this.getHeight() < minHeight) {
-				this.endx=this.startx+minWidth;
-				this.endy=this.starty+minHeight;
+			if (this.getWidth() < minWidth && this.getHeight() < minHeight) {
+				this.endx = this.startx + minWidth;
+				this.endy = this.starty + minHeight;
 			}
 			
 			this.length = Math.sqrt(xdiff*xdiff+ydiff*ydiff);
@@ -1511,8 +1499,8 @@ class TwoPointer extends BaseObject{
 }
 
 class BaseConnection extends TwoPointer{
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos) {
+		super(id, type, pos);
 		this._start_attach = null;
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
@@ -1523,7 +1511,7 @@ class BaseConnection extends TwoPointer{
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
 		}
-		last_connection=this;
+		last_connection = this;
 	}
 	set start_attach(new_start_attach) {
 		// Trigger the attach event on the old attachment primitives
@@ -1533,7 +1521,7 @@ class BaseConnection extends TwoPointer{
 		this._start_attach = new_start_attach;
 		
 		let sourcePrimitive = null;
-		if(this._start_attach!=null) {
+		if (this._start_attach != null) {
 			sourcePrimitive = findID(this._start_attach.id);
 		}
 		setSource(this.primitive, sourcePrimitive);
@@ -1552,7 +1540,7 @@ class BaseConnection extends TwoPointer{
 		// Update the attachment primitive
 		this._end_attach = new_end_attach;
 		let targetPrimitive = null;
-		if(this._end_attach!=null) {
+		if (this._end_attach != null) {
 			targetPrimitive = findID(this._end_attach.id);
 		}
 		setTarget(this.primitive, targetPrimitive);
@@ -1565,10 +1553,10 @@ class BaseConnection extends TwoPointer{
 	}
 	triggerAttachEvents() {
 		// We must always trigger both start and end, since a change in the start might affect the logics of the primitive attach at the end of a link or flow
-		if(this._start_attach!=null) {
+		if (this._start_attach != null) {
 			this._start_attach.attachEvent();
 		}
-		if(this._end_attach!=null) {
+		if (this._end_attach != null) {
 			this._end_attach.attachEvent();
 		}
 	}
@@ -1582,38 +1570,38 @@ class BaseConnection extends TwoPointer{
 	linearInterpolation(progress) {
 		// Find a point at the progress place along a line between start and end
 		// progress is between 0 and 1
-		if(this.start_attach!=null) {
+		if (this.start_attach != null) {
 			[this.startx, this.starty] = this.start_anchor.get_pos();
 		}
-		if(this.end_attach!=null) {
+		if (this.end_attach != null) {
 			[this.endx, this.endy] = this.end_anchor.get_pos();
 		}
-		let start=[this.startx,this.starty];
-		let end=[this.endx,this.endy];
-		let result=[start[0]*(1-progress)+end[0]*progress,start[1]*(1-progress)+end[1]*progress];
+		let start = [this.startx, this.starty];
+		let end = [this.endx, this.endy];
+		let result = [start[0]*(1-progress)+end[0]*progress,start[1]*(1-progress)+end[1]*progress];
 		return result;
 	}
 }
 
 class FlowVisual extends BaseConnection {
-	constructor(id,type,pos) {
-		super(id,type,pos);
-		this.mountPoints=[[-15,15],[15,15],[0,30],[0,-10]];
-		this.rotatePosList=[[0,48],[25,18],[0,-30],[-25,18]];
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
+		this.rotatePosList = [[0,48],[25,18],[0,-30],[-25,18]];
 	}
 	
 	updateLength() {
 		// The rotation of the arrowhead is upwards until rotated
-		const halfWidth=1.5;
+		const halfWidth = 1.5;
 		const headHalfWidth = 7;
 		var newPath = `M0,0 ${headHalfWidth},10 ${halfWidth},10 ${halfWidth},${this.length} -${halfWidth},${this.length} -${halfWidth},10 -${headHalfWidth},10 Z`;
 		this.arrowPath.setAttribute("d",newPath);
 	}
 	
 	makeGraphics() {
-		this.arrowPath=svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
 		this.updateLength();
-		this.arrowhead=svg_group([this.arrowPath]);
+		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 
 		this.name_element = svg_text(0,0,"variable","name_element");
@@ -1627,7 +1615,7 @@ class FlowVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group=svg_group([this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.arrowhead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
@@ -1644,22 +1632,22 @@ class FlowVisual extends BaseConnection {
 		
 		let connectionCenter = this.get_pos();
 		
-		if(this.start_attach!=null && this.start_anchor!=null) {
-			if(this.start_attach.get_pos) {
+		if (this.start_attach != null && this.start_anchor != null) {
+			if (this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
 				let newPos = this.start_attach.getMountPos(connectionCenter);
 				// If start point have moved reset b1
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
 				}
 			}
 		}
-		if(this.end_attach!=null && this.end_anchor!=null) {
-			if(this.end_attach.get_pos) {
+		if (this.end_attach != null && this.end_anchor != null) {
+			if (this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
 				let newPos = this.end_attach.getMountPos(connectionCenter);
 				// If end point have moved reset b2
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
 				}
 			}
@@ -1668,9 +1656,9 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let xdiff=this.endx-this.startx;
-		let ydiff=this.endy-this.starty;
-		let angle=Math.atan2(xdiff,-ydiff)*(180/Math.PI);
+		let xdiff = this.endx-this.startx;
+		let ydiff = this.endy-this.starty;
+		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
 		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
 		
 		let auxiliaryPos = [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
@@ -1684,22 +1672,22 @@ class FlowVisual extends BaseConnection {
 }
 
 class RiverVisual extends BaseConnection {
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos) {
+		super(id, type, pos);
 		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
 		this.rotatePosList = [[0,48],[25,18],[0,-30],[-25,18]];
 		this.anchorPoints = [];
 		this.flowcore2;
 	}
 
-	createAnchorPoint(x,y) {
+	createAnchorPoint(x, y) {
 		let newAnchor = new AnchorPoint(this.id+".point"+this.anchorPoints.length,"dummy_anchor",[x, y],anchorTypeEnum.bezier1);
 		this.anchorPoints.push(newAnchor);
 	}
 	
 	updateLength() {
 		// The rotation of the arrowhead is upwards until rotated
-		const halfWidth=1.5;
+		const halfWidth = 1.5;
 		const headHalfWidth = 7;
 		var newPath = `M0,0 ${headHalfWidth},10 ${halfWidth},10 ${halfWidth},${this.length} -${halfWidth},${this.length} -${halfWidth},10 -${headHalfWidth},10 Z`;
 		this.arrowPath.setAttribute("d",newPath);
@@ -1741,22 +1729,22 @@ class RiverVisual extends BaseConnection {
 		
 		let connectionCenter = this.get_pos();
 		
-		if(this.start_attach!=null && this.start_anchor!=null) {
-			if(this.start_attach.get_pos) {
+		if (this.start_attach != null && this.start_anchor != null) {
+			if (this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
 				let newPos = this.start_attach.getMountPos(connectionCenter);
 				// If start point have moved reset b1
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
 				}
 			}
 		}
-		if(this.end_attach!=null && this.end_anchor!=null) {
-			if(this.end_attach.get_pos) {
+		if (this.end_attach != null && this.end_anchor != null) {
+			if (this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
 				let newPos = this.end_attach.getMountPos(connectionCenter);
 				// If end point have moved reset b2
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
 				}
 			}
@@ -1765,9 +1753,9 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let xdiff=this.endx-this.startx;
-		let ydiff=this.endy-this.starty;
-		let angle=Math.atan2(xdiff,-ydiff)*(180/Math.PI);
+		let xdiff = this.endx-this.startx;
+		let ydiff = this.endy-this.starty;
+		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
 		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
 		
 		let auxiliaryPos = [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
@@ -1789,27 +1777,25 @@ function getStackTrace() {
 	}
 }
 
-
-
 class RectangleVisual extends TwoPointer {
 	makeGraphics() {
-		var dash="";
-		this.element=svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",dash); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
-		this.coordRect=new CoordRect();
-		this.coordRect.element=this.element;
-		this.group=svg_group([this.element]);
+		var dash = "";
+		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",dash); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);
-		var element_array=[this.element];
+		var element_array = [this.element];
 		for(var key in element_array) {
 			element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1=this.startx;
-		this.coordRect.y1=this.starty;
-		this.coordRect.x2=this.endx;
-		this.coordRect.y2=this.endy;
+		this.coordRect.x1 = this.startx;
+		this.coordRect.y1 = this.starty;
+		this.coordRect.x2 = this.endx;
+		this.coordRect.y2 = this.endy;
 		this.coordRect.update();
 	}
 }
@@ -1845,21 +1831,21 @@ class TableVisual extends htmlTwoPointer {
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getEnd(),this.dialog.getStep());
 		
 		// Make header
-		html+="<td>"+formatFunction("Time")+"</td>";
+		html += "<td>"+formatFunction("Time")+"</td>";
 		for(let i in namesToDisplay) {
-			html+="<td>"+makePrimitiveName(namesToDisplay[i])+"</td>";
+			html += "<td>"+makePrimitiveName(namesToDisplay[i])+"</td>";
 		}
 		// Make content
-		html+="</thead><tbody>";
+		html += "</thead><tbody>";
 		for(let row_index in results) {
-			html+="<tr>";
+			html += "<tr>";
 			for(let column_index in ["Time"].concat(namesToDisplay)) {
 				// We must get the data in column_index+1 since column 1 is reserved for time
-				html+="<td>"+stocsd_format(results[row_index][column_index],6)+"</td>";
+				html += "<td>"+stocsd_format(results[row_index][column_index],6)+"</td>";
 			}
-			html+="</tr>";
+			html += "</tr>";
 		}
-		html+="</tbody></table>";
+		html += "</tbody></table>";
 		this.updateHTML(html);
 	}
 	
@@ -1868,7 +1854,7 @@ class TableVisual extends htmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element=svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",""); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
+		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",""); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
 		this.htmlElement = svg_foreignobject(this.startx,this.starty,200,200,"table not renderd yet");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
@@ -1881,14 +1867,14 @@ class TableVisual extends htmlTwoPointer {
 			this.dialog.show();
 		});
 		
-		this.coordRect=new CoordRect();
-		this.coordRect.element=this.element;
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
 		
-		this.group=svg_group([this.element]);
+		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);	
 		
-		var element_array=[this.element];
-		var element_array=[this.htmlElement.scrollDiv
+		var element_array = [this.element];
+		var element_array = [this.htmlElement.scrollDiv
 ,this.element];
 		for(var key in element_array) {
 			element_array[key].setAttribute("node_id",this.id);
@@ -1896,10 +1882,10 @@ class TableVisual extends htmlTwoPointer {
 	}
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1=this.startx;
-		this.coordRect.y1=this.starty;
-		this.coordRect.x2=this.endx;
-		this.coordRect.y2=this.endy;
+		this.coordRect.x1 = this.startx;
+		this.coordRect.y1 = this.starty;
+		this.coordRect.x2 = this.endx;
+		this.coordRect.y2 = this.endy;
 		this.coordRect.update();
 		
 		this.htmlElement.setAttribute("x",this.getMinX());
@@ -1927,9 +1913,9 @@ class htmlOverlayTwoPointer extends TwoPointer {
 	makeGraphics() {
 		this.targetBorder = 4;
 		this.targetElement = document.createElement("div");
-		this.targetElement.style.position="absolute";
-		this.targetElement.style.backgroundColor="white";
-		this.targetElement.style.zIndex=100;
+		this.targetElement.style.position = "absolute";
+		this.targetElement.style.backgroundColor = "white";
+		this.targetElement.style.zIndex = 100;
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
@@ -1944,15 +1930,15 @@ class htmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 		
-		this.element=svg_rect(this.startx,this.starty,this.endx,this.endy,"black","white","element","");
+		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","white","element","");
 
-		this.coordRect=new CoordRect();
-		this.coordRect.element=this.element;
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
 		
-		this.group=svg_group([this.element]);
+		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);	
 		
-		var element_array=[this.element];
+		var element_array = [this.element];
 		for(var key in element_array) {
 			element_array[key].setAttribute("node_id",this.id);
 		}
@@ -1960,20 +1946,20 @@ class htmlOverlayTwoPointer extends TwoPointer {
 	
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1=this.startx;
-		this.coordRect.y1=this.starty;
-		this.coordRect.x2=this.endx;
-		this.coordRect.y2=this.endy;
+		this.coordRect.x1 = this.startx;
+		this.coordRect.y1 = this.starty;
+		this.coordRect.x2 = this.endx;
+		this.coordRect.y2 = this.endy;
 		this.coordRect.update();
 		
-		let svgoffset=$("#svgplane").offset();
+		let svgoffset = $("#svgplane").offset();
 		
 		
-		this.targetElement.style.left=(this.getMinX()+this.targetBorder+1)+"px";
-		this.targetElement.style.top=(this.getMinY()+this.targetBorder+1)+"px";
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
 		
-		this.targetElement.style.width=(this.getWidth()-(2*this.targetBorder))+"px";
-		this.targetElement.style.height=(this.getHeight()-(2*this.targetBorder))+"px";
+		this.targetElement.style.width = (this.getWidth()-(2*this.targetBorder))+"px";
+		this.targetElement.style.height = (this.getHeight()-(2*this.targetBorder))+"px";
 	}
 	
 	clean() {
@@ -1983,8 +1969,8 @@ class htmlOverlayTwoPointer extends TwoPointer {
 }
 
 class DiagramVisual extends htmlOverlayTwoPointer {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
+	constructor(id, type, pos) {		
+		super(id, type, pos);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -2001,11 +1987,11 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 	render() {
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
-		if(results.length==0) {
+		if (results.length == 0) {
 			// We can't render anything with no data
 			
 			return;
@@ -2019,10 +2005,10 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 			for(let row of results) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
-				if(value < this.minValue) {
+				if (value < this.minValue) {
 					this.minValue = value;
 				}
-				if(value > this.maxValue) {
+				if (value > this.maxValue) {
 					this.maxValue = value;
 				}
 				serie.push([time,value]);
@@ -2037,7 +2023,7 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 		this.serieArray = [];
 		
 		// Make time series
-		for(let i=1;i<=IdsToDisplay.length;i++) {
+		for(let i = 1; i <= IdsToDisplay.length; i++) {
 			this.serieArray.push(makeSerie(i));
 		}
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
@@ -2062,12 +2048,12 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 		
 	}
 	updateChart() {
-		if(this.serieArray==null) {
+		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "No data. Run to create data!";
 			return;
 		}
-		if(this.serieArray.length == 0) {
+		if (this.serieArray.length == 0) {
 			// We have no series to display
 			this.chartDiv.innerHTML = "At least one primitive must be selected!";
 			return;
@@ -2105,10 +2091,10 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 	updateGraphics() {
 		super.updateGraphics();
 		
-		let width=$(this.targetElement).width()-20;
-		let height=$(this.targetElement).height()-20;
-		this.chartDiv.style.width=width+"px";
-		this.chartDiv.style.height=height+"px";
+		let width = $(this.targetElement).width()-20;
+		let height = $(this.targetElement).height()-20;
+		this.chartDiv.style.width = width+"px";
+		this.chartDiv.style.height = height+"px";
 		
 		this.updateChart();
 	}
@@ -2178,7 +2164,7 @@ class XyPlotVisual extends DiagramVisual {
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
-		if(results.length==0) {
+		if (results.length == 0) {
 			// We can't render anything with no data
 			
 			return;
@@ -2190,10 +2176,10 @@ class XyPlotVisual extends DiagramVisual {
 		this.minYValue = 0;
 		this.maxYValue = 0;
 		
-		this.serieXName="X series";
-		this.serieYName="Y series";
+		this.serieXName = "X series";
+		this.serieYName = "Y series";
 		
-		if(IdsToDisplay.length != 2) {
+		if (IdsToDisplay.length != 2) {
 			// We have no series to display
 			this.chartDiv.innerHTML = "Exactly two primitives must be selected!";
 			return;
@@ -2207,16 +2193,16 @@ class XyPlotVisual extends DiagramVisual {
 			for(let row of results) {
 				let x = Number(row[1])
 				let y = Number(row[2])
-				if(x < this.minXValue) {
+				if (x < this.minXValue) {
 					this.minXValue = x;
 				}
-				if(x > this.maxXValue) {
+				if (x > this.maxXValue) {
 					this.maxXValue = x;
 				}
-				if(y < this.minValue) {
+				if (y < this.minValue) {
 					this.minYValue = y;
 				}
-				if(y > this.maxYValue) {
+				if (y > this.maxYValue) {
 					this.maxYValue = y;
 				}
 				serie.push([x,y]);
@@ -2255,7 +2241,7 @@ class XyPlotVisual extends DiagramVisual {
 	}
 	
 	updateChart() {
-		if(this.serieArray==null) {
+		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "No data. Run to create data!";
 			return;
@@ -2291,13 +2277,13 @@ class XyPlotVisual extends DiagramVisual {
 
 class LineVisual extends TwoPointer {
 	makeGraphics() {
-		var dash="";
-		this.element=svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
-		this.coordRect=new CoordRect();
-		this.coordRect.element=this.element;
-		this.group=svg_group([this.element]);
+		var dash = "";
+		this.element = svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);
-		var element_array=[this.element];
+		var element_array = [this.element];
 		for(var key in element_array) {
 			element_array[key].setAttribute("node_id",this.id);
 		}
@@ -2314,8 +2300,8 @@ class LinkVisual extends BaseConnection{
 		super(id,type,pos);
 	}
 	unselect() {
-		this.selected=false;
-		if(hasSelectedChildren(this.id)) {
+		this.selected = false;
+		if (hasSelectedChildren(this.id)) {
 			for(var i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke","black");
 			}	
@@ -2323,7 +2309,7 @@ class LinkVisual extends BaseConnection{
 			let children = getChildren(this.id);
 			for(let id in children) {
 				let object = get_object(id);
-				if('setVisible' in object) {
+				if ('setVisible' in object) {
 					object.setVisible(false);
 				}
 			}
@@ -2334,11 +2320,11 @@ class LinkVisual extends BaseConnection{
 			element.setAttribute("visibility","hidden");
 		}
 	}
-	select(selectChildren=true) {		
+	select(selectChildren = true) {		
 		let children = getChildren(this.id);
 		for(let id in children) {
 			let object = get_object(id);
-			if('setVisible' in object) {
+			if ('setVisible' in object) {
 				object.setVisible(true);
 			}
 		}
@@ -2346,7 +2332,7 @@ class LinkVisual extends BaseConnection{
 			this.highlight_on_select[i].setAttribute("stroke","red");
 		}
 		
-		if(selectChildren) {
+		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
 			for(var anchor of get_anchors(this.id)) {
 				anchor.select();
@@ -2360,20 +2346,20 @@ class LinkVisual extends BaseConnection{
 		}
 	}
 	updateClickArea() {
-		this.click_area.x1=this.curve.x1;
-		this.click_area.y1=this.curve.y1;
-		this.click_area.x2=this.curve.x2;
-		this.click_area.y2=this.curve.y2;
-		this.click_area.x3=this.curve.x3;
-		this.click_area.y3=this.curve.y3;
-		this.click_area.x4=this.curve.x4;
-		this.click_area.y4=this.curve.y4;
+		this.click_area.x1 = this.curve.x1;
+		this.click_area.y1 = this.curve.y1;
+		this.click_area.x2 = this.curve.x2;
+		this.click_area.y2 = this.curve.y2;
+		this.click_area.x3 = this.curve.x3;
+		this.click_area.y3 = this.curve.y3;
+		this.click_area.x4 = this.curve.x4;
+		this.click_area.y4 = this.curve.y4;
 		this.click_area.update();
 	}
 	makeGraphics() {
-		const headHalfWidth=2;
-		this.arrowPath=svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
-		this.arrowhead=svg_group([this.arrowPath]);
+		const headHalfWidth = 2;
+		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
+		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all","stroke":"none","stroke-width":"10"}); 
 		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black","stroke-width":"1"});
@@ -2381,20 +2367,18 @@ class LinkVisual extends BaseConnection{
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group=svg_group([this.click_area,this.curve,this.arrowhead]);
+		this.group = svg_group([this.click_area,this.curve,this.arrowhead]);
 		this.group.setAttribute("node_id",this.id);
 		
 		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
-		
 		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
-
 
 		this.b1_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
 		this.b2_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
 		
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
-		this.element_array=this.element_array.concat([this.b1_line,this.b2_line]);
+		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	resetBezierPoints() {
 		this.resetBezier1();
@@ -2416,21 +2400,21 @@ class LinkVisual extends BaseConnection{
 		
 		switch(anchorType) {
 		case anchorTypeEnum.start:
-			this.curve.x1=startpos[0];
-			this.curve.y1=startpos[1];
+			this.curve.x1 = startpos[0];
+			this.curve.y1 = startpos[1];
 			this.curve.update();
 			
-			this.b1_line.setAttribute("x1",startpos[0]);
-			this.b1_line.setAttribute("y1",startpos[1]);
+			this.b1_line.setAttribute("x1", startpos[0]);
+			this.b1_line.setAttribute("y1", startpos[1]);
 		break;
 		case anchorTypeEnum.end:
-			this.curve.x4=endpos[0];
-			this.curve.y4=endpos[1];
+			this.curve.x4 = endpos[0];
+			this.curve.y4 = endpos[1];
 			this.curve.update();
 			
 			
-			this.b2_line.setAttribute("x1",endpos[0]);
-			this.b2_line.setAttribute("y1",endpos[1]);
+			this.b2_line.setAttribute("x1", endpos[0]);
+			this.b2_line.setAttribute("y1", endpos[1]);
 		break;
 		case anchorTypeEnum.bezier1:
 		{
@@ -2466,14 +2450,14 @@ class LinkVisual extends BaseConnection{
 		// The arrow is pointed from the second bezier point to the end
 		let b2pos = this.b2_anchor.get_pos();
 		
-		let xdiff=this.endx-b2pos[0];
-		let ydiff=this.endy-b2pos[1];
-		let angle=Math.atan2(xdiff,-ydiff)*(180/Math.PI);
+		let xdiff = this.endx-b2pos[0];
+		let ydiff = this.endy-b2pos[1];
+		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
 		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
 		
 		// Update end position so that we get the drawing effect when link is created
-		this.curve.x4=this.endx;
-		this.curve.y4=this.endy;
+		this.curve.x4 = this.endx;
+		this.curve.y4 = this.endy;
 		this.curve.update();
 	}
 	finishCreate() {
@@ -2492,22 +2476,22 @@ class LinkVisual extends BaseConnection{
 		//console.log(this.b1_anchor.get_pos());
 		//let connectionCenter = this.b1_anchor.get_pos();
 		
-		if(this.start_attach!=null && this.start_anchor!=null) {
-			if(this.start_attach.get_pos) {
+		if (this.start_attach != null && this.start_anchor != null) {
+			if (this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
 				let newPos = this.start_attach.getMountPos(this.b1_anchor.get_pos());
 				// If start point have moved reset b1
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
 				}
 			}
 		}
-		if(this.end_attach!=null && this.end_anchor!=null) {
-			if(this.end_attach.get_pos) {
+		if (this.end_attach != null && this.end_anchor != null) {
+			if (this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
 				let newPos = this.end_attach.getMountPos(this.b2_anchor.get_pos());
 				// If end point have moved reset b2
-				if(oldPos[0]!=newPos[0] || oldPos[1] != newPos[1]) {
+				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
 				}
 			}
@@ -2573,8 +2557,8 @@ class TextTool extends BaseTool {
 
 class NumberboxTool extends BaseTool {
 	static init() {
-		this.targetPrimitive=null;
-		this.numberboxable_primitives=["stock","variable","converter","flow"];
+		this.targetPrimitive = null;
+		this.numberboxable_primitives = ["stock","variable","converter","flow"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
@@ -2589,28 +2573,28 @@ class NumberboxTool extends BaseTool {
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
-		var selected_ids=Object.keys(get_selected_root_objects());
-		if(selected_ids.length!=1) {
+		var selected_ids = Object.keys(get_selected_root_objects());
+		if (selected_ids.length != 1) {
 			xAlert("You must first select exactly one primitive to watch");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		
-		var selected_object=get_object(selected_ids[0]);
-		if(this.numberboxable_primitives.indexOf(selected_object.type)==-1) {
+		var selected_object = get_object(selected_ids[0]);
+		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
 			xAlert("This primitive is not watchable");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		this.targetPrimitive=selected_ids[0];
+		this.targetPrimitive = selected_ids[0];
 	}
 }
 NumberboxTool.init();
 
 class DeleteTool extends BaseTool {
 	static enterTool() {
-		var selected_ids=Object.keys(get_selected_root_objects());
-		if(selected_ids.length==0) {
+		var selected_ids = Object.keys(get_selected_root_objects());
+		if (selected_ids.length == 0) {
 			xAlert("You must select at least one primitive to delete");
 			ToolBox.setTool("mouse");
 			return;
@@ -2664,13 +2648,13 @@ class RotateNameTool extends BaseTool {
 
 class GhostTool extends BaseTool {
 	static init() {
-		this.id_to_ghost=null;
-		this.ghostable_primitives=["stock","variable","converter"];
+		this.id_to_ghost = null;
+		this.ghostable_primitives = ["stock","variable","converter"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
 		var source = findID(this.id_to_ghost);
-		var ghost=makeGhost(source,[x,y]);
+		var ghost = makeGhost(source,[x,y]);
 		ghost.setAttribute("RotateName","0");
 		syncVisual(ghost);
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
@@ -2678,24 +2662,24 @@ class GhostTool extends BaseTool {
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
-		var selected_ids=get_selected_ids();
-		if(selected_ids.length!=1) {
+		var selected_ids = get_selected_ids();
+		if (selected_ids.length != 1) {
 			errorPopUp("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		var selected_object=get_object(selected_ids[0]);
-		if(selected_object.is_ghost) {
+		var selected_object = get_object(selected_ids[0]);
+		if (selected_object.is_ghost) {
 			errorPopUp("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		if(this.ghostable_primitives.indexOf(selected_object.type)==-1) {
+		if (this.ghostable_primitives.indexOf(selected_object.type) == -1) {
 			errorPopUp("This primitive is not ghostable");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		this.id_to_ghost=selected_ids[0];
+		this.id_to_ghost = selected_ids[0];
 	}
 }
 GhostTool.init();
@@ -2727,17 +2711,17 @@ class MouseTool extends BaseTool {
 		// Check if we selected only 1 anchor element. Return that anchor else return null
 		
 		let selectedAnchors = [];
-		let selectedObjects=get_selected_objects();
+		let selectedObjects = get_selected_objects();
 	
 		// Get the selected anchors
 		for(var i in selectedObjects) {
-			if(selectedObjects[i].type=="dummy_anchor") {
+			if (selectedObjects[i].type == "dummy_anchor") {
 				selectedAnchors.push(selectedObjects[i]);
 			}
 		}
 		
 		// If the number of selected anchors is exactly 1 return it
-		if(selectedAnchors.length==1) {
+		if (selectedAnchors.length == 1) {
 			return selectedAnchors[0];
 		} else {
 			// More then one or no anchor selected
@@ -2745,25 +2729,25 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseDown(x,y) {
-		mousedown_x=x;
-		mousedown_y=y;
+		mousedown_x = x;
+		mousedown_y = y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
-		if(!last_click_object_clicked) {
+		if (!last_click_object_clicked) {
 			empty_click();
 		}
 		
 
 		
 		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor=this.get_single_selected_anchor();
-		if(selectedAnchor) {
+		let selectedAnchor = this.get_single_selected_anchor();
+		if (selectedAnchor) {
 			let parentObject = get_parent(selectedAnchor);
 			switch(selectedAnchor.getAnchorType()) {
 			case anchorTypeEnum.start:
-				parentObject.start_attach=null;
+				parentObject.start_attach = null;
 				break;
 			case anchorTypeEnum.end:
-				parentObject.end_attach=null;
+				parentObject.end_attach = null;
 				break;
 			}
 		}
@@ -2773,18 +2757,18 @@ class MouseTool extends BaseTool {
 		last_click_object_clicked = false;
 	}
 	static mouseMove(x,y) {
-		var diff_x=x-mousedown_x;
-		var diff_y=y-mousedown_y;
-		mousedown_x=x;
-		mousedown_y=y;
+		var diff_x = x-mousedown_x;
+		var diff_y = y-mousedown_y;
+		mousedown_x = x;
+		mousedown_y = y;
 		
-		if(empty_click_down) {				
-			rectselector.x2=mousedown_x;
-			rectselector.y2=mousedown_y;
+		if (empty_click_down) {				
+			rectselector.x2 = mousedown_x;
+			rectselector.y2 = mousedown_y;
 			rectselector.setVisible(true);
 			rectselector.update();
 			unselect_all();
-			var select_array=get_objects_in_rectselect();
+			var select_array = get_objects_in_rectselect();
 			for(var key in select_array) {
 				let parent = get_parent(select_array[key]);
 				parent.select(false); // We also select the parent but not all of its anchors
@@ -2794,47 +2778,47 @@ class MouseTool extends BaseTool {
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger empty_click_down
-		var move_array=get_selected_objects();
+		var move_array = get_selected_objects();
 		
 		var objectMoved = false;
 		for(var key in move_array) {
-			if(move_array[key].draggable==undefined) {
+			if (move_array[key].draggable == undefined) {
 				
 				//~ console.error("Drag and drop for connections not implemented yet");
 				continue;
 			}
-			if(move_array[key].draggable==false) {
+			if (move_array[key].draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
 			}
 			
 			// We can't drug and drop attached anchors
-			if(move_array[key].type=="dummy_anchor") {
-				if(move_array[key].isAttached()) {
+			if (move_array[key].type == "dummy_anchor") {
+				if (move_array[key].isAttached()) {
 					continue;
 				}
 			}
 			
 			
-			objectMoved=true;
+			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
 			rel_move(key,diff_x,diff_y);
 			
 		}
-		if(objectMoved) {
+		if (objectMoved) {
 			update_all_objects();
 		}
 	}
 	static leftMouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor=this.get_single_selected_anchor();
-		if(selectedAnchor) {
+		let selectedAnchor = this.get_single_selected_anchor();
+		if (selectedAnchor) {
 			let parentObject = get_parent(selectedAnchor);
 			attach_selected_anchor(selectedAnchor);
 		}
-		if(empty_click_down) {
+		if (empty_click_down) {
 			rectselector.setVisible(false);
-			var select_array=get_objects_in_rectselect();
+			var select_array = get_objects_in_rectselect();
 			for(var key in select_array) {
 				select_array[key].select();
 			}
@@ -2855,27 +2839,27 @@ class TwoPointerTool extends BaseTool {
 	static get_type() {
 		return "none";
 	}
-	static create_TwoPointer_start(x,y,name) {
+	static create_TwoPointer_start(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
-		// Example: this.current_connection=new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
+		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static create_TwoPointer_end() {
 		// Override this
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
-		var start_element=find_element_under(x,y);
+		var start_element = find_element_under(x,y);
 		var primitive_name = findFreeName(type_basename[this.get_type()]);
 		this.create_TwoPointer_start(x,y,primitive_name);
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
-		if(start_element!=null) {
+		if (start_element != null) {
 			this.current_connection.start_attach = get_parent(start_element);
 		}
 		this.current_connection.set_name(primitive_name);
 	}
 	static mouseMove(x,y) {
-		if(this.current_connection==null) {
+		if (this.current_connection == null) {
 			return;
 		}
 		this.current_connection.endx = x;
@@ -2884,10 +2868,10 @@ class TwoPointerTool extends BaseTool {
 	}
 	static leftMouseUp(x,y) {
 		this.mouseMove(x,y);
-		if(this.current_connection.end_anchor==null) {
+		if (this.current_connection.end_anchor == null) {
 			this.current_connection.create_dummy_end_anchor();
 		}
-		if(this.current_connection.start_anchor==null) {
+		if (this.current_connection.start_anchor == null) {
 			this.current_connection.create_dummy_start_anchor();
 		}
 		
@@ -2899,7 +2883,7 @@ class TwoPointerTool extends BaseTool {
 		this.current_connection.finishCreate();
 		this.create_TwoPointer_end();
 		
-		this.current_connection=null;
+		this.current_connection = null;
 		last_clicked_element = null;
 		ToolBox.setTool("mouse");
 	}
@@ -2914,12 +2898,12 @@ class FlowTool extends TwoPointerTool {
 		
 		let rotateName = this.primitive.getAttribute("RotateName");
 		// Force all stocks to have a RotateName
-		if(!rotateName) {
+		if (!rotateName) {
 			rotateName = "0";
 			this.primitive.setAttribute("RotateName",rotateName);
 		}		
 		
-		this.current_connection=new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
@@ -2936,7 +2920,7 @@ class RiverTool extends TwoPointerTool {
 		
 		let rotateName = this.primitive.getAttribute("RotateName");
 		// Force all stocks to have a RotateName
-		if(!rotateName) {
+		if (!rotateName) {
 			rotateName = "0";
 			this.primitive.setAttribute("RotateName",rotateName);
 		}		
@@ -2957,12 +2941,11 @@ class RiverTool extends TwoPointerTool {
 }
 RiverTool.init();
 
-
 function cleanUnconnectedLinks() {
 	let allLinks = primitives("Link");
 	for(let link of allLinks) {
 		let ends = getEnds(link);
-		if((ends[0] == null) || (ends[1] == null)) {
+		if ((ends[0] == null) || (ends[1] == null)) {
 			removePrimitive(link);
 		}
 	}
@@ -2971,7 +2954,7 @@ function cleanUnconnectedLinks() {
 class LinkTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
-		this.current_connection=new LinkVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new LinkVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static create_TwoPointer_end() {
 		cleanUnconnectedLinks();
@@ -2985,7 +2968,7 @@ LinkTool.init();
 class RectangleTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
-		this.current_connection=new RectangleVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new RectangleVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static get_type() {
 		return "rectangle";
@@ -2996,7 +2979,7 @@ RectangleTool.init();
 class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
-		this.current_connection=new LineVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new LineVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static get_type() {
 		return "line";
@@ -3007,14 +2990,14 @@ LineTool.init();
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
-		this.current_connection=new TableVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new TableVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static init() {
-		this.initialSelectedIds=[];
+		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x,y) {
-		this.initialSelectedIds=Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
@@ -3028,14 +3011,14 @@ TableTool.init();
 class DiagramTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
-		this.current_connection=new DiagramVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new DiagramVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static init() {
-		this.initialSelectedIds=[];
+		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x,y) {
-		this.initialSelectedIds=Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
@@ -3050,10 +3033,10 @@ class TextAreaTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		let primitive_name = findFreeName(type_basename["text"]);
 		this.primitive = createConnector(primitive_name, "TextArea", null,null);
-		this.current_connection=new TextAreaVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new TextAreaVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static init() {
-		this.initialSelectedIds=[];
+		this.initialSelectedIds = [];
 		super.init();
 	}
 	static get_type() {
@@ -3065,14 +3048,14 @@ DiagramTool.init();
 class XyPlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "XyPlot", null,null);
-		this.current_connection=new XyPlotVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new XyPlotVisual(this.primitive.id,this.get_type(),[x,y]);
 	}
 	static init() {
-		this.initialSelectedIds=[];
+		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x,y) {
-		this.initialSelectedIds=Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
@@ -3093,12 +3076,12 @@ function attach_selected_anchor(selectedAnchor) {
 	
 
 	// Find unselected stock element
-	for(var i=0;i<elements_under.length;i++) {
-		if(!elements_under[i].is_selected() && ("getMountPos" in elements_under[i]) && elements_under[i] != parentConnection) {
-			attach_to=elements_under[i]; 
+	for(var i = 0; i < elements_under.length; i++) {
+		if (!elements_under[i].is_selected() && ("getMountPos" in elements_under[i]) && elements_under[i] != parentConnection) {
+			attach_to = elements_under[i]; 
 		}
 	}
-	if(attach_to==null) {
+	if (attach_to == null) {
 		return false;
 	}
 	
@@ -3119,14 +3102,14 @@ var currentTool = MouseTool;
 
 class CoordRect {
 	constructor() {
-		this.x1=0;
-		this.y1=0;
-		this.x2=0;
-		this.y2=0;
+		this.x1 = 0;
+		this.y1 = 0;
+		this.x2 = 0;
+		this.y2 = 0;
 		this.element = null; // This is set at page ready
 	}
 	setVisible(new_visible) {
-		if(new_visible) {
+		if (new_visible) {
 			this.element.setAttribute("visibility","visible");
 		}
 		else {
@@ -3156,7 +3139,7 @@ class CoordRect {
 rectselector = new CoordRect();
 
 function in_selection(node_id) {
-	if(
+	if (
 		object_array[node_id].pos[0] >= rectselector.xmin()
 	&&  object_array[node_id].pos[1] >= rectselector.ymin()
 	&&  object_array[node_id].pos[0] <= rectselector.xmin()+rectselector.width()
@@ -3171,7 +3154,7 @@ function in_selection(node_id) {
 function get_objects_in_rectselect() {
 	var return_array = {};
 	for(var key in object_array) {
-		if(in_selection(key)) {
+		if (in_selection(key)) {
 			return_array[key] = object_array[key];
 		}
 	}
@@ -3184,7 +3167,7 @@ function tool_deletePrimitive(id) {
 	removePrimitive(primitive);
 	
 	// Delete ghosts
-	var ghostIDs=findGhostsOfID(id);
+	var ghostIDs = findGhostsOfID(id);
 	for(var i in ghostIDs) {
 		tool_deletePrimitive(ghostIDs[i]);
 	}
@@ -3192,13 +3175,13 @@ function tool_deletePrimitive(id) {
 }
 
 function get_selected_root_objects() {
-	var result={};
+	var result = {};
 	var all_objects = get_all_objects();
 	for(var key in all_objects) {
 		let parent = get_parent(all_objects[key]);
 		
 		// If any element is selected we add its parent
-		if(all_objects[key].is_selected()) {
+		if (all_objects[key].is_selected()) {
 			result[parent.id]=parent;
 		}
 	}
@@ -3206,10 +3189,10 @@ function get_selected_root_objects() {
 }
 
 function get_root_objects() {
-	var result={};
+	var result = {};
 	var all_objects = get_all_objects();
 	for(var key in all_objects) {
-		if(key.indexOf(".")==-1) {
+		if (key.indexOf(".") == -1) {
 			result[key]=all_objects[key];
 		}
 	}
@@ -3218,7 +3201,7 @@ function get_root_objects() {
 
 function delete_selected_objects() {
 	// Delete all objects that are selected
-	var object_array=get_selected_root_objects();
+	var object_array = get_selected_root_objects();
 	for(var key in object_array) {
 			tool_deletePrimitive(key);
 	}
@@ -3227,12 +3210,12 @@ function delete_selected_objects() {
 function get_selected_objects() {
 	var return_array = {};
 	for(var key in object_array) {
-		if(object_array[key].is_selected()) {
+		if (object_array[key].is_selected()) {
 			return_array[key] = object_array[key];
 		}
 	}
 	for(var key in connection_array) {
-		if(connection_array[key].is_selected()) {
+		if (connection_array[key].is_selected()) {
 			return_array[key] = connection_array[key];
 		}
 	}
@@ -3244,7 +3227,7 @@ function get_selected_ids() {
 }
 
 function delete_connection(key) {
-	if(!(key in connection_array)) {
+	if (!(key in connection_array)) {
 		return;
 	}
 	var start_anchor = connection_array[key].start_anchor;
@@ -3264,14 +3247,14 @@ function delete_object(node_id) {
 	
 	// Delete all references to the object in the connections
 	for(var key in connection_array) {
-		if(connection_array[key].start_anchor==object_to_delete) {
+		if (connection_array[key].start_anchor == object_to_delete) {
 			connection_array[key].create_dummy_start_anchor();
 		}
-		if(connection_array[key].end_anchor==object_to_delete) {
+		if (connection_array[key].end_anchor == object_to_delete) {
 			connection_array[key].create_dummy_end_anchor();
 		}
 	}
-	if(object_to_delete.hasOwnProperty("parent_id")) {
+	if (object_to_delete.hasOwnProperty("parent_id")) {
 		delete_connection(object_to_delete.parent_id);
 	}
 	
@@ -3289,24 +3272,24 @@ function primitive_mousedown(node_id,event,new_primitive) {
 	last_clicked_element = get_object(node_id);
 	
 	// If we click directly on the anchors we dont want anything but them selected
-	if(last_clicked_element.type=="dummy_anchor") {
+	if (last_clicked_element.type == "dummy_anchor") {
 		let elementId = get_parent_id(last_clicked_element.id);
 		unselect_all_but(elementId);
 	}
-	if(last_clicked_element.is_selected()) {
-		if(event.shiftKey) {
+	if (last_clicked_element.is_selected()) {
+		if (event.shiftKey) {
 			last_clicked_element.unselect();
 		}
 	} else {
-		if(!event.shiftKey) {
+		if (!event.shiftKey) {
 			// We don't want to unselect an eventual parent
 			// As that will hide other anchors
-			var parent_id=get_parent_id(node_id);
+			var parent_id = get_parent_id(node_id);
 			unselect_all_but(parent_id);
 		}
 		last_clicked_element.select();
 	}
-	last_click_object_clicked=true;
+	last_click_object_clicked = true;
 }
 
 function update_all_objects() {
@@ -3319,7 +3302,7 @@ function update_all_objects() {
 }
 
 function get_all_objects() {
-	var result={}
+	var result = {}
 	for(var key in object_array) {
 		result[key]=object_array[key];
 	}
@@ -3330,21 +3313,20 @@ function get_all_objects() {
 }
 
 function get_anchors(id) {
-	var result=[]
+	var result = []
 	for(var key in object_array) {
-		if(key.startsWith(id+".") && object_array[key].type=="dummy_anchor") {
+		if (key.startsWith(id+".") && object_array[key].type == "dummy_anchor") {
 			result.push(object_array[key]);
 		}
 	}
 	return result;
 }
 
-
 function get_object(id) {
-	if(typeof object_array[id]!="undefined") {
+	if (typeof object_array[id] != "undefined") {
 		return object_array[id];
 	}
-	if(typeof connection_array[id]!="undefined") {
+	if (typeof connection_array[id] != "undefined") {
 		return connection_array[id];
 	}
 	return false;
@@ -3352,7 +3334,7 @@ function get_object(id) {
 
 function set_name(id,new_name) {
 	var tobject = get_object(id);
-	if(!tobject)  {
+	if (!tobject)  {
 		return;
 	}
 	tobject.set_name(new_name);
@@ -3361,15 +3343,15 @@ function set_name(id,new_name) {
 
 function rel_move(node_id,diff_x,diff_y) {
 	let primitive = findID(node_id);
-	if(primitive != null) {
+	if (primitive != null) {
 		// If its a real primitive (stoch, variable etc) update it in the engine
 		let oldPos = getCenterPosition(primitive);
 		let newPos = [oldPos[0]+diff_x,oldPos[1]+diff_y];
 		setCenterPosition(primitive,newPos);
 	} else {
 		// If its not a real primtiive but rather an anchor point updated the position only graphically
-		object_array[node_id].pos[0]+=diff_x;
-		object_array[node_id].pos[1]+=diff_y;
+		object_array[node_id].pos[0] += diff_x;
+		object_array[node_id].pos[1] += diff_y;
 	}
 	object_array[node_id].updatePosition();
 	object_array[node_id].afterMove(diff_x,diff_y);
@@ -3390,51 +3372,46 @@ function unselect_all() {
 
 function unselect_all_but(dont_unselect_id) {
 	for(var key in object_array) {
-		if(key!=dont_unselect_id) {
+		if (key != dont_unselect_id) {
 			object_array[key].unselect();
 		}
 	}
 	for(var key in connection_array) {
-		if(key!=dont_unselect_id) {
+		if (key != dont_unselect_id) {
 			connection_array[key].unselect();
 		}
 	}
 }
-
 
 function unselect_all_but_family(id) {
 	for(var key in object_array) {
-		if(!is_family(id,key)) {
+		if (!is_family(id,key)) {
 			object_array[key].unselect();
 		}
 	}
 	for(var key in connection_array) {
-		if(!is_family(id,key)) {
+		if (!is_family(id,key)) {
 			connection_array[key].unselect();
 		}
 	}
 }
-
-
-
-
 
 function empty_click() {
 	empty_click_down = true;
 	unselect_all();
-	rectselector.x1=mousedown_x;
-	rectselector.y1=mousedown_y;
-	rectselector.x2=mousedown_x;
-	rectselector.y2=mousedown_y;
+	rectselector.x1 = mousedown_x;
+	rectselector.y1 = mousedown_y;
+	rectselector.x2 = mousedown_x;
+	rectselector.y2 = mousedown_y;
 	rectselector.update();
 }
 
 function rotate_name(node_id) {
 	let object = get_object(node_id);
-	if(object.name_pos<3) {
+	if (object.name_pos<3) {
 		object.name_pos++;
 	} else {
-		object.name_pos=0;
+		object.name_pos = 0;
 	}
 	update_name_pos(node_id);
 }
@@ -3443,11 +3420,11 @@ function update_name_pos(node_id) {
 	var object = get_object(node_id);
 	var name_element = object.name_element;
 	// Some objects does not have name element
-	if(name_element==null) {
+	if (name_element == null) {
 		return;
 	}
 	// For fixed names (used only by text element)
-	if(object.name_centered) {
+	if (object.name_centered) {
 		name_element.setAttribute("x",0); //Set path's data
 		name_element.setAttribute("y",0); //Set path's data
 		name_element.setAttribute("text-anchor","middle");
@@ -3455,7 +3432,7 @@ function update_name_pos(node_id) {
 	}
 
 	let visualObject = get_object(node_id);
-	let pos=visualObject.rotatePosList[visualObject.name_pos];
+	let pos = visualObject.rotatePosList[visualObject.name_pos];
 	name_element.setAttribute("x",pos[0]); //Set path's data
 	name_element.setAttribute("y",pos[1]); //Set path's data
 
@@ -3510,13 +3487,13 @@ function mouseDownHandler(event) {
 }
 function mouseMoveHandler(event) {
 	var offset = $(svgplane).offset();
-	var x=event.pageX-offset.left;
+	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
 	
 	lastMouseX = x;
 	lastMouseY = y;
 	
-	if(!mouseisdown) {
+	if (!mouseisdown) {
 		return;
 	}
 	currentTool.mouseMove(x,y);
@@ -3526,7 +3503,7 @@ function mouseUpHandler(event) {
 		do_global_log("Button other then left mouse was released up");
 		return;
 	}
-	if(!mouseisdown) {
+	if (!mouseisdown) {
 		return;
 	}
 	// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
@@ -3536,32 +3513,32 @@ function mouseUpHandler(event) {
 	var y = event.pageY-offset.top;
 	
 	currentTool.leftMouseUp(x,y);
-	mouseisdown=false;
+	mouseisdown = false;
 	History.storeUndoState();
 }
 
 function find_elements_under(in_x,in_y) {
 	var offset = $(svgplane).offset();
-	var x= in_x+offset.left-window.scrollX;
+	var x = in_x+offset.left-window.scrollX;
 	var y = in_y+offset.top-window.scrollY;
 	
-	var found_array=[];
+	var found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
-	//~ let attachable_object_types=["flow","stock","variable"];
-	let attachable_object_types=["flow","stock","variable","converter"];
+	//~ let attachable_object_types = ["flow","stock","variable"];
+	let attachable_object_types = ["flow","stock","variable","converter"];
 	for(key in objects) {
-		if(objects[key].type == "dummy_anchor") {
+		if (objects[key].type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
 			continue;
 		}
-		if(attachable_object_types.indexOf(objects[key].type) == -1) {
+		if (attachable_object_types.indexOf(objects[key].type) == -1) {
 			// We skip if the object is not attachable
 			continue;
 		}
-		var rect=objects[key].group.getBoundingClientRect();
+		var rect = objects[key].group.getBoundingClientRect();
 		do_global_log(key+" "+objects[key].type+" x:"+rect.left+"-"+rect.right+" y:"+rect.top+"-"+rect.bottom);
-		if(x>=rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+		if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
 			found_array.push(objects[key]);
 		}
 	}
@@ -3570,8 +3547,8 @@ function find_elements_under(in_x,in_y) {
 }
 
 function find_element_under(x,y) {
-	elements_under=find_elements_under(x,y);
-	if(elements_under.length>0) {
+	elements_under = find_elements_under(x,y);
+	if (elements_under.length>0) {
 		do_global_log("find_element_under choose "+elements_under[0].id);
 		return elements_under[0];
 	} else {
@@ -3580,9 +3557,9 @@ function find_element_under(x,y) {
 }
 
 function stochsd_clear_sync() {
-	var root_object_array=get_root_objects();
+	var root_object_array = get_root_objects();
 	for(var id in root_object_array) {
-		if(findID(id)==null) {
+		if (findID(id) == null) {
 			stochsd_delete_primitive(id);
 		}
 	}
@@ -3590,7 +3567,7 @@ function stochsd_clear_sync() {
 
 class ToolBox {
 	static init() {
-		this.tools={
+		this.tools = {
 			"mouse":MouseTool,
 			"delete":DeleteTool,
 			"undo":UndoTool,
@@ -3617,12 +3594,12 @@ class ToolBox {
 		};
 	}
 	static setTool(toolName) {
-		if(toolName in this.tools) {
+		if (toolName in this.tools) {
 			$(".toolButton").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
 			currentTool.leaveTool();
-			currentTool=this.tools[toolName];
+			currentTool = this.tools[toolName];
 			currentTool.enterTool();
 		} else {
 			errorPopUp("The tool "+toolName+" does not exist");
@@ -3636,15 +3613,15 @@ ToolBox.init();
 
 class ClipboardItem {
 	constructor(id) {
-		this.id=id;
-		this.absolutePosition=[0,0];
-		this.relativePosition=[0,0];
+		this.id = id;
+		this.absolutePosition = [0,0];
+		this.relativePosition = [0,0];
 	}
 }
 
 class Clipboard {
 	static init() {
-		this.copiedItems=[];
+		this.copiedItems = [];
 	}
 	static copyObject(clipboardItem) {
 		var parent = graph.children[0].children[0];
@@ -3663,7 +3640,7 @@ class Clipboard {
 		let parentIdArray = [];
 		for(let i in rawSelectedIdArray) {
 			let parentId = get_parent_id(rawSelectedIdArray[i]);
-			if(parentIdArray.indexOf(parentId)==-1) {
+			if (parentIdArray.indexOf(parentId) == -1) {
 				parentIdArray.push(parentId);
 			}
 		}
@@ -3673,14 +3650,14 @@ class Clipboard {
 			let clipboardItem = new ClipboardItem(parentIdArray[i]);
 			let tmp_object = get_object(parentIdArray[i]);
 			
-			let absolutePosition=tmp_object.get_pos();
-			clipboardItem.absolutePosition=absolutePosition;
+			let absolutePosition = tmp_object.get_pos();
+			clipboardItem.absolutePosition = absolutePosition;
 			
 			this.copiedItems.push(clipboardItem);			
 		}
 		
 		// Create position list to calculate relative positions
-		let positionList=[];
+		let positionList = [];
 		for(let i in this.copiedItems) {
 			positionList.push(this.copiedItems[i].absolutePosition);
 			do_global_log(JSON.stringify(positionList));
@@ -3708,15 +3685,15 @@ function showDebug() {
 }
 
 function hashUpdate() {
-	if(location.hash == "#debug") {
+	if (location.hash == "#debug") {
 		showDebug();
 	}
 }
 
 $(document).ready(function() {
-	rectselector.element=svg_rect(-30,-30,60,60,"green","none","element");
+	rectselector.element = svg_rect(-30,-30,60,60,"green","none","element");
 	rectselector.setVisible(false);
-	var svgplane=document.getElementById("svgplane");
+	var svgplane = document.getElementById("svgplane");
 	
 	$(".toolButton").mousedown(function(event) {
 		var toolName = $(this).attr("data-tool");
@@ -3726,54 +3703,54 @@ $(document).ready(function() {
 	$(window).bind( 'hashchange', hashUpdate);
 	hashUpdate();
 	
-	if(Settings.showDebug) {
+	if (Settings.showDebug) {
 		showDebug();
 	}
 	
 	$(document).keydown(function(event){
 		// Only works if no dialog is open
-		if(jqDialog.blockingDialogOpen) {
+		if (jqDialog.blockingDialogOpen) {
 			return;
 		}
-		if(event.keyCode == keyboard["delete"]) {
+		if (event.keyCode == keyboard["delete"]) {
 			DeleteTool.enterTool();
 		}
 		
-		if(event.ctrlKey) {
-			if(event.keyCode == keyboard["1"]) {
+		if (event.ctrlKey) {
+			if (event.keyCode == keyboard["1"]) {
 				event.preventDefault();
 				RunTool.enterTool();
 			}
-			if(event.keyCode == keyboard["2"]) {
+			if (event.keyCode == keyboard["2"]) {
 				event.preventDefault();
 				StepTool.enterTool();
 			}
-			if(event.keyCode == keyboard["3"]) {
+			if (event.keyCode == keyboard["3"]) {
 				event.preventDefault();
 				ResetTool.enterTool();
 			}
-			if(event.keyCode == keyboard["O"]){
+			if (event.keyCode == keyboard["O"]){
 				event.preventDefault();
 				$("#btn_load").click();
 			}
-			if(event.keyCode == keyboard["S"]){
+			if (event.keyCode == keyboard["S"]){
 				event.preventDefault();
 				$("#btn_save").click();
 			}
-			if(event.keyCode == keyboard["P"]){
+			if (event.keyCode == keyboard["P"]){
 				event.preventDefault();
 				$("#btn_print_model").click();
 			}
-			if(event.keyCode == keyboard["Z"]){
+			if (event.keyCode == keyboard["Z"]){
 				History.doUndo();
 			}
-			if(event.keyCode == keyboard["Y"]){
+			if (event.keyCode == keyboard["Y"]){
 				History.doRedo();
 			}
-			if(event.keyCode == keyboard["C"]){
+			if (event.keyCode == keyboard["C"]){
 				Clipboard.copy();
 			}
-			if(event.keyCode == keyboard["V"]){
+			if (event.keyCode == keyboard["V"]){
 				Clipboard.paste();
 				History.storeUndoState();
 			}
@@ -3841,7 +3818,7 @@ $(document).ready(function() {
 		let pluginName = $(event.target).data("plugin-name");
 		loadPlugin(pluginName);
 	});
-	if(fileManager.hasSaveAs()) {
+	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
 	macroDialog = new MacroDialog();
@@ -3868,9 +3845,9 @@ function find_connections(primitive) {
 }
 
 function find_start_connections(primitive) {
-	var connections_array=Array(0);
+	var connections_array = Array(0);
 	for(key in connection_array) {
-		if(connection_array[key].start_anchor==primitive) {
+		if (connection_array[key].start_anchor == primitive) {
 			connections_array.push(connection_array[key]);
 		}
 	}
@@ -3878,9 +3855,9 @@ function find_start_connections(primitive) {
 }
 
 function find_end_connections(primitive) {
-	var connections_array=Array(0);
+	var connections_array = Array(0);
 	for(key in connection_array) {
-		if(connection_array[key].end_anchor==primitive) {
+		if (connection_array[key].end_anchor == primitive) {
 			connections_array.push(connection_array[key]);
 		}
 	}
@@ -3889,11 +3866,11 @@ function find_end_connections(primitive) {
 	
 function stochsd_delete_primitive (id) {
 	var stochsd_object = get_object(id);
-	if(stochsd_object) {
+	if (stochsd_object) {
 		stochsd_object.clean();
 	}
 	
-	if(object_array[id]) {
+	if (object_array[id]) {
 		delete object_array[id];
 	} else if (connection_array[id]) {
 		delete connection_array[id];
@@ -3902,9 +3879,7 @@ function stochsd_delete_primitive (id) {
 	}
 }
 
-
 var InsightMakerFileExtension = ".InsightMaker";
-
 
 function isLocal(){
 	return true; // Expose additional debugging and error messages
@@ -3917,7 +3892,7 @@ function export_txt(fileName, data) {
 	
 	// Create download link and click it
 	var a = document.createElement("a");
-	a.style.display="none";
+	a.style.display = "none";
 	a.href = url;
 	a.download = fileName;
 	document.body.appendChild(a);
@@ -3956,14 +3931,14 @@ loadXML(blankGraphTemplate);
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
 	var stochsd_object = get_object(tprimitive.id);
-	if(stochsd_object!=false) {
+	if (stochsd_object != false) {
 		return false;
 	}
 	let nodeType = tprimitive.value.nodeName;
 	switch(nodeType) {
 		case "Numberbox":
 		{
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			let visualObject = new NumberboxVisual(tprimitive.id,"numberbox",position);
 			visualObject.render();
 		}
@@ -3984,8 +3959,8 @@ function syncVisual(tprimitive) {
 					dimClass = XyPlotVisual;
 				break;
 			}
-			var source_position=getSourcePosition(tprimitive);
-			var target_position=getTargetPosition(tprimitive);
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
 			
 			let connection = new dimClass(tprimitive.id,"table",[0,0]);
 			connection.create_dummy_start_anchor();
@@ -4017,8 +3992,8 @@ function syncVisual(tprimitive) {
 					dimClass = RectangleVisual;
 				break;
 			}
-			var source_position=getSourcePosition(tprimitive);
-			var target_position=getTargetPosition(tprimitive);
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
 			
 			let connection = new dimClass(tprimitive.id,"table",[0,0]);
 			connection.create_dummy_start_anchor();
@@ -4034,8 +4009,8 @@ function syncVisual(tprimitive) {
 		break;
 		case "TextArea":
 		{
-			var source_position=getSourcePosition(tprimitive);
-			var target_position=getTargetPosition(tprimitive);
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
 			
 			let connection = new TextAreaVisual(tprimitive.id,"table",[0,0]);
 			connection.create_dummy_start_anchor();
@@ -4051,13 +4026,13 @@ function syncVisual(tprimitive) {
 		break;
 		case "Stock":
 		{
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			let visualObject = new StockVisual(tprimitive.id,"stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
-			if(!rotateName) {
+			if (!rotateName) {
 				rotateName = "0";
 				tprimitive.setAttribute("RotateName",rotateName);
 			}
@@ -4067,13 +4042,13 @@ function syncVisual(tprimitive) {
 		break;
 		case "Converter":
 		{
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			let visualObject = new ConverterVisual(tprimitive.id,"converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
-			if(!rotateName) {
+			if (!rotateName) {
 				rotateName = "0";
 				tprimitive.setAttribute("RotateName",rotateName);
 			}
@@ -4084,7 +4059,7 @@ function syncVisual(tprimitive) {
 		case "Text":
 		{
 			do_global_log("id is "+tprimitive.id);
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			new TextVisual(tprimitive.id,"text",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 		}
@@ -4092,9 +4067,9 @@ function syncVisual(tprimitive) {
 		case "Ghost":
 		{
 			var source_primitive = findID(tprimitive.getAttribute("Source"));
-			var source_type=source_primitive.value.nodeName;
+			var source_type = source_primitive.value.nodeName;
 			//~ do_global_log("id is "+tprimitive.id);
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			let visualObject = null;
 			switch(source_type) {
 					case "Converter":
@@ -4115,13 +4090,13 @@ function syncVisual(tprimitive) {
 		case "Variable":
 		{
 			//~ do_global_log("VARIABLE id is "+tprimitive.id);
-			var position=getCenterPosition(tprimitive);
+			var position = getCenterPosition(tprimitive);
 			visualObject = new VariableVisual(tprimitive.id,"variable",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
-			if(!rotateName) {
+			if (!rotateName) {
 				rotateName = "0";
 				tprimitive.setAttribute("RotateName",rotateName);
 			}
@@ -4133,8 +4108,8 @@ function syncVisual(tprimitive) {
 		case "Link":
 		{
 			let connection = null;
-			var source_position=getSourcePosition(tprimitive);
-			var target_position=getTargetPosition(tprimitive);
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
 			switch(nodeType) {
 				case "Flow":
 				{
@@ -4142,7 +4117,7 @@ function syncVisual(tprimitive) {
 					
 					let rotateName = tprimitive.getAttribute("RotateName");
 					// Force all stocks to have a RotateName
-					if(!rotateName) {
+					if (!rotateName) {
 						rotateName = "0";
 						tprimitive.setAttribute("RotateName",rotateName);
 					}
@@ -4156,20 +4131,20 @@ function syncVisual(tprimitive) {
 				}
 				break;
 			}
-			var source_position=getSourcePosition(tprimitive);
-			var target_position=getTargetPosition(tprimitive);
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
 
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();
 			
-			if(tprimitive.source!=null) {
+			if (tprimitive.source != null) {
 				// Attach to object
 				connection.start_attach = get_object(tprimitive.source.getAttribute("id"));
 			} else {
 				// Set UI-coordinates to coordinates in primitive
 				connection.start_anchor.set_pos(source_position);
 			}
-			if(tprimitive.target!=null) {
+			if (tprimitive.target != null) {
 				// Attach to object
 				connection.end_attach = get_object(tprimitive.target.getAttribute("id"));
 			} else {
@@ -4192,7 +4167,7 @@ function syncVisual(tprimitive) {
 						tprimitive.value.getAttribute("b2y")
 					];
 
-					if(bezierPoints.indexOf(null) == -1) {
+					if (bezierPoints.indexOf(null) == -1) {
 						connection.b1_anchor.set_pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
 						connection.b2_anchor.set_pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
 					} else {
@@ -4213,7 +4188,7 @@ function syncVisual(tprimitive) {
 // This is executed after loading a file or loading a whole new state such as after undo
 function syncAllVisuals() {
 	for(let type of saveblePrimitiveTypes) {
-	var primitive_list=primitives(type);
+	var primitive_list = primitives(type);
 		for(key in primitive_list) {
 			try {
 				syncVisual(primitive_list[key]);
@@ -4229,22 +4204,20 @@ function syncAllVisuals() {
 }
 
 function findFreeName(basename) {
-	var counter=0;
+	var counter = 0;
 	var testname;
 	do {
 		counter++;
 		testname = basename+counter.toString();
-	} while(findName(testname)!=null)
+	} while(findName(testname) != null)
 	return testname;
 }
 
-
 syncAllVisuals();
-
 
 class SubscribePool {
 	constructor() {
-		this.subscribers=[];
+		this.subscribers = [];
 	}
 	subscribe(handler) {
 		this.subscribers.push(handler);
@@ -4263,7 +4236,7 @@ class runOverlay {
 				$("#svgBlockOverlay").css("opacity",0.5);
 				yesNoAlert("Do you want to terminate the simulation now to change the model?",function(answer) {
 					$("#svgBlockOverlay").css("opacity",0);
-					if(answer=="yes") {
+					if (answer == "yes") {
 						RunResults.resetSimulation();
 					}
 				});
@@ -4294,18 +4267,18 @@ class RunResults {
 		// Is always null if simulation is not running
 		// Is a data structure returned from runModel if simulation is running it
 		this.simulationController = null;
-		this.varnameList=[];
+		this.varnameList = [];
 		this.varIdList = [];
-		this.varnameList=["Time"];
-		this.results=[];
-		this.runSubscribers=[];
+		this.varnameList = ["Time"];
+		this.results = [];
+		this.runSubscribers = [];
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates everytime updateCounter goes down to zero
 		this.simulationTime = 0;
 	}
 	static createHeader() {
 		// Get list of primitives that we want to observe from the model
-		var primitive_array=getPrimitiveList();
+		var primitive_array = getPrimitiveList();
 
 		// Create list of ids
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
@@ -4318,31 +4291,31 @@ class RunResults {
 	}
 	static toCsv() {
 		// Under development
-		let out="";
+		let out = "";
 		
 		//~ let namesToDisplay = IdsToDisplay.map(findID).map(getName);
-		let first=true;
-		out+="Time"
+		let first = true;
+		out += "Time"
 		for(let id of this.varIdList) {
 			let primitive = findID(id);
-			if(primitive) {
+			if (primitive) {
 					out += ","+getName(primitive);
 			}
 		}
-		out+="\n";
+		out += "\n";
 		
 		for(let row_index in this.results) {
 			//~ for(let column_index in ["Time"].concat(namesToDisplay)) {
 			first = true;
 			for(let column_index in this.varIdList) {
-				if(first) {
-					out+=stocsd_format(this.results[row_index][column_index],6);
+				if (first) {
+					out += stocsd_format(this.results[row_index][column_index],6);
 					first = false;
 				} else {
-					out+=","+stocsd_format(this.results[row_index][column_index],6);
+					out += ","+stocsd_format(this.results[row_index][column_index],6);
 				}
 			}
-			out+="\n";
+			out += "\n";
 		}
 		return out;
 	}
@@ -4356,7 +4329,7 @@ class RunResults {
 			var currentRunResults = [];
 			currentRunResults.push(time);
 			for(let key in this.varIdList) {
-				if(key==0) {
+				if (key == 0) {
 					// On location 0 we always have time
 					continue;
 				}
@@ -4386,7 +4359,7 @@ class RunResults {
 		this.runState = runStateEnum.running;
 		// Simulation controller can only be null if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
-		if(this.simulationController != null) {
+		if (this.simulationController != null) {
 			
 			this.simulationController.resume();
 			// We have a bug that happens some times on resume because simulationController is null
@@ -4399,7 +4372,7 @@ class RunResults {
 		$("#imgRunPauseTool").attr("src","graphics/pause.svg");
 		this.createHeader();
 		// We can only take 100 iterations between every update to avoid the feeling of program freezing
-		if(getTimeLength()*getTimeStep() >= 100) {
+		if (getTimeLength()*getTimeStep() >= 100) {
 			// For long runs. Longer then 100
 			setPauseInterval(getTimeStep()*100);
 		} else {
@@ -4416,10 +4389,10 @@ class RunResults {
 				this.simulationController = res;
 				
 				// If still running continue with next cycle
-				if(this.runState == runStateEnum.running) {
+				if (this.runState == runStateEnum.running) {
 					this.updateProgressBar()
 					do_global_log("length "+this.results.length)
-					if(this.simulationController==null) {
+					if (this.simulationController == null) {
 						do_global_log("simulation controller is null")
 					}
 					this.continueRunSimulation()
@@ -4441,7 +4414,7 @@ class RunResults {
 	}
 	static continueRunSimulation() {
 		this.storeResults(this.simulationController);
-		if(this.updateCounter==0) {
+		if (this.updateCounter == 0) {
 			this.triggerRunFinished();
 			this.updateCounter = this.updateFrequency;
 		}
@@ -4450,7 +4423,7 @@ class RunResults {
 	}
 	static stepSimulation() {
 		/* experiment
-		if(this.runState == runStateEnum.running) {
+		if (this.runState == runStateEnum.running) {
 			this.resetSimulation();
 			this.simulationController = null;
 			this.runState = runStateEnum.stepping;
@@ -4458,7 +4431,7 @@ class RunResults {
 		}
 		*/
 		// if stepping was already started
-		if(this.simulationController!=null) {
+		if (this.simulationController != null) {
 			this.simulationController.resume();
 			return;
 		}
@@ -4523,7 +4496,7 @@ class RunResults {
 	}
 	static getLastValue(primitiveId) {
 		let lastRow = this.getLastRow();
-		if(lastRow==null) {
+		if (lastRow == null) {
 			//~ alert("early return");
 			return null;
 		}	
@@ -4533,7 +4506,7 @@ class RunResults {
 	static getRunProgress() {
 		let lastRow = this.getLastRow();
 		// If we have no last row return null
-		if(lastRow==null) {
+		if (lastRow == null) {
 			return 0;
 		}
 		// else return time
@@ -4547,7 +4520,7 @@ class RunResults {
 	}
 	static getLastRow() {
 		//~ alert(this.results.length);
-		if(this.results.length!=0) {
+		if (this.results.length != 0) {
 			return this.results[this.results.length-1];
 		} else {
 			return null;
@@ -4558,18 +4531,18 @@ class RunResults {
 		varIdList = varIdList.map(Number);
 		
 		// Contains the indexes from this.results that we want to return
-		let selectedVarIdIndexes=[0]; // The first index is always 0 for time
+		let selectedVarIdIndexes = [0]; // The first index is always 0 for time
 		for(let i in varIdList) {
 			let varIdIndex = this.varIdList.indexOf(varIdList[i]);
 			selectedVarIdIndexes.push(varIdIndex);
 		}
 		do_global_log("this.varIdList "+JSON.stringify(this.varIdList)+" varIdList "+JSON.stringify(varIdList));
-		let returnResults=[];
+		let returnResults = [];
 		for(let row_index in this.results) {
 			let tmpRow = [];
 			for(let column_index in selectedVarIdIndexes) {
 				let wantedIndex = selectedVarIdIndexes[column_index];
-				if(wantedIndex!=-1) {
+				if (wantedIndex != -1) {
 					tmpRow.push(this.results[row_index][wantedIndex]);
 				} else {
 					tmpRow.push(null);
@@ -4583,25 +4556,25 @@ class RunResults {
 		let unfilteredResults = this.getSelectiveIdResults(varIdList);
 		let filteredResults = [];
 		let printInterval = step/getTimeStep();
-		let printCounter=1;
+		let printCounter = 1;
 		
 		for(let row_index in unfilteredResults) {
 			let time = unfilteredResults[row_index][0];
-			if(time < start) {
+			if (time < start) {
 				continue;
 			}
-			if(time == start) {
+			if (time == start) {
 				printCounter = printInterval;
 			}
-			if(time > length) {
+			if (time > length) {
 				// End of loop
 				return filteredResults;
 			}
-			if(printCounter<printInterval) {
+			if (printCounter<printInterval) {
 				printCounter++;
 				continue;
 			} else {
-				printCounter=1;
+				printCounter = 1;
 			}
 			filteredResults.push(unfilteredResults[row_index]);
 		}
@@ -4620,20 +4593,20 @@ class jqDialog {
 		// This is a static attribute that prevents delete key etc to be relevant when a dialog is open
 		jqDialog.blockingDialogOpen = false;
 	}
-	constructor(title=null,contentHTML=null,size=null) {
+	constructor(title = null, contentHTML = null, size = null) {
 		this.dialog = null;
 		
 		this.contentHTML = "Empty dialog";
 		this.title = "Title";
-		this.size=[600,400];
+		this.size = [600,400];
 		
-		if(contentHTML) {
+		if (contentHTML) {
 			this.contentHTML = contentHTML;
 		}
-		if(title) {
+		if (title) {
 			this.title = title;
 		}
-		if(size) {
+		if (size) {
 			this.size = size;
 		}
 		
@@ -4644,7 +4617,7 @@ class jqDialog {
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
-		this.dialogDiv.style.display="none";
+		this.dialogDiv.style.display = "none";
 
 		this.dialogContent = document.createElement("div");
 		this.dialogContent.innerHTML=this.contentHTML;
@@ -4674,14 +4647,14 @@ class jqDialog {
 				this.beforeClose();
 			},
 			close: () => {
-				this.visible=false;
+				this.visible = false;
 				jqDialog.blockingDialogOpen = false;
 				this.afterClose();
 			},
 			width: this.size[0],
 			height: this.size[1],
 			open: ( event, ui ) => {
-				if(this.dialogParameters.modal) {
+				if (this.dialogParameters.modal) {
 					jqDialog.blockingDialogOpen = true;
 				}
 				
@@ -4707,7 +4680,7 @@ class jqDialog {
 		this.dialogParameters.width = "auto";
 		this.dialogParameters.height = "auto";
 		this.beforeCreateDialog();
-		this.dialog=$(this.dialogDiv).dialog(this.dialogParameters);
+		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
 	afterOkClose() {
 		
@@ -4771,7 +4744,7 @@ function getPrimitiveList() {
 }
 
 class XAlertDialog extends jqDialog {
-	constructor(message,closeHandler=null) {
+	constructor(message,closeHandler = null) {
 		super();
 		this.setTitle("Alert");
 		this.message = message;
@@ -4779,7 +4752,7 @@ class XAlertDialog extends jqDialog {
 		this.closeHandler = closeHandler;
 	}
 	afterClose() {
-		if(this.closeHandler) {
+		if (this.closeHandler) {
 			this.closeHandler();
 		}
 	}
@@ -4807,7 +4780,7 @@ class YesNoDialog extends jqDialog {
 		this.answer = "no";
 	}
 	afterClose() {
-		if(this.closeHandler) {
+		if (this.closeHandler) {
 			this.closeHandler(this.answer);
 		}
 	}
@@ -4815,12 +4788,12 @@ class YesNoDialog extends jqDialog {
 		this.dialogParameters.buttons = {
 			"Yes":() =>
 			{
-				this.answer="yes";
+				this.answer = "yes";
 				$(this.dialog).dialog('close');
 			},
 			"No":() =>
 			{
-				this.answer="no";
+				this.answer = "no";
 				$(this.dialog).dialog('close');
 			}
 		};
@@ -4841,7 +4814,7 @@ class YesNoCancelDialog extends jqDialog {
 		this.answer = "cancel";
 	}
 	afterClose() {
-		if(this.closeHandler) {
+		if (this.closeHandler) {
 			this.closeHandler(this.answer);
 		}
 	}
@@ -4849,17 +4822,17 @@ class YesNoCancelDialog extends jqDialog {
 		this.dialogParameters.buttons = {
 			"Yes":() =>
 			{
-				this.answer="yes";
+				this.answer = "yes";
 				$(this.dialog).dialog('close');
 			},
 			"No":() =>
 			{
-				this.answer="no";
+				this.answer = "no";
 				$(this.dialog).dialog('close');
 			},
 			"Cancel":() =>
 			{
-				this.answer="cancel";
+				this.answer = "cancel";
 				$(this.dialog).dialog('close');
 			}
 		};
@@ -4872,7 +4845,7 @@ function yesNoCancelAlert(message,closeHandler) {
 
 function saveChangedAlert(continueHandler) {
 	// If we have no unsaved changes we just continue directly	
-	if(!History.unsavedChanges) {
+	if (!History.unsavedChanges) {
 		continueHandler();
 		return;
 	}	
@@ -4898,12 +4871,12 @@ class DisplayDialog extends jqDialog {
 		super();
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
-		this.acceptedPrimitveTypes=["Stock","Flow","Variable","Converter"];
+		this.acceptedPrimitveTypes = ["Stock","Flow","Variable","Converter"];
 	}
 	
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
-			if(findID(id)==null) {
+			if (findID(id) == null) {
 				this.setDisplayId(id,false);
 			}
 		}
@@ -4913,7 +4886,7 @@ class DisplayDialog extends jqDialog {
 		let results = [];
 		let primitiveList = getPrimitiveList();
 		for(let primitive of primitiveList) {
-			if(this.acceptsId(primitive.id)) {
+			if (this.acceptsId(primitive.id)) {
 				results.push(primitive);
 			}
 		}
@@ -4922,7 +4895,7 @@ class DisplayDialog extends jqDialog {
 	
 	acceptsId(id) {
 		let type = getType(findID(id));
-		return (this.acceptedPrimitveTypes.indexOf(type)!=-1);
+		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
 	}
 	
 	setDisplayId(id,value) {
@@ -4930,11 +4903,11 @@ class DisplayDialog extends jqDialog {
 		switch(value) {
 			case true:
 				// Check that the id can be added
-				if(!this.acceptsId(id)) {
+				if (!this.acceptsId(id)) {
 					return;
 				}
 				// Check if id already in this.displayIdList
-				if(oldIdIndex!=-1) {
+				if (oldIdIndex != -1) {
 					return;
 				}
 				// Add the value
@@ -4943,7 +4916,7 @@ class DisplayDialog extends jqDialog {
 			break;
 			case false:
 				// Check if id is not in the list
-				if(oldIdIndex==-1) {
+				if (oldIdIndex == -1) {
 					return;
 				}				
 				this.displayIdList.splice(oldIdIndex,1);
@@ -4952,8 +4925,8 @@ class DisplayDialog extends jqDialog {
 	}
 	
 	getDisplayId(id) {
-		id=id.toString();
-		if(this.displayIdList.indexOf(id)==-1) {
+		id = id.toString();
+		if (this.displayIdList.indexOf(id) == -1) {
 			return false;
 		} else {
 			return true;
@@ -4988,8 +4961,8 @@ class DisplayDialog extends jqDialog {
 		this.setHtml(this.renderPrimitiveListHtml());
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
-			let idClicked=$(clickedElement).attr("data-id");
-			let checked=$(clickedElement).prop("checked");
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
 			this.setDisplayId(idClicked,checked);
 			this.subscribePool.publish("primitive check changed");
 		});
@@ -5044,8 +5017,8 @@ class DiagramDialog extends DisplayDialog {
 		this.setHtml(contentHTML);
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
-			let idClicked=$(clickedElement).attr("data-id");
-			let checked=$(clickedElement).prop("checked");
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
 			this.setDisplayId(idClicked,checked);
 			this.subscribePool.publish("primitive check changed");
 		});
@@ -5058,9 +5031,9 @@ class DiagramDialog extends DisplayDialog {
 		this.updateInterval();
 	}
 	updateInterval() {
-		this.xMin=Number($(this.dialogContent).find(".xMin").val());
-		this.xMax=Number($(this.dialogContent).find(".xMax").val());
-		this.xAuto=$(this.dialogContent).find(".xAuto").prop("checked");
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
 		
 		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
 		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
@@ -5069,9 +5042,9 @@ class DiagramDialog extends DisplayDialog {
 		$(this.dialogContent).find(".xMax").val(this.getXMax());
 		
 		
-		this.yMin=Number($(this.dialogContent).find(".yMin").val());
-		this.yMax=Number($(this.dialogContent).find(".yMax").val());
-		this.yAuto=$(this.dialogContent).find(".yAuto").prop("checked");
+		this.yMin = Number($(this.dialogContent).find(".yMin").val());
+		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
 		
 		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
 		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
@@ -5080,14 +5053,14 @@ class DiagramDialog extends DisplayDialog {
 		$(this.dialogContent).find(".yMax").val(this.getYMax());
 	}
 	getXMin() {
-		if(this.xAuto) {
+		if (this.xAuto) {
 			return getTimeStart();
 		} else {
 			return this.xMin;
 		}
 	}
 	getXMax() {
-		if(this.xAuto) {
+		if (this.xAuto) {
 			// Uncomment if you want the diagram to grow dynamicly as more data is produced
 			//~ return this.simulationTime;
 			return getTimeLength()
@@ -5096,14 +5069,14 @@ class DiagramDialog extends DisplayDialog {
 		}
 	}
 	getYMin() {
-		if(this.yAuto) {
+		if (this.yAuto) {
 			return this.minValue;
 		} else {
 			return this.yMin;
 		}
 	}
 	getYMax() {
-		if(this.yAuto) {
+		if (this.yAuto) {
 			return this.maxValue;
 		} else {
 			return this.yMax;
@@ -5132,28 +5105,28 @@ class XyPlotDialog extends DiagramDialog {
 	}
 	
 	getXMin() {
-		if(this.xAuto) {
+		if (this.xAuto) {
 			return this.minXValue;
 		} else {
 			return this.xMin;
 		}
 	}
 	getXMax() {
-		if(this.xAuto) {
+		if (this.xAuto) {
 			return this.maxXValue;
 		} else {
 			return this.xMax;
 		}
 	}
 	getYMin() {
-		if(this.yAuto) {
+		if (this.yAuto) {
 			return this.minYValue;
 		} else {
 			return this.yMin;
 		}
 	}
 	getYMax() {
-		if(this.yAuto) {
+		if (this.yAuto) {
 			return this.maxYValue;
 		} else {
 			return this.yMax;
@@ -5199,8 +5172,8 @@ class TableDialog extends DisplayDialog {
 		this.setHtml(contentHTML);
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
-			let idClicked=$(clickedElement).attr("data-id");
-			let checked=$(clickedElement).prop("checked");
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
 			this.setDisplayId(idClicked,checked);
 			this.subscribePool.publish("primitive check changed");
 		});
@@ -5210,9 +5183,9 @@ class TableDialog extends DisplayDialog {
 		this.updateInterval();
 	}
 	updateInterval()  {
-		this.start=Number($(this.dialogContent).find(".start").val());
-		this.end=Number($(this.dialogContent).find(".end").val());
-		this.step=Number($(this.dialogContent).find(".step").val());
+		this.start = Number($(this.dialogContent).find(".start").val());
+		this.end = Number($(this.dialogContent).find(".end").val());
+		this.step = Number($(this.dialogContent).find(".step").val());
 		
 		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
 		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
@@ -5227,21 +5200,21 @@ class TableDialog extends DisplayDialog {
 		$(this.dialogContent).find(".step").val(this.getStep());
 	}
 	getStart() {
-		if(this.startAuto) {
+		if (this.startAuto) {
 			return getTimeStart();
 		} else {
 			return this.start;
 		}
 	}
 	getEnd() {
-		if(this.endAuto) {
+		if (this.endAuto) {
 			return getTimeLength()-getTimeStart();
 		} else {
 			return this.end;
 		}
 	}
 	getStep() {
-		if(this.stepAuto) {
+		if (this.stepAuto) {
 			return getTimeStep();
 		} else {
 			return this.step;
@@ -5256,7 +5229,7 @@ class SimulationSettings extends jqDialog {
 		
 	}
 	beforeShow() {
-		let start=getTimeStart();
+		let start = getTimeStart();
 		let length = getTimeLength();
 		let step = getTimeStep();
 		this.setHtml(`
@@ -5291,7 +5264,7 @@ class NumberBoxDialog extends jqDialog {
 		super();
 		this.setTitle("Info");
 		let imPrimitive = findID(id);
-		if(imPrimitive) {
+		if (imPrimitive) {
 			let primitiveName = makePrimitiveName(getName(imPrimitive));
 			this.setHtml(`
 				Value of ${primitiveName}
@@ -5341,13 +5314,13 @@ class ConverterDialog extends jqDialog {
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
 		this.nameField = $(this.dialogContent).find(".nameField").get(0);
 	}
-	open(id,defaultFocusSelector=null) {
-		if(jqDialog.blockingDialogOpen) {
+	open(id,defaultFocusSelector = null) {
+		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
 			return;
 		}
 		this.primitive = findID(id);
-		if(this.primitive == null) {
+		if (this.primitive == null) {
 			alert("Primitive with id "+id+" does not exist");
 			return;
 		}
@@ -5362,7 +5335,7 @@ class ConverterDialog extends jqDialog {
 		$(this.nameField).val(oldName);
 		$(this.valueField).val(oldValue);
 		
-		if(this.defaultFocusSelector) {
+		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
 		}
@@ -5373,7 +5346,7 @@ class ConverterDialog extends jqDialog {
 		field.setSelectionRange(0, inputLength);
 	}
 	afterOkClose() {
-		if(this.primitive) {
+		if (this.primitive) {
 			// Handle value
 			let value = $(this.valueField).val();
 			value = value.replace(/\n/g, "\\n");
@@ -5386,16 +5359,15 @@ class ConverterDialog extends jqDialog {
 	}
 }
 
-
 function global_log_update() {
-	var log="";
-	log+="<br/>";
-	log+=global_log+"<br/>";
+	var log = "";
+	log += "<br/>";
+	log += global_log+"<br/>";
 	$(".log").html(log);
 }
 
 function do_global_log(line) {
-	global_log=line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
+	global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
 	global_log_update();
 }
 
@@ -5415,7 +5387,7 @@ class DebugDialog extends jqDialog {
 		`);
 
 		$(this.dialogContent).find(".btn_clear_log").click((event) => {
-			global_log="";
+			global_log = "";
 			global_log_update();
 		});
 	}
@@ -5425,7 +5397,6 @@ class DebugDialog extends jqDialog {
 		this.dialogParameters.height = 400;
 	}
 }
-
 
 class AboutDialog extends jqDialog {
 	constructor() {
@@ -5478,7 +5449,6 @@ class EquationEditor extends jqDialog {
     <div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
 	<div class="accordionCluster">
 
-
 	</div> <!--End of accordionCluster. Programming help is inserted here-->
 		
     
@@ -5494,8 +5464,6 @@ class EquationEditor extends jqDialog {
 		this.positiveOnlyDiv = $(this.dialogContent).find(".positiveOnlyDiv").get(0);
 		
 		let helpData = getFunctionHelpData();
-
-
 	
 		let functionListToHtml = function(functionList) {
 			let filterFunctionTemplate = (functionTemplate)=> {
@@ -5506,9 +5474,9 @@ class EquationEditor extends jqDialog {
 			let codeTemplate = "";
 			let codeHelp = "";
 			for (let j = 0; j < functionList.length; j++) {
-				let example="";
-				if(functionList[j].length==4) {
-					if((functionList[j][3]).constructor === Array) {
+				let example = "";
+				if (functionList[j].length == 4) {
+					if ((functionList[j][3]).constructor === Array) {
 						let codeSample = functionList[j][3][0];
 						let returnValue = functionList[j][3][1];
 						example = `<br/><br/><b>Example</b><br/>${codeSample}<br/><br/><b>Returns:</b><br/> ${returnValue}`;
@@ -5524,7 +5492,7 @@ class EquationEditor extends jqDialog {
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
 				result += `<li class = "functionHelp clickFunction" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
 			}
-			result+="</ul>";
+			result += "</ul>";
 			return result;
 		};
 	
@@ -5560,7 +5528,7 @@ class EquationEditor extends jqDialog {
 		});
 		
 		
-		if(this.defaultFocusSelector) {
+		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
 			var inputLength = valueFieldDom.value.length;  
@@ -5569,13 +5537,13 @@ class EquationEditor extends jqDialog {
 		}
 	
 	}
-	open(id,defaultFocusSelector=null) {
-		if(jqDialog.blockingDialogOpen) {
+	open(id,defaultFocusSelector = null) {
+		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
 			return;
 		}
 		this.primitive = findID(id);
-		if(this.primitive == null) {
+		if (this.primitive == null) {
 			alert("Primitive with id "+id+" does not exist");
 			return;
 		}
@@ -5598,7 +5566,7 @@ class EquationEditor extends jqDialog {
 		
 		
 		// Handle restrict to positive
-		if(["Flow","Stock"].indexOf(getType(this.primitive))!=-1) {
+		if (["Flow","Stock"].indexOf(getType(this.primitive)) != -1) {
 			// If element has restrict to positive
 			$(this.positiveOnlyDiv).show();
 			let restrictPositive = getNonNegative(this.primitive);
@@ -5615,8 +5583,8 @@ class EquationEditor extends jqDialog {
 		referenceList.sort(function(a, b){
 			let nameA = getName(a);
 			let nameB = getName(b);
-			if(nameA < nameB) return -1;
-			if(nameA > nameB) return 1;
+			if (nameA < nameB) return -1;
+			if (nameA > nameB) return 1;
 			return 0;
 		})
 		
@@ -5630,7 +5598,7 @@ class EquationEditor extends jqDialog {
 		}
 		
 		let referenceHTML = "";
-		if(referenceList.length > 0) {
+		if (referenceList.length > 0) {
 			referenceHTML = "Linked primitives: <br/>"+referenceListToHtml(referenceList);
 		} else {
 			referenceHTML = "No linked primitives";
@@ -5639,7 +5607,7 @@ class EquationEditor extends jqDialog {
 		
 		$(this.referenceDiv).find(".clickFunction").click((event) => this.templateClick(event));
 		
-		if(this.defaultFocusSelector) {
+		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
 			var inputLength = valueFieldDom.value.length;  
@@ -5674,21 +5642,21 @@ class EquationEditor extends jqDialog {
 	afterShow() {
 		// Building the accordion must be done while the window is visible for accordions to work correctly
 		// We therefor build it the first time the dialog is shown and store it in this.accordionBuilt
-		if(!this.accordionBuilt) {
+		if (!this.accordionBuilt) {
 			this.buildAccordion();
 			this.accordionBuilt = true;
 		}
 	}
 	storeValueSelectionRange() {
-		this.valueSelectionStart=this.valueField.selectionStart;
-		this.valueSelectionEnd=this.valueField.selectionEnd;
+		this.valueSelectionStart = this.valueField.selectionStart;
+		this.valueSelectionEnd = this.valueField.selectionEnd;
 	}
 	restoreValueSelectionRange() {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
 	afterOkClose() {
-		if(this.primitive) {
+		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
 			value = value.replace(/\n/g, "\\n");
@@ -5721,7 +5689,7 @@ class MacroDialog extends jqDialog {
 		this.setHtml(`
 		<textarea class="macroText"></textarea>
 		`);		
-		this.macroTextArea=$(this.dialogContent).find(".macroText");
+		this.macroTextArea =$(this.dialogContent).find(".macroText");
 	}
 	beforeShow() {
 		let oldMacro = getMacros();
@@ -5740,8 +5708,8 @@ class MacroDialog extends jqDialog {
 		this.macroTextArea.height(height-20);
 	}
 	beforeCreateDialog() {
-		this.dialogParameters.width="500";
-		this.dialogParameters.height="400";
+		this.dialogParameters.width = "500";
+		this.dialogParameters.height = "400";
 	}
 	afterOkClose() {
 		let newMacro = $(this.dialogContent).find(".macroText").val();
@@ -5757,7 +5725,7 @@ class TextAreaDialog extends jqDialog {
 		this.setHtml(`
 		<textarea class="text"></textarea>
 		`);		
-		this.textArea=$(this.dialogContent).find(".text");
+		this.textArea = $(this.dialogContent).find(".text");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
@@ -5776,8 +5744,8 @@ class TextAreaDialog extends jqDialog {
 		this.textArea.height(height-20);
 	}
 	beforeCreateDialog() {
-		this.dialogParameters.width="500";
-		this.dialogParameters.height="400";
+		this.dialogParameters.width = "500";
+		this.dialogParameters.height = "400";
 	}
 	afterOkClose() {
 		let newText = $(this.dialogContent).find(".text").val();
@@ -5806,8 +5774,8 @@ class EquationListDialog extends jqDialog {
 		let htmlOut = "";
 		
 		let Stocks = primitives("Stock");
-		if(Stocks.length > 0) {
-		htmlOut+=`
+		if (Stocks.length > 0) {
+		htmlOut += `
 		<h3 class="equationListHeader">Stocks</h3>
 			<table>
 				<tr><th>Name</th><td>Initial value</td></tr>
@@ -5817,8 +5785,8 @@ class EquationListDialog extends jqDialog {
 		}
 		
 		let Flows = primitives("Flow");
-		if(Flows.length > 0) {
-		htmlOut+=`
+		if (Flows.length > 0) {
+		htmlOut += `
 		<h3 class="equationListHeader">Flows</h3>
 			<table>
 				<tr><th>Name</th><td>Rate</td></tr>
@@ -5828,8 +5796,8 @@ class EquationListDialog extends jqDialog {
 		}
 		
 		let Variables = primitives("Variable");
-		if(Variables.length > 0) {
-		htmlOut+=`
+		if (Variables.length > 0) {
+		htmlOut += `
 		<h3 class="equationListHeader">Variables</h3>
 			<table>
 				<tr><th>Name</th><td>Value</td></tr>
@@ -5838,20 +5806,19 @@ class EquationListDialog extends jqDialog {
 		`;
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length;
-		if(numberOfPrimitives == 0) {
+		if (numberOfPrimitives == 0) {
 			this.setHtml("This model is emptry. Build a model to show equation list");	
 			return;		
 		}
-		htmlOut+="<br/>Total of "+numberOfPrimitives+" primitives";
+		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
 		this.setHtml(htmlOut);
 	}
 }
 
-
 // Override the message function used by the insight maker engine so that we can catch error popups
-if(typeof mxUtils == "undefined") {
+if (typeof mxUtils == "undefined") {
 	window.mxUtils = {};
-	window.mxUtils.alert=function(message,closeHandler) {
+	window.mxUtils.alert = function(message,closeHandler) {
 		xAlert("Message from engine:  "+message,closeHandler);
 	}
 }
