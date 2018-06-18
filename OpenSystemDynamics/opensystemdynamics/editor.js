@@ -1379,7 +1379,7 @@ class TwoPointer extends BaseObject{
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event){
 			var node_id = this.getAttribute("node_id");
-			primitive_mousedown(node_id,event);
+			primitive_mousedown(node_id, event);
 		});
 		last_connection = this;
 		this.update();
@@ -2801,8 +2801,6 @@ class MouseTool extends BaseTool {
 			empty_click();
 		}
 		
-
-		
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
 		if (selectedAnchor) {
@@ -2816,7 +2814,6 @@ class MouseTool extends BaseTool {
 				break;
 			}
 		}
-			
 			
 		// Reset it for use next time
 		last_click_object_clicked = false;
@@ -3333,7 +3330,7 @@ function delete_object(node_id) {
 	delete object_to_delete;
 	delete object_array[node_id];
 }
-function primitive_mousedown(node_id,event,new_primitive) {
+function primitive_mousedown(node_id, event, new_primitive) {
 	last_clicked_element = get_object(node_id);
 	
 	// If we click directly on the anchors we dont want anything but them selected
