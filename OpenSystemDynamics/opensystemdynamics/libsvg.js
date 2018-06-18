@@ -348,3 +348,37 @@ class svgsFlowArrow {
 	} 
 }
 
+function svgCloud() {
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+	newElement.pos = [0,0];
+	var cloudPath = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	cloudPath.setAttribute("stroke", "black");
+	cloudPath.setAttribute("stroke-width", "1");
+	cloudPath.setAttribute("fill", "white");
+	cloudPath.setAttribute("d", "m -1.698631,-21.919908 c -8.659549,0.01471 -15.955172,6.469861 -17.016609,15.0640783 -4.55912,0.898914 -7.846344,4.8960976 -7.847997,9.5430092 -0.0013,5.3742001 4.354491,9.7317125 9.728642,9.7326095 H 14.258461 C 21.186891,12.42126 26.803868,6.8043302 26.802389,-0.12411639 26.536181,-8.3845263 20.147881,-13.319146 13.539504,-12.627763 10.596092,-18.3299 4.7184111,-21.914628 -1.6986288,-21.921306 Z");
+	
+	newElement.setPos = function (pos, adjecentPos) {
+		let offset = [0,0];
+		let sine = sin(adjecentPos, pos);
+		let cosine = cos(adjecentPos, pos);
+		sin45 = 1/Math.sqrt(2);
+		if (sin45 < sine) {				// Top
+			offset = [-1.7, 21.9];
+		} else if (sin45 < cosine) {	// Right
+			offset = [26.8, 0];
+		} else if (sine < -sin45) { 	// Bottom
+			offset = [-1.7, -12.4]
+		} else { 						// Left 
+			offset = [-26.6, 3.2];
+		}
+		this.pos = translate(pos, offset);		
+	}
+	
+	newElement.update = function () {
+		this.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
+	}
+	
+	newElement.appendChild(cloudPath);
+	svgplane.appendChild(newElement);
+	return newElement;
+}

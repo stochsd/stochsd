@@ -1683,10 +1683,13 @@ class RiverVisual extends BaseConnection {
 		// List of all cooridnates for path including start and end. TYPE: [[x,y]]
 		this.pathPoints = []; 
 
+		this.startCloud;
+		this.endCloud;
 		this.outerPath; // Black path
 		this.innerPath; // White path
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
+
 	}
 
 	createAnchorPoint(x, y) {
@@ -1703,11 +1706,12 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	makeGraphics() {
-		
+		this.startCloud = svgCloud();
+		this.endCloud = svgCloud();
 		this.outerPath = svgWidePath(7, "black");
 		this.innerPath = svgWidePath(5, "white");
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
-		this.flowPathGroup = svg_group([this.outerPath, this.innerPath, this.arrowHeadPath]);
+		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.anchorPoints = [];
 
 		// ----- Erik's code below ------
@@ -1805,10 +1809,28 @@ class RiverVisual extends BaseConnection {
 		super.update();
 		// ----- Eriks code above -----^
 		// ----- Magnus code below ----v
+		
+		// Set positions
 		this.updatePathPoints();
+		if (this.start_attach == null) {
+			this.startCloud.setAttribute("visibility", "visible");
+			this.startCloud.setPos(this.pathPoints[0], this.pathPoints[1]);
+		} else {
+			this.startCloud.setAttribute("visibility", "hidden");
+		}
+		if (this.end_attach == null) {
+			this.endCloud.setAttribute("visibility", "visible");
+			this.endCloud.setPos(this.pathPoints[this.pathPoints.length-1], this.pathPoints[this.pathPoints.length-2]);
+		} else {
+			this.endCloud.setAttribute("visibility", "hidden");
+		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(12));
 		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
+		
+		// Update
+		this.startCloud.update();
+		this.endCloud.update();
 		this.outerPath.update();
 		this.innerPath.update();
 		this.arrowHeadPath.update();
