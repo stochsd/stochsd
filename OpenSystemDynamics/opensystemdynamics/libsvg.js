@@ -286,6 +286,9 @@ function svgWidePath(width, color) {
 		for (i = 1; i < this.points.length; i++) {
 			d += "L"+points[i][0]+","+points[i][1]+" ";
 		}
+		for (i = this.points.length-2; 0 < i; i-- ) { 	// Draw path back upon itself - Reason: remove area in which to click on
+			d += "L"+points[i][0]+","+points[i][1]+" ";
+		}
 		// d += "Z";
 		this.setAttribute("d", d);
 	}
