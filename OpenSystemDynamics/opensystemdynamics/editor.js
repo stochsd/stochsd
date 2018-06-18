@@ -1688,6 +1688,7 @@ class RiverVisual extends BaseConnection {
 		this.outerPath; // Black path
 		this.innerPath; // White path
 		this.arrowHeadPath; // Head of Magnus Arrow
+		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
 	}
 
 	createAnchorPoint(x, y) {
@@ -1708,6 +1709,7 @@ class RiverVisual extends BaseConnection {
 		this.outerPath = svgWidePath(7, "black");
 		this.innerPath = svgWidePath(5, "white");
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
+		this.flowPathGroup = svg_group([this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.anchorPoints = [];
 
 		// ----- Erik's code below ------
