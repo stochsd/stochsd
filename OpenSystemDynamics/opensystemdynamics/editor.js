@@ -1687,7 +1687,6 @@ class RiverVisual extends BaseConnection {
 		this.innerPath; // White path
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
-		this.group2; // Group with flowPathGroup and coreFlowPathGroup
 	}
 
 	createAnchorPoint(x, y) {
@@ -1709,8 +1708,6 @@ class RiverVisual extends BaseConnection {
 		this.innerPath = svgWidePath(5, "white");
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
 		this.flowPathGroup = svg_group([this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.group2 = svg_group([this.flowPathGroup]);
-		this.group2.setAttribute("node_id", this.id);
 		this.anchorPoints = [];
 
 		// ----- Erik's code below ------
@@ -1730,7 +1727,7 @@ class RiverVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.flowPathGroup, this.arrowhead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
