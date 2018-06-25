@@ -1698,7 +1698,7 @@ class RiverVisual extends BaseConnection {
 
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getVariablePos();
 		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
