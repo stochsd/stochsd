@@ -1733,7 +1733,7 @@ class RiverVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.flowPathGroup, this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.flowPathGroup, this.valve, this.arrowhead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
