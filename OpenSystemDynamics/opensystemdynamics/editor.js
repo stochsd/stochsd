@@ -1675,7 +1675,7 @@ class RiverVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
-		this.rotatePosList = [[0,48],[25,18],[0,-30],[-25,18]];
+		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
@@ -1693,14 +1693,14 @@ class RiverVisual extends BaseConnection {
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
 		this.valve; 		// variable side;
+		this.variable; 		// Fake variable ball
 	}
 
 	moveValve () {
-		this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
-		// if (this.variableSide) {
-		// 	this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
-		// }
-		// this.variableSide = !this.variableSide;
+		if (this.variableSide) {
+			this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
+		}
+		this.variableSide = !this.variableSide;
 		this.update();
 	}
 
@@ -1725,6 +1725,8 @@ class RiverVisual extends BaseConnection {
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z","black","white","element")]);
+		this.name_element = svg_text(0, -15, "vairable", "name_element");
+		this.variable = svg_group([svg_circle(0, 0, 15, "black", "white", "element"), this.name_element]);
 		this.anchorPoints = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -1735,18 +1737,18 @@ class RiverVisual extends BaseConnection {
 		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 
-		this.name_element = svg_text(0,0,"variable","name_element");
+		//this.name_element = svg_text(0,0,"variable","name_element");
 		this.flowcore = svg_group([ 
 			svg_circle(0,15,15,"black","white","element"),
-			svg_path("M0,0 -10,-10 10,-10 Z","black","white","element"),
-			this.name_element
+			svg_path("M0,0 -10,-10 10,-10 Z","black","white","element")// ,
+			//this.name_element
 		],svg_transform_string(100,100,0,1));
 		
 		$(this.name_element).dblclick((event) => {	
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.flowPathGroup, this.valve, this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.flowPathGroup, this.valve, this.variable, this.arrowhead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
@@ -1846,11 +1848,28 @@ class RiverVisual extends BaseConnection {
 		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
 		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
 		let valveRot = 0;
+		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
 			valveRot = 90;
 		}
+
+		if (dir == "north" || dir == "south") {
+			if (this.variableSide) {
+				variableOffset = [15, 0];
+			} else {
+				variableOffset = [-15, 0];
+			}
+		} else {
+			if (this.variableSide) {
+				variableOffset = [0, -15];
+			} else {
+				variableOffset = [0, 15];
+			}
+		}
+
 		svg_transform(this.valve, valveX, valveY, valveRot, 1);
-		
+		this.variable
+		svg_translate(this.variable, valveX+variableOffset[0], valveY+variableOffset[1]);
 		// Update
 		this.startCloud.update();
 		this.endCloud.update();
