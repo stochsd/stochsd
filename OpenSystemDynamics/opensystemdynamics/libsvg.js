@@ -359,19 +359,21 @@ function svgCloud() {
 	
 	newElement.setPos = function (pos, adjecentPos) {
 		let offset = [0,0];
-		let sine = sin(adjecentPos, pos);
-		let cosine = cos(adjecentPos, pos);
-		sin45 = 1/Math.sqrt(2);
-		if (sin45 < sine) {				// Top
-			offset = [-1.7, 21.9];
-		} else if (sin45 < cosine) {	// Right
-			offset = [26.8, 0];
-		} else if (sine < -sin45) { 	// Bottom
-			offset = [-1.7, -12.4]
-		} else { 						// Left 
-			offset = [-26.6, 3.2];
+		switch (neswDirection(adjecentPos, pos)) {
+			case "north":
+				offset = [-1.7, 21.9];	
+				break;
+			case "east":
+				offset = [26.8, 0];
+				break;
+			case "south":
+				offset = [-1.7, -12.4];
+				break;
+			default: // west
+				offset = [-26.6, 3.2];	
+				break;
 		}
-		this.pos = translate(pos, offset);		
+		this.pos = translate(pos, offset);
 	}
 	
 	newElement.update = function () {
