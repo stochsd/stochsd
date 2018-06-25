@@ -1683,14 +1683,25 @@ class RiverVisual extends BaseConnection {
 		// List of all cooridnates for path including start and end. TYPE: [[x,y]]
 		this.pathPoints = []; 
 
+		this.valveIndex; 	// index to indicate what inbetween path valve is placed
+		this.variableSide;	// bool to indicate what side of path variable is placed
+
 		this.startCloud;
 		this.endCloud;
 		this.outerPath; // Black path
 		this.innerPath; // White path
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
-		this.valve;
+		this.valve; 		// variable side;
+	}
 
+	moveValve () {
+		this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
+		// if (this.variableSide) {
+		// 	this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
+		// }
+		// this.variableSide = !this.variableSide;
+		this.update();
 	}
 
 	createAnchorPoint(x, y) {
@@ -1715,6 +1726,8 @@ class RiverVisual extends BaseConnection {
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z","black","white","element")]);
 		this.anchorPoints = [];
+		this.valveIndex = 0;
+		this.variableSide = false;
 
 		// ----- Erik's code below ------
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
@@ -1829,9 +1842,9 @@ class RiverVisual extends BaseConnection {
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
 		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
-		let valveX = (this.pathPoints[0][0]+this.pathPoints[1][0])/2;
-		let valveY = (this.pathPoints[0][1]+this.pathPoints[1][1])/2;
-		let dir = neswDirection(this.pathPoints[0], this.pathPoints[1]);
+		let valveX = (this.pathPoints[this.valveIndex][0]+this.pathPoints[this.valveIndex+1][0])/2;
+		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
+		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
 			valveRot = 90;
@@ -2737,6 +2750,19 @@ class RotateNameTool extends BaseTool {
 	}
 	static leaveTool() {
 		History.storeUndoState();
+	}
+}
+
+class MoveValveTool extends BaseTool {
+	static enterTool() {
+		var object_array = get_selected_objects();
+		for (var node_id in object_array) {
+			let obj = get_object(node_id);
+			if (obj.type == "flow") {
+				obj.moveValve();
+			}
+		}
+		ToolBox.setTool("mouse");
 	}
 }
 
@@ -3670,6 +3696,7 @@ class ToolBox {
 			"river":RiverTool,
 			"link":LinkTool,
 			"rotatename":RotateNameTool,
+			"movevalve":MoveValveTool,
 			"ghost":GhostTool,
 			//~ "text":TextTool,
 			"text":TextAreaTool,
