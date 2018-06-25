@@ -1674,8 +1674,7 @@ class FlowVisual extends BaseConnection {
 class RiverVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
-		this.mountPoints = [[-15,15],[15,15],[0,30],[0,-10]];
-		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]
+		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]];
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
@@ -1693,7 +1692,7 @@ class RiverVisual extends BaseConnection {
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
 		this.valve; 
-		this.variable; 		// Fake variable ball
+		this.variable; 		// variable (only svg group-element with circle and text)
 	}
 
 	getMountPos([xTarget, yTarget]) {
@@ -1778,32 +1777,19 @@ class RiverVisual extends BaseConnection {
 		this.anchorPoints = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
-
-		// ----- Erik's code below ------
-		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
-		this.updateLength();
-		this.arrowhead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowhead,this.endx,this.endy);
-
-		//this.name_element = svg_text(0,0,"variable","name_element");
-		this.flowcore = svg_group([ 
-			svg_circle(0,15,15,"black","white","element"),
-			svg_path("M0,0 -10,-10 10,-10 Z","black","white","element")// ,
-			//this.name_element
-		],svg_transform_string(100,100,0,1));
 		
 		$(this.name_element).dblclick((event) => {	
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.flowPathGroup, this.valve, this.variable, this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.flowPathGroup, this.valve, this.variable]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
 			this.double_click(this.id);
 		});
 	}
-
+	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
 		let len = this.pathPoints.length;
@@ -1876,6 +1862,10 @@ class RiverVisual extends BaseConnection {
 		// ----- Magnus code below ----v
 		
 		// Set positions
+
+	}
+	
+	updateGraphics() {
 		this.updatePathPoints();
 		if (this.start_attach == null) {
 			this.startCloud.setAttribute("visibility", "visible");
@@ -1905,17 +1895,6 @@ class RiverVisual extends BaseConnection {
 		this.outerPath.update();
 		this.innerPath.update();
 		this.arrowHeadPath.update();
-	}
-	
-	updateGraphics() {
-		let xdiff = this.endx-this.startx;
-		let ydiff = this.endy-this.starty;
-		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
-		
-		let auxiliaryPos = [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
-		svg_transform(get_object(this.id).flowcore,auxiliaryPos[0],auxiliaryPos[1],0,1);
-		this.updateLength();
 	}
 	
 	double_click() {
