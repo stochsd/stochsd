@@ -1836,11 +1836,14 @@ class RiverVisual extends BaseConnection {
 		// start_attach is null if we are not attached to anything
 		
 		let connectionCenter = this.get_pos();
-		
+		this.updatePathPoints();
+		let connectionStartPos = this.pathPoints[1];
+		let conectionEndPos = this.pathPoints[this.pathPoints.length-2];
+
 		if (this.start_attach != null && this.start_anchor != null) {
 			if (this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.getMountPos(connectionCenter);
+				let newPos = this.start_attach.getMountPos(connectionStartPos);
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -1850,7 +1853,7 @@ class RiverVisual extends BaseConnection {
 		if (this.end_attach != null && this.end_anchor != null) {
 			if (this.end_attach.get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getMountPos(connectionCenter);
+				let newPos = this.end_attach.getMountPos(conectionEndPos);
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -1858,11 +1861,6 @@ class RiverVisual extends BaseConnection {
 			}
 		}
 		super.update();
-		// ----- Eriks code above -----^
-		// ----- Magnus code below ----v
-		
-		// Set positions
-
 	}
 	
 	updateGraphics() {
