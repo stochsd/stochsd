@@ -1688,12 +1688,25 @@ class RiverVisual extends BaseConnection {
 
 		this.startCloud;
 		this.endCloud;
-		this.outerPath; // Black path
-		this.innerPath; // White path
+		this.outerPath; 	// Black path
+		this.innerPath; 	// White path
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
-		this.valve; 		// variable side;
+		this.valve; 
 		this.variable; 		// Fake variable ball
+	}
+
+	getMountPos([xTarget, yTarget]) {
+		// See "docs/code/mountPoints.svg" for math explanation 
+		const [xCenter, yCenter] = this.get_pos();
+		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const dXTarget = xTarget - xCenter;
+		const dYTarget = yTarget - yCenter;
+		const dXEdge = safeDivision(dXTarget*15, rTarget);
+		const dYEdge = safeDivision(dYTarget*15, rTarget);
+		const xEdge = dXEdge + xCenter; 
+		const yEdge = dYEdge + yCenter;
+		return [xEdge, yEdge]; 
 	}
 
 	moveValve () {
@@ -1717,6 +1730,41 @@ class RiverVisual extends BaseConnection {
 		this.arrowPath.setAttribute("d",newPath);
 	}
 	
+	getValvePos() {
+		let valveX = (this.pathPoints[this.valveIndex][0]+this.pathPoints[this.valveIndex+1][0])/2;
+		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
+		return [valveX, valveY];
+	}
+
+	getValveRotation() {
+		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
+		let valveRot = 0;
+		if (dir == "north" || dir == "south") {
+			valveRot = 90;
+		}
+		return valveRot;
+	}
+
+	getVariablePos() {
+		let [valveX, valveY] = this.getValvePos();
+		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
+		let variableOffset = [0, 0];
+		if (dir == "north" || dir == "south") {
+			if (this.variableSide) {
+				variableOffset = [15, 0];
+			} else {
+				variableOffset = [-15, 0];
+			}
+		} else {
+			if (this.variableSide) {
+				variableOffset = [0, -15];
+			} else {
+				variableOffset = [0, 15];
+			}
+		} 
+		return [valveX+variableOffset[0], valveY+variableOffset[1]];
+	}
+
 	makeGraphics() {
 		this.startCloud = svgCloud();
 		this.endCloud = svgCloud();
@@ -1844,32 +1892,13 @@ class RiverVisual extends BaseConnection {
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
 		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
-		let valveX = (this.pathPoints[this.valveIndex][0]+this.pathPoints[this.valveIndex+1][0])/2;
-		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
-		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
-		let valveRot = 0;
-		let variableOffset = [0, 0];
-		if (dir == "north" || dir == "south") {
-			valveRot = 90;
-		}
 
-		if (dir == "north" || dir == "south") {
-			if (this.variableSide) {
-				variableOffset = [15, 0];
-			} else {
-				variableOffset = [-15, 0];
-			}
-		} else {
-			if (this.variableSide) {
-				variableOffset = [0, -15];
-			} else {
-				variableOffset = [0, 15];
-			}
-		}
-
+		let [valveX, valveY] = this.getValvePos();
+		let valveRot = this.getValveRotation();
+		let [varX, varY] = this.getVariablePos();
 		svg_transform(this.valve, valveX, valveY, valveRot, 1);
 		this.variable
-		svg_translate(this.variable, valveX+variableOffset[0], valveY+variableOffset[1]);
+		svg_translate(this.variable, varX, varY);
 		// Update
 		this.startCloud.update();
 		this.endCloud.update();
