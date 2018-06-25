@@ -1689,6 +1689,7 @@ class RiverVisual extends BaseConnection {
 		this.innerPath; // White path
 		this.arrowHeadPath; // Head of Magnus Arrow
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
+		this.valve;
 
 	}
 
@@ -1712,6 +1713,7 @@ class RiverVisual extends BaseConnection {
 		this.innerPath = svgWidePath(5, "white");
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
+		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z","black","white","element")]);
 		this.anchorPoints = [];
 
 		// ----- Erik's code below ------
@@ -1827,6 +1829,14 @@ class RiverVisual extends BaseConnection {
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
 		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
+		let valveX = (this.pathPoints[0][0]+this.pathPoints[1][0])/2;
+		let valveY = (this.pathPoints[0][1]+this.pathPoints[1][1])/2;
+		let dir = neswDirection(this.pathPoints[0], this.pathPoints[1]);
+		let valveRot = 0;
+		if (dir == "north" || dir == "south") {
+			valveRot = 90;
+		}
+		svg_transform(this.valve, valveX, valveY, valveRot, 1);
 		
 		// Update
 		this.startCloud.update();
