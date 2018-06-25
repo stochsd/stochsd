@@ -49,3 +49,19 @@ function rotatePoints(points, sine, cosine) {
 	}
 	return newPoints;
 }
+
+// Returns "north, east, west or south. Closest direction to the two points vector."
+function neswDirection(point1, point2) {
+	let sine = sin(point1, point2);
+	let cosine = cos(point1, point2);
+	sin45 = 1/Math.sqrt(2);
+	if (sin45 < sine) {	
+		return "north";
+	} else if (sin45 < cosine) {
+		return "east"
+	} else if (sine < -sin45) { 
+		return "south"
+	} else { 
+		return "west"
+	}
+}
