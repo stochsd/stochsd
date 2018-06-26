@@ -3047,24 +3047,24 @@ FlowTool.init();
 
 class RiverTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Flow", null,null);
-		setNonNegative(this.primitive,false);
+		this.primitive = createConnector(name, "Flow", null, null);
+		setNonNegative(this.primitive, false);
 		
 		let rotateName = this.primitive.getAttribute("RotateName");
 		// Force all stocks to have a RotateName
 		if (!rotateName) {
 			rotateName = "0";
-			this.primitive.setAttribute("RotateName",rotateName);
+			this.primitive.setAttribute("RotateName", rotateName);
 		}		
 		
-		this.current_connection = new RiverVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new RiverVisual(this.primitive.id, this.get_type(), [x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
 
 	static rightMouseDown(x,y) {
 		do_global_log("Right mouse on: "+x+", "+y);
-		this.current_connection.createAnchorPoint(x,y);
+		this.current_connection.createAnchorPoint(x, y);
 	}
 
 	static get_type() {
