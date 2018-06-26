@@ -1876,7 +1876,6 @@ class RiverVisual extends BaseConnection {
 		let valveRot = this.getValveRotation();
 		let [varX, varY] = this.getVariablePos();
 		svg_transform(this.valve, valveX, valveY, valveRot, 1);
-		this.variable
 		svg_translate(this.variable, varX, varY);
 		// Update
 		this.startCloud.update();
