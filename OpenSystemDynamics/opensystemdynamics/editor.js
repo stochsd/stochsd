@@ -1827,7 +1827,6 @@ class RiverVisual extends BaseConnection {
 		// start_anchor is null if we are currently creating the connection
 		// start_attach is null if we are not attached to anything
 		
-		let connectionCenter = this.get_pos();
 		this.updatePathPoints();
 		let connectionStartPos = this.pathPoints[1];
 		let conectionEndPos = this.pathPoints[this.pathPoints.length-2];
