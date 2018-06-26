@@ -1096,6 +1096,14 @@ class OrthoAnchorPoint extends AnchorPoint {
 		super(id, type, pos, anchorTypeEnum.ortho);
 		this.changed = true;
 	}
+	
+	afterMove(diff_x, diff_y) {
+		super.afterMove(diff_x, diff_y);
+		do_global_log("OrthoAnchor - afterMove() -"+this.id);
+		let parent = get_parent(this);
+		// Add adjust nighbor to RiverVisual
+		parent.adjustNeighbors(this.index); 
+	}
 }
 
 class TextVisual extends BasePrimitive{
