@@ -990,7 +990,8 @@ const anchorTypeEnum = {
 	start:2,
 	end:3,
 	bezier1:4,
-	bezier2:5
+	bezier2:5,
+	ortho:6
 }
 class AnchorPoint extends OnePointer{
 	constructor(id, type, pos, anchorType) {
@@ -1044,10 +1045,12 @@ class AnchorPoint extends OnePointer{
 	}
 	update() {
 		super.update();
+		console.log("update() AnchorPoint "+this.id);
 	}
 	afterUpdatePosition() {
 		let parentId = get_parent_id(this.id);
 		get_object(parentId).afterAnchorUpdate(this.anchorType);
+		console.log("afterUpdatePosition() AnchorPoint "+this.id);
 	}
 	updatePosition() {
 		this.update();
@@ -1085,6 +1088,13 @@ class AnchorPoint extends OnePointer{
 				break;			
 			}
 		}
+	}
+}
+
+class OrthoAnchorPoint extends AnchorPoint {
+	constructor(id, type, pos) {
+		super(id, type, pos, anchorTypeEnum.ortho);
+		this.changed = true;
 	}
 }
 
@@ -1717,16 +1727,20 @@ class RiverVisual extends BaseConnection {
 	}
 
 	createAnchorPoint(x, y) {
-		// Find last anchorpoint 
-		// Get link to anchor point before (and after?)
-		// Get neswDirection - place point
-		// Restrain x or y some how
-		// -----------------------
-		// Extra attributes that orto achor need:
-		//	anchor refrences: prevAnchor, nextAnchor
-		// 	booleans: isXFree, isYFree
-		// 	limits?
-		let newAnchor = new AnchorPoint(this.id+".point"+this.anchorPoints.length,"dummy_anchor",[x, y],anchorTypeEnum.bezier1);
+		let [newX, newY] = [x, y];
+		let prevPos = [0, 0];
+		if (this.anchorPoints.length == 0) {
+			prevPos = [this.startx, this.starty];
+		} else {
+			prevPos = this.anchorPoints[this.anchorPoints.length-1].get_pos();
+		}
+		let dir = neswDirection(prevPos, [x, y]);
+		if (dir == "north" || dir == "south") {
+			newX = prevPos[0];
+		} else {
+			newY = prevPos[1];
+		}
+		let newAnchor = new OrthoAnchorPoint(this.id+".point"+this.anchorPoints.length, "dummy_anchor", [newX, newY]);
 		this.anchorPoints.push(newAnchor);
 	}
 	
