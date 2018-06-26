@@ -3046,7 +3046,7 @@ class FlowTool extends TwoPointerTool {
 FlowTool.init();
 
 class RiverTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static create_TwoPointer_start(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false);
 		
