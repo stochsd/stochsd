@@ -1861,7 +1861,6 @@ class RiverVisual extends BaseConnection {
 			this.startCloud.setPos(this.pathPoints[0], this.pathPoints[1]);
 		} else {
 			this.startCloud.setVisibility(false);
-			this.startCloud.setAttribute("transform", "rotate(90)");
 		}
 		if (this.end_attach == null) {
 			this.endCloud.setVisibility(true);
