@@ -1717,6 +1717,15 @@ class RiverVisual extends BaseConnection {
 	}
 
 	createAnchorPoint(x, y) {
+		// Find last anchorpoint 
+		// Get link to anchor point before (and after?)
+		// Get neswDirection - place point
+		// Restrain x or y some how
+		// -----------------------
+		// Extra attributes that orto achor need:
+		//	anchor refrences: prevAnchor, nextAnchor
+		// 	booleans: isXFree, isYFree
+		// 	limits?
 		let newAnchor = new AnchorPoint(this.id+".point"+this.anchorPoints.length,"dummy_anchor",[x, y],anchorTypeEnum.bezier1);
 		this.anchorPoints.push(newAnchor);
 	}
