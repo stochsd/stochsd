@@ -1684,7 +1684,7 @@ class FlowVisual extends BaseConnection {
 class RiverVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
-		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacering vid rotation av text.
+		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
