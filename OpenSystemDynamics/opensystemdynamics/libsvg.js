@@ -349,13 +349,11 @@ class svgsFlowArrow {
 }
 
 function svgCloud() {
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'g');
-	newElement.pos = [0,0];
-	var cloudPath = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-	cloudPath.setAttribute("stroke", "black");
-	cloudPath.setAttribute("stroke-width", "1");
-	cloudPath.setAttribute("fill", "white");
-	cloudPath.setAttribute("d", "m -1.698631,-21.919908 c -8.659549,0.01471 -15.955172,6.469861 -17.016609,15.0640783 -4.55912,0.898914 -7.846344,4.8960976 -7.847997,9.5430092 -0.0013,5.3742001 4.354491,9.7317125 9.728642,9.7326095 H 14.258461 C 21.186891,12.42126 26.803868,6.8043302 26.802389,-0.12411639 26.536181,-8.3845263 20.147881,-13.319146 13.539504,-12.627763 10.596092,-18.3299 4.7184111,-21.914628 -1.6986288,-21.921306 Z");
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	newElement.setAttribute("stroke", "black");
+	newElement.setAttribute("stroke-width", "1");
+	newElement.setAttribute("fill", "white");
+	newElement.setAttribute("d", "m -1.698631,-21.919908 c -8.659549,0.01471 -15.955172,6.469861 -17.016609,15.0640783 -4.55912,0.898914 -7.846344,4.8960976 -7.847997,9.5430092 -0.0013,5.3742001 4.354491,9.7317125 9.728642,9.7326095 H 14.258461 C 21.186891,12.42126 26.803868,6.8043302 26.802389,-0.12411639 26.536181,-8.3845263 20.147881,-13.319146 13.539504,-12.627763 10.596092,-18.3299 4.7184111,-21.914628 -1.6986288,-21.921306 Z");
 	
 	newElement.setPos = function (pos, adjecentPos) {
 		let offset = [0,0];
@@ -380,7 +378,6 @@ function svgCloud() {
 		this.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
 	}
 	
-	newElement.appendChild(cloudPath);
 	svgplane.appendChild(newElement);
 	return newElement;
 }
