@@ -1736,8 +1736,10 @@ class RiverVisual extends BaseConnection {
 		}
 		let dir = neswDirection(prevPos, [x, y]);
 		if (dir == "north" || dir == "south") {
+			// Snap X-coordinate to previous point
 			newX = prevPos[0];
 		} else {
+			// Snap Y-coordinate to previous point
 			newY = prevPos[1];
 		}
 		let newAnchor = new OrthoAnchorPoint(this.id+".point"+this.anchorPoints.length, "dummy_anchor", [newX, newY]);
