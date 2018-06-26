@@ -3857,7 +3857,8 @@ function hashUpdate() {
 }
 
 $(document).ready(function() {
-	rectselector.element = svg_rect(-30,-30,60,60,"green","none","element");
+	rectselector.element = svg_rect(-30,-30,60,60,"black","none","element");
+	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 	var svgplane = document.getElementById("svgplane");
 	
