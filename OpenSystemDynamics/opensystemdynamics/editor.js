@@ -1721,14 +1721,6 @@ class RiverVisual extends BaseConnection {
 		this.anchorPoints.push(newAnchor);
 	}
 	
-	updateLength() {
-		// The rotation of the arrowhead is upwards until rotated
-		const halfWidth = 1.5;
-		const headHalfWidth = 7;
-		var newPath = `M0,0 ${headHalfWidth},10 ${halfWidth},10 ${halfWidth},${this.length} -${halfWidth},${this.length} -${halfWidth},10 -${headHalfWidth},10 Z`;
-		this.arrowPath.setAttribute("d",newPath);
-	}
-	
 	getValvePos() {
 		let valveX = (this.pathPoints[this.valveIndex][0]+this.pathPoints[this.valveIndex+1][0])/2;
 		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
