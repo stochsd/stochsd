@@ -360,13 +360,13 @@ function svgCloud() {
 		let offset = [0,0];
 		switch (neswDirection(adjecentPos, pos)) {
 			case "north":
-				offset = [-1.7, 21.9];	
+				offset = [0, 21.9];	
 				break;
 			case "east":
 				offset = [26.8, 0];
 				break;
 			case "south":
-				offset = [-1.7, -12.4];
+				offset = [0, -12.4];
 				break;
 			default: // west
 				offset = [-26.6, 3.2];	
