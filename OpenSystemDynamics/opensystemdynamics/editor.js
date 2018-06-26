@@ -176,14 +176,14 @@ class History {
 	}
 	
 	static toLocalStorage() {
-		localStorage.setItem("undoState_length",this.undoStates.length);
+		localStorage.setItem("undoState_length", this.undoStates.length);
 		
 		for(let i in this.undoStates) {
 			let state = this.undoStates[i];
-			localStorage.setItem("undoState_"+i,state);
+			localStorage.setItem("undoState_"+i, state);
 		}
 		
-		localStorage.setItem("undoIndex",this.undoIndex);
+		localStorage.setItem("undoIndex", this.undoIndex);
 	}
 	
 	static fromLocalStorage() {
@@ -222,7 +222,7 @@ function loadPlugin(pluginName) {
 }
 
 function setParentTitle(newTitle) {	
-	sendToParentFrame({"title":newTitle},"update_title");
+	sendToParentFrame({"title":newTitle}, "update_title");
 }
 
 function quitQuestion() {
@@ -266,12 +266,12 @@ function updateWindowSize() {
 
 }
 
-defaultAttributeChangeHandler = function(primitive,attributeName,value) {
+defaultAttributeChangeHandler = function(primitive, attributeName, value) {
 	let id = getID(primitive);
 	let type = getType(primitive);
 	let visualObject = get_object(id);
 	if (visualObject) {
-		visualObject.attributeChangeHandler(attributeName,value);
+		visualObject.attributeChangeHandler(attributeName, value);
 	}
 	
 	switch(attributeName) {
@@ -583,7 +583,7 @@ function stripBrackets(primitiveName) {
 	if (cutTo == -1) {
 		cutTo = primitiveName.length;
 	}
-	return primitiveName.slice(cutFrom,cutTo);
+	return primitiveName.slice(cutFrom, cutTo);
 }
 
 function formatFunction(functionName) {
@@ -630,11 +630,11 @@ function stocsd_format(number, tdecimals) {
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
 	
-	if (Math.abs(number)<Math.pow(10,(-tdecimals))) {
+	if (Math.abs(number)<Math.pow(10, (-tdecimals))) {
         return number.toExponential(2).toUpperCase();
 	}
 	//Check if the number is to big to be view ed in the field
-	if (Math.abs(number)>Math.pow(10,tdecimals)) {
+	if (Math.abs(number)>Math.pow(10, tdecimals)) {
         return number.toExponential(2).toUpperCase();
 	}
 	
@@ -666,7 +666,7 @@ function get_parent(child) {
 	return get_object(get_parent_id(child.id));
 }
 
-function is_family(id1,id2) {
+function is_family(id1, id2) {
 	var parent_id1 = id1.toString().split(".")[0];
 	var parent_id2 = id2.toString().split(".")[0];
 	if (parent_id1 == parent_id2) {
@@ -713,10 +713,10 @@ function default_double_click(id) {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
 	}
-	equationEditor.open(id,".valueField");
+	equationEditor.open(id, ".valueField");
 }
 
-function calc_distance(xdiff,ydiff) {
+function calc_distance(xdiff, ydiff) {
 	return Math.sqrt((xdiff*xdiff) + (ydiff*ydiff));
 }
 
@@ -736,7 +736,7 @@ class BaseObject {
 		this.group = null;
 		this.mountPoints = [[0,0]];
 		
-		this.rotatePosList = [[0,this.name_radius+8],[this.name_radius,0],[0,-this.name_radius],[-this.name_radius,0]];
+		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
 
 	}
 
@@ -745,20 +745,20 @@ class BaseObject {
 		
 		// Check if we only have one mount point
 		if (this.mountPoints == 1) {
-			return [pos[0]+this.mountPoints[0],pos[1]+this.mountPoints[1]];
+			return [pos[0]+this.mountPoints[0], pos[1]+this.mountPoints[1]];
 		}
 		
 		// Else calculate the closest one
 		let closedFoundPoint = this.mountPoints[0];
-		let closedFoundDistance = pointDistance(positionSum(this.mountPoints[0],pos),closeToPoint);
+		let closedFoundDistance = pointDistance(positionSum(this.mountPoints[0], pos), closeToPoint);
 		for(let mp of this.mountPoints) {
-			let tmpDistance = pointDistance(positionSum(mp,pos),closeToPoint);
+			let tmpDistance = pointDistance(positionSum(mp, pos), closeToPoint);
 			if (tmpDistance < closedFoundDistance) {
 				closedFoundDistance = tmpDistance;
 				closedFoundPoint = mp;
 			}
 		}
-		return [pos[0]+closedFoundPoint[0],pos[1]+closedFoundPoint[1]];
+		return [pos[0]+closedFoundPoint[0], pos[1]+closedFoundPoint[1]];
 	}
 	
 	is_selected() {
@@ -808,7 +808,7 @@ class BaseObject {
 		//~ do_global_log("updating name pos to "+value);
 		this._name_pos = Number(value);
 		if (this.primitive) {
-			this.primitive.setAttribute("RotateName",value.toString());
+			this.primitive.setAttribute("RotateName", value.toString());
 		}
 	}
 	
@@ -820,7 +820,7 @@ class BaseObject {
 			return;
 		}
 		let id = get_parent_id(this.id)
-		equationEditor.open(id,".nameField");
+		equationEditor.open(id, ".nameField");
 		event.stopPropagation();
 	}
 	
@@ -977,8 +977,8 @@ class OnePointer extends BaseObject{
 }
 
 class BasePrimitive extends OnePointer {
-	constructor(id,type,pos,extras) {
-		super(id,type,pos,extras);
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras);
 	}
 	double_click() {
 		default_double_click(get_parent_id(this.id));
@@ -993,8 +993,8 @@ const anchorTypeEnum = {
 	bezier2:5
 }
 class AnchorPoint extends OnePointer{
-	constructor(id,type,pos,anchorType) {
-		super(id,type,pos);
+	constructor(id, type, pos, anchorType) {
+		super(id, type, pos);
 		this.anchorType = anchorType;
 	}
 	isAttached() {
@@ -1059,11 +1059,11 @@ class AnchorPoint extends OnePointer{
 	}
 	getImage() {
 		return [
-			svg_circle(0,0,4,"black","black","element"),
-			svg_circle(0,0,4,"red","red","selector")
+			svg_circle(0, 0, 4, "black" ,"black" ,"element"),
+			svg_circle(0, 0, 4, "red" ,"red" ,"selector")
 		];	
 	}
-	afterMove(diff_x,diff_y) {
+	afterMove(diff_x, diff_y) {
 		// This is an attempt to make beizer points move with the anchors points but id does not work well with undo
 		// commeted out until fixed
 		let parentId = get_parent_id(this.id);
@@ -1074,13 +1074,13 @@ class AnchorPoint extends OnePointer{
 				case anchorTypeEnum.start:
 				{
 					let oldPos = parent.b1_anchor.get_pos();
-					parent.b1_anchor.set_pos([oldPos[0]+diff_x,oldPos[1]+diff_y]);
+					parent.b1_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;
 				case anchorTypeEnum.end:
 				{
 					let oldPos = parent.b2_anchor.get_pos();
-					parent.b2_anchor.set_pos([oldPos[0]+diff_x,oldPos[1]+diff_y]);
+					parent.b2_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;			
 			}
@@ -1099,18 +1099,18 @@ class TextVisual extends BasePrimitive{
 		var boundingRect = this.name_element.getBoundingClientRect();
 		var rect = this.selector_array[0];
 		var margin = 10;
-		rect.setAttribute("width",boundingRect.width+margin*2);
-		rect.setAttribute("height",boundingRect.height+margin*2);
-		rect.setAttribute("x",-boundingRect.width/2-margin);
-		rect.setAttribute("y",-boundingRect.height/2-margin);
+		rect.setAttribute("width", boundingRect.width+margin*2);
+		rect.setAttribute("height", boundingRect.height+margin*2);
+		rect.setAttribute("x", -boundingRect.width/2-margin);
+		rect.setAttribute("y", -boundingRect.height/2-margin);
 	}
 	afterNameChange() {
 		this.setSelectionSizeToText();
 	}
 	getImage() {
 		return [
-			svg_text(0,0,"text","name_element",{"style": "font-size: 16px"}),
-			svg_rect(-20,-15,40,30,"red","none","selector")
+			svg_text(0, 0, "text", "name_element", {"style": "font-size: 16px"}),
+			svg_rect( -20, -15, 40, 30, "red", "none", "selector")
 		];	
 	}
 	set_name(new_name) {
