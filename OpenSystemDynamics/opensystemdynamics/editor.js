@@ -1101,7 +1101,11 @@ class OrthoAnchorPoint extends AnchorPoint {
 		do_global_log("OrthoAnchor - afterMove() -"+this.id);
 		let parent = get_parent(this);
 		// Add adjust nighbor to RiverVisual
-		parent.adjustNeighbors(this.index); 
+		console.log("get_parent(this).areAllAnchorsSelected()");
+		console.log(get_parent(this).areAllAnchorsSelected());
+		if ( ! get_parent(this).areAllAnchorsSelected()) {
+			parent.adjustNeighbors(this.index); 
+		}
 	}
 }
 
@@ -1710,6 +1714,18 @@ class RiverVisual extends BaseConnection {
 		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
 		this.valve; 
 		this.variable; 		// variable (only svg group-element with circle and text)
+	}
+
+	areAllAnchorsSelected() {
+		if ( ! this.start_anchor.is_selected() && ! this.end_anchor.is_selected()) {
+			return false;
+		}
+		for (i = 0; i < this.anchorPoints.length; i++) {
+			if ( ! this.anchorPoints[i].is_selected()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	getPreviousAnchor(index) { // Index is index of Anchor in this.anchorPoints
