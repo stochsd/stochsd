@@ -1045,12 +1045,10 @@ class AnchorPoint extends OnePointer{
 	}
 	update() {
 		super.update();
-		console.log("update() AnchorPoint "+this.id);
 	}
 	afterUpdatePosition() {
 		let parentId = get_parent_id(this.id);
 		get_object(parentId).afterAnchorUpdate(this.anchorType);
-		console.log("afterUpdatePosition() AnchorPoint "+this.id);
 	}
 	updatePosition() {
 		this.update();
@@ -1092,9 +1090,10 @@ class AnchorPoint extends OnePointer{
 }
 
 class OrthoAnchorPoint extends AnchorPoint {
-	constructor(id, type, pos) {
+	constructor(id, type, pos, index) {
 		super(id, type, pos, anchorTypeEnum.ortho);
 		this.changed = true;
+		this.index = index;
 	}
 	
 	afterMove(diff_x, diff_y) {
@@ -1713,6 +1712,34 @@ class RiverVisual extends BaseConnection {
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
 
+	adjustNeighbors(anchorIndex) {
+		let anchor = this.anchorPoints[anchorIndex];
+		let prevAnchor;
+		if (anchorIndex-1 < 0) {
+			prevAnchor = this.start_anchor;
+		} else {
+			prevAnchor = this.anchorPoints[anchorIndex-1];
+			console.log("anchorIndex-1");
+			console.log(anchorIndex-1);
+			console.log("this.anchorPoints[anchorIndex-1]");
+			console.log(this.anchorPoints[anchorIndex-1]);
+			console.log("this.anchorPoints");
+			console.log(this.anchorPoints);
+		}
+		console.log("prevAnchor");
+		console.log(prevAnchor);
+		let prevDir = neswDirection(prevAnchor.get_pos(), anchor.get_pos());
+		let [prevX, prevY] = [0, 0];
+		if (prevDir == "north" || prevDir == "south") {
+			 prevX = anchor.get_pos()[0];
+			 prevY = prevAnchor.get_pos()[1];
+		} else {
+			prevX = prevAnchor.get_pos()[0];
+			prevY = anchor.get_pos()[1];
+		}
+		prevAnchor.set_pos([prevX, prevY]);
+	}
+
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.getVariablePos();
@@ -1750,7 +1777,8 @@ class RiverVisual extends BaseConnection {
 			// Snap Y-coordinate to previous point
 			newY = prevPos[1];
 		}
-		let newAnchor = new OrthoAnchorPoint(this.id+".point"+this.anchorPoints.length, "dummy_anchor", [newX, newY]);
+		let index = this.anchorPoints.length;
+		let newAnchor = new OrthoAnchorPoint(this.id+".point"+index, "dummy_anchor", [newX, newY], index);
 		this.anchorPoints.push(newAnchor);
 	}
 	
