@@ -1712,33 +1712,44 @@ class RiverVisual extends BaseConnection {
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
 
+	getPreviousAnchor(index) { // Index is index of Anchor in this.anchorPoints
+		if (index == 0) {
+			return this.start_anchor;
+		} else {
+			return this.anchorPoints[index-1];
+		}
+	}
+
+	getNextAnchor(index) { // Index is index of Anchor in this.anchorPoints
+		if (this.anchorPoints.length-1 == index) {
+			return this.end_anchor;
+		} else {
+			return this.anchorPoints[index+1];
+		} 
+	}
+
+	adjustNeighborAnchor(masterAnchor, slaveAnchor) {
+		let dir = neswDirection(masterAnchor.get_pos(), slaveAnchor.get_pos());
+		if (dir == "north" || dir == "south") {
+			slaveAnchor.set_pos([masterAnchor.get_pos()[0], slaveAnchor.get_pos()[1]]);
+		} else {
+			slaveAnchor.set_pos([slaveAnchor.get_pos()[0], masterAnchor.get_pos()[1]]);
+		}
+	}
+
 	adjustNeighbors(anchorIndex) {
 		let anchor = this.anchorPoints[anchorIndex];
-		let prevAnchor;
-		if (anchorIndex-1 < 0) {
-			prevAnchor = this.start_anchor;
-		} else {
-			prevAnchor = this.anchorPoints[anchorIndex-1];
-			console.log("anchorIndex-1");
-			console.log(anchorIndex-1);
-			console.log("this.anchorPoints[anchorIndex-1]");
-			console.log(this.anchorPoints[anchorIndex-1]);
-			console.log("this.anchorPoints");
-			console.log(this.anchorPoints);
-		}
-		console.log("prevAnchor");
-		console.log(prevAnchor);
-		let prevDir = neswDirection(prevAnchor.get_pos(), anchor.get_pos());
-		let [prevX, prevY] = [0, 0];
-		if (prevDir == "north" || prevDir == "south") {
-			 prevX = anchor.get_pos()[0];
-			 prevY = prevAnchor.get_pos()[1];
-		} else {
-			prevX = prevAnchor.get_pos()[0];
-			prevY = anchor.get_pos()[1];
-		}
-		prevAnchor.set_pos([prevX, prevY]);
+
+		// Adjust previous Neighbor
+		let prevAnchor = this.getPreviousAnchor(anchorIndex);
+		this.adjustNeighborAnchor(anchor, prevAnchor);
+
+		// Adjust next Neighbor
+		let nextAnchor = this.getNextAnchor(anchorIndex);
+		this.adjustNeighborAnchor(anchor, nextAnchor);
 	}
+
+	
 
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
