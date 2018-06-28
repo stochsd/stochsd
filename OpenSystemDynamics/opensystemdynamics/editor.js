@@ -726,6 +726,7 @@ class BaseObject {
 		this.type = type;
 		this.selected = false;
 		this.name_radius = 30;
+		this.color = "black";
 		this.superClass = "baseobject";
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
@@ -737,7 +738,10 @@ class BaseObject {
 		this.mountPoints = [[0,0]];
 		
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
+	}
 
+	setColor(color) {
+		this.color;
 	}
 
 	getMountPos(closeToPoint) {
@@ -926,7 +930,7 @@ class OnePointer extends BaseObject{
 			}
 		}
 	}
-	
+
 	set_pos(pos) {
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
@@ -1201,7 +1205,7 @@ class StockVisual extends BasePrimitive{
 
 	getImage() {
 		return [
-		svg_rect(-20,-15,40,30,"black","white","element"),
+		svg_rect(-20,-15,40,30, this.color, "white", "element"),
 		svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
 		svg_text(0,39,"stock","name_element")
@@ -1405,7 +1409,7 @@ class TwoPointer extends BaseObject{
 		last_connection = this;
 		this.update();
 	}
-	
+
 	create_dummy_start_anchor() {
 		this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
 	}
@@ -4017,7 +4021,9 @@ $(document).ready(function() {
 	$("#btn_print_model").click(function() {
 		unselect_all();
 		hideAndPrint([$("#topPanel").get(0)]);
-
+	});
+	$("#btn_green").click(function() {
+		setColorToSelection("#00ff00");
 	});
 	$("#btn_macro").click(function() {
 		macroDialog.show();
@@ -4483,6 +4489,17 @@ const runStateEnum = {
 	stepping: "stepping",
 	paused: "paused"
 }
+
+function setColorToSelection(color) {
+	let objects = get_selected_objects();
+	console.log(objects);
+	for(var id in objects) {
+		console.log(get_object(id));
+		let obj = get_object(id);
+		obj.setColor(color);
+	}
+}
+
 class RunResults {
 	static init() {		
 		this.runState = runStateEnum.none;
