@@ -726,7 +726,6 @@ class BaseObject {
 		this.type = type;
 		this.selected = false;
 		this.name_radius = 30;
-		this.color = "black";
 		this.superClass = "baseobject";
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
@@ -738,10 +737,6 @@ class BaseObject {
 		this.mountPoints = [[0,0]];
 		
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
-	}
-
-	setColor(color) {
-		this.color;
 	}
 
 	getMountPos(closeToPoint) {
@@ -948,7 +943,9 @@ class OnePointer extends BaseObject{
 		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
 		return [this.pos[0], this.pos[1]];
 	}
-	
+	setColor(color) {
+		this.group.setAttribute("stroke", color);
+	}
 	select() {
 		this.selected = true;
 		for(var i in this.selector_array) {
@@ -1205,7 +1202,7 @@ class StockVisual extends BasePrimitive{
 
 	getImage() {
 		return [
-		svg_rect(-20,-15,40,30, this.color, "white", "element"),
+		svg_rect(-20,-15,40,30, "black", "white", "element"),
 		svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
 		svg_text(0,39,"stock","name_element")
