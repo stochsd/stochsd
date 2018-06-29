@@ -3048,6 +3048,22 @@ class MouseTool extends BaseTool {
 	}
 }
 
+class MultiPointerTool extends BaseTool {
+
+}
+
+class FrameTool extends MultiPointerTool {
+
+}
+
+class MultiPointer extends BaseObject {
+
+}
+
+class FrameVisual extends MultiPointer {
+
+}
+
 class TwoPointerTool extends BaseTool {
 	static init() {
 		this.primitive = null; // The primitive in Insight Maker engine we are creating
@@ -3137,7 +3153,7 @@ FlowTool.init();
 class RiverTool extends TwoPointerTool {
 	static create_TwoPointer_start(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
-		setNonNegative(this.primitive, false);
+		setNonNegative(this.primitive, false); 			// What does this do?
 		
 		let rotateName = this.primitive.getAttribute("RotateName");
 		// Force all stocks to have a RotateName
@@ -3805,6 +3821,7 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
+			"frame":FrameTool,
 			"line":LineTool,
 			"table":TableTool,
 			"diagram":DiagramTool,
