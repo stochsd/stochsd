@@ -3048,22 +3048,6 @@ class MouseTool extends BaseTool {
 	}
 }
 
-class MultiPointerTool extends BaseTool {
-
-}
-
-class FrameTool extends MultiPointerTool {
-
-}
-
-class MultiPointer extends BaseObject {
-
-}
-
-class FrameVisual extends MultiPointer {
-
-}
-
 class TwoPointerTool extends BaseTool {
 	static init() {
 		this.primitive = null; // The primitive in Insight Maker engine we are creating
