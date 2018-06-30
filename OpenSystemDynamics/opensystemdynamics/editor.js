@@ -3811,7 +3811,6 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
-			"frame":FrameTool,
 			"line":LineTool,
 			"table":TableTool,
 			"diagram":DiagramTool,
