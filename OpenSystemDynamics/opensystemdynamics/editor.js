@@ -1767,6 +1767,15 @@ class RiverVisual extends BaseConnection {
 	}
 
 	
+	create_dummy_start_anchor() {
+		//this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
+		this.start_anchor = new OrthoAnchorPoint(this.id+".start_anchor", "dummy_anchor", [this.startx, this.starty], 0);
+		this.anchorPoints[0] = (this.start_anchor);
+	}
+	/*
+	create_dummy_end_anchor() {
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
+	}*/
 
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
@@ -2604,6 +2613,8 @@ class LinkVisual extends BaseConnection{
 	afterAnchorUpdate(anchorType) {
 		super.afterAnchorUpdate(anchorType);
 		
+		
+
 		let startpos = this.start_anchor.get_pos();
 		let endpos = this.end_anchor.get_pos();
 		let b1pos = this.b1_anchor.get_pos();
@@ -3084,6 +3095,11 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.start_attach = get_parent(start_element);
 		}
 		this.current_connection.set_name(primitive_name);
+		
+		if (this.current_connection.start_anchor == null) {
+			// a dummy anchor has no attached object
+			this.current_connection.create_dummy_start_anchor();
+		}
 	}
 	static mouseMove(x,y) {
 		if (this.current_connection == null) {
@@ -3096,11 +3112,13 @@ class TwoPointerTool extends BaseTool {
 	static leftMouseUp(x,y) {
 		this.mouseMove(x,y);
 		if (this.current_connection.end_anchor == null) {
+			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
 		}
-		if (this.current_connection.start_anchor == null) {
-			this.current_connection.create_dummy_start_anchor();
-		}
+		// if (this.current_connection.start_anchor == null) {
+		// 	// a dummy anchor has no attached object
+		// 	this.current_connection.create_dummy_start_anchor();
+		// }
 		
 		attach_selected_anchor(this.current_connection.end_anchor);
 		
@@ -3470,7 +3488,7 @@ function delete_connection(key) {
 	delete_object(auxiliary.id);	
 }
 function delete_object(node_id) {
-	var object_to_delete = object_array[node_id];
+	var object_to_delete = object_array[node_id]; // 44 stock1 
 	
 	// Delete all references to the object in the connections
 	for(var key in connection_array) {
