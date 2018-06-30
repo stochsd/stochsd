@@ -2613,8 +2613,6 @@ class LinkVisual extends BaseConnection{
 	afterAnchorUpdate(anchorType) {
 		super.afterAnchorUpdate(anchorType);
 		
-		
-
 		let startpos = this.start_anchor.get_pos();
 		let endpos = this.end_anchor.get_pos();
 		let b1pos = this.b1_anchor.get_pos();
@@ -3488,7 +3486,7 @@ function delete_connection(key) {
 	delete_object(auxiliary.id);	
 }
 function delete_object(node_id) {
-	var object_to_delete = object_array[node_id]; // 44 stock1 
+	var object_to_delete = object_array[node_id];
 	
 	// Delete all references to the object in the connections
 	for(var key in connection_array) {
