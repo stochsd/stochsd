@@ -3086,9 +3086,15 @@ class TwoPointerTool extends BaseTool {
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
+
+		// Looks for element under mouse. 
 		var start_element = find_element_under(x,y);
+
+		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
 		var primitive_name = findFreeName(type_basename[this.get_type()]);
 		this.create_TwoPointer_start(x,y,primitive_name);
+
+		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
 		if (start_element != null) {
 			this.current_connection.start_attach = get_parent(start_element);
