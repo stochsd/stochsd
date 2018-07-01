@@ -1939,7 +1939,6 @@ class RiverVisual extends BaseConnection {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
-		// start_anchor is null if we are currently creating the connection
 		// start_attach is null if we are not attached to anything
 		
 		let points = this.getPathPoints();
