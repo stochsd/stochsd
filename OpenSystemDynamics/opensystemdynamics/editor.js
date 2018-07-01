@@ -1930,7 +1930,9 @@ class RiverVisual extends BaseConnection {
 
 	getPathPoints() {
 		let points = this.anchorPoints.map(point => point.get_pos());
-		if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
+		if (points.length == 0) {
+			points = [[this.startx, this.starty], [this.endx, this.endy]];
+		} else if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
 			points.push([this.endx, this.endy]);
 		}
 		return points;
@@ -1953,12 +1955,13 @@ class RiverVisual extends BaseConnection {
 		// start_anchor is null if we are currently creating the connection
 		// start_attach is null if we are not attached to anything
 
-		if (this.anchorPoints.length < 2) { 
-			return; 
-		}
+		// if (this.anchorPoints.length < 2) { 
+		// 	return; 
+		// }
 		
-		let connectionStartPos = this.anchorPoints[1].get_pos();
-		let conectionEndPos = this.anchorPoints[this.anchorPoints.length-2].get_pos();
+		let points = this.getPathPoints();
+		let connectionStartPos = points[1];
+		let conectionEndPos = points[points.length-2]; 
 
 		if (this.start_attach != null && this.start_anchor != null) {
 			if (this.start_attach.get_pos) {
