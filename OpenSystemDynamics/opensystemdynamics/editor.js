@@ -1818,11 +1818,8 @@ class RiverVisual extends BaseConnection {
 	createAnchorPoint(x, y) {
 		let [newX, newY] = [x, y];
 		let prevPos = [0, 0];
-		if (this.anchorPoints.length == 0) {
-			prevPos = [this.startx, this.starty];
-		} else {
-			prevPos = this.anchorPoints[this.anchorPoints.length-1].get_pos();
-		}
+		prevPos = this.anchorPoints[this.anchorPoints.length-1].get_pos();
+		
 		let dir = neswDirection(prevPos, [x, y]);
 		if (dir == "north" || dir == "south") {
 			// Snap X-coordinate to previous point
