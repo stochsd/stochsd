@@ -1917,22 +1917,18 @@ class RiverVisual extends BaseConnection {
 			let p2 = this.pathPoints[len-2];
 			return [p2[0]-p1[0], p2[1]-p1[1]];
 		}
-	} 
+	}
 
 	shortenLastPoint(shortenAmount) {
 		let points = this.getPathPoints();
-		if (points.length < 2) {
-			return points;
-		} else {
-			let last = points[points.length-1];
-			let secondLast = points[points.length-2];
-			let sine = sin(last, secondLast);
-			let cosine = cos(last, secondLast);
-			let newLast = rotate([shortenAmount, 0], sine, cosine);
-			newLast = translate(newLast, last);
-			points[points.length-1] = newLast;
-			return points;
-		}
+		let last = points[points.length-1];
+		let secondLast = points[points.length-2];
+		let sine = sin(last, secondLast);
+		let cosine = cos(last, secondLast);
+		let newLast = rotate([shortenAmount, 0], sine, cosine);
+		newLast = translate(newLast, last);
+		points[points.length-1] = newLast;
+		return points;
 	}
 
 	getPathPoints() {
