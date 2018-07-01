@@ -1717,9 +1717,6 @@ class RiverVisual extends BaseConnection {
 	}
 
 	areAllAnchorsSelected() {
-		if ( ! this.start_anchor.is_selected() && ! this.end_anchor.is_selected()) {
-			return false;
-		}
 		for (i = 0; i < this.anchorPoints.length; i++) {
 			if ( ! this.anchorPoints[i].is_selected()) {
 				return false;
