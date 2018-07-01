@@ -1762,9 +1762,7 @@ class RiverVisual extends BaseConnection {
 		this.adjustNeighborAnchor(anchor, nextAnchor);
 	}
 
-	
 	create_dummy_start_anchor() {
-		//this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
 		this.start_anchor = new OrthoAnchorPoint(
 			this.id+".start_anchor", 
 			"dummy_anchor", 
@@ -1775,9 +1773,7 @@ class RiverVisual extends BaseConnection {
 		this.anchorPoints[0] = (this.start_anchor);
 	}
 	
-	
 	create_dummy_end_anchor() {
-		// this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
 		this.end_anchor = new OrthoAnchorPoint(
 			this.id+".end_anchor", 
 			"dummy_anchor", 
