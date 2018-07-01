@@ -1703,9 +1703,6 @@ class RiverVisual extends BaseConnection {
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
 
-		// List of all cooridnates for path including start and end. TYPE: [[x,y]]
-		this.pathPoints = []; 
-
 		this.valveIndex; 	// index to indicate what inbetween path valve is placed
 		this.variableSide;	// bool to indicate what side of path variable is placed
 
@@ -1938,16 +1935,6 @@ class RiverVisual extends BaseConnection {
 		return points;
 	}
 
-	updatePathPoints() {
-		let points = [];
-		points.push([this.startx, this.starty] )
-		for (i = 0; i < this.anchorPoints.length; i++) {
-			points.push(this.anchorPoints[i].get_pos());
-		}
-		points.push([this.endx, this.endy]);
-		this.pathPoints = points;
-	}
-
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
@@ -1984,22 +1971,22 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		this.updatePathPoints();
+		let points = this.getPathPoints();
 		if (this.start_attach == null) {
 			this.startCloud.setVisibility(true);
-			this.startCloud.setPos(this.pathPoints[0], this.pathPoints[1]);
+			this.startCloud.setPos(points[0], points[1]);
 		} else {
 			this.startCloud.setVisibility(false);
 		}
 		if (this.end_attach == null) {
 			this.endCloud.setVisibility(true);
-			this.endCloud.setPos(this.pathPoints[this.pathPoints.length-1], this.pathPoints[this.pathPoints.length-2]);
+			this.endCloud.setPos(points[points.length-1], points[points.length-2]);
 		} else {
 			this.endCloud.setVisibility(false);
 		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
-		this.arrowHeadPath.setPos(this.pathPoints[this.pathPoints.length-1], this.getDirection());
+		this.arrowHeadPath.setPos(points[points.length-1], this.getDirection());
 
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
