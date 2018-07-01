@@ -1929,10 +1929,7 @@ class RiverVisual extends BaseConnection {
 	}
 
 	getPathPoints() {
-		let points = [];
-		for (i = 0; i < this.anchorPoints.length; i++) {
-			points.push(this.anchorPoints[i].get_pos());
-		}
+		let points = this.anchorPoints.map(point => point.get_pos());
 		if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
 			points.push([this.endx, this.endy]);
 		}
