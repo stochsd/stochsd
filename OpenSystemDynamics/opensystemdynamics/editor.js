@@ -1847,7 +1847,8 @@ class RiverVisual extends BaseConnection {
 	}
 
 	getValveRotation() {
-		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
+		let points = this.getPathPoints();
+		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
 			valveRot = 90;
@@ -1856,8 +1857,8 @@ class RiverVisual extends BaseConnection {
 	}
 
 	getVariablePos() {
-		let [valveX, valveY] = this.getValvePos();
-		let dir = neswDirection(this.pathPoints[this.valveIndex], this.pathPoints[this.valveIndex+1]);
+		let points = this.getPathPoints();
+		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
 			if (this.variableSide) {
@@ -1872,6 +1873,7 @@ class RiverVisual extends BaseConnection {
 				variableOffset = [0, 15];
 			}
 		} 
+		let [valveX, valveY] = this.getValvePos();
 		return [valveX+variableOffset[0], valveY+variableOffset[1]];
 	}
 
