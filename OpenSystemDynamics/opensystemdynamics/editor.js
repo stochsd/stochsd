@@ -1920,14 +1920,17 @@ class RiverVisual extends BaseConnection {
 	} 
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.pathPoints.slice();
+		let points = this.anchorPoints.map(point => point.get_pos());
+		if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
+			points.push([this.endx, this.endy]);
+		}
 		if (points.length < 2) {
 			return points;
 		} else {
 			let last = points[points.length-1];
-			let sndlast = points[points.length-2];
-			let sine = sin(last, sndlast);
-			let cosine = cos(last, sndlast);
+			let secondLast = points[points.length-2];
+			let sine = sin(last, secondLast);
+			let cosine = cos(last, secondLast);
 			let newLast = rotate([shortenAmount, 0], sine, cosine);
 			newLast = translate(newLast, last);
 			points[points.length-1] = newLast;
