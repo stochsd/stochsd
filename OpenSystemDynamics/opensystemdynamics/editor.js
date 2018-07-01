@@ -1920,10 +1920,7 @@ class RiverVisual extends BaseConnection {
 	} 
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.anchorPoints.map(point => point.get_pos());
-		if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
-			points.push([this.endx, this.endy]);
-		}
+		let points = this.getPathPoints();
 		if (points.length < 2) {
 			return points;
 		} else {
@@ -1936,6 +1933,17 @@ class RiverVisual extends BaseConnection {
 			points[points.length-1] = newLast;
 			return points;
 		}
+	}
+
+	getPathPoints() {
+		let points = [];
+		for (i = 0; i < this.anchorPoints.length; i++) {
+			points.push(this.anchorPoints[i].get_pos());
+		}
+		if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
+			points.push([this.endx, this.endy]);
+		}
+		return points;
 	}
 
 	updatePathPoints() {
