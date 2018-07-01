@@ -1840,13 +1840,10 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	getValvePos() {
-		if (this.anchorPoints.length < 2) {
-			return [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
-		} else {
-			let valveX = (this.anchorPoints[this.valveIndex].get_pos()[0]+this.anchorPoints[this.valveIndex+1].get_pos()[0])/2;
-			let valveY = (this.anchorPoints[this.valveIndex].get_pos()[1]+this.anchorPoints[this.valveIndex+1].get_pos()[1])/2;
-			return [valveX, valveY];
-		}
+		let points = this.getPathPoints();
+		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
+		let valveY = (points[this.valveIndex][1]+points[this.valveIndex+1][1])/2;
+		return [valveX, valveY];
 	}
 
 	getValveRotation() {
