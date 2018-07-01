@@ -1905,12 +1905,13 @@ class RiverVisual extends BaseConnection {
 	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let len = this.pathPoints.length;
+		let points = this.getPathPoints();
+		let len = points.length;
 		if (len < 2) {
 			return [0,0];
 		} else {
-			let p1 = this.pathPoints[len-1];
-			let p2 = this.pathPoints[len-2];
+			let p1 = points[len-1];
+			let p2 = points[len-2];
 			return [p2[0]-p1[0], p2[1]-p1[1]];
 		}
 	}
