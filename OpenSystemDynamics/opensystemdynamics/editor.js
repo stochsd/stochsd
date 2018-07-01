@@ -1809,7 +1809,7 @@ class RiverVisual extends BaseConnection {
 
 	moveValve () {
 		if (this.variableSide) {
-			this.valveIndex = (this.valveIndex+1)%(this.pathPoints.length-1);
+			this.valveIndex = (this.valveIndex+1)%(this.anchorPoints.length-1);
 		}
 		this.variableSide = !this.variableSide;
 		this.update();
@@ -1843,9 +1843,13 @@ class RiverVisual extends BaseConnection {
 	}
 	
 	getValvePos() {
-		let valveX = (this.pathPoints[this.valveIndex][0]+this.pathPoints[this.valveIndex+1][0])/2;
-		let valveY = (this.pathPoints[this.valveIndex][1]+this.pathPoints[this.valveIndex+1][1])/2;
-		return [valveX, valveY];
+		if (this.anchorPoints.length < 2) {
+			return [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
+		} else {
+			let valveX = (this.anchorPoints[this.valveIndex].get_pos()[0]+this.anchorPoints[this.valveIndex+1].get_pos()[0])/2;
+			let valveY = (this.anchorPoints[this.valveIndex].get_pos()[1]+this.anchorPoints[this.valveIndex+1].get_pos()[1])/2;
+			return [valveX, valveY];
+		}
 	}
 
 	getValveRotation() {
@@ -1947,10 +1951,13 @@ class RiverVisual extends BaseConnection {
 		// Get start position from attach
 		// start_anchor is null if we are currently creating the connection
 		// start_attach is null if we are not attached to anything
+
+		if (this.anchorPoints.length < 2) { 
+			return; 
+		}
 		
-		this.updatePathPoints();
-		let connectionStartPos = this.pathPoints[1];
-		let conectionEndPos = this.pathPoints[this.pathPoints.length-2];
+		let connectionStartPos = this.anchorPoints[1].get_pos();
+		let conectionEndPos = this.anchorPoints[this.anchorPoints.length-2].get_pos();
 
 		if (this.start_attach != null && this.start_anchor != null) {
 			if (this.start_attach.get_pos) {
@@ -1964,6 +1971,7 @@ class RiverVisual extends BaseConnection {
 		}
 		if (this.end_attach != null && this.end_anchor != null) {
 			if (this.end_attach.get_pos) {
+				
 				let oldPos = this.end_anchor.get_pos();
 				let newPos = this.end_attach.getMountPos(conectionEndPos);
 				// If end point have moved reset b2
@@ -1996,6 +2004,8 @@ class RiverVisual extends BaseConnection {
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
 		let [varX, varY] = this.getVariablePos();
+		console.log("valveX, valveY, valveRot");
+		console.log(valveX, valveY, valveRot);
 		svg_transform(this.valve, valveX, valveY, valveRot, 1);
 		svg_translate(this.variable, varX, varY);
 		// Update
