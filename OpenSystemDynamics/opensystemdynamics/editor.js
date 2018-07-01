@@ -992,7 +992,7 @@ const anchorTypeEnum = {
 	end:3,
 	bezier1:4,
 	bezier2:5,
-	ortho:6
+	orthoMiddle:6
 }
 class AnchorPoint extends OnePointer{
 	constructor(id, type, pos, anchorType) {
@@ -1093,8 +1093,8 @@ class AnchorPoint extends OnePointer{
 }
 
 class OrthoAnchorPoint extends AnchorPoint {
-	constructor(id, type, pos, index) {
-		super(id, type, pos, anchorTypeEnum.ortho);
+	constructor(id, type, pos, anchorType, index) {
+		super(id, type, pos, anchorType);
 		this.changed = true;
 		this.index = index;
 	}
@@ -1771,13 +1771,28 @@ class RiverVisual extends BaseConnection {
 	
 	create_dummy_start_anchor() {
 		//this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
-		this.start_anchor = new OrthoAnchorPoint(this.id+".start_anchor", "dummy_anchor", [this.startx, this.starty], 0);
+		this.start_anchor = new OrthoAnchorPoint(
+			this.id+".start_anchor", 
+			"dummy_anchor", 
+			[this.startx, this.starty], 
+			anchorTypeEnum.start, 
+			0
+		);
 		this.anchorPoints[0] = (this.start_anchor);
 	}
-	/*
+	
+	
 	create_dummy_end_anchor() {
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
-	}*/
+		// this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
+		this.end_anchor = new OrthoAnchorPoint(
+			this.id+".end_anchor", 
+			"dummy_anchor", 
+			[this.endx, this.endy],
+			anchorTypeEnum.end,
+			this.anchorPoints.length
+		)
+		this.anchorPoints[this.anchorPoints.length] = this.end_anchor; 
+	}
 
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
@@ -1817,7 +1832,13 @@ class RiverVisual extends BaseConnection {
 			newY = prevPos[1];
 		}
 		let index = this.anchorPoints.length;
-		let newAnchor = new OrthoAnchorPoint(this.id+".point"+index, "dummy_anchor", [newX, newY], index);
+		let newAnchor = new OrthoAnchorPoint(
+			this.id+".point"+index, 
+			"dummy_anchor", 
+			[newX, newY], 
+			anchorTypeEnum.orthoMiddle, 
+			index
+		);
 		this.anchorPoints.push(newAnchor);
 	}
 	
