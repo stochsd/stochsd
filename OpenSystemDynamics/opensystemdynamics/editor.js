@@ -3178,7 +3178,35 @@ class RiverTool extends TwoPointerTool {
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
-
+	static mouseMove(x, y) {
+		if (this.current_connection == null) {
+			return;
+		}
+		let dir;
+		if (this.current_connection.anchorPoints.length == 1) {
+			dir = neswDirection(this.current_connection.anchorPoints[0].get_pos(), [x, y]);
+			if (dir == "north" || dir == "south") {
+				this.current_connection.endx = this.current_connection.anchorPoints[0].get_pos()[0];
+				this.current_connection.endy = y;
+			} else {
+				this.current_connection.endx = x;
+				this.current_connection.endy = this.current_connection.anchorPoints[0].get_pos()[1];
+			}
+		} else {
+			let anchorPoints = this.current_connection.anchorPoints;
+			let lastAnchor = anchorPoints[anchorPoints.length-1];
+			let secondLastAnchor = anchorPoints[anchorPoints.length-2];
+			dir = neswDirection(secondLastAnchor.get_pos(), lastAnchor.get_pos());
+			if (dir == "north" || dir == "south") {
+				this.current_connection.endx = x;
+				this.current_connection.endy = lastAnchor.get_pos()[1];
+			} else {
+				this.current_connection.endx = lastAnchor.get_pos()[0];
+				this.current_connection.endy = y;
+			}
+		}
+		this.current_connection.update();
+	}
 	static rightMouseDown(x,y) {
 		do_global_log("Right mouse on: "+x+", "+y);
 		this.current_connection.createAnchorPoint(x, y);
