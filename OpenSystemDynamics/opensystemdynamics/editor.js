@@ -3089,13 +3089,13 @@ class TwoPointerTool extends BaseTool {
 	static set_type() {
 		
 	}
-	static get_type() {
+	static getType() {
 		return "none";
 	}
 	static create_TwoPointer_start(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
-		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
+		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static create_TwoPointer_end() {
 		// Override this
@@ -3107,7 +3107,7 @@ class TwoPointerTool extends BaseTool {
 		var start_element = find_element_under(x,y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		var primitive_name = findFreeName(type_basename[this.get_type()]);
+		var primitive_name = findFreeName(type_basename[this.getType()]);
 		this.create_TwoPointer_start(x,y,primitive_name);
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
@@ -3169,11 +3169,11 @@ class FlowTool extends TwoPointerTool {
 			this.primitive.setAttribute("RotateName",rotateName);
 		}		
 		
-		this.current_connection = new FlowVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
-	static get_type() {
+	static getType() {
 		return "flow";
 	}
 }
@@ -3191,7 +3191,7 @@ class RiverTool extends TwoPointerTool {
 			this.primitive.setAttribute("RotateName", rotateName);
 		}		
 		
-		this.current_connection = new RiverVisual(this.primitive.id, this.get_type(), [x,y]);
+		this.current_connection = new RiverVisual(this.primitive.id, this.getType(), [x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
@@ -3226,7 +3226,7 @@ class RiverTool extends TwoPointerTool {
 		this.current_connection.createAnchorPoint(x, y);
 	}
 
-	static get_type() {
+	static getType() {
 		return "flow";
 	}
 }
@@ -3245,12 +3245,12 @@ function cleanUnconnectedLinks() {
 class LinkTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
-		this.current_connection = new LinkVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new LinkVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static create_TwoPointer_end() {
 		cleanUnconnectedLinks();
 	}
-	static get_type() {
+	static getType() {
 		return "link";
 	}
 }
@@ -3259,9 +3259,9 @@ LinkTool.init();
 class RectangleTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
-		this.current_connection = new RectangleVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new RectangleVisual(this.primitive.id,this.getType(),[x,y]);
 	}
-	static get_type() {
+	static getType() {
 		return "rectangle";
 	}
 }
@@ -3270,9 +3270,9 @@ RectangleTool.init();
 class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
-		this.current_connection = new LineVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new LineVisual(this.primitive.id,this.getType(),[x,y]);
 	}
-	static get_type() {
+	static getType() {
 		return "line";
 	}
 }
@@ -3281,7 +3281,7 @@ LineTool.init();
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
-		this.current_connection = new TableVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new TableVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -3293,7 +3293,7 @@ class TableTool extends TwoPointerTool {
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
-	static get_type() {
+	static getType() {
 		return "table";
 	}
 }
@@ -3302,7 +3302,7 @@ TableTool.init();
 class DiagramTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
-		this.current_connection = new DiagramVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new DiagramVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -3314,7 +3314,7 @@ class DiagramTool extends TwoPointerTool {
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
-	static get_type() {
+	static getType() {
 		return "diagram";
 	}
 }
@@ -3324,13 +3324,13 @@ class TextAreaTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		let primitive_name = findFreeName(type_basename["text"]);
 		this.primitive = createConnector(primitive_name, "TextArea", null,null);
-		this.current_connection = new TextAreaVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new TextAreaVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
-	static get_type() {
+	static getType() {
 		return "diagram";
 	}
 }
@@ -3339,7 +3339,7 @@ DiagramTool.init();
 class XyPlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "XyPlot", null,null);
-		this.current_connection = new XyPlotVisual(this.primitive.id,this.get_type(),[x,y]);
+		this.current_connection = new XyPlotVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -3351,7 +3351,7 @@ class XyPlotTool extends TwoPointerTool {
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
-	static get_type() {
+	static getType() {
 		return "xyplot";
 	}
 }
