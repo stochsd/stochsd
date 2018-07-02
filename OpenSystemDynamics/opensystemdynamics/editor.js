@@ -3179,9 +3179,6 @@ class RiverTool extends TwoPointerTool {
 		update_name_pos(this.primitive.id);
 	}
 	static mouseMove(x, y) {
-		if (this.current_connection == null) {
-			return;
-		}
 		let dir;
 		if (this.current_connection.anchorPoints.length == 1) {
 			dir = neswDirection(this.current_connection.anchorPoints[0].get_pos(), [x, y]);
