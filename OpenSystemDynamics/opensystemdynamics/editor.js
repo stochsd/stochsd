@@ -1806,23 +1806,11 @@ class RiverVisual extends BaseConnection {
 	}
 
 	createAnchorPoint(x, y) {
-		let [newX, newY] = [x, y];
-		let prevPos = [0, 0];
-		prevPos = this.anchorPoints[this.anchorPoints.length-1].get_pos();
-		
-		let dir = neswDirection(prevPos, [x, y]);
-		if (dir == "north" || dir == "south") {
-			// Snap X-coordinate to previous point
-			newX = prevPos[0];
-		} else {
-			// Snap Y-coordinate to previous point
-			newY = prevPos[1];
-		}
 		let index = this.anchorPoints.length;
 		let newAnchor = new OrthoAnchorPoint(
 			this.id+".point"+index, 
 			"dummy_anchor", 
-			[newX, newY], 
+			[this.endx, this.endy], 
 			anchorTypeEnum.orthoMiddle, 
 			index
 		);
