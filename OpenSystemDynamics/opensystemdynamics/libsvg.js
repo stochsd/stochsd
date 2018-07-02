@@ -246,7 +246,7 @@ function svgArrowHead(stroke, directionVector) {
 	this.pointsA = [[0,0], [10,10]]; // Arbitrary start points
 
 	newElement.setPos = function (pos, directionVector=[1,0]) {
-		let points = [[12, -3],[12, -7], [0,0], [12, 7],[12, 3]];
+		let points = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
 		let sine = sin([0,0], directionVector);
 		let cosine = cos([0,0], directionVector);
 		points = rotatePoints(points, sine, cosine);

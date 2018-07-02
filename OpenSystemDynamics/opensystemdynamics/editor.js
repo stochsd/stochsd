@@ -1870,8 +1870,8 @@ class RiverVisual extends BaseConnection {
 	makeGraphics() {
 		this.startCloud = svgCloud();
 		this.endCloud = svgCloud();
-		this.outerPath = svgWidePath(7, "black");
-		this.innerPath = svgWidePath(5, "white");
+		this.outerPath = svgWidePath(5, "black");
+		this.innerPath = svgWidePath(3, "white");
 		this.arrowHeadPath = svgArrowHead("black", [1,0]);
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z","black","white","element")]);
