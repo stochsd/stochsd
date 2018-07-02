@@ -810,7 +810,9 @@ class BaseObject {
 			this.primitive.setAttribute("RotateName", value.toString());
 		}
 	}
-	
+	getType() {
+		return this.type;
+	}
 	name_double_click() {
 		//~ alert("hahaha");
 					
@@ -1535,9 +1537,16 @@ class BaseConnection extends TwoPointer{
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
 		}
+		this.attachableTypes = ["stock", "variable", "converter", "flow"];
 		last_connection = this;
 	}
+	setAttachableTypes(types) {
+		this.attachableTypes = types;
+	}
 	set start_attach(new_start_attach) {
+		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
+			return;
+		}
 		// Trigger the attach event on the old attachment primitives
 		this.triggerAttachEvents();
 		
@@ -1558,6 +1567,9 @@ class BaseConnection extends TwoPointer{
 	}
 	set end_attach(new_end_attach) {
 		do_global_log("end_attach");
+		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
+			return;
+		}
 		// Trigger the attach event on the old attachment primitives
 		this.triggerAttachEvents();
 		
@@ -1698,6 +1710,7 @@ class FlowVisual extends BaseConnection {
 class RiverVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
+		this.setAttachableTypes(["stock"]);
 		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
