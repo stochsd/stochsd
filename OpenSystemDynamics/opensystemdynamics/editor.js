@@ -1104,8 +1104,8 @@ class OrthoAnchorPoint extends AnchorPoint {
 		do_global_log("OrthoAnchor - afterMove() -"+this.id);
 		let parent = get_parent(this);
 		// Add adjust nighbor to RiverVisual
-		console.log("get_parent(this).areAllAnchorsSelected()");
-		console.log(get_parent(this).areAllAnchorsSelected());
+		// console.log("get_parent(this).areAllAnchorsSelected()");
+		// console.log(get_parent(this).areAllAnchorsSelected());
 		if ( ! get_parent(this).areAllAnchorsSelected()) {
 			parent.adjustNeighbors(this.index); 
 		}
@@ -1742,11 +1742,27 @@ class RiverVisual extends BaseConnection {
 	}
 
 	adjustNeighborAnchor(masterAnchor, slaveAnchor) {
-		let dir = neswDirection(masterAnchor.get_pos(), slaveAnchor.get_pos());
+		let masterPos = masterAnchor.get_pos();
+		let slavePos = slaveAnchor.get_pos();
+		let dir = neswDirection(masterPos, slavePos);
 		if (dir == "north" || dir == "south") {
-			slaveAnchor.set_pos([masterAnchor.get_pos()[0], slaveAnchor.get_pos()[1]]);
+			// Keep masterAnchor at distance from slaveAnchor 
+			if (slavePos[1]-30 < masterPos[1] && masterPos[1] <= slavePos[1]) { // if too close above
+				masterAnchor.set_pos([masterPos[0], slavePos[1]-30]);
+			} else if (slavePos[1] <= masterPos[1] && masterPos[1] < slavePos[1]+30) { // if too close below 
+				masterAnchor.set_pos([masterPos[0], slavePos[1]+30]);
+			}
+			
+			slaveAnchor.set_pos([masterPos[0], slavePos[1]]);
 		} else {
-			slaveAnchor.set_pos([slaveAnchor.get_pos()[0], masterAnchor.get_pos()[1]]);
+			// Keep masterAnchor at distance from slaveAnchor 
+			if ((slavePos[0]-30 < masterPos[0]) && (masterPos[0] <= slavePos[0])) {
+				masterAnchor.set_pos([slavePos[0]-30, masterPos[1]]);
+			} else if (slavePos[0] <= masterPos[0] && masterPos[0] < slavePos[0]+30) {
+				masterAnchor.set_pos([slavePos[0]+30, masterPos[1]]);
+			}
+
+			slaveAnchor.set_pos([slavePos[0], masterPos[1]]);
 		}
 	}
 
