@@ -1204,7 +1204,7 @@ class StockVisual extends BasePrimitive{
 
 	getImage() {
 		return [
-		svg_rect(-20,-15,40,30, "black", "white", "element"),
+		svg_rect(-20,-15,40,30, "black", "#ffffffaa", "element"),
 		svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
 		svg_text(0,39,"stock","name_element")
