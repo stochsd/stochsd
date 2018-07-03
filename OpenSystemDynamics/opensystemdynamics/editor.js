@@ -1758,21 +1758,24 @@ class RiverVisual extends BaseConnection {
 		let masterPos = masterAnchor.get_pos();
 		let slavePos = slaveAnchor.get_pos();
 		let dir = neswDirection(masterPos, slavePos);
+		let dist = 15; 		// mininum distance from master and slave anchor
 		if (dir == "north" || dir == "south") {
+
 			// Keep masterAnchor at distance from slaveAnchor 
-			if (slavePos[1]-30 < masterPos[1] && masterPos[1] <= slavePos[1]) { // if too close above
-				masterAnchor.set_pos([masterPos[0], slavePos[1]-30]);
-			} else if (slavePos[1] <= masterPos[1] && masterPos[1] < slavePos[1]+30) { // if too close below 
-				masterAnchor.set_pos([masterPos[0], slavePos[1]+30]);
+			if (slavePos[1]-dist < masterPos[1] && masterPos[1] <= slavePos[1]) { // if too close above
+				masterAnchor.set_pos([masterPos[0], slavePos[1]+dist]);			// switch side
+			} else if (slavePos[1] <= masterPos[1] && masterPos[1] < slavePos[1]+dist) { // if too close below 
+				masterAnchor.set_pos([masterPos[0], slavePos[1]-dist]); 		// switch side
 			}
 			
 			slaveAnchor.set_pos([masterPos[0], slavePos[1]]);
 		} else {
+
 			// Keep masterAnchor at distance from slaveAnchor 
-			if ((slavePos[0]-30 < masterPos[0]) && (masterPos[0] <= slavePos[0])) {
-				masterAnchor.set_pos([slavePos[0]-30, masterPos[1]]);
-			} else if (slavePos[0] <= masterPos[0] && masterPos[0] < slavePos[0]+30) {
-				masterAnchor.set_pos([slavePos[0]+30, masterPos[1]]);
+			if ((slavePos[0]-dist < masterPos[0]) && (masterPos[0] <= slavePos[0])) { // if to close left
+				masterAnchor.set_pos([slavePos[0]+dist, masterPos[1]]);				// switch to right side
+			} else if (slavePos[0] <= masterPos[0] && masterPos[0] < slavePos[0]+dist) { // if to close to right side
+				masterAnchor.set_pos([slavePos[0]-dist, masterPos[1]]);				// switch to left side 
 			}
 
 			slaveAnchor.set_pos([slavePos[0], masterPos[1]]);
