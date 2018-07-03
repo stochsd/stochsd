@@ -28,8 +28,6 @@ StochSD was developed by Erik Gustafsson, dept. of Signals and Systems, Uppsala 
 Mail: Ekir.Gustafsson@gmail.com.
 `;
 
-const ghost_image = '<path inkscape:connector-curvature="0"     d="m 6.8787701,-1.172115 c 0,0.94923948 0.1554403,8.1989876 -0.1943007,9.0150008 C 6.3347285,8.6644488 4.9635227,5.8111805 4.3473135,6.4329047 3.7255523,7.0546289 3.5034948,7.6319441 2.6818813,7.9816633 1.8602682,8.3258325 0.96093505,6.3884958 0.0116386,6.3884958 c -0.94929616,0 -1.8486295,1.9373367 -2.6702428,1.5931675 C -3.4802173,7.6319441 -3.6245546,7.3543882 -4.2463158,6.7326641 -4.8680773,6.1109399 -6.3614144,8.6922061 -6.7111551,7.870641 -7.0553443,7.0490771 -6.8554926,-0.22287552 -6.8554926,-1.172115 c 0,-3.7858565 3.0754975,-6.8611709 6.8671312,-6.8611709 3.7916334,0 6.8671315,3.0753144 6.8671315,6.8611709 z"     style="fill:#ffffff;stroke:#000000;stroke-width:0.7"     id="path18423" />';
-
 // This values are not used by stochsd, as primitives cannot be resized in stochsd
 // They are only used for exporting the model to Insight Maker
 type_size = {};
@@ -1213,7 +1211,7 @@ class StockVisual extends BasePrimitive{
 	getImage() {
 		return [
 		svg_rect(-20,-15,40,30,  defaultStroke,  defaultFill, "element"),
-		svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
+		svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
 		svg_text(0,39,"stock","name_element")
 		];
@@ -1308,7 +1306,7 @@ class VariableVisual extends BasePrimitive{
 		return [
 			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
 			svg_text(0,0,"variable","name_element"),
-			svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
 			svg_circle(0,0,this.getRadius(),"red","none","selector")
 		];
 	}
@@ -1336,7 +1334,7 @@ class ConverterVisual extends BasePrimitive{
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", defaultStroke, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","red","none","selector"),
-			svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
+			svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
 			svg_text(0,0,"variable","name_element"),
 		];
 	}
