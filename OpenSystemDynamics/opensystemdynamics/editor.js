@@ -65,6 +65,12 @@ var empty_click_down = false;
 // Stores log for the global log
 var global_log = "";
 
+
+// default svg values 
+var defaultFill = "#ffffff01";
+var defaultStroke = "black";
+
+
 function applicationReload() {
 	environment.reloadingStarted = true;
 	location.reload();
@@ -1206,7 +1212,7 @@ class StockVisual extends BasePrimitive{
 
 	getImage() {
 		return [
-		svg_rect(-20,-15,40,30, "black", "#ffffffaa", "element"),
+		svg_rect(-20,-15,40,30,  defaultStroke,  defaultFill, "element"),
 		svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
 		svg_text(0,39,"stock","name_element")
@@ -1275,7 +1281,7 @@ class NumberboxVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_rect(-20,-15,40,30,"black","white","element"),
+			svg_rect(-20,-15,40,30, defaultStroke, defaultFill,"element"),
 			svg_text(0,0,"","name_element",{"alignment-baseline": "middle", "style": "font-size: 16px"}),
 			svg_rect(-20,-15,40,30,"red","none","selector")
 		];	
@@ -1300,7 +1306,7 @@ class VariableVisual extends BasePrimitive{
 
 	getImage () {
 		return [
-			svg_circle(0,0,this.getRadius(),"black","white","element"),
+			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
 			svg_text(0,0,"variable","name_element"),
 			svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 			svg_circle(0,0,this.getRadius(),"red","none","selector")
@@ -1328,7 +1334,7 @@ class ConverterVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","black","white","element"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", defaultStroke, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","red","none","selector"),
 			svg_group([svg_from_string(ghost_image)],svg_transform_string(0,0,0,1),"ghost"),
 			svg_text(0,0,"variable","name_element"),
@@ -1635,15 +1641,15 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	makeGraphics() {
-		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke="black" fill="white"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke=${defaultStroke} fill=${defaultFill} />`);
 		this.updateLength();
 		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 
 		this.name_element = svg_text(0,0,"variable","name_element");
 		this.flowcore = svg_group([ 
-			svg_circle(0,15,15,"black","white","element"),
-			svg_path("M0,0 -10,-10 10,-10 Z","black","white","element"),
+			svg_circle(0,15,15, defaultStroke, defaultFill, "element"),
+			svg_path("M0,0 -10,-10 10,-10 Z", defaultStroke, defaultFill, "element"),
 			this.name_element
 		],svg_transform_string(100,100,0,1));
 		
@@ -1888,15 +1894,15 @@ class RiverVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
-		this.startCloud = svgCloud();
-		this.endCloud = svgCloud();
-		this.outerPath = svgWidePath(5, "black");
+		this.startCloud = svgCloud(defaultStroke, defaultFill);
+		this.endCloud = svgCloud(defaultStroke, defaultFill);
+		this.outerPath = svgWidePath(5, defaultStroke);
 		this.innerPath = svgWidePath(3, "white");
-		this.arrowHeadPath = svgArrowHead("black", [1,0]);
+		this.arrowHeadPath = svgArrowHead(defaultStroke, defaultFill, [1,0]);
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z","black","white","element")]);
+		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z", defaultStroke, defaultFill, "element")]);
 		this.name_element = svg_text(0, -15, "vairable", "name_element");
-		this.variable = svg_group([svg_circle(0, 0, 15, "black", "white", "element"), this.name_element]);
+		this.variable = svg_group([svg_circle(0, 0, 15, defaultStroke, "white", "element"), this.name_element]);
 		this.anchorPoints = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2026,7 +2032,16 @@ function getStackTrace() {
 class RectangleVisual extends TwoPointer {
 	makeGraphics() {
 		var dash = "";
-		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",dash); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
+		this.element = svg_rect(
+			this.startx, 
+			this.starty, 
+			this.endx, 
+			this.endy, 
+			defaultStroke, 
+			"none", 
+			"element", 
+			dash
+		);
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 		this.group = svg_group([this.element]);
@@ -2100,8 +2115,17 @@ class TableVisual extends htmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","none","element",""); //svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
-		this.htmlElement = svg_foreignobject(this.startx,this.starty,200,200,"table not renderd yet");
+		this.element = svg_rect(
+			this.startx,
+			this.starty,
+			this.endx,
+			this.endy,
+			defaultStroke,
+			"none",
+			"element",
+			""
+		);
+		this.htmlElement = svg_foreignobject(this.startx, this.starty, 200, 200, "table not renderd yet", defaultFill);
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2160,7 +2184,7 @@ class htmlOverlayTwoPointer extends TwoPointer {
 		this.targetBorder = 4;
 		this.targetElement = document.createElement("div");
 		this.targetElement.style.position = "absolute";
-		this.targetElement.style.backgroundColor = "white";
+		this.targetElement.style.backgroundColor = defaultFill;
 		this.targetElement.style.zIndex = 100;
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
@@ -2176,17 +2200,25 @@ class htmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 		
-		this.element = svg_rect(this.startx,this.starty,this.endx,this.endy,"black","white","element","");
+		this.element = svg_rect(this.startx,
+			this.starty,
+			this.endx,
+			this.endy, 
+			defaultStroke, 
+			defaultFill, 
+			"element",
+			""
+		);
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 		
 		this.group = svg_group([this.element]);
-		this.group.setAttribute("node_id",this.id);	
+		this.group.setAttribute("node_id", this.id);	
 		
 		var element_array = [this.element];
 		for(var key in element_array) {
-			element_array[key].setAttribute("node_id",this.id);
+			element_array[key].setAttribute("node_id", this.id);
 		}
 	}
 	
@@ -2524,7 +2556,7 @@ class XyPlotVisual extends DiagramVisual {
 class LineVisual extends TwoPointer {
 	makeGraphics() {
 		var dash = "";
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy,"black","white","element",dash);
+		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill ,"element",dash);
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 		this.group = svg_group([this.element]);

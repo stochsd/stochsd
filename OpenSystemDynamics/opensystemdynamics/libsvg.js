@@ -153,7 +153,7 @@ function svg_rect(x, y, width, height, stroke, fill, markclass) {
 }
 
 // Drawing primitive for drawing svg rects
-function svg_foreignobject(x, y, width, height, innerHTML) {
+function svg_foreignobject(x, y, width, height, innerHTML, fill="white") {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	// foreignObject tag must be cammel case to work which is wierd
 	
@@ -167,18 +167,18 @@ function svg_foreignobject(x, y, width, height, innerHTML) {
 
 	// This div holds the scrolling and sets the background color
 	let scrollDiv = document.createElement("div");
-	scrollDiv.setAttribute("style","background-color: white; overflow: scroll");
+	scrollDiv.setAttribute(`style`, `background-color: ${fill}; overflow: scroll`);
 	scrollDiv.setAttribute("class","scrollDiv");
 
 	// This div is on the inside of the scroll div and reacts to things such as clicks
 	let innerDiv = document.createElement("div");
-	innerDiv.setAttribute("style","width: 100%; height: 100%; overflow: visible;background-color: white");
+	innerDiv.setAttribute(`style`, `width: 100%; height: 100%; overflow: visible; background-color: ${fill}`);
 	innerDiv.setAttribute("class","innerDiv");
 	
 	// This div is where we put the content
 	let contentDiv = document.createElement("div");
 	contentDiv.innerHTML=innerHTML;
-	contentDiv.setAttribute("style","overflow: visible;background-color: hite");
+	contentDiv.setAttribute(`style`, `overflow: visible; background-color: ${fill}`);
 	contentDiv.setAttribute("class","contentDiv");
 	
 	innerDiv.appendChild(contentDiv);
@@ -239,10 +239,10 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	return newElement;
 }
 
-function svgArrowHead(stroke, directionVector) {
+function svgArrowHead(stroke, fill, directionVector) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
-	newElement.setAttribute("fill", "white");
+	newElement.setAttribute("fill", fill);
 	this.pointsA = [[0,0], [10,10]]; // Arbitrary start points
 
 	newElement.setPos = function (pos, directionVector=[1,0]) {
@@ -348,11 +348,11 @@ class svgsFlowArrow {
 	} 
 }
 
-function svgCloud() {
+function svgCloud(stroke, fill) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-	newElement.setAttribute("stroke", "black");
+	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("stroke-width", "1");
-	newElement.setAttribute("fill", "white");
+	newElement.setAttribute("fill", fill);
 	newElement.setAttribute("d", "m -0.8447564,-11.14014 c -4.6214865,0.0079 -8.5150638,3.4528784 -9.0815386,8.0394981 -2.433142,0.4797384 -4.187489,2.61298232 -4.188373,5.0929775 -6.93e-4,2.8681392 2.323935,5.1936858 5.1920483,5.1941646 H 7.671332 C 11.368943,7.1872852 14.36665,4.1896043 14.365861,0.49198425 14.223787,-3.916487 10.814437,-6.550028 7.2876342,-6.1810461 5.7167742,-9.2242012 2.5799338,-11.137323 -0.84475524,-11.140887 Z");
 	this.visibility = true;
 	newElement.pos = [0, 0];
