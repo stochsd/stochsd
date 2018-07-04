@@ -1191,15 +1191,15 @@ class StockVisual extends BasePrimitive{
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
 		let xEdge;
 		let yEdge; 
-		if (-boxSlope < targetSlope && targetSlope < boxSlope) { // Left or right of box
+		if (isInLimits(-boxSlope, targetSlope, boxSlope)) { // Left or right of box
 			xEdge = sign(xTarget-xCenter)*width/2 + xCenter;
-			if (yCenter - height/2 < yTarget && yTarget < yCenter + height/2) { // if within box y-limits
+			if (isInLimits(yCenter-height/2, yTarget, yCenter+height/2)) { // if within box y-limits
 				yEdge = yTarget;
 			} else {
 				yEdge = yCenter + sign(yTarget-yCenter)*height/2
 			}
 		} else { // above or below box
-			if (xCenter - width/2 < xTarget && xTarget < xCenter + width/2) {	// If within box x-limits
+			if (isInLimits(xCenter-width/2, xTarget, xCenter+width/2)) {	// If within box x-limits
 				xEdge = xTarget;
 			} else {
 				xEdge = xCenter + sign(xTarget-xCenter)*width/2;
@@ -1218,7 +1218,7 @@ class StockVisual extends BasePrimitive{
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
 		let xEdge;
 		let yEdge; 
-		if (-boxSlope < targetSlope && targetSlope < boxSlope) {
+		if (isInLimits(-boxSlope, targetSlope, boxSlope)) {
 			const xSign = sign(xTarget-xCenter); // -1 if target left of box and 1 if target right of box 
 			xEdge = xSign * (width/2) + xCenter;
 			yEdge = xSign * (width/2) * targetSlope + yCenter;

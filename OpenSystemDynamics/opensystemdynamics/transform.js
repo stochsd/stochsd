@@ -65,3 +65,7 @@ function neswDirection(point1, point2) {
 		return "west"
 	}
 }
+
+function isInLimits(lowerLimit, value, upperLimit) {
+	return (lowerLimit < value && value < upperLimit);
+}
