@@ -1947,7 +1947,7 @@ class RiverVisual extends BaseConnection {
 		
 		let points = this.getPathPoints();
 		let connectionStartPos = points[1];
-		let conectionEndPos = points[points.length-2]; 
+		let connectionEndPos = points[points.length-2]; 
 
 		if (this.start_attach != null && this.start_anchor != null) {
 			if (this.start_attach.get_pos) {
@@ -1963,7 +1963,7 @@ class RiverVisual extends BaseConnection {
 			if (this.end_attach.get_pos) {
 				
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getMountPos(conectionEndPos);
+				let newPos = this.end_attach.getMountPos(connectionEndPos);
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
