@@ -1110,8 +1110,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 		do_global_log("OrthoAnchor - afterMove() -"+this.id);
 		let parent = get_parent(this);
 		// Add adjust nighbor to RiverVisual
-		// console.log("get_parent(this).areAllAnchorsSelected()");
-		// console.log(get_parent(this).areAllAnchorsSelected());
 		if ( ! get_parent(this).areAllAnchorsSelected()) {
 			parent.adjustNeighbors(this.index); 
 		}
@@ -1346,10 +1344,6 @@ class ConverterVisual extends BasePrimitive{
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
 		let xEdgeRel; 	// Relative x Position to center of Visual object.
 		let yEdgeRel; 	// Relative y Position to center of Visual object.  
-		console.log("hexSlope");
-		console.log(hexSlope);
-		console.log("targetSlope");
-		console.log(targetSlope);
 		if (hexSlope < targetSlope || targetSlope < -hexSlope) {
 			const ySign = sign(yTarget - yCenter); 	// -1 if target above hexagon and 1 if target below hexagon 
 			xEdgeRel = ySign*safeDivision(15, targetSlope);
@@ -2749,7 +2743,6 @@ class LinkVisual extends BaseConnection{
 		// start_anchor is null if we are currently creating the connection
 		// start_attach is null if we are not attached to anything
 		
-		//console.log(this.b1_anchor.get_pos());
 		//let connectionCenter = this.b1_anchor.get_pos();
 
 		if (this.start_attach != null && this.start_anchor != null) {
@@ -3790,8 +3783,6 @@ function update_name_pos(node_id) {
 }
 
 function mouseDownHandler(event) {
-	// console.log("Mouse event");
-	// console.log(event);
 	do_global_log("mouseDownHandler");
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
@@ -4592,9 +4583,7 @@ const runStateEnum = {
 
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
-	console.log(objects);
 	for(var id in objects) {
-		console.log(get_object(id));
 		let obj = get_object(id);
 		obj.setColor(color);
 	}
