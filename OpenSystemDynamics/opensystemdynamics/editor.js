@@ -1565,7 +1565,7 @@ class BaseConnection extends TwoPointer{
 	setAttachableTypes(types) {
 		this.attachableTypes = types;
 	}
-	set start_attach(new_start_attach) {
+	setStartAttach(new_start_attach) {
 		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
 			return;
 		}
@@ -3058,7 +3058,7 @@ class MouseTool extends BaseTool {
 			let parentObject = get_parent(selectedAnchor);
 			switch(selectedAnchor.getAnchorType()) {
 			case anchorTypeEnum.start:
-				parentObject.start_attach = null;
+				parentObject.setStartAttach(null);
 				break;
 			case anchorTypeEnum.end:
 				parentObject.end_attach = null;
@@ -3173,7 +3173,7 @@ class TwoPointerTool extends BaseTool {
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
 		if (start_element != null) {
-			this.current_connection.start_attach = get_parent(start_element);
+			this.current_connection.setStartAttach(get_parent(start_element));
 		}
 		this.current_connection.set_name(primitive_name);
 		
@@ -3438,7 +3438,7 @@ function attach_selected_anchor(selectedAnchor) {
 	
 	switch(selectedAnchor.getAnchorType()) {
 	case anchorTypeEnum.start:
-		parentConnection.start_attach = attach_to;
+		parentConnection.setStartAttach(attach_to);
 		break;
 	case anchorTypeEnum.end:
 		parentConnection.end_attach = attach_to;
@@ -4492,7 +4492,7 @@ function syncVisual(tprimitive) {
 			
 			if (tprimitive.source != null) {
 				// Attach to object
-				connection.start_attach = get_object(tprimitive.source.getAttribute("id"));
+				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
 			} else {
 				// Set UI-coordinates to coordinates in primitive
 				connection.start_anchor.set_pos(source_position);
