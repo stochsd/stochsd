@@ -1587,7 +1587,7 @@ class BaseConnection extends TwoPointer{
 	get start_attach() {
 		return this._start_attach;
 	}
-	set end_attach(new_end_attach) {
+	setEndAttach(new_end_attach) {
 		do_global_log("end_attach");
 		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
 			return;
@@ -2012,7 +2012,7 @@ class RiverVisual extends BaseConnection {
 		} else {
 			this.startCloud.setVisibility(false);
 		}
-		if (this.end_attach == null) {
+		if (this.setEndAttach(null)) {
 			this.endCloud.setVisibility(true);
 			this.endCloud.setPos(points[points.length-1], points[points.length-2]);
 		} else {
@@ -3061,7 +3061,7 @@ class MouseTool extends BaseTool {
 				parentObject.setStartAttach(null);
 				break;
 			case anchorTypeEnum.end:
-				parentObject.end_attach = null;
+				parentObject.setEndAttach(null);
 				break;
 			}
 		}
@@ -3441,7 +3441,7 @@ function attach_selected_anchor(selectedAnchor) {
 		parentConnection.setStartAttach(attach_to);
 		break;
 	case anchorTypeEnum.end:
-		parentConnection.end_attach = attach_to;
+		parentConnection.setEndAttach(attach_to);
 		break;
 	}
 	
@@ -4499,7 +4499,7 @@ function syncVisual(tprimitive) {
 			}
 			if (tprimitive.target != null) {
 				// Attach to object
-				connection.end_attach = get_object(tprimitive.target.getAttribute("id"));
+				connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
 			} else {
 				// Set UI-coordinates to coordinates in primitive
 				connection.end_anchor.set_pos(target_position);
