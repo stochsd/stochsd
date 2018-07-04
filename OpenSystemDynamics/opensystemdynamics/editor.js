@@ -1971,6 +1971,10 @@ class RiverVisual extends BaseConnection {
 			}
 		}
 		super.update();
+		if (this.start_anchor && this.end_anchor) {
+			this.adjustNeighborAnchor(this.anchorPoints[0], this.anchorPoints[1]);
+			this.adjustNeighborAnchor(this.anchorPoints[this.anchorPoints.length-1], this.anchorPoints[this.anchorPoints.length-2]);
+		}
 	}
 	
 	updateGraphics() {
