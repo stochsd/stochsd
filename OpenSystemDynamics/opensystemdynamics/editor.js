@@ -2678,6 +2678,12 @@ class LinkVisual extends BaseConnection{
 		
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
+	dashLine() {
+		this.curve.setAttribute("stroke-dasharray", "4 4");
+	}
+	undashLine() {
+		this.curve.setAttribute("stroke-dasharray", "");
+	}
 	resetBezierPoints() {
 		this.resetBezier1();
 		this.resetBezier2();
