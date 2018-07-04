@@ -2742,19 +2742,6 @@ class LinkVisual extends BaseConnection{
 		this.afterAnchorUpdate(anchorTypeEnum.bezier1);
 		this.afterAnchorUpdate(anchorTypeEnum.bezier2);	
 	}
-	isChildSelected() {
-		let children = getChildren(this.id);
-		let suffixs = [".start_anchor", ".b1_anchor", ".b2_anchor", ".end_anchor"];
-		let selectedArray = [];
-		for (i = 0; i < suffixs.length; i++) {
-			let suffix = suffixs[i];
-			let child = children[this.id+suffix];
-			if (child) {
-				selectedArray.push(child.selected);	
-			}
-		}
-		return selectedArray.includes(true);
-	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
@@ -2786,10 +2773,6 @@ class LinkVisual extends BaseConnection{
 			}
 		}
 		super.update();
-
-		// if (! this.isChildSelected() && (this.end_attach == null || this.start_attach == null)) {
-		// 	console.log(`Link with id ${this.id} should self delete`);
-		// }
 	}
 }
 
