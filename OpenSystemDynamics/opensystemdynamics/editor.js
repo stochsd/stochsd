@@ -949,6 +949,8 @@ class OnePointer extends BaseObject{
 		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
 		return [this.pos[0], this.pos[1]];
 	}
+
+	// This functinality is not yet implemented correctly
 	setColor(color) {
 		this.group.setAttribute("stroke", color);
 	}
@@ -4581,6 +4583,7 @@ const runStateEnum = {
 	paused: "paused"
 }
 
+// Not yet implemented
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
 	for(var id in objects) {
