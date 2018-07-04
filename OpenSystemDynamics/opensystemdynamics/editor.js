@@ -905,7 +905,6 @@ class OnePointer extends BaseObject{
 		object_array[id] = this;
 		this.update();
 
-		
 		for(var key in this.element_array) {
 			var element = this.element_array[key];
 			$(element).on("mousedown",(event) => {
@@ -917,10 +916,6 @@ class OnePointer extends BaseObject{
 				this.double_click(this.id);
 			}
 		});
-		
-		
-		
-
 		
 		this.unselect();
 		
