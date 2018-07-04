@@ -1187,15 +1187,26 @@ class StockVisual extends BasePrimitive{
 	getSimpleMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
 		const [width, height] = this.getSize();
-		if (xTarget <= xCenter-(width/2)) { // Left side
-			return [xCenter-(width/2), yTarget];
-		} else if (xCenter+(width/2) <= xTarget) { // Right Side
-			return [xCenter+(width/2), yTarget];
-		} else if (yTarget <= yCenter) { // Top side
-			return [xTarget, yCenter-(height/2)];
-		} else { // Bottom side
-			return [xTarget, yCenter+(height/2)];
+		const boxSlope = safeDivision(height, width);
+		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
+		let xEdge;
+		let yEdge; 
+		if (-boxSlope < targetSlope && targetSlope < boxSlope) { // Left or right of box
+			xEdge = sign(xTarget-xCenter)*width/2 + xCenter;
+			if (yCenter - height/2 < yTarget && yTarget < yCenter + height/2) { // if within box y-limits
+				yEdge = yTarget;
+			} else {
+				yEdge = yCenter + sign(yTarget-yCenter)*height/2
+			}
+		} else { // above or below box
+			if (xCenter - width/2 < xTarget && xTarget < xCenter + width/2) {	// If within box x-limits
+				xEdge = xTarget;
+			} else {
+				xEdge = xCenter + sign(xTarget-xCenter)*width/2;
+			}
+			yEdge = sign(yTarget-yCenter) * (height/2) + yCenter;
 		}
+		return [xEdge, yEdge];
 	}
 
 	// Used for LinkVisual
@@ -1968,7 +1979,7 @@ class RiverVisual extends BaseConnection {
 		if (this.start_attach != null && this.start_anchor != null) {
 			if (this.start_attach.get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.getMountPos(connectionStartPos);
+				let newPos = this.start_attach.getSimpleMountPos(connectionStartPos);
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -1979,7 +1990,7 @@ class RiverVisual extends BaseConnection {
 			if (this.end_attach.get_pos) {
 				
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getMountPos(connectionEndPos);
+				let newPos = this.end_attach.getSimpleMountPos(connectionEndPos);
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
