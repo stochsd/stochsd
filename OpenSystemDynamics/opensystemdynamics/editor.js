@@ -2653,6 +2653,14 @@ class LinkVisual extends BaseConnection{
 		this.click_area.y4 = this.curve.y4;
 		this.click_area.update();
 	}
+	setEndAttach(new_end_attach) {
+		super.setEndAttach(new_end_attach);
+		if(new_end_attach != null && new_end_attach.getType() == "stock") {
+			this.dashLine();
+		} else {
+			this.undashLine();
+		}
+	}
 	makeGraphics() {
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
