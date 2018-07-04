@@ -1183,6 +1183,22 @@ class StockVisual extends BasePrimitive{
 		return [40, 30];
 	}
 
+	// Used for RiverVisual
+	getSimpleMountPos([xTarget, yTarget]) {
+		const [xCenter, yCenter] = this.get_pos();
+		const [width, height] = this.getSize();
+		if (xTarget <= xCenter-(width/2)) { // Left side
+			return [xCenter-(width/2), yTarget];
+		} else if (xCenter+(width/2) <= xTarget) { // Right Side
+			return [xCenter+(width/2), yTarget];
+		} else if (yTarget <= yCenter) { // Top side
+			return [xTarget, yCenter-(height/2)];
+		} else { // Bottom side
+			return [xTarget, yCenter+(height/2)];
+		}
+	}
+
+	// Used for LinkVisual
 	getMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
