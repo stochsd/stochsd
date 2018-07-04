@@ -1007,7 +1007,7 @@ class AnchorPoint extends OnePointer{
 		let parent = get_object(parentId);
 		switch(this.anchorType) {
 			case anchorTypeEnum.start:
-				if (parent.start_attach) {
+				if (parent.getStartAttach()) {
 					return true;
 				} else {
 					return false;
@@ -1584,7 +1584,7 @@ class BaseConnection extends TwoPointer{
 		// Trigger the attach event on the new attachment primitives
 		this.triggerAttachEvents();
 	}
-	get start_attach() {
+	getStartAttach() {
 		return this._start_attach;
 	}
 	setEndAttach(new_end_attach) {
@@ -1611,8 +1611,8 @@ class BaseConnection extends TwoPointer{
 	}
 	triggerAttachEvents() {
 		// We must always trigger both start and end, since a change in the start might affect the logics of the primitive attach at the end of a link or flow
-		if (this._start_attach != null) {
-			this._start_attach.attachEvent();
+		if (this.getStartAttach() != null) {
+			this.getStartAttach().attachEvent();
 		}
 		if (this._end_attach != null) {
 			this._end_attach.attachEvent();
@@ -1628,7 +1628,7 @@ class BaseConnection extends TwoPointer{
 	linearInterpolation(progress) {
 		// Find a point at the progress place along a line between start and end
 		// progress is between 0 and 1
-		if (this.start_attach != null) {
+		if (this.getStartAttach() != null) {
 			[this.startx, this.starty] = this.start_anchor.get_pos();
 		}
 		if (this.end_attach != null) {
@@ -1685,15 +1685,15 @@ class FlowVisual extends BaseConnection {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
-		// start_anchor is null if we are currently creating the connection
-		// start_attach is null if we are not attached to anything
+		// _start_anchor is null if we are currently creating the connection
+		// _start_attach is null if we are not attached to anything
 		
 		let connectionCenter = this.get_pos();
 		
-		if (this.start_attach != null && this.start_anchor != null) {
-			if (this.start_attach.get_pos) {
+		if (this.getStartAttach() != null && this.start_anchor != null) {
+			if (this.getStartAttach().get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.getLinkMountPos(connectionCenter);
+				let newPos = this.getStartAttach().getLinkMountPos(connectionCenter);
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -1970,16 +1970,16 @@ class RiverVisual extends BaseConnection {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
-		// start_attach is null if we are not attached to anything
+		// _start_attach is null if we are not attached to anything
 		
 		let points = this.getPathPoints();
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length-2]; 
 
-		if (this.start_attach != null && this.start_anchor != null) {
-			if (this.start_attach.get_pos) {
+		if (this.getStartAttach() != null && this.start_anchor != null) {
+			if (this.getStartAttach().get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.getFlowMountPos(connectionStartPos);
+				let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
@@ -2006,7 +2006,7 @@ class RiverVisual extends BaseConnection {
 	
 	updateGraphics() {
 		let points = this.getPathPoints();
-		if (this.start_attach == null) {
+		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPos(points[0], points[1]);
 		} else {
@@ -2774,15 +2774,15 @@ class LinkVisual extends BaseConnection{
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
-		// start_anchor is null if we are currently creating the connection
-		// start_attach is null if we are not attached to anything
+		// _start_anchor is null if we are currently creating the connection
+		// _start_attach is null if we are not attached to anything
 		
 		//let connectionCenter = this.b1_anchor.get_pos();
 
-		if (this.start_attach != null && this.start_anchor != null) {
-			if (this.start_attach.get_pos) {
+		if (this.getStartAttach() != null && this.start_anchor != null) {
+			if (this.getStartAttach().get_pos) {
 				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.start_attach.getLinkMountPos(this.b1_anchor.get_pos());
+				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.get_pos());
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
