@@ -1014,7 +1014,7 @@ class AnchorPoint extends OnePointer{
 				}
 			break;
 			case anchorTypeEnum.end:
-				if (parent.end_attach) {
+				if (parent.getEndAttach()) {
 					return true;
 				} else {
 					return false;
@@ -1606,7 +1606,7 @@ class BaseConnection extends TwoPointer{
 		// Trigger the attach event on the new attachment primitives
 		this.triggerAttachEvents();
 	}
-	get end_attach() {
+	getEndAttach() {
 		return this._end_attach;
 	}
 	triggerAttachEvents() {
@@ -1614,8 +1614,8 @@ class BaseConnection extends TwoPointer{
 		if (this.getStartAttach() != null) {
 			this.getStartAttach().attachEvent();
 		}
-		if (this._end_attach != null) {
-			this._end_attach.attachEvent();
+		if (this.getEndAttach() != null) {
+			this.getEndAttach().attachEvent();
 		}
 	}
 	clean() {
@@ -1631,7 +1631,7 @@ class BaseConnection extends TwoPointer{
 		if (this.getStartAttach() != null) {
 			[this.startx, this.starty] = this.start_anchor.get_pos();
 		}
-		if (this.end_attach != null) {
+		if (this.getEndAttach() != null) {
 			[this.endx, this.endy] = this.end_anchor.get_pos();
 		}
 		let start = [this.startx, this.starty];
@@ -1700,10 +1700,10 @@ class FlowVisual extends BaseConnection {
 				}
 			}
 		}
-		if (this.end_attach != null && this.end_anchor != null) {
-			if (this.end_attach.get_pos) {
+		if (this.getEndAttach() != null && this.end_anchor != null) {
+			if (this.getEndAttach().get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getLinkMountPos(connectionCenter);
+				let newPos = this.getEndAttach().getLinkMountPos(connectionCenter);
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -1986,11 +1986,10 @@ class RiverVisual extends BaseConnection {
 				}
 			}
 		}
-		if (this.end_attach != null && this.end_anchor != null) {
-			if (this.end_attach.get_pos) {
-				
+		if (this.getEndAttach() != null && this.end_anchor != null) {
+			if (this.getEndAttach().get_pos) {				
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getFlowMountPos(connectionEndPos);
+				let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
@@ -2789,10 +2788,10 @@ class LinkVisual extends BaseConnection{
 				}
 			}
 		}
-		if (this.end_attach != null && this.end_anchor != null) {
-			if (this.end_attach.get_pos) {
+		if (this.getEndAttach() != null && this.end_anchor != null) {
+			if (this.getEndAttach().get_pos) {
 				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.end_attach.getLinkMountPos(this.b2_anchor.get_pos());
+				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.get_pos());
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
