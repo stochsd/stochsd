@@ -1315,6 +1315,26 @@ class NumberboxVisual extends BasePrimitive{
 	}
 }
 
+class ConstantVisual extends BasePrimitive {
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras)
+	}
+
+	getImage() {
+		return [
+			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
+			svg_text(0, 0, "constant", "name_element"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
+			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
+		];
+	}
+
+	getLinkMountPos([xTarget, yTarget]) {
+		const [xCenter, yCenter] = this.get_pos();
+		return [xCenter, yCenter];
+	}
+}
+
 class VariableVisual extends BasePrimitive{
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
@@ -3029,6 +3049,16 @@ class VariableTool extends BaseTool {
 	}
 }
 
+class ConstantTool extends BaseTool {
+	static leftMouseDown(x, y) {
+		unselect_all();
+		let primitiveName = findFreeName(type_basename["constant"]);
+		let size = type_size["variable"];
+		let newConstant = createPrimitive(primitiveName, "Variable", [x-size[0]/2, y-size[1]/2], size);
+		ToolBox.setTool("mouse");
+	}
+}
+
 class MouseTool extends BaseTool {
 	static get_single_selected_anchor() {
 		// Check if we selected only 1 anchor element. Return that anchor else return null
@@ -3936,6 +3966,7 @@ class ToolBox {
 			"stock":StockTool,
 			"converter":ConverterTool,
 			"variable":VariableTool,
+			"constant":ConstantTool,
 			"flow":FlowTool,
 			"river":RiverTool,
 			"link":LinkTool,
