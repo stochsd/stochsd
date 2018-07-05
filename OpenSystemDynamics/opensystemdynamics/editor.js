@@ -1856,7 +1856,7 @@ class RiverVisual extends BaseConnection {
 			this.valveIndex = (this.valveIndex+1)%(this.anchorPoints.length-1);
 		}
 		this.variableSide = !this.variableSide;
-		this.update();
+		update_all_objects();
 	}
 
 	createAnchorPoint(x, y) {
