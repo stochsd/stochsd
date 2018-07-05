@@ -3133,7 +3133,6 @@ class MouseTool extends BaseTool {
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
 		if (selectedAnchor) {
-			let parentObject = get_parent(selectedAnchor);
 			attach_selected_anchor(selectedAnchor);
 		}
 		if (empty_click_down) {
