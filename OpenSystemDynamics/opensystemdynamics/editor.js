@@ -3435,8 +3435,14 @@ function attach_selected_anchor(selectedAnchor) {
 
 	// Find unselected stock element
 	for(var i = 0; i < elements_under.length; i++) {
-		if (!elements_under[i].is_selected() && ("getLinkMountPos" in elements_under[i]) && elements_under[i] != parentConnection) {
-			attach_to = elements_under[i]; 
+		let element = elements_under[i];
+		
+		let elemIsNotSelected = ! element.is_selected();
+		let elemIsOkType = parentConnection.attachableTypes.includes(element.getType());
+		let elemIsNotParentOfAnchor = element[i] != parentConnection;
+		if (elemIsNotSelected && elemIsOkType && elemIsNotParentOfAnchor) {
+			attach_to = element;
+			break;
 		}
 	}
 	if (attach_to == null) {
