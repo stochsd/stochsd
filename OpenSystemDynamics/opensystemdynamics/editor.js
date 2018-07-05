@@ -2011,7 +2011,7 @@ class RiverVisual extends BaseConnection {
 		} else {
 			this.startCloud.setVisibility(false);
 		}
-		if (this.setEndAttach(null)) {
+		if (this.getEndAttach() == null) {
 			this.endCloud.setVisibility(true);
 			this.endCloud.setPos(points[points.length-1], points[points.length-2]);
 		} else {
