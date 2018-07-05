@@ -11,7 +11,7 @@
    height="106.66666"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="rotate_name.svg">
   <metadata
      id="metadata10">
@@ -36,13 +36,13 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1018"
+     inkscape:window-width="1600"
+     inkscape:window-height="837"
      id="namedview6"
      showgrid="false"
-     inkscape:zoom="2.56"
-     inkscape:cx="-12.58105"
-     inkscape:cy="59.245074"
+     inkscape:zoom="5.12"
+     inkscape:cx="61.237165"
+     inkscape:cy="53.158017"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -50,37 +50,38 @@
      units="px" />
   <circle
      class="element"
-     cx="28.860348"
-     cy="59.210155"
+     cx="28.079098"
+     cy="28.35078"
      id="circle4"
      style="fill:#ffffff;stroke:#000000;stroke-width:1.82325256"
      r="27.348776" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:10.3110981px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.85925823px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     x="60.431423"
-     y="80.219131"
+     x="2.5950849"
+     y="88.474281"
      id="text3338"
      transform="scale(1.0063418,0.99369816)"><tspan
        sodipodi:role="line"
        id="tspan3340"
-       x="60.431423"
-       y="80.219131"
-       style="font-size:31.32006454px;line-height:1.25;stroke-width:0.85925823px">[A]</tspan></text>
+       x="2.5950849"
+       y="88.474281"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:31.32006454px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.85925823px">[A]</tspan></text>
   <g
      id="g4498"
-     transform="translate(-4)">
+     transform="rotate(90,54.850419,51.907168)">
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path3357"
-       d="m 79.337799,46.509558 c 0,-26.700241 -35.599762,-38.5668774 -35.599762,-38.5668774"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.82325256px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="m 79.337799,46.509558 c 0,-33.145554 -35.599762,-38.5668774 -35.599762,-38.5668774"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path4159"
-       d="m 50.907437,3.4922756 -6.922232,4.6982166 2.719414,9.1497368"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.82325256px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="M 55.204312,3.1016506 43.985205,8.1904922 51.392119,18.707417"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:nodetypes="ccc" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -95,5 +96,39 @@
        id="circle4-5"
        style="fill:none;stroke:#ff0000;stroke-width:3.29062629;stroke-opacity:1"
        r="49.359375" />
+  </g>
+  <circle
+     r="27.348776"
+     style="fill:#ffffff;stroke:#000000;stroke-width:1.82325256"
+     id="circle822"
+     cy="59.210155"
+     cx="-140.6709"
+     class="element" />
+  <text
+     transform="scale(1.0063418,0.99369816)"
+     id="text826"
+     y="80.219131"
+     x="-108.03147"
+     style="font-style:normal;font-weight:normal;font-size:10.3110981px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.85925823px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     xml:space="preserve"><tspan
+       style="font-size:31.32006454px;line-height:1.25;stroke-width:0.85925823px"
+       y="80.219131"
+       x="-108.03147"
+       id="tspan824"
+       sodipodi:role="line">[A]</tspan></text>
+  <g
+     transform="translate(-173.53125)"
+     id="g832">
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.82325256px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 79.337799,46.509558 c 0,-26.700241 -35.599762,-38.5668774 -35.599762,-38.5668774"
+       id="path828"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.82325256px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 50.907437,3.4922756 -6.922232,4.6982166 2.719414,9.1497368"
+       id="path830"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
