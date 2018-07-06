@@ -776,9 +776,6 @@ class BaseObject {
 				children[id].clean();
 				delete object_array[id];
 			}
-		
-			// Get the connections this object has before we clean it
-			var connection_array = find_connections(this);
 			
 			this.clearImage();
 	}
