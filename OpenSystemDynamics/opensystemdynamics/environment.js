@@ -495,5 +495,6 @@ function detectEnvironment() {
 	}
 }
 
+// Set global variable for environment and fileManager 
 var environment = detectEnvironment();
 var fileManager = environment.getFileManager();
