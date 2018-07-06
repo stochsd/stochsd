@@ -186,6 +186,7 @@ primitiveBank.variable.setAttribute('Note', '');
 primitiveBank.variable.setAttribute('Equation', '0');
 setValuedProperties(primitiveBank.variable);
 primitiveBank.variable.setAttribute('Image', 'None');
+primitiveBank.variable.setAttribute('isConstant', false);
 primitiveBank.variable.setAttribute('FlipHorizontal', false);
 primitiveBank.variable.setAttribute('FlipVertical', false);
 primitiveBank.variable.setAttribute('LabelPosition', "Middle");

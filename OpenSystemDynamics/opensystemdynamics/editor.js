@@ -43,6 +43,7 @@ type_basename["flow"] = "Flow";
 type_basename["link"] = "Link";
 type_basename["converter"] = "Converter";
 type_basename["text"] = "Text";
+type_basename["constant"] = "Constant";
 
 last_connection = null;
 
@@ -845,27 +846,20 @@ class BaseObject {
 class OnePointer extends BaseObject{
 	constructor(id, type, pos, extras = false) {
 		super(id,type,pos);
+		// Add object to global 
+		object_array[id] = this;
 		this.id = id;
-		this.type = type;
+		this.type = type; 
 
 		this.element_array = [];
 		this.selector_array = [];
 		this.ghost_array = [];
 		this.group = null;
 		this.superClass = "OnePointer";
-		var element_array = this.getImage();
-		if (element_array == false) {
-			alert("getImage() must be overriden to add graphics to this object");
-		}
 		this.draggable = true; // Default value, change it afterwords if you want
 		this.name_centered = false;
 		this.pos = pos;
-		this.element_array = element_array;
-		// Set selector element
-		this.selector_array = [];
-		
 		this.is_ghost = false; // Default value
-		
 		if (extras != false) {
 			do_global_log("has extras");
 			if ("is_ghost" in extras) {
@@ -873,6 +867,45 @@ class OnePointer extends BaseObject{
 			}
 		}
 		do_global_log("is ghost "+this.is_ghost);
+
+		this.loadImage();
+
+		this.unselect();
+		
+		// Handled for when attribute changes in corresponding SimpleNode
+		this.changeAttributeHandler = (attribute,value) => {
+			if (attribute == "name") {
+				this.set_name(value);
+			}
+		}
+	}
+
+	set_pos(pos) {
+		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
+			// If the position has not changed we should not update it
+			// This turned out to be a huge optimisation
+			return;
+		}
+		// Recreating the array is intentional to avoid copying a reference
+		//~ alert(" old pos "+this.pos[0]+","+this.pos[1]+" new pos "+pos[0]+","+pos[1]);
+		this.pos = [pos[0],pos[1]];
+		this.updatePosition();
+	}
+		
+	get_pos() {
+		// This must be done by splitting up the array and joining it again to avoid sending a reference
+		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
+		return [this.pos[0], this.pos[1]];
+	}
+
+
+	loadImage() {
+		var element_array = this.getImage();
+		if (element_array == false) {
+			alert("getImage() must be overriden to add graphics to this object");
+		}
+		
+		this.element_array = element_array;
 		
 		for(var key in element_array) {
 			if (element_array[key].getAttribute("class") == "selector") {
@@ -900,15 +933,15 @@ class OnePointer extends BaseObject{
 			}
 		}
 		this.group = svg_group(this.element_array);
-		this.group.setAttribute("class","testgroup");
-		this.group.setAttribute("node_id",id);
-		object_array[id] = this;
+		this.group.setAttribute("class", "testgroup");
+		this.group.setAttribute("node_id", this.id);
+		
 		this.update();
 
 		for(var key in this.element_array) {
 			var element = this.element_array[key];
 			$(element).on("mousedown",(event) => {
-				primitive_mousedown(this.id,event);
+				primitive_mousedown(this.id, event);
 			});
 		}
 		$(this.group).dblclick((event) => {
@@ -916,33 +949,6 @@ class OnePointer extends BaseObject{
 				this.double_click(this.id);
 			}
 		});
-		
-		this.unselect();
-		
-		// Handled for when attribute changes in corresponding SimpleNode
-		this.changeAttributeHandler = (attribute,value) => {
-			if (attribute == "name") {
-				this.set_name(value);
-			}
-		}
-	}
-
-	set_pos(pos) {
-		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
-			// If the position has not changed we should not update it
-			// This turned out to be a huge optimisation
-			return;
-		}
-		// Recreating the array is intentional to avoid copying a reference
-		//~ alert(" old pos "+this.pos[0]+","+this.pos[1]+" new pos "+pos[0]+","+pos[1]);
-		this.pos = [pos[0],pos[1]];
-		this.updatePosition();
-	}
-		
-	get_pos() {
-		// This must be done by splitting up the array and joining it again to avoid sending a reference
-		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
-		return [this.pos[0], this.pos[1]];
 	}
 
 	// This functinality is not yet implemented correctly
@@ -1315,42 +1321,62 @@ class NumberboxVisual extends BasePrimitive{
 	}
 }
 
-class ConstantVisual extends BasePrimitive {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras)
-	}
-
-	getImage() {
-		return [
-			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
-			svg_text(0, 0, "constant", "name_element"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
-		];
-	}
-
-	getLinkMountPos([xTarget, yTarget]) {
-		const [xCenter, yCenter] = this.get_pos();
-		return [xCenter, yCenter];
-	}
-}
+// class ConstantVisual extends BasePrimitive {
+// 	constructor(id, type, pos, extras) {
+// 		super(id, type, pos, extras)
+// 	}
+// 
+// 	getImage() {
+// 		return [
+// 			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
+// 			svg_text(0, 0, "constant", "name_element"),
+// 			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
+// 			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
+// 		];
+// 	}
+// 
+// 	getLinkMountPos([xTarget, yTarget]) {
+// 		const [xCenter, yCenter] = this.get_pos();
+// 		return [xCenter, yCenter];
+// 	}
+// }
 
 class VariableVisual extends BasePrimitive{
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		this.constant = false;
 	}	
+
+	setConstant(value) {
+		this.constant = value;
+		// this.loadImage();
+	}
+
+	isConstant() {
+		return this.constant;
+	}
 
 	getRadius() {
 		return 15;
 	}
 
 	getImage () {
-		return [
-			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
-			svg_text(0,0,"variable","name_element"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
-			svg_circle(0,0,this.getRadius(),"red","none","selector")
-		];
+		let element;
+		if (this.isConstant()) {
+			return [
+				svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
+				svg_text(0,0,"variable","name_element"),
+				svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+				svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
+			];
+		} else {
+			return [
+				svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
+				svg_text(0,0,"variable","name_element"),
+				svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+				svg_circle(0,0,this.getRadius(),"red","none","selector")
+			];
+		}
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
@@ -3061,6 +3087,7 @@ class ConstantTool extends BaseTool {
 		let primitiveName = findFreeName(type_basename["constant"]);
 		let size = type_size["variable"];
 		let newConstant = createPrimitive(primitiveName, "Variable", [x-size[0]/2, y-size[1]/2], size);
+		newConstant.setAttribute("isConstant", true);
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4495,6 +4522,9 @@ function syncVisual(tprimitive) {
 			var position = getCenterPosition(tprimitive);
 			visualObject = new VariableVisual(tprimitive.id,"variable",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
+			if (tprimitive.getAttribute("isConstant")) {
+				visualObject.setConstant(true);
+			}
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
