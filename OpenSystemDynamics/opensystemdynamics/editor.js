@@ -780,14 +780,17 @@ class BaseObject {
 			// Get the connections this object has before we clean it
 			var connection_array = find_connections(this);
 			
-			// Do the cleaning
-			for(var i in this.selector_array) {
-				this.selector_array[i].remove();
-			}
-			for(var key in this.element_array) {
-				this.element_array[key].remove();
-			}
-			this.group.remove();
+			this.clearImage();
+	}
+	clearImage() {
+		// Do the cleaning
+		for(var i in this.selector_array) {
+			this.selector_array[i].remove();
+		}
+		for(var key in this.element_array) {
+			this.element_array[key].remove();
+		}
+		this.group.remove();
 	}
 	double_click() {
 		// This function has to be overriden
