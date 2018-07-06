@@ -487,6 +487,7 @@ class NwEnvironment extends Environment {
 }
 
 function detectEnvironment() {
+	// Check if we run in node-webkit or in a browser 
 	if(nwController.isNwActive()) {
 		return new NwEnvironment();
 	} else {
