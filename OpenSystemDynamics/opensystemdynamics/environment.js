@@ -413,7 +413,7 @@ class NwFileManager extends BaseFileManager {
 	}
 }
 
-class Environment {
+class BaseEnvironment {
 	constructor() {
 		this.reloadingStarted = false;
 	}
@@ -428,7 +428,7 @@ class Environment {
 	}
 }
 
-class WebEnvironment extends Environment {
+class WebEnvironment extends BaseEnvironment {
 	ready() {
 		window.onbeforeunload=(e)=>{
 			if(this.reloadingStarted) {
@@ -448,7 +448,7 @@ class WebEnvironment extends Environment {
 	}
 }
 
-class NwEnvironment extends Environment {
+class NwEnvironment extends BaseEnvironment {
 	ready() {
 		$("#btn_zoom_in").click(function() {
 			NwZoomController.zoomIn();
