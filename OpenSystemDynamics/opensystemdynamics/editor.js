@@ -1349,7 +1349,8 @@ class VariableVisual extends BasePrimitive{
 
 	setConstant(value) {
 		this.constant = value;
-		// this.loadImage();
+		this.clearImage();
+		this.loadImage();
 	}
 
 	isConstant() {
@@ -3077,6 +3078,7 @@ class VariableTool extends BaseTool {
 		var primitive_name = findFreeName(type_basename["variable"]);
 		var size = type_size["variable"];
 		var new_stock = createPrimitive(primitive_name, "Variable", [x-size[0]/2, y-size[1]/2], size);
+		new_stock.setAttribute("isConstant", false);
 		ToolBox.setTool("mouse");
 	}
 }
