@@ -803,6 +803,9 @@ class BaseObject {
 		// Or when the connections starting point is connected or disconnected
 		// Override this
 	}
+	detachEvent() {
+		// This happens when object is disconected.
+	}
 	get name_pos() {
 		return this._name_pos;
 	}
@@ -1392,6 +1395,22 @@ class VariableVisual extends BasePrimitive{
 		const yEdge = dYEdge + yCenter;
 		return [xEdge, yEdge]; 
 	}
+
+	attachEvent() {
+		for (key in connection_array) {
+			if (this == connection_array[key].getEndAttach()) {
+				this.setConstant(false);
+				return;
+			}
+		}
+		this.setConstant(true);
+		return;
+	}
+	detachEvent() {
+		this.attachEvent();
+	}
+
+
 }
 
 class ConverterVisual extends BasePrimitive{
@@ -1619,8 +1638,8 @@ class BaseConnection extends TwoPointer{
 		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
 			return;
 		}
-		// Trigger the attach event on the old attachment primitives
-		this.triggerAttachEvents();
+
+		let previosStartAttach = this.getStartAttach();
 		
 		// Update the attachment primitive
 		this._start_attach = new_start_attach;
@@ -1633,6 +1652,7 @@ class BaseConnection extends TwoPointer{
 
 		// Trigger the attach event on the new attachment primitives
 		this.triggerAttachEvents();
+		this.triggerDetachEvent(previosStartAttach);
 	}
 	getStartAttach() {
 		return this._start_attach;
@@ -1645,8 +1665,8 @@ class BaseConnection extends TwoPointer{
 		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
 			return;
 		}
-		// Trigger the attach event on the old attachment primitives
-		this.triggerAttachEvents();
+
+		let previousEndAttach = this.getEndAttach();
 		
 		// Update the attachment primitive
 		this._end_attach = new_end_attach;
@@ -1658,9 +1678,15 @@ class BaseConnection extends TwoPointer{
 
 		// Trigger the attach event on the new attachment primitives
 		this.triggerAttachEvents();
+		this.triggerDetachEvent(previousEndAttach);
 	}
 	getEndAttach() {
 		return this._end_attach;
+	}
+	triggerDetachEvent(detachObject) {
+		if (detachObject != null) {
+			detachObject.detachEvent();
+		}
 	}
 	triggerAttachEvents() {
 		// We must always trigger both start and end, since a change in the start might affect the logics of the primitive attach at the end of a link or flow
