@@ -1855,6 +1855,18 @@ class RiverVisual extends BaseConnection {
 		} 
 	}
 
+	afterAnchorUpdate(anchorType) {
+		super.afterAnchorUpdate(anchorType);
+		let middlePoints = "";
+		for (i = 1; i < this.anchorPoints.length-1; i++) {
+			let pos = this.anchorPoints[i].get_pos();
+			let x = pos[0];
+			let y = pos[1];
+			middlePoints += `${x},${y} `;
+		}
+		this.primitive.value.setAttribute("MiddlePoints", middlePoints);
+	}
+
 	adjustNeighborAnchor(masterAnchor, slaveAnchor) {
 		let masterPos = masterAnchor.get_pos();
 		let slavePos = slaveAnchor.get_pos();
