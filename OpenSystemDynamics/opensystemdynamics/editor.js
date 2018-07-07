@@ -1977,9 +1977,20 @@ class RiverVisual extends BaseConnection {
 		return points;
 	}
 
-	loadAnchorPoints() {
+	loadMiddlePoints() {
 		let middlePointsString = this.primitive.getAttribute("MiddlePoints");
-		
+		let points = this.parseMiddlePoints(middlePointsString);
+		for (let point of points) {
+			let index = this.anchorPoints.length;
+			let newAnchor = new OrthoAnchorPoint(
+				this.id+".point"+index, 
+				"dummy_anchor", 
+				point,
+				anchorTypeEnum.orthoMiddle, 
+				index
+			);
+			this.anchorPoints.push(newAnchor);
+		}
 	}
 
 	getValvePos() {
@@ -4612,6 +4623,7 @@ function syncVisual(tprimitive) {
 			var target_position = getTargetPosition(tprimitive);
 
 			connection.create_dummy_start_anchor();
+			connection.loadMiddlePoints();
 			connection.create_dummy_end_anchor();
 			
 			if (tprimitive.source != null) {
@@ -4690,6 +4702,7 @@ function syncAllVisuals() {
 				removePrimitive(primitive_list[key]);
 				alert("Error while loading corrupted primitive of type "+type+". Removing corrupted primitive to avoid propagated errors.");
 				//~ alert("Error while loading corrupted primitive of type "+type+". Removing corrupted primitive to avoid propagated errors. \n\nError happened at: "+exception.stack);
+				throw exception;
 			}
 		}
 	}
