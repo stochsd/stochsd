@@ -4597,32 +4597,17 @@ function syncVisual(tprimitive) {
 		}
 		break;
 		case "Flow":
-		case "Link":
-		{
-			let connection = null;
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
-			switch(nodeType) {
-				case "Flow":
-				{
-					connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
-					
-					let rotateName = tprimitive.getAttribute("RotateName");
-					// Force all stocks to have a RotateName
-					if (!rotateName) {
-						rotateName = "0";
-						tprimitive.setAttribute("RotateName",rotateName);
-					}
-					connection.name_pos = rotateName;
-					update_name_pos(tprimitive.id);
-				}	
-				break;
-				case "Link":
-				{
-					connection = new LinkVisual(tprimitive.id,"link",[0,0]);
-				}
-				break;
+			let connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
+						
+			let rotateName = tprimitive.getAttribute("RotateName");
+			// Force all stocks to have a RotateName
+			if (!rotateName) {
+				rotateName = "0";
+				tprimitive.setAttribute("RotateName",rotateName);
 			}
+			connection.name_pos = rotateName;
+			update_name_pos(tprimitive.id);
+
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 
@@ -4644,32 +4629,49 @@ function syncVisual(tprimitive) {
 				connection.end_anchor.set_pos(target_position);
 			}
 			connection.update();
-			switch(nodeType) {
-				case "Flow":
-				{
-					set_name(tprimitive.id,getName(tprimitive));
-				}
-				break;
-				case "Link":
-				{
-					let bezierPoints = [
-						tprimitive.value.getAttribute("b1x"),
-						tprimitive.value.getAttribute("b1y"),
-						tprimitive.value.getAttribute("b2x"),
-						tprimitive.value.getAttribute("b2y")
-					];
 
-					if (bezierPoints.indexOf(null) == -1) {
-						connection.b1_anchor.set_pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
-						connection.b2_anchor.set_pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
-					} else {
-						// bezierPoints does not exist. Create them
-						connection.resetBezierPoints();
-					}
-					connection.curve.update();
-				}
-				break;
+			set_name(tprimitive.id,getName(tprimitive));
+		break;
+		case "Link":
+		{
+			let connection = new LinkVisual(tprimitive.id,"link",[0,0]);
+
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
+
+			connection.create_dummy_start_anchor();
+			connection.create_dummy_end_anchor();
+			
+			if (tprimitive.source != null) {
+				// Attach to object
+				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
+			} else {
+				// Set UI-coordinates to coordinates in primitive
+				connection.start_anchor.set_pos(source_position);
 			}
+			if (tprimitive.target != null) {
+				// Attach to object
+				connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
+			} else {
+				// Set UI-coordinates to coordinates in primitive
+				connection.end_anchor.set_pos(target_position);
+			}
+			connection.update();
+			let bezierPoints = [
+				tprimitive.value.getAttribute("b1x"),
+				tprimitive.value.getAttribute("b1y"),
+				tprimitive.value.getAttribute("b2x"),
+				tprimitive.value.getAttribute("b2y")
+			];
+
+			if (bezierPoints.indexOf(null) == -1) {
+				connection.b1_anchor.set_pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
+				connection.b2_anchor.set_pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
+			} else {
+				// bezierPoints does not exist. Create them
+				connection.resetBezierPoints();
+			}
+			connection.curve.update();
 		}
 		break;
 	}
