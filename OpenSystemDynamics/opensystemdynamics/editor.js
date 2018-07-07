@@ -1962,6 +1962,26 @@ class RiverVisual extends BaseConnection {
 		this.anchorPoints.push(newAnchor);
 	}
 	
+	parseMiddlePoints(middlePointsString) {
+		// example input: "15,17 19,12 "
+		
+		// example ["15,17", "19,12"]
+		let stringPoints = middlePointsString.trim().split(" ");
+		
+		// example [["15", "17"], ["19", "12"]]
+		let stringDimension = stringPoints.map(stringPos => stringPos.split(","));
+		
+		// example [[15,17], [19,12]]
+		let points = stringDimension.map(dim => [parseInt(dim[0]), parseInt(dim[1])]);
+
+		return points;
+	}
+
+	loadAnchorPoints() {
+		let middlePointsString = this.primitive.getAttribute("MiddlePoints");
+		
+	}
+
 	getValvePos() {
 		let points = this.getPathPoints();
 		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
@@ -4585,7 +4605,7 @@ function syncVisual(tprimitive) {
 			switch(nodeType) {
 				case "Flow":
 				{
-					connection = new FlowVisual(tprimitive.id,"flow",[0,0]);
+					connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
 					
 					let rotateName = tprimitive.getAttribute("RotateName");
 					// Force all stocks to have a RotateName
