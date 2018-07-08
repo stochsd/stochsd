@@ -1827,10 +1827,10 @@ class RiverVisual extends BaseConnection {
 
 		this.startCloud;
 		this.endCloud;
-		this.outerPath; 	// Black path
-		this.innerPath; 	// White path
-		this.arrowHeadPath; // Head of Magnus Arrow
-		this.flowPathGroup; // Group with outer- inner- & arrowHeadPath within.
+		this.outerPath; 	// Black path element
+		this.innerPath; 	// White path element
+		this.arrowHeadPath; // Head of Arrow element
+		this.flowPathGroup; // Group element with outer- inner- & arrowHeadPath within.
 		this.valve; 
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
