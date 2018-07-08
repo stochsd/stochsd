@@ -5674,12 +5674,13 @@ class TableDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.start = getTimeStart();
-		this.end = getTimeLength() + getTimeStart();
+		//this.end = getTimeLength() + getTimeStart();
+		this.length = getTimeLength();
 		this.step = getTimeStep();
 		this.setTitle("Table properties");
 		
 		this.startAuto  = true;
-		this.endAuto = true;
+		this.lengthAuto = true;
 		this.stepAuto = true;
 	}
 	beforeShow() {
@@ -5690,14 +5691,13 @@ class TableDialog extends DisplayDialog {
 		<br/><br/>
 		<table>
 		<tr>
-			<td class="text">From</td>
+			<td class="text">Start</td>
 			<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
 			<td>Auto <input class="intervalsettings start_auto" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
 		</tr><tr>
-			<td class="text">To</td>
-
-			<td><input class="intervalsettings end" name="end" value="${this.end}" type="text"></td>
-			<td>Auto <input class="intervalsettings end_auto" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
+			<td class="text">Length</td>
+			<td><input class="intervalsettings length" name="length" value="${this.length}" type="text"></td>
+			<td>Auto <input class="intervalsettings length_auto" type="checkbox"  ${checkedHtmlAttribute(this.lengthAuto)}/></td>
 		</tr><tr>
 			<td class="text">Step</td>
 			<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
@@ -5720,16 +5720,16 @@ class TableDialog extends DisplayDialog {
 	}
 	updateInterval()  {
 		this.start = Number($(this.dialogContent).find(".start").val());
-		this.end = Number($(this.dialogContent).find(".end").val());
+		this.length = Number($(this.dialogContent).find(".length").val());
 		this.step = Number($(this.dialogContent).find(".step").val());
 		
 		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
 		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
 		$(this.dialogContent).find(".start").val(this.getStart());
 		
-		this.endAuto = $(this.dialogContent).find(".end_auto").prop("checked");
-		$(this.dialogContent).find(".end").prop("disabled",this.endAuto);
-		$(this.dialogContent).find(".end").val(this.getEnd());
+		this.lengthAuto = $(this.dialogContent).find(".length_auto").prop("checked");
+		$(this.dialogContent).find(".length").prop("disabled", this.lengthAuto);
+		$(this.dialogContent).find(".length").val(this.getLength());
 		
 		this.stepAuto = $(this.dialogContent).find(".step_auto").prop("checked");
 		$(this.dialogContent).find(".step").prop("disabled",this.stepAuto);
@@ -5737,25 +5737,28 @@ class TableDialog extends DisplayDialog {
 	}
 	getStart() {
 		if (this.startAuto) {
+			// Fetch from IM engine
 			return getTimeStart();
 		} else {
+			// Fetch from user input
 			return this.start;
 		}
 	}
-	getEnd() {
-		if (this.endAuto) {
-			return getTimeStart() + getTimeLength();
+	getLength() {
+		if (this.LengthAuto) {
+			// Fetch from IM engine
+			return getTimeLength();
 		} else {
+			// Fetch from user input
 			return this.end;
 		}
 	}
-	getLength() {
-		return this.getEnd() - this.getStart();
-	}
 	getStep() {
 		if (this.stepAuto) {
+			// Fetch from IM engine
 			return getTimeStep();
 		} else {
+			// Fetch from user input
 			return this.step;
 		}
 	}
