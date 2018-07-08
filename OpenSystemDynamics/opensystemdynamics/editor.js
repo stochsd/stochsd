@@ -746,6 +746,8 @@ class BaseObject {
 
 	getBoundRect() {
 		// Override this function
+		// This functions returns a hash map, e.i. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}
+		// The hashmap dictates in what rect mouse can click to create connections
 	}
 
 	getLinkMountPos(closeToPoint) {
