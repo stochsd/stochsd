@@ -744,6 +744,10 @@ class BaseObject {
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
 	}
 
+	getBoundRect() {
+		// Override this function
+	}
+
 	getLinkMountPos(closeToPoint) {
 		let pos = this.get_pos();
 		
@@ -881,6 +885,11 @@ class OnePointer extends BaseObject{
 				this.set_name(value);
 			}
 		}
+	}
+
+	getBoundRect() {
+		let [x, y] = this.get_pos();
+		return {"minX": x-10, "maxX": x+10, "minY": y-10, "maxY": y+10};
 	}
 
 	set_pos(pos) {
@@ -1460,6 +1469,14 @@ class TwoPointer extends BaseObject{
 		});
 		last_connection = this;
 		this.update();
+	}
+
+	getBoundRect() {
+		let minX = this.getMinX();
+		let maxX = minX + this.getWidth();
+		let minY = this.getMinY();
+		let maxY = minY + this.getHeight();
+		return {"minX": minX, "maxX": maxX, "minY": minY, "maxY": maxY};
 	}
 
 	create_dummy_start_anchor() {
@@ -3985,11 +4002,7 @@ function mouseUpHandler(event) {
 	History.storeUndoState();
 }
 
-function find_elements_under(in_x,in_y) {
-	var offset = $(svgplane).offset();
-	var x = in_x+offset.left-window.scrollX;
-	var y = in_y+offset.top-window.scrollY;
-	
+function find_elements_under(x, y) {	
 	var found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
@@ -4004,9 +4017,15 @@ function find_elements_under(in_x,in_y) {
 			// We skip if the object is not attachable
 			continue;
 		}
-		var rect = objects[key].group.getBoundingClientRect();
-		do_global_log(key+" "+objects[key].type+" x:"+rect.left+"-"+rect.right+" y:"+rect.top+"-"+rect.bottom);
-		if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+		var rect = objects[key].getBoundRect();
+		console.log("rect");
+		console.log(rect);
+		console.log("key");
+		console.log(key);
+		console.log("x, y");
+		console.log(x, y);
+		
+		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
 			found_array.push(objects[key]);
 		}
 	}
