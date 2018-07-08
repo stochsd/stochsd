@@ -5599,7 +5599,7 @@ class DiagramDialog extends DisplayDialog {
 		if (this.xAuto) {
 			// Uncomment if you want the diagram to grow dynamicly as more data is produced
 			//~ return this.simulationTime;
-			return getTimeLength()
+			return getTimeStart() + getTimeLength();
 		} else {
 			return this.xMax;
 		}
