@@ -1599,7 +1599,7 @@ See also:
 
 */
 var last_vertex;
-function createPrimitive(name, type, position, size) {
+function createPrimitive(name, type, position, size, extraAttributes = {}) {
 	// name, type, poisition, size
 	// size will be ignored in imdia
 	//~ dpopup("create primitive");
@@ -1608,6 +1608,10 @@ function createPrimitive(name, type, position, size) {
 	if(graph instanceof SimpleNode){
 		var parent = graph.children[0].children[0];
 		var vertex = simpleCloneNode(primitiveBank[t], parent);
+		
+		for(let key in extraAttributes) {
+			vertex.value.setAttribute(key, extraAttributes[key]);
+		}
 		
 		last_vertex=vertex;
 		//~ vertex.value.children.push({"children":[{"attributes"}]

@@ -1324,40 +1324,9 @@ class NumberboxVisual extends BasePrimitive{
 	}
 }
 
-// class ConstantVisual extends BasePrimitive {
-// 	constructor(id, type, pos, extras) {
-// 		super(id, type, pos, extras)
-// 	}
-// 
-// 	getImage() {
-// 		return [
-// 			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
-// 			svg_text(0, 0, "constant", "name_element"),
-// 			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-// 			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
-// 		];
-// 	}
-// 
-// 	getLinkMountPos([xTarget, yTarget]) {
-// 		const [xCenter, yCenter] = this.get_pos();
-// 		return [xCenter, yCenter];
-// 	}
-// }
-
 class VariableVisual extends BasePrimitive{
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.constant = false;
-	}	
-
-	setConstant(value) {
-		this.constant = value;
-		this.clearImage();
-		this.loadImage();
-	}
-
-	isConstant() {
-		return this.constant;
 	}
 
 	getRadius() {
@@ -1365,22 +1334,12 @@ class VariableVisual extends BasePrimitive{
 	}
 
 	getImage () {
-		let element;
-		if (this.isConstant()) {
-			return [
-				svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
-				svg_text(0,0,"variable","name_element"),
-				svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
-				svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
-			];
-		} else {
-			return [
-				svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
-				svg_text(0,0,"variable","name_element"),
-				svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
-				svg_circle(0,0,this.getRadius(),"red","none","selector")
-			];
-		}
+		return [
+			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
+			svg_text(0,0,"variable","name_element"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+			svg_circle(0,0,this.getRadius(),"red","none","selector")
+		];
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
@@ -1395,22 +1354,26 @@ class VariableVisual extends BasePrimitive{
 		const yEdge = dYEdge + yCenter;
 		return [xEdge, yEdge]; 
 	}
+}
 
-	attachEvent() {
-		for (key in connection_array) {
-			if (this == connection_array[key].getEndAttach()) {
-				this.setConstant(false);
-				return;
-			}
-		}
-		this.setConstant(true);
-		return;
-	}
-	detachEvent() {
-		this.attachEvent();
+class ConstantVisual extends VariableVisual {
+	constructor(id, type, pos, extras) {
+		super(id, type, pos, extras)
 	}
 
+	getImage() {
+		return [
+			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
+			svg_text(0, 0, "constant", "name_element"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
+			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
+		];
+	}
 
+	getLinkMountPos([xTarget, yTarget]) {
+		const [xCenter, yCenter] = this.get_pos();
+		return [xCenter, yCenter];
+	}
 }
 
 class ConverterVisual extends BasePrimitive{
@@ -3146,8 +3109,13 @@ class VariableTool extends BaseTool {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["variable"]);
 		var size = type_size["variable"];
-		var new_stock = createPrimitive(primitive_name, "Variable", [x-size[0]/2, y-size[1]/2], size);
-		new_stock.setAttribute("isConstant", false);
+		var newVariable = createPrimitive(
+			primitive_name, 
+			"Variable", 
+			[x-size[0]/2, y-size[1]/2], 
+			size,
+			{"isConstant": false}
+		);
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3157,8 +3125,13 @@ class ConstantTool extends BaseTool {
 		unselect_all();
 		let primitiveName = findFreeName(type_basename["constant"]);
 		let size = type_size["variable"];
-		let newConstant = createPrimitive(primitiveName, "Variable", [x-size[0]/2, y-size[1]/2], size);
-		newConstant.setAttribute("isConstant", true);
+		let newConstant = createPrimitive(
+			primitiveName, 
+			"Variable", 
+			[x-size[0]/2, y-size[1]/2], 
+			size, 
+			{"isConstant": true}
+		);
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4591,11 +4564,13 @@ function syncVisual(tprimitive) {
 		{
 			//~ do_global_log("VARIABLE id is "+tprimitive.id);
 			var position = getCenterPosition(tprimitive);
-			visualObject = new VariableVisual(tprimitive.id,"variable",position);
-			set_name(tprimitive.id,tprimitive.getAttribute("name"));
-			if (tprimitive.getAttribute("isConstant")) {
-				visualObject.setConstant(true);
+			let visualObject;
+			if (tprimitive.getAttribute("isConstant") == "false") {
+				visualObject = new VariableVisual(tprimitive.id,"variable",position);
+			} else {
+				visualObject = new ConstantVisual(tprimitive.id,"variable",position);
 			}
+			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
