@@ -4053,13 +4053,6 @@ function find_elements_under(x, y) {
 			continue;
 		}
 		var rect = objects[key].getBoundRect();
-		console.log("rect");
-		console.log(rect);
-		console.log("key");
-		console.log(key);
-		console.log("x, y");
-		console.log(x, y);
-		
 		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
 			found_array.push(objects[key]);
 		}
