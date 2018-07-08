@@ -4304,9 +4304,6 @@ $(document).ready(function() {
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
 	});
-	$("#btn_magnus").click(function() {
-		alert("Magnus is super awesome!");
-	});
 	$("#btn_equation_list").click(function() {
 		equationList.show();
 	});
