@@ -1363,10 +1363,10 @@ class ConstantVisual extends VariableVisual {
 
 	getImage() {
 		return [
-			svg_path("M0,20 20,0 0,-20 -20,0Z", defaultStroke, defaultFill, "element"),
+			svg_path("M0,15 15,0 0,-15 -15,0Z", defaultStroke, defaultFill, "element"),
 			svg_text(0, 0, "constant", "name_element"),
 			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-			svg_path("M0,20 20,0 0,-20 -20,0Z", "red", "none", "selector")
+			svg_path("M0,15 15,0 0,-15 -15,0Z", "red", "none", "selector")
 		];
 	}
 
