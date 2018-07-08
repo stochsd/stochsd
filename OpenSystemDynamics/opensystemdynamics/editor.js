@@ -1203,6 +1203,17 @@ class StockVisual extends BasePrimitive{
 		return [40, 30];
 	}
 
+	getBoundRect() {
+		let pos = this.get_pos()
+		let size = this.getSize();
+		return {
+			"minX": pos[0] - size[0]/2, 
+			"maxX": pos[0] + size[0]/2, 
+			"minY": pos[1] - size[1]/2, 
+			"maxY": pos[1] + size[1]/2 
+		};
+	}
+
 	// Used for RiverVisual
 	getFlowMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
@@ -1342,6 +1353,17 @@ class VariableVisual extends BasePrimitive{
 
 	getRadius() {
 		return 15;
+	}
+
+	getBoundRect() {
+	let pos = this.get_pos();
+	let radius = this.getRadius();
+		return {
+			"minX": pos[0] - radius,
+			"maxX": pos[0] + radius,
+			"minY": pos[1] - radius,
+			"maxY": pos[1] + radius
+		};
 	}
 
 	getImage () {
