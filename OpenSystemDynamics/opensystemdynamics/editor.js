@@ -2245,7 +2245,7 @@ class TableVisual extends htmlTwoPointer {
 		let namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(namesToDisplay));
-		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getEnd(),this.dialog.getStep());
+		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
 		html += "<td>"+formatFunction("Time")+"</td>";
@@ -5102,7 +5102,7 @@ class RunResults {
 			if (time == start) {
 				printCounter = printInterval;
 			}
-			if (time > length) {
+			if (time > start + length) {
 				// End of loop
 				return filteredResults;
 			}
@@ -5674,7 +5674,7 @@ class TableDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.start = getTimeStart();
-		this.end = getTimeLength() - getTimeStart();
+		this.end = getTimeLength() + getTimeStart();
 		this.step = getTimeStep();
 		this.setTitle("Table properties");
 		
@@ -5744,10 +5744,13 @@ class TableDialog extends DisplayDialog {
 	}
 	getEnd() {
 		if (this.endAuto) {
-			return getTimeLength()-getTimeStart();
+			return getTimeStart() + getTimeLength();
 		} else {
 			return this.end;
 		}
+	}
+	getLength() {
+		return this.getEnd() - this.getStart();
 	}
 	getStep() {
 		if (this.stepAuto) {
