@@ -1472,11 +1472,12 @@ class TwoPointer extends BaseObject{
 	}
 
 	getBoundRect() {
-		let minX = this.getMinX();
-		let maxX = minX + this.getWidth();
-		let minY = this.getMinY();
-		let maxY = minY + this.getHeight();
-		return {"minX": minX, "maxX": maxX, "minY": minY, "maxY": maxY};
+		return {
+			"minX": this.getMinX(),
+			"maxX": this.getMinX() + this.getWidth(),
+			"minY": this.getMinY(),
+			"maxY": this.getMinY() + this.getHeight()
+		};
 	}
 
 	create_dummy_start_anchor() {
@@ -1971,6 +1972,16 @@ class RiverVisual extends BaseConnection {
 			);
 			this.anchorPoints.push(newAnchor);
 		}
+	}
+
+	getBoundRect() {
+		let pos = this.getVariablePos();
+		return {
+			"minX": pos[0] - 15, 
+			"maxX": pos[0] + 15,
+			"minY": pos[1] - 15,
+			"maxY": pos[1] + 15
+		};
 	}
 
 	getValvePos() {
