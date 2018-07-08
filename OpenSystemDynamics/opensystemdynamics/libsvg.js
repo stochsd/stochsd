@@ -379,17 +379,16 @@ function svgCloud(stroke, fill) {
 	}
 	
 	newElement.update = function () {
-		if(this.visible) {
-			this.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
-		} else {
-			// setting visibility to "hidden" causes bugs, like clicking on invisible objects
-			// Therefore I just place the object outside the screen
-			this.setAttribute("transform","translate(-20, 20)");
-		}
+		this.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
 	}
 
 	newElement.setVisibility = function (isVisible) {
-		this.visible = isVisible;		
+		this.visible = isVisible;
+		if (this.visible) {
+			this.setAttribute("visibility", "visible");
+		} else {
+			this.setAttribute("visibility", "hidden");
+		} 
 	}
 	
 	svgplane.appendChild(newElement);
