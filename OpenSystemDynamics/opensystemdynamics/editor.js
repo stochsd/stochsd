@@ -975,7 +975,6 @@ class OnePointer extends BaseObject{
 		this.color = color;
 		this.clearImage();
 		this.loadImage();
-		this.update();
 	}
 	select() {
 		this.selected = true;
@@ -1270,7 +1269,8 @@ class StockVisual extends BasePrimitive{
 	}
 
 	getImage() {
-		let textElem = svg_text(0,39,"stock","name_element");
+		// let textElem = svg_text(0, 39, "stock", "name_element");
+		let textElem = svg_text(0, 39, `[${this.primitive.getAttribute("name")}]`, "name_element");
 		textElem.setAttribute("fill", this.color);
 		return [
 			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
