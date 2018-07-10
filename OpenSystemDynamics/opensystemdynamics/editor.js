@@ -732,6 +732,7 @@ class BaseObject {
 		this.selected = false;
 		this.name_radius = 30;
 		this.superClass = "baseobject";
+		this.color = defaultStroke;
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
@@ -742,6 +743,10 @@ class BaseObject {
 		this.mountPoints = [[0,0]];
 		
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
+	}
+
+	setColor(color) {
+		// Override this function 
 	}
 
 	getBoundRect() {
@@ -967,7 +972,10 @@ class OnePointer extends BaseObject{
 
 	// This functinality is not yet implemented correctly
 	setColor(color) {
-		this.group.setAttribute("stroke", color);
+		this.color = color;
+		this.clearImage();
+		this.loadImage();
+		this.update();
 	}
 	select() {
 		this.selected = true;
@@ -1262,11 +1270,13 @@ class StockVisual extends BasePrimitive{
 	}
 
 	getImage() {
+		let textElem = svg_text(0,39,"stock","name_element");
+		textElem.setAttribute("fill", this.color);
 		return [
-		svg_rect(-20,-15,40,30,  defaultStroke,  defaultFill, "element"),
-		svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
+		svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
+		svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
 		svg_rect(-20,-15,40,30,"red","none","selector"),
-		svg_text(0,39,"stock","name_element")
+		textElem
 		];
 	}
 }
