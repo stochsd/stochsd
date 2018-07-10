@@ -1343,8 +1343,8 @@ class NumberboxVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_rect(-20,-15,40,30, defaultStroke, defaultFill,"element"),
-			svg_text(0,0,"","name_element",{"alignment-baseline": "middle", "style": "font-size: 16px"}),
+			svg_rect(-20,-15,40,30, this.color, defaultFill,"element"),
+			svg_text(0,0,"","name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
 			svg_rect(-20,-15,40,30,"red","none","selector")
 		];	
 	}
