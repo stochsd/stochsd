@@ -1379,9 +1379,9 @@ class VariableVisual extends BasePrimitive{
 
 	getImage () {
 		return [
-			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
-			svg_text(0,0,"variable","name_element"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
+			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`,"name_element", {"fill": this.color}),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
 			svg_circle(0,0,this.getRadius(),"red","none","selector")
 		];
 	}
