@@ -975,6 +975,7 @@ class OnePointer extends BaseObject{
 		this.color = color;
 		this.clearImage();
 		this.loadImage();
+		update_name_pos(this.id);
 	}
 	select() {
 		this.selected = true;
