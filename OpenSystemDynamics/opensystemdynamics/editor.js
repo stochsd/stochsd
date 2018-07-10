@@ -1427,10 +1427,10 @@ class ConverterVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", defaultStroke, defaultFill, "element"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","red","none","selector"),
-			svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
-			svg_text(0,0,"variable","name_element"),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+			svg_text(0,0,`[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 		];
 	}
 
