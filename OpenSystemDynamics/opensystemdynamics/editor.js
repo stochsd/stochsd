@@ -1273,10 +1273,10 @@ class StockVisual extends BasePrimitive{
 		let textElem = svg_text(0,39,"stock","name_element");
 		textElem.setAttribute("fill", this.color);
 		return [
-		svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
-		svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
-		svg_rect(-20,-15,40,30,"red","none","selector"),
-		textElem
+			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
+			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
+			svg_rect(-20,-15,40,30,"red","none","selector"),
+			textElem
 		];
 	}
 }
