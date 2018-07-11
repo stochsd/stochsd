@@ -4886,7 +4886,7 @@ function setColorToSelection(color) {
 	let objects = get_selected_objects();
 	for(var id in objects) {
 		let obj = get_object(id);
-		obj.setColor(color);
+		get_parent(obj).setColor(color);
 	}
 }
 
