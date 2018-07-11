@@ -4344,8 +4344,35 @@ $(document).ready(function() {
 		unselect_all();
 		hideAndPrint([$("#topPanel").get(0)]);
 	});
+	$("#btn_black").click(function() {
+		setColorToSelection("black");
+	});
+	$("#btn_darkgrey").click(function() {
+		setColorToSelection("darkgrey");
+	});
+	$("#btn_red").click(function() {
+		setColorToSelection("red");
+	});
+	$("#btn_yellow").click(function() {
+		setColorToSelection("yellow");
+	});
+	$("#btn_orange").click(function() {
+		setColorToSelection("orange");
+	});
 	$("#btn_green").click(function() {
-		setColorToSelection("#00ff00");
+		setColorToSelection("green");
+	});
+	$("#btn_teal").click(function() {
+		setColorToSelection("teal");
+	});
+	$("#btn_blue").click(function() {
+		setColorToSelection("blue");
+	});
+	$("#btn_purple").click(function() {
+		setColorToSelection("purple");
+	});
+	$("#btn_deeppink").click(function() {
+		setColorToSelection("deeppink");
 	});
 	$("#btn_macro").click(function() {
 		macroDialog.show();
