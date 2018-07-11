@@ -1521,6 +1521,12 @@ class TwoPointer extends BaseObject {
 		};
 	}
 
+	setColor(color) {
+		super.setColor(color);
+		this.start_anchor.setColor(color);
+		this.end_anchor.setColor(color);
+	}
+
 	create_dummy_start_anchor() {
 		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
 	}
