@@ -239,11 +239,17 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	return newElement;
 }
 
-function svgArrowHead(stroke, fill, directionVector) {
+function svgArrowHead(stroke, fill, directionVector, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
 	this.pointsA = [[0,0], [10,10]]; // Arbitrary start points
+
+	if (extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]);
+		}
+	}
 
 	newElement.setPos = function (pos, directionVector=[1,0]) {
 		let points = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
@@ -268,13 +274,20 @@ function svgArrowHead(stroke, fill, directionVector) {
 	return newElement;
 }
 
-function svgWidePath(width, color) {
+function svgWidePath(width, color, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.points = [];
 	newElement.setAttribute("stroke", color);
 	newElement.setAttribute("fill", "transparent");
 	newElement.setAttribute("stroke-width", width.toString());
 	
+	// Is set last so it can override default attributes
+	if(extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]); //Set path's data
+		}
+	}
+
 	newElement.setPoints = function (points) {
 		this.points = points;
 	}
@@ -348,7 +361,7 @@ class svgsFlowArrow {
 	} 
 }
 
-function svgCloud(stroke, fill) {
+function svgCloud(stroke, fill, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("stroke-width", "1");
@@ -358,6 +371,13 @@ function svgCloud(stroke, fill) {
 	newElement.pos = [0, 0];
 	newElement.defaultStroke = stroke;
 	newElement.defaultFill = fill;
+
+	// Is set last so it can override default attributes
+	if(extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]); //Set path's data
+		}
+	}
 
 	newElement.setPos = function (pos, adjecentPos) {
 		let offset = [0,0];
