@@ -754,6 +754,7 @@ class BaseObject {
 				element.setAttribute("fill", this.color);
 			}
 		}
+		this.primitive.setAttribute("color", this.color);
 	}
 
 	getBoundRect() {
@@ -2059,6 +2060,7 @@ class RiverVisual extends BaseConnection {
 
 	setColor(color) {
 		this.color = color;
+		this.primitive.setAttribute("color", this.color);
 		this.startCloud.setAttribute("stroke", color);
 		this.endCloud.setAttribute("stroke", color);
 		this.outerPath.setAttribute("stroke", color);
@@ -2823,6 +2825,7 @@ class LinkVisual extends BaseConnection {
 
 	setColor(color) {
 		this.color = color;
+		this.primitive.setAttribute("color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("fill", color);
