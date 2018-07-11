@@ -206,7 +206,7 @@ function svg_foreignobject(x, y, width, height, innerHTML, fill="white") {
 }
 
 // Drawing primitive for drawing svg circles
-function svg_circle(cx, cy, r, stroke, fill,markclass) {
+function svg_circle(cx, cy, r, stroke, fill, markclass, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); // Create a path in SVG's namespace
 	newElement.setAttribute("class",markclass); // Set path's data
 	newElement.setAttribute("cx",cx); // Set path's data
@@ -215,6 +215,13 @@ function svg_circle(cx, cy, r, stroke, fill,markclass) {
 	newElement.setAttribute("fill",fill);
 	newElement.setAttribute("stroke",stroke);
 	newElement.setAttribute("data-attr","selected");
+
+	if (extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]);
+		}
+	}
+
 	svgplane.appendChild(newElement);
 	return newElement;
 }

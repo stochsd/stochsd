@@ -756,7 +756,10 @@ class BaseObject {
 				element.setAttribute("fill", this.color);
 			}
 		}
-		this.primitive.setAttribute("color", this.color);
+		if (this.primitive) {
+			// AnchorPoints has no primitve
+			this.primitive.setAttribute("color", this.color);
+		}
 	}
 
 	getBoundRect() {
@@ -1097,8 +1100,8 @@ class AnchorPoint extends OnePointer {
 	}
 	getImage() {
 		return [
-			svg_circle(0, 0, 4, "black", "black", "element"),
-			svg_circle(0, 0, 4, "red", "red", "selector")
+			svg_circle(0, 0, 4, "black", "white", "element"),
+			svg_circle(0, 0, 4, "none", this.color, "selector")
 		];	
 	}
 	afterMove(diff_x, diff_y) {
@@ -2070,6 +2073,7 @@ class RiverVisual extends BaseConnection {
 		this.valve.setAttribute("stroke", color);
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color)
 		this.name_element.setAttribute("fill", color);
+		this.anchorPoints.map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
@@ -2831,6 +2835,12 @@ class LinkVisual extends BaseConnection {
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("fill", color);
+		this.start_anchor.setColor(color);
+		this.end_anchor.setColor(color);
+		this.b1_anchor.setColor(color);
+		this.b2_anchor.setColor(color);
+		this.b1_line.setAttribute("stroke", color);
+		this.b2_line.setAttribute("stroke", color);
 	}
 
 	makeGraphics() {
