@@ -1758,8 +1758,8 @@ class FlowVisual extends BaseConnection {
 	makeGraphics() {
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke=${defaultStroke} fill=${defaultFill} />`);
 		this.updateLength();
-		this.arrowhead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowhead,this.endx,this.endy);
+		this.arrowHead = svg_group([this.arrowPath]);
+		svg_translate(this.arrowHead,this.endx,this.endy);
 
 		this.name_element = svg_text(0,0, "variable", "name_element");
 		this.flowcore = svg_group([ 
@@ -1772,7 +1772,7 @@ class FlowVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.arrowHead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
@@ -1816,7 +1816,7 @@ class FlowVisual extends BaseConnection {
 		let xdiff = this.endx-this.startx;
 		let ydiff = this.endy-this.starty;
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
 		
 		let auxiliaryPos = [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
 		svg_transform(get_object(this.id).flowcore,auxiliaryPos[0],auxiliaryPos[1],0,1);
@@ -2825,18 +2825,26 @@ class LinkVisual extends BaseConnection {
 			this.undashLine();
 		}
 	}
+
+	setColor(color) {
+		this.color = color;
+		this.curve.setAttribute("stroke", color);
+		this.arrowPath.setAttribute("stroke", color);
+		this.arrowPath.setAttribute("fill", color);
+	}
+
 	makeGraphics() {
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
-		this.arrowhead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowhead,this.endx,this.endy);
+		this.arrowHead = svg_group([this.arrowPath]);
+		svg_translate(this.arrowHead,this.endx,this.endy);
 		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
 		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group = svg_group([this.click_area,this.curve,this.arrowhead]);
+		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 		
 		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
@@ -2928,7 +2936,7 @@ class LinkVisual extends BaseConnection {
 		let xdiff = this.endx-b2pos[0];
 		let ydiff = this.endy-b2pos[1];
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
 		
 		// Update end position so that we get the drawing effect when link is created
 		this.curve.x4 = this.endx;
