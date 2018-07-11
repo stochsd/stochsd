@@ -4490,6 +4490,9 @@ function syncVisual(tprimitive) {
 		{
 			var position = getCenterPosition(tprimitive);
 			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
 			visualObject.render();
 		}
 		break;
@@ -4580,6 +4583,10 @@ function syncVisual(tprimitive) {
 			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4596,6 +4603,10 @@ function syncVisual(tprimitive) {
 			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4611,6 +4622,11 @@ function syncVisual(tprimitive) {
 			do_global_log("id is "+tprimitive.id);
 			var position = getCenterPosition(tprimitive);
 			new TextVisual(tprimitive.id, "text",position);
+
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 		}
 		break;
@@ -4633,6 +4649,11 @@ function syncVisual(tprimitive) {
 						break;
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
+
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			visualObject.name_pos = tprimitive.getAttribute("RotateName");
 			update_name_pos(tprimitive.id);
 		}
@@ -4649,6 +4670,10 @@ function syncVisual(tprimitive) {
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4661,7 +4686,11 @@ function syncVisual(tprimitive) {
 		break;
 		case "Flow":
 			let connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
-						
+			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4699,6 +4728,10 @@ function syncVisual(tprimitive) {
 		case "Link":
 		{
 			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
+
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
 
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
