@@ -2393,9 +2393,9 @@ class htmlOverlayTwoPointer extends TwoPointer {
 		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id", this.id);	
 		
-		var element_array = [this.element];
-		for(var key in element_array) {
-			element_array[key].setAttribute("node_id", this.id);
+		this.element_array = [this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id", this.id);
 		}
 	}
 	
