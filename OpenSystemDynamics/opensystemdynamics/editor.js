@@ -4355,11 +4355,11 @@ $(document).ready(function() {
 	$("#btn_red").click(function() {
 		setColorToSelection("red");
 	});
-	$("#btn_yellow").click(function() {
-		setColorToSelection("yellow");
-	});
 	$("#btn_orange").click(function() {
 		setColorToSelection("orange");
+	});
+	$("#btn_brown").click(function() {
+		setColorToSelection("brown");
 	});
 	$("#btn_green").click(function() {
 		setColorToSelection("green");
