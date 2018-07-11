@@ -94,7 +94,7 @@ function svg_curve(x1,y1,x2,y2,x3,y3,x4,y4,extra_attributes=null) {
 	return newElement;
 }
 
-function svg_path(dstring,stroke,fill , markclass) {
+function svg_path(dstring,stroke,fill , markclass, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
 	newElement.setAttribute("class",markclass); //Set path's data
 	newElement.setAttribute("stroke","black");
@@ -105,6 +105,13 @@ function svg_path(dstring,stroke,fill , markclass) {
 	newElement.update=function() {
 		this.setAttribute("d",this.dstring);
 	};
+
+	if(extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]); //Set path's data
+		}
+	}
+	
 	newElement.update();
 	svgplane.appendChild(newElement);
 	return newElement;

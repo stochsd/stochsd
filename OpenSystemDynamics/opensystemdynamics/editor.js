@@ -752,6 +752,8 @@ class BaseObject {
 				element.setAttribute("stroke", this.color);
 			} else if(element.getAttribute("class") == "name_element") {
 				element.setAttribute("fill", this.color);
+			} else if(element.getAttribute("class") == "selector") {
+				element.setAttribute("fill", this.color);
 			}
 		}
 		this.primitive.setAttribute("color", this.color);
@@ -1277,7 +1279,7 @@ class StockVisual extends BasePrimitive {
 		return [
 			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
 			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
-			svg_rect(-20,-15,40,30, "red", "none", "selector"),
+			svg_rect(-18, -13, 36, 26, "none", this.color, "selector"),
 			textElem
 		];
 	}
@@ -1383,7 +1385,7 @@ class VariableVisual extends BasePrimitive {
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
-			svg_circle(0,0,this.getRadius(), "red", "none", "selector")
+			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector")
 		];
 	}
 
@@ -1411,7 +1413,7 @@ class ConstantVisual extends VariableVisual {
 			svg_path("M0,15 15,0 0,-15 -15,0Z", this.color, defaultFill, "element"),
 			svg_text(0, 0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-			svg_path("M0,15 15,0 0,-15 -15,0Z", "red", "none", "selector")
+			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector")
 		];
 	}
 
@@ -1429,7 +1431,7 @@ class ConverterVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "red", "none", "selector"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
 			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
 			svg_text(0,0,`[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 		];
