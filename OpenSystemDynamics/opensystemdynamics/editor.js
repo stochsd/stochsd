@@ -970,13 +970,17 @@ class OnePointer extends BaseObject{
 		});
 	}
 
-	// This functinality is not yet implemented correctly
 	setColor(color) {
 		this.color = color;
-		this.clearImage();
-		this.loadImage();
-		update_name_pos(this.id);
+		for (let element of this.element_array) {
+			if (element.getAttribute("class") == "element") {
+				element.setAttribute("stroke", this.color);
+			} else if(element.getAttribute("class") == "name_element") {
+				element.setAttribute("fill", this.color);
+			}
+		}
 	}
+	
 	select() {
 		this.selected = true;
 		for(var i in this.selector_array) {
