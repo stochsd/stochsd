@@ -746,7 +746,14 @@ class BaseObject {
 	}
 
 	setColor(color) {
-		// Override this function 
+		this.color = color;
+		for (let element of this.element_array) {
+			if (element.getAttribute("class") == "element") {
+				element.setAttribute("stroke", this.color);
+			} else if(element.getAttribute("class") == "name_element") {
+				element.setAttribute("fill", this.color);
+			}
+		}
 	}
 
 	getBoundRect() {
@@ -968,17 +975,6 @@ class OnePointer extends BaseObject{
 				this.double_click(this.id);
 			}
 		});
-	}
-
-	setColor(color) {
-		this.color = color;
-		for (let element of this.element_array) {
-			if (element.getAttribute("class") == "element") {
-				element.setAttribute("stroke", this.color);
-			} else if(element.getAttribute("class") == "name_element") {
-				element.setAttribute("fill", this.color);
-			}
-		}
 	}
 	
 	select() {
