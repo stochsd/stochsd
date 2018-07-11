@@ -78,7 +78,7 @@ function applicationReload() {
 function preserveRestart() {
 	History.toLocalStorage();
 	localStorage.setItem("fileName",fileManager.fileName);
-	localStorage.setItem("reloadPending","1");
+	localStorage.setItem("reloadPending", "1");
 	applicationReload();
 }
 
@@ -223,7 +223,7 @@ function sendToParentFrame(returnobj,target) {
 }
 
 function loadPlugin(pluginName) {	
-	sendToParentFrame({"app_name":pluginName},"load_app");
+	sendToParentFrame({"app_name":pluginName}, "load_app");
 }
 
 function setParentTitle(newTitle) {	
@@ -487,7 +487,7 @@ function getFunctionHelpData() {
 		]]
 
 	];
-	helpData = helpData.sort(function(a, b){
+	helpData = helpData.sort(function(a, b) {
 		var categoryA = a[0];
 		var categoryB = b[0];
 		if (categoryA < categoryB) return -1;
@@ -514,7 +514,7 @@ function sdsLoadFunctions() {
 	defineFunction("TE", {params:[]}, function(x) {
         return new Material(simulate.timeEnd.toNum().value);
 	});
-    defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x){
+    defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x) {
         var dt = simulate.timeStep.toNum().value;
         
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
@@ -935,7 +935,7 @@ class OnePointer extends BaseObject{
 		if (!this.is_ghost) {
 			for(var key in element_array) {
 				if (element_array[key].getAttribute("class") == "ghost") {
-					element_array[key].setAttribute("visibility","hidden");
+					element_array[key].setAttribute("visibility", "hidden");
 				}
 			}
 		}
@@ -984,20 +984,20 @@ class OnePointer extends BaseObject{
 	select() {
 		this.selected = true;
 		for(var i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility","visible");
+			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 	}
 	unselect() {
 		this.selected = false;
 		for(var i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility","hidden");
+			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 	}
 	afterUpdate() {
 		
 	}
 	update() {
-		this.group.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
+		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		this.afterUpdate();
 	}
 	updatePosition() {
@@ -1029,7 +1029,7 @@ const anchorTypeEnum = {
 	bezier2:5,
 	orthoMiddle:6
 }
-class AnchorPoint extends OnePointer{
+class AnchorPoint extends OnePointer {
 	constructor(id, type, pos, anchorType) {
 		super(id, type, pos);
 		this.anchorType = anchorType;
@@ -1068,14 +1068,14 @@ class AnchorPoint extends OnePointer{
 			for(let element of this.element_array) {
 				// Show all elements except for selectors
 				if (element.getAttribute("class") != "selector") {
-					element.setAttribute("visibility","visible");
+					element.setAttribute("visibility", "visible");
 				}
 			}
 		}
 		else {
 			// Hide elements
 			for(let element of this.element_array) {
-				element.setAttribute("visibility","hidden");
+				element.setAttribute("visibility", "hidden");
 			}
 		}
 	}
@@ -1098,8 +1098,8 @@ class AnchorPoint extends OnePointer{
 	}
 	getImage() {
 		return [
-			svg_circle(0, 0, 4, "black" ,"black" ,"element"),
-			svg_circle(0, 0, 4, "red" ,"red" ,"selector")
+			svg_circle(0, 0, 4, "black", "black", "element"),
+			svg_circle(0, 0, 4, "red", "red", "selector")
 		];	
 	}
 	afterMove(diff_x, diff_y) {
@@ -1145,7 +1145,7 @@ class OrthoAnchorPoint extends AnchorPoint {
 	}
 }
 
-class TextVisual extends BasePrimitive{
+class TextVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.name_centered = true;
@@ -1206,7 +1206,7 @@ function sign(value) {
 	}
 }
 
-class StockVisual extends BasePrimitive{
+class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
@@ -1279,14 +1279,14 @@ class StockVisual extends BasePrimitive{
 		textElem.setAttribute("fill", this.color);
 		return [
 			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
-			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
-			svg_rect(-20,-15,40,30,"red","none","selector"),
+			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
+			svg_rect(-20,-15,40,30, "red", "none", "selector"),
 			textElem
 		];
 	}
 }
 
-class NumberboxVisual extends BasePrimitive{
+class NumberboxVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.name_centered = true;
@@ -1347,9 +1347,9 @@ class NumberboxVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_rect(-20,-15,40,30, this.color, defaultFill,"element"),
-			svg_text(0,0,"","name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
-			svg_rect(-20,-15,40,30,"red","none","selector")
+			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
+			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
+			svg_rect(-20,-15,40,30, "red", "none", "selector")
 		];	
 	}
 	name_double_click() {
@@ -1361,7 +1361,7 @@ class NumberboxVisual extends BasePrimitive{
 	}
 }
 
-class VariableVisual extends BasePrimitive{
+class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
@@ -1384,9 +1384,9 @@ class VariableVisual extends BasePrimitive{
 	getImage () {
 		return [
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
-			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`,"name_element", {"fill": this.color}),
-			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
-			svg_circle(0,0,this.getRadius(),"red","none","selector")
+			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
+			svg_circle(0,0,this.getRadius(), "red", "none", "selector")
 		];
 	}
 
@@ -1424,7 +1424,7 @@ class ConstantVisual extends VariableVisual {
 	}
 }
 
-class ConverterVisual extends BasePrimitive{
+class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.mountPoints = [[-20,0],[20,0],[0,-15],[0,15]];
@@ -1432,8 +1432,8 @@ class ConverterVisual extends BasePrimitive{
 	getImage() {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","red","none","selector"),
-			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "red", "none", "selector"),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
 			svg_text(0,0,`[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 		];
 	}
@@ -1449,7 +1449,7 @@ class ConverterVisual extends BasePrimitive{
 			const ySign = sign(yTarget - yCenter); 	// -1 if target above hexagon and 1 if target below hexagon 
 			xEdgeRel = ySign*safeDivision(15, targetSlope);
 			yEdgeRel = ySign*15; 
-		} else if (0 < targetSlope && targetSlope < hexSlope){
+		} else if (0 < targetSlope && targetSlope < hexSlope) {
 			const xSign = sign(xTarget - xCenter); // -1 if target left of hexagon and 1 if target right of hexagon
 			xEdgeRel = xSign*safeDivision(30, (3/2)+targetSlope);
 			yEdgeRel = xEdgeRel*targetSlope;
@@ -1477,15 +1477,15 @@ class ConverterVisual extends BasePrimitive{
 		}
 	}
 	name_double_click() {
-		converterDialog.open(this.id,".nameField");
+		converterDialog.open(this.id, ".nameField");
 	}
 	
 	double_click() {
-		converterDialog.open(this.id,".valueField");
+		converterDialog.open(this.id, ".valueField");
 	}
 }
 
-class TwoPointer extends BaseObject{
+class TwoPointer extends BaseObject {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.id = id;
@@ -1502,7 +1502,7 @@ class TwoPointer extends BaseObject{
 		connection_array[this.id] = this;
 		
 		this.makeGraphics();
-		$(this.group).on("mousedown",function(event){
+		$(this.group).on("mousedown",function(event) {
 			var node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
@@ -1520,10 +1520,10 @@ class TwoPointer extends BaseObject{
 	}
 
 	create_dummy_start_anchor() {
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
 	}
 	create_dummy_end_anchor() {
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
 	}
 	
 	get_pos() {
@@ -1632,7 +1632,7 @@ class TwoPointer extends BaseObject{
 	}
 }
 
-class BaseConnection extends TwoPointer{
+class BaseConnection extends TwoPointer {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this._start_attach = null;
@@ -1761,7 +1761,7 @@ class FlowVisual extends BaseConnection {
 		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
 
-		this.name_element = svg_text(0,0,"variable","name_element");
+		this.name_element = svg_text(0,0, "variable", "name_element");
 		this.flowcore = svg_group([ 
 			svg_circle(0,15,15, defaultStroke, defaultFill, "element"),
 			svg_path("M0,0 -10,-10 10,-10 Z", defaultStroke, defaultFill, "element"),
@@ -2738,7 +2738,7 @@ class XyPlotVisual extends DiagramVisual {
 class LineVisual extends TwoPointer {
 	makeGraphics() {
 		var dash = "";
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill ,"element",dash);
+		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element",dash);
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 		this.group = svg_group([this.element]);
@@ -2755,15 +2755,16 @@ class LineVisual extends TwoPointer {
 		this.element.setAttribute("y2",this.endy);
 	}
 }
-class LinkVisual extends BaseConnection{
-	constructor(id,type,pos) {
-		super(id,type,pos);
+
+class LinkVisual extends BaseConnection {
+	constructor(id, type, pos) {
+		super(id, type, pos);
 	}
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
 			for(var i in this.highlight_on_select) {
-				this.highlight_on_select[i].setAttribute("stroke","black");
+				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}	
 		} else {
 			let children = getChildren(this.id);
@@ -2777,7 +2778,7 @@ class LinkVisual extends BaseConnection{
 		
 		// Hide beizer lines
 		for(let element of this.showOnlyOnSelect) {
-			element.setAttribute("visibility","hidden");
+			element.setAttribute("visibility", "hidden");
 		}
 	}
 	select(selectChildren = true) {		
@@ -2789,7 +2790,7 @@ class LinkVisual extends BaseConnection{
 			}
 		}
 		for(var i in this.highlight_on_select) {
-			this.highlight_on_select[i].setAttribute("stroke","red");
+			this.highlight_on_select[i].setAttribute("stroke", "red");
 		}
 		
 		if (selectChildren) {
@@ -2802,7 +2803,7 @@ class LinkVisual extends BaseConnection{
 		
 		// Show beizer lines
 		for(let element of this.showOnlyOnSelect) {
-			element.setAttribute("visibility","visible");
+			element.setAttribute("visibility", "visible");
 		}
 	}
 	updateClickArea() {
@@ -2829,8 +2830,8 @@ class LinkVisual extends BaseConnection{
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
 		this.arrowhead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowhead,this.endx,this.endy);
-		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all","stroke":"none","stroke-width":"10"}); 
-		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black","stroke-width":"1"});
+		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
@@ -2838,11 +2839,11 @@ class LinkVisual extends BaseConnection{
 		this.group = svg_group([this.click_area,this.curve,this.arrowhead]);
 		this.group.setAttribute("node_id",this.id);
 		
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
 
-		this.b1_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
-		this.b2_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
+		this.b1_line = svg_line(this.startx,this.starty,this.startx,this.starty, "black", "black", "", "1,5");
+		this.b2_line = svg_line(this.startx,this.starty,this.startx,this.starty, "black", "black", "", "1,5");
 		
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
@@ -3031,7 +3032,7 @@ class TextTool extends BaseTool {
 class NumberboxTool extends BaseTool {
 	static init() {
 		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock","variable","converter","flow"];
+		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
@@ -3135,13 +3136,13 @@ class MoveValveTool extends BaseTool {
 class GhostTool extends BaseTool {
 	static init() {
 		this.id_to_ghost = null;
-		this.ghostable_primitives = ["stock","variable","converter"];
+		this.ghostable_primitives = ["stock", "variable", "converter"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
 		var source = findID(this.id_to_ghost);
 		var ghost = makeGhost(source,[x,y]);
-		ghost.setAttribute("RotateName","0");
+		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
@@ -3658,10 +3659,10 @@ class CoordRect {
 	}
 	setVisible(new_visible) {
 		if (new_visible) {
-			this.element.setAttribute("visibility","visible");
+			this.element.setAttribute("visibility", "visible");
 		}
 		else {
-			this.element.setAttribute("visibility","hidden");
+			this.element.setAttribute("visibility", "hidden");
 		}
 	}
 	xmin() {
@@ -3975,7 +3976,7 @@ function update_name_pos(node_id) {
 	if (object.name_centered) {
 		name_element.setAttribute("x",0); //Set path's data
 		name_element.setAttribute("y",0); //Set path's data
-		name_element.setAttribute("text-anchor","middle");
+		name_element.setAttribute("text-anchor", "middle");
 		return;
 	}
 
@@ -3989,26 +3990,26 @@ function update_name_pos(node_id) {
 		// Below
 				//~ name_element.setAttribute("x",0); //Set path's data
 				//~ name_element.setAttribute("y",dist_down); //Set path's data
-				name_element.setAttribute("text-anchor","middle");
+				name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 1:
 		// To the right
 				//~ name_element.setAttribute("x",dist_right); //Set path's data
 				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor","start");
+				name_element.setAttribute("text-anchor", "start");
 		break;
 		case 2:
 		// Above
 				//~ name_element.setAttribute("x",0); //Set path's data
 				//~ name_element.setAttribute("y",-dist_up); //Set path's data
-				name_element.setAttribute("text-anchor","middle");
+				name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 3:
 		// To the left
 				//~ name_element.setAttribute("x",-dist_left); //Set path's data
 				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor","end");
-				//~ name_element.setAttribute("alignment-baseline","hanging");
+				name_element.setAttribute("text-anchor", "end");
+				//~ name_element.setAttribute("alignment-baseline", "hanging");
 		break;
 	}
 }
@@ -4067,8 +4068,8 @@ function find_elements_under(x, y) {
 	var found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
-	//~ let attachable_object_types = ["flow","stock","variable"];
-	let attachable_object_types = ["flow","stock","variable","converter"];
+	//~ let attachable_object_types = ["flow", "stock", "variable"];
+	let attachable_object_types = ["flow", "stock", "variable", "converter"];
 	for(key in objects) {
 		if (objects[key].type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
@@ -4234,7 +4235,7 @@ function hashUpdate() {
 }
 
 $(document).ready(function() {
-	rectselector.element = svg_rect(-30,-30,60,60,"black","none","element");
+	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 	var svgplane = document.getElementById("svgplane");
@@ -4251,7 +4252,7 @@ $(document).ready(function() {
 		showDebug();
 	}
 	
-	$(document).keydown(function(event){
+	$(document).keydown(function(event) {
 		// Only works if no dialog is open
 		if (jqDialog.blockingDialogOpen) {
 			return;
@@ -4273,28 +4274,28 @@ $(document).ready(function() {
 				event.preventDefault();
 				ResetTool.enterTool();
 			}
-			if (event.keyCode == keyboard["O"]){
+			if (event.keyCode == keyboard["O"]) {
 				event.preventDefault();
 				$("#btn_load").click();
 			}
-			if (event.keyCode == keyboard["S"]){
+			if (event.keyCode == keyboard["S"]) {
 				event.preventDefault();
 				$("#btn_save").click();
 			}
-			if (event.keyCode == keyboard["P"]){
+			if (event.keyCode == keyboard["P"]) {
 				event.preventDefault();
 				$("#btn_print_model").click();
 			}
-			if (event.keyCode == keyboard["Z"]){
+			if (event.keyCode == keyboard["Z"]) {
 				History.doUndo();
 			}
-			if (event.keyCode == keyboard["Y"]){
+			if (event.keyCode == keyboard["Y"]) {
 				History.doRedo();
 			}
-			if (event.keyCode == keyboard["C"]){
+			if (event.keyCode == keyboard["C"]) {
 				Clipboard.copy();
 			}
-			if (event.keyCode == keyboard["V"]){
+			if (event.keyCode == keyboard["V"]) {
 				Clipboard.paste();
 				History.storeUndoState();
 			}
@@ -4424,7 +4425,7 @@ function stochsd_delete_primitive (id) {
 
 var InsightMakerFileExtension = ".InsightMaker";
 
-function isLocal(){
+function isLocal() {
 	return true; // Expose additional debugging and error messages
 }
 
@@ -4482,7 +4483,7 @@ function syncVisual(tprimitive) {
 		case "Numberbox":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new NumberboxVisual(tprimitive.id,"numberbox",position);
+			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
 			visualObject.render();
 		}
 		break;
@@ -4505,7 +4506,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id,"table",[0,0]);
+			let connection = new dimClass(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4538,7 +4539,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id,"table",[0,0]);
+			let connection = new dimClass(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4555,7 +4556,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id,"table",[0,0]);
+			let connection = new TextAreaVisual(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4570,7 +4571,7 @@ function syncVisual(tprimitive) {
 		case "Stock":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new StockVisual(tprimitive.id,"stock",position);
+			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
@@ -4586,7 +4587,7 @@ function syncVisual(tprimitive) {
 		case "Converter":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new ConverterVisual(tprimitive.id,"converter",position);
+			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
 			let rotateName = tprimitive.getAttribute("RotateName");
@@ -4603,7 +4604,7 @@ function syncVisual(tprimitive) {
 		{
 			do_global_log("id is "+tprimitive.id);
 			var position = getCenterPosition(tprimitive);
-			new TextVisual(tprimitive.id,"text",position);
+			new TextVisual(tprimitive.id, "text",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 		}
 		break;
@@ -4616,13 +4617,13 @@ function syncVisual(tprimitive) {
 			let visualObject = null;
 			switch(source_type) {
 					case "Converter":
-						visualObject = new ConverterVisual(tprimitive.id,"converter",position,{"is_ghost":true});
+						visualObject = new ConverterVisual(tprimitive.id, "converter",position,{"is_ghost":true});
 						break;
 					case "Variable":
-						visualObject = new VariableVisual(tprimitive.id,"variable",position,{"is_ghost":true});
+						visualObject = new VariableVisual(tprimitive.id, "variable",position,{"is_ghost":true});
 						break;
 					case "Stock":
-						visualObject = new StockVisual(tprimitive.id,"stock",position,{"is_ghost":true});
+						visualObject = new StockVisual(tprimitive.id, "stock",position,{"is_ghost":true});
 						break;
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
@@ -4636,9 +4637,9 @@ function syncVisual(tprimitive) {
 			var position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
-				visualObject = new VariableVisual(tprimitive.id,"variable",position);
+				visualObject = new VariableVisual(tprimitive.id, "variable",position);
 			} else {
-				visualObject = new ConstantVisual(tprimitive.id,"variable",position);
+				visualObject = new ConstantVisual(tprimitive.id, "variable",position);
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
@@ -4691,7 +4692,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Link":
 		{
-			let connection = new LinkVisual(tprimitive.id,"link",[0,0]);
+			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
 
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
@@ -4881,11 +4882,11 @@ class RunResults {
 		}
 		return out;
 	}
-	static storeResults(res){
+	static storeResults(res) {
 		// This method is executed after the simulation is finished
 		// res is the result of the simulation
 		let index = this.results.length;
-		while(index < res.periods){
+		while(index < res.periods) {
 			let time = res.times[index];
 			this.simulationTime = res.times[index];
 			var currentRunResults = [];
@@ -4917,7 +4918,7 @@ class RunResults {
 		}
 	}
 	static resumeSimulation() {
-		$("#imgRunPauseTool").attr("src","graphics/pause.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.runState = runStateEnum.running;
 		// Simulation controller can only be null if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
@@ -4929,9 +4930,9 @@ class RunResults {
 			//~ console.error(getStackTrace());
 		}
 	}
-	static runSimulation(){
+	static runSimulation() {
 		this.stopSimulation();
-		$("#imgRunPauseTool").attr("src","graphics/pause.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
 		// We can only take 100 iterations between every update to avoid the feeling of program freezing
 		if (getTimeLength()*getTimeStep() >= 100) {
@@ -5031,7 +5032,7 @@ class RunResults {
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
-		$("#imgRunPauseTool").attr("src","graphics/run.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 	}
 	static resetSimulation() {
 		this.stopSimulation();
@@ -5044,7 +5045,7 @@ class RunResults {
 		endRunningSimulation();
 		this.runState = runStateEnum.stopped;
 		this.simulationController = null;
-		$("#imgRunPauseTool").attr("src","graphics/run.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
 	}
 	static subscribeRun(handler) {
@@ -5433,7 +5434,7 @@ class DisplayDialog extends jqDialog {
 		super();
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
-		this.acceptedPrimitveTypes = ["Stock","Flow","Variable","Converter"];
+		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 	}
 	
 	clearRemovedIds() {
@@ -6134,7 +6135,7 @@ class EquationEditor extends jqDialog {
 		
 		
 		// Handle restrict to positive
-		if (["Flow","Stock"].indexOf(getType(this.primitive)) != -1) {
+		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
 			// If element has restrict to positive
 			$(this.positiveOnlyDiv).show();
 			let restrictPositive = getNonNegative(this.primitive);
@@ -6148,7 +6149,7 @@ class EquationEditor extends jqDialog {
 		let referenceList = getLinkedPrimitives(this.primitive);
 	
 		// Sort reference list by name
-		referenceList.sort(function(a, b){
+		referenceList.sort(function(a, b) {
 			let nameA = getName(a);
 			let nameB = getName(b);
 			if (nameA < nameB) return -1;
