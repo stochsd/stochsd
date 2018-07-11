@@ -2061,14 +2061,25 @@ class RiverVisual extends BaseConnection {
 		return [valveX+variableOffset[0], valveY+variableOffset[1]];
 	}
 
+	setColor(color) {
+		this.color = color;
+		this.startCloud.setAttribute("stroke", color);
+		this.endCloud.setAttribute("stroke", color);
+		this.outerPath.setAttribute("stroke", color);
+		this.arrowHeadPath.setAttribute("stroke", color);
+		this.valve.setAttribute("stroke", color);
+		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color)
+		this.name_element.setAttribute("fill", color);
+	}
+
 	makeGraphics() {
-		this.startCloud = svgCloud(defaultStroke, defaultFill);
-		this.endCloud = svgCloud(defaultStroke, defaultFill);
-		this.outerPath = svgWidePath(5, defaultStroke);
-		this.innerPath = svgWidePath(3, "white");
-		this.arrowHeadPath = svgArrowHead(defaultStroke, defaultFill, [1,0]);
+		this.startCloud = svgCloud(this.color, defaultFill, {"class": "element"});
+		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
+		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
+		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
+		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, [1,0], {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z", defaultStroke, defaultFill, "element")]);
+		this.valve = svg_path("M10,10 -10,-10 10,-10 -10,10 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -15, "vairable", "name_element");
 		this.variable = svg_group([svg_circle(0, 0, 15, defaultStroke, "white", "element"), this.name_element]);
 		this.anchorPoints = [];
