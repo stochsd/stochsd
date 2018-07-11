@@ -1744,7 +1744,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateLength() {
-		// The rotation of the arrowhead is upwards until rotated
+		// The rotation of the arrowHead is upwards until rotated
 		const halfWidth = 1.5;
 		const headHalfWidth = 7;
 		var newPath = `M0,0 ${headHalfWidth},10 ${halfWidth},10 ${halfWidth},${this.length} -${halfWidth},${this.length} -${halfWidth},10 -${headHalfWidth},10 Z`;
