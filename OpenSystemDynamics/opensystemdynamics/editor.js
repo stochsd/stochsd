@@ -2860,8 +2860,8 @@ class LinkVisual extends BaseConnection {
 		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
 		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
 
-		this.b1_line = svg_line(this.startx,this.starty,this.startx,this.starty, "black", "black", "", "1,5");
-		this.b2_line = svg_line(this.startx,this.starty,this.startx,this.starty, "black", "black", "", "1,5");
+		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
+		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
 		
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
