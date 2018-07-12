@@ -78,7 +78,7 @@ function applicationReload() {
 function preserveRestart() {
 	History.toLocalStorage();
 	localStorage.setItem("fileName",fileManager.fileName);
-	localStorage.setItem("reloadPending","1");
+	localStorage.setItem("reloadPending", "1");
 	applicationReload();
 }
 
@@ -223,7 +223,7 @@ function sendToParentFrame(returnobj,target) {
 }
 
 function loadPlugin(pluginName) {	
-	sendToParentFrame({"app_name":pluginName},"load_app");
+	sendToParentFrame({"app_name":pluginName}, "load_app");
 }
 
 function setParentTitle(newTitle) {	
@@ -487,7 +487,7 @@ function getFunctionHelpData() {
 		]]
 
 	];
-	helpData = helpData.sort(function(a, b){
+	helpData = helpData.sort(function(a, b) {
 		var categoryA = a[0];
 		var categoryB = b[0];
 		if (categoryA < categoryB) return -1;
@@ -514,7 +514,7 @@ function sdsLoadFunctions() {
 	defineFunction("TE", {params:[]}, function(x) {
         return new Material(simulate.timeEnd.toNum().value);
 	});
-    defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x){
+    defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x) {
         var dt = simulate.timeStep.toNum().value;
         
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
@@ -732,6 +732,7 @@ class BaseObject {
 		this.selected = false;
 		this.name_radius = 30;
 		this.superClass = "baseobject";
+		this.color = defaultStroke;
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
@@ -742,6 +743,23 @@ class BaseObject {
 		this.mountPoints = [[0,0]];
 		
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
+	}
+
+	setColor(color) {
+		this.color = color;
+		for (let element of this.element_array) {
+			if (element.getAttribute("class") == "element") {
+				element.setAttribute("stroke", this.color);
+			} else if(element.getAttribute("class") == "name_element") {
+				element.setAttribute("fill", this.color);
+			} else if(element.getAttribute("class") == "selector") {
+				element.setAttribute("fill", this.color);
+			}
+		}
+		if (this.primitive) {
+			// AnchorPoints has no primitve
+			this.primitive.setAttribute("color", this.color);
+		}
 	}
 
 	getBoundRect() {
@@ -930,7 +948,7 @@ class OnePointer extends BaseObject{
 		if (!this.is_ghost) {
 			for(var key in element_array) {
 				if (element_array[key].getAttribute("class") == "ghost") {
-					element_array[key].setAttribute("visibility","hidden");
+					element_array[key].setAttribute("visibility", "hidden");
 				}
 			}
 		}
@@ -964,28 +982,24 @@ class OnePointer extends BaseObject{
 			}
 		});
 	}
-
-	// This functinality is not yet implemented correctly
-	setColor(color) {
-		this.group.setAttribute("stroke", color);
-	}
+	
 	select() {
 		this.selected = true;
 		for(var i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility","visible");
+			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 	}
 	unselect() {
 		this.selected = false;
 		for(var i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility","hidden");
+			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 	}
 	afterUpdate() {
 		
 	}
 	update() {
-		this.group.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
+		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		this.afterUpdate();
 	}
 	updatePosition() {
@@ -1017,7 +1031,7 @@ const anchorTypeEnum = {
 	bezier2:5,
 	orthoMiddle:6
 }
-class AnchorPoint extends OnePointer{
+class AnchorPoint extends OnePointer {
 	constructor(id, type, pos, anchorType) {
 		super(id, type, pos);
 		this.anchorType = anchorType;
@@ -1056,14 +1070,14 @@ class AnchorPoint extends OnePointer{
 			for(let element of this.element_array) {
 				// Show all elements except for selectors
 				if (element.getAttribute("class") != "selector") {
-					element.setAttribute("visibility","visible");
+					element.setAttribute("visibility", "visible");
 				}
 			}
 		}
 		else {
 			// Hide elements
 			for(let element of this.element_array) {
-				element.setAttribute("visibility","hidden");
+				element.setAttribute("visibility", "hidden");
 			}
 		}
 	}
@@ -1086,8 +1100,8 @@ class AnchorPoint extends OnePointer{
 	}
 	getImage() {
 		return [
-			svg_circle(0, 0, 4, "black" ,"black" ,"element"),
-			svg_circle(0, 0, 4, "red" ,"red" ,"selector")
+			svg_circle(0, 0, 4, "black", "white", "element"),
+			svg_circle(0, 0, 4, "none", this.color, "selector")
 		];	
 	}
 	afterMove(diff_x, diff_y) {
@@ -1133,7 +1147,7 @@ class OrthoAnchorPoint extends AnchorPoint {
 	}
 }
 
-class TextVisual extends BasePrimitive{
+class TextVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.name_centered = true;
@@ -1194,7 +1208,7 @@ function sign(value) {
 	}
 }
 
-class StockVisual extends BasePrimitive{
+class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
@@ -1262,16 +1276,19 @@ class StockVisual extends BasePrimitive{
 	}
 
 	getImage() {
+		// let textElem = svg_text(0, 39, "stock", "name_element");
+		let textElem = svg_text(0, 39, `[${this.primitive.getAttribute("name")}]`, "name_element");
+		textElem.setAttribute("fill", this.color);
 		return [
-		svg_rect(-20,-15,40,30,  defaultStroke,  defaultFill, "element"),
-		svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
-		svg_rect(-20,-15,40,30,"red","none","selector"),
-		svg_text(0,39,"stock","name_element")
+			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
+			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
+			svg_rect(-18, -13, 36, 26, "none", this.color, "selector"),
+			textElem
 		];
 	}
 }
 
-class NumberboxVisual extends BasePrimitive{
+class NumberboxVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.name_centered = true;
@@ -1332,9 +1349,9 @@ class NumberboxVisual extends BasePrimitive{
 	}
 	getImage() {
 		return [
-			svg_rect(-20,-15,40,30, defaultStroke, defaultFill,"element"),
-			svg_text(0,0,"","name_element",{"alignment-baseline": "middle", "style": "font-size: 16px"}),
-			svg_rect(-20,-15,40,30,"red","none","selector")
+			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
+			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
+			svg_rect(-20,-15,40,30, "red", "none", "selector")
 		];	
 	}
 	name_double_click() {
@@ -1346,7 +1363,7 @@ class NumberboxVisual extends BasePrimitive{
 	}
 }
 
-class VariableVisual extends BasePrimitive{
+class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
@@ -1368,10 +1385,10 @@ class VariableVisual extends BasePrimitive{
 
 	getImage () {
 		return [
-			svg_circle(0,0,this.getRadius(), defaultStroke, defaultFill, "element"),
-			svg_text(0,0,"variable","name_element"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1),"ghost"),
-			svg_circle(0,0,this.getRadius(),"red","none","selector")
+			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
+			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
+			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector")
 		];
 	}
 
@@ -1396,10 +1413,10 @@ class ConstantVisual extends VariableVisual {
 
 	getImage() {
 		return [
-			svg_path("M0,15 15,0 0,-15 -15,0Z", defaultStroke, defaultFill, "element"),
-			svg_text(0, 0, "constant", "name_element"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-			svg_path("M0,15 15,0 0,-15 -15,0Z", "red", "none", "selector")
+			svg_path("M0,15 15,0 0,-15 -15,0Z", this.color, defaultFill, "element"),
+			svg_text(0, 0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
+			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector")
 		];
 	}
 
@@ -1409,17 +1426,17 @@ class ConstantVisual extends VariableVisual {
 	}
 }
 
-class ConverterVisual extends BasePrimitive{
+class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.mountPoints = [[-20,0],[20,0],[0,-15],[0,15]];
 	}
 	getImage() {
 		return [
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", defaultStroke, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z","red","none","selector"),
-			svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1),"ghost"),
-			svg_text(0,0,"variable","name_element"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
+			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
+			svg_text(0,0,`[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 		];
 	}
 
@@ -1434,7 +1451,7 @@ class ConverterVisual extends BasePrimitive{
 			const ySign = sign(yTarget - yCenter); 	// -1 if target above hexagon and 1 if target below hexagon 
 			xEdgeRel = ySign*safeDivision(15, targetSlope);
 			yEdgeRel = ySign*15; 
-		} else if (0 < targetSlope && targetSlope < hexSlope){
+		} else if (0 < targetSlope && targetSlope < hexSlope) {
 			const xSign = sign(xTarget - xCenter); // -1 if target left of hexagon and 1 if target right of hexagon
 			xEdgeRel = xSign*safeDivision(30, (3/2)+targetSlope);
 			yEdgeRel = xEdgeRel*targetSlope;
@@ -1462,15 +1479,15 @@ class ConverterVisual extends BasePrimitive{
 		}
 	}
 	name_double_click() {
-		converterDialog.open(this.id,".nameField");
+		converterDialog.open(this.id, ".nameField");
 	}
 	
 	double_click() {
-		converterDialog.open(this.id,".valueField");
+		converterDialog.open(this.id, ".valueField");
 	}
 }
 
-class TwoPointer extends BaseObject{
+class TwoPointer extends BaseObject {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.id = id;
@@ -1487,7 +1504,7 @@ class TwoPointer extends BaseObject{
 		connection_array[this.id] = this;
 		
 		this.makeGraphics();
-		$(this.group).on("mousedown",function(event){
+		$(this.group).on("mousedown",function(event) {
 			var node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
@@ -1504,11 +1521,17 @@ class TwoPointer extends BaseObject{
 		};
 	}
 
+	setColor(color) {
+		super.setColor(color);
+		this.start_anchor.setColor(color);
+		this.end_anchor.setColor(color);
+	}
+
 	create_dummy_start_anchor() {
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
 	}
 	create_dummy_end_anchor() {
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor","dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
 	}
 	
 	get_pos() {
@@ -1617,7 +1640,7 @@ class TwoPointer extends BaseObject{
 	}
 }
 
-class BaseConnection extends TwoPointer{
+class BaseConnection extends TwoPointer {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this._start_attach = null;
@@ -1733,7 +1756,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateLength() {
-		// The rotation of the arrowhead is upwards until rotated
+		// The rotation of the arrowHead is upwards until rotated
 		const halfWidth = 1.5;
 		const headHalfWidth = 7;
 		var newPath = `M0,0 ${headHalfWidth},10 ${halfWidth},10 ${halfWidth},${this.length} -${halfWidth},${this.length} -${halfWidth},10 -${headHalfWidth},10 Z`;
@@ -1743,10 +1766,10 @@ class FlowVisual extends BaseConnection {
 	makeGraphics() {
 		this.arrowPath = svg_from_string(`<path d="M0,0 0,0" stroke=${defaultStroke} fill=${defaultFill} />`);
 		this.updateLength();
-		this.arrowhead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowhead,this.endx,this.endy);
+		this.arrowHead = svg_group([this.arrowPath]);
+		svg_translate(this.arrowHead,this.endx,this.endy);
 
-		this.name_element = svg_text(0,0,"variable","name_element");
+		this.name_element = svg_text(0,0, "variable", "name_element");
 		this.flowcore = svg_group([ 
 			svg_circle(0,15,15, defaultStroke, defaultFill, "element"),
 			svg_path("M0,0 -10,-10 10,-10 Z", defaultStroke, defaultFill, "element"),
@@ -1757,7 +1780,7 @@ class FlowVisual extends BaseConnection {
 			this.name_double_click();
 		});
 		
-		this.group = svg_group([this.arrowhead,this.flowcore]);
+		this.group = svg_group([this.arrowHead,this.flowcore]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
@@ -1801,7 +1824,7 @@ class FlowVisual extends BaseConnection {
 		let xdiff = this.endx-this.startx;
 		let ydiff = this.endy-this.starty;
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
 		
 		let auxiliaryPos = [(this.startx+this.endx)/2, (this.starty+this.endy)/2];
 		svg_transform(get_object(this.id).flowcore,auxiliaryPos[0],auxiliaryPos[1],0,1);
@@ -2046,14 +2069,27 @@ class RiverVisual extends BaseConnection {
 		return [valveX+variableOffset[0], valveY+variableOffset[1]];
 	}
 
+	setColor(color) {
+		this.color = color;
+		this.primitive.setAttribute("color", this.color);
+		this.startCloud.setAttribute("stroke", color);
+		this.endCloud.setAttribute("stroke", color);
+		this.outerPath.setAttribute("stroke", color);
+		this.arrowHeadPath.setAttribute("stroke", color);
+		this.valve.setAttribute("stroke", color);
+		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color)
+		this.name_element.setAttribute("fill", color);
+		this.anchorPoints.map(anchor => anchor.setColor(color));
+	}
+
 	makeGraphics() {
-		this.startCloud = svgCloud(defaultStroke, defaultFill);
-		this.endCloud = svgCloud(defaultStroke, defaultFill);
-		this.outerPath = svgWidePath(5, defaultStroke);
-		this.innerPath = svgWidePath(3, "white");
-		this.arrowHeadPath = svgArrowHead(defaultStroke, defaultFill, [1,0]);
+		this.startCloud = svgCloud(this.color, defaultFill, {"class": "element"});
+		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
+		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
+		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
+		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, [1,0], {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.valve = svg_group([svg_path("M10,10 -10,-10 10,-10 -10,10 Z", defaultStroke, defaultFill, "element")]);
+		this.valve = svg_path("M10,10 -10,-10 10,-10 -10,10 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -15, "vairable", "name_element");
 		this.variable = svg_group([svg_circle(0, 0, 15, defaultStroke, "white", "element"), this.name_element]);
 		this.anchorPoints = [];
@@ -2202,9 +2238,9 @@ class RectangleVisual extends TwoPointer {
 		this.coordRect.element = this.element;
 		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);
-		var element_array = [this.element];
-		for(var key in element_array) {
-			element_array[key].setAttribute("node_id",this.id);
+		this.element_array = [this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
@@ -2299,11 +2335,10 @@ class TableVisual extends htmlTwoPointer {
 		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);	
 		
-		var element_array = [this.element];
-		var element_array = [this.htmlElement.scrollDiv
-,this.element];
-		for(var key in element_array) {
-			element_array[key].setAttribute("node_id",this.id);
+		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.scrollDiv, this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
@@ -2372,9 +2407,9 @@ class htmlOverlayTwoPointer extends TwoPointer {
 		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id", this.id);	
 		
-		var element_array = [this.element];
-		for(var key in element_array) {
-			element_array[key].setAttribute("node_id", this.id);
+		this.element_array = [this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id", this.id);
 		}
 	}
 	
@@ -2712,14 +2747,14 @@ class XyPlotVisual extends DiagramVisual {
 class LineVisual extends TwoPointer {
 	makeGraphics() {
 		var dash = "";
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill ,"element",dash);
+		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element",dash);
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);
-		var element_array = [this.element];
-		for(var key in element_array) {
-			element_array[key].setAttribute("node_id",this.id);
+		this.element_array = [this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
@@ -2729,15 +2764,16 @@ class LineVisual extends TwoPointer {
 		this.element.setAttribute("y2",this.endy);
 	}
 }
-class LinkVisual extends BaseConnection{
-	constructor(id,type,pos) {
-		super(id,type,pos);
+
+class LinkVisual extends BaseConnection {
+	constructor(id, type, pos) {
+		super(id, type, pos);
 	}
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
 			for(var i in this.highlight_on_select) {
-				this.highlight_on_select[i].setAttribute("stroke","black");
+				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}	
 		} else {
 			let children = getChildren(this.id);
@@ -2751,7 +2787,7 @@ class LinkVisual extends BaseConnection{
 		
 		// Hide beizer lines
 		for(let element of this.showOnlyOnSelect) {
-			element.setAttribute("visibility","hidden");
+			element.setAttribute("visibility", "hidden");
 		}
 	}
 	select(selectChildren = true) {		
@@ -2763,7 +2799,7 @@ class LinkVisual extends BaseConnection{
 			}
 		}
 		for(var i in this.highlight_on_select) {
-			this.highlight_on_select[i].setAttribute("stroke","red");
+			this.highlight_on_select[i].setAttribute("stroke", "red");
 		}
 		
 		if (selectChildren) {
@@ -2776,7 +2812,7 @@ class LinkVisual extends BaseConnection{
 		
 		// Show beizer lines
 		for(let element of this.showOnlyOnSelect) {
-			element.setAttribute("visibility","visible");
+			element.setAttribute("visibility", "visible");
 		}
 	}
 	updateClickArea() {
@@ -2798,25 +2834,40 @@ class LinkVisual extends BaseConnection{
 			this.undashLine();
 		}
 	}
+
+	setColor(color) {
+		this.color = color;
+		this.primitive.setAttribute("color", this.color);
+		this.curve.setAttribute("stroke", color);
+		this.arrowPath.setAttribute("stroke", color);
+		this.arrowPath.setAttribute("fill", color);
+		this.start_anchor.setColor(color);
+		this.end_anchor.setColor(color);
+		this.b1_anchor.setColor(color);
+		this.b2_anchor.setColor(color);
+		this.b1_line.setAttribute("stroke", color);
+		this.b2_line.setAttribute("stroke", color);
+	}
+
 	makeGraphics() {
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
-		this.arrowhead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowhead,this.endx,this.endy);
-		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all","stroke":"none","stroke-width":"10"}); 
-		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black","stroke-width":"1"});
+		this.arrowHead = svg_group([this.arrowPath]);
+		svg_translate(this.arrowHead,this.endx,this.endy);
+		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group = svg_group([this.click_area,this.curve,this.arrowhead]);
+		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 		
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor","dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
 
-		this.b1_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
-		this.b2_line = svg_line(this.startx,this.starty,this.startx,this.starty,"black","black","","1,5");
+		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
+		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
 		
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
@@ -2901,7 +2952,7 @@ class LinkVisual extends BaseConnection{
 		let xdiff = this.endx-b2pos[0];
 		let ydiff = this.endy-b2pos[1];
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowhead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
 		
 		// Update end position so that we get the drawing effect when link is created
 		this.curve.x4 = this.endx;
@@ -3005,7 +3056,7 @@ class TextTool extends BaseTool {
 class NumberboxTool extends BaseTool {
 	static init() {
 		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock","variable","converter","flow"];
+		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
@@ -3109,13 +3160,13 @@ class MoveValveTool extends BaseTool {
 class GhostTool extends BaseTool {
 	static init() {
 		this.id_to_ghost = null;
-		this.ghostable_primitives = ["stock","variable","converter"];
+		this.ghostable_primitives = ["stock", "variable", "converter"];
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
 		var source = findID(this.id_to_ghost);
 		var ghost = makeGhost(source,[x,y]);
-		ghost.setAttribute("RotateName","0");
+		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
@@ -3632,10 +3683,10 @@ class CoordRect {
 	}
 	setVisible(new_visible) {
 		if (new_visible) {
-			this.element.setAttribute("visibility","visible");
+			this.element.setAttribute("visibility", "visible");
 		}
 		else {
-			this.element.setAttribute("visibility","hidden");
+			this.element.setAttribute("visibility", "hidden");
 		}
 	}
 	xmin() {
@@ -3949,7 +4000,7 @@ function update_name_pos(node_id) {
 	if (object.name_centered) {
 		name_element.setAttribute("x",0); //Set path's data
 		name_element.setAttribute("y",0); //Set path's data
-		name_element.setAttribute("text-anchor","middle");
+		name_element.setAttribute("text-anchor", "middle");
 		return;
 	}
 
@@ -3963,26 +4014,26 @@ function update_name_pos(node_id) {
 		// Below
 				//~ name_element.setAttribute("x",0); //Set path's data
 				//~ name_element.setAttribute("y",dist_down); //Set path's data
-				name_element.setAttribute("text-anchor","middle");
+				name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 1:
 		// To the right
 				//~ name_element.setAttribute("x",dist_right); //Set path's data
 				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor","start");
+				name_element.setAttribute("text-anchor", "start");
 		break;
 		case 2:
 		// Above
 				//~ name_element.setAttribute("x",0); //Set path's data
 				//~ name_element.setAttribute("y",-dist_up); //Set path's data
-				name_element.setAttribute("text-anchor","middle");
+				name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 3:
 		// To the left
 				//~ name_element.setAttribute("x",-dist_left); //Set path's data
 				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor","end");
-				//~ name_element.setAttribute("alignment-baseline","hanging");
+				name_element.setAttribute("text-anchor", "end");
+				//~ name_element.setAttribute("alignment-baseline", "hanging");
 		break;
 	}
 }
@@ -4041,8 +4092,8 @@ function find_elements_under(x, y) {
 	var found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
-	//~ let attachable_object_types = ["flow","stock","variable"];
-	let attachable_object_types = ["flow","stock","variable","converter"];
+	//~ let attachable_object_types = ["flow", "stock", "variable"];
+	let attachable_object_types = ["flow", "stock", "variable", "converter"];
 	for(key in objects) {
 		if (objects[key].type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
@@ -4208,7 +4259,7 @@ function hashUpdate() {
 }
 
 $(document).ready(function() {
-	rectselector.element = svg_rect(-30,-30,60,60,"black","none","element");
+	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 	var svgplane = document.getElementById("svgplane");
@@ -4225,7 +4276,7 @@ $(document).ready(function() {
 		showDebug();
 	}
 	
-	$(document).keydown(function(event){
+	$(document).keydown(function(event) {
 		// Only works if no dialog is open
 		if (jqDialog.blockingDialogOpen) {
 			return;
@@ -4247,28 +4298,28 @@ $(document).ready(function() {
 				event.preventDefault();
 				ResetTool.enterTool();
 			}
-			if (event.keyCode == keyboard["O"]){
+			if (event.keyCode == keyboard["O"]) {
 				event.preventDefault();
 				$("#btn_load").click();
 			}
-			if (event.keyCode == keyboard["S"]){
+			if (event.keyCode == keyboard["S"]) {
 				event.preventDefault();
 				$("#btn_save").click();
 			}
-			if (event.keyCode == keyboard["P"]){
+			if (event.keyCode == keyboard["P"]) {
 				event.preventDefault();
 				$("#btn_print_model").click();
 			}
-			if (event.keyCode == keyboard["Z"]){
+			if (event.keyCode == keyboard["Z"]) {
 				History.doUndo();
 			}
-			if (event.keyCode == keyboard["Y"]){
+			if (event.keyCode == keyboard["Y"]) {
 				History.doRedo();
 			}
-			if (event.keyCode == keyboard["C"]){
+			if (event.keyCode == keyboard["C"]) {
 				Clipboard.copy();
 			}
-			if (event.keyCode == keyboard["V"]){
+			if (event.keyCode == keyboard["V"]) {
 				Clipboard.paste();
 				History.storeUndoState();
 			}
@@ -4311,8 +4362,35 @@ $(document).ready(function() {
 		unselect_all();
 		hideAndPrint([$("#topPanel").get(0)]);
 	});
+	$("#btn_black").click(function() {
+		setColorToSelection("black");
+	});
+	$("#btn_darkgrey").click(function() {
+		setColorToSelection("darkgrey");
+	});
+	$("#btn_red").click(function() {
+		setColorToSelection("red");
+	});
+	$("#btn_orange").click(function() {
+		setColorToSelection("orange");
+	});
+	$("#btn_brown").click(function() {
+		setColorToSelection("brown");
+	});
 	$("#btn_green").click(function() {
-		setColorToSelection("#00ff00");
+		setColorToSelection("green");
+	});
+	$("#btn_teal").click(function() {
+		setColorToSelection("teal");
+	});
+	$("#btn_blue").click(function() {
+		setColorToSelection("blue");
+	});
+	$("#btn_purple").click(function() {
+		setColorToSelection("purple");
+	});
+	$("#btn_deeppink").click(function() {
+		setColorToSelection("deeppink");
 	});
 	$("#btn_macro").click(function() {
 		macroDialog.show();
@@ -4398,7 +4476,7 @@ function stochsd_delete_primitive (id) {
 
 var InsightMakerFileExtension = ".InsightMaker";
 
-function isLocal(){
+function isLocal() {
 	return true; // Expose additional debugging and error messages
 }
 
@@ -4456,7 +4534,10 @@ function syncVisual(tprimitive) {
 		case "Numberbox":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new NumberboxVisual(tprimitive.id,"numberbox",position);
+			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
 			visualObject.render();
 		}
 		break;
@@ -4479,7 +4560,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id,"table",[0,0]);
+			let connection = new dimClass(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4512,7 +4593,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id,"table",[0,0]);
+			let connection = new dimClass(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4529,7 +4610,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id,"table",[0,0]);
+			let connection = new TextAreaVisual(tprimitive.id, "table",[0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4544,9 +4625,13 @@ function syncVisual(tprimitive) {
 		case "Stock":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new StockVisual(tprimitive.id,"stock",position);
+			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4560,9 +4645,13 @@ function syncVisual(tprimitive) {
 		case "Converter":
 		{
 			var position = getCenterPosition(tprimitive);
-			let visualObject = new ConverterVisual(tprimitive.id,"converter",position);
+			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4577,7 +4666,12 @@ function syncVisual(tprimitive) {
 		{
 			do_global_log("id is "+tprimitive.id);
 			var position = getCenterPosition(tprimitive);
-			new TextVisual(tprimitive.id,"text",position);
+			new TextVisual(tprimitive.id, "text",position);
+
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 		}
 		break;
@@ -4590,16 +4684,21 @@ function syncVisual(tprimitive) {
 			let visualObject = null;
 			switch(source_type) {
 					case "Converter":
-						visualObject = new ConverterVisual(tprimitive.id,"converter",position,{"is_ghost":true});
+						visualObject = new ConverterVisual(tprimitive.id, "converter",position,{"is_ghost":true});
 						break;
 					case "Variable":
-						visualObject = new VariableVisual(tprimitive.id,"variable",position,{"is_ghost":true});
+						visualObject = new VariableVisual(tprimitive.id, "variable",position,{"is_ghost":true});
 						break;
 					case "Stock":
-						visualObject = new StockVisual(tprimitive.id,"stock",position,{"is_ghost":true});
+						visualObject = new StockVisual(tprimitive.id, "stock",position,{"is_ghost":true});
 						break;
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
+
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			visualObject.name_pos = tprimitive.getAttribute("RotateName");
 			update_name_pos(tprimitive.id);
 		}
@@ -4610,12 +4709,16 @@ function syncVisual(tprimitive) {
 			var position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
-				visualObject = new VariableVisual(tprimitive.id,"variable",position);
+				visualObject = new VariableVisual(tprimitive.id, "variable",position);
 			} else {
-				visualObject = new ConstantVisual(tprimitive.id,"variable",position);
+				visualObject = new ConstantVisual(tprimitive.id, "variable",position);
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
+			if (tprimitive.getAttribute("color")) {
+				visualObject.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4628,7 +4731,11 @@ function syncVisual(tprimitive) {
 		break;
 		case "Flow":
 			let connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
-						
+			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
 			if (!rotateName) {
@@ -4665,7 +4772,11 @@ function syncVisual(tprimitive) {
 		break;
 		case "Link":
 		{
-			let connection = new LinkVisual(tprimitive.id,"link",[0,0]);
+			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
+
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
 
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
@@ -4793,7 +4904,7 @@ function setColorToSelection(color) {
 	let objects = get_selected_objects();
 	for(var id in objects) {
 		let obj = get_object(id);
-		obj.setColor(color);
+		get_parent(obj).setColor(color);
 	}
 }
 
@@ -4855,11 +4966,11 @@ class RunResults {
 		}
 		return out;
 	}
-	static storeResults(res){
+	static storeResults(res) {
 		// This method is executed after the simulation is finished
 		// res is the result of the simulation
 		let index = this.results.length;
-		while(index < res.periods){
+		while(index < res.periods) {
 			let time = res.times[index];
 			this.simulationTime = res.times[index];
 			var currentRunResults = [];
@@ -4891,7 +5002,7 @@ class RunResults {
 		}
 	}
 	static resumeSimulation() {
-		$("#imgRunPauseTool").attr("src","graphics/pause.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.runState = runStateEnum.running;
 		// Simulation controller can only be null if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
@@ -4903,9 +5014,9 @@ class RunResults {
 			//~ console.error(getStackTrace());
 		}
 	}
-	static runSimulation(){
+	static runSimulation() {
 		this.stopSimulation();
-		$("#imgRunPauseTool").attr("src","graphics/pause.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
 		// We can only take 100 iterations between every update to avoid the feeling of program freezing
 		if (getTimeLength()*getTimeStep() >= 100) {
@@ -5005,7 +5116,7 @@ class RunResults {
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
-		$("#imgRunPauseTool").attr("src","graphics/run.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 	}
 	static resetSimulation() {
 		this.stopSimulation();
@@ -5018,7 +5129,7 @@ class RunResults {
 		endRunningSimulation();
 		this.runState = runStateEnum.stopped;
 		this.simulationController = null;
-		$("#imgRunPauseTool").attr("src","graphics/run.svg");
+		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
 	}
 	static subscribeRun(handler) {
@@ -5407,7 +5518,7 @@ class DisplayDialog extends jqDialog {
 		super();
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
-		this.acceptedPrimitveTypes = ["Stock","Flow","Variable","Converter"];
+		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 	}
 	
 	clearRemovedIds() {
@@ -6108,7 +6219,7 @@ class EquationEditor extends jqDialog {
 		
 		
 		// Handle restrict to positive
-		if (["Flow","Stock"].indexOf(getType(this.primitive)) != -1) {
+		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
 			// If element has restrict to positive
 			$(this.positiveOnlyDiv).show();
 			let restrictPositive = getNonNegative(this.primitive);
@@ -6122,7 +6233,7 @@ class EquationEditor extends jqDialog {
 		let referenceList = getLinkedPrimitives(this.primitive);
 	
 		// Sort reference list by name
-		referenceList.sort(function(a, b){
+		referenceList.sort(function(a, b) {
 			let nameA = getName(a);
 			let nameB = getName(b);
 			if (nameA < nameB) return -1;
