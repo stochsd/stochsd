@@ -1037,8 +1037,10 @@ class AnchorPoint extends OnePointer {
 		this.anchorType = anchorType;
 	}
 	isAttached() {
-		let parentId = get_parent_id(this.id);
-		let parent = get_object(parentId);
+		let parent = get_parent(this);
+		if (! parent.getStartAttach) {
+			return;
+		}
 		switch(this.anchorType) {
 			case anchorTypeEnum.start:
 				if (parent.getStartAttach()) {
