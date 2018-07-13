@@ -4283,6 +4283,9 @@ $(document).ready(function() {
 	$("#btn_red").click(function() {
 		setColorToSelection("red");
 	});
+	$("#btn_deeppink").click(function() {
+		setColorToSelection("deeppink");
+	});
 	$("#btn_orange").click(function() {
 		setColorToSelection("orange");
 	});
@@ -4300,9 +4303,6 @@ $(document).ready(function() {
 	});
 	$("#btn_purple").click(function() {
 		setColorToSelection("purple");
-	});
-	$("#btn_deeppink").click(function() {
-		setColorToSelection("deeppink");
 	});
 	$("#btn_macro").click(function() {
 		macroDialog.show();
