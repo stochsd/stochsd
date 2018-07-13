@@ -3776,7 +3776,11 @@ function delete_selected_objects() {
 	// Delete all objects that are selected
 	var object_array = get_selected_root_objects();
 	for(var key in object_array) {
+		// check if object not already deleted
+		// e.i. link gets deleted automatically if any of it's attachments gets deleted
+		if (get_object(key)) {
 			tool_deletePrimitive(key);
+		}
 	}
 }
 
