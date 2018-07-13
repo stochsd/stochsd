@@ -3303,7 +3303,7 @@ class TwoPointerTool extends BaseTool {
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
-		if (start_element != null) {
+		if (start_element != null && this.current_connection.getStartAttach) {
 			this.current_connection.setStartAttach(get_parent(start_element));
 		}
 		this.current_connection.set_name(primitive_name);
