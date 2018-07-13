@@ -3434,27 +3434,6 @@ class TwoPointerTool extends BaseTool {
 		last_clicked_element = null;
 	}
 }
-class FlowTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Flow", null,null);
-		setNonNegative(this.primitive,false);
-		
-		let rotateName = this.primitive.getAttribute("RotateName");
-		// Force all stocks to have a RotateName
-		if (!rotateName) {
-			rotateName = "0";
-			this.primitive.setAttribute("RotateName",rotateName);
-		}		
-		
-		this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
-		this.current_connection.name_pos = rotateName;
-		update_name_pos(this.primitive.id);
-	}
-	static getType() {
-		return "flow";
-	}
-}
-FlowTool.init();
 
 class RiverTool extends TwoPointerTool {
 	static create_TwoPointer_start(x, y, name) {
@@ -4147,7 +4126,6 @@ class ToolBox {
 			"converter":ConverterTool,
 			"variable":VariableTool,
 			"constant":ConstantTool,
-			"flow":FlowTool,
 			"river":RiverTool,
 			"link":LinkTool,
 			"rotatename":RotateNameTool,
