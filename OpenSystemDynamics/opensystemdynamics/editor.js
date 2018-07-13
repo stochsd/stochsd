@@ -3331,8 +3331,9 @@ class TwoPointerTool extends BaseTool {
 		// 	// a dummy anchor has no attached object
 		// 	this.current_connection.create_dummy_start_anchor();
 		// }
-		
-		attach_selected_anchor(this.current_connection.end_anchor);
+		if (this.current_connection.getStartAttach) {
+			attach_selected_anchor(this.current_connection.end_anchor);
+		}
 		
 		this.current_connection.start_anchor.updatePosition();
 		this.current_connection.end_anchor.updatePosition();
