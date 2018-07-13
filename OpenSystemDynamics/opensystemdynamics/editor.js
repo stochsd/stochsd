@@ -1424,7 +1424,21 @@ class ConstantVisual extends VariableVisual {
 
 	getLinkMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
-		return [xCenter, yCenter];
+		const targetSlope = safeDivision(yCenter-yTarget, xCenter-xTarget);
+		
+		// "k" in the formula: y = kx + m
+		const edgeSlope = -sign(targetSlope);
+
+		// Where the line intercepts the x-axis ("m" in the formula: y = kx + m)
+		const edgeIntercept = 15*sign(yTarget - yCenter);
+		
+		// Relative coodinates relative center of ConstantVisual
+		const xEdgeRel = safeDivision(edgeIntercept, targetSlope-edgeSlope);
+		const yEdgeRel = edgeSlope*xEdgeRel + edgeIntercept;
+		
+		const xEdge = xEdgeRel + xCenter;
+		const yEdge = yEdgeRel + yCenter;
+		return [xEdge, yEdge];
 	}
 }
 
