@@ -3184,7 +3184,7 @@ class MouseTool extends BaseTool {
 		
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
-		if (selectedAnchor) {
+		if (selectedAnchor && get_parent(selectedAnchor).getStartAttach) {
 			let parentObject = get_parent(selectedAnchor);
 			switch(selectedAnchor.getAnchorType()) {
 			case anchorTypeEnum.start:
