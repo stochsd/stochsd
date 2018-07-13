@@ -264,7 +264,7 @@ function updateWindowSize() {
 	// Instead we wait until it is resized and then adopt to the result
 	setTimeout(function() {
 		var svgPosition = $("#svgplanebackground").position();
-		$("#svgplanebackground").width(windowWidth-50);
+		$("#svgplanebackground").width(windowWidth-18);
 		$("#svgplanebackground").height(windowHeight-svgPosition.top);
 	},100);
 	
