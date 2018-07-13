@@ -1660,11 +1660,11 @@ class BaseConnection extends TwoPointer {
 		this.attachableTypes = types;
 	}
 	setStartAttach(new_start_attach) {
-		if (this.getEndAttach() == new_start_attach) {
-			return;		// Will not attach is other other anchor is attached
+		if (new_start_attach != null && this.getEndAttach() == new_start_attach) {
+			return;		// Will not attach if other anchor is attached to same
 		}
 		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
-			return;
+			return; 	// Will not attach if not acceptable attachType
 		}
 
 		let previosStartAttach = this.getStartAttach();
@@ -1687,11 +1687,11 @@ class BaseConnection extends TwoPointer {
 	}
 	setEndAttach(new_end_attach) {
 		do_global_log("end_attach");
-		if (this.getStartAttach() == new_end_attach) {
-			return; 	// Will not attach is other other anchor is attached
+		if (new_end_attach != null && this.getStartAttach() == new_end_attach) {
+			return; 	// Will not attach if other anchor is attached to same 
 		}
 		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
-			return;
+			return;		// Will not attach if not acceptable attachType
 		}
 
 		let previousEndAttach = this.getEndAttach();
