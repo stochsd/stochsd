@@ -1140,7 +1140,7 @@ class OrthoAnchorPoint extends AnchorPoint {
 		super.afterMove(diff_x, diff_y);
 		do_global_log("OrthoAnchor - afterMove() -"+this.id);
 		let parent = get_parent(this);
-		// Add adjust nighbor to RiverVisual
+		// Add adjust nighbor to FlowVisual
 		if ( ! get_parent(this).areAllAnchorsSelected()) {
 			parent.adjustNeighbors(this.index); 
 		}
@@ -1228,7 +1228,7 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
-	// Used for RiverVisual
+	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
 		const [width, height] = this.getSize();
@@ -1748,7 +1748,7 @@ class BaseConnection extends TwoPointer {
 	}
 }
 
-class RiverVisual extends BaseConnection {
+class FlowVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
@@ -3347,7 +3347,7 @@ class TwoPointerTool extends BaseTool {
 	}
 }
 
-class RiverTool extends TwoPointerTool {
+class FlowTool extends TwoPointerTool {
 	static create_TwoPointer_start(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
@@ -3359,7 +3359,7 @@ class RiverTool extends TwoPointerTool {
 			this.primitive.setAttribute("RotateName", rotateName);
 		}		
 		
-		this.current_connection = new RiverVisual(this.primitive.id, this.getType(), [x,y]);
+		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y]);
 		this.current_connection.name_pos = rotateName;
 		update_name_pos(this.primitive.id);
 	}
@@ -3398,7 +3398,7 @@ class RiverTool extends TwoPointerTool {
 		return "flow";
 	}
 }
-RiverTool.init();
+FlowTool.init();
 
 function cleanUnconnectedLinks() {
 	let allLinks = primitives("Link");
@@ -4038,7 +4038,7 @@ class ToolBox {
 			"converter":ConverterTool,
 			"variable":VariableTool,
 			"constant":ConstantTool,
-			"river":RiverTool,
+			"flow":FlowTool,
 			"link":LinkTool,
 			"rotatename":RotateNameTool,
 			"movevalve":MoveValveTool,
@@ -4625,7 +4625,7 @@ function syncVisual(tprimitive) {
 		}
 		break;
 		case "Flow":
-			let connection = new RiverVisual(tprimitive.id, "flow", [0,0]);
+			let connection = new FlowVisual(tprimitive.id, "flow", [0,0]);
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));
