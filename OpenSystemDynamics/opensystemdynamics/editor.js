@@ -1884,6 +1884,7 @@ class RiverVisual extends BaseConnection {
 	}
 
 	afterAnchorUpdate(anchorType) {
+		// Save middle anchor points to primitive
 		super.afterAnchorUpdate(anchorType);
 		let middlePoints = "";
 		for (i = 1; i < this.anchorPoints.length-1; i++) {
