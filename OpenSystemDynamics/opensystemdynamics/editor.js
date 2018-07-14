@@ -127,7 +127,7 @@ class History {
 
 		// Add to undo history if it is different then previus state
 		if (this.lastUndoState != undoState) {
-			// remove previous states in front in array
+			// Preserves onlu states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex+1);
 			
 			this.undoStates.push(undoState);
