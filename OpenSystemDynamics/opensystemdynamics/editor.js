@@ -2809,8 +2809,16 @@ class LinkVisual extends BaseConnection {
 		this.curve.setAttribute("stroke-dasharray", "");
 	}
 	resetBezierPoints() {
+		let obj1 = this.getStartAttach();
+		let obj2 = this.getEndAttach();
+		if ( ! obj1 && ! obj2) {
+			return;
+		}
+		this.start_anchor.set_pos(obj1.getLinkMountPos(obj2.get_pos()));
+		this.end_anchor.set_pos(obj2.getLinkMountPos(obj1.get_pos()));
 		this.resetBezier1();
 		this.resetBezier2();
+		this.update();
 	}
 	resetBezier1() {
 		this.b1_anchor.set_pos(this.linearInterpolation((1/3)));
@@ -3088,7 +3096,14 @@ class MoveValveTool extends BaseTool {
 
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
-		xAlert("This function is not yet implemented");
+		for (let node_id in get_selected_objects()) {
+			let key = get_parent_id(node_id);
+			let obj = get_object(key);
+			if (obj.type == "link") {
+				obj.resetBezierPoints();
+			}
+		}
+		ToolBox.setTool("mouse");
 	}
 		
 }
