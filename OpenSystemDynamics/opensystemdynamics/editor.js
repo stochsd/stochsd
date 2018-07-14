@@ -4325,11 +4325,17 @@ $(document).ready(function() {
 	$("#btn_deeppink").click(function() {
 		setColorToSelection("deeppink");
 	});
+	$("#btn_brown").click(function() {
+		setColorToSelection("brown");
+	});
 	$("#btn_orange").click(function() {
 		setColorToSelection("orange");
 	});
-	$("#btn_brown").click(function() {
-		setColorToSelection("brown");
+	$("#btn_gold").click(function() {
+		setColorToSelection("gold");
+	});
+	$("#btn_olive").click(function() {
+		setColorToSelection("olive");
 	});
 	$("#btn_green").click(function() {
 		setColorToSelection("green");
