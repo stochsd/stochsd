@@ -66,7 +66,7 @@ var global_log = "";
 
 
 // default svg values 
-var defaultFill = "#ffffff01";
+var defaultFill = "transparent";
 var defaultStroke = "black";
 
 
