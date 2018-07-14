@@ -1035,6 +1035,7 @@ class AnchorPoint extends OnePointer {
 	constructor(id, type, pos, anchorType) {
 		super(id, type, pos);
 		this.anchorType = anchorType;
+		this.isSquare = false;
 	}
 	isAttached() {
 		let parent = get_parent(this);
@@ -1101,10 +1102,23 @@ class AnchorPoint extends OnePointer {
 		super.unselect();
 	}
 	getImage() {
-		return [
-			svg_circle(0, 0, 4, "black", "white", "element"),
-			svg_circle(0, 0, 4, "none", this.color, "selector")
-		];	
+		if (this.isSquare) {
+			return [
+				svg_rect(-4, -4, 8, 8, this.color, "white", "element"),
+				svg_rect(-4, -4, 8, 8, "none", this.color, "selector")
+			];
+		} else {
+			return [
+				svg_circle(0, 0, 4, this.color, "white", "element"),
+				svg_circle(0, 0, 4, "none", this.color, "selector")
+			];
+		}
+		
+	}
+	makeSquare() {
+		this.isSquare = true;
+		this.clearImage();
+		this.loadImage();
 	}
 	afterMove(diff_x, diff_y) {
 		// This is an attempt to make beizer points move with the anchors points but id does not work well with undo
@@ -2793,7 +2807,9 @@ class LinkVisual extends BaseConnection {
 		this.group.setAttribute("node_id",this.id);
 		
 		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
+		this.b1_anchor.makeSquare();
 		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
+		this.b2_anchor.makeSquare();
 
 		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
 		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
