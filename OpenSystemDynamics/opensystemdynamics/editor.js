@@ -2169,7 +2169,6 @@ function getStackTrace() {
 
 class RectangleVisual extends TwoPointer {
 	makeGraphics() {
-		var dash = "";
 		this.element = svg_rect(
 			this.startx, 
 			this.starty, 
@@ -2177,8 +2176,7 @@ class RectangleVisual extends TwoPointer {
 			this.endy, 
 			defaultStroke, 
 			"none", 
-			"element", 
-			dash
+			"element"
 		);
 
 		// Invisible rect to more easily click
@@ -2715,8 +2713,7 @@ class XyPlotVisual extends DiagramVisual {
 
 class LineVisual extends TwoPointer {
 	makeGraphics() {
-		var dash = "";
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element",dash);
+		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
 		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
 		this.clickLine.setAttribute("stroke-width", "10");
 		this.coordRect = new CoordRect();
