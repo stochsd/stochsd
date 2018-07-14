@@ -2811,7 +2811,7 @@ class LinkVisual extends BaseConnection {
 	resetBezierPoints() {
 		let obj1 = this.getStartAttach();
 		let obj2 = this.getEndAttach();
-		if ( ! obj1 && ! obj2) {
+		if ( ! obj1 || ! obj2 ) {
 			return;
 		}
 		this.start_anchor.set_pos(obj1.getLinkMountPos(obj2.get_pos()));
