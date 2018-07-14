@@ -2286,7 +2286,7 @@ class TableVisual extends htmlTwoPointer {
 			"element",
 			""
 		);
-		this.htmlElement = svg_foreignobject(this.startx, this.starty, 200, 200, "table not renderd yet", defaultFill);
+		this.htmlElement = svg_foreignobject(this.startx, this.starty, 200, 200, "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2344,7 +2344,7 @@ class htmlOverlayTwoPointer extends TwoPointer {
 		this.targetBorder = 4;
 		this.targetElement = document.createElement("div");
 		this.targetElement.style.position = "absolute";
-		this.targetElement.style.backgroundColor = defaultFill;
+		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
@@ -2365,7 +2365,7 @@ class htmlOverlayTwoPointer extends TwoPointer {
 			this.endx,
 			this.endy, 
 			defaultStroke, 
-			defaultFill, 
+			"white", 
 			"element",
 			""
 		);
