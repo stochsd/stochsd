@@ -903,7 +903,7 @@ class OnePointer extends BaseObject{
 
 		this.loadImage();
 
-		this.unselect();
+		this.select();
 		
 		// Handled for when attribute changes in corresponding SimpleNode
 		this.changeAttributeHandler = (attribute,value) => {
