@@ -3005,6 +3005,8 @@ class TextTool extends BaseTool {
 		var primitive_name = findFreeName(type_basename["text"]);
 		var size = type_size["text"];
 		var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3023,7 +3025,8 @@ class NumberboxTool extends BaseTool {
 		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
 		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
 		this.primitive.setAttribute("Target",this.targetPrimitive);
-		
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3083,6 +3086,8 @@ class StockTool extends BaseTool {
 		var primitive_name = findFreeName(type_basename["stock"]);
 		var size = type_size["stock"];
 		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3140,6 +3145,8 @@ class GhostTool extends BaseTool {
 		syncVisual(ghost);
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3172,6 +3179,8 @@ class ConverterTool extends BaseTool {
 		var primitive_name = findFreeName(type_basename["converter"]);
 		var size = type_size["converter"];
 		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3189,6 +3198,8 @@ class VariableTool extends BaseTool {
 			size,
 			{"isConstant": false}
 		);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3205,6 +3216,8 @@ class ConstantTool extends BaseTool {
 			size, 
 			{"isConstant": true}
 		);
+	}
+	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
 }
