@@ -118,22 +118,26 @@ class History {
 		History.unsavedChanges = false;
 		
 	}
+	
 	static storeUndoState() {
+		// Create new XML for state
 		let InsightMakerDocumentWriter = new InsightMakerDocument();
 		InsightMakerDocumentWriter.appendPrimitives();
 		let undoState = InsightMakerDocumentWriter.getXmlString();
-		
-		
+
 		// Add to undo history if it is different then previus state
 		if (this.lastUndoState != undoState) {
+			// remove previous states in front in array
+			this.undoStates.splice(this.undoIndex+1);
+			
 			this.undoStates.push(undoState);
 			this.undoIndex = this.undoStates.length-1;
 			this.lastUndoState = undoState;
-			
+			console.log("undoIndex:", this.undoIndex);
 			this.unsavedChanges = true;
 		}
 	}
-	
+
 	static forceCustomUndoState(newState) {
 		this.undoStates = [];
 		this.undoStates.push(newState);
@@ -145,6 +149,7 @@ class History {
 	static doUndo() {
 		if (this.undoIndex > 0) {
 			this.undoIndex --;
+			console.log("undoIndex:", this.undoIndex);
 			this.restoreUndoState();	
 		} else {
 			xAlert("No more undo");
@@ -154,6 +159,7 @@ class History {
 	static doRedo() {
 		if (this.undoIndex < this.undoStates.length-1) {
 			this.undoIndex ++;
+			console.log("undoIndex:", this.undoIndex);
 			this.restoreUndoState();
 		} else {
 			xAlert("No more redo");
