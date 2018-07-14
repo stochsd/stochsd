@@ -2717,9 +2717,11 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		var dash = "";
 		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element",dash);
+		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
+		this.clickLine.setAttribute("stroke-width", "10");
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
-		this.group = svg_group([this.element]);
+		this.group = svg_group([this.element, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
 		for(var key in this.element_array) {
@@ -2731,6 +2733,10 @@ class LineVisual extends TwoPointer {
 		this.element.setAttribute("y1",this.starty);
 		this.element.setAttribute("x2",this.endx);
 		this.element.setAttribute("y2",this.endy);
+		this.clickLine.setAttribute("x1", this.startx);
+		this.clickLine.setAttribute("y1", this.starty);
+		this.clickLine.setAttribute("x2", this.endx);
+		this.clickLine.setAttribute("y2", this.endy);
 	}
 }
 
