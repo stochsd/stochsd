@@ -1934,6 +1934,9 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	parseMiddlePoints(middlePointsString) {
+		if (middlePointsString == "") {
+			return [];
+		}
 		// example input: "15,17 19,12 "
 		
 		// example ["15,17", "19,12"]
