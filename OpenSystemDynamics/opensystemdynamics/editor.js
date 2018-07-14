@@ -1612,12 +1612,6 @@ class TwoPointer extends BaseObject {
 		}
 	}
 	
-	
-	
-	is_selected() {
-		return this.selected;
-	}
-	
 	update() {
 		// Get start position from anchor
 		if (this.start_anchor != null) {
