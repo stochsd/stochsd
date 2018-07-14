@@ -3086,6 +3086,13 @@ class MoveValveTool extends BaseTool {
 	}
 }
 
+class StraightenLinkTool extends BaseTool {
+	static enterTool() {
+		xAlert("This function is not yet implemented");
+	}
+		
+}
+
 class GhostTool extends BaseTool {
 	static init() {
 		this.id_to_ghost = null;
@@ -4059,6 +4066,7 @@ class ToolBox {
 			"link":LinkTool,
 			"rotatename":RotateNameTool,
 			"movevalve":MoveValveTool,
+			"straightenlink": StraightenLinkTool,
 			"ghost":GhostTool,
 			//~ "text":TextTool,
 			"text":TextAreaTool,
