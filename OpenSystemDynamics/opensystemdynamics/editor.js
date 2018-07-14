@@ -5288,6 +5288,7 @@ class jqDialog {
 				// We add a delay to make sure we closed first
 				setTimeout(() => {
 					this.afterOkClose();
+					History.storeUndoState();
 				},200);
 			}
 		};
