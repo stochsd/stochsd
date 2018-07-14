@@ -2180,9 +2180,25 @@ class RectangleVisual extends TwoPointer {
 			"element", 
 			dash
 		);
+
+		// Invisible rect to more easily click
+		this.clickRect = svg_rect(
+			this.startx, 
+			this.starty, 
+			this.endx, 
+			this.endy, 
+			"transparent", 
+			"none"
+		);
+		this.clickRect.setAttribute("stroke-width", "10");
+
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
-		this.group = svg_group([this.element]);
+
+		this.clickCoordRect = new CoordRect();
+		this.clickCoordRect.element = this.clickRect;
+
+		this.group = svg_group([this.element, this.clickRect]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
 		for(var key in this.element_array) {
@@ -2196,6 +2212,13 @@ class RectangleVisual extends TwoPointer {
 		this.coordRect.x2 = this.endx;
 		this.coordRect.y2 = this.endy;
 		this.coordRect.update();
+
+		this.clickCoordRect.x1 = this.startx;
+		this.clickCoordRect.y1 = this.starty;
+		this.clickCoordRect.x2 = this.endx;
+		this.clickCoordRect.y2 = this.endy;
+		this.clickCoordRect.update();
+
 	}
 }
 
