@@ -4650,7 +4650,11 @@ function syncVisual(tprimitive) {
 						visualObject = new ConverterVisual(tprimitive.id, "converter",position,{"is_ghost":true});
 						break;
 					case "Variable":
-						visualObject = new VariableVisual(tprimitive.id, "variable",position,{"is_ghost":true});
+						if (source_primitive.getAttribute("isConstant") == "true") {
+							visualObject = new ConstantVisual(tprimitive.id, "variable", position, {"is_ghost":true});
+						} else {
+							visualObject = new VariableVisual(tprimitive.id, "variable", position, {"is_ghost":true});
+						}
 						break;
 					case "Stock":
 						visualObject = new StockVisual(tprimitive.id, "stock",position,{"is_ghost":true});
