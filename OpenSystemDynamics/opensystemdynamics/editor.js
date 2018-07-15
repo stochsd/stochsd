@@ -1303,8 +1303,8 @@ class StockVisual extends BasePrimitive {
 		textElem.setAttribute("fill", this.color);
 		return [
 			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
-			svg_group([svgGhost(this.color, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
 			svg_rect(-18, -13, 36, 26, "none", this.color, "selector"),
+			svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
 			textElem
 		];
 	}
@@ -1409,8 +1409,8 @@ class VariableVisual extends BasePrimitive {
 		return [
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
-			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
-			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector")
+			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost")
 		];
 	}
 
@@ -1437,8 +1437,8 @@ class ConstantVisual extends VariableVisual {
 		return [
 			svg_path("M0,15 15,0 0,-15 -15,0Z", this.color, defaultFill, "element"),
 			svg_text(0, 0, `[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
-			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost"),
-			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector")
+			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost")
 		];
 	}
 
@@ -1471,7 +1471,7 @@ class ConverterVisual extends BasePrimitive {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
-			svg_group([svgGhost(this.color, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
+			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
 			svg_text(0,0,`[${this.primitive.getAttribute("name")}]`, "name_element", {"fill": this.color}),
 		];
 	}
