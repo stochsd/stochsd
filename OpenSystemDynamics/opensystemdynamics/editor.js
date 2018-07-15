@@ -4591,10 +4591,6 @@ function syncVisual(tprimitive) {
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
-			console.log("tprimitive.id");
-			console.log(tprimitive.id);
-			console.log("primitivesString");
-			console.log(primitivesString);
 			if (primitivesString) {
 				connection.dialog.setIdsToDisplay(idsToDisplay);
 			}
