@@ -3734,6 +3734,23 @@ function tool_deletePrimitive(id) {
 		tool_deletePrimitive(ghostIDs[i]);
 	}
 	cleanUnconnectedLinks();
+	detachFlows(id);
+}
+
+function detachFlows(id) {
+	for (let key in connection_array) {
+		let connection = connection_array[key];
+		if (connection.type == "flow") {
+			if (connection.getStartAttach() && connection.getStartAttach().id == id) {
+				connection.setStartAttach(null);
+				connection.update();
+			}
+			if (connection.getEndAttach() && connection.getEndAttach().id == id) {
+				connection.setEndAttach(null);
+				connection.update();
+			}
+		}
+	}
 }
 
 function get_selected_root_objects() {
