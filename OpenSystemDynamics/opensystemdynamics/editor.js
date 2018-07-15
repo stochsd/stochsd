@@ -4583,6 +4583,10 @@ function syncVisual(tprimitive) {
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			// Set UI-coordinates to coordinates in primitive
 			connection.start_anchor.set_pos(source_position);
 			// Set UI-coordinates to coordinates in primitive
