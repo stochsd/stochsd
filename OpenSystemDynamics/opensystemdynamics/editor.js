@@ -4616,6 +4616,10 @@ function syncVisual(tprimitive) {
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			// Set UI-coordinates to coordinates in primitive
 			connection.start_anchor.set_pos(source_position);
 			// Set UI-coordinates to coordinates in primitive
@@ -4633,6 +4637,10 @@ function syncVisual(tprimitive) {
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			// Set UI-coordinates to coordinates in primitive
 			connection.start_anchor.set_pos(source_position);
 			// Set UI-coordinates to coordinates in primitive
@@ -4754,10 +4762,6 @@ function syncVisual(tprimitive) {
 		break;
 		case "Flow":
 			let connection = new FlowVisual(tprimitive.id, "flow", [0,0]);
-			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
 
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
@@ -4775,6 +4779,10 @@ function syncVisual(tprimitive) {
 			connection.loadMiddlePoints();
 			connection.create_dummy_end_anchor();
 			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			if (tprimitive.source != null) {
 				// Attach to object
 				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
@@ -4797,16 +4805,16 @@ function syncVisual(tprimitive) {
 		{
 			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
 
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
-
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();
 			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
 			if (tprimitive.source != null) {
 				// Attach to object
 				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
