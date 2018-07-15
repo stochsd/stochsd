@@ -5926,7 +5926,7 @@ class TableDialog extends DisplayDialog {
 class SimulationSettings extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Simulation setttings");
+		this.setTitle("Simulation settings");
 		
 	}
 	beforeShow() {
