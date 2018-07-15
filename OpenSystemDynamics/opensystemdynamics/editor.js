@@ -1918,6 +1918,10 @@ class FlowVisual extends BaseConnection {
 			this.valveIndex = (this.valveIndex+1)%(this.anchorPoints.length-1);
 		}
 		this.variableSide = !this.variableSide;
+
+		this.primitive.setAttribute("valveIndex", this.valveIndex);
+		this.primitive.setAttribute("variableSide", this.variableSide);
+
 		update_all_objects();
 	}
 
@@ -4788,6 +4792,11 @@ function syncVisual(tprimitive) {
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
+			if (tprimitive.getAttribute("valveIndex")) {
+				connection.valveIndex = parseInt(tprimitive.getAttribute("valveIndex"));
+				connection.variableSide = (tprimitive.getAttribute("variableSide") == "true");
 			}
 
 			if (tprimitive.source != null) {
