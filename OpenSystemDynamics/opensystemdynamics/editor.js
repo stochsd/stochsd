@@ -2445,9 +2445,6 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 			}
 		);
 
-		console.log("this.patternsToDisplay");
-		console.log( this.patternsToDisplay );
-
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
