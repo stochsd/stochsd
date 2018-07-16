@@ -5016,6 +5016,8 @@ function updateInfoBar() {
 		if (definition != "") {
 			infoBar.html(`[${name}] = ${definition}`);
 		}
+	} else {
+		infoBar.html(`${selected_array.length} objects selected`)
 	}
 }
 
