@@ -2693,7 +2693,13 @@ class XyPlotVisual extends DiagramVisual {
 		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
-			this.serieSettingsArray.push({label: this.namesToDisplay[i], showMarker:false});
+			this.serieSettingsArray.push(
+				{
+					label: this.namesToDisplay[i], 
+					shadow: false,
+					showMarker:false
+				}
+			);
 		}
 		
 		do_global_log(JSON.stringify(this.serieSettingsArray));
