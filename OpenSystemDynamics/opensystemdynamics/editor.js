@@ -5733,6 +5733,8 @@ class DiagramDialog extends DisplayDialog {
 		super();
 		this.setTitle("Diagram properties");
 		
+		this.markers = false;
+
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
@@ -5847,7 +5849,7 @@ class XyPlotDialog extends DiagramDialog {
 	constructor() {
 		super();
 		this.setTitle("XY-plot properties");
-		
+
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
