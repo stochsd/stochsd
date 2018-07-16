@@ -3275,13 +3275,13 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseDown(x,y) {
+		updateInfoBar();
 		mousedown_x = x;
 		mousedown_y = y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
 		if (!last_click_object_clicked) {
 			empty_click();
 		}
-		
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
 		if (selectedAnchor && get_parent(selectedAnchor).getStartAttach) {
@@ -3300,6 +3300,7 @@ class MouseTool extends BaseTool {
 		last_click_object_clicked = false;
 	}
 	static mouseMove(x,y) {
+		updateInfoBar();
 		var diff_x = x-mousedown_x;
 		var diff_y = y-mousedown_y;
 		mousedown_x = x;
@@ -3353,6 +3354,7 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseUp(x,y) {
+		updateInfoBar();
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
 		if (selectedAnchor) {
@@ -4953,6 +4955,41 @@ function setColorToSelection(color) {
 		let obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
+}
+
+
+function updateInfoBar() {
+	let infoBar = $("#infoBar");
+	let selected_hash = get_selected_root_objects();
+	let selected_array = [];
+	for (let key in selected_hash) {
+		selected_array.push(selected_hash[key]);
+	}
+
+	if (selected_array == 0) {
+		infoBar.html("Nothing selected");
+	} else if (selected_array.length == 1) {
+		let selected = selected_array[0];
+		let name = selected.primitive.getAttribute("name");
+		let definition = "";
+		if (selected.type == "stock") {
+			definition = selected.primitive.getAttribute("InitialValue").split("\n")[0];
+		} else if (selected.type == "flow") {
+			definition = selected.primitive.getAttribute("FlowRate").split("\n")[0];
+		} else if (selected.type == "converter") {
+			definition = selected.primitive.getAttribute("Data").split("\n")[0];
+		} else if (selected.type == "variable") {
+			definition = selected.primitive.getAttribute("Equation").split("\n")[0];
+		}
+		if (name == "" || definition == "") {
+			infoBar.html(`${selected_array.length} object selected`);
+		} else {
+			infoBar.html(`[${name}] = ${definition}`);
+		}
+	} else {
+		infoBar.html(`${selected_array.length} objects selected`);
+	}
+
 }
 
 class RunResults {
