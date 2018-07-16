@@ -4970,26 +4970,28 @@ function updateInfoBar() {
 		infoBar.html("Nothing selected");
 	} else if (selected_array.length == 1) {
 		let selected = selected_array[0];
-		let name = selected.primitive.getAttribute("name");
+		primitive = selected_array[0].primitive;
+		let name = primitive.getAttribute("name");
 		let definition = "";
-		if (selected.type == "stock") {
-			definition = selected.primitive.getAttribute("InitialValue").split("\n")[0];
-		} else if (selected.type == "flow") {
-			definition = selected.primitive.getAttribute("FlowRate").split("\n")[0];
-		} else if (selected.type == "converter") {
+		if (primitive.getAttribute("InitialValue")) {
+			definition = primitive.getAttribute("InitialValue").split("\n")[0];
+		} else if (primitive.getAttribute("FlowRate")) {
+			definition = primitive.getAttribute("FlowRate").split("\n")[0];
+		} else if (primitive.getAttribute("Data")) {
 			definition = selected.primitive.getAttribute("Data").split("\n")[0];
-		} else if (selected.type == "variable") {
+		} else if (primitive.getAttribute("Equation")) {
 			definition = selected.primitive.getAttribute("Equation").split("\n")[0];
-		}
-		if (name == "" || definition == "") {
-			infoBar.html(`${selected_array.length} object selected`);
 		} else {
+			let type = selected.type;
+
+			// Make first letter uppercase
+			type = type.charAt(0).toUpperCase() + type.slice(1); 
+			infoBar.html(`${type} selected`);
+		}
+		if (definition != "") {
 			infoBar.html(`[${name}] = ${definition}`);
 		}
-	} else {
-		infoBar.html(`${selected_array.length} objects selected`);
 	}
-
 }
 
 class RunResults {
