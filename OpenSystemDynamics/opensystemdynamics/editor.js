@@ -2432,6 +2432,21 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 		this.colorsToDisplay = IdsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
 		);
+		this.patternsToDisplay = IdsToDisplay.map(findID).map(
+			node => {
+				let type = get_object(node.id).type;
+				if (type == "variable" || type == "converter") {
+					return ".";
+				} else if (type == "flow") {
+					return "-";
+				} else {
+					return "_";
+				}
+			}
+		);
+
+		console.log("this.patternsToDisplay");
+		console.log( this.patternsToDisplay );
 
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
@@ -2484,6 +2499,7 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 				{
 					label: makePrimitiveName(this.namesToDisplay[i]), 
 					color: this.colorsToDisplay[i],
+					linePattern: this.patternsToDisplay[i],
 					shadow: false,
 					showMarker:false
 				}
