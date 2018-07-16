@@ -3057,6 +3057,7 @@ class NumberboxTool extends BaseTool {
 		this.primitive.setAttribute("Target",this.targetPrimitive);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3118,6 +3119,7 @@ class StockTool extends BaseTool {
 		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3177,6 +3179,7 @@ class GhostTool extends BaseTool {
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3211,6 +3214,7 @@ class ConverterTool extends BaseTool {
 		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3230,6 +3234,7 @@ class VariableTool extends BaseTool {
 		);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3248,6 +3253,7 @@ class ConstantTool extends BaseTool {
 		);
 	}
 	static leftMouseUp(x, y) {
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3275,7 +3281,6 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseDown(x,y) {
-		updateInfoBar();
 		mousedown_x = x;
 		mousedown_y = y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
@@ -3300,7 +3305,6 @@ class MouseTool extends BaseTool {
 		last_click_object_clicked = false;
 	}
 	static mouseMove(x,y) {
-		updateInfoBar();
 		var diff_x = x-mousedown_x;
 		var diff_y = y-mousedown_y;
 		mousedown_x = x;
@@ -3412,6 +3416,7 @@ class TwoPointerTool extends BaseTool {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_start_anchor();
 		}
+		updateInfoBar();
 	}
 	static mouseMove(x,y) {
 		if (this.current_connection == null) {
