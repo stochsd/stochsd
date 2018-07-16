@@ -2333,7 +2333,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 }
 
-class htmlOverlayTwoPointer extends TwoPointer {
+class HtmlOverlayTwoPointer extends TwoPointer {
 	constructor(id,type,pos) {		
 		super(id,type,pos);
 	}
@@ -2408,7 +2408,7 @@ class htmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
-class DiagramVisual extends htmlOverlayTwoPointer {
+class DiagramVisual extends HtmlOverlayTwoPointer {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
@@ -2567,7 +2567,7 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 	}
 }
 
-class TextAreaVisual extends htmlOverlayTwoPointer {
+class TextAreaVisual extends HtmlOverlayTwoPointer {
 	constructor(id,type,pos) {		
 		super(id,type,pos);
 		
