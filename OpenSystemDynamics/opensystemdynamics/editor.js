@@ -2429,6 +2429,10 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
+		this.colorsToDisplay = IdsToDisplay.map(findID).map(
+			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+		);
+
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
@@ -2476,7 +2480,13 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
-			this.serieSettingsArray.push({label: makePrimitiveName(this.namesToDisplay[i]), showMarker:false});
+			this.serieSettingsArray.push(
+				{
+					label: makePrimitiveName(this.namesToDisplay[i]), 
+					color: this.colorsToDisplay[i],
+					showMarker:false
+				}
+			);
 		}
 		
 		do_global_log(JSON.stringify(this.serieSettingsArray));
