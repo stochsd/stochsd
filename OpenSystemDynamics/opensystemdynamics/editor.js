@@ -5709,12 +5709,29 @@ class DisplayDialog extends jqDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		return `
-		<table>
-		<tr>
-			${primitives.map(p => '<tr><td class="text">'+makePrimitiveName(getName(p))+'</td><td><input class="primitive_checkbox" type="checkbox" '+checkedHtmlAttribute(this.getDisplayId(getID(p)))+' data-name="'+getName(p)+'" data-id="'+getID(p)+'"></td></tr>').join('')}
-		</tr>
-		</table>`;
+		
+		return (`
+			<table>
+			<tr>
+				${primitives.map(p => `
+					<tr>
+						<td class="text">
+							${makePrimitiveName(getName(p))} 
+						</td>
+						<td>
+							<input 
+								class="primitive_checkbox" 
+								type="checkbox" 
+								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+							>
+						</td>
+					</tr>
+				`).join('')}
+			</tr>
+			</table>
+		`);
 	}
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
