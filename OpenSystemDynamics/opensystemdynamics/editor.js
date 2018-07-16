@@ -2224,7 +2224,7 @@ class RectangleVisual extends TwoPointer {
 	}
 }
 
-class htmlTwoPointer extends TwoPointer {
+class HtmlTwoPointer extends TwoPointer {
 	updateHTML(html) {
 		this.htmlElement.contentDiv.innerHTML = html;
 	}
@@ -2234,7 +2234,7 @@ class htmlTwoPointer extends TwoPointer {
 	}
 }
 
-class TableVisual extends htmlTwoPointer {
+class TableVisual extends HtmlTwoPointer {
 	constructor(id,type,pos) {
 		super(id,type,pos);
 		this.runHandler = () => {
