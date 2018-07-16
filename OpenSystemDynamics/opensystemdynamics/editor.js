@@ -3084,7 +3084,6 @@ class NumberboxTool extends BaseTool {
 		this.primitive.setAttribute("Target",this.targetPrimitive);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3146,7 +3145,6 @@ class StockTool extends BaseTool {
 		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3206,7 +3204,6 @@ class GhostTool extends BaseTool {
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 	static enterTool() {
@@ -3241,7 +3238,6 @@ class ConverterTool extends BaseTool {
 		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3261,7 +3257,6 @@ class VariableTool extends BaseTool {
 		);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3280,7 +3275,6 @@ class ConstantTool extends BaseTool {
 		);
 	}
 	static leftMouseUp(x, y) {
-		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3385,7 +3379,6 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseUp(x,y) {
-		updateInfoBar();
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
 		if (selectedAnchor) {
@@ -3443,7 +3436,6 @@ class TwoPointerTool extends BaseTool {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_start_anchor();
 		}
-		updateInfoBar();
 	}
 	static mouseMove(x,y) {
 		if (this.current_connection == null) {
@@ -4133,6 +4125,7 @@ function mouseUpHandler(event) {
 	
 	currentTool.leftMouseUp(x,y);
 	mouseisdown = false;
+	updateInfoBar();
 	History.storeUndoState();
 }
 
