@@ -2484,6 +2484,7 @@ class DiagramVisual extends htmlOverlayTwoPointer {
 				{
 					label: makePrimitiveName(this.namesToDisplay[i]), 
 					color: this.colorsToDisplay[i],
+					shadow: false,
 					showMarker:false
 				}
 			);
