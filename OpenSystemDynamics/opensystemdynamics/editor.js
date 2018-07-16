@@ -2696,6 +2696,7 @@ class XyPlotVisual extends DiagramVisual {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
+					color: "black",
 					shadow: false,
 					showMarker:false
 				}
@@ -2717,11 +2718,6 @@ class XyPlotVisual extends DiagramVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		
-		this.serieSettingsArray = this.serieSettingsArray.map(function(settingsIn) {
-			settingsIn.showMarker = true;
-			return settingsIn;
-		});
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			  series: this.serieSettingsArray,
