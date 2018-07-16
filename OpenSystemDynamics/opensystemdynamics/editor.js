@@ -4960,6 +4960,7 @@ function setColorToSelection(color) {
 		let obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
+	History.storeUndoState();
 }
 
 
