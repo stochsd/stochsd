@@ -5003,13 +5003,13 @@ function updateInfoBar() {
 		primitive = selected_array[0].primitive;
 		let name = primitive.getAttribute("name");
 		let definition = "";
-		if (primitive.getAttribute("InitialValue")) {
+		if (primitive.getAttribute("InitialValue")) { // Stock
 			definition = primitive.getAttribute("InitialValue").split("\n")[0];
-		} else if (primitive.getAttribute("FlowRate")) {
+		} else if (primitive.getAttribute("FlowRate")) { // Flow
 			definition = primitive.getAttribute("FlowRate").split("\n")[0];
-		} else if (primitive.getAttribute("Data")) {
+		} else if (primitive.getAttribute("Data")) { // Converter
 			definition = selected.primitive.getAttribute("Data").split("\n")[0];
-		} else if (primitive.getAttribute("Equation")) {
+		} else if (primitive.getAttribute("Equation")) { // Variable or Constant
 			definition = selected.primitive.getAttribute("Equation").split("\n")[0];
 		} else {
 			let type = selected.type;
