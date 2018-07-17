@@ -1449,6 +1449,7 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		this.rotatePosList = [[0, 27],[23, 3],[0, -21],[-23, 3]];
 	}
 	getImage() {
 		return [
