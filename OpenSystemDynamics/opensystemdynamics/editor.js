@@ -2626,7 +2626,8 @@ class XyPlotVisual extends DiagramVisual {
 	}
 	render() {		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.markers = this.dialog.getMarkers();
+		this.showMarkers = this.dialog.isMarkersChecked();
+		this.showLine = this.dialog.isLineChecked();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
@@ -2701,8 +2702,8 @@ class XyPlotVisual extends DiagramVisual {
 					label: this.namesToDisplay[i], 
 					color: "black",
 					shadow: false,
-					showLine: ! this.markers,
-					showMarker: this.markers  
+					showLine: this.showLine,
+					showMarker: this.showMarkers  
 				}
 			);
 		}
@@ -5878,6 +5879,7 @@ class XyPlotDialog extends DiagramDialog {
 		this.setTitle("XY-plot properties");
 
 		this.markersChecked = false;
+		this.lineChecked = true;
 
 		this.xMin = 0;
 		this.xMax = 0;
@@ -5898,19 +5900,20 @@ class XyPlotDialog extends DiagramDialog {
 		return (`
 			<table style=" float: right; margin: 16px 16px; text-align: left;">
 				<tr>
+				<td style="text-align: left">
+						Line
+					</td>	
 					<td>
-						<input type="radio" name="displayType" class="line">
+						<input type="checkbox" name="displayType" class="line">
 					</td>
-					<td style="text-align: left">
-						Show plot as line (default)
-					</td>
+					
 				</tr>
 				<tr>
-					<td>
-						<input type="radio" name="displayType" class="markers">
-					</td>
 					<td style="text-align: left">
-						Show plot as markers
+						Markers
+					</td>
+					<td>
+						<input type="checkbox" name="displayType" class="markers">
 					</td>
 				</tr>
 			</table>
@@ -5935,7 +5938,7 @@ class XyPlotDialog extends DiagramDialog {
 
 	bindMarkersHTML() {
 		$(this.dialogContent).find(".line").change((event) => {
-			this.markersChecked = ! event.target.checked;
+			this.lineChecked = event.target.checked;
 			this.updateInterval();
 		});
 		$(this.dialogContent).find(".markers").change((event) => {
@@ -5944,14 +5947,18 @@ class XyPlotDialog extends DiagramDialog {
 		});
 	}
 
-	getMarkers() {
+	isMarkersChecked() {
 		return this.markersChecked;
+	}
+
+	isLineChecked() {
+		return this.lineChecked;
 	}
 
 	updateInterval() {
 		super.updateInterval();
+		$(this.dialogContent).find(".line")[0].checked = this.lineChecked;
 		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
-		$(this.dialogContent).find(".line")[0].checked = ! this.markersChecked;
 	}
 
 	getXMin() {
