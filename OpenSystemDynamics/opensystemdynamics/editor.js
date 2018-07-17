@@ -2639,8 +2639,8 @@ class XyPlotVisual extends DiagramVisual {
 		
 		let makeXYSerie = () => {
 			let serie = [];
-			this.serieXName = makePrimitiveName(this.namesToDisplay[0]);
-			this.serieYName = makePrimitiveName(this.namesToDisplay[1]);
+			this.serieXName = this.namesToDisplay[0];
+			this.serieYName = this.namesToDisplay[1];
 			
 			for(let row of results) {
 				let x = Number(row[1])
