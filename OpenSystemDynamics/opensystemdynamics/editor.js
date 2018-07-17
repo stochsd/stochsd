@@ -1233,6 +1233,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		this.rotatePosList = [[0, 27], [22, 3], [0, -21], [-22, 3]];
 	}
 
 	getSize() {
