@@ -2611,6 +2611,8 @@ class XyPlotVisual extends DiagramVisual {
 		this.serieArray = null;
 		this.namesToDisplay = [];
 		
+		this.markers = false;
+
 		this.minXValue = 0;
 		this.maxXValue = 0;
 		
@@ -2624,6 +2626,7 @@ class XyPlotVisual extends DiagramVisual {
 	}
 	render() {		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		this.markers = this.dialog.getMarkers();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
@@ -2698,7 +2701,7 @@ class XyPlotVisual extends DiagramVisual {
 					label: this.namesToDisplay[i], 
 					color: "black",
 					shadow: false,
-					showMarker:false
+					showMarker: this.markers  
 				}
 			);
 		}
@@ -5873,6 +5876,8 @@ class XyPlotDialog extends DiagramDialog {
 		super();
 		this.setTitle("XY-plot properties");
 
+		this.markersChecked = false;
+
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
@@ -5893,7 +5898,7 @@ class XyPlotDialog extends DiagramDialog {
 			<table style="margin: 16px 0px; text-align: left;">
 				<tr>
 					<td>
-						<input type="radio" name="displayType" value="line">
+						<input type="radio" name="displayType" class="line">
 					</td>
 					<td style="text-align: left">
 						Show plot as line (default)
@@ -5901,7 +5906,7 @@ class XyPlotDialog extends DiagramDialog {
 				</tr>
 				<tr>
 					<td>
-						<input type="radio" name="displayType" value="marker">
+						<input type="radio" name="displayType" class="markers">
 					</td>
 					<td style="text-align: left">
 						Show plot as markers
@@ -5922,12 +5927,30 @@ class XyPlotDialog extends DiagramDialog {
 		
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
-		
+		this.bindMarkersHTML();
+
 		this.updateInterval();
+	}
+
+	bindMarkersHTML() {
+		$(this.dialogContent).find(".line").change((event) => {
+			this.markersChecked = ! event.target.checked;
+			this.updateInterval();
+		});
+		$(this.dialogContent).find(".markers").change((event) => {
+			this.markersChecked = event.target.checked;
+			this.updateInterval();
+		});
+	}
+
+	getMarkers() {
+		return this.markersChecked;
 	}
 
 	updateInterval() {
 		super.updateInterval();
+		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
+		$(this.dialogContent).find(".line")[0].checked = ! this.markersChecked;
 	}
 
 	getXMin() {
