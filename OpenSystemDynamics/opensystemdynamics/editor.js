@@ -2701,6 +2701,7 @@ class XyPlotVisual extends DiagramVisual {
 					label: this.namesToDisplay[i], 
 					color: "black",
 					shadow: false,
+					showLine: ! this.markers,
 					showMarker: this.markers  
 				}
 			);
