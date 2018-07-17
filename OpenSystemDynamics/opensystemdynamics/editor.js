@@ -746,7 +746,6 @@ class BaseObject {
 		this.element_array = [];
 		this.selector_array = [];
 		this.group = null;
-		this.mountPoints = [[0,0]];
 		
 		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
 	}
@@ -775,24 +774,7 @@ class BaseObject {
 	}
 
 	getLinkMountPos(closeToPoint) {
-		let pos = this.get_pos();
-		
-		// Check if we only have one mount point
-		if (this.mountPoints == 1) {
-			return [pos[0]+this.mountPoints[0], pos[1]+this.mountPoints[1]];
-		}
-		
-		// Else calculate the closest one
-		let closedFoundPoint = this.mountPoints[0];
-		let closedFoundDistance = pointDistance(positionSum(this.mountPoints[0], pos), closeToPoint);
-		for(let mp of this.mountPoints) {
-			let tmpDistance = pointDistance(positionSum(mp, pos), closeToPoint);
-			if (tmpDistance < closedFoundDistance) {
-				closedFoundDistance = tmpDistance;
-				closedFoundPoint = mp;
-			}
-		}
-		return [pos[0]+closedFoundPoint[0], pos[1]+closedFoundPoint[1]];
+		return this.get_pos();
 	}
 	
 	is_selected() {
@@ -1467,7 +1449,6 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.mountPoints = [[-20,0],[20,0],[0,-15],[0,15]];
 	}
 	getImage() {
 		return [
