@@ -4902,7 +4902,7 @@ function syncVisual(tprimitive) {
 // This is executed after loading a file or loading a whole new state such as after undo
 function syncAllVisuals() {
 	for(let type of saveblePrimitiveTypes) {
-	var primitive_list = primitives(type);
+		var primitive_list = primitives(type);
 		for(key in primitive_list) {
 			try {
 				syncVisual(primitive_list[key]);
