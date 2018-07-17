@@ -5896,7 +5896,7 @@ class XyPlotDialog extends DiagramDialog {
 	
 	renderMarkerRadioHTML() {
 		return (`
-			<table style="margin: 16px 0px; text-align: left;">
+			<table style=" float: right; margin: 16px 16px; text-align: left;">
 				<tr>
 					<td>
 						<input type="radio" name="displayType" class="line">
@@ -5921,8 +5921,8 @@ class XyPlotDialog extends DiagramDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 
-		let contentHTML = this.renderPrimitiveListHtml();
-		contentHTML += this.renderMarkerRadioHTML();
+		let contentHTML = this.renderMarkerRadioHTML();
+		contentHTML += this.renderPrimitiveListHtml();
 		contentHTML += this.renderAxisLimitsHTML();
 		this.setHtml(contentHTML);
 		
