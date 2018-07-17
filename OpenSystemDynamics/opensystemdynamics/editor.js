@@ -5713,7 +5713,7 @@ class DisplayDialog extends jqDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table>
+			<table style="margin: 16px 0px;">
 			<tr>
 				${primitives.map(p => `
 					<tr>
@@ -5735,8 +5735,7 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	beforeShow() {
-		this.setHtml(this.renderPrimitiveListHtml());
+	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
 			let idClicked = $(clickedElement).attr("data-id");
@@ -5744,6 +5743,10 @@ class DisplayDialog extends jqDialog {
 			this.setDisplayId(idClicked,checked);
 			this.subscribePool.publish("primitive check changed");
 		});
+	}
+	beforeShow() {
+		this.setHtml(this.renderPrimitiveListHtml());
+		this.bindPrimitiveListEvents();
 	}
 }
 
@@ -5767,13 +5770,10 @@ class DiagramDialog extends DisplayDialog {
 		
 		this.simulationTime = 0;
 	}
-	beforeShow() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = this.renderPrimitiveListHtml()+`
-		<br/><br/>
-		<table>
+
+	renderAxisLimitsHTML() {
+		return (`
+		<table style="margin: 16px 0px;">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -5793,20 +5793,24 @@ class DiagramDialog extends DisplayDialog {
 				<td><input class="yAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 			</tr>
 		</table>
-		`;
-		this.setHtml(contentHTML);
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
-			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
-			this.setDisplayId(idClicked,checked);
-			this.subscribePool.publish("primitive check changed");
-		});
-		
-		
+		`);
+	}
+
+	bindAxisLimitsEvents() {
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
 		});
+	}
+
+	beforeShow() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+
+		let contentHTML = this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
+		this.setHtml(contentHTML);
+		
+		this.bindPrimitiveListEvents();
+		this.bindAxisLimitsEvents();
 		
 		this.updateInterval();
 	}
@@ -5884,6 +5888,48 @@ class XyPlotDialog extends DiagramDialog {
 		this.maxYValue = 0;
 	}
 	
+	renderMarkerRadioHTML() {
+		return (`
+			<table style="margin: 16px 0px; text-align: left;">
+				<tr>
+					<td>
+						<input type="radio" name="displayType" value="line">
+					</td>
+					<td style="text-align: left">
+						Show plot as line (default)
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="radio" name="displayType" value="marker">
+					</td>
+					<td style="text-align: left">
+						Show plot as markers
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+
+	beforeShow() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+
+		let contentHTML = this.renderPrimitiveListHtml();
+		contentHTML += this.renderMarkerRadioHTML();
+		contentHTML += this.renderAxisLimitsHTML();
+		this.setHtml(contentHTML);
+		
+		this.bindPrimitiveListEvents();
+		this.bindAxisLimitsEvents();
+		
+		this.updateInterval();
+	}
+
+	updateInterval() {
+		super.updateInterval();
+	}
+
 	getXMin() {
 		if (this.xAuto) {
 			return this.minXValue;
@@ -5927,36 +5973,34 @@ class TableDialog extends DisplayDialog {
 		this.lengthAuto = true;
 		this.stepAuto = true;
 	}
+	renderTableLimitsHTML() {
+		return (`
+		<table style="margin: 16px 0px;">
+			<tr>
+				<td class="text">Start</td>
+				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
+				<td>Auto <input class="intervalsettings start_auto" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
+			</tr><tr>
+				<td class="text">Length</td>
+				<td><input class="intervalsettings length" name="length" value="${this.length}" type="text"></td>
+				<td>Auto <input class="intervalsettings length_auto" type="checkbox"  ${checkedHtmlAttribute(this.lengthAuto)}/></td>
+			</tr><tr>
+				<td class="text">Step</td>
+				<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
+				<td>Auto <input class="intervalsettings step_auto" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
+			</tr>
+		</table>
+		`);
+
+	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = this.renderPrimitiveListHtml()+`
-		<br/><br/>
-		<table>
-		<tr>
-			<td class="text">Start</td>
-			<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
-			<td>Auto <input class="intervalsettings start_auto" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
-		</tr><tr>
-			<td class="text">Length</td>
-			<td><input class="intervalsettings length" name="length" value="${this.length}" type="text"></td>
-			<td>Auto <input class="intervalsettings length_auto" type="checkbox"  ${checkedHtmlAttribute(this.lengthAuto)}/></td>
-		</tr><tr>
-			<td class="text">Step</td>
-			<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
-			<td>Auto <input class="intervalsettings step_auto" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
-		</tr>
-		</table>
-		`;
+		let contentHTML = this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
 		this.setHtml(contentHTML);
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
-			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
-			this.setDisplayId(idClicked,checked);
-			this.subscribePool.publish("primitive check changed");
-		});
+		
+		this.bindPrimitiveListEvents();
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
 		});
