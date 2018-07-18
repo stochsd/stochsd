@@ -1221,7 +1221,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.namePosList = [[0, 27], [22, 3], [0, -21], [-22, 3]];
+		this.namePosList = [[0, 29], [22, 5], [0, -19], [-22, 5]];
 	}
 
 	getSize() {
@@ -1377,7 +1377,7 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.namePosList = [[0, 27],[18, 3],[0, -21],[-18, 3]];
+		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
 	}
 
 	getRadius() {
@@ -1455,7 +1455,7 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.namePosList = [[0, 27],[23, 3],[0, -21],[-23, 3]];
+		this.namePosList = [[0, 29],[23, 5],[0, -19],[-23, 5]];
 	}
 	getImage() {
 		return [
@@ -1772,7 +1772,7 @@ class FlowVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
-		this.namePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacement when rotating text
+		this.namePosList = [[0,36],[28,5],[0,-30],[-28,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
