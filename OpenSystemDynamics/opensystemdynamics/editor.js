@@ -112,6 +112,7 @@ class History {
 		this.undoStates = [];
 		this.undoIndex = -1;
 		this.lastUndoState = "";
+		this.undoLimit = 10;
 		
 		// Tells if the last state is saved to file
 		// This is used for determining if the program should ask about saving
@@ -127,14 +128,19 @@ class History {
 
 		// Add to undo history if it is different then previus state
 		if (this.lastUndoState != undoState) {
-			// Preserves onlu states from 0 to undoIndex
+			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex+1);
 			
 			this.undoStates.push(undoState);
 			this.undoIndex = this.undoStates.length-1;
 			this.lastUndoState = undoState;
-			console.log("undoIndex:", this.undoIndex);
 			this.unsavedChanges = true;
+
+			if (this.undoLimit < this.undoStates.length) {
+				this.undoStates = this.undoStates.slice(this.undoStates.length - this.undoLimit);
+				this.undoIndex = this.undoStates.length-1;
+			}
+			console.log("undoIndex:", this.undoIndex);
 		}
 	}
 
