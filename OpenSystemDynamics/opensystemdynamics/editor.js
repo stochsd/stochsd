@@ -753,7 +753,7 @@ class BaseObject {
 		this.selector_array = [];
 		this.group = null;
 		
-		this.rotatePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
+		this.namePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
 	}
 
 	setColor(color) {
@@ -1221,7 +1221,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.rotatePosList = [[0, 27], [22, 3], [0, -21], [-22, 3]];
+		this.namePosList = [[0, 27], [22, 3], [0, -21], [-22, 3]];
 	}
 
 	getSize() {
@@ -1377,7 +1377,7 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.rotatePosList = [[0, 27],[18, 3],[0, -21],[-18, 3]];
+		this.namePosList = [[0, 27],[18, 3],[0, -21],[-18, 3]];
 	}
 
 	getRadius() {
@@ -1455,7 +1455,7 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.rotatePosList = [[0, 27],[23, 3],[0, -21],[-23, 3]];
+		this.namePosList = [[0, 27],[23, 3],[0, -21],[-23, 3]];
 	}
 	getImage() {
 		return [
@@ -1772,7 +1772,7 @@ class FlowVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
-		this.rotatePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacement when rotating text
+		this.namePosList = [[0,36],[28,3],[0,-30],[-28,3]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
@@ -4039,7 +4039,7 @@ function update_name_pos(node_id) {
 	}
 
 	let visualObject = get_object(node_id);
-	let pos = visualObject.rotatePosList[visualObject.name_pos];
+	let pos = visualObject.namePosList[visualObject.name_pos];
 	name_element.setAttribute("x",pos[0]); //Set path's data
 	name_element.setAttribute("y",pos[1]); //Set path's data
 
