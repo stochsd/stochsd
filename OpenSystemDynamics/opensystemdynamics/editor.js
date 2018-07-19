@@ -792,9 +792,9 @@ class BaseObject {
 	setDefined(value) {
 		this.isDefined = value;
 		if (this.isDefined) {
-			// Hide question mark
+			this.icons.setState("none");
 		} else {
-			// Show question mark
+			this.icons.setState("questionmark");
 		}
 	}
 

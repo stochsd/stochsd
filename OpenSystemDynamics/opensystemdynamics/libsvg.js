@@ -463,14 +463,17 @@ function svgIcons(stroke, fill, markclass) {
 	
 	newElement.setColor = function (color) {
 		this.ghost.setAttribute("stroke", color);
-		this.questionmark.setAttribute("fill", color);
+		this.questionmark.setAttribute("style", `fill: ${color}`);
 	}
 
 	newElement.setState = function (state) {
-		if ("ghost") {
+		if (state == "none") {
+			this.ghost.setAttribute("visibility", "hidden");
+			this.questionmark.setAttribute("visibility", "hidden");
+		} else if (state == "ghost") {
 			this.ghost.setAttribute("visibility", "visible");
 			this.questionmark.setAttribute("visibility", "hidden")
-		} else if ("questionmark") {
+		} else if (state == "questionmark") {
 			this.ghost.setAttribute("visibility", "hidden");
 			this.questionmark.setAttribute("visibility", "visible")
 		}
