@@ -2247,7 +2247,7 @@ class TableVisual extends HtmlTwoPointer {
 		// Make header
 		html += "<td>"+formatFunction("Time")+"</td>";
 		for(let i in namesToDisplay) {
-			html += "<td>"+makePrimitiveName(namesToDisplay[i])+"</td>";
+			html += `<td>${namesToDisplay[i]}</td>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
