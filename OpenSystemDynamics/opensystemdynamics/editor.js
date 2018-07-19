@@ -745,12 +745,14 @@ class BaseObject {
 		this.name_radius = 30;
 		this.superClass = "baseobject";
 		this.color = defaultStroke;
+		this.isDefined = false;
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
 		
 		this.element_array = [];
 		this.selector_array = [];
+		this.icons; 	// svg_group with icons such as ghost and questionmark
 		this.group = null;
 		
 		this.namePosList = [[0, this.name_radius+8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
@@ -786,7 +788,16 @@ class BaseObject {
 	is_selected() {
 		return this.selected;
 	}
-	
+
+	setDefined(value) {
+		this.isDefined = value;
+		if (this.isDefined) {
+			// Hide question mark
+		} else {
+			// Show question mark
+		}
+	}
+
 	clean() {
 			// Clean all children
 			let children = getChildren(this.id);
@@ -939,12 +950,22 @@ class OnePointer extends BaseObject{
 			}
 		}
 		
+		for (let key in element_array) {
+			if (element_array[key].getAttribute("class") == "icons") {
+				this.icons = this.element_array[key]
+				break;
+			}
+		}
+		
 		if (!this.is_ghost) {
 			for(var key in element_array) {
 				if (element_array[key].getAttribute("class") == "ghost") {
 					element_array[key].setAttribute("visibility", "hidden");
 				}
 			}
+		}
+		if (this.is_ghost && this.icons) {
+			this.icons.setState("ghost");
 		}
 		
 			
@@ -1400,7 +1421,9 @@ class VariableVisual extends BasePrimitive {
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost")
+			svgIcons(defaultStroke, defaultFill, "icons")
+			//svgQuestionmark(defaultStroke),
+			// svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost")
 		];
 	}
 
