@@ -2484,7 +2484,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
-					label: makePrimitiveName(this.namesToDisplay[i]), 
+					label: this.namesToDisplay[i], 
 					color: this.colorsToDisplay[i],
 					linePattern: this.patternsToDisplay[i],
 					shadow: false,
