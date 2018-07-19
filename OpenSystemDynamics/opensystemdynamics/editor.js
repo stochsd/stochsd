@@ -259,6 +259,7 @@ function makeKeyboardCodes() {
 	keyboard["delete"] = 46;
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
+	keyboard["enter"] = 13;
 	return keyboard;
 }
 
@@ -5438,20 +5439,23 @@ class jqDialog {
 			"Cancel":() => {
 				$(this.dialog).dialog('close');
 			},
-			"Apply":() =>
-			{
-				$(this.dialog).dialog('close');
-				// We add a delay to make sure we closed first
-				setTimeout(() => {
-					this.afterOkClose();
-					History.storeUndoState();
-				},200);
+			"Apply": () => {
+				this.applyChanges();
 			}
 		};
 		this.dialogParameters.width = "auto";
 		this.dialogParameters.height = "auto";
 		this.beforeCreateDialog();
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
+	}
+	applyChanges() {
+		$(this.dialog).dialog('close');
+		// We add a delay to make sure we closed first
+		setTimeout(() => {
+			this.afterOkClose();
+			History.storeUndoState();
+			updateInfoBar();
+		}, 200);
 	}
 	afterOkClose() {
 		
@@ -6324,7 +6328,21 @@ class EquationEditor extends jqDialog {
 		`);
 
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
+		$(this.valueField).keydown((event) => {
+			if (event.ctrlKey) {
+				if (event.keyCode == keyboard["enter"]) {
+					this.applyChanges();
+				}
+			}
+		});
+		
 		this.nameField = $(this.dialogContent).find(".nameField").get(0);
+		$(this.nameField).keydown((event) => {
+			if (event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
+		})
+
 		this.referenceDiv = $(this.dialogContent).find(".referenceDiv").get(0);
 		this.restrictPositiveCheckbox = $(this.dialogContent).find(".restrictPositive").get(0);
 		this.positiveOnlyDiv = $(this.dialogContent).find(".positiveOnlyDiv").get(0);
