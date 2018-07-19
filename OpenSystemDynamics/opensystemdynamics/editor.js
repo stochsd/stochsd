@@ -5012,23 +5012,16 @@ function updateInfoBar() {
 		primitive = selected_array[0].primitive;
 		let name = primitive.getAttribute("name");
 		let definition = "";
-		if (primitive.getAttribute("InitialValue")) { // Stock
-			definition = primitive.getAttribute("InitialValue").split("\n")[0];
-		} else if (primitive.getAttribute("FlowRate")) { // Flow
-			definition = primitive.getAttribute("FlowRate").split("\n")[0];
-		} else if (primitive.getAttribute("Data")) { // Converter
-			definition = selected.primitive.getAttribute("Data").split("\n")[0];
-		} else if (primitive.getAttribute("Equation")) { // Variable or Constant
-			definition = selected.primitive.getAttribute("Equation").split("\n")[0];
+		definition = getValue(primitive).split("\n")[0];
+		
+		if (definition != "") {
+			infoBar.html(`[${name}] = ${definition}`);
 		} else {
 			let type = selected.type;
-
+			
 			// Make first letter uppercase
 			type = type.charAt(0).toUpperCase() + type.slice(1); 
 			infoBar.html(`${type} selected`);
-		}
-		if (definition != "") {
-			infoBar.html(`[${name}] = ${definition}`);
 		}
 	} else {
 		infoBar.html(`${selected_array.length} objects selected`)
