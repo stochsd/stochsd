@@ -4479,6 +4479,9 @@ $(document).ready(function() {
 	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
+	if (fileManager.hasRecentFiles()) {
+		// $("#id_of_recentFiles").show();
+	}
 	macroDialog = new MacroDialog();
 	equationEditor = new EquationEditor();
 	converterDialog = new ConverterDialog();

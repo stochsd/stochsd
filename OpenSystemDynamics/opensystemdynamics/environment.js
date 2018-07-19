@@ -171,6 +171,9 @@ class BaseFileManager {
 	hasSaveAs() {
 		return false;
 	}
+	hasRecentFiles() {
+		return false;
+	}
 	saveModelAs() {
 		// Override this where hasSaveAs is true
 	}
@@ -348,6 +351,9 @@ class NwFileManager extends BaseFileManager {
 		this.modelSaverInput.accept=InsightMakerFileExtension;
 	}
 	hasSaveAs() {
+		return true;
+	}
+	hasRecentFiles() {
 		return true;
 	}
 	writeFile(fileName,FileData) {
