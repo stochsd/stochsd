@@ -885,7 +885,6 @@ class OnePointer extends BaseObject{
 
 		this.element_array = [];
 		this.selector_array = [];
-		this.ghost_array = [];
 		this.group = null;
 		this.superClass = "OnePointer";
 		this.draggable = true; // Default value, change it afterwords if you want
@@ -957,13 +956,6 @@ class OnePointer extends BaseObject{
 			}
 		}
 		
-		if (!this.is_ghost) {
-			for(var key in element_array) {
-				if (element_array[key].getAttribute("class") == "ghost") {
-					element_array[key].setAttribute("visibility", "hidden");
-				}
-			}
-		}
 		if (this.is_ghost && this.icons) {
 			this.icons.setState("ghost");
 		}
@@ -1320,8 +1312,8 @@ class StockVisual extends BasePrimitive {
 		return [
 			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
 			svg_rect(-18, -13, 36, 26, "none", this.color, "selector"),
-			svg_group([svgGhost(defaultStroke, defaultFill)],svg_transform_string(0,0,0,1), "ghost"),
-			textElem
+			textElem,
+			svgIcons(defaultStroke, defaultFill, "icons")
 		];
 	}
 }
@@ -1455,7 +1447,7 @@ class ConstantVisual extends VariableVisual {
 			svg_path("M0,15 15,0 0,-15 -15,0Z", this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector"),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0, 0, 0, 1), "ghost")
+			svgIcons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1488,7 +1480,7 @@ class ConverterVisual extends BasePrimitive {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
-			svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost"),
+			svgIcons(defaultStroke, defaultFill, "icons"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 		];
 	}
