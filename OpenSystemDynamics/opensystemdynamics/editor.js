@@ -1003,11 +1003,17 @@ class OnePointer extends BaseObject{
 		for(var i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
+		if (this.icons) {
+			this.icons.setColor("white");
+		}
 	}
 	unselect() {
 		this.selected = false;
 		for(var i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "hidden");
+		}
+		if (this.icons) {
+			this.icons.setColor(this.color);
 		}
 	}
 	afterUpdate() {
@@ -1422,8 +1428,6 @@ class VariableVisual extends BasePrimitive {
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
 			svgIcons(defaultStroke, defaultFill, "icons")
-			//svgQuestionmark(defaultStroke),
-			// svg_group([svgGhost(defaultStroke, defaultFill)], svg_transform_string(0,0,0,1), "ghost")
 		];
 	}
 
