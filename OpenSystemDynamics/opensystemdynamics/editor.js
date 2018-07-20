@@ -6329,7 +6329,7 @@ class EquationEditor extends jqDialog {
 
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
 		$(this.valueField).keydown((event) => {
-			if (event.ctrlKey) {
+			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
 					this.applyChanges();
 				}
