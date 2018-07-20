@@ -5000,6 +5000,11 @@ function setColorToSelection(color) {
 	History.storeUndoState();
 }
 
+function removeNewLines(string) {
+	let newString = string;
+	newString = newString.replace(/\\n/g, " ");
+	return newString;
+}
 
 function updateInfoBar() {
 	let infoBar = $("#infoBar");
@@ -5016,7 +5021,7 @@ function updateInfoBar() {
 		primitive = selected_array[0].primitive;
 		let name = primitive.getAttribute("name");
 		let definition = "";
-		definition = getValue(primitive).split("\n")[0];
+		definition = removeNewLines(getValue(primitive));
 		
 		if (definition != "") {
 			infoBar.html(`[${name}] = ${definition}`);
