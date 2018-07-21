@@ -400,6 +400,7 @@ class NwFileManager extends BaseFileManager {
 		this.writeFile(this.fileName,fileData);
 		this.updateSaveTime();
 		this.updateTitle();
+		this.addToRecent(this.fileName);
 	}
 	saveModelAs() {
 		do_global_log("NW: save model as ... triggered");
