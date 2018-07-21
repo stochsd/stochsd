@@ -339,6 +339,10 @@ class NwFileManager extends BaseFileManager {
 				this.fileName = this.appendFileExtension(file.path,InsightMakerFileExtension);
 				let fileData = createModelFileData();
 				this.writeFile(this.fileName,fileData);
+				
+				// adds to file localStorage.recentFiles list
+				this.addToRecent(this.fileName);
+				
 				this.updateSaveTime();
 				this.updateTitle();
 				if(this.finishedSaveHandler) {
