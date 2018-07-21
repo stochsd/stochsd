@@ -4486,11 +4486,8 @@ $(document).ready(function() {
 	if (fileManager.hasRecentFiles()) {
 		for (let i = 0; i < 5; i++) {
 			$(`#btn_recent_${i}`).click(function(event) {
-				console.log('event.target.getAttribute("filePath")');
-				console.log( event.target.getAttribute("filePath") );
-				
 				let filePath = event.target.getAttribute("filePath");
-				// fileManager.loadSpecificModel(filePath)
+				fileManager.loadFromFile(filePath);
 			});
 		}
 	}

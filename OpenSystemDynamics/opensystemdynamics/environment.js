@@ -43,7 +43,7 @@ class nwController{
 		let params = this.getParams();
 		if(params.length >= 1) {
 			let parameterFilename = params[0];
-			fileManager.loadFromCommandLine(parameterFilename);
+			fileManager.loadFromFile(parameterFilename);
 		}
 		
 		var ngui = this.unsafeGetGui();
@@ -426,7 +426,7 @@ class NwFileManager extends BaseFileManager {
 		// The following line seems to cause a flicky bug
 		//~ uploader.parentElement.removeChild(uploader);
 	}
-	loadFromCommandLine(fileName) {
+	loadFromFile(fileName) {
 		var fs = require('fs')
 		var resolve = require('path').resolve;
 		var absoluteFileName = resolve(fileName);
@@ -440,6 +440,7 @@ class NwFileManager extends BaseFileManager {
 			this.fileName = absoluteFileName;
 			this.loadModelData(data);	
 			this.updateTitle();
+			this.addToRecent(this.fileName);
 		});
 	}
 }
