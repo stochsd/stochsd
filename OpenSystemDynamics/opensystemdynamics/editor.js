@@ -6052,7 +6052,7 @@ class TableDialog extends DisplayDialog {
 		return (`
 		<table style="margin: 16px 0px;">
 			<tr>
-				<td class="text">Start</td>
+				<td class="text">Start Time</td>
 				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
 				<td>Auto <input class="intervalsettings start_auto" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
 			</tr><tr>
@@ -6060,7 +6060,7 @@ class TableDialog extends DisplayDialog {
 				<td><input class="intervalsettings length" name="length" value="${this.length}" type="text"></td>
 				<td>Auto <input class="intervalsettings length_auto" type="checkbox"  ${checkedHtmlAttribute(this.lengthAuto)}/></td>
 			</tr><tr>
-				<td class="text">Step</td>
+				<td class="text">Time Step</td>
 				<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
 				<td>Auto <input class="intervalsettings step_auto" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
 			</tr>
@@ -6140,13 +6140,13 @@ class SimulationSettings extends jqDialog {
 		this.setHtml(`
 			<table>
 			<tr>
-				<td>Start</td>
+				<td>Start Time</td>
 				<td><input class="input_start" name="start" value="${start}" type="text"></td>
 			</tr><tr>
 				<td>Length</td>
 				<td><input class="input_length" name="length" value="${length}" type="text"></td>
 			</tr><tr>
-				<td>Step</td>
+				<td>Time Step</td>
 				<td><input class="input_step" name="step" value="${step}" type="text"></td>
 			</tr>
 			</table>
