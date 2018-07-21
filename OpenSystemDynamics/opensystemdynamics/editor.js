@@ -5264,7 +5264,7 @@ class RunResults {
 		const progressBarWidth = 98;
 		$("#runStatusBarOuter").width(progressBarWidth);
 		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
-		$("#runStatusBarText").html(this.getRunProgress() + " / " + this.getRunProgressMax());
+		$("#runStatusBarText").html(`${this.getRunProgress()} / ${this.getRunProgressMax()} (${this.getRunStep()})`);
 		
 	}
 	static pauseSimulation() {
@@ -5302,6 +5302,12 @@ class RunResults {
 		}	
 		let varIdIndex = this.varIdList.indexOf(Number(primitiveId));
 		return lastRow[varIdIndex];
+	}
+	static getRunStep() {
+		if (this.results && 1 < this.results.length) {
+			return this.results[1][0]-this.results[0][0];
+		}
+		return 0;
 	}
 	static getRunProgress() {
 		let lastRow = this.getLastRow();
