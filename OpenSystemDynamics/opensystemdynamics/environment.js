@@ -356,6 +356,22 @@ class NwFileManager extends BaseFileManager {
 	hasRecentFiles() {
 		return true;
 	}
+	addToRecent(filePath) {
+		let limit = 5;
+		let recentFiles = [];
+		if (localStorage.recentFiles) {
+			recentFiles = JSON.parse(localStorage.recentFiles);
+		}
+		if (recentFiles.includes(filePath)) {
+			let index = recentFiles.indexOf(filePath);
+			recentFiles.splice(index, 1);
+		}
+		if (recentFiles.length <= limit) {
+			recentFiles.splice(limit-1);
+		}
+		recentFiles.unshift(filePath);
+		localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+	}
 	writeFile(fileName,FileData) {
 		do_global_log("NW: In write file");
 		//~ if(self.fileName == null) {
