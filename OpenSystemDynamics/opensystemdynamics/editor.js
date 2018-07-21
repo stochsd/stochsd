@@ -4480,9 +4480,7 @@ $(document).ready(function() {
 	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
-	if (fileManager.hasRecentFiles()) {
-		// $("#id_of_recentFiles").show();
-	}
+	updateRecentsMenu();
 	macroDialog = new MacroDialog();
 	equationEditor = new EquationEditor();
 	converterDialog = new ConverterDialog();
@@ -5004,6 +5002,18 @@ function removeNewLines(string) {
 	let newString = string;
 	newString = newString.replace(/\\n/g, " ");
 	return newString;
+}
+
+function updateRecentsMenu() {
+	if (fileManager.hasRecentFiles()) {
+		if (localStorage.recentFiles) {
+			let recent = JSON.parse(localStorage.recentFiles);
+			for (let i = 0; i < recent.length; i++) {
+				$(`#btn_recent_${i}`).show();
+				$(`#btn_recent_${i}`).html(recent[i]);
+			}
+		}
+	}
 }
 
 function updateInfoBar() {
