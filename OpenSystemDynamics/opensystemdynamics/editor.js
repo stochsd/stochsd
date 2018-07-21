@@ -4400,12 +4400,15 @@ $(document).ready(function() {
 		saveChangedAlert(function() {
 			fileManager.loadModel();
 		});
+		updateRecentsMenu();
 	});
 	$("#btn_save").click(function() {
 		fileManager.saveModel();
+		updateRecentsMenu();
 	});
 	$("#btn_save_as").click(function() {
 		fileManager.saveModelAs();
+		updateRecentsMenu();
 	});
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
