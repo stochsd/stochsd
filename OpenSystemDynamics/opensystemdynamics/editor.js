@@ -4391,6 +4391,9 @@ $(document).ready(function() {
 	$("html").mousemove(mouseMoveHandler);
 	$("html").mouseup(mouseUpHandler);
 	ToolBox.setTool("mouse");
+	$("#btn_file").click(function() {
+		updateRecentsMenu();
+	});
 	$("#btn_new").click(function() {
 		saveChangedAlert(function() {
 			fileManager.newModel();
@@ -4400,15 +4403,12 @@ $(document).ready(function() {
 		saveChangedAlert(function() {
 			fileManager.loadModel();
 		});
-		updateRecentsMenu();
 	});
 	$("#btn_save").click(function() {
 		fileManager.saveModel();
-		updateRecentsMenu();
 	});
 	$("#btn_save_as").click(function() {
 		fileManager.saveModelAs();
-		updateRecentsMenu();
 	});
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
@@ -4483,7 +4483,6 @@ $(document).ready(function() {
 	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
-	updateRecentsMenu();
 	macroDialog = new MacroDialog();
 	equationEditor = new EquationEditor();
 	converterDialog = new ConverterDialog();
