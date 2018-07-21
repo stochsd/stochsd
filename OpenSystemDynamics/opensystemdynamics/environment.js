@@ -320,6 +320,10 @@ class NwFileManager extends BaseFileManager {
 					do_global_log("NW: reader.onload callback");
 					var fileData = reader_event.target.result;
 					History.forceCustomUndoState(fileData);
+					
+					// Add to localStorage.recentFiles
+					this.addToRecent(this.fileName);
+
 					this.updateTitle();
 					preserveRestart();
 				}
