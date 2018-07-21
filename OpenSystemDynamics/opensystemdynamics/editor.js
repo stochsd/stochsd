@@ -4483,6 +4483,17 @@ $(document).ready(function() {
 	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
+	if (fileManager.hasRecentFiles()) {
+		for (let i = 0; i < 5; i++) {
+			$(`#btn_recent_${i}`).click(function(event) {
+				console.log('event.target.getAttribute("filePath")');
+				console.log( event.target.getAttribute("filePath") );
+				
+				let filePath = event.target.getAttribute("filePath");
+				// fileManager.loadSpecificModel(filePath)
+			});
+		}
+	}
 	macroDialog = new MacroDialog();
 	equationEditor = new EquationEditor();
 	converterDialog = new ConverterDialog();
@@ -5013,6 +5024,7 @@ function updateRecentsMenu() {
 			for (let i = 0; i < recent.length; i++) {
 				$(`#btn_recent_${i}`).show();
 				$(`#btn_recent_${i}`).html(recent[i]);
+				$(`#btn_recent_${i}`).attr("filePath", recent[i]);
 			}
 		}
 	}
