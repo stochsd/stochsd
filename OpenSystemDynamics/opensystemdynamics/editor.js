@@ -6217,7 +6217,19 @@ class ConverterDialog extends jqDialog {
 			</div>
 		`);
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
+		$(this.valueField).keydown((event) => {
+			if (! event.shiftKey) {
+				if (event.keyCode == keyboard["enter"]) {
+					this.applyChanges();
+				}
+			}
+		});
 		this.nameField = $(this.dialogContent).find(".nameField").get(0);
+		$(this.nameField).keydown((event) => {
+			if (event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
+		});
 	}
 	open(id,defaultFocusSelector = null) {
 		if (jqDialog.blockingDialogOpen) {
