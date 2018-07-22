@@ -5246,7 +5246,7 @@ class RunResults {
 		const progressBarWidth = 98;
 		$("#runStatusBarOuter").width(progressBarWidth);
 		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
-		$("#runStatusBarText").html(`${this.getRunProgress()} / ${this.getRunProgressMax()} (${this.getRunStep()})`);
+		$("#runStatusBarText").html(`${this.getRunProgress()} / ${this.getRunProgressMax()} (${this.getTimeStep()})`);
 		
 	}
 	static pauseSimulation() {
@@ -5285,17 +5285,19 @@ class RunResults {
 		let varIdIndex = this.varIdList.indexOf(Number(primitiveId));
 		return lastRow[varIdIndex];
 	}
-	static getRunStep() {
+	static getTimeStep() {
 		if (this.results && 1 < this.results.length) {
 			return this.results[1][0]-this.results[0][0];
+		} else if (primitives("Setting")[0]) {
+			return primitives("Setting")[0].getAttribute("TimeStep");
 		}
 		return 0;
 	}
 	static getRunProgress() {
 		let lastRow = this.getLastRow();
 		// If we have no last row return null
-		if (lastRow == null) {
-			return 0;
+		if (lastRow == null && primitives("Setting")[0]) {
+			return primitives("Setting")[0].getAttribute("TimeStart");
 		}
 		// else return time
 		return lastRow[0];
