@@ -3450,6 +3450,7 @@ function setEnds(connector, ends) {
 
 // Sometimes we can not use setEnds if we want to update only source or target but not both of them
 // Therefor we also have setSource and setTarget
+/*
 function setSource(connector,source) {
 	connector.source = source;
 	clearPrimitiveCache();	
@@ -3458,7 +3459,35 @@ function setSource(connector,source) {
 function setTarget(connector,target) {
 	connector.target = target;
 	clearPrimitiveCache();	
+}*/
+
+// Replaced original setSource & setTarget above with functions below
+// Change made by Magnus Gustafsson
+// Change is made to set value to correct source as well
+function setSource(connector, source) {
+	connector.source = source;
+	if (connector.value.children[0]) {
+		if (source == null) {
+			connector.value.children[0].removeAttribute("source");
+		} else {
+			connector.value.children[0].setAttribute("source", source.id);
+		}
+	}
+	clearPrimitiveCache();
 }
+
+function setTarget(connector, target) {
+	connector.target = target;
+	if (connector.value.children[0]) {
+		if (target == null) {
+			connector.value.children[0].removeAttribute("target");
+		} else {
+			connector.value.children[0].setAttribute("target", target.id);
+		}
+	}
+	clearPrimitiveCache();
+}
+
 
 /*
 Method: connected
