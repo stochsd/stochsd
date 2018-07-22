@@ -4405,9 +4405,11 @@ $(document).ready(function() {
 		});
 	});
 	$("#btn_save").click(function() {
+		History.storeUndoState();
 		fileManager.saveModel();
 	});
 	$("#btn_save_as").click(function() {
+		History.storeUndoState();
 		fileManager.saveModelAs();
 	});
 	$("#btn_simulation_settings").click(function() {
