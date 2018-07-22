@@ -4839,19 +4839,16 @@ function syncVisual(tprimitive) {
 				connection.variableSide = (tprimitive.getAttribute("variableSide") == "true");
 			}
 
+			connection.start_anchor.set_pos(source_position);
+			connection.end_anchor.set_pos(target_position);
+			
 			if (tprimitive.source != null) {
 				// Attach to object
 				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
-			} else {
-				// Set UI-coordinates to coordinates in primitive
-				connection.start_anchor.set_pos(source_position);
 			}
 			if (tprimitive.target != null) {
 				// Attach to object
 				connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
-			} else {
-				// Set UI-coordinates to coordinates in primitive
-				connection.end_anchor.set_pos(target_position);
 			}
 			connection.update();
 
