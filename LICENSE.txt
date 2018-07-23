@@ -1,11 +1,12 @@
-StochSD is a fork of Insight Maker. StochSD as well as it's original Insight Maker are release under Insight MakerPublic License
+StochSim is a fork of Insight Maker. StochSim as well as it's original Insight Maker are release under Insight MakerPublic License
 
-It is worth noticing that MxGraph and ExtJS are not used in StochSD but they were used in Insight Maker.
+It is worth noticing that MxGraph and ExtJS are not used in StochSim but they were used in Insight Maker.
 
 Insight Maker Public license comes from the Insght Maker project and is available at the end of this file, and also on this URL:
 https://insightmaker.com/impl
 
-All the parts of the code that are from the original Insight Maker are copyright by Scott Fortmann-Roe and the files specific to StochSD are copyright by Erik Gustafsson. 
+All the parts of the code that are from the original Insight Maker are copyright by Scott Fortmann-Roe and the files specific to StochSim are copyright by Erik Gustafsson
+. 
 
 
 

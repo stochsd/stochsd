@@ -70,10 +70,10 @@ $(document).ready(function() {
     update_debug_mode();
 	
 	$("#SimulationIFrame")[0].onload=function() {
-		// Show tool menu in StochSD/InsightMaker
+		// Show tool menu in StochSim/InsightMaker
 		im_show_tool();
 		
-		// Make the iframe focused when application start so that StochSD/InsightMaker can use keyboard shortcuts
+		// Make the iframe focused when application start so that StochSim/InsightMaker can use keyboard shortcuts
 		var iframe = $("#SimulationIFrame")[0];
 		iframe.contentWindow.focus();
 		

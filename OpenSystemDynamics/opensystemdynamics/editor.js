@@ -18,13 +18,13 @@ var aboutDialog;
 
 const aboutText = `
 <img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
-<b>StochSD version 180801</b><br/>
+<b>StochSim version 180801</b><br/>
 <br/>
-<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
+<b>StochSim</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
 <br/>
-StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
+StochSim is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSim open for use as well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
 <br/>
-StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
+StochSim was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
 Mail: magnus.ja.gustafsson@gmail.com.
 `;
 
@@ -324,7 +324,7 @@ defaultPrimitiveBeforeDestroyHandler = function(primitive) {
 	stochsd_delete_primitive(getID(primitive));
 }
 
-var sdsMacros = `### Imported Macros from StochSD ###
+var sdsMacros = `### Imported Macros from StochSim ###
 T() <- Unitless(Time())
 DT() <- Unitless(TimeStep())
 TS() <- Unitless(TimeStart())
@@ -332,11 +332,11 @@ TL() <- Unitless(TimeLength())
 TE() <- Unitless(TimeEnd())
 PoFlow(Lambda) <- RandPoisson(Dt()*Lambda)/DT()
 PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat) 
-### End of StochSD Macros ###
+### End of StochSim Macros ###
 ### Put your own macro code below ###`;
 
 // Add the StocSD macro-script to the beggning of the Macro
-function appendStochSDMacros() {
+function appendStochSimMacros() {
 	var macros = getMacros();
 	if (macros === undefined) {
 		macros = "";
@@ -347,8 +347,8 @@ function appendStochSDMacros() {
 	}
 }
 
-// Replace macro with the StochSD macro-script
-function setStochSDMacros() {
+// Replace macro with the StochSim macro-script
+function setStochSimMacros() {
 	var macros = sdsMacros+"\n\n\n";
 	setMacros(macros);
 }
@@ -6280,7 +6280,7 @@ class DebugDialog extends jqDialog {
 		this.setTitle("Debug");
 		this.setHtml(`
 			<div id="log_panel" style="z-index: 10; position: absolute; left: 0px; top: 0px; height: 90%; overflow-x: visible">
-				This windows is only for developers of StochSD. If you are not developing StochSD you probably dont need this.<br/>
+				This windows is only for developers of StochSim. If you are not developing StochSim you probably dont need this.<br/>
 				<button class="btn_clear_log">clear</button>
 				<div class="log" style="width: 100%; height: 90%; overflow-y: scroll;">
 				</div>
