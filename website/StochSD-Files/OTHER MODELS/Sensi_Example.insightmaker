@@ -1,0 +1,131 @@
+<InsightMakerModel>
+<root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<TextArea Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="57" name="Sens example  170616">
+<mxCell parent="1" visible="0" edge="1" style="textarea">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="123.00706058740616" y="38.770896911621094"/>
+<mxPoint as="targetPoint" x="-0.9929394125938416" y="-0.22910308837890625"/>
+</mxGeometry>
+</mxCell>
+</TextArea>
+<Setting Note="" Version="36" TimeLength="20" TimeStart="0" TimeStep="0.1" TimeUnits="Years" StrictUnits="true" Units="" HiddenUIGroups="Validation,User Interface" SolutionAlgorithm="RK1" BackgroundColor="white" Throttle="-1" Macros="" SensitivityPrimitives="" SensitivityRuns="50" SensitivityBounds="50, 80, 95, 100" SensitivityShowRuns="false" article="{&quot;comments&quot;:true, &quot;facebookUID&quot;: &quot;&quot;}" StyleSheet="{}" id="2" TimePause="2">
+<mxCell parent="1" vertex="1" visible="0" style="setting">
+<mxGeometry x="20" y="20" width="80" height="40" as="geometry"/>
+</mxCell>
+</Setting>
+<Stock name="Xd" Note="" InitialValue="[X0d]" StockMode="Store" Delay="10" Volume="100" NonNegative="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="44" RotateName="2">
+<mxCell parent="1" vertex="1" style="stock">
+<mxGeometry x="3" y="78" width="80" height="60" as="geometry"/>
+</mxCell>
+</Stock>
+<Stock name="Xs" Note="" InitialValue="[X0s]" StockMode="Store" Delay="10" Volume="100" NonNegative="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="45" RotateName="2">
+<mxCell parent="1" vertex="1" style="stock">
+<mxGeometry x="255" y="78" width="80" height="60" as="geometry"/>
+</mxCell>
+</Stock>
+<Stock name="Cum_d" Note="" InitialValue="0" StockMode="Store" Delay="10" Volume="100" NonNegative="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="46" RotateName="2">
+<mxCell parent="1" vertex="1" style="stock">
+<mxGeometry x="169" y="79" width="80" height="60" as="geometry"/>
+</mxCell>
+</Stock>
+<Stock name="Cum_s" Note="" InitialValue="0" StockMode="Store" Delay="10" Volume="100" NonNegative="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="47" RotateName="2">
+<mxCell parent="1" vertex="1" style="stock">
+<mxGeometry x="408" y="80" width="80" height="60" as="geometry"/>
+</mxCell>
+</Stock>
+<Variable name="Td" Note="" Equation="12" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="52" RotateName="0" OnlyPositive="false">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="95" y="147" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Variable name="Ts" Note="" Equation="12" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="54" RotateName="0" OnlyPositive="false">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="342" y="145" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Variable name="X0d" Note="" Equation="12" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="60" RotateName="0" OnlyPositive="false">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="10" y="147" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Variable name="X0s" Note="" Equation="12" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="61" RotateName="0" OnlyPositive="false">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="265" y="146" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Diagram Primitives="44,45" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="56" name="undefined1">
+<mxCell parent="1" visible="0" edge="1" style="diagram">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="13.007060587406158" y="246.7708969116211"/>
+<mxPoint as="targetPoint" x="390.7605285644531" y="452.7708969116211"/>
+</mxGeometry>
+</mxCell>
+</Diagram>
+<Flow name="F" Note="" FlowRate="[Xd]/[Td]" OnlyPositive="false" TimeIndependent="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="48" RotateName="2">
+<mxCell parent="1" source="44" target="46" edge="1" style="flow">
+<mxGeometry x="126" y="108.5" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="63" y="108"/>
+<mxPoint as="targetPoint" x="189" y="109"/>
+</mxGeometry>
+</mxCell>
+</Flow>
+<Flow name="PoF" Note="" FlowRate="PoFlow([Xs]/[Ts])" OnlyPositive="false" TimeIndependent="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="49" RotateName="2">
+<mxCell parent="1" source="45" target="47" edge="1" style="flow">
+<mxGeometry x="371.5" y="109" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="315" y="108"/>
+<mxPoint as="targetPoint" x="428" y="110"/>
+</mxGeometry>
+</mxCell>
+</Flow>
+<Link name="Link1" Note="" BiDirectional="false" id="50" b1x="69" b1y="131.16666666666669" b2x="94" b2y="132.33333333333331">
+<mxCell parent="1" source="44" target="48" edge="1" style="link">
+<mxGeometry x="87" y="115.75" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="63" y="108"/>
+<mxPoint as="targetPoint" x="111" y="123.5"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link2" Note="" BiDirectional="false" id="51" b1x="320.16666666666674" b1y="135.33333333333337" b2x="339.33333333333326" b2y="130.66666666666669">
+<mxCell parent="1" source="45" target="49" edge="1" style="link">
+<mxGeometry x="335.75" y="116" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="315" y="108"/>
+<mxPoint as="targetPoint" x="356.5" y="124"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link3" Note="" BiDirectional="false" id="59" b1x="124.66666666666667" b1y="150.16666666666669" b2x="125.33333333333334" b2y="144.33333333333334">
+<mxCell parent="1" source="52" target="48" edge="1" style="link">
+<mxGeometry x="125.5" y="150.25" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="125" y="162"/>
+<mxPoint as="targetPoint" x="126" y="138.5"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link5" Note="" BiDirectional="false" id="62" b1x="41" b1y="147.33333333333334" b2x="42" b2y="135.66666666666669">
+<mxCell parent="1" source="60" target="44" edge="1" style="link">
+<mxGeometry x="41.5" y="142.5" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="40" y="162"/>
+<mxPoint as="targetPoint" x="43" y="123"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link6" Note="" BiDirectional="false" id="63" b1x="294.33333333333337" b1y="151" b2x="294.6666666666667" b2y="137">
+<mxCell parent="1" source="61" target="45" edge="1" style="link">
+<mxGeometry x="295" y="142" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="295" y="161"/>
+<mxPoint as="targetPoint" x="295" y="123"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link4" Note="" BiDirectional="false" id="64" b1x="370.5" b1y="158.33333333333334" b2x="371" b2y="148.66666666666666">
+<mxCell parent="1" source="54" target="49" edge="1" style="link">
+<mxGeometry x="372" y="255.25" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="372" y="160"/>
+<mxPoint as="targetPoint" x="371.5" y="139"/>
+</mxGeometry>
+</mxCell>
+</Link>
+</root>
+</InsightMakerModel>

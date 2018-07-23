@@ -1,0 +1,61 @@
+<InsightMakerModel>
+<root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<TextArea Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="46" name="Converter">
+<mxCell parent="1" visible="0" edge="1" style="textarea">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="97.00706058740616" y="37.770896911621094"/>
+<mxPoint as="targetPoint" x="9.007060587406158" y="4.770896911621094"/>
+</mxGeometry>
+</mxCell>
+</TextArea>
+<Setting Note="" Version="36" TimeLength="90" TimeStart="0" TimeStep="0.1" TimeUnits="Years" StrictUnits="true" Units="" HiddenUIGroups="Validation,User Interface" SolutionAlgorithm="RK1" BackgroundColor="white" Throttle="-1" Macros="" SensitivityPrimitives="" SensitivityRuns="50" SensitivityBounds="50, 80, 95, 100" SensitivityShowRuns="false" article="{&quot;comments&quot;:true, &quot;facebookUID&quot;: &quot;&quot;}" StyleSheet="{}" id="2" TimePause="9">
+<mxCell parent="1" vertex="1" visible="0" style="setting">
+<mxGeometry x="20" y="20" width="80" height="40" as="geometry"/>
+</mxCell>
+</Setting>
+<Variable name="X" Note="" Equation="Sin(Pi*T()/90)" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="44" RotateName="2" OnlyPositive="false">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="288" y="67" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Converter name="Y" Note="" Source="44" Data="0,6; 0.2,8; 0.4,14; 0.6,10; 0.8,7.3; 1.0,4" Interpolation="Linear" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" id="45" RotateName="2">
+<mxCell parent="1" vertex="1" style="converter">
+<mxGeometry x="428" y="70" width="80" height="60" as="geometry"/>
+</mxCell>
+</Converter>
+<Diagram Primitives="45" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="49" name="undefined2">
+<mxCell parent="1" visible="0" edge="1" style="diagram">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="638.0070605874062" y="72.7708969116211"/>
+<mxPoint as="targetPoint" x="876.0070605874062" y="237.7708969116211"/>
+</mxGeometry>
+</mxCell>
+</Diagram>
+<Diagram Primitives="44" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="50" name="undefined3">
+<mxCell parent="1" visible="0" edge="1" style="diagram">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="50.00706058740616" y="66.7708969116211"/>
+<mxPoint as="targetPoint" x="295.00706058740616" y="232.7708969116211"/>
+</mxGeometry>
+</mxCell>
+</Diagram>
+<XyPlot Primitives="44,45" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="48" name="undefined1">
+<mxCell parent="1" visible="0" edge="1" style="xyplot">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="341.00706058740616" y="131.7708969116211"/>
+<mxPoint as="targetPoint" x="624.0070605874062" y="338.7708969116211"/>
+</mxGeometry>
+</mxCell>
+</XyPlot>
+<Link name="Link1" Note="" BiDirectional="false" id="47" b1x="363.6666666666667" b1y="83.33333333333333" b2x="425.33333333333337" b2y="82.66666666666666">
+<mxCell parent="1" source="44" target="45" edge="1" style="link">
+<mxGeometry x="390.5" y="98.5" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="333" y="97"/>
+<mxPoint as="targetPoint" x="448" y="100"/>
+</mxGeometry>
+</mxCell>
+</Link>
+</root>
+</InsightMakerModel>
