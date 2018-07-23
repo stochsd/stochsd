@@ -28,7 +28,7 @@ StochSim was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala Univers
 Mail: magnus.ja.gustafsson@gmail.com.
 `;
 
-// This values are not used by stochsd, as primitives cannot be resized in stochsd
+// This values are not used by stochsim, as primitives cannot be resized in stochsim
 // They are only used for exporting the model to Insight Maker
 type_size = {};
 type_size["stock"] = [80,60];
