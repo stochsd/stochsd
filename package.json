@@ -2,6 +2,6 @@
 	"name": "StochSim - Magnus",
 	"main": "index.html",
 	"window": {
-		"icon": "icons/stochsd.png"
+		"icon": "icons/stochsim.png"
 	}
 }
