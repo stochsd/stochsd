@@ -140,7 +140,6 @@ class History {
 				this.undoStates = this.undoStates.slice(this.undoStates.length - this.undoLimit);
 				this.undoIndex = this.undoStates.length-1;
 			}
-			console.log("undoIndex:", this.undoIndex);
 		}
 	}
 
@@ -155,7 +154,6 @@ class History {
 	static doUndo() {
 		if (this.undoIndex > 0) {
 			this.undoIndex --;
-			console.log("undoIndex:", this.undoIndex);
 			this.restoreUndoState();	
 		} else {
 			xAlert("No more undo");
@@ -165,7 +163,6 @@ class History {
 	static doRedo() {
 		if (this.undoIndex < this.undoStates.length-1) {
 			this.undoIndex ++;
-			console.log("undoIndex:", this.undoIndex);
 			this.restoreUndoState();
 		} else {
 			xAlert("No more redo");
