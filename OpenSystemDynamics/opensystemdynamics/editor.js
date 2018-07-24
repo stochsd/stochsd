@@ -5000,6 +5000,9 @@ function updateRecentsMenu() {
 	if (fileManager.hasRecentFiles()) {
 		if (localStorage.recentFiles) {
 			let recent = JSON.parse(localStorage.recentFiles);
+			if (0 < recent.length) {
+				$('#recent_title').show();
+			}
 			for (let i = 0; i < recent.length; i++) {
 				$(`#btn_recent_${i}`).show();
 				$(`#btn_recent_${i}`).html(recent[i]);
