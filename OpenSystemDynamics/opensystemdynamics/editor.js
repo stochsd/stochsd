@@ -1950,6 +1950,9 @@ class FlowVisual extends BaseConnection {
 
 	loadMiddlePoints() {
 		let middlePointsString = this.primitive.getAttribute("MiddlePoints");
+		if (! middlePointsString) {
+			return [];
+		}
 		let points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
 			let index = this.anchorPoints.length;
