@@ -86,7 +86,9 @@ function svg_curve(x1,y1,x2,y2,x3,y3,x4,y4,extra_attributes=null) {
 	}
 	
 	newElement.update=function() {
-		var d="M"+this.x1+","+this.y1+" C"+this.x2+","+this.y2+" "+this.x3+","+this.y3+" "+this.x4+","+this.y4;
+		let d = `M${this.x1},${this.y1} C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x4},${this.y4}`;
+		// Make path go back on itself so it does not create an area
+		d += `C ${this.x3},${this.y3} ${this.x2},${this.y2} ${this.x1},${this.y1}`;
 		this.setAttribute("d",d);
 	};
 	newElement.update();
