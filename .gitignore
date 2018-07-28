@@ -1,3 +1,6 @@
 OpenSystemDynamics/build/
 OpenSystemDynamics/node_modules/
 OpenSystemDynamics/package-lock.json
+node_modules/
+package-lock.json
+build/
