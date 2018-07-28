@@ -1,4 +1,13 @@
 {
-	"name": "StochSim Desktop - Magnus",
-	"main": "opensystemdynamics/index.html"
+	"name": "StochSim-Desktop",
+	"main": "opensystemdynamics/index.html",
+	"devDependencies": {
+		"gulp-useref": "^3.1.5"
+	},
+	"dependencies": {
+		"gulp": "^3.9.1"
+	},
+	"scripts": {
+		"build": "node_modules/gulp/bin/gulp.js"
+	}
 }
