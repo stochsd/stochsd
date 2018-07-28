@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const useref = require('gulp-useref');
 gulp.task('default' , function() {
-	gulp.src('index.html')
+	gulp.src('MultiSimulationAnalyser/index.html')
 	.pipe(useref())
 	.pipe(gulp.dest('build'));
 	
