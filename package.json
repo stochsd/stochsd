@@ -3,5 +3,11 @@
 	"main": "index.html",
 	"window": {
 		"icon": "icons/stochsim.png"
+	},
+	"devDependencies": {
+		"gulp-useref": "^3.1.5"
+	},
+	"dependencies": {
+		"gulp": "^3.9.1"
 	}
 }
