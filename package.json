@@ -1,5 +1,5 @@
 {
-	"name": "StochSim - Magnus",
+	"name": "StochSim",
 	"main": "index.html",
 	"window": {
 		"icon": "icons/stochsim.png"
