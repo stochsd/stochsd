@@ -5,6 +5,15 @@ gulp.task('default' , function() {
 	.pipe(useref())
 	.pipe(gulp.dest('build'));
 	
-	// gulp.src('opensystemdynamics/graphics/**')
-	// .pipe(gulp.dest('build/graphics'));
+	gulp.src('MultiSimulationAnalyser/img/**')
+	.pipe(gulp.dest('build/img'));
+	
+	gulp.src('MultiSimulationAnalyser/images/**')
+	.pipe(gulp.dest('build/images'));
+	
+	gulp.src('MultiSimulationAnalyser/icons/**')
+	.pipe(gulp.dest('build/icons'));
+	
+	gulp.src('MultiSimulationAnalyser/im_img/**')
+	.pipe(gulp.dest('build/im_img'));
 });
