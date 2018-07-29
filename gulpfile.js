@@ -1,32 +1,55 @@
 const gulp = require('gulp');
 const useref = require('gulp-useref');
 gulp.task('default' , function() {
+	buildForWeb("build/stochsim-web/");
+	buildForDesktop("build/package.nw/");
+});
+
+function buildForDesktop(rootFolder) {
+	// License
+	gulp.src('LICENSE.txt')
+	.pipe(gulp.dest(rootFolder));
+
 	// Launcher
 	gulp.src('index.html')
-	.pipe(gulp.dest('build/'));
-	
+	.pipe(gulp.dest(rootFolder));
+
 	// OpenSystemDynamics
-	gulp.src('OpenSystemDynamics/opensystemdynamics/index.html')
-	.pipe(useref())
-	.pipe(gulp.dest('build/OpenSystemDynamics/opensystemdynamics'));
-	
-	gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
-	.pipe(gulp.dest('build/OpenSystemDynamics/opensystemdynamics/graphics'));
+	gulp.src('OpenSystemDynamics/**')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics'));
 	
 	// MultiSimulationAnalyser
-	gulp.src('MultiSimulationAnalyser/index.html')
-	.pipe(useref())
-	.pipe(gulp.dest('build/MultiSimulationAnalyser'));
-	
-	gulp.src('MultiSimulationAnalyser/img/**')
-	.pipe(gulp.dest('build/MultiSimulationAnalyser/img'));
-	
-	gulp.src('MultiSimulationAnalyser/images/**')
-	.pipe(gulp.dest('build/MultiSimulationAnalyser/images'));
-	
-	gulp.src('MultiSimulationAnalyser/icons/**')
-	.pipe(gulp.dest('build/MultiSimulationAnalyser/icons'));
-	
-	gulp.src('MultiSimulationAnalyser/im_img/**')
-	.pipe(gulp.dest('build/MultiSimulationAnalyser/im_img'));
-});
+	gulp.src('MultiSimulationAnalyser/**')
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser'));
+}
+
+function buildForWeb(rootFolder) {
+		// Launcher
+		gulp.src('index.html')
+		.pipe(gulp.dest(rootFolder));
+		
+		// OpenSystemDynamics
+		gulp.src('OpenSystemDynamics/opensystemdynamics/index.html')
+		.pipe(useref())
+		.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics'));
+		
+		gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
+		.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/graphics'));
+		
+		// MultiSimulationAnalyser
+		gulp.src('MultiSimulationAnalyser/index.html')
+		.pipe(useref())
+		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser'));
+		
+		gulp.src('MultiSimulationAnalyser/img/**')
+		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/img'));
+		
+		gulp.src('MultiSimulationAnalyser/images/**')
+		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/images'));
+		
+		gulp.src('MultiSimulationAnalyser/icons/**')
+		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/icons'));
+		
+		gulp.src('MultiSimulationAnalyser/im_img/**')
+		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/im_img'));
+}
