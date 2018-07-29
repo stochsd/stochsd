@@ -18,6 +18,14 @@ function buildForDesktop(rootFolder) {
 	gulp.src('OpenSystemDynamics/**')
 	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics'));
 	
+	// package.json
+	gulp.src('package.json')
+	.pipe(gulp.dest(rootFolder));
+
+	// icons 
+	gulp.src('icons/**')
+	.pipe(gulp.dest(rootFolder+'icons'));
+
 	// MultiSimulationAnalyser
 	gulp.src('MultiSimulationAnalyser/**')
 	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser'));
