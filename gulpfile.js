@@ -44,6 +44,9 @@ function buildForWeb(rootFolder) {
 	gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
 	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/graphics'));
 
+	gulp.src('OpenSystemDynamics/opensystemdynamics/jquery-ui-1.12.1/images/**')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/images'));
+
 	// MultiSimulationAnalyser
 	gulp.src('MultiSimulationAnalyser/index.html')
 	.pipe(useref())
