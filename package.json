@@ -1,16 +1,21 @@
 {
 	"name": "StochSim",
+	"version": "2018.08.01",
+	"description": "Stochastic Simulation application",
 	"main": "index.html",
 	"window": {
 		"icon": "icons/stochsim.png"
 	},
 	"devDependencies": {
-		"gulp-useref": "^3.1.5"
+		"gulp-useref": "^3.1.5",
+		"nwjs-builder-phoenix": "^1.14.8"
 	},
 	"dependencies": {
 		"gulp": "^3.9.1"
 	},
 	"scripts": {
-		"build": "node_modules/gulp/bin/gulp.js"
+		"build": "node_modules/gulp/bin/gulp.js",
+		"dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
+        "start": "run --x86 --mirror https://dl.nwjs.io/ ."
 	}
 }
