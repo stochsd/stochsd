@@ -32,32 +32,32 @@ function buildForDesktop(rootFolder) {
 }
 
 function buildForWeb(rootFolder) {
-		// Launcher
-		gulp.src('index.html')
-		.pipe(gulp.dest(rootFolder));
-		
-		// OpenSystemDynamics
-		gulp.src('OpenSystemDynamics/opensystemdynamics/index.html')
-		.pipe(useref())
-		.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics'));
-		
-		gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
-		.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/graphics'));
-		
-		// MultiSimulationAnalyser
-		gulp.src('MultiSimulationAnalyser/index.html')
-		.pipe(useref())
-		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser'));
-		
-		gulp.src('MultiSimulationAnalyser/img/**')
-		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/img'));
-		
-		gulp.src('MultiSimulationAnalyser/images/**')
-		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/images'));
-		
-		gulp.src('MultiSimulationAnalyser/icons/**')
-		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/icons'));
-		
-		gulp.src('MultiSimulationAnalyser/im_img/**')
-		.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/im_img'));
+	// Launcher
+	gulp.src('index.html')
+	.pipe(gulp.dest(rootFolder));
+
+	// OpenSystemDynamics
+	gulp.src('OpenSystemDynamics/opensystemdynamics/index.html')
+	.pipe(useref())
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics'));
+
+	gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/graphics'));
+
+	// MultiSimulationAnalyser
+	gulp.src('MultiSimulationAnalyser/index.html')
+	.pipe(useref())
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser'));
+
+	gulp.src('MultiSimulationAnalyser/img/**')
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/img'));
+
+	gulp.src('MultiSimulationAnalyser/images/**')
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/images'));
+
+	gulp.src('MultiSimulationAnalyser/icons/**')
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/icons'));
+
+	gulp.src('MultiSimulationAnalyser/im_img/**')
+	.pipe(gulp.dest(rootFolder+'MultiSimulationAnalyser/im_img'));
 }
