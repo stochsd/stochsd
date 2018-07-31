@@ -1,9 +1,5 @@
 # StochSim (formerly StochSD)
 
-![Github Logo] (/icons/stochsim.png)
-
-Format: [Alt Text](url)
-
 ## What does the program do
 
 StochSim is a stochastic simulation application, primarily developed to introduce statistical pos-analysis from multiple simulations.
