@@ -1,5 +1,5 @@
 {
-	"name": "StochSim-Desktop",
+	"name": "StochSD-Desktop",
 	"main": "opensystemdynamics/index.html",
 	"devDependencies": {
 		"gulp-useref": "^3.1.5"

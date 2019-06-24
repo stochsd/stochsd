@@ -53,7 +53,7 @@ class nwController{
 		nwjsWindow = nwin;
 		nwjsApp = app;
 
-		// This save before closing handler only works when we run without StochSim tools.
+		// This save before closing handler only works when we run without StochSD tools.
 		// Otherwise it makes it impossible to quit
 		nwin.on("close",function(event) {
 			quitQuestion();
@@ -141,7 +141,7 @@ class BaseFileManager {
 	constructor() {
 		this._fileName = "";
 		this.lastSaved = null;
-		this.softwareName = "StochSim";
+		this.softwareName = "StochSD";
 	}
 	// This is executed when the document is ready
 	ready() {
@@ -236,7 +236,7 @@ class BaseFileManager {
 class WebFileManager extends BaseFileManager {
 	constructor() {
 		super();
-		this.softwareName = "StochSim Web";
+		this.softwareName = "StochSD Web";
 	}
 	download(fileName, data) {
 		// Create Blob and attach it to ObjectURL
@@ -300,7 +300,7 @@ class WebFileManager extends BaseFileManager {
 class NwFileManager extends BaseFileManager {
 	constructor() {
 		super();
-		this.softwareName = "StochSim Desktop";
+		this.softwareName = "StochSD Desktop";
 	}
 	
 	// This is executed when the document is ready

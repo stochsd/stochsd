@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const useref = require('gulp-useref');
 gulp.task('default' , function() {
-	buildForWeb("build/stochsim-web/");
+	buildForWeb("build/stochsd-web/");
 	buildForDesktop("build/package.nw/");
 });
 

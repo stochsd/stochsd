@@ -1,10 +1,10 @@
 {
-	"name": "StochSim",
+	"name": "StochSD",
 	"version": "2018.08.01",
 	"description": "Stochastic Simulation application",
 	"main": "index.html",
 	"window": {
-		"icon": "icons/stochsim.png"
+		"icon": "icons/stochsd.png"
 	},
 	"devDependencies": {
 		"gulp-useref": "^3.1.5",

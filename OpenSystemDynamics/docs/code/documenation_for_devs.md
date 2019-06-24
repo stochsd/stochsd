@@ -1,38 +1,38 @@
 # Todo list for uploading new version
 
 - Download nw.js (normal not sdk) versions for windows 64bit, windows 32bit and ...
-- Change folder names to: `StochSim-WindowsXXbit-yyyy-mm-dd` 
+- Change folder names to: `StochSD-WindowsXXbit-yyyy-mm-dd` 
 - Build Desktop and Web version in repo directory with:
 
  `node node_modules\gulp\bin\gulp.js` or `node node_modules/gulp/bin/gulp.js`
 
 learn more at https://www.udemy.com/starting-with-gulp/learn/v4/content
 
-for windows or unix. This creates folder `./build` that contains `./build/package.nw`  and  `./build/stochsim-web`
+for windows or unix. This creates folder `./build` that contains `./build/package.nw`  and  `./build/stochsd-web`
 
 - Move a copy of `package.nw` into the 64bit and 32bit folders respectively.
 
 - Change name of nw.exe in folder to stochism.exe
 
-- Change icon of stochsim.exe using ResourceHacker (http://www.angusj.com/resourcehacker/)
+- Change icon of stochsd.exe using ResourceHacker (http://www.angusj.com/resourcehacker/)
 
 - Zip folders for uploading
 
-- Upload these files (StochSim Desktop) to SourceForge via the website.
+- Upload these files (StochSD Desktop) to SourceForge via the website.
 
-- To upload StochSim Web with FileZilla
+- To upload StochSD Web with FileZilla
 
   - Host: [web.sourceforge.net](http://web.sourceforge.net)  
   - User: mrmagnus  
   - Default remote (root) folder: `/home/project-web/s/st/stochsd/htdocs`
 
-- Upload `build/stochsim-web` and replace folder `/home/project-web/s/st/stochsd/htdocs/software` with same name.
+- Upload `build/stochsd-web` and replace folder `/home/project-web/s/st/stochsd/htdocs/software` with same name.
 
   
 
   #To update website 
 
-- Open repo `website_stochsim` 
+- Open repo `website_stochsd` 
 
 - Run `npm run build` .
 
