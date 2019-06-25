@@ -6260,8 +6260,15 @@ class ConverterDialog extends jqDialog {
 			setValue(this.primitive,value);
 			
 			// handle name
-			let name = stripBrackets($(this.nameField).val());
-			setName(this.primitive,name);
+			let oldName = getName(this.primitive);
+			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			if (oldName != newName) {
+				if (isNameFree(newName)) {
+					setName(this.primitive, newName);
+				} else {
+					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
+				}
+			}
 		}
 	}
 }
@@ -6584,8 +6591,15 @@ class EquationEditor extends jqDialog {
 			setValue(this.primitive,value);
 			
 			// handle name
-			let name = stripBrackets($(this.dialogContent).find(".nameField").val());
-			setName(this.primitive,name);
+			let oldName = getName(this.primitive);
+			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			if (oldName != newName) {
+				if (isNameFree(newName)) {
+					setName(this.primitive, newName);
+				} else {
+					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
+				}
+			}
 			
 			// Handle restrict to positive
 			let restrictPositive = $(this.restrictPositiveCheckbox).prop("checked");
