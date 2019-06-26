@@ -1083,9 +1083,6 @@ class AnchorPoint extends OnePointer {
 			}
 		}
 	}
-	update() {
-		super.update();
-	}
 	afterUpdatePosition() {
 		let parent = get_parent(this);
 		if (parent.start_anchor && parent.end_anchor)  {
