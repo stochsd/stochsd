@@ -787,15 +787,6 @@ class BaseObject {
 		return this.selected;
 	}
 
-	setDefined(value) {
-		this.isDefined = value;
-		if (this.isDefined) {
-			this.icons.setState("none");
-		} else {
-			this.icons.setState("questionmark");
-		}
-	}
-
 	clean() {
 			// Clean all children
 			let children = getChildren(this.id);
@@ -952,7 +943,7 @@ class OnePointer extends BaseObject{
 		}
 		
 		if (this.is_ghost && this.icons) {
-			this.icons.setState("ghost");
+			this.icons.set("ghost", "visible");
 		}
 		
 			
@@ -1253,6 +1244,15 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
+	update() {
+		super.update();
+		if(this.primitive.getAttribute("InitialValue") === "") {
+			this.icons.set("questionmark", "visible");
+		} else {
+			this.icons.set("questionmark", "hidden");
+		}
+	}
+
 	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
@@ -1392,6 +1392,15 @@ class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
+	}
+
+	update() {
+		super.update();
+		if(this.primitive.getAttribute("Equation") === "") {
+			this.icons.set("questionmark", "visible");
+		} else {
+			this.icons.set("questionmark", "hidden");
+		}
 	}
 
 	getRadius() {
@@ -6609,6 +6618,15 @@ class EquationEditor extends jqDialog {
 			// Handle restrict to positive
 			let restrictPositive = $(this.restrictPositiveCheckbox).prop("checked");
 			setNonNegative(this.primitive,restrictPositive);
+			
+			let visualObject = object_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
+			}
+			visualObject = connection_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
+			}
 		}
 	}
 }
