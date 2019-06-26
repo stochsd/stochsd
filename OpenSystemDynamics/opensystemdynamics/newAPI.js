@@ -157,3 +157,59 @@ function isNameFree(newName) {
 	}
 	return true;
 }
+
+/* 
+	Method: findPrimitivesWithOutgoingLinks
+
+	Finds and returns all primitives in the model.
+
+	Return:
+
+	An array of primitives.
+
+*/
+
+function findPrimitivesWithOutgoingLinks(id) {
+	let links = primitives("Link");
+	let outgoingLinks = links.filter((p) => p.source.id == id);
+	return outgoingLinks.map(s => s.target);
+}
+/*
+	Method: replaceName
+	replaces all instences of a variable name in a definition 
+
+	Example:
+	$ let definition = "0.5*[foo]*[somevariable]/(foo * [foo])"
+	$ let newDefinition = replaceName(definition, "foo", "bar")
+	$ newDefiition
+	> "0.5*[bar]*[somevariable]/(foo * [bar])"
+
+*/
+function replaceName(definition, oldName, newName) {
+	let newDefinition = definition;
+	let rex = new RegExp("\\[" + oldName + "]", "g");
+	newDefinition = definition.replace(rex, "[" + newName + "]");
+	return newDefinition;
+}
+
+function changeReferencesToName(id, oldName, newName) {
+	let objWLinkedPrims = findPrimitivesWithOutgoingLinks(id);
+	objWLinkedPrims.map((p) => {
+		switch (p.value.nodeName) {
+			case "Flow":
+				let newFlowRate = replaceName(p.getAttribute("FlowRate"), oldName, newName);
+				p.setAttribute("FlowRate", newFlowRate);
+				break;
+			case "Variable":
+				let newEquation = replaceName(p.getAttribute("Equation"), oldName, newName);
+				p.setAttribute("Equation", newEquation);
+				break;
+			case "Stock": 
+				let newInitialValue = replaceName(p.getAttribute("InitialValue"), oldName, newName);
+				p.setAttribute("InitialValue", newInitialValue);
+				break;
+			default:
+				break;
+		}
+	});
+}

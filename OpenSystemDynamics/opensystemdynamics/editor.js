@@ -6256,6 +6256,9 @@ class ConverterDialog extends jqDialog {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.valueField).val();
+			while(value[value.length-1] === " " || value[value.length-1] === ";" || value[value.length-1] === "\n"){
+				value = value.substring(0, value.length-1);
+			}
 			value = value.replace(/\n/g, "\\n");
 			setValue(this.primitive,value);
 			
@@ -6265,6 +6268,7 @@ class ConverterDialog extends jqDialog {
 			if (oldName != newName) {
 				if (isNameFree(newName)) {
 					setName(this.primitive, newName);
+					changeReferencesToName(this.primitive.id, oldName, newName);
 				} else {
 					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
 				}
@@ -6596,6 +6600,7 @@ class EquationEditor extends jqDialog {
 			if (oldName != newName) {
 				if (isNameFree(newName)) {
 					setName(this.primitive, newName);
+					changeReferencesToName(this.primitive.id, oldName, newName);
 				} else {
 					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
 				}
