@@ -6596,6 +6596,7 @@ class EquationEditor extends jqDialog {
 			if (oldName != newName) {
 				if (isNameFree(newName)) {
 					setName(this.primitive, newName);
+					changeReferencesToName(this.primitive.id, oldName, newName);
 				} else {
 					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
 				}
