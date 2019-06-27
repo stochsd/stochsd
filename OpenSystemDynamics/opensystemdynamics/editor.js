@@ -6270,6 +6270,11 @@ class ConverterDialog extends jqDialog {
 					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
 				}
 			}
+			// Update visual object to add/remove "?" icon 
+			let visualObject = object_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
+			}
 		}
 	}
 }
