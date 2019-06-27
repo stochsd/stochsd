@@ -30,20 +30,28 @@ Mail: magnus.ja.gustafsson@gmail.com.
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
-type_size = {};
-type_size["stock"] = [80,60];
-type_size["variable"] = [60,60];
-type_size["converter"] = [80,60];
-type_size["text"] = [120,60];
+// type_size = {};
+// type_size["stock"] = [80,60];
+// type_size["variable"] = [60,60];
+// type_size["converter"] = [80,60];
+// type_size["text"] = [120,60];
 
-type_basename = {};
-type_basename["stock"] = "Stock";
-type_basename["variable"] = "Variable";
-type_basename["flow"] = "Flow";
-type_basename["link"] = "Link";
-type_basename["converter"] = "Converter";
-type_basename["text"] = "Text";
-type_basename["constant"] = "Constant";
+const type_size = {
+	"stock":			[80, 60],
+	"variable":		[60, 60],
+	"converter":	[80, 60],
+	"text":				[120, 60]
+}
+
+const type_basename = {
+	"stock":			"Stock",
+	"variable":		"Variable",
+	"flow":				"Flow",
+	"link":				"Link",
+	"converter":	"Converter",
+	"text":				"Text",
+	"constant":		"Constant"
+};
 
 last_connection = null;
 
