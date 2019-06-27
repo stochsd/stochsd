@@ -144,7 +144,13 @@ function propogateGhosts(cell) {
 		}
 	}
 }
+/*
+	Method isNameFree
+	
+	Checks all other primitives if a name is taken. 
+	Returns false if taken, and true if free 
 
+*/
 function isNameFree(newName) {
 	for(let obj in object_array) {
 		let prim = object_array[obj].primitive;
@@ -176,7 +182,7 @@ function findPrimitivesWithOutgoingLinks(id) {
 }
 /*
 	Method: replaceName
-	replaces all instences of a variable name in a definition 
+	replaces all instences of a variable name in a definition (FlowRate, InitialValue, Equation)
 
 	Example:
 	$ let definition = "0.5*[foo]*[somevariable]/(foo * [foo])"
@@ -192,6 +198,13 @@ function replaceName(definition, oldName, newName) {
 	return newDefinition;
 }
 
+/**
+ * Changes names of all references of names in their definitions.
+ * 
+ * @param {string or number} 	id 
+ * @param {string} 				oldName 
+ * @param {string} 				newName 
+ */
 function changeReferencesToName(id, oldName, newName) {
 	let objWLinkedPrims = findPrimitivesWithOutgoingLinks(id);
 	objWLinkedPrims.map((p) => {
