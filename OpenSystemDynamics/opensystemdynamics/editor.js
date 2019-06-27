@@ -2024,7 +2024,8 @@ class FlowVisual extends BaseConnection {
 		this.outerPath.setAttribute("stroke", color);
 		this.arrowHeadPath.setAttribute("stroke", color);
 		this.valve.setAttribute("stroke", color);
-		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color)
+		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
+		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
 		this.anchorPoints.map(anchor => anchor.setColor(color));
 	}
@@ -2038,7 +2039,14 @@ class FlowVisual extends BaseConnection {
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M10,10 -10,-10 10,-10 -10,10 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -15, "vairable", "name_element");
-		this.variable = svg_group([svg_circle(0, 0, 15, defaultStroke, "white", "element"), this.name_element]);
+		this.icons = svgIcons(defaultStroke, defaultFill, "icons");
+		this.variable = svg_group(
+			[svg_circle(0, 0, 15, this.color, "white", "element"), 
+			svg_circle(0, 0, 13, "none", this.color, "selector"),
+			this.icons,	
+			this.name_element]
+		);
+		this.icons.setColor("white");
 		this.anchorPoints = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2121,6 +2129,15 @@ class FlowVisual extends BaseConnection {
 			this.adjustNeighborAnchor(this.anchorPoints[0], this.anchorPoints[1]);
 			this.adjustNeighborAnchor(this.anchorPoints[this.anchorPoints.length-1], this.anchorPoints[this.anchorPoints.length-2]);
 		}
+
+		if(this.primitive && this.icons) {
+			if(getValue(this.primitive) === "") {
+				this.icons.set("questionmark", "visible");
+			} else {
+				this.icons.set("questionmark", "hidden");
+			}
+		}
+
 	}
 	
 	updateGraphics() {
@@ -2152,6 +2169,18 @@ class FlowVisual extends BaseConnection {
 		this.outerPath.update();
 		this.innerPath.update();
 		this.arrowHeadPath.update();
+	}
+	
+	unselect() {
+		super.unselect();
+		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
+		this.icons.setColor(this.color);
+	}
+
+	select() {
+		super.select();
+		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
+		this.icons.setColor("white");
 	}
 	
 	double_click() {
