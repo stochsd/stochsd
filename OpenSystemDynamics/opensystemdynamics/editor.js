@@ -6202,13 +6202,22 @@ class TextBoxDialog extends jqDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Converter settings");
+		this.setTitle("Converter Settings");
 		this.setHtml(`
-			<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+			<div class="primitiveSettings" style="padding: 10px 0px">
 				Name:<br/>
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="valueField" style="width: 100%; height: 50px;"></textarea>
+				<div>
+					<p style="color:grey; font-size:14px; margin:5px 0px">
+						<b>Definition:</b></br>
+						&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
+						</br>
+						<b>Example:</b></br>
+						&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
+					</p>
+				</div>
 			</div>
 		`);
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
