@@ -999,6 +999,15 @@ class OnePointer extends BaseObject{
 	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
+		
+		if(this.primitive && this.icons) {
+			if(getValue(this.primitive) === "") {
+				this.icons.set("questionmark", "visible");
+			} else {
+				this.icons.set("questionmark", "hidden");
+			}
+		}
+		
 		this.afterUpdate();
 	}
 	updatePosition() {
@@ -1241,15 +1250,6 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
-	update() {
-		super.update();
-		if(this.primitive.getAttribute("InitialValue") === "") {
-			this.icons.set("questionmark", "visible");
-		} else {
-			this.icons.set("questionmark", "hidden");
-		}
-	}
-
 	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
@@ -1389,15 +1389,6 @@ class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
-	}
-
-	update() {
-		super.update();
-		if(this.primitive.getAttribute("Equation") === "") {
-			this.icons.set("questionmark", "visible");
-		} else {
-			this.icons.set("questionmark", "hidden");
-		}
 	}
 
 	getRadius() {
