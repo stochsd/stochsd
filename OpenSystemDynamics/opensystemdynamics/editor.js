@@ -2137,7 +2137,6 @@ class FlowVisual extends BaseConnection {
 				this.icons.set("questionmark", "hidden");
 			}
 		}
-
 	}
 	
 	updateGraphics() {
@@ -3116,6 +3115,9 @@ class NumberboxTool extends BaseTool {
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
+	static rightMouseDown(x, y){
+		NumberboxTool.leftMouseDown(x, y);
+	}
 	static enterTool() {
 		var selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length != 1) {
@@ -3177,6 +3179,9 @@ class StockTool extends BaseTool {
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
+	static rightMouseDown(x, y){
+		StockTool.leftMouseDown(x, y);
+	}
 }
 
 class RotateNameTool extends BaseTool {
@@ -3236,6 +3241,9 @@ class GhostTool extends BaseTool {
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
+	static rightMouseDown(x, y){
+		GhostTool.leftMouseDown(x, y);
+	}
 	static enterTool() {
 		var selected_ids = get_selected_ids();
 		if (selected_ids.length != 1) {
@@ -3270,6 +3278,9 @@ class ConverterTool extends BaseTool {
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
+	static rightMouseDown(x, y){
+		ConverterTool.leftMouseDown(x, y);
+	}
 }
 
 class VariableTool extends BaseTool {
@@ -3289,6 +3300,9 @@ class VariableTool extends BaseTool {
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
+	static rightMouseDown(x, y){
+		VariableTool.leftMouseDown(x, y);
+	}
 }
 
 class ConstantTool extends BaseTool {
@@ -3306,6 +3320,9 @@ class ConstantTool extends BaseTool {
 	}
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
+	}
+	static rightMouseDown(x, y){
+		ConstantTool.leftMouseDown(x, y);
 	}
 }
 
