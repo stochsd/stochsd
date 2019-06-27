@@ -869,7 +869,7 @@ class BaseObject {
 	}
 }
 
-class OnePointer extends BaseObject{
+class OnePointer extends BaseObject {
 	constructor(id, type, pos, extras = false) {
 		super(id,type,pos);
 		// Add object to global 
@@ -1109,10 +1109,6 @@ class AnchorPoint extends OnePointer {
 	updatePosition() {
 		this.update();
 		this.afterUpdatePosition();
-	}
-	unselect() {
-		this.selected = false;
-		super.unselect();
 	}
 	getImage() {
 		if (this.isSquare) {
