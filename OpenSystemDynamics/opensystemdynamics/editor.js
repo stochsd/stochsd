@@ -3097,46 +3097,6 @@ class TextTool extends BaseTool {
 	}
 }
 
-class NumberboxTool extends BaseTool {
-	static init() {
-		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
-	}
-	static leftMouseDown(x,y) {
-		unselect_all();
-		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
-		
-		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
-		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
-		this.primitive.setAttribute("Target",this.targetPrimitive);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static rightMouseDown(x, y){
-		NumberboxTool.leftMouseDown(x, y);
-	}
-	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
-		if (selected_ids.length != 1) {
-			xAlert("You must first select exactly one primitive to watch");
-			ToolBox.setTool("mouse");
-			return;
-		}
-		
-		var selected_object = get_object(selected_ids[0]);
-		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not watchable");
-			ToolBox.setTool("mouse");
-			return;
-		}
-		this.targetPrimitive = selected_ids[0];
-	}
-}
-NumberboxTool.init();
-
 class DeleteTool extends BaseTool {
 	static enterTool() {
 		var selected_ids = Object.keys(get_selected_root_objects());
@@ -3168,19 +3128,72 @@ class RedoTool extends BaseTool {
 }
 RedoTool.init();
 
-class StockTool extends BaseTool {
-	static leftMouseDown(x,y) {
+class OnePointCreateTool extends BaseTool {
+	constructor() {
+		this.rightClickMode = false;
+	}
+	static create(x, y) {
+		// This function should be over written
+	}
+	static leftMouseDown(x, y) {
 		unselect_all();
-		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["stock"]);
-		var size = type_size["stock"];
-		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
+		if (this.rightClickMode) {
+			ToolBox.setTool("mouse");
+			this.rightClickMode = false; 
+		} else {
+			this.create(x, y);
+		}
 	}
 	static leftMouseUp(x, y) {
 		ToolBox.setTool("mouse");
 	}
-	static rightMouseDown(x, y){
-		StockTool.leftMouseDown(x, y);
+	static rightMouseDown(x, y) {
+		this.rightClickMode = true;
+		unselect_all();
+		this.create(x, y);
+	}
+}
+
+class NumberboxTool extends OnePointCreateTool {
+	static init() {
+		this.targetPrimitive = null;
+		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
+	}
+	static create(x, y) {
+		// The right place to  create primitives and elements is in the tools-layers
+		var primitive_name = findFreeName(type_basename["text"]);
+		var size = type_size["text"];
+		
+		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
+		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
+		this.primitive.setAttribute("Target",this.targetPrimitive);
+	}
+	static enterTool() {
+		var selected_ids = Object.keys(get_selected_root_objects());
+		if (selected_ids.length != 1) {
+			xAlert("You must first select exactly one primitive to watch");
+			ToolBox.setTool("mouse");
+			return;
+		}
+		
+		var selected_object = get_object(selected_ids[0]);
+		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
+			xAlert("This primitive is not watchable");
+			ToolBox.setTool("mouse");
+			return;
+		}
+		this.targetPrimitive = selected_ids[0];
+	}
+}
+NumberboxTool.init();
+
+
+class StockTool extends OnePointCreateTool {	
+	static create(x, y) {
+		// The right place to  create primitives and elements is in the tools-layers
+		var primitive_name = findFreeName(type_basename["stock"]);
+		var size = type_size["stock"];
+		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
 	}
 }
 
@@ -3224,25 +3237,18 @@ class StraightenLinkTool extends BaseTool {
 		
 }
 
-class GhostTool extends BaseTool {
+class GhostTool extends OnePointCreateTool {
 	static init() {
 		this.id_to_ghost = null;
 		this.ghostable_primitives = ["stock", "variable", "converter"];
 	}
-	static leftMouseDown(x,y) {
-		unselect_all();
+	static create(x, y) {
 		var source = findID(this.id_to_ghost);
 		var ghost = makeGhost(source,[x,y]);
 		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static rightMouseDown(x, y){
-		GhostTool.leftMouseDown(x, y);
 	}
 	static enterTool() {
 		var selected_ids = get_selected_ids();
@@ -3267,25 +3273,17 @@ class GhostTool extends BaseTool {
 }
 GhostTool.init();
 
-class ConverterTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
+class ConverterTool extends OnePointCreateTool {
+	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["converter"]);
 		var size = type_size["converter"];
 		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static rightMouseDown(x, y){
-		ConverterTool.leftMouseDown(x, y);
-	}
 }
 
-class VariableTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
+class VariableTool extends OnePointCreateTool {
+	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["variable"]);
 		var size = type_size["variable"];
@@ -3297,17 +3295,10 @@ class VariableTool extends BaseTool {
 			{"isConstant": false}
 		);
 	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static rightMouseDown(x, y){
-		VariableTool.leftMouseDown(x, y);
-	}
 }
 
-class ConstantTool extends BaseTool {
-	static leftMouseDown(x, y) {
-		unselect_all();
+class ConstantTool extends OnePointCreateTool {
+	static create(x, y) {
 		let primitiveName = findFreeName(type_basename["constant"]);
 		let size = type_size["variable"];
 		let newConstant = createPrimitive(
@@ -3317,12 +3308,6 @@ class ConstantTool extends BaseTool {
 			size, 
 			{"isConstant": true}
 		);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static rightMouseDown(x, y){
-		ConstantTool.leftMouseDown(x, y);
 	}
 }
 
