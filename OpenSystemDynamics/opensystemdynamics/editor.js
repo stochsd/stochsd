@@ -3253,18 +3253,18 @@ class GhostTool extends OnePointCreateTool {
 	static enterTool() {
 		var selected_ids = get_selected_ids();
 		if (selected_ids.length != 1) {
-			errorPopUp("You must first select exactly one primitive to ghost");
+			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		var selected_object = get_object(selected_ids[0]);
 		if (selected_object.is_ghost) {
-			errorPopUp("You cannot ghost a ghost");
+			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		if (this.ghostable_primitives.indexOf(selected_object.type) == -1) {
-			errorPopUp("This primitive is not ghostable");
+			xAlert("This primitive is not ghostable");
 			ToolBox.setTool("mouse");
 			return;
 		}
