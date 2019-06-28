@@ -6404,36 +6404,31 @@ class EquationEditor extends jqDialog {
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
 			<div class="table">
-  <div class="table-row">
-	<div class="table-row">
-		<div class="table-cell" style="width: 400px">
-				<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-					Name:<br/>
-					<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
-					Definition:<br/>
-					<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
-					<br/>
-					<div class="referenceDiv" style="width: 500px; overflow-x: auto" ><!-- References goes here-->
-						
-					</div>
-					<div class="positiveOnlyDiv">
-						<br/>
-						<label><input class="restrictPositive" type="checkbox"/> Restrict to positive values</label>
+  			<div class="table-row">
+					<div class="table-row">
+						<div class="table-cell" style="width: 300px">
+							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+								Name:<br/>
+								<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
+								Definition:<br/>
+								<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
+								<br/>
+								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							</div>
+						<div class="positiveOnlyDiv">
+							<br/>
+							<label><input class="restrictPositive" type="checkbox"/> Restrict to positive values</label>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-    <div class="table-cell">
-    
-    <div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
-	<div class="accordionCluster">
-
-	</div> <!--End of accordionCluster. Programming help is inserted here-->
-		
-    
-    </div>
-  </div>
-</div>
+    	<div class="table-cell">
+    		<div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
+					<div class="accordionCluster">
+					</div> <!--End of accordionCluster. Programming help is inserted here-->
+				</div>
+  		</div>
+			</div>
 		`);
 
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
