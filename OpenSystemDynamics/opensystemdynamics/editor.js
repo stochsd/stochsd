@@ -6652,6 +6652,9 @@ class EquationEditor extends jqDialog {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
+			while(value[value.length-1] === " " || value[value.length-1] === ";" || value[value.length-1] === "\n"){
+				value = value.substring(0, value.length-1);
+			}
 			value = value.replace(/\n/g, "\\n");
 			setValue(this.primitive,value);
 			
