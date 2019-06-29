@@ -2503,13 +2503,21 @@ function getSize(primitive) {
 		if(graph instanceof SimpleNode){
 			if(typeof primitive.value.children[0]=="undefined") {
 				dpopup("No position data for "+primitive.id+" found");
-				return [0,0];
+				return [0, 0];
 			}
 			var geometry = primitive.value.children[0].children[0].attributes;
 			tgeometry = geometry;
-			var width=parseInt(geometry.getNamedItem("width").value);
-			var height=parseInt(geometry.getNamedItem("height").value);
-			return [width,height];
+			// console.log(geometry);
+			// ERROR HERE: geometry.getNamedItem("width") === NULL 
+			let widthItem = geometry.getNamedItem("width");
+			let heightItem = geometry.getNamedItem("height");
+			if (widthItem && heightItem) {
+				let width = parseInt(widthItem.value);
+				let height = parseInt(heightItem.value);
+				return [width, height];
+			} else {
+				return [0, 0];
+			}			
 		}
 		var size = graph.getCellBounds(primitive);
 		var scale = graph.view.getScale();
