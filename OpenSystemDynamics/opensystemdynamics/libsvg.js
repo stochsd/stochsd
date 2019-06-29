@@ -455,30 +455,22 @@ function svgIcons(stroke, fill, markclass) {
 		svgQuestionmark(stroke)
 	]);
 	newElement.setAttribute("class", markclass);
-	newElement.ghost = newElement.children[0];
-	newElement.questionmark = newElement.children[1];
-	
+	newElement.elements = {
+		"ghost": newElement.children[0],
+		"questionmark": newElement.children[1]
+	};
 
 	for (let child of newElement.children) {
 		child.setAttribute("visibility", "hidden");
 	}
 	
 	newElement.setColor = function (color) {
-		this.ghost.setAttribute("stroke", color);
-		this.questionmark.setAttribute("style", `fill: ${color}`);
+		this.elements["ghost"].setAttribute("stroke", color);
+		this.elements["questionmark"].setAttribute("style", `fill: ${color}`);
 	}
 
-	newElement.setState = function (state) {
-		if (state == "none") {
-			this.ghost.setAttribute("visibility", "hidden");
-			this.questionmark.setAttribute("visibility", "hidden");
-		} else if (state == "ghost") {
-			this.ghost.setAttribute("visibility", "visible");
-			this.questionmark.setAttribute("visibility", "hidden")
-		} else if (state == "questionmark") {
-			this.ghost.setAttribute("visibility", "hidden");
-			this.questionmark.setAttribute("visibility", "visible")
-		}
+	newElement.set = function (icon, visibility) {
+		this.elements[icon].setAttribute("visibility", visibility);
 	}
 	return newElement;
 }

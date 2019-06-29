@@ -30,20 +30,28 @@ Mail: magnus.ja.gustafsson@gmail.com.
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
-type_size = {};
-type_size["stock"] = [80,60];
-type_size["variable"] = [60,60];
-type_size["converter"] = [80,60];
-type_size["text"] = [120,60];
+// type_size = {};
+// type_size["stock"] = [80,60];
+// type_size["variable"] = [60,60];
+// type_size["converter"] = [80,60];
+// type_size["text"] = [120,60];
 
-type_basename = {};
-type_basename["stock"] = "Stock";
-type_basename["variable"] = "Variable";
-type_basename["flow"] = "Flow";
-type_basename["link"] = "Link";
-type_basename["converter"] = "Converter";
-type_basename["text"] = "Text";
-type_basename["constant"] = "Constant";
+const type_size = {
+	"stock":			[80, 60],
+	"variable":		[60, 60],
+	"converter":	[80, 60],
+	"text":				[120, 60]
+}
+
+const type_basename = {
+	"stock":			"Stock",
+	"variable":		"Variable",
+	"flow":				"Flow",
+	"link":				"Link",
+	"converter":	"Converter",
+	"text":				"Text",
+	"constant":		"Constant"
+};
 
 last_connection = null;
 
@@ -787,15 +795,6 @@ class BaseObject {
 		return this.selected;
 	}
 
-	setDefined(value) {
-		this.isDefined = value;
-		if (this.isDefined) {
-			this.icons.setState("none");
-		} else {
-			this.icons.setState("questionmark");
-		}
-	}
-
 	clean() {
 			// Clean all children
 			let children = getChildren(this.id);
@@ -870,7 +869,7 @@ class BaseObject {
 	}
 }
 
-class OnePointer extends BaseObject{
+class OnePointer extends BaseObject {
 	constructor(id, type, pos, extras = false) {
 		super(id,type,pos);
 		// Add object to global 
@@ -952,7 +951,7 @@ class OnePointer extends BaseObject{
 		}
 		
 		if (this.is_ghost && this.icons) {
-			this.icons.setState("ghost");
+			this.icons.set("ghost", "visible");
 		}
 		
 			
@@ -1008,6 +1007,15 @@ class OnePointer extends BaseObject{
 	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
+		
+		if(this.primitive && this.icons) {
+			if(getValue(this.primitive) === "") {
+				this.icons.set("questionmark", "visible");
+			} else {
+				this.icons.set("questionmark", "hidden");
+			}
+		}
+		
 		this.afterUpdate();
 	}
 	updatePosition() {
@@ -1092,9 +1100,6 @@ class AnchorPoint extends OnePointer {
 			}
 		}
 	}
-	update() {
-		super.update();
-	}
 	afterUpdatePosition() {
 		let parent = get_parent(this);
 		if (parent.start_anchor && parent.end_anchor)  {
@@ -1104,10 +1109,6 @@ class AnchorPoint extends OnePointer {
 	updatePosition() {
 		this.update();
 		this.afterUpdatePosition();
-	}
-	unselect() {
-		this.selected = false;
-		super.unselect();
 	}
 	getImage() {
 		if (this.isSquare) {
@@ -2023,7 +2024,8 @@ class FlowVisual extends BaseConnection {
 		this.outerPath.setAttribute("stroke", color);
 		this.arrowHeadPath.setAttribute("stroke", color);
 		this.valve.setAttribute("stroke", color);
-		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color)
+		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
+		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
 		this.anchorPoints.map(anchor => anchor.setColor(color));
 	}
@@ -2037,7 +2039,14 @@ class FlowVisual extends BaseConnection {
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M10,10 -10,-10 10,-10 -10,10 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -15, "vairable", "name_element");
-		this.variable = svg_group([svg_circle(0, 0, 15, defaultStroke, "white", "element"), this.name_element]);
+		this.icons = svgIcons(defaultStroke, defaultFill, "icons");
+		this.variable = svg_group(
+			[svg_circle(0, 0, 15, this.color, "white", "element"), 
+			svg_circle(0, 0, 13, "none", this.color, "selector"),
+			this.icons,	
+			this.name_element]
+		);
+		this.icons.setColor("white");
 		this.anchorPoints = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2120,6 +2129,14 @@ class FlowVisual extends BaseConnection {
 			this.adjustNeighborAnchor(this.anchorPoints[0], this.anchorPoints[1]);
 			this.adjustNeighborAnchor(this.anchorPoints[this.anchorPoints.length-1], this.anchorPoints[this.anchorPoints.length-2]);
 		}
+
+		if(this.primitive && this.icons) {
+			if(getValue(this.primitive) === "") {
+				this.icons.set("questionmark", "visible");
+			} else {
+				this.icons.set("questionmark", "hidden");
+			}
+		}
 	}
 	
 	updateGraphics() {
@@ -2151,6 +2168,18 @@ class FlowVisual extends BaseConnection {
 		this.outerPath.update();
 		this.innerPath.update();
 		this.arrowHeadPath.update();
+	}
+	
+	unselect() {
+		super.unselect();
+		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
+		this.icons.setColor(this.color);
+	}
+
+	select() {
+		super.select();
+		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
+		this.icons.setColor("white");
 	}
 	
 	double_click() {
@@ -3068,43 +3097,6 @@ class TextTool extends BaseTool {
 	}
 }
 
-class NumberboxTool extends BaseTool {
-	static init() {
-		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
-	}
-	static leftMouseDown(x,y) {
-		unselect_all();
-		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
-		
-		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
-		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
-		this.primitive.setAttribute("Target",this.targetPrimitive);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
-		if (selected_ids.length != 1) {
-			xAlert("You must first select exactly one primitive to watch");
-			ToolBox.setTool("mouse");
-			return;
-		}
-		
-		var selected_object = get_object(selected_ids[0]);
-		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not watchable");
-			ToolBox.setTool("mouse");
-			return;
-		}
-		this.targetPrimitive = selected_ids[0];
-	}
-}
-NumberboxTool.init();
-
 class DeleteTool extends BaseTool {
 	static enterTool() {
 		var selected_ids = Object.keys(get_selected_root_objects());
@@ -3136,16 +3128,72 @@ class RedoTool extends BaseTool {
 }
 RedoTool.init();
 
-class StockTool extends BaseTool {
-	static leftMouseDown(x,y) {
+class OnePointCreateTool extends BaseTool {
+	constructor() {
+		this.rightClickMode = false;
+	}
+	static create(x, y) {
+		// This function should be over written
+	}
+	static leftMouseDown(x, y) {
 		unselect_all();
+		if (this.rightClickMode) {
+			ToolBox.setTool("mouse");
+			this.rightClickMode = false; 
+		} else {
+			this.create(x, y);
+		}
+	}
+	static leftMouseUp(x, y) {
+		ToolBox.setTool("mouse");
+	}
+	static rightMouseDown(x, y) {
+		this.rightClickMode = true;
+		unselect_all();
+		this.create(x, y);
+	}
+}
+
+class NumberboxTool extends OnePointCreateTool {
+	static init() {
+		this.targetPrimitive = null;
+		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
+	}
+	static create(x, y) {
+		// The right place to  create primitives and elements is in the tools-layers
+		var primitive_name = findFreeName(type_basename["text"]);
+		var size = type_size["text"];
+		
+		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
+		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
+		this.primitive.setAttribute("Target",this.targetPrimitive);
+	}
+	static enterTool() {
+		var selected_ids = Object.keys(get_selected_root_objects());
+		if (selected_ids.length != 1) {
+			xAlert("You must first select exactly one primitive to watch");
+			ToolBox.setTool("mouse");
+			return;
+		}
+		
+		var selected_object = get_object(selected_ids[0]);
+		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
+			xAlert("This primitive is not watchable");
+			ToolBox.setTool("mouse");
+			return;
+		}
+		this.targetPrimitive = selected_ids[0];
+	}
+}
+NumberboxTool.init();
+
+
+class StockTool extends OnePointCreateTool {	
+	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["stock"]);
 		var size = type_size["stock"];
 		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
 	}
 }
 
@@ -3189,13 +3237,12 @@ class StraightenLinkTool extends BaseTool {
 		
 }
 
-class GhostTool extends BaseTool {
+class GhostTool extends OnePointCreateTool {
 	static init() {
 		this.id_to_ghost = null;
 		this.ghostable_primitives = ["stock", "variable", "converter"];
 	}
-	static leftMouseDown(x,y) {
-		unselect_all();
+	static create(x, y) {
 		var source = findID(this.id_to_ghost);
 		var ghost = makeGhost(source,[x,y]);
 		ghost.setAttribute("RotateName", "0");
@@ -3203,24 +3250,21 @@ class GhostTool extends BaseTool {
 		var DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
 	static enterTool() {
 		var selected_ids = get_selected_ids();
 		if (selected_ids.length != 1) {
-			errorPopUp("You must first select exactly one primitive to ghost");
+			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		var selected_object = get_object(selected_ids[0]);
 		if (selected_object.is_ghost) {
-			errorPopUp("You cannot ghost a ghost");
+			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		if (this.ghostable_primitives.indexOf(selected_object.type) == -1) {
-			errorPopUp("This primitive is not ghostable");
+			xAlert("This primitive is not ghostable");
 			ToolBox.setTool("mouse");
 			return;
 		}
@@ -3229,22 +3273,17 @@ class GhostTool extends BaseTool {
 }
 GhostTool.init();
 
-class ConverterTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
+class ConverterTool extends OnePointCreateTool {
+	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["converter"]);
 		var size = type_size["converter"];
 		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
 }
 
-class VariableTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
+class VariableTool extends OnePointCreateTool {
+	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
 		var primitive_name = findFreeName(type_basename["variable"]);
 		var size = type_size["variable"];
@@ -3256,14 +3295,10 @@ class VariableTool extends BaseTool {
 			{"isConstant": false}
 		);
 	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
 }
 
-class ConstantTool extends BaseTool {
-	static leftMouseDown(x, y) {
-		unselect_all();
+class ConstantTool extends OnePointCreateTool {
+	static create(x, y) {
 		let primitiveName = findFreeName(type_basename["constant"]);
 		let size = type_size["variable"];
 		let newConstant = createPrimitive(
@@ -3273,9 +3308,6 @@ class ConstantTool extends BaseTool {
 			size, 
 			{"isConstant": true}
 		);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
 	}
 }
 
@@ -6197,13 +6229,22 @@ class TextBoxDialog extends jqDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Converter settings");
+		this.setTitle("Converter Settings");
 		this.setHtml(`
-			<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+			<div class="primitiveSettings" style="padding: 10px 0px">
 				Name:<br/>
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="valueField" style="width: 100%; height: 50px;"></textarea>
+				<div>
+					<p style="color:grey; font-size:14px; margin:5px 0px">
+						<b>Definition:</b></br>
+						&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
+						</br>
+						<b>Example:</b></br>
+						&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
+					</p>
+				</div>
 			</div>
 		`);
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
@@ -6272,6 +6313,11 @@ class ConverterDialog extends jqDialog {
 				} else {
 					xAlert(`The name <b>${newName}</b> is already a taken name. \nName was not changed.`);
 				}
+			}
+			// Update visual object to add/remove "?" icon 
+			let visualObject = object_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
 			}
 		}
 	}
@@ -6343,36 +6389,31 @@ class EquationEditor extends jqDialog {
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
 			<div class="table">
-  <div class="table-row">
-	<div class="table-row">
-		<div class="table-cell" style="width: 400px">
-				<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-					Name:<br/>
-					<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
-					Definition:<br/>
-					<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
-					<br/>
-					<div class="referenceDiv" style="width: 500px; overflow-x: auto" ><!-- References goes here-->
-						
-					</div>
-					<div class="positiveOnlyDiv">
-						<br/>
-						<label><input class="restrictPositive" type="checkbox"/> Restrict to positive values</label>
+  			<div class="table-row">
+					<div class="table-row">
+						<div class="table-cell" style="width: 300px">
+							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+								Name:<br/>
+								<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
+								Definition:<br/>
+								<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
+								<br/>
+								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							</div>
+						<div class="positiveOnlyDiv">
+							<br/>
+							<label><input class="restrictPositive" type="checkbox"/> Restrict to positive values</label>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-    <div class="table-cell">
-    
-    <div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
-	<div class="accordionCluster">
-
-	</div> <!--End of accordionCluster. Programming help is inserted here-->
-		
-    
-    </div>
-  </div>
-</div>
+    	<div class="table-cell">
+    		<div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
+					<div class="accordionCluster">
+					</div> <!--End of accordionCluster. Programming help is inserted here-->
+				</div>
+  		</div>
+			</div>
 		`);
 
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
@@ -6591,6 +6632,9 @@ class EquationEditor extends jqDialog {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
+			while(value[value.length-1] === " " || value[value.length-1] === ";" || value[value.length-1] === "\n"){
+				value = value.substring(0, value.length-1);
+			}
 			value = value.replace(/\n/g, "\\n");
 			setValue(this.primitive,value);
 			
@@ -6609,6 +6653,15 @@ class EquationEditor extends jqDialog {
 			// Handle restrict to positive
 			let restrictPositive = $(this.restrictPositiveCheckbox).prop("checked");
 			setNonNegative(this.primitive,restrictPositive);
+			
+			let visualObject = object_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
+			}
+			visualObject = connection_array[this.primitive.id];
+			if (visualObject) {
+				visualObject.update();
+			}
 		}
 	}
 }

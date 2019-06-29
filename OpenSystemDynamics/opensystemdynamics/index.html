@@ -13,6 +13,10 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
     <title></title>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- Prevent rightclick contextmenu -->
+	<script type="text/javascript">
+		document.addEventListener('contextmenu', event => event.preventDefault());
+	</script>
 	<!-- build:js opensystemdynamics.min.js  -->
 	<script type="text/javascript" src="settings.js"></script>
 	<script type="text/javascript" src="debug.js"></script>

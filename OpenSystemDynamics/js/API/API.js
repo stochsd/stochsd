@@ -1631,10 +1631,6 @@ function createPrimitive(name, type, position, size, extraAttributes = {}) {
 
 	setName(vertex, name);
 
-	if (vertex.value.nodeName == "Converter") {
-		setConverterInit(vertex);
-	}
-
 	if (isValued(vertex) || vertex.value.nodeName == "Agents") {
 		var displays = primitives("Display");
 		for (var i = 0; i < displays.length; i++) {
