@@ -1376,9 +1376,21 @@ class NumberboxVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
+			svg_rect(-20,-15,40,30, "none", this.color, "selector"),
 			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
-			svg_rect(-20,-15,40,30, "red", "none", "selector")
 		];	
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.select();
+	}
+	select() {
+		super.select();
+		this.name_element.setAttribute("fill", "white");
+	}
+	unselect() {
+		super.unselect();
+		this.name_element.setAttribute("fill", this.color);
 	}
 	name_double_click() {
 		this.double_click();
