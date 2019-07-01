@@ -2757,6 +2757,7 @@ class XyPlotVisual extends DiagramVisual {
 		$(this.chartDiv).empty();
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
+				animate: true, 
 			  series: this.serieSettingsArray,
 			  sortData: false,
 			  axesDefaults: {
