@@ -2555,7 +2555,8 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		$(this.chartDiv).empty();
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			  series: this.serieSettingsArray,
+				series: this.serieSettingsArray,
+				animate: true,
 			  axes: {
 				xaxis: {
 				  label: formatFunction('Time'),
