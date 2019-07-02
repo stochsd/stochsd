@@ -1922,7 +1922,8 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("valveIndex", this.valveIndex);
 		this.primitive.setAttribute("variableSide", this.variableSide);
 
-		update_all_objects();
+		// update_all_objects();
+		update_fewer_objects("");
 	}
 
 	createAnchorPoint(x, y) {
@@ -3413,7 +3414,12 @@ class MouseTool extends BaseTool {
 			
 		}
 		if (objectMoved) {
-			update_all_objects();
+			// update_all_objects();
+			let ids = [];
+			for (let key in move_array) {
+				ids.push(move_array[key].id);
+			}
+			update_fewer_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -3941,6 +3947,23 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		last_clicked_element.select();
 	}
 	last_click_object_clicked = true;
+}
+
+
+// only updates diagrams, tables, and XyPlots if needed 
+function update_fewer_objects(ids) {
+	for(var key in object_array) {
+		object_array[key].update();
+	}
+	for(var key in connection_array) {
+		if(connection_array[key].type === "table") {
+			if (ids.includes(key)) {
+				connection_array[key].update();
+			}
+		} else {
+			connection_array[key].update();
+		}
+	}
 }
 
 function update_all_objects() {
