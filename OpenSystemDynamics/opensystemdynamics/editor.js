@@ -5797,7 +5797,7 @@ class DisplayDialog extends jqDialog {
 						<td class="text">
 							${makePrimitiveName(getName(p))} 
 						</td>
-						<td>
+						<td style="text-align: center;">
 							<input 
 								class="primitive_checkbox" 
 								type="checkbox" 
@@ -5812,6 +5812,59 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
+	renderAxisLimitsHTML() {
+		return (`
+		<table style="margin: 16px 0px;">
+			<tr>
+				<th></th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+			</tr>
+			<tr>
+				<td>X-axis</td>
+				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+			</tr>
+			<tr>
+				<td>Y-axis</td>
+				<td><input class="yMin intervalsettings" type="text" value="${this.getYMin()}"></td>
+				<td><input class="yMax intervalsettings" type="text" value="${this.getYMax()}"></td>
+				<td><input class="yAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+			</tr>
+		</table>
+		`);
+	}
+	bindAxisLimitsEvents() {
+		$(this.dialogContent).find(".intervalsettings").change((event) => {
+			this.updateInterval();
+		});
+	}
+
+	updateInterval() {
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
+		
+		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		
+		$(this.dialogContent).find(".xMin").val(this.getXMin());
+		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		
+		
+		this.yMin = Number($(this.dialogContent).find(".yMin").val());
+		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
+		
+		$(this.dialogContent).find(".yMin").val(this.getYMin());
+		$(this.dialogContent).find(".yMax").val(this.getYMax());
+	}
+
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
@@ -5847,36 +5900,45 @@ class DiagramDialog extends DisplayDialog {
 		
 		this.simulationTime = 0;
 	}
-
-	renderAxisLimitsHTML() {
+	
+	renderPrimitiveListHtml() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+		let primitives = this.getAcceptedPrimitiveList();
+		
 		return (`
-		<table style="margin: 16px 0px;">
+			<table style="margin: 16px 0px;">
 			<tr>
-				<th></th>
-				<th>Min</th>
-				<th>Max</th>
-				<th>Auto</th>
-			</tr>
 			<tr>
-				<td>X-axis</td>
-				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td style="text-align: center;" ><b>&nbsp Primitives &nbsp</b></td>
+				<td><b>&nbsp Left &nbsp</b></td>
+				<td><b>&nbsp Right &nbsp</b></td>
 			</tr>
-			<tr>
-				<td>Y-axis</td>
-				<td><input class="yMin intervalsettings" type="text" value="${this.getYMin()}"></td>
-				<td><input class="yMax intervalsettings" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+				${primitives.map(p => `
+					<tr>
+						<td class="text">
+							${makePrimitiveName(getName(p))} 
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox" 
+								type="checkbox" 
+								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+							>
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox"
+								type="checkbox"
+							>
+						</td>
+					</tr>
+				`).join('')}
 			</tr>
-		</table>
+			</table>
 		`);
-	}
-
-	bindAxisLimitsEvents() {
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			this.updateInterval();
-		});
 	}
 
 	beforeShow() {
@@ -5890,28 +5952,6 @@ class DiagramDialog extends DisplayDialog {
 		this.bindAxisLimitsEvents();
 		
 		this.updateInterval();
-	}
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
-		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
-		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
-		
-		
-		this.yMin = Number($(this.dialogContent).find(".yMin").val());
-		this.yMax = Number($(this.dialogContent).find(".yMax").val());
-		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
-		
-		$(this.dialogContent).find(".yMin").val(this.getYMin());
-		$(this.dialogContent).find(".yMax").val(this.getYMax());
 	}
 	getXMin() {
 		if (this.xAuto) {
@@ -5945,7 +5985,7 @@ class DiagramDialog extends DisplayDialog {
 	}
 }
 
-class XyPlotDialog extends DiagramDialog {
+class XyPlotDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.setTitle("XY-plot properties");
