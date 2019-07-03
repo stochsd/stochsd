@@ -1923,7 +1923,7 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("variableSide", this.variableSide);
 
 		// update_all_objects();
-		update_fewer_objects("");
+		update_relevant_objects("");
 	}
 
 	createAnchorPoint(x, y) {
@@ -3422,7 +3422,7 @@ class MouseTool extends BaseTool {
 			for (let key in move_array) {
 				ids.push(move_array[key].id);
 			}
-			update_fewer_objects(ids);
+			update_relevant_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -3954,7 +3954,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 
 
 // only updates diagrams, tables, and XyPlots if needed 
-function update_fewer_objects(ids) {
+function update_relevant_objects(ids) {
 	for(var key in object_array) {
 		object_array[key].update();
 	}
