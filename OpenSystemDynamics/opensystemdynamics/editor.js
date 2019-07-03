@@ -2635,7 +2635,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 }
 
-class XyPlotVisual extends DiagramVisual {
+class XyPlotVisual extends HtmlOverlayTwoPointer {
 	constructor(id,type,pos) {		
 		super(id,type,pos);
 		this.runHandler = () => {
@@ -2778,6 +2778,27 @@ class XyPlotVisual extends DiagramVisual {
 				}
 			}
 		  });
+	}
+	updateGraphics() {
+		super.updateGraphics();
+		
+		let width = $(this.targetElement).width()-20;
+		let height = $(this.targetElement).height()-20;
+		this.chartDiv.style.width = width+"px";
+		this.chartDiv.style.height = height+"px";
+		
+		this.updateChart();
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+	}
+	double_click() {
+		this.dialog.show();
 	}
 }
 
