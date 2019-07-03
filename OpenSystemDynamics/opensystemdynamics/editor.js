@@ -5910,6 +5910,9 @@ class DiagramDialog extends DisplayDialog {
 		
 		this.markers = false;
 
+		// For keeping track of what y-axis graph should be ploted ("L" or "R")
+		this.sides = [];
+
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
@@ -5924,6 +5927,54 @@ class DiagramDialog extends DisplayDialog {
 		this.simulationTime = 0;
 	}
 	
+	setDisplayId(id, value, side) {
+		let oldIdIndex = this.displayIdList.indexOf(id);
+		switch(value) {
+			case true:
+				// Check that the id can be added
+				if (!this.acceptsId(id)) {
+					return;
+				}
+				// Check if id already in this.displayIdList
+				if (oldIdIndex != -1 ) {
+					if (this.sides[oldIdIndex] !== side) {
+						this.sides[oldIdIndex] = side;
+					}
+					return;
+				}
+				// Add the value
+				this.displayIdList.push(id.toString());
+				this.sides.push(side);
+
+			break;
+			case false:
+				// Check if id is not in the list
+				if (oldIdIndex == -1) {
+					return;
+				}				
+				this.displayIdList.splice(oldIdIndex,1);
+				this.sides.splice(oldIdIndex, 1);
+			break;
+		}
+	}
+	
+	getDisplayId(id, side) {
+		id = id.toString();
+		let index = this.displayIdList.indexOf(id)
+		return (index != -1 && this.sides[index] === side);
+	}
+	
+	setIdsToDisplay(idList) {
+		this.displayIdList = [];
+		for(let i in idList) {
+			this.setDisplayId(idList[i],true);
+		}
+	}
+	getIdsToDisplay() {
+		this.clearRemovedIds();
+		return this.displayIdList;
+	}
+
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -5946,15 +5997,20 @@ class DiagramDialog extends DisplayDialog {
 							<input 
 								class="primitive_checkbox" 
 								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
 								data-name="${getName(p)}" 
 								data-id="${getID(p)}"
+								data-side="L"
 							>
 						</td>
 						<td style="text-align: center;">
 							<input 
 								class="primitive_checkbox"
 								type="checkbox"
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+								data-side="R"
 							>
 						</td>
 					</tr>
@@ -5963,7 +6019,28 @@ class DiagramDialog extends DisplayDialog {
 			</table>
 		`);
 	}
-
+	bindPrimitiveListEvents() {
+		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+			let clickedElement = event.target;
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
+			let side = $(clickedElement).attr("data-side");
+			
+			// Remove opposite checkmark
+			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
+			if (side === "R") {
+				$(commonParent[0].children[1].children[0]).removeAttr("checked");
+			} else {
+				$(commonParent[0].children[2].children[0]).removeAttr("checked");
+			}
+			
+			this.setDisplayId(idClicked, checked, side);
+			this.subscribePool.publish("primitive check changed");
+			console.log("===========");
+			console.log(this.displayIdList);
+			console.log(this.sides);
+		});
+	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
