@@ -2393,6 +2393,11 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		$(this.targetElement).dblclick(()=>{
 			this.double_click(this.id);
 		});
+
+		// Emergency solution since double clicking a Diagram or XyPlot does not always work.
+		$(this.targetElement).bind("contextmenu", (event)=> {
+			this.double_click(this.id);
+		});
 		
 		this.element = svg_rect(this.startx,
 			this.starty,
