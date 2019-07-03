@@ -2459,7 +2459,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	render() {
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
+		this.primitive.value.setAttribute("Sides", sides.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = IdsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
@@ -2544,6 +2546,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		
 	}
 	updateChart() {
+
 		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "No data. Run to create data!";
@@ -4700,8 +4703,13 @@ function syncVisual(tprimitive) {
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
+			let sidesString = tprimitive.value.getAttribute("Sides");
 			if (primitivesString) {
-				connection.dialog.setIdsToDisplay(idsToDisplay);
+				if (nodeType === "Diagram" && sidesString) {
+					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
+				} else {
+					connection.dialog.setIdsToDisplay(idsToDisplay);
+				}
 			}
 			
 			
@@ -5964,17 +5972,34 @@ class DiagramDialog extends DisplayDialog {
 		return (index != -1 && this.sides[index] === side);
 	}
 	
-	setIdsToDisplay(idList) {
+	setIdsToDisplay(idList, sides) {
 		this.displayIdList = [];
-		for(let i in idList) {
-			this.setDisplayId(idList[i],true);
+		if (sides === undefined || sides.length !== idList.length) {
+			for(let i in idList) {
+				this.setDisplayId(idList[i], true, "L");
+			}
+		} else {
+			for(let i in idList) {
+				this.setDisplayId(idList[i], true, sides[i]);
+			}
+		}
+		
+	}
+	clearRemovedIds() {
+		for(let id of this.displayIdList) {
+			if (findID(id) == null) {
+				this.setDisplayId(id, false, "L");
+				this.setDisplayId(id, false, "R");
+			}
 		}
 	}
 	getIdsToDisplay() {
 		this.clearRemovedIds();
 		return this.displayIdList;
 	}
-
+	getSidesToDisplay() {
+		return this.sides;
+	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -6036,9 +6061,6 @@ class DiagramDialog extends DisplayDialog {
 			
 			this.setDisplayId(idClicked, checked, side);
 			this.subscribePool.publish("primitive check changed");
-			console.log("===========");
-			console.log(this.displayIdList);
-			console.log(this.sides);
 		});
 	}
 	beforeShow() {
