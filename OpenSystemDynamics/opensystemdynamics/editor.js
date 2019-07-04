@@ -6039,9 +6039,9 @@ class DiagramDialog extends DisplayDialog {
 			<table style="margin: 16px 0px;">
 			<tr>
 			<tr>
-				<td style="text-align: center;" ><b>&nbsp Primitives &nbsp</b></td>
-				<td><b>&nbsp Left &nbsp</b></td>
-				<td><b>&nbsp Right &nbsp</b></td>
+				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
+				<th>&nbsp Left  &nbsp</th>
+				<th>&nbsp Right &nbsp</th>
 			</tr>
 				${primitives.map(p => `
 					<tr>
