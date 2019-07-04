@@ -2534,6 +2534,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
+					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					color: this.colorsToDisplay[i],
 					linePattern: this.patternsToDisplay[i],
 					shadow: false,
@@ -2575,6 +2576,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 				yaxis: {
 					min: this.dialog.getYMin(),
 					max: this.dialog.getYMax()
+				},
+				y2axis: {
+
 				}
 			},
 			   legend: {
