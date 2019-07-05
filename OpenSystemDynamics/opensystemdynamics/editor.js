@@ -2467,6 +2467,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
 		this.primitive.value.setAttribute("Sides", sides.join(","));
+		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = IdsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
@@ -4746,7 +4749,16 @@ function syncVisual(tprimitive) {
 				}
 			}
 			
+			// This is only for Diagram 
+			let titleLabel = tprimitive.value.getAttribute("TitleLabel");
+			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
 			
+			let leftAxisLabel = tprimitive.value.getAttribute("LeftAxisLabel");
+			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
+			
+			let rightAxisLabel = tprimitive.value.getAttribute("RightAxisLabel");
+			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
+
 			connection.update();
 			connection.render();
 		}
@@ -5577,9 +5589,10 @@ class jqDialog {
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
 	applyChanges() {
+		this.afterOkClose();
 		$(this.dialog).dialog('close');
 		// We add a delay to make sure we closed first
-		this.afterOkClose();
+		
 		setTimeout(() => {
 			History.storeUndoState();
 			updateInfoBar();
