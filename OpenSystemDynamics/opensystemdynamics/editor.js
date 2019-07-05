@@ -2565,26 +2565,30 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		$(this.chartDiv).empty();
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
+				title: this.title,
 				series: this.serieSettingsArray,
 			  axes: {
 				xaxis: {
-				  label: formatFunction('Time'),
+				  label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					min: this.dialog.getXMin(),
 					max: this.dialog.getXMax()
 				},
 				yaxis: {
+					label: this.dialog.leftAxisLabel,
 					min: this.dialog.getYMin(),
-					max: this.dialog.getYMax()
+					max: this.dialog.getYMax(),
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 				},
 				y2axis: {
-
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.rightAxisLabel,
 				}
 			},
-			   legend: {
-				show: true,
-				placement: 'outsideGrid'
-			   }
+			  legend: {
+					show: true,
+					placement: 'outsideGrid'
+			  }
 			  
 		  });
 	}
@@ -5945,6 +5949,9 @@ class DiagramDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.setTitle("Diagram properties");
+		this.title = "";
+		this.leftAxisLabel = "";
+		this.rightAxisLabel = "";
 		
 		this.markers = false;
 
@@ -6030,14 +6037,68 @@ class DiagramDialog extends DisplayDialog {
 	getSidesToDisplay() {
 		return this.sides;
 	}
+	renderAxisNamesHtml() {
+		return (`
+			<table style="margin-bottom: 16px;">
+				<tr>
+					<th>&nbsp Title: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.title}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Left Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.leftAxisLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Right Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel" type="text" value="${this.rightAxisLabel}">
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisLimitsHTML() {
+		return (`
+		<table style="margin:0px;">
+			<tr>
+				<th>Axis</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Time</td>
+				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Left</td>
+				<td><input class="yMin intervalsettings" type="text" value="${this.getYMin()}"></td>
+				<td><input class="yMax intervalsettings" type="text" value="${this.getYMax()}"></td>
+				<td><input class="yAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Right</td>
+				<td><input class="yMin intervalsettings" type="text" value=""></td>
+				<td><input class="yMax intervalsettings" type="text" value=""></td>
+				<td><input class="yAuto intervalsettings" type="checkbox"></td>
+			</tr>
+		</table>
+		`);
+	}
+
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table style="margin: 16px 0px;">
-			<tr>
+			<table style="margin: 0px;">
 			<tr>
 				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
 				<th>&nbsp Left  &nbsp</th>
@@ -6097,7 +6158,16 @@ class DiagramDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 
-		let contentHTML = this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
+		let contentHTML = `
+			<div style="float: left; margin: 12px;">
+				${this.renderPrimitiveListHtml()}
+			</div>
+			<div style="float: right; margin: 12px;">
+				${this.renderAxisNamesHtml()}
+				${this.renderAxisLimitsHTML()}
+			</div>
+		`;
+		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
