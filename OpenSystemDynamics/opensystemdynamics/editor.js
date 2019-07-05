@@ -2565,7 +2565,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		$(this.chartDiv).empty();
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-				title: this.title,
+				title: this.dialog.titleLabel,
 				series: this.serieSettingsArray,
 			  axes: {
 				xaxis: {
@@ -5579,8 +5579,8 @@ class jqDialog {
 	applyChanges() {
 		$(this.dialog).dialog('close');
 		// We add a delay to make sure we closed first
+		this.afterOkClose();
 		setTimeout(() => {
-			this.afterOkClose();
 			History.storeUndoState();
 			updateInfoBar();
 		}, 200);
@@ -5949,7 +5949,7 @@ class DiagramDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.setTitle("Diagram properties");
-		this.title = "";
+		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
 		
@@ -6020,7 +6020,6 @@ class DiagramDialog extends DisplayDialog {
 				this.setDisplayId(idList[i], true, sides[i]);
 			}
 		}
-		
 	}
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
@@ -6043,7 +6042,7 @@ class DiagramDialog extends DisplayDialog {
 				<tr>
 					<th>&nbsp Title: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.title}">
+						<input style="width: 150px; text-align: left;" class="TitleLabel" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
@@ -6153,6 +6152,11 @@ class DiagramDialog extends DisplayDialog {
 			this.setDisplayId(idClicked, checked, side);
 			this.subscribePool.publish("primitive check changed");
 		});
+	}
+	afterOkClose() {
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
