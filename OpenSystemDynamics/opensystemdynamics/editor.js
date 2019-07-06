@@ -5868,7 +5868,7 @@ class DisplayDialog extends jqDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table class="modernTable" style="margin: 16px 0px;">
+			<table class="modernTable" >
 			<tr>
 				${primitives.map(p => `
 					<tr>
@@ -6253,7 +6253,7 @@ class XyPlotDialog extends DisplayDialog {
 	
 	renderMarkerRadioHTML() {
 		return (`
-			<table class="modernTable" style=" float: right; margin: 16px 16px; text-align: left;">
+			<table class="modernTable" style="text-align: left;">
 				<tr>
 				<td style="text-align: left">
 						Line
@@ -6279,9 +6279,14 @@ class XyPlotDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 
-		let contentHTML = this.renderMarkerRadioHTML();
-		contentHTML += this.renderPrimitiveListHtml();
-		contentHTML += this.renderAxisLimitsHTML();
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr>
+					<td>${this.renderPrimitiveListHtml()}</td>
+					<td>${this.renderMarkerRadioHTML()} ${this.renderAxisLimitsHTML()}</td>
+				</tr>
+			</table>
+		`;
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
@@ -6361,7 +6366,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin: 16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<td class="text">Start Time</td>
 				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
@@ -6383,7 +6388,15 @@ class TableDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr>
+					<td>${this.renderPrimitiveListHtml()}</td>
+					<td>${this.renderTableLimitsHTML()}</td>
+				</tr>
+			</table>
+		`;
+		// this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
