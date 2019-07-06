@@ -2287,9 +2287,9 @@ class TableVisual extends HtmlTwoPointer {
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
-		html += "<td>"+formatFunction("Time")+"</td>";
+		html += "<th>"+formatFunction("Time")+"</th>";
 		for(let i in namesToDisplay) {
-			html += `<td>${namesToDisplay[i]}</td>`;
+			html += `<th>${namesToDisplay[i]}</th>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
