@@ -2276,7 +2276,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 	render() {
 		html = "";
-		html += "<table><thead><tr>";
+		html += "<table class='classicTable'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
@@ -5868,7 +5868,7 @@ class DisplayDialog extends jqDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table style="margin: 16px 0px;">
+			<table class="modernTable" style="margin: 16px 0px;">
 			<tr>
 				${primitives.map(p => `
 					<tr>
@@ -5892,7 +5892,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table style="margin: 16px 0px;">
+		<table class="modernTable" style="margin: 16px 0px;">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -6051,7 +6051,7 @@ class DiagramDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table style="margin-bottom: 16px;">
+			<table class="modernTable" style="margin-bottom: 16px;">
 				<tr>
 					<th>&nbsp Title: &nbsp</th>
 					<td>
@@ -6075,7 +6075,7 @@ class DiagramDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table style="margin:0px;">
+		<table class="modernTable" style="margin:0px;">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -6110,7 +6110,7 @@ class DiagramDialog extends DisplayDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table style="margin: 0px;">
+			<table class="modernTable" style="margin: 0px;">
 			<tr>
 				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
 				<th>&nbsp Left  &nbsp</th>
@@ -6176,13 +6176,17 @@ class DiagramDialog extends DisplayDialog {
 		// The dialog is owned by the table to which it belongs
 
 		let contentHTML = `
-			<div style="float: left; margin: 12px;">
-				${this.renderPrimitiveListHtml()}
-			</div>
-			<div style="float: right; margin: 12px;">
-				${this.renderAxisNamesHtml()}
-				${this.renderAxisLimitsHTML()}
-			</div>
+			<table class="invisibleTable">
+				<tr class="invisibleTable">
+					<td class="invisibleTable">
+						${this.renderPrimitiveListHtml()}
+					</td>
+					<td class="invisibleTable">
+						${this.renderAxisNamesHtml()}
+						${this.renderAxisLimitsHTML()}
+					</td>
+				</tr>
+			</table>			
 		`;
 		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
 		this.setHtml(contentHTML);
@@ -6249,7 +6253,7 @@ class XyPlotDialog extends DisplayDialog {
 	
 	renderMarkerRadioHTML() {
 		return (`
-			<table style=" float: right; margin: 16px 16px; text-align: left;">
+			<table class="modernTable" style=" float: right; margin: 16px 16px; text-align: left;">
 				<tr>
 				<td style="text-align: left">
 						Line
@@ -6357,7 +6361,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		return (`
-		<table style="margin: 16px 0px;">
+		<table class="modernTable" style="margin: 16px 0px;">
 			<tr>
 				<td class="text">Start Time</td>
 				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
@@ -6445,7 +6449,7 @@ class SimulationSettings extends jqDialog {
 		let length = getTimeLength();
 		let step = getTimeStep();
 		this.setHtml(`
-			<table>
+			<table class="modernTable">
 			<tr>
 				<td>Start Time</td>
 				<td><input class="input_start" name="start" value="${start}" type="text"></td>
