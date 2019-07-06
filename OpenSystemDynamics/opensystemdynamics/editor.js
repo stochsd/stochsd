@@ -2606,8 +2606,8 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	updateGraphics() {
 		super.updateGraphics();
 		
-		let width = $(this.targetElement).width()-20;
-		let height = $(this.targetElement).height()-20;
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
 		this.chartDiv.style.width = width+"px";
 		this.chartDiv.style.height = height+"px";
 		
@@ -2798,8 +2798,8 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 	updateGraphics() {
 		super.updateGraphics();
 		
-		let width = $(this.targetElement).width()-20;
-		let height = $(this.targetElement).height()-20;
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
 		this.chartDiv.style.width = width+"px";
 		this.chartDiv.style.height = height+"px";
 		
