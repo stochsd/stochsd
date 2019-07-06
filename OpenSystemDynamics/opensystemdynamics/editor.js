@@ -2536,7 +2536,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
-					label: this.namesToDisplay[i], 
+					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					color: this.colorsToDisplay[i],
 					linePattern: this.patternsToDisplay[i],
