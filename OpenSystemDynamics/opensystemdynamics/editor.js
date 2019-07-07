@@ -2561,6 +2561,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
+			grid: {
+				background: "white"
+			},
 			axes: {
 				xaxis: {
 					label: "Time",
@@ -2773,6 +2776,9 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			  series: this.serieSettingsArray,
+			  grid: {
+				  background: "white"
+			  },
 			  sortData: false,
 			  axesDefaults: {
 		            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
