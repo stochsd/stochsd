@@ -2497,11 +2497,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		var filteredResults = [];
 		let startTime = results[0][0];
 		let numSaved = 0;
-		let plotPer = 5;
-		let currentTime = results[0][0];
 		for(let row of results) {
-			currentTime = row[0];
-			if (startTime+numSaved*plotPer <= currentTime ) {
+			let currentTime = row[0];
+			if (startTime+numSaved*this.dialog.plotPer <= currentTime ) {
 				filteredResults.push(row);
 				numSaved++;
 			}
@@ -5984,6 +5982,9 @@ class DiagramDialog extends DisplayDialog {
 		
 		this.markers = false;
 
+		this.autoPlotPer = true;
+		this.plotPer = getTimeLength()/100;
+
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
 
@@ -6081,11 +6082,11 @@ class DiagramDialog extends DisplayDialog {
 						&nbsp Save Point Every: &nbsp
 					</th>
 					<td>
-						<input style="" class="savePerValue" type="text"/>
+						<input style="" class="plotPer intervalsettings" type="text" value="${this.plotPer}"/>
 					</td>
 					<td>
 						Auto
-						<input style="" class="savePerAuto" type="checkbox"/>
+						<input style="" class="autoPlotPer intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
 					</td>
 				</tr>
 			</table>
@@ -6156,7 +6157,7 @@ class DiagramDialog extends DisplayDialog {
 		$(this.dialogContent).find(".xMin").val(this.getXMin());
 		$(this.dialogContent).find(".xMax").val(this.getXMax());
 		
-		
+		// Update Left Min Max values
 		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
 		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
 		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
@@ -6167,6 +6168,7 @@ class DiagramDialog extends DisplayDialog {
 		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
 		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
 
+		// Update Right Min Max values
 		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
 		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
 		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
@@ -6176,6 +6178,19 @@ class DiagramDialog extends DisplayDialog {
 		
 		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
 		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.plotPer = getTimeLength()/100; 
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
