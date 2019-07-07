@@ -5887,7 +5887,7 @@ class DisplayDialog extends jqDialog {
 				${primitives.map(p => `
 					<tr>
 						<td class="text">
-							${makePrimitiveName(getName(p))} 
+							&nbsp ${getName(p)} &nbsp
 						</td>
 						<td style="text-align: center;">
 							<input 
@@ -6209,7 +6209,7 @@ class DiagramDialog extends DisplayDialog {
 				${primitives.map(p => `
 					<tr>
 						<td class="text">
-							${makePrimitiveName(getName(p))} 
+							&nbsp ${getName(p)} &nbsp
 						</td>
 						<td style="text-align: center;">
 							<input 
