@@ -2495,20 +2495,14 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			return;
 		}
 		
-		this.minValue = 0;
-		this.maxValue = 0;
+		this.minLValue = 0;
+		this.maxLValue = 0;
 		
 		let makeSerie = (resultColumn) => {
 			let serie = [];
 			for(let row of results) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
-				if (value < this.minValue) {
-					this.minValue = value;
-				}
-				if (value > this.maxValue) {
-					this.maxValue = value;
-				}
 				serie.push([time,value]);
 			}
 			return serie;
@@ -2526,16 +2520,13 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
-		
-		this.dialog.minValue = this.minValue;
-		this.dialog.maxValue = this.maxValue;
-		
 		this.dialog.simulationTime = RunResults.simulationTime;
 		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
+					showLabel: true,
 					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					color: this.colorsToDisplay[i],
@@ -2567,33 +2558,38 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			return;
 		}
 		$(this.chartDiv).empty();
-		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-				title: this.dialog.titleLabel,
-				series: this.serieSettingsArray,
-			  axes: {
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			title: this.dialog.titleLabel,
+			series: this.serieSettingsArray,
+			axes: {
 				xaxis: {
-				  label: "Time",
+					label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					min: this.dialog.getXMin(),
 					max: this.dialog.getXMax()
 				},
 				yaxis: {
-					label: this.dialog.leftAxisLabel,
-					min: this.dialog.getYMin(),
-					max: this.dialog.getYMax(),
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.leftAxisLabel,
+					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
+					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
 				},
 				y2axis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.rightAxisLabel,
+					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
+					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax()
 				}
 			},
 			  legend: {
 					show: true,
 					placement: 'outsideGrid'
 			  }
-			  
-		  });
+		});
+		this.dialog.minLValue = this.plot.axes.yaxis.min; 
+		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
+		this.dialog.minRValue = this.plot.axes.y2axis.min;
+		this.dialog.maxRValue = this.plot.axes.y2axis.max;
 	}
 	makeGraphics() {
 		super.makeGraphics();
@@ -5971,16 +5967,24 @@ class DiagramDialog extends DisplayDialog {
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
 
+		// Values choosen by user
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
 		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
+		this.yLMin = 0;
+		this.yLMax = 0;
+		this.yLAuto  = true;
 		
-		this.minValue = 0;
-		this.maxValue = 0;
+		this.yRMin = 0;
+		this.yRMax = 0;
+		this.yRAuto = true;
+
+		// Automatic value (is set in the DiagramVisual)
+		this.minLValue = 0;
+		this.maxLValue = 0;
+		this.minRValue = 0;
+		this.maxRValue = 0;
 		
 		this.simulationTime = 0;
 	}
@@ -6090,20 +6094,51 @@ class DiagramDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td><input class="yMin intervalsettings" type="text" value="${this.getYMin()}"></td>
-				<td><input class="yMax intervalsettings" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+				<td><input class="yLMin intervalsettings" type="text" value="${this.getYLMin()}"></td>
+				<td><input class="yLMax intervalsettings" type="text" value="${this.getYLMax()}"></td>
+				<td><input class="yLAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
 			</tr>
 			<tr>
-				<td style="text-align:center; padding:0px 6px">Right</td>
-				<td><input class="yMin intervalsettings" type="text" value=""></td>
-				<td><input class="yMax intervalsettings" type="text" value=""></td>
-				<td><input class="yAuto intervalsettings" type="checkbox"></td>
+				<td style="text-align:center; padding:0px 6px;">Right</td>
+				<td><input class="yRMin intervalsettings" type="text" value="${this.getYRMin()}"></td>
+				<td><input class="yRMax intervalsettings" type="text" value="${this.getYRMax()}"></td>
+				<td><input class="yRAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 			</tr>
 		</table>
 		`);
 	}
+	updateInterval() {
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
+		
+		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		
+		$(this.dialogContent).find(".xMin").val(this.getXMin());
+		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		
+		
+		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
+		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
+		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
+		
+		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
+		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
 
+		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
+		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
+		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
+		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
+		
+		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
+		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -6212,19 +6247,17 @@ class DiagramDialog extends DisplayDialog {
 			return this.xMax;
 		}
 	}
-	getYMin() {
-		if (this.yAuto) {
-			return this.minValue;
-		} else {
-			return this.yMin;
-		}
+	getYLMin() {
+		return (this.yLAuto) ? this.minLValue : this.yLMin;
 	}
-	getYMax() {
-		if (this.yAuto) {
-			return this.maxValue;
-		} else {
-			return this.yMax;
-		}
+	getYLMax() {
+		return (this.yLAuto) ? this.maxLValue : this.yLMax;
+	}
+	getYRMin() {
+		return (this.yRAuto) ? this.minRValue : this.yRMin;
+	}
+	getYRMax() {
+		return (this.yRAuto) ? this.maxRValue : this.yRMax;
 	}
 }
 
