@@ -2971,7 +2971,7 @@ class LinkVisual extends BaseConnection {
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	dashLine() {
-		this.curve.setAttribute("stroke-dasharray", "4 4");
+		this.curve.setAttribute("stroke-dasharray", "4 6");
 	}
 	undashLine() {
 		this.curve.setAttribute("stroke-dasharray", "");
