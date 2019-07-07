@@ -6073,6 +6073,24 @@ class DiagramDialog extends DisplayDialog {
 	getSidesToDisplay() {
 		return this.sides;
 	}
+	renderPlotPerHtml() {
+		return (`
+			<table class="modernTable" style="margin-bottom: 16px">
+				<tr>
+					<th>
+						&nbsp Save Point Every: &nbsp
+					</th>
+					<td>
+						<input style="" class="savePerValue" type="text"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="savePerAuto" type="checkbox"/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
 	renderAxisNamesHtml() {
 		return (`
 			<table class="modernTable" style="margin-bottom: 16px;">
@@ -6099,7 +6117,7 @@ class DiagramDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin:0px;">
+		<table class="modernTable" style="margin:16px 0px;">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -6237,8 +6255,9 @@ class DiagramDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</td>
 					<td class="invisibleTable">
-						${this.renderAxisNamesHtml()}
+						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
+						${this.renderAxisNamesHtml()}
 					</td>
 				</tr>
 			</table>			
