@@ -2491,16 +2491,30 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
 			// We can't render anything with no data
-			
 			return;
 		}
+
+		var filteredResults = [];
+		let startTime = results[0][0];
+		let numSaved = 0;
+		let plotPer = 5;
+		let currentTime = results[0][0];
+		for(let row of results) {
+			currentTime = row[0];
+			if (startTime+numSaved*plotPer <= currentTime ) {
+				filteredResults.push(row);
+				numSaved++;
+			}
+		}
+		// Append Last value 
+		filteredResults.push(results[results.length-1]);
 		
 		this.minLValue = 0;
 		this.maxLValue = 0;
 		
 		let makeSerie = (resultColumn) => {
 			let serie = [];
-			for(let row of results) {
+			for(let row of filteredResults) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
 				serie.push([time,value]);
