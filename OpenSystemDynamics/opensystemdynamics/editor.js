@@ -6076,10 +6076,12 @@ class DiagramDialog extends DisplayDialog {
 	}
 	renderPlotPerHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px">
+			<table class="modernTable" style="margin-bottom: 16px" 
+				title="Distance between points in time units. \n (Should not be less then Time Step)"
+			>
 				<tr>
 					<th>
-						&nbsp Save Point Every: &nbsp
+						&nbsp Plot Period: &nbsp
 					</th>
 					<td>
 						<input style="" class="plotPer intervalsettings" type="text" value="${this.plotPer}"/>
