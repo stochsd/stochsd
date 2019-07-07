@@ -243,7 +243,7 @@ function quitQuestion() {
 	// How close event works
 	// https://github.com/nwjs/nw.js/wiki/window
 	saveChangedAlert(function() {
-		nwjsWindow.close(true);
+		environment.closeWindow()
 	});
 }
 

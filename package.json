@@ -2,7 +2,8 @@
 	"name": "StochSD",
 	"version": "2018.08.01",
 	"description": "Stochastic Simulation application",
-	"main": "index.html",
+	"author": "stochsdteam",
+	"main": "index.js",
 	"window": {
 		"icon": "icons/stochsd.png"
 	},
@@ -11,11 +12,12 @@
 		"nwjs-builder-phoenix": "^1.14.8"
 	},
 	"dependencies": {
-		"gulp": "^3.9.1"
+		"gulp": "^3.9.1",
+		"electron": "^5.0.6"
 	},
 	"scripts": {
 		"build": "node_modules/gulp/bin/gulp.js",
 		"dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
-		"start": "run --x86 --mirror https://dl.nwjs.io/ ."
+		"start": "electron ."
 	}
 }
