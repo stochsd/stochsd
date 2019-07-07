@@ -226,3 +226,11 @@ function changeReferencesToName(id, oldName, newName) {
 		}
 	});
 }
+
+function removeSpacesAtEnd(str) {
+	value = str;
+	while(value[value.length-1] === " ") {
+		value = value.substring(0, value.length-1);
+	}
+	return value;
+}

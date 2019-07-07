@@ -30,12 +30,6 @@ Mail: magnus.ja.gustafsson@gmail.com.
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
-// type_size = {};
-// type_size["stock"] = [80,60];
-// type_size["variable"] = [60,60];
-// type_size["converter"] = [80,60];
-// type_size["text"] = [120,60];
-
 const type_size = {
 	"stock":			[80, 60],
 	"variable":		[60, 60],
@@ -1376,9 +1370,21 @@ class NumberboxVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
+			svg_rect(-20,-15,40,30, "none", this.color, "selector"),
 			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
-			svg_rect(-20,-15,40,30, "red", "none", "selector")
 		];	
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.select();
+	}
+	select() {
+		super.select();
+		this.name_element.setAttribute("fill", "white");
+	}
+	unselect() {
+		super.unselect();
+		this.name_element.setAttribute("fill", this.color);
 	}
 	name_double_click() {
 		this.double_click();
@@ -1916,7 +1922,8 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("valveIndex", this.valveIndex);
 		this.primitive.setAttribute("variableSide", this.variableSide);
 
-		update_all_objects();
+		// update_all_objects();
+		update_relevant_objects("");
 	}
 
 	createAnchorPoint(x, y) {
@@ -2269,7 +2276,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 	render() {
 		html = "";
-		html += "<table><thead><tr>";
+		html += "<table class='classicTable'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
@@ -2280,9 +2287,9 @@ class TableVisual extends HtmlTwoPointer {
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
-		html += "<td>"+formatFunction("Time")+"</td>";
+		html += "<th>"+formatFunction("Time")+"</th>";
 		for(let i in namesToDisplay) {
-			html += `<td>${namesToDisplay[i]}</td>`;
+			html += `<th>${namesToDisplay[i]}</th>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
@@ -2386,6 +2393,11 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		$(this.targetElement).dblclick(()=>{
 			this.double_click(this.id);
 		});
+
+		// Emergency solution since double clicking a Diagram or XyPlot does not always work.
+		$(this.targetElement).bind("contextmenu", (event)=> {
+			this.double_click(this.id);
+		});
 		
 		this.element = svg_rect(this.startx,
 			this.starty,
@@ -2452,7 +2464,12 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	render() {
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
+		this.primitive.value.setAttribute("Sides", sides.join(","));
+		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = IdsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
@@ -2474,24 +2491,30 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
 			// We can't render anything with no data
-			
 			return;
 		}
+
+		var filteredResults = [];
+		let startTime = results[0][0];
+		let numSaved = 0;
+		for(let row of results) {
+			let currentTime = row[0];
+			if (startTime+numSaved*this.dialog.plotPer <= currentTime ) {
+				filteredResults.push(row);
+				numSaved++;
+			}
+		}
+		// Append Last value 
+		filteredResults.push(results[results.length-1]);
 		
-		this.minValue = 0;
-		this.maxValue = 0;
+		this.minLValue = 0;
+		this.maxLValue = 0;
 		
 		let makeSerie = (resultColumn) => {
 			let serie = [];
-			for(let row of results) {
+			for(let row of filteredResults) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
-				if (value < this.minValue) {
-					this.minValue = value;
-				}
-				if (value > this.maxValue) {
-					this.maxValue = value;
-				}
 				serie.push([time,value]);
 			}
 			return serie;
@@ -2509,17 +2532,15 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
-		
-		this.dialog.minValue = this.minValue;
-		this.dialog.maxValue = this.maxValue;
-		
 		this.dialog.simulationTime = RunResults.simulationTime;
 		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
-					label: this.namesToDisplay[i], 
+					showLabel: true,
+					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
+					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					color: this.colorsToDisplay[i],
 					linePattern: this.patternsToDisplay[i],
 					shadow: false,
@@ -2537,6 +2558,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		
 	}
 	updateChart() {
+
 		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "No data. Run to create data!";
@@ -2548,26 +2570,41 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			return;
 		}
 		$(this.chartDiv).empty();
-		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			  series: this.serieSettingsArray,
-			  axes: {
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			title: this.dialog.titleLabel,
+			series: this.serieSettingsArray,
+			grid: {
+				background: "white"
+			},
+			axes: {
 				xaxis: {
-				  label: formatFunction('Time'),
+					label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					min: this.dialog.getXMin(),
 					max: this.dialog.getXMax()
 				},
 				yaxis: {
-					min: this.dialog.getYMin(),
-					max: this.dialog.getYMax()
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.leftAxisLabel,
+					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
+					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
+				},
+				y2axis: {
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.rightAxisLabel,
+					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
+					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax()
 				}
 			},
-			   legend: {
-				show: true,
-				placement: 'outsideGrid'
-			   }
-			  
-		  });
+			  legend: {
+					show: true,
+					placement: 'outsideGrid'
+			  }
+		});
+		this.dialog.minLValue = this.plot.axes.yaxis.min; 
+		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
+		this.dialog.minRValue = this.plot.axes.y2axis.min;
+		this.dialog.maxRValue = this.plot.axes.y2axis.max;
 	}
 	makeGraphics() {
 		super.makeGraphics();
@@ -2580,8 +2617,8 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	updateGraphics() {
 		super.updateGraphics();
 		
-		let width = $(this.targetElement).width()-20;
-		let height = $(this.targetElement).height()-20;
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
 		this.chartDiv.style.width = width+"px";
 		this.chartDiv.style.height = height+"px";
 		
@@ -2625,7 +2662,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 }
 
-class XyPlotVisual extends DiagramVisual {
+class XyPlotVisual extends HtmlOverlayTwoPointer {
 	constructor(id,type,pos) {		
 		super(id,type,pos);
 		this.runHandler = () => {
@@ -2751,6 +2788,9 @@ class XyPlotVisual extends DiagramVisual {
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			  series: this.serieSettingsArray,
+			  grid: {
+				  background: "white"
+			  },
 			  sortData: false,
 			  axesDefaults: {
 		            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
@@ -2768,6 +2808,27 @@ class XyPlotVisual extends DiagramVisual {
 				}
 			}
 		  });
+	}
+	updateGraphics() {
+		super.updateGraphics();
+		
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
+		this.chartDiv.style.width = width+"px";
+		this.chartDiv.style.height = height+"px";
+		
+		this.updateChart();
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+	}
+	double_click() {
+		this.dialog.show();
 	}
 }
 
@@ -2908,7 +2969,7 @@ class LinkVisual extends BaseConnection {
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	dashLine() {
-		this.curve.setAttribute("stroke-dasharray", "4 4");
+		this.curve.setAttribute("stroke-dasharray", "4 6");
 	}
 	undashLine() {
 		this.curve.setAttribute("stroke-dasharray", "");
@@ -3407,7 +3468,12 @@ class MouseTool extends BaseTool {
 			
 		}
 		if (objectMoved) {
-			update_all_objects();
+			// update_all_objects();
+			let ids = [];
+			for (let key in move_array) {
+				ids.push(move_array[key].id);
+			}
+			update_relevant_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -3935,6 +4001,23 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		last_clicked_element.select();
 	}
 	last_click_object_clicked = true;
+}
+
+
+// only updates diagrams, tables, and XyPlots if needed 
+function update_relevant_objects(ids) {
+	for(var key in object_array) {
+		object_array[key].update();
+	}
+	for(var key in connection_array) {
+		if(connection_array[key].type === "table") {
+			if (ids.includes(key)) {
+				connection_array[key].update();
+			}
+		} else {
+			connection_array[key].update();
+		}
+	}
 }
 
 function update_all_objects() {
@@ -4671,11 +4754,25 @@ function syncVisual(tprimitive) {
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
+			let sidesString = tprimitive.value.getAttribute("Sides");
 			if (primitivesString) {
-				connection.dialog.setIdsToDisplay(idsToDisplay);
+				if (nodeType === "Diagram" && sidesString) {
+					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
+				} else {
+					connection.dialog.setIdsToDisplay(idsToDisplay);
+				}
 			}
 			
+			// This is only for Diagram 
+			let titleLabel = tprimitive.value.getAttribute("TitleLabel");
+			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
 			
+			let leftAxisLabel = tprimitive.value.getAttribute("LeftAxisLabel");
+			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
+			
+			let rightAxisLabel = tprimitive.value.getAttribute("RightAxisLabel");
+			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
+
 			connection.update();
 			connection.render();
 		}
@@ -5506,10 +5603,11 @@ class jqDialog {
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
 	applyChanges() {
+		this.afterOkClose();
 		$(this.dialog).dialog('close');
 		// We add a delay to make sure we closed first
+		
 		setTimeout(() => {
-			this.afterOkClose();
 			History.storeUndoState();
 			updateInfoBar();
 		}, 200);
@@ -5784,14 +5882,14 @@ class DisplayDialog extends jqDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table style="margin: 16px 0px;">
+			<table class="modernTable" >
 			<tr>
 				${primitives.map(p => `
 					<tr>
 						<td class="text">
 							${makePrimitiveName(getName(p))} 
 						</td>
-						<td>
+						<td style="text-align: center;">
 							<input 
 								class="primitive_checkbox" 
 								type="checkbox" 
@@ -5806,45 +5904,9 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
-			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
-			this.setDisplayId(idClicked,checked);
-			this.subscribePool.publish("primitive check changed");
-		});
-	}
-	beforeShow() {
-		this.setHtml(this.renderPrimitiveListHtml());
-		this.bindPrimitiveListEvents();
-	}
-}
-
-class DiagramDialog extends DisplayDialog {
-	constructor() {
-		super();
-		this.setTitle("Diagram properties");
-		
-		this.markers = false;
-
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
-		
-		this.minValue = 0;
-		this.maxValue = 0;
-		
-		this.simulationTime = 0;
-	}
-
 	renderAxisLimitsHTML() {
 		return (`
-		<table style="margin: 16px 0px;">
+		<table class="modernTable" style="margin: 16px 0px;">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -5866,25 +5928,12 @@ class DiagramDialog extends DisplayDialog {
 		</table>
 		`);
 	}
-
 	bindAxisLimitsEvents() {
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
 		});
 	}
 
-	beforeShow() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-
-		let contentHTML = this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
-		this.setHtml(contentHTML);
-		
-		this.bindPrimitiveListEvents();
-		this.bindAxisLimitsEvents();
-		
-		this.updateInterval();
-	}
 	updateInterval() {
 		this.xMin = Number($(this.dialogContent).find(".xMin").val());
 		this.xMax = Number($(this.dialogContent).find(".xMax").val());
@@ -5907,6 +5956,335 @@ class DiagramDialog extends DisplayDialog {
 		$(this.dialogContent).find(".yMin").val(this.getYMin());
 		$(this.dialogContent).find(".yMax").val(this.getYMax());
 	}
+
+	bindPrimitiveListEvents() {
+		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+			let clickedElement = event.target;
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
+			this.setDisplayId(idClicked,checked);
+			this.subscribePool.publish("primitive check changed");
+		});
+	}
+	beforeShow() {
+		this.setHtml(this.renderPrimitiveListHtml());
+		this.bindPrimitiveListEvents();
+	}
+}
+
+class DiagramDialog extends DisplayDialog {
+	constructor() {
+		super();
+		this.setTitle("Diagram properties");
+		this.titleLabel = "";
+		this.leftAxisLabel = "";
+		this.rightAxisLabel = "";
+		
+		this.markers = false;
+
+		this.autoPlotPer = true;
+		this.plotPer = getTimeLength()/100;
+
+		// For keeping track of what y-axis graph should be ploted ("L" or "R")
+		this.sides = [];
+
+		// Values choosen by user
+		this.xMin = 0;
+		this.xMax = 0;
+		this.xAuto  = true;
+		
+		this.yLMin = 0;
+		this.yLMax = 0;
+		this.yLAuto  = true;
+		
+		this.yRMin = 0;
+		this.yRMax = 0;
+		this.yRAuto = true;
+
+		// Automatic value (is set in the DiagramVisual)
+		this.minLValue = 0;
+		this.maxLValue = 0;
+		this.minRValue = 0;
+		this.maxRValue = 0;
+		
+		this.simulationTime = 0;
+	}
+	
+	setDisplayId(id, value, side) {
+		let oldIdIndex = this.displayIdList.indexOf(id);
+		switch(value) {
+			case true:
+				// Check that the id can be added
+				if (!this.acceptsId(id)) {
+					return;
+				}
+				// Check if id already in this.displayIdList
+				if (oldIdIndex != -1 ) {
+					if (this.sides[oldIdIndex] !== side) {
+						this.sides[oldIdIndex] = side;
+					}
+					return;
+				}
+				// Add the value
+				this.displayIdList.push(id.toString());
+				this.sides.push(side);
+
+			break;
+			case false:
+				// Check if id is not in the list
+				if (oldIdIndex == -1) {
+					return;
+				}				
+				this.displayIdList.splice(oldIdIndex,1);
+				this.sides.splice(oldIdIndex, 1);
+			break;
+		}
+	}
+	
+	getDisplayId(id, side) {
+		id = id.toString();
+		let index = this.displayIdList.indexOf(id)
+		return (index != -1 && this.sides[index] === side);
+	}
+	
+	setIdsToDisplay(idList, sides) {
+		this.displayIdList = [];
+		if (sides === undefined || sides.length !== idList.length) {
+			for(let i in idList) {
+				this.setDisplayId(idList[i], true, "L");
+			}
+		} else {
+			for(let i in idList) {
+				this.setDisplayId(idList[i], true, sides[i]);
+			}
+		}
+	}
+	clearRemovedIds() {
+		for(let id of this.displayIdList) {
+			if (findID(id) == null) {
+				this.setDisplayId(id, false, "L");
+				this.setDisplayId(id, false, "R");
+			}
+		}
+	}
+	getIdsToDisplay() {
+		this.clearRemovedIds();
+		return this.displayIdList;
+	}
+	getSidesToDisplay() {
+		return this.sides;
+	}
+	renderPlotPerHtml() {
+		return (`
+			<table class="modernTable" style="margin-bottom: 16px">
+				<tr>
+					<th>
+						&nbsp Save Point Every: &nbsp
+					</th>
+					<td>
+						<input style="" class="plotPer intervalsettings" type="text" value="${this.plotPer}"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="autoPlotPer intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisNamesHtml() {
+		return (`
+			<table class="modernTable" style="margin-bottom: 16px;">
+				<tr>
+					<th>&nbsp Title: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="TitleLabel" type="text" value="${this.titleLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Left Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.leftAxisLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Right Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel" type="text" value="${this.rightAxisLabel}">
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisLimitsHTML() {
+		return (`
+		<table class="modernTable" style="margin:16px 0px;">
+			<tr>
+				<th>Axis</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Time</td>
+				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Left</td>
+				<td><input class="yLMin intervalsettings" type="text" value="${this.getYLMin()}"></td>
+				<td><input class="yLMax intervalsettings" type="text" value="${this.getYLMax()}"></td>
+				<td><input class="yLAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px;">Right</td>
+				<td><input class="yRMin intervalsettings" type="text" value="${this.getYRMin()}"></td>
+				<td><input class="yRMax intervalsettings" type="text" value="${this.getYRMax()}"></td>
+				<td><input class="yRAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
+			</tr>
+		</table>
+		`);
+	}
+	updateInterval() {
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
+		
+		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		
+		$(this.dialogContent).find(".xMin").val(this.getXMin());
+		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		
+		// Update Left Min Max values
+		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
+		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
+		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
+		
+		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
+		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
+
+		// Update Right Min Max values
+		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
+		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
+		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
+		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
+		
+		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
+		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.plotPer = getTimeLength()/100; 
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+
+	}
+	renderPrimitiveListHtml() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+		let primitives = this.getAcceptedPrimitiveList();
+		
+		return (`
+			<table class="modernTable" style="margin: 0px;">
+			<tr>
+				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
+				<th>&nbsp Left  &nbsp</th>
+				<th>&nbsp Right &nbsp</th>
+			</tr>
+				${primitives.map(p => `
+					<tr>
+						<td class="text">
+							${makePrimitiveName(getName(p))} 
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox" 
+								type="checkbox" 
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+								data-side="L"
+							>
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox"
+								type="checkbox"
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+								data-side="R"
+							>
+						</td>
+					</tr>
+				`).join('')}
+			</tr>
+			</table>
+		`);
+	}
+	bindPrimitiveListEvents() {
+		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+			let clickedElement = event.target;
+			let idClicked = $(clickedElement).attr("data-id");
+			let checked = $(clickedElement).prop("checked");
+			let side = $(clickedElement).attr("data-side");
+			
+			// Remove opposite checkmark
+			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
+			if (side === "R") {
+				$(commonParent[0].children[1].children[0]).removeAttr("checked");
+			} else {
+				$(commonParent[0].children[2].children[0]).removeAttr("checked");
+			}
+			
+			this.setDisplayId(idClicked, checked, side);
+			this.subscribePool.publish("primitive check changed");
+		});
+	}
+	afterOkClose() {
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+	}
+	beforeShow() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr class="invisibleTable">
+					<td class="invisibleTable">
+						${this.renderPrimitiveListHtml()}
+					</td>
+					<td class="invisibleTable">
+						${this.renderPlotPerHtml()}
+						${this.renderAxisLimitsHTML()}
+						${this.renderAxisNamesHtml()}
+					</td>
+				</tr>
+			</table>			
+		`;
+		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
+		this.setHtml(contentHTML);
+		
+		this.bindPrimitiveListEvents();
+		this.bindAxisLimitsEvents();
+		
+		this.updateInterval();
+	}
 	getXMin() {
 		if (this.xAuto) {
 			return getTimeStart();
@@ -5923,23 +6301,21 @@ class DiagramDialog extends DisplayDialog {
 			return this.xMax;
 		}
 	}
-	getYMin() {
-		if (this.yAuto) {
-			return this.minValue;
-		} else {
-			return this.yMin;
-		}
+	getYLMin() {
+		return (this.yLAuto) ? this.minLValue : this.yLMin;
 	}
-	getYMax() {
-		if (this.yAuto) {
-			return this.maxValue;
-		} else {
-			return this.yMax;
-		}
+	getYLMax() {
+		return (this.yLAuto) ? this.maxLValue : this.yLMax;
+	}
+	getYRMin() {
+		return (this.yRAuto) ? this.minRValue : this.yRMin;
+	}
+	getYRMax() {
+		return (this.yRAuto) ? this.maxRValue : this.yRMax;
 	}
 }
 
-class XyPlotDialog extends DiagramDialog {
+class XyPlotDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.setTitle("XY-plot properties");
@@ -5964,7 +6340,7 @@ class XyPlotDialog extends DiagramDialog {
 	
 	renderMarkerRadioHTML() {
 		return (`
-			<table style=" float: right; margin: 16px 16px; text-align: left;">
+			<table class="modernTable" style="text-align: left;">
 				<tr>
 				<td style="text-align: left">
 						Line
@@ -5990,9 +6366,14 @@ class XyPlotDialog extends DiagramDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 
-		let contentHTML = this.renderMarkerRadioHTML();
-		contentHTML += this.renderPrimitiveListHtml();
-		contentHTML += this.renderAxisLimitsHTML();
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr>
+					<td>${this.renderPrimitiveListHtml()}</td>
+					<td>${this.renderMarkerRadioHTML()} ${this.renderAxisLimitsHTML()}</td>
+				</tr>
+			</table>
+		`;
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
@@ -6072,7 +6453,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		return (`
-		<table style="margin: 16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<td class="text">Start Time</td>
 				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
@@ -6094,7 +6475,15 @@ class TableDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr>
+					<td>${this.renderPrimitiveListHtml()}</td>
+					<td>${this.renderTableLimitsHTML()}</td>
+				</tr>
+			</table>
+		`;
+		// this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
@@ -6160,7 +6549,7 @@ class SimulationSettings extends jqDialog {
 		let length = getTimeLength();
 		let step = getTimeStep();
 		this.setHtml(`
-			<table>
+			<table class="modernTable">
 			<tr>
 				<td>Start Time</td>
 				<td><input class="input_start" name="start" value="${start}" type="text"></td>

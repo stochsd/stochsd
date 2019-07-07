@@ -137,16 +137,29 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
 		}
 		table {
 			border-collapse: collapse;
-			border: 1px solid black;
 		}
 		td.text {
 			text-align: left;		
 		}
-		td,th {
+		.classicTable table, .classicTable tr, .classicTable td {
 			border: 1px solid black;
+			text-align: right;
 		}
-		td {
-			text-align: right;			
+		.classicTable th {
+			border: 1px solid black;
+			text-align: center;
+		}
+		.modernTable tr:nth-child(even){
+			background-color: #f4f4f4;
+		}
+		.modernTable td, .modernTable th {
+			border: 1px solid #ddd;
+			padding: 1px;
+		}
+		.invisibleTable table,tr,th,td {
+			border: 0px;
+			vertical-align: text-top;
+			padding: 0px 10px;
 		}
 		input[type="text"] {
 			width: 50px;
