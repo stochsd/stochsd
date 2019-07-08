@@ -5491,6 +5491,12 @@ class RunResults {
 			}
 			filteredResults.push(unfilteredResults[row_index]);
 		}
+		// Make sure last value is added
+		if (filteredResults.length !== 0 && unfilteredResults.length !== 0) {
+			if (filteredResults[filteredResults.length-1][0] !== unfilteredResults[unfilteredResults.length-1][0]) {
+				filteredResults.push(unfilteredResults[unfilteredResults.length-1]);
+			}
+		}
 		return filteredResults;
 	}
 	static triggerRunFinished() {
