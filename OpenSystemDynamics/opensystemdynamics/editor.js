@@ -5876,6 +5876,20 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
+	renderKeepHtml() {
+		return (`
+			<table class="modernTable" style="width:100%; text-align:center;">
+				<tr>
+					<td style="width:50%">
+						&nbsp Keep <input type="checkbox">
+					</td>
+					<td>
+						<button>Clear </button>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -6076,7 +6090,7 @@ class DiagramDialog extends DisplayDialog {
 	}
 	renderPlotPerHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px" 
+			<table class="modernTable" style="margin: 16px 0px" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
 			>
 				<tr>
@@ -6272,6 +6286,7 @@ class DiagramDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</td>
 					<td class="invisibleTable">
+						${this.renderKeepHtml()}
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
