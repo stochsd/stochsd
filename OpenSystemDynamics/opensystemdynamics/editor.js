@@ -2449,20 +2449,27 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
+			this.fetchData();
 			this.render();
 		}
 		RunResults.subscribeRun(this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
+		this.results = [];
 		
 		this.dialog = new DiagramDialog();
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
 	}
+	fetchData() {
+		console.log("Fetched data för diagram");
+		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		this.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+	}
 	render() {
-		
+
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
@@ -2486,11 +2493,8 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 				}
 			}
 		);
-
-		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		
-		var results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);	
-		if (results.length == 0) {
+		if (this.results.length == 0) {
 			// We can't render anything with no data
 			return;
 		}
@@ -2500,7 +2504,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		
 		let makeSerie = (resultColumn) => {
 			let serie = [];
-			for(let row of results) {
+			for(let row of this.results) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
 				serie.push([time,value]);
