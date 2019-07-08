@@ -5281,7 +5281,6 @@ class RunResults {
 			setPauseInterval(getTimeStep()*getTimeLength());
 		}
 		this.runState = runStateEnum.running;
-		this.triggerRunFinished();
 		runOverlay.block();
 		this.simulationController = runModel({
 			rate: -1,
@@ -5317,7 +5316,6 @@ class RunResults {
 	static continueRunSimulation() {
 		this.storeResults(this.simulationController);
 		if (this.updateCounter == 0) {
-			this.triggerRunFinished();
 			this.updateCounter = this.updateFrequency;
 		}
 		this.updateCounter -= 1;
