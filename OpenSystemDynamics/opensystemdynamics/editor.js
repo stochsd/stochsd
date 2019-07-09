@@ -5877,10 +5877,10 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable" style="width:100%; text-align:center;">
 				<tr>
 					<td style="width:50%">
-						&nbsp Keep <input type="checkbox">
+						&nbsp Keep Results <input type="checkbox">
 					</td>
 					<td>
-						<button>Clear </button>
+						<button>Clear Results</button>
 					</td>
 				</tr>
 			</table>
