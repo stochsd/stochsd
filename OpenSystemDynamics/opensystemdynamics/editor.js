@@ -5598,7 +5598,7 @@ class jqDialog {
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
 	applyChanges() {
-		this.afterOkClose();
+		this.makeApply();
 		$(this.dialog).dialog('close');
 		// We add a delay to make sure we closed first
 		
@@ -5607,7 +5607,7 @@ class jqDialog {
 			updateInfoBar();
 		}, 200);
 	}
-	afterOkClose() {
+	makeApply() {
 		
 	}
 	getWidth() {
@@ -6225,7 +6225,7 @@ class DiagramDialog extends DisplayDialog {
 			this.subscribePool.publish("primitive check changed");
 		});
 	}
-	afterOkClose() {
+	makeApply() {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
@@ -6549,7 +6549,7 @@ class SimulationSettings extends jqDialog {
 			</table>
 		`);
 	}
-	afterOkClose() {
+	makeApply() {
 		let timeStart =$(this.dialogContent).find(".input_start").val();
 		setTimeStart(timeStart);
 		
@@ -6595,7 +6595,7 @@ class TextBoxDialog extends jqDialog {
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
-	afterOkClose() {
+	makeApply() {
 		let name = $(this.dialogContent).find(".textInput").val();
 		setName(findID(this.id),name);
 	}
@@ -6668,7 +6668,7 @@ class ConverterDialog extends jqDialog {
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
-	afterOkClose() {
+	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.valueField).val();
@@ -7003,7 +7003,7 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
-	afterOkClose() {
+	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
@@ -7079,7 +7079,7 @@ class MacroDialog extends jqDialog {
 		this.dialogParameters.width = "500";
 		this.dialogParameters.height = "400";
 	}
-	afterOkClose() {
+	makeApply() {
 		let newMacro = $(this.dialogContent).find(".macroText").val();
 		setMacros(newMacro);
 	}
@@ -7115,7 +7115,7 @@ class TextAreaDialog extends jqDialog {
 		this.dialogParameters.width = "500";
 		this.dialogParameters.height = "400";
 	}
-	afterOkClose() {
+	makeApply() {
 		let newText = $(this.dialogContent).find(".text").val();
 		setName(this.primitive, newText);
 	}
