@@ -2456,7 +2456,10 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
-		this.results = [];
+		this.data = {
+			resultIds: [],
+			results: []
+		}
 		
 		this.dialog = new DiagramDialog();
 		this.dialog.subscribePool.subscribe(()=>{
@@ -2464,23 +2467,25 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		});
 	}
 	fetchData() {
-		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.data.resultIds = ["time"].concat(this.fetchedIds)
+		console.log(this.data.resultIds);
+		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 	}
 	render() {
 
-		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
-		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
+		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
 		this.primitive.value.setAttribute("Sides", sides.join(","));
 		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
-		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
-		this.colorsToDisplay = IdsToDisplay.map(findID).map(
+		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
+		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
 		);
-		this.patternsToDisplay = IdsToDisplay.map(findID).map(
+		this.patternsToDisplay = idsToDisplay.map(findID).map(
 			node => {
 				let type = get_object(node.id).type;
 				if (type == "variable" || type == "converter") {
@@ -2493,7 +2498,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			}
 		);
 		
-		if (this.results.length == 0) {
+		if (this.data.results.length == 0) {
 			// We can't render anything with no data
 			return;
 		}
@@ -2503,7 +2508,7 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		
 		let makeSerie = (resultColumn) => {
 			let serie = [];
-			for(let row of this.results) {
+			for(let row of this.data.results) {
 				let time = Number(row[0])
 				let value = Number(row[resultColumn])
 				serie.push([time,value]);
@@ -2512,14 +2517,18 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		}
 		
 
-		
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
 		this.serieArray = [];
 		
 		// Make time series
-		for(let i = 1; i <= IdsToDisplay.length; i++) {
-			this.serieArray.push(makeSerie(i));
+		for(let i = 0; i < idsToDisplay.length; i++) {
+			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
+			if (index === -1) {
+				this.serieArray.push([null, null]);	
+			} else {
+				this.serieArray.push(makeSerie(index));	
+			}
 		}
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
