@@ -2464,7 +2464,6 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		});
 	}
 	fetchData() {
-		console.log("Fetched data för diagram");
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 	}
@@ -6020,37 +6019,6 @@ class DiagramDialog extends DisplayDialog {
 		this.simulationTime = 0;
 	}
 	
-	setDisplayId(id, value, side) {
-		let oldIdIndex = this.displayIdList.indexOf(id);
-		switch(value) {
-			case true:
-				// Check that the id can be added
-				if (!this.acceptsId(id)) {
-					return;
-				}
-				// Check if id already in this.displayIdList
-				if (oldIdIndex != -1 ) {
-					if (this.sides[oldIdIndex] !== side) {
-						this.sides[oldIdIndex] = side;
-					}
-					return;
-				}
-				// Add the value
-				this.displayIdList.push(id.toString());
-				this.sides.push(side);
-
-			break;
-			case false:
-				// Check if id is not in the list
-				if (oldIdIndex == -1) {
-					return;
-				}				
-				this.displayIdList.splice(oldIdIndex,1);
-				this.sides.splice(oldIdIndex, 1);
-			break;
-		}
-	}
-	
 	getDisplayId(id, side) {
 		id = id.toString();
 		let index = this.displayIdList.indexOf(id)
@@ -6059,26 +6027,20 @@ class DiagramDialog extends DisplayDialog {
 	
 	setIdsToDisplay(idList, sides) {
 		this.displayIdList = [];
+		this.sides = [];
 		if (sides === undefined || sides.length !== idList.length) {
 			for(let i in idList) {
-				this.setDisplayId(idList[i], true, "L");
+				this.displayIdList.push(idList[i]);
+				this.sides.push("L");
 			}
 		} else {
 			for(let i in idList) {
-				this.setDisplayId(idList[i], true, sides[i]);
-			}
-		}
-	}
-	clearRemovedIds() {
-		for(let id of this.displayIdList) {
-			if (findID(id) == null) {
-				this.setDisplayId(id, false, "L");
-				this.setDisplayId(id, false, "R");
+				this.displayIdList.push(idList[i]);
+				this.sides.push(sides[i]);
 			}
 		}
 	}
 	getIdsToDisplay() {
-		this.clearRemovedIds();
 		return this.displayIdList;
 	}
 	getSidesToDisplay() {
@@ -6250,8 +6212,6 @@ class DiagramDialog extends DisplayDialog {
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
 			let side = $(clickedElement).attr("data-side");
 			
 			// Remove opposite checkmark
@@ -6262,7 +6222,6 @@ class DiagramDialog extends DisplayDialog {
 				$(commonParent[0].children[2].children[0]).removeAttr("checked");
 			}
 			
-			this.setDisplayId(idClicked, checked, side);
 			this.subscribePool.publish("primitive check changed");
 		});
 	}
@@ -6270,6 +6229,20 @@ class DiagramDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		this.sides = [];
+		this.displayIdList = [];
+		for(let i = 0; i < primitiveCheckboxes.length; i++) {
+			let box = primitiveCheckboxes[i];
+			let id = box.getAttribute("data-id");
+			let side = box.getAttribute("data-side");
+			let name = box.getAttribute("data-name");
+			if (box.checked) {
+				this.displayIdList.push(id.toString());
+				this.sides.push(side);
+			}
+		}
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
