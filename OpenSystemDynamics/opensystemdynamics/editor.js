@@ -5880,20 +5880,6 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
-	renderKeepHtml() {
-		return (`
-			<table class="modernTable" style="width:100%; text-align:center;">
-				<tr>
-					<td style="width:50%">
-						&nbsp Keep Results <input type="checkbox">
-					</td>
-					<td>
-						<button>Clear Results</button>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -6000,6 +5986,8 @@ class DiagramDialog extends DisplayDialog {
 		
 		this.markers = false;
 
+		this.keep = false;
+
 		this.autoPlotPer = true;
 		this.plotPer = getTimeLength()/100;
 
@@ -6054,6 +6042,20 @@ class DiagramDialog extends DisplayDialog {
 	}
 	getSidesToDisplay() {
 		return this.sides;
+	}
+	renderKeepHtml() {
+		return (`
+			<table class="modernTable" style="width:100%; text-align:center;">
+				<tr>
+					<td style="width:50%">
+						&nbsp Keep Results <input type="checkbox" class="keep_checkbox" ${checkedHtmlAttribute(this.keep)}>
+					</td>
+					<td>
+						<button>Clear Results</button>
+					</td>
+				</tr>
+			</table>
+		`);
 	}
 	renderPlotPerHtml() {
 		return (`
@@ -6239,6 +6241,8 @@ class DiagramDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 
+		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
+		
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
 		this.displayIdList = [];
