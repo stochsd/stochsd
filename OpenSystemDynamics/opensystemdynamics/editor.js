@@ -2445,6 +2445,140 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
+// Hold data for Diagrams 
+class DataGenerations {
+	constructor() {
+		this.reset();
+	}
+	reset() {
+		this.numGenerations = 0;
+		this.numLines = 0;
+		this.idGen = [];
+		this.sideGen = [];
+		this.nameGen = [];
+		this.colorGen = [];
+		this.patternGen = [];
+		this.resultGen = []; 
+		this.plotPers = [];
+	}
+	append(ids, sides, results) {
+		this.resultGen.push(results);
+		this.numGenerations++;
+		this.numLines += ids.length;
+		this.idGen.push(ids);
+		this.sideGen.push(sides);
+		this.nameGen.push(ids.map(findID).map(getName));
+		this.colorGen.push(ids.map(findID).map(
+			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+		));
+		this.patternGen.push(ids.map(findID).map( (node) => {
+				switch(get_object(node.id).type) {
+					case "variable":
+					case "converter":
+						return "."
+					case "flow":
+						return "-";
+					default:
+						return "_";
+				}
+		}));
+	}
+	setCurrent(ids, sides, results) {
+		// Remove last
+		if (this.idGen.length !== 0) {
+			let removedIds = this.idGen.pop();
+			let numRemoved = removedIds.length;
+			this.numLines -= numRemoved;
+			this.numGenerations--;
+			this.sideGen.pop();
+			this.nameGen.pop();
+			this.colorGen.pop();
+			this.patternGen.pop();
+			this.resultGen.pop();
+		}
+		
+		// Add new 
+		this.append(ids, sides, results);
+	}
+	getSeriesArray(wantedIds) {
+		let seriesArray = [];
+		let lineCount = 0;
+		// Loop generations 
+		for(let i = 0; i < this.idGen.length; i++) {
+			let currentIds = this.idGen[i];
+			let plotPer = this.plotPers[i];
+			for(let j = 0; j < currentIds.length; j++) {
+				let id = currentIds[j];
+				if(wantedIds.includes(id)) {
+					let tmpArr = [];
+					lineCount++;
+					let plotPerIndex = Math.floor(this.resultGen[i].length/4);
+					for (let k = 0; k < this.resultGen[i].length; k++) {
+						let row = this.resultGen[i][k];
+						let time = Number(row[0]);
+						let value = Number(row[j+1]);
+						if ((k % plotPerIndex) === Math.floor(plotPerIndex/2)) {
+							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
+						} else {
+							tmpArr.push([time, value, null]);
+						}
+					}
+					seriesArray.push(tmpArr);
+				}
+			}
+		}
+		return seriesArray;
+	}
+	getSeriesSettingsArray(wantedIds) {
+		let areBothSidesUsed = () => {
+			let leftUsed = false;
+			let rightUsed = false;
+			for(let i = 0; i < this.idGen.length; i++) {
+				let currentIds = this.idGen[i];
+				for(let j = 0; j < currentIds.length; j++) {
+					let id = currentIds[j];
+					if(wantedIds.includes(id)) {
+						for (let side of  this.sideGen[i]) {
+							leftUsed = (side === "L") ? true : leftUsed;
+							rightUsed = (side === "R") ? true : rightUsed;
+						}
+					}	
+				}
+			}
+			return 	(leftUsed && rightUsed);
+		}
+		let bothSidesUsed = areBothSidesUsed();
+		let seriesSettingsArray = [];
+		let countLine = 0;
+		// Loop generations 
+		for(let i = 0; i < this.idGen.length; i++) {
+			let currentIds = this.idGen[i];
+			for(let j = 0; j < currentIds.length; j++) {
+				let id = currentIds[j];
+				if(wantedIds.includes(id)) {
+					countLine++;
+					seriesSettingsArray.push({
+						showLabel: true, 
+						label: `${countLine}. ${this.nameGen[i][j]} ${(bothSidesUsed) ? ((this.sideGen[i][j] === "L")? " - L" : " - R" ) : ("")}`,
+						linePattern: this.patternGen[i][j],
+						yaxis: (this.sideGen[i][j] === "L") ? "yaxis": "y2axis",
+						color: this.colorGen[i][j],
+						shadow: false,
+						showMarker: false,
+						pointLabels: {
+							show: true,
+							edgeTolerance: 0,
+							ypadding: 0,
+							location: "n" 
+						}
+					});
+				}
+			}
+		}
+		return seriesSettingsArray;
+	}
+}
+
 class DiagramVisual extends HtmlOverlayTwoPointer {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
@@ -2456,7 +2590,12 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
+		this.gens = new DataGenerations();
 		this.data = {
+			numKepsRuns: 0,
+			keptResultsSides: [],
+			keptResultsNames: [],
+			keptResults: [],
 			resultIds: [],
 			results: []
 		}
@@ -2468,8 +2607,15 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
-		this.data.resultIds = ["time"].concat(this.fetchedIds)
-		console.log(this.data.resultIds);
+		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		if(this.dialog.keep) {
+			// add generation 
+			this.gens.append(this.dialog.getIdsToDisplay(), this.dialog.getSidesToDisplay(), results);
+		} else {
+			this.gens.setCurrent(this.dialog.getIdsToDisplay(), this.dialog.getSidesToDisplay(), results);
+		}
+		
+		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 	}
 	render() {
@@ -2478,9 +2624,11 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
 		this.primitive.value.setAttribute("Sides", sides.join(","));
+
 		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
@@ -2510,8 +2658,8 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			let serie = [];
 			for(let row of this.data.results) {
 				let time = Number(row[0])
-				let value = Number(row[resultColumn])
-				serie.push([time,value]);
+				let value = Number(row[resultColumn]);
+				serie.push([time, value, null]);
 			}
 			return serie;
 		}
@@ -2522,33 +2670,15 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.serieArray = [];
 		
 		// Make time series
-		for(let i = 0; i < idsToDisplay.length; i++) {
-			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
-			if (index === -1) {
-				this.serieArray.push([null, null]);	
-			} else {
-				this.serieArray.push(makeSerie(index));	
-			}
-		}
+		this.serieArray = this.gens.getSeriesArray(idsToDisplay);
+
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		this.dialog.simulationTime = RunResults.simulationTime;
 		
 		// Make serie settings
-		for(let i in this.namesToDisplay) {
-			this.serieSettingsArray.push(
-				{
-					showLabel: true,
-					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
-					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
-					color: this.colorsToDisplay[i],
-					linePattern: this.patternsToDisplay[i],
-					shadow: false,
-					showMarker:false
-				}
-			);
-		}
-		
+		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay);
+
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
 		// We need to ad a delay and respond to events first to make this work in firefox
@@ -6242,7 +6372,7 @@ class DiagramDialog extends DisplayDialog {
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
-		
+
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
 		this.displayIdList = [];
