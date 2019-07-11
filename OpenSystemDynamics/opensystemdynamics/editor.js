@@ -2650,6 +2650,11 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 			// We can't render anything with no data
 			return;
 		}
+		
+		if (this.dialog.clear) {
+			this.gens.reset();
+			this.dialog.clear = false;
+		}
 
 		this.minLValue = 0;
 		this.maxLValue = 0;
@@ -2689,14 +2694,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	}
 	updateChart() {
 
-		if (this.serieArray == null) {
+		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "No data. Run to create data!";
-			return;
-		}
-		if (this.serieArray.length == 0) {
-			// We have no series to display
-			this.chartDiv.innerHTML = "At least one primitive must be selected!";
+			this.chartDiv.innerHTML = "<b>Time Diagram</b><br/> No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -6117,6 +6117,7 @@ class DiagramDialog extends DisplayDialog {
 		this.markers = false;
 
 		this.keep = false;
+		this.clear = false;
 
 		this.autoPlotPer = true;
 		this.plotPer = getTimeLength()/100;
@@ -6181,7 +6182,7 @@ class DiagramDialog extends DisplayDialog {
 						&nbsp Keep Results <input type="checkbox" class="keep_checkbox" ${checkedHtmlAttribute(this.keep)}>
 					</td>
 					<td>
-						<button>Clear Results</button>
+						<button class="keepButton">Clear Results</button>
 					</td>
 				</tr>
 			</table>
@@ -6364,6 +6365,9 @@ class DiagramDialog extends DisplayDialog {
 			}
 			
 			this.subscribePool.publish("primitive check changed");
+		});
+		$(this.dialogContent).find(".keepButton").click((event) => {
+			this.clear = true;
 		});
 	}
 	makeApply() {
