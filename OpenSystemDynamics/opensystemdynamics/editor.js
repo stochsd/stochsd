@@ -6151,10 +6151,10 @@ class DiagramDialog extends DisplayDialog {
 			<table class="modernTable" style="width:100%; text-align:center;">
 				<tr>
 					<td style="width:50%">
-						&nbsp Keep Results <input type="checkbox" class="keep_checkbox" ${checkedHtmlAttribute(this.keep)}>
+						&nbsp Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
 					</td>
 					<td>
-						<button class="keepButton">Clear Results</button>
+						<button class="keepButton enterApply">Clear Results</button>
 					</td>
 				</tr>
 			</table>
@@ -6170,11 +6170,11 @@ class DiagramDialog extends DisplayDialog {
 						&nbsp Plot Period: &nbsp
 					</th>
 					<td>
-						<input style="" class="plotPer intervalsettings" type="text" value="${this.plotPer}"/>
+						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
 					</td>
 					<td>
 						Auto
-						<input style="" class="autoPlotPer intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
 					</td>
 				</tr>
 			</table>
@@ -6186,19 +6186,19 @@ class DiagramDialog extends DisplayDialog {
 				<tr>
 					<th>&nbsp Title: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="TitleLabel" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>&nbsp Left Label: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>&nbsp Right Label: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -6215,21 +6215,21 @@ class DiagramDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td><input class="yLMin intervalsettings" type="text" value="${this.getYLMin()}"></td>
-				<td><input class="yLMax intervalsettings" type="text" value="${this.getYLMax()}"></td>
-				<td><input class="yLAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
+				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
+				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td><input class="yRMin intervalsettings" type="text" value="${this.getYRMin()}"></td>
-				<td><input class="yRMax intervalsettings" type="text" value="${this.getYRMax()}"></td>
-				<td><input class="yRAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
+				<td><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
+				<td><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
+				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 			</tr>
 		</table>
 		`);
@@ -6299,7 +6299,7 @@ class DiagramDialog extends DisplayDialog {
 						</td>
 						<td style="text-align: center;">
 							<input 
-								class="primitive_checkbox" 
+								class="primitive_checkbox enterApply" 
 								type="checkbox" 
 								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
 								data-name="${getName(p)}" 
@@ -6309,7 +6309,7 @@ class DiagramDialog extends DisplayDialog {
 						</td>
 						<td style="text-align: center;">
 							<input 
-								class="primitive_checkbox"
+								class="primitive_checkbox enterApply"
 								type="checkbox"
 								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
 								data-name="${getName(p)}" 
@@ -6337,6 +6337,11 @@ class DiagramDialog extends DisplayDialog {
 			}
 			
 			this.subscribePool.publish("primitive check changed");
+		});
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
 		});
 		$(this.dialogContent).find(".keepButton").click((event) => {
 			this.clear = true;
