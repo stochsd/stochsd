@@ -5490,10 +5490,10 @@ class RunResults {
 		$("#runStatusBarOuter").width(progressBarWidth);
 		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
 		let currentTime = this.getRunProgress();
-		let endTime = this.getRunProgressMax();
+		let startTime = this.getRunProgressMin();
+		// let endTime = this.getRunProgressMax();
 		let timeStep = Math.round(this.getTimeStep() * 1000) /1000;
-		$("#runStatusBarText").html(`${currentTime} / ${endTime} (${timeStep})`);
-		
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
@@ -5553,6 +5553,9 @@ class RunResults {
 	}
 	static getRunProgressMax() {
 		return getTimeStart()+getTimeLength()
+	}
+	static getRunProgressMin() {
+		return getTimeStart();
 	}
 	static getLastRow() {
 		//~ alert(this.results.length);
