@@ -2651,8 +2651,6 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
-		this.dialog.simulationTime = RunResults.simulationTime;
-		
 		// Make serie settings
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay);
 
@@ -6115,8 +6113,6 @@ class DiagramDialog extends DisplayDialog {
 		this.maxLValue = 0;
 		this.minRValue = 0;
 		this.maxRValue = 0;
-		
-		this.simulationTime = 0;
 	}
 	
 	getDisplayId(id, side) {
@@ -6404,8 +6400,6 @@ class DiagramDialog extends DisplayDialog {
 	}
 	getXMax() {
 		if (this.xAuto) {
-			// Uncomment if you want the diagram to grow dynamicly as more data is produced
-			//~ return this.simulationTime;
 			return getTimeStart() + getTimeLength();
 		} else {
 			return this.xMax;
