@@ -2628,23 +2628,6 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
-
-		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
-		this.colorsToDisplay = idsToDisplay.map(findID).map(
-			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
-		);
-		this.patternsToDisplay = idsToDisplay.map(findID).map(
-			node => {
-				let type = get_object(node.id).type;
-				if (type == "variable" || type == "converter") {
-					return ".";
-				} else if (type == "flow") {
-					return "-";
-				} else {
-					return "_";
-				}
-			}
-		);
 		
 		if (this.data.results.length == 0) {
 			// We can't render anything with no data
@@ -2659,17 +2642,6 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.minLValue = 0;
 		this.maxLValue = 0;
 		
-		let makeSerie = (resultColumn) => {
-			let serie = [];
-			for(let row of this.data.results) {
-				let time = Number(row[0])
-				let value = Number(row[resultColumn]);
-				serie.push([time, value, null]);
-			}
-			return serie;
-		}
-		
-
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
 		this.serieArray = [];
