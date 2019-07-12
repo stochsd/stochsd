@@ -6581,7 +6581,7 @@ class TableDialog extends DisplayDialog {
 				<th class="text">&nbsp To &nbsp</th>
 				<td><input class="intervalsettings end" name="end" value="${this.end}" type="text"></td>
 				<td>Auto <input class="intervalsettings end_auto" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
-			</tr><tr>
+			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">&nbsp Step &nbsp</th>
 				<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
 				<td>Auto <input class="intervalsettings step_auto" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
@@ -6613,7 +6613,8 @@ class TableDialog extends DisplayDialog {
 	updateInterval()  {
 		this.start = Number($(this.dialogContent).find(".start").val());
 		this.end = Number($(this.dialogContent).find(".end").val());
-		this.step = Number($(this.dialogContent).find(".step").val());
+		let step = Number($(this.dialogContent).find(".step").val());
+		this.step = (step < getTimeStep()) ? getTimeStep() : step;
 		
 		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
 		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
