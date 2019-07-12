@@ -6671,14 +6671,14 @@ class SimulationSettings extends jqDialog {
 		this.setHtml(`
 			<table class="modernTable">
 			<tr>
-				<td>Start Time</td>
-				<td><input class="input_start" name="start" value="${start}" type="text"></td>
+				<td>&nbsp Start Time &nbsp</td>
+				<td><input class="input_start" name="start" style="width:100px;" value="${start}" type="text"></td>
 			</tr><tr>
-				<td>Length</td>
-				<td><input class="input_length" name="length" value="${length}" type="text"></td>
+				<td>&nbsp Length &nbsp</td>
+				<td><input class="input_length" name="length" style="width:100px;" value="${length}" type="text"></td>
 			</tr><tr>
-				<td>Time Step</td>
-				<td><input class="input_step" name="step" value="${step}" type="text"></td>
+				<td>&nbsp Time Step &nbsp</td>
+				<td><input class="input_step" name="step" style="width:100px;" value="${step}" type="text"></td>
 			</tr>
 			</table>
 		`);
