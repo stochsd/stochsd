@@ -3686,6 +3686,19 @@ class TwoPointerTool extends BaseTool {
 }
 
 class FlowTool extends TwoPointerTool {
+	static init() {
+		super.init();
+		// Is to prevent error if rightdown happens before leftdown 
+		this.hasLeftClicked = false;
+	}
+	static leftMouseDown(x, y) {
+		super.leftMouseDown(x, y);
+		this.hasLeftClicked = true;
+	}
+	static leftMouseUp(x, y) {
+		super.leftMouseUp(x, y);
+		this.hasLeftClicked = false;
+	}
 	static create_TwoPointer_start(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
@@ -3728,8 +3741,10 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection.update();
 	}
 	static rightMouseDown(x,y) {
-		do_global_log("Right mouse on: "+x+", "+y);
-		this.current_connection.createAnchorPoint(x, y);
+		if (this.hasLeftClicked) {
+			do_global_log("Right mouse on: "+x+", "+y);
+			this.current_connection.createAnchorPoint(x, y);
+		}
 	}
 
 	static getType() {
