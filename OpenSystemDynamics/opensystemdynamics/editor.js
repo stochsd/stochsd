@@ -2857,13 +2857,6 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 		this.serieArray.push(makeXYSerie());
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
-		
-		this.dialog.minXValue = this.minXValue;
-		this.dialog.maxXValue = this.maxXValue;
-		
-		this.dialog.minYValue = this.minYValue;
-		this.dialog.maxYValue = this.maxYValue;
-		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
@@ -2905,22 +2898,26 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			  axes: {
 				xaxis: {
 					label: this.serieXName,
-					min: this.dialog.getXMin(),
-					max: this.dialog.getXMax(),
+					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
+					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax(),
 					labelOptions: {
 						textColor: this.xAxisColor
 					}
 				},
 				yaxis: {
 					label: this.serieYName,
-					min: this.dialog.getYMin(),
-					max: this.dialog.getYMax(),
+					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
+					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax(),
 					labelOptions: {
 						textColor: this.yAxisColor
 					}
 				}
 			}
 		  });
+		  this.dialog.minXValue = this.plot.axes.xaxis.min;
+		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
+		  this.dialog.minYValue = this.plot.axes.yaxis.min;
+		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
 	}
 	updateGraphics() {
 		super.updateGraphics();
