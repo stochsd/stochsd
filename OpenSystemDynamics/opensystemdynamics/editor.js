@@ -3278,6 +3278,7 @@ class DeleteTool extends BaseTool {
 		}
 		delete_selected_objects();
 		History.storeUndoState();
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3313,6 +3314,7 @@ class OnePointCreateTool extends BaseTool {
 			this.rightClickMode = false; 
 		} else {
 			this.create(x, y);
+			updateInfoBar();
 		}
 	}
 	static leftMouseUp(x, y) {
@@ -3322,6 +3324,7 @@ class OnePointCreateTool extends BaseTool {
 		this.rightClickMode = true;
 		unselect_all();
 		this.create(x, y);
+		updateInfoBar();
 	}
 }
 
