@@ -2759,16 +2759,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		RunResults.subscribeRun(this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
-		this.namesToDisplay = [];
 		this.gens = new DataGenerations();
-		this.data = {
-			numKepsRuns: 0,
-			keptResultsSides: [],
-			keptResultsNames: [],
-			keptResults: [],
-			resultIds: [],
-			results: []
-		}
 		
 		this.dialog = new ComparePlotDialog();
 		this.dialog.subscribePool.subscribe(()=>{
@@ -2784,9 +2775,6 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		} else {
 			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results);
 		}
-		
-		this.data.resultIds = ["time"].concat(this.fetchedIds);
-		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 	}
 	render() {
 
@@ -2797,7 +2785,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
-		if (this.data.results.length == 0) {
+		if (this.gens.numGenerations == 0) {
 			// We can't render anything with no data
 			return;
 		}
