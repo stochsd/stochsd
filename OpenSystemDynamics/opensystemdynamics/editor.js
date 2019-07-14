@@ -2579,7 +2579,7 @@ class DataGenerations {
 	}
 }
 
-class DiagramVisual extends HtmlOverlayTwoPointer {
+class ComparePlotVisual extends HtmlOverlayTwoPointer {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
@@ -3823,7 +3823,7 @@ TableTool.init();
 class ComparePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
-		this.current_connection = new DiagramVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new ComparePlotVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4856,7 +4856,7 @@ function syncVisual(tprimitive) {
 					dimClass = TableVisual;
 				break;
 				case "Diagram":
-					dimClass = DiagramVisual;
+					dimClass = ComparePlotVisual;
 				break;
 				case "XyPlot":
 					dimClass = XyPlotVisual;
@@ -6138,7 +6138,7 @@ class DiagramDialog extends DisplayDialog {
 		this.yRMax = 0;
 		this.yRAuto = true;
 
-		// Automatic value (is set in the DiagramVisual)
+		// Automatic value (is set in the ComparePlotVisual)
 		this.minLValue = 0;
 		this.maxLValue = 0;
 		this.minRValue = 0;
