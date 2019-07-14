@@ -6687,13 +6687,13 @@ class ComparePlotDialog extends DisplayDialog {
 				<tr>
 					<th>&nbsp Title: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
+						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>&nbsp Left Label: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 			</table>
