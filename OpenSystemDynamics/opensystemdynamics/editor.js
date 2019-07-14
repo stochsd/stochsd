@@ -2559,7 +2559,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			);
 		}
 
-
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
@@ -2647,19 +2646,17 @@ class DataGenerations {
 		this.numGenerations = 0;
 		this.numLines = 0;
 		this.idGen = [];
-		this.sideGen = [];
 		this.nameGen = [];
 		this.colorGen = [];
 		this.patternGen = [];
 		this.resultGen = []; 
 		this.plotPers = [];
 	}
-	append(ids, sides, results) {
+	append(ids, results) {
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
 		this.idGen.push(ids);
-		this.sideGen.push(sides);
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
@@ -2676,14 +2673,13 @@ class DataGenerations {
 				}
 		}));
 	}
-	setCurrent(ids, sides, results) {
+	setCurrent(ids, results) {
 		// Remove last
 		if (this.idGen.length !== 0) {
 			let removedIds = this.idGen.pop();
 			let numRemoved = removedIds.length;
 			this.numLines -= numRemoved;
 			this.numGenerations--;
-			this.sideGen.pop();
 			this.nameGen.pop();
 			this.colorGen.pop();
 			this.patternGen.pop();
@@ -2691,7 +2687,7 @@ class DataGenerations {
 		}
 		
 		// Add new 
-		this.append(ids, sides, results);
+		this.append(ids, results);
 	}
 	getSeriesArray(wantedIds) {
 		let seriesArray = [];
@@ -2723,24 +2719,6 @@ class DataGenerations {
 		return seriesArray;
 	}
 	getSeriesSettingsArray(wantedIds) {
-		let areBothSidesUsed = () => {
-			let leftUsed = false;
-			let rightUsed = false;
-			for(let i = 0; i < this.idGen.length; i++) {
-				let currentIds = this.idGen[i];
-				for(let j = 0; j < currentIds.length; j++) {
-					let id = currentIds[j];
-					if(wantedIds.includes(id)) {
-						for (let side of  this.sideGen[i]) {
-							leftUsed = (side === "L") ? true : leftUsed;
-							rightUsed = (side === "R") ? true : rightUsed;
-						}
-					}	
-				}
-			}
-			return 	(leftUsed && rightUsed);
-		}
-		let bothSidesUsed = areBothSidesUsed();
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2752,9 +2730,8 @@ class DataGenerations {
 					countLine++;
 					seriesSettingsArray.push({
 						showLabel: true, 
-						label: `${countLine}. ${this.nameGen[i][j]} ${(bothSidesUsed) ? ((this.sideGen[i][j] === "L")? " - L" : " - R" ) : ("")}`,
+						label: `${countLine}. ${this.nameGen[i][j]}`,
 						linePattern: this.patternGen[i][j],
-						yaxis: (this.sideGen[i][j] === "L") ? "yaxis": "y2axis",
 						color: this.colorGen[i][j],
 						shadow: false,
 						showMarker: false,
@@ -2803,9 +2780,9 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if(this.dialog.keep) {
 			// add generation 
-			this.gens.append(this.dialog.getIdsToDisplay(), this.dialog.getSidesToDisplay(), results);
+			this.gens.append(this.dialog.getIdsToDisplay(), results);
 		} else {
-			this.gens.setCurrent(this.dialog.getIdsToDisplay(), this.dialog.getSidesToDisplay(), results);
+			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results);
 		}
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
@@ -2814,9 +2791,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 	render() {
 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
-		this.primitive.value.setAttribute("Sides", sides.join(","));
 
 		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
@@ -6643,9 +6618,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.autoPlotPer = true;
 		this.plotPer = getTimeLength()/100;
 
-		// For keeping track of what y-axis graph should be ploted ("L" or "R")
-		this.sides = [];
-
 		// Values choosen by user
 		this.xMin = 0;
 		this.xMax = 0;
@@ -6654,44 +6626,26 @@ class ComparePlotDialog extends DisplayDialog {
 		this.yLMin = 0;
 		this.yLMax = 0;
 		this.yLAuto  = true;
-		
-		this.yRMin = 0;
-		this.yRMax = 0;
-		this.yRAuto = true;
 
 		// Automatic value (is set in the ComparePlotVisual)
 		this.minLValue = 0;
 		this.maxLValue = 0;
-		this.minRValue = 0;
-		this.maxRValue = 0;
 	}
 	
-	getDisplayId(id, side) {
+	getDisplayId(id) {
 		id = id.toString();
 		let index = this.displayIdList.indexOf(id)
-		return (index != -1 && this.sides[index] === side);
+		return (index != -1);
 	}
 	
-	setIdsToDisplay(idList, sides) {
+	setIdsToDisplay(idList) {
 		this.displayIdList = [];
-		this.sides = [];
-		if (sides === undefined || sides.length !== idList.length) {
-			for(let i in idList) {
-				this.displayIdList.push(idList[i]);
-				this.sides.push("L");
-			}
-		} else {
-			for(let i in idList) {
-				this.displayIdList.push(idList[i]);
-				this.sides.push(sides[i]);
-			}
+		for(let i in idList) {
+			this.displayIdList.push(idList[i]);
 		}
 	}
 	getIdsToDisplay() {
 		return this.displayIdList;
-	}
-	getSidesToDisplay() {
-		return this.sides;
 	}
 	renderKeepHtml() {
 		return (`
@@ -6742,12 +6696,6 @@ class ComparePlotDialog extends DisplayDialog {
 						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
-				<tr>
-					<th>&nbsp Right Label: &nbsp</th>
-					<td>
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
-					</td>
-				</tr>
 			</table>
 		`);
 	}
@@ -6767,16 +6715,10 @@ class ComparePlotDialog extends DisplayDialog {
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
-				<td style="text-align:center; padding:0px 6px">Left</td>
+				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
 				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
 				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
 				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
-			</tr>
-			<tr>
-				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
-				<td><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
-				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 			</tr>
 		</table>
 		`);
@@ -6825,64 +6767,9 @@ class ComparePlotDialog extends DisplayDialog {
 
 		$(this.dialogContent).find(".plotPer").val(this.plotPer);
 		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
-
-	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		
-		return (`
-			<table class="modernTable" style="margin: 0px;">
-			<tr>
-				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
-				<th>&nbsp Left  &nbsp</th>
-				<th>&nbsp Right &nbsp</th>
-			</tr>
-				${primitives.map(p => `
-					<tr>
-						<td class="text">
-							&nbsp ${getName(p)} &nbsp
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="L"
-							>
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply"
-								type="checkbox"
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="R"
-							>
-						</td>
-					</tr>
-				`).join('')}
-			</tr>
-			</table>
-		`);
 	}
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
-			let clickedElement = event.target;
-			let side = $(clickedElement).attr("data-side");
-			
-			// Remove opposite checkmark
-			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
-			if (side === "R") {
-				$(commonParent[0].children[1].children[0]).removeAttr("checked");
-			} else {
-				$(commonParent[0].children[2].children[0]).removeAttr("checked");
-			}
-			
 			this.subscribePool.publish("primitive check changed");
 		});
 		$(this.dialogContent).find(".enterApply").keydown((event) =>{
@@ -6897,21 +6784,17 @@ class ComparePlotDialog extends DisplayDialog {
 	makeApply() {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
-		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
-		this.sides = [];
 		this.displayIdList = [];
 		for(let i = 0; i < primitiveCheckboxes.length; i++) {
 			let box = primitiveCheckboxes[i];
 			let id = box.getAttribute("data-id");
-			let side = box.getAttribute("data-side");
 			let name = box.getAttribute("data-name");
 			if (box.checked) {
 				this.displayIdList.push(id.toString());
-				this.sides.push(side);
 			}
 		}
 	}
