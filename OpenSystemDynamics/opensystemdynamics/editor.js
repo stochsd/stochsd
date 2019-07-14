@@ -2600,7 +2600,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 			results: []
 		}
 		
-		this.dialog = new DiagramDialog();
+		this.dialog = new ComparePlotDialog();
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -5929,7 +5929,7 @@ function saveChangedAlert(continueHandler) {
 	});
 }
 
-// This is the super class dor DiagramDialog and TableDialog
+// This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
 	constructor() {
 		super();
@@ -6106,7 +6106,7 @@ class DisplayDialog extends jqDialog {
 	}
 }
 
-class DiagramDialog extends DisplayDialog {
+class ComparePlotDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.setTitle("Diagram Properties");
