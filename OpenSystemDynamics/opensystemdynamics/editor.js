@@ -3820,7 +3820,7 @@ class TableTool extends TwoPointerTool {
 }
 TableTool.init();
 
-class DiagramTool extends TwoPointerTool {
+class ComparePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
 		this.current_connection = new DiagramVisual(this.primitive.id,this.getType(),[x,y]);
@@ -3839,7 +3839,7 @@ class DiagramTool extends TwoPointerTool {
 		return "diagram";
 	}
 }
-DiagramTool.init();
+ComparePlotTool.init();
 
 class TextAreaTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -3855,7 +3855,6 @@ class TextAreaTool extends TwoPointerTool {
 		return "diagram";
 	}
 }
-DiagramTool.init();
 
 class XyPlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -4437,7 +4436,7 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"line":LineTool,
 			"table":TableTool,
-			"diagram":DiagramTool,
+			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
