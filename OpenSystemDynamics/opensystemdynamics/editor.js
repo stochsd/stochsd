@@ -2445,6 +2445,192 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
+class TimePlotVisual extends HtmlOverlayTwoPointer {
+	constructor(id, type, pos) {		
+		super(id, type, pos);
+		this.runHandler = () => {
+			this.fetchData();
+			this.render();
+		}
+		RunResults.subscribeRun(this.runHandler);
+		this.plot = null;
+		this.serieArray = null;
+		this.namesToDisplay = [];
+		this.data = {
+			resultIds: [],
+			results: []
+		}
+		
+		this.dialog = new TimePlotDialog();
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
+	}
+	fetchData() {
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		
+		this.data.resultIds = ["time"].concat(this.fetchedIds);
+		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+	}
+	render() {
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let sides = this.dialog.getSidesToDisplay();
+		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
+		this.primitive.value.setAttribute("Sides", sides.join(","));
+		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
+		this.colorsToDisplay = idsToDisplay.map(findID).map(
+			(node) => node.getAttribute("color") ? node.getAttribute("color") : defaultStroke
+		);
+		this.pattersToDisplay = idsToDisplay.map(findID).map(
+			( node ) => {
+				let type = get_object(node.id).type;
+				switch(type) {
+					case("variable"):
+					case("constant"):
+						return ".";
+					case("flow"):
+						return "-";
+					default:
+						return "_";
+				}
+			}
+		);
+
+		if (this.data.results.length == 0) {
+			// We can't render anything with no data
+			return;
+		}
+
+		this.minLValue = 0;
+		this.maxLValue = 0;
+		
+
+		let makeSerie = (resultColumn) => {
+			let serie = [];
+			for (let row of this.data.results) {
+				let time = Number(row[0]);
+				let value = Number(row[resultColumn]);
+				serie.push([time, value]);
+			}
+			return serie;
+		}
+
+		// Declare series and settings for series
+		this.serieSettingsArray = [];
+		this.serieArray = [];
+		
+		// Make time series
+		for(let i = 0; i < idsToDisplay.length; i++) {
+			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
+			if (index === -1) {
+				this.serieArray.push([null, null]);
+			} else {
+				this.serieArray.push(makeSerie(index));
+			}
+		}
+
+
+		do_global_log("serieArray "+JSON.stringify(this.serieArray));
+
+		// Make serie settings
+		for(let i in this.namesToDisplay) {
+			this.serieSettingsArray.push(
+				{
+					showLabel: true,
+					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
+					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
+					color: this.colorsToDisplay[i],
+					shadow: false,
+					showMarker: false
+				}
+			);
+		}
+
+		console.log("this.serieArray");
+		console.log(this.serieArray);
+		console.log("this.serieSettingsArray");
+		console.log(this.serieSettingsArray);
+
+		do_global_log(JSON.stringify(this.serieSettingsArray));
+		
+		// We need to ad a delay and respond to events first to make this work in firefox
+		setTimeout(() => {
+			this.updateChart();
+		 },200);
+		
+	}
+	updateChart() {
+
+		if (this.serieArray == null || this.serieArray.length == 0) {
+			// The series are not initialized yet
+			this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
+			return;
+		}
+		$(this.chartDiv).empty();
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			title: this.dialog.titleLabel,
+			series: this.serieSettingsArray,
+			grid: {
+				background: "white"
+			},
+			axes: {
+				xaxis: {
+					label: "Time",
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					min: this.dialog.getXMin(),
+					max: this.dialog.getXMax()
+				},
+				yaxis: {
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.leftAxisLabel,
+					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
+					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
+				},
+				y2axis: {
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.rightAxisLabel,
+					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
+					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax()
+				}
+			},
+			  legend: {
+					show: true,
+					placement: 'outsideGrid'
+			  }
+		});
+		this.dialog.minLValue = this.plot.axes.yaxis.min; 
+		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
+		this.dialog.minRValue = this.plot.axes.y2axis.min;
+		this.dialog.maxRValue = this.plot.axes.y2axis.max;
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+	}
+	updateGraphics() {
+		super.updateGraphics();
+		
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
+		this.chartDiv.style.width = width+"px";
+		this.chartDiv.style.height = height+"px";
+		
+		this.updateChart();
+	}
+	double_click() {
+		this.dialog.show();
+	}
+}
+
+
 // Hold data for ComparePlots 
 class DataGenerations {
 	constructor() {
@@ -3820,6 +4006,13 @@ class TableTool extends TwoPointerTool {
 }
 TableTool.init();
 
+class TimePlotTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Diagram", null, null);
+		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+}
+
 class ComparePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Diagram", null,null);
@@ -4436,6 +4629,7 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"line":LineTool,
 			"table":TableTool,
+			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
 			"numberbox":NumberboxTool,
@@ -6103,6 +6297,326 @@ class DisplayDialog extends jqDialog {
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
 		this.bindPrimitiveListEvents();
+	}
+}
+
+class TimePlotDialog extends DisplayDialog {
+	constructor() {
+		super();
+		this.setTitle("Time Plot Properties");
+		this.titleLabel = "";
+		this.leftAxisLabel = "";
+		this.rightAxisLabel = "";
+		
+		this.markers = false;
+
+		this.autoPlotPer = true;
+		this.plotPer = getTimeLength()/100;
+
+		// For keeping track of what y-axis graph should be ploted ("L" or "R")
+		this.sides = [];
+
+		// Values choosen by user
+		this.xMin = 0;
+		this.xMax = 0;
+		this.xAuto  = true;
+		
+		this.yLMin = 0;
+		this.yLMax = 0;
+		this.yLAuto  = true;
+		
+		this.yRMin = 0;
+		this.yRMax = 0;
+		this.yRAuto = true;
+
+		// Automatic value (is set in the ComparePlotVisual)
+		this.minLValue = 0;
+		this.maxLValue = 0;
+		this.minRValue = 0;
+		this.maxRValue = 0;
+	}
+	
+	getDisplayId(id, side) {
+		id = id.toString();
+		let index = this.displayIdList.indexOf(id)
+		return (index != -1 && this.sides[index] === side);
+	}
+	
+	setIdsToDisplay(idList, sides) {
+		this.displayIdList = [];
+		this.sides = [];
+		if (sides === undefined || sides.length !== idList.length) {
+			for(let i in idList) {
+				this.displayIdList.push(idList[i]);
+				this.sides.push("L");
+			}
+		} else {
+			for(let i in idList) {
+				this.displayIdList.push(idList[i]);
+				this.sides.push(sides[i]);
+			}
+		}
+	}
+	getIdsToDisplay() {
+		return this.displayIdList;
+	}
+	getSidesToDisplay() {
+		return this.sides;
+	}
+	renderPlotPerHtml() {
+		return (`
+			<table class="modernTable" style="margin: 16px 0px" 
+				title="Distance between points in time units. \n (Should not be less then Time Step)"
+			>
+				<tr>
+					<th>
+						&nbsp Plot Period: &nbsp
+					</th>
+					<td>
+						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisNamesHtml() {
+		return (`
+			<table class="modernTable" style="margin-bottom: 16px;">
+				<tr>
+					<th>&nbsp Title: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Left Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Right Label: &nbsp</th>
+					<td>
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisLimitsHTML() {
+		return (`
+		<table class="modernTable" style="margin:16px 0px;">
+			<tr>
+				<th>Axis</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Time</td>
+				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Left</td>
+				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
+				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
+				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px;">Right</td>
+				<td><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
+				<td><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
+				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
+			</tr>
+		</table>
+		`);
+	}
+	updateInterval() {
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
+		
+		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		
+		$(this.dialogContent).find(".xMin").val(this.getXMin());
+		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		
+		// Update Left Min Max values
+		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
+		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
+		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
+		
+		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
+		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
+
+		// Update Right Min Max values
+		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
+		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
+		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
+		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
+		
+		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
+		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.plotPer = getTimeLength()/100; 
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+
+	}
+	renderPrimitiveListHtml() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+		let primitives = this.getAcceptedPrimitiveList();
+		
+		return (`
+			<table class="modernTable" style="margin: 0px;">
+			<tr>
+				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
+				<th>&nbsp Left  &nbsp</th>
+				<th>&nbsp Right &nbsp</th>
+			</tr>
+				${primitives.map(p => `
+					<tr>
+						<td class="text">
+							&nbsp ${getName(p)} &nbsp
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox enterApply" 
+								type="checkbox" 
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+								data-side="L"
+							>
+						</td>
+						<td style="text-align: center;">
+							<input 
+								class="primitive_checkbox enterApply"
+								type="checkbox"
+								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+								data-name="${getName(p)}" 
+								data-id="${getID(p)}"
+								data-side="R"
+							>
+						</td>
+					</tr>
+				`).join('')}
+			</tr>
+			</table>
+		`);
+	}
+	bindPrimitiveListEvents() {
+		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+			let clickedElement = event.target;
+			let side = $(clickedElement).attr("data-side");
+			
+			// Remove opposite checkmark
+			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
+			if (side === "R") {
+				$(commonParent[0].children[1].children[0]).removeAttr("checked");
+			} else {
+				$(commonParent[0].children[2].children[0]).removeAttr("checked");
+			}
+			
+			this.subscribePool.publish("primitive check changed");
+		});
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
+		});
+	}
+	makeApply() {
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		this.sides = [];
+		this.displayIdList = [];
+		for(let i = 0; i < primitiveCheckboxes.length; i++) {
+			let box = primitiveCheckboxes[i];
+			let id = box.getAttribute("data-id");
+			let side = box.getAttribute("data-side");
+			let name = box.getAttribute("data-name");
+			if (box.checked) {
+				this.displayIdList.push(id.toString());
+				this.sides.push(side);
+			}
+		}
+	}
+	beforeShow() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr class="invisibleTable">
+					<td class="invisibleTable">
+						${this.renderPrimitiveListHtml()}
+					</td>
+					<td class="invisibleTable">
+						${this.renderPlotPerHtml()}
+						${this.renderAxisLimitsHTML()}
+						${this.renderAxisNamesHtml()}
+					</td>
+				</tr>
+			</table>			
+		`;
+		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
+		this.setHtml(contentHTML);
+		
+		this.bindPrimitiveListEvents();
+		this.bindAxisLimitsEvents();
+		
+		this.updateInterval();
+	}
+	getXMin() {
+		if (this.xAuto) {
+			return getTimeStart();
+		} else {
+			return this.xMin;
+		}
+	}
+	getXMax() {
+		if (this.xAuto) {
+			return getTimeStart() + getTimeLength();
+		} else {
+			return this.xMax;
+		}
+	}
+	getYLMin() {
+		return (this.yLAuto) ? this.minLValue : this.yLMin;
+	}
+	getYLMax() {
+		return (this.yLAuto) ? this.maxLValue : this.yLMax;
+	}
+	getYRMin() {
+		return (this.yRAuto) ? this.minRValue : this.yRMin;
+	}
+	getYRMax() {
+		return (this.yRAuto) ? this.maxRValue : this.yRMax;
 	}
 }
 
