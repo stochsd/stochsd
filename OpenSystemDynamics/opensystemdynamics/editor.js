@@ -2509,12 +2509,19 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 		this.maxLValue = 0;
 		
 
-		let makeSerie = (resultColumn) => {
-			let serie = [];
-			for (let row of this.data.results) {
+		let makeSerie = (resultColumn, countLine) => {
+			let serie = []; 
+			let plotPer = Math.floor(this.data.results.length/4);
+			for (let i = 0; i < this.data.results.length; i++) {
+				let row = this.data.results[i];
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
-				serie.push([time, value]);
+				console.log(Math.floor(plotPer/2));
+				if (i%plotPer === Math.floor(plotPer/2)) {
+					serie.push([time, value, countLine]);
+				} else {
+					serie.push([time, value, null]);
+				}
 			}
 			return serie;
 		}
@@ -2523,37 +2530,37 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 		this.serieSettingsArray = [];
 		this.serieArray = [];
 		
-		// Make time series
+		// Make time series & Settings 
+		let counter = 0;
 		for(let i = 0; i < idsToDisplay.length; i++) {
+			counter++;
 			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
 			if (index === -1) {
-				this.serieArray.push([null, null]);
+				this.serieArray.push([null, null, null]);
 			} else {
-				this.serieArray.push(makeSerie(index));
+				this.serieArray.push(makeSerie(index, counter));
 			}
-		}
 
-
-		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-
-		// Make serie settings
-		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
+					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					color: this.colorsToDisplay[i],
 					shadow: false,
-					showMarker: false
+					showMarker: false,
+					pointLabels: {
+						show: true,
+						edgeTolerance: 0,
+						ypadding: 0,
+						location: "n"
+					}
 				}
 			);
 		}
 
-		console.log("this.serieArray");
-		console.log(this.serieArray);
-		console.log("this.serieSettingsArray");
-		console.log(this.serieSettingsArray);
+
+		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
