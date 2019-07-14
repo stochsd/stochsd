@@ -3036,7 +3036,7 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
