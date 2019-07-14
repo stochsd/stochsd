@@ -2394,7 +2394,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 
-		// Emergency solution since double clicking a Diagram or XyPlot does not always work.
+		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
 		$(this.targetElement).bind("contextmenu", (event)=> {
 			this.double_click(this.id);
 		});
@@ -2445,7 +2445,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
-// Hold data for Diagrams 
+// Hold data for ComparePlots 
 class DataGenerations {
 	constructor() {
 		this.reset();
@@ -2666,7 +2666,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>Time Diagram</b><br/> No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>Compare Plot</b><br/> No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -6109,7 +6109,7 @@ class DisplayDialog extends jqDialog {
 class ComparePlotDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("Diagram Properties");
+		this.setTitle("Compare Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
