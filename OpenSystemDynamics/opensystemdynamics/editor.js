@@ -6109,7 +6109,7 @@ class DisplayDialog extends jqDialog {
 class DiagramDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("Diagram properties");
+		this.setTitle("Diagram Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
@@ -6452,7 +6452,7 @@ class DiagramDialog extends DisplayDialog {
 class XyPlotDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("XY-plot properties");
+		this.setTitle("XY-plot Properties");
 
 		this.markersChecked = false;
 		this.lineChecked = true;
@@ -6578,7 +6578,7 @@ class TableDialog extends DisplayDialog {
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
 		this.step = getTimeStep();
-		this.setTitle("Table properties");
+		this.setTitle("Table Properties");
 		
 		this.startAuto  = true;
 		this.endAuto = true;
@@ -6674,7 +6674,7 @@ class TableDialog extends DisplayDialog {
 class SimulationSettings extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Simulation settings");
+		this.setTitle("Simulation Settings");
 		
 	}
 	beforeShow() {
@@ -6751,7 +6751,7 @@ class TextBoxDialog extends jqDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Converter Settings");
+		this.setTitle("Converter Properties");
 		this.setHtml(`
 			<div class="primitiveSettings" style="padding: 10px 0px">
 				Name:<br/>
@@ -6904,7 +6904,7 @@ class EquationEditor extends jqDialog {
 	constructor() {
 		super();
 		this.accordionBuilt = false;
-		this.setTitle("Equation editor");
+		this.setTitle("Equation Editor");
 		this.primitive = null;
 		
 		
@@ -7054,7 +7054,7 @@ class EquationEditor extends jqDialog {
 		
 		var oldName = makePrimitiveName(getName(this.primitive));
 		
-		this.setTitle(typeName+" settings");
+		this.setTitle(typeName+" Properties");
 
 		$(this.nameField).val(oldName);
 		$(this.valueField).val(oldValue);
