@@ -3977,7 +3977,7 @@ TableTool.init();
 
 class TimePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Diagram", null, null);
+		this.primitive = createConnector(name, "TimePlot", null, null);
 		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y]);
 	}
 	static init() {
@@ -5023,16 +5023,12 @@ function syncVisual(tprimitive) {
 		}
 		break;
 		case "Table":
-		case "Diagram":
 		case "XyPlot":
 		{
 			dimClass = null;
 			switch(nodeType) {
 				case "Table":
 					dimClass = TableVisual;
-				break;
-				case "Diagram":
-					dimClass = ComparePlotVisual;
 				break;
 				case "XyPlot":
 					dimClass = XyPlotVisual;
@@ -5057,9 +5053,39 @@ function syncVisual(tprimitive) {
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
+			if (primitivesString) {
+				connection.dialog.setIdsToDisplay(idsToDisplay);
+			}
+
+			connection.update();
+			connection.render();
+		}
+		break;
+		case "Diagram":
+		case "TimePlot":
+		{
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
+			
+			let connection = new TimePlotVisual(tprimitive.id, "timeplot",[0,0]);
+			connection.create_dummy_start_anchor();
+			connection.create_dummy_end_anchor();			
+			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
+			// Set UI-coordinates to coordinates in primitive
+			connection.start_anchor.set_pos(source_position);
+			// Set UI-coordinates to coordinates in primitive
+			connection.end_anchor.set_pos(target_position);
+			
+			// Insert correct primtives
+			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let idsToDisplay = primitivesString.split(",");
 			let sidesString = tprimitive.value.getAttribute("Sides");
 			if (primitivesString) {
-				if (nodeType === "Diagram" && sidesString) {
+				if (sidesString) {
 					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
 				} else {
 					connection.dialog.setIdsToDisplay(idsToDisplay);
