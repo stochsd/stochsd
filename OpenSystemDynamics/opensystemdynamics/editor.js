@@ -3997,7 +3997,7 @@ class TimePlotTool extends TwoPointerTool {
 
 class ComparePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Diagram", null,null);
+		this.primitive = createConnector(name, "ComparePlot", null,null);
 		this.current_connection = new ComparePlotVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
@@ -5063,11 +5063,22 @@ function syncVisual(tprimitive) {
 		break;
 		case "Diagram":
 		case "TimePlot":
+		case "ComparePlot":
 		{
+			dimClass = null;
+			switch(nodeType) {
+				case "Diagram":
+				case "TimePlot":
+					dimClass = TimePlotVisual;
+				break;
+				case "ComparePlot":
+					dimClass = ComparePlotVisual;
+				break;
+			}
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new TimePlotVisual(tprimitive.id, "timeplot",[0,0]);
+			let connection = new dimClass(tprimitive.id, "timeplot", [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
