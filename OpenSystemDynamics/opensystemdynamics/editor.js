@@ -2517,7 +2517,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
 				if (i%plotPer === Math.floor(plotPer/2)) {
-					serie.push([time, value, countLine]);
+					serie.push([time, value, Math.floor(countLine).toString()]);
 				} else {
 					serie.push([time, value, null]);
 				}
