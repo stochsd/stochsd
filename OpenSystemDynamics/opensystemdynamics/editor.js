@@ -3991,7 +3991,7 @@ class TimePlotTool extends TwoPointerTool {
 		this.current_connection.render();
 	}
 	static getType() {
-		return "diagram";
+		return "timeplot";
 	}
 }
 
@@ -4011,7 +4011,7 @@ class ComparePlotTool extends TwoPointerTool {
 		this.current_connection.render();
 	}
 	static getType() {
-		return "diagram";
+		return "compareplot";
 	}
 }
 ComparePlotTool.init();
@@ -4027,7 +4027,7 @@ class TextAreaTool extends TwoPointerTool {
 		super.init();
 	}
 	static getType() {
-		return "diagram";
+		return "text";
 	}
 }
 
@@ -5037,7 +5037,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, "table",[0,0]);
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -5078,7 +5078,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, "timeplot", [0,0]);
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -5132,7 +5132,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, "table",[0,0]);
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -5153,7 +5153,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id, "table",[0,0]);
+			let connection = new TextAreaVisual(tprimitive.id, "text", [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -5260,9 +5260,9 @@ function syncVisual(tprimitive) {
 			var position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
-				visualObject = new VariableVisual(tprimitive.id, "variable",position);
+				visualObject = new VariableVisual(tprimitive.id, "variable", position);
 			} else {
-				visualObject = new ConstantVisual(tprimitive.id, "variable",position);
+				visualObject = new ConstantVisual(tprimitive.id, "constant", position);
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
