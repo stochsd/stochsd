@@ -6642,7 +6642,7 @@ class TimePlotDialog extends DisplayDialog {
 class ComparePlotDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("Compare Plot Properties");
+		this.setTitle("Compare Simulations Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
