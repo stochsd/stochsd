@@ -3540,7 +3540,7 @@ class StraightenLinkTool extends BaseTool {
 class GhostTool extends OnePointCreateTool {
 	static init() {
 		this.id_to_ghost = null;
-		this.ghostable_primitives = ["stock", "variable", "converter"];
+		this.ghostable_primitives = ["stock", "variable", "constant", "converter"];
 	}
 	static create(x, y) {
 		var source = findID(this.id_to_ghost);
