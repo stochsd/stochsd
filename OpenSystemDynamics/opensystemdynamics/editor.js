@@ -2841,14 +2841,8 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 				yaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.leftAxisLabel,
-					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
-					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
-				},
-				y2axis: {
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.rightAxisLabel,
-					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
-					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax()
+					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYMin(),
+					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYMax()
 				}
 			},
 			  legend: {
@@ -6645,7 +6639,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.setTitle("Compare Simulations Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
-		this.rightAxisLabel = "";
 		
 		this.markers = false;
 
@@ -6660,13 +6653,13 @@ class ComparePlotDialog extends DisplayDialog {
 		this.xMax = 0;
 		this.xAuto  = true;
 		
-		this.yLMin = 0;
-		this.yLMax = 0;
-		this.yLAuto  = true;
+		this.yMin = 0;
+		this.yMax = 0;
+		this.yAuto  = true;
 
 		// Automatic value (is set in the ComparePlotVisual)
-		this.minLValue = 0;
-		this.maxLValue = 0;
+		this.minValue = 0;
+		this.maxValue = 0;
 	}
 	
 	getDisplayId(id) {
@@ -6728,7 +6721,7 @@ class ComparePlotDialog extends DisplayDialog {
 					</td>
 				</tr>
 				<tr>
-					<th>&nbsp Left Label: &nbsp</th>
+					<th>&nbsp Y-axis Label: &nbsp</th>
 					<td>
 						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
@@ -6753,9 +6746,9 @@ class ComparePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
-				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
-				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
-				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+				<td><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
+				<td><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
+				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 			</tr>
 		</table>
 		`);
@@ -6772,26 +6765,15 @@ class ComparePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".xMax").val(this.getXMax());
 		
 		// Update Left Min Max values
-		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
-		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
-		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
+		this.yMin = Number($(this.dialogContent).find(".yMin").val());
+		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
 		
-		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
-		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
 		
-		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
-		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
-
-		// Update Right Min Max values
-		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
-		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
-		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
-		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
-		
-		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
-		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+		$(this.dialogContent).find(".yMin").val(this.getYMin());
+		$(this.dialogContent).find(".yMax").val(this.getYMax());
 
 		// update plotPer
 		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
@@ -6876,17 +6858,11 @@ class ComparePlotDialog extends DisplayDialog {
 			return this.xMax;
 		}
 	}
-	getYLMin() {
+	getYMin() {
 		return (this.yLAuto) ? this.minLValue : this.yLMin;
 	}
-	getYLMax() {
+	getYMax() {
 		return (this.yLAuto) ? this.maxLValue : this.yLMax;
-	}
-	getYRMin() {
-		return (this.yRAuto) ? this.minRValue : this.yRMin;
-	}
-	getYRMax() {
-		return (this.yRAuto) ? this.maxRValue : this.yRMax;
 	}
 }
 
