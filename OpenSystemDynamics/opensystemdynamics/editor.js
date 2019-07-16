@@ -992,8 +992,10 @@ class OnePointer extends BaseObject {
 		
 		if(this.primitive && this.icons) {
 			if(getValue(this.primitive) === "") {
+				this.isDefined = false;
 				this.icons.set("questionmark", "visible");
 			} else {
+				this.isDefined = true;
 				this.icons.set("questionmark", "hidden");
 			}
 		}
@@ -2088,8 +2090,10 @@ class FlowVisual extends BaseConnection {
 
 		if(this.primitive && this.icons) {
 			if(getValue(this.primitive) === "") {
+				this.isDefined = false;
 				this.icons.set("questionmark", "visible");
 			} else {
+				this.isDefined = true;
 				this.icons.set("questionmark", "hidden");
 			}
 		}
@@ -3332,9 +3336,40 @@ class BaseTool {
 		// Is triggered when the tool is deselected
 	}
 }
+
+function getAllNonDefinedVisual() {
+	for (let id in object_array) {
+		let prim = findID(id);
+		let vis = object_array[id];
+		let typesToCheck = ["stock", "variable", "constant", "converter"];
+		if (prim && vis && typesToCheck.includes(vis.type) && ! vis.is_ghost && ! vis.isDefined) {
+			return vis;
+		}
+	}
+	for (let id in connection_array) {
+		let prim = findID(id);
+		let vis = connection_array[id];
+		if (prim && vis && vis.type == "flow" && ! vis.isDefined) {
+			return vis;
+		}
+	}
+	return null;
+}
+
 class RunTool extends BaseTool {
 	static enterTool() {
-		RunResults.runPauseSimulation();
+		/* Check that all primitives are defined */
+		let nonDefinedVis = getAllNonDefinedVisual();
+		if (nonDefinedVis) {
+			xAlert(`
+				Unable to simulate. <br/> 
+				The ${type_basename[nonDefinedVis.type]} [${nonDefinedVis.primitive.getAttribute("name")}] is undefined
+			`);
+			unselect_all();
+			nonDefinedVis.select();
+		} else {
+			RunResults.runPauseSimulation();
+		}
 		ToolBox.setTool("mouse");
 	}
 }
