@@ -1694,7 +1694,7 @@ class BaseConnection extends TwoPointer {
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
 		}
-		this.attachableTypes = ["stock", "variable", "converter", "flow"];
+		this.attachableTypes = ["stock", "variable", "constant", "converter", "flow"];
 		last_connection = this;
 	}
 	setAttachableTypes(types) {
@@ -4545,7 +4545,7 @@ function find_elements_under(x, y) {
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
 	//~ let attachable_object_types = ["flow", "stock", "variable"];
-	let attachable_object_types = ["flow", "stock", "variable", "converter"];
+	let attachable_object_types = ["flow", "stock", "constant", "variable", "converter"];
 	for(key in objects) {
 		if (objects[key].type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
