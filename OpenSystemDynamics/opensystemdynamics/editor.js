@@ -3861,6 +3861,7 @@ class FlowTool extends TwoPointerTool {
 		
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y]);
 		this.current_connection.name_pos = rotateName;
+		this.current_connection.select();
 		update_name_pos(this.primitive.id);
 	}
 	static mouseMove(x, y) {
