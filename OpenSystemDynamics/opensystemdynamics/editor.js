@@ -1003,7 +1003,11 @@ class OnePointer extends BaseObject {
 			let ghostIds = (primitives("Ghost").filter(gPrim => {
 				return gPrim.getAttribute("Source") == this.id
 			})).map(g => g.value.getAttribute("id"));
-			ghostIds.map(gId => { object_array[gId].update() });
+			ghostIds.map(gId => { 
+				if (object_array[gId]) {
+					object_array[gId].update(); 
+				}
+			});
 		}
 
 		this.afterUpdate();
