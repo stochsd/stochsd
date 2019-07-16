@@ -989,17 +989,23 @@ class OnePointer extends BaseObject {
 	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
-		
-		if(this.primitive && this.icons) {
-			if(getValue(this.primitive) === "") {
-				this.isDefined = false;
-				this.icons.set("questionmark", "visible");
-			} else {
-				this.isDefined = true;
-				this.icons.set("questionmark", "hidden");
-			}
+
+		let id = (this.is_ghost) ? this.primitive.getAttribute("Source") : this.id; 
+		let primitive = findID(id);
+
+		if(primitive && this.icons) {
+			this.isDefined = (getValue(primitive) !== "");
+			this.icons.set("questionmark", (this.isDefined ? "hidden" : "visible"));
 		}
-		
+
+		// Update ghosts of object 
+		if ( ! this.is_ghost) {
+			let ghostIds = (primitives("Ghost").filter(gPrim => {
+				return gPrim.getAttribute("Source") == this.id
+			})).map(g => g.value.getAttribute("id"));
+			ghostIds.map(gId => { object_array[gId].update() });
+		}
+
 		this.afterUpdate();
 	}
 	updatePosition() {
