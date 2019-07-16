@@ -1166,45 +1166,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 	}
 }
 
-class TextVisual extends BasePrimitive {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
-		this.name_centered = true;
-		update_name_pos(id);
-		this.setSelectionSizeToText();
-	}
-	setSelectionSizeToText() {
-		var boundingRect = this.name_element.getBoundingClientRect();
-		var rect = this.selector_array[0];
-		var margin = 10;
-		rect.setAttribute("width", boundingRect.width+margin*2);
-		rect.setAttribute("height", boundingRect.height+margin*2);
-		rect.setAttribute("x", -boundingRect.width/2-margin);
-		rect.setAttribute("y", -boundingRect.height/2-margin);
-	}
-	afterNameChange() {
-		this.setSelectionSizeToText();
-	}
-	getImage() {
-		return [
-			svg_text(0, 0, "text", "name_element", {"style": "font-size: 16px"}),
-			svg_rect( -20, -15, 40, 30, "red", "none", "selector")
-		];	
-	}
-	set_name(new_name) {
-		this.name_element.innerHTML=new_name;
-	}
-	
-	name_double_click() {
-		
-	}
-	
-	double_click() {
-		let dialog = new TextBoxDialog(this.id);
-		dialog.show();
-	}
-}
-
 function pointDistance(point1,point2) {
 	let distance = calc_distance(point1[0]-point2[0], point1[1]-point2[1]);
 	return distance;
@@ -3404,19 +3365,6 @@ class ResetTool extends BaseTool {
 	}
 }
 
-class TextTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
-		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
-		var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-}
-
 class DeleteTool extends BaseTool {
 	static enterTool() {
 		var selected_ids = Object.keys(get_selected_root_objects());
@@ -5206,19 +5154,6 @@ function syncVisual(tprimitive) {
 			}
 			visualObject.name_pos = rotateName;
 			update_name_pos(tprimitive.id);
-		}
-		break;
-		case "Text":
-		{
-			do_global_log("id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
-			new TextVisual(tprimitive.id, "text",position);
-
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
-
-			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 		}
 		break;
 		case "Ghost":
@@ -7145,28 +7080,6 @@ class NumberBoxDialog extends jqDialog {
 				Target primitive not found
 			`);	
 		}
-	}
-}
-
-class TextBoxDialog extends jqDialog {
-	constructor(id) {
-		super();
-		this.id = id;
-		this.setTitle("Info");
-		let text = getName(findID(this.id));
-		this.setHtml(`
-			Text:<br/>
-			<input class="textfieldText textInput" type="text" style="width: 200px" value="${text}"/>
-		`);
-	}
-	afterShow() {
-		let field = $(this.dialogContent).find(".textInput").get(0);
-		let inputLength = field.value.length;  
-		field.setSelectionRange(0, inputLength);
-	}
-	makeApply() {
-		let name = $(this.dialogContent).find(".textInput").val();
-		setName(findID(this.id),name);
 	}
 }
 
