@@ -4764,6 +4764,10 @@ $(document).ready(function() {
 				event.preventDefault();
 				$("#btn_print_model").click();
 			}
+			if (event.keyCode == keyboard["A"]) {
+				for (let id in object_array) { object_array[id].select(); }
+				for (let id in connection_array) { connection_array[id].select(); }
+			}
 			if (event.keyCode == keyboard["Z"]) {
 				History.doUndo();
 			}
