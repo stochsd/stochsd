@@ -16,18 +16,6 @@ var equationList;
 var debugDialog;
 var aboutDialog;
 
-const aboutText = `
-<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
-<b>StochSD version 180801</b><br/>
-<br/>
-<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
-<br/>
-StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
-<br/>
-StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
-Mail: magnus.ja.gustafsson@gmail.com.
-`;
-
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
 const type_size = {
@@ -7223,7 +7211,17 @@ class AboutDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("About");
-		this.setHtml(aboutText);
+		this.setHtml(`
+			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
+			<b>StochSD version 180801</b><br/>
+			<br/>
+			<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of 	stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
+			<br/>
+			StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> 	developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as 	well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
+			<br/>
+			StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
+			Mail: magnus.ja.gustafsson@gmail.com.
+		`);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
