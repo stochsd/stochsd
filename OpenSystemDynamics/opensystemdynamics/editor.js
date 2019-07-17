@@ -5863,6 +5863,7 @@ class jqDialog {
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
+		this.dialogDiv.setAttribute("style", "font-size: 13px;");
 		this.dialogDiv.style.display = "none";
 
 		this.dialogContent = document.createElement("div");
