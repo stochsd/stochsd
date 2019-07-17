@@ -2479,7 +2479,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 				let row = this.data.results[i];
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
-				if (i%plotPer === Math.floor(plotPer/2 + (plotPer*countLine)/8)) {
+				if (i%plotPer === Math.floor((plotPer/2 + (plotPer*countLine)/8)%plotPer)) {
 					serie.push([time, value, Math.floor(countLine).toString()]);
 				} else {
 					serie.push([time, value, null]);
@@ -2668,7 +2668,7 @@ class DataGenerations {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
-						if ((k % plotPerIndex) === Math.floor(plotPerIndex/2 + (plotPerIndex*lineCount)/8)) {
+						if ((k % plotPerIndex) === Math.floor((plotPerIndex/2 + (plotPerIndex*lineCount)/8)%plotPerIndex)) {
 							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
 						} else {
 							tmpArr.push([time, value, null]);
