@@ -3372,9 +3372,12 @@ class RunTool extends BaseTool {
 		/* Check that all primitives are defined */
 		let nonDefinedVis = getAllNonDefinedVisual();
 		if (nonDefinedVis) {
+			let type = type_basename[nonDefinedVis.type]; 
+			let name = nonDefinedVis.primitive.getAttribute("name");
+			let color = nonDefinedVis.color ? nonDefinedVis.color : "black";
 			xAlert(`
 				Unable to simulate. <br/> 
-				The ${type_basename[nonDefinedVis.type]} [${nonDefinedVis.primitive.getAttribute("name")}] is undefined
+				The ${type} <b style="color:${color};">${name}</b> is undefined
 			`);
 			unselect_all();
 			nonDefinedVis.select();
