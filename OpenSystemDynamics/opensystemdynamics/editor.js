@@ -2431,12 +2431,19 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds.map(id => {
+			if (findID(id) === null) {
+				this.dialog.removeIdToDisplay(id);
+			}
+		});
+		this.fetchedIds = this.dialog.getIdsToDisplay();
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 	}
 	render() {
+		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
@@ -2732,6 +2739,12 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		});
 	}
 	fetchData() {
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds.map(id => {
+			if (findID(id) === null) {
+				this.dialog.removeIdToDisplay(id);
+			}
+		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if(this.dialog.keep) {
@@ -6334,6 +6347,14 @@ class TimePlotDialog extends DisplayDialog {
 		return (index != -1 && this.sides[index] === side);
 	}
 	
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+			this.sides.splice(idxToRemove, 1);
+		}
+	}
+
 	setIdsToDisplay(idList, sides) {
 		this.displayIdList = [];
 		this.sides = [];
@@ -6641,6 +6662,13 @@ class ComparePlotDialog extends DisplayDialog {
 		this.maxValue = 0;
 	}
 	
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
+	}
+
 	getDisplayId(id) {
 		id = id.toString();
 		let index = this.displayIdList.indexOf(id)
