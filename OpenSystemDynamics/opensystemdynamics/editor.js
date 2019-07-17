@@ -2472,15 +2472,15 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 		this.maxLValue = 0;
 		
 
-		let makeSerie = (resultColumn, countLine) => {
+		let makeSerie = (resultColumn, lineCount) => {
 			let serie = []; 
-			let plotPer = Math.floor(this.data.results.length/4);
+			let plotPerIdx = Math.floor(this.data.results.length/4);
 			for (let i = 0; i < this.data.results.length; i++) {
 				let row = this.data.results[i];
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
-				if (i%plotPer === Math.floor((plotPer/2 + (plotPer*countLine)/8)%plotPer)) {
-					serie.push([time, value, Math.floor(countLine).toString()]);
+				if (i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
+					serie.push([time, value, Math.floor(lineCount).toString()]);
 				} else {
 					serie.push([time, value, null]);
 				}
@@ -2663,12 +2663,12 @@ class DataGenerations {
 				if(wantedIds.includes(id)) {
 					let tmpArr = [];
 					lineCount++;
-					let plotPerIndex = Math.floor(this.resultGen[i].length/4);
+					let plotPerIdx = Math.floor(this.resultGen[i].length/4);
 					for (let k = 0; k < this.resultGen[i].length; k++) {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
-						if ((k % plotPerIndex) === Math.floor((plotPerIndex/2 + (plotPerIndex*lineCount)/8)%plotPerIndex)) {
+						if ((k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
 							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
 						} else {
 							tmpArr.push([time, value, null]);
