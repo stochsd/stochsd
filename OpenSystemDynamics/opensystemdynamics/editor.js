@@ -2506,6 +2506,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
+					lineWidth: 1,
 					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
@@ -2693,6 +2694,7 @@ class DataGenerations {
 					countLine++;
 					seriesSettingsArray.push({
 						showLabel: true, 
+						lineWidth: 1,
 						label: `${countLine}. ${this.nameGen[i][j]}`,
 						linePattern: this.patternGen[i][j],
 						color: this.colorGen[i][j],
@@ -2975,6 +2977,7 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
+					lineWidth: 1, 
 					color: "black",
 					shadow: false,
 					showLine: this.showLine,
