@@ -3461,7 +3461,7 @@ class OnePointCreateTool extends BaseTool {
 class NumberboxTool extends OnePointCreateTool {
 	static init() {
 		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
+		this.numberboxable_primitives = ["stock", "variable", "constant", "converter", "flow"];
 	}
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
