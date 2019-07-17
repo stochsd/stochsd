@@ -2508,6 +2508,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 					showLabel: true,
 					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
+					linePattern: this.pattersToDisplay[i], 
 					color: this.colorsToDisplay[i],
 					shadow: false,
 					showMarker: false,
