@@ -2807,8 +2807,8 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 				yaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.leftAxisLabel,
-					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYMin(),
-					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYMax()
+					min: (this.dialog.yAuto) ? undefined: this.dialog.getYMin(),
+					max: (this.dialog.yAuto) ? undefined: this.dialog.getYMax()
 				}
 			},
 			  legend: {
@@ -2816,10 +2816,8 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 					placement: 'outsideGrid'
 			  }
 		});
-		this.dialog.minLValue = this.plot.axes.yaxis.min; 
-		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
-		this.dialog.minRValue = this.plot.axes.y2axis.min;
-		this.dialog.maxRValue = this.plot.axes.y2axis.max;
+		this.dialog.minValue = this.plot.axes.yaxis.min; 
+		this.dialog.maxValue = this.plot.axes.yaxis.max; 
 	}
 	makeGraphics() {
 		super.makeGraphics();
@@ -6840,10 +6838,10 @@ class ComparePlotDialog extends DisplayDialog {
 		}
 	}
 	getYMin() {
-		return (this.yLAuto) ? this.minLValue : this.yLMin;
+		return (this.yAuto) ? this.minValue : this.yMin;
 	}
 	getYMax() {
-		return (this.yLAuto) ? this.maxLValue : this.yLMax;
+		return (this.yAuto) ? this.maxValue : this.yMax;
 	}
 }
 
