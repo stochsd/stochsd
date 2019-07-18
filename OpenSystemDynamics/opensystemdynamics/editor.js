@@ -2437,7 +2437,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			}
 		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
-		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
