@@ -6209,6 +6209,26 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
+	renderPlotPerHtml() {
+		return (`
+			<table class="modernTable" style="margin: 16px 0px" 
+				title="Distance between points in time units. \n (Should not be less then Time Step)"
+			>
+				<tr>
+					<th>
+						&nbsp Plot Period: &nbsp
+					</th>
+					<td>
+						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
 	renderColorCheckboxHtml() {
 		return (`
 			<table class="modernTable">
@@ -6388,26 +6408,6 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	getSidesToDisplay() {
 		return this.sides;
-	}
-	renderPlotPerHtml() {
-		return (`
-			<table class="modernTable" style="margin: 16px 0px" 
-				title="Distance between points in time units. \n (Should not be less then Time Step)"
-			>
-				<tr>
-					<th>
-						&nbsp Plot Period: &nbsp
-					</th>
-					<td>
-						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
-					</td>
-					<td>
-						Auto
-						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
-					</td>
-				</tr>
-			</table>
-		`);
 	}
 	renderAxisNamesHtml() {
 		return (`
@@ -6708,26 +6708,6 @@ class ComparePlotDialog extends DisplayDialog {
 					</td>
 					<td>
 						<button class="keepButton enterApply">Clear Results</button>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
-	renderPlotPerHtml() {
-		return (`
-			<table class="modernTable" style="margin: 16px 0px" 
-				title="Distance between points in time units. \n (Should not be less then Time Step)"
-			>
-				<tr>
-					<th>
-						&nbsp Plot Period: &nbsp
-					</th>
-					<td>
-						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
-					</td>
-					<td>
-						Auto
-						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
 					</td>
 				</tr>
 			</table>
