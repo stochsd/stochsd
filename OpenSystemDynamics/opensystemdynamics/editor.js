@@ -2512,7 +2512,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					lineWidth: 1,
+					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : 1),
 					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
