@@ -2516,7 +2516,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
-					color: this.colorsToDisplay[i],
+					color: (this.dialog.colorFromPrimitive ? this.colorsToDisplay[i] : undefined),
 					shadow: false,
 					showMarker: false,
 					pointLabels: {
@@ -6209,6 +6209,18 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
+	renderColorCheckboxHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+					<b>&nbsp Colour From Primitive: &nbsp</b>
+					<input class="ColorFromPrimitive" type="checkbox" ${checkedHtmlAttribute(this.colorFromPrimitive)}>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -6314,6 +6326,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.rightAxisLabel = "";
 		
 		this.markers = false;
+		this.colorFromPrimitive = false;
 
 		this.autoPlotPer = true;
 		this.plotPer = getTimeLength()/100;
@@ -6564,6 +6577,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
 
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
@@ -6593,6 +6607,7 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
+						${this.renderColorCheckboxHtml()}
 					</td>
 				</tr>
 			</table>			
