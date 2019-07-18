@@ -3390,6 +3390,7 @@ class RunTool extends BaseTool {
 			let name = nonDefinedVis.primitive.getAttribute("name");
 			let color = nonDefinedVis.color ? nonDefinedVis.color : "black";
 			xAlert(`
+				Modelling Error. <br/>
 				Unable to simulate. <br/> 
 				The ${type} <b style="color:${color};">${name}</b> is undefined
 			`);
