@@ -2688,7 +2688,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds) {
+	getSeriesSettingsArray(wantedIds, colorFromPrimitive) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2703,7 +2703,7 @@ class DataGenerations {
 						lineWidth: 1,
 						label: `${countLine}. ${this.nameGen[i][j]}`,
 						linePattern: this.patternGen[i][j],
-						color: this.colorGen[i][j],
+						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						shadow: false,
 						showMarker: false,
 						pointLabels: {
@@ -2785,7 +2785,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay);
+		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay, this.dialog.colorFromPrimitive);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
@@ -6656,6 +6656,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = "";
 		
 		this.markers = false;
+		this.colorFromPrimitive = false;
 
 		this.keep = false;
 		this.clear = false;
@@ -6805,6 +6806,7 @@ class ComparePlotDialog extends DisplayDialog {
 	makeApply() {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
@@ -6834,6 +6836,7 @@ class ComparePlotDialog extends DisplayDialog {
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
+						${this.renderColorCheckboxHtml()}
 					</td>
 				</tr>
 			</table>			
