@@ -7336,10 +7336,10 @@ class EquationEditor extends jqDialog {
 					<div class="table-row">
 						<div class="table-cell" style="width: 300px">
 							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-								Name:<br/>
+								<b>Name:</b><br/>
 								<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
-								Definition:<br/>
-								<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
+								<b>Definition:</b><br/>
+								<textarea class="valueField" style="width: 100%; height: 70px;"></textarea>
 								<br/>
 								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -7351,8 +7351,8 @@ class EquationEditor extends jqDialog {
 				</div>
 			</div>
     	<div class="table-cell">
-    		<div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
-					<div class="accordionCluster">
+    		<div style="overflow-y: scroll; width: 300px; height: 250px; padding:  10px 20px 20px 0px;">
+				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>
   		</div>
@@ -7508,14 +7508,14 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;`;
+				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
 		
 		let referenceHTML = "";
 		if (referenceList.length > 0) {
-			referenceHTML = "Linked primitives: <br/>"+referenceListToHtml(referenceList);
+			referenceHTML = "<b>Linked primitives:</b><br/>"+referenceListToHtml(referenceList);
 		} else {
 			referenceHTML = "No linked primitives";
 		}
