@@ -7116,6 +7116,12 @@ class SimulationSettings extends jqDialog {
 			</tr><tr>
 				<td>&nbsp Time Step &nbsp</td>
 				<td><input class="input_step" name="step" style="width:100px;" value="${step}" type="text"></td>
+			</tr><tr>
+				<td>&nbsp Method &nbsp</td>
+				<td><select class="input_method" style="width:100px">
+				<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
+				<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
+				</select></td>
 			</tr>
 			</table>
 		`);
@@ -7129,6 +7135,9 @@ class SimulationSettings extends jqDialog {
 		
 		let timeStep = $(this.dialogContent).find(".input_step").val();
 		setTimeStep(timeStep);
+
+		let method = $(".input_method :selected").val();
+		setAlgorithm(method);
 	}
 }
 
