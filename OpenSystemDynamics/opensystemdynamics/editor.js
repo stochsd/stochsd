@@ -7351,7 +7351,7 @@ class EquationEditor extends jqDialog {
 				</div>
 			</div>
     	<div class="table-cell">
-    		<div style="overflow-y: scroll; width: 300px; height: 250px; padding:  10px 20px 20px 0px;">
+    		<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
 				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>
