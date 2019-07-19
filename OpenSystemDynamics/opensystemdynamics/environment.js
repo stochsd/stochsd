@@ -275,6 +275,15 @@ class WebFileManager extends BaseFileManager {
 			this.finishedSaveHandler();
 		}
 	}
+	exportFile(dataToSave, fileExtension) {
+		var fileName = prompt("Filename:", fileExtension);
+		if (fileName == null) {
+			return;
+		}
+		const exportFileName = this.appendFileExtension(fileName, fileExtension);
+		// Wrapper so that also web application can save files (csv and other)
+		this.download(exportFileName, dataToSave);
+	}
 	loadModel() {
 		openFile({
 			read: "text",
@@ -342,7 +351,6 @@ class ElectronFileManager extends BaseFileManager {
 				alert("Error in file saving " + getStackTrace());
 			}
 			do_global_log("NW: Success in write file callback");
-			History.unsavedChanges = false;
 		});
 	}
 	saveModel() {
@@ -368,6 +376,7 @@ class ElectronFileManager extends BaseFileManager {
 	doSaveModel(fileName) {
 		let fileData = createModelFileData();
 		this.writeFile(this.fileName, fileData);
+		History.unsavedChanges = false;
 		this.updateSaveTime();
 		this.updateTitle();
 		this.addToRecent(this.fileName);
@@ -463,6 +472,31 @@ class NwFileManager extends BaseFileManager {
 		this.modelSaverInput.type = "file";
 		this.modelSaverInput.nwsaveas = "";
 		this.modelSaverInput.accept = InsightMakerFileExtension;
+
+
+				// Prepare model saver
+		//<input type="file" nwsaveas>
+		this.fileExportInput = document.body.appendChild(document.createElement("input"));
+		this.fileExportInput.className = "fileExportInput";
+		this.fileExportInput.addEventListener('change', (event) => {
+			var file = event.target.files[0];
+			if (file) {
+				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
+				console.log("exportFilePath", exportFilePath);
+				this.writeFile(exportFilePath, this.dataToExport);
+			}
+		}, false);
+		this.fileExportInput.type = "file";
+		this.fileExportInput.nwsaveas = "";
+		this.fileExportInput.accept = ".csv";
+	}
+	exportFile(dataToSave, fileExtension) {
+		do_global_log("NW: export file");
+		this.fileExportInput.value = "";
+		this.exportFileExtension = fileExtension;
+		this.fileExportInput.accept = fileExtension;
+		this.dataToExport = dataToSave;
+		this.fileExportInput.click();
 	}
 	hasSaveAs() {
 		return true;
@@ -501,7 +535,6 @@ class NwFileManager extends BaseFileManager {
 				alert("Error in file saving " + getStackTrace());
 			}
 			do_global_log("NW: Success in write file callback");
-			History.unsavedChanges = false;
 		});
 	}
 	saveModel() {
@@ -512,6 +545,7 @@ class NwFileManager extends BaseFileManager {
 		}
 		let fileData = createModelFileData();
 		this.writeFile(this.fileName, fileData);
+		History.unsavedChanges = false;
 		this.updateSaveTime();
 		this.updateTitle();
 		this.addToRecent(this.fileName);
