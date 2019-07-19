@@ -175,7 +175,7 @@
          x="966.6123"
          y="643.672"
          id="tspan1109"
-         style="font-size:11.82534313px;line-height:1.25;stroke-width:0.85208488px">DiagramTool</tspan></text>
+         style="font-size:11.82534313px;line-height:1.25;stroke-width:0.85208488px">ComparePlotTool</tspan></text>
     <text
        id="text1115"
        y="662.53229"
@@ -1041,7 +1041,7 @@
          x="-302.86887"
          y="614.90302"
          id="tspan1482"
-         style="font-size:11.82534218px;line-height:1.25;text-align:center;text-anchor:middle;stroke-width:0.85208482px">DiagramVisual</tspan></text>
+         style="font-size:11.82534218px;line-height:1.25;text-align:center;text-anchor:middle;stroke-width:0.85208482px">ComparePlotVisual</tspan></text>
     <text
        id="text1488"
        y="616.91193"

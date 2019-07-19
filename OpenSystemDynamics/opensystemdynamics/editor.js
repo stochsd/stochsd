@@ -16,18 +16,6 @@ var equationList;
 var debugDialog;
 var aboutDialog;
 
-const aboutText = `
-<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
-<b>StochSD version 180801</b><br/>
-<br/>
-<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
-<br/>
-StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
-<br/>
-StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
-Mail: magnus.ja.gustafsson@gmail.com.
-`;
-
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
 const type_size = {
@@ -1001,15 +989,27 @@ class OnePointer extends BaseObject {
 	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
-		
-		if(this.primitive && this.icons) {
-			if(getValue(this.primitive) === "") {
-				this.icons.set("questionmark", "visible");
-			} else {
-				this.icons.set("questionmark", "hidden");
-			}
+
+		let id = (this.is_ghost) ? this.primitive.getAttribute("Source") : this.id; 
+		let primitive = findID(id);
+
+		if(primitive && this.icons) {
+			this.isDefined = (getValue(primitive) !== "");
+			this.icons.set("questionmark", (this.isDefined ? "hidden" : "visible"));
 		}
-		
+
+		// Update ghosts of object 
+		if ( ! this.is_ghost) {
+			let ghostIds = (primitives("Ghost").filter(gPrim => {
+				return gPrim.getAttribute("Source") == this.id
+			})).map(g => g.value.getAttribute("id"));
+			ghostIds.map(gId => { 
+				if (object_array[gId]) {
+					object_array[gId].update(); 
+				}
+			});
+		}
+
 		this.afterUpdate();
 	}
 	updatePosition() {
@@ -1163,45 +1163,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 		if ( ! get_parent(this).areAllAnchorsSelected()) {
 			parent.adjustNeighbors(this.index); 
 		}
-	}
-}
-
-class TextVisual extends BasePrimitive {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
-		this.name_centered = true;
-		update_name_pos(id);
-		this.setSelectionSizeToText();
-	}
-	setSelectionSizeToText() {
-		var boundingRect = this.name_element.getBoundingClientRect();
-		var rect = this.selector_array[0];
-		var margin = 10;
-		rect.setAttribute("width", boundingRect.width+margin*2);
-		rect.setAttribute("height", boundingRect.height+margin*2);
-		rect.setAttribute("x", -boundingRect.width/2-margin);
-		rect.setAttribute("y", -boundingRect.height/2-margin);
-	}
-	afterNameChange() {
-		this.setSelectionSizeToText();
-	}
-	getImage() {
-		return [
-			svg_text(0, 0, "text", "name_element", {"style": "font-size: 16px"}),
-			svg_rect( -20, -15, 40, 30, "red", "none", "selector")
-		];	
-	}
-	set_name(new_name) {
-		this.name_element.innerHTML=new_name;
-	}
-	
-	name_double_click() {
-		
-	}
-	
-	double_click() {
-		let dialog = new TextBoxDialog(this.id);
-		dialog.show();
 	}
 }
 
@@ -1694,7 +1655,7 @@ class BaseConnection extends TwoPointer {
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
 		}
-		this.attachableTypes = ["stock", "variable", "converter", "flow"];
+		this.attachableTypes = ["stock", "variable", "constant", "converter", "flow"];
 		last_connection = this;
 	}
 	setAttachableTypes(types) {
@@ -2139,8 +2100,10 @@ class FlowVisual extends BaseConnection {
 
 		if(this.primitive && this.icons) {
 			if(getValue(this.primitive) === "") {
+				this.isDefined = false;
 				this.icons.set("questionmark", "visible");
 			} else {
+				this.isDefined = true;
 				this.icons.set("questionmark", "hidden");
 			}
 		}
@@ -2394,7 +2357,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 
-		// Emergency solution since double clicking a Diagram or XyPlot does not always work.
+		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
 		$(this.targetElement).bind("contextmenu", (event)=> {
 			this.double_click(this.id);
 		});
@@ -2445,110 +2408,129 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
-class DiagramVisual extends HtmlOverlayTwoPointer {
+class TimePlotVisual extends HtmlOverlayTwoPointer {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
+			this.fetchData();
 			this.render();
 		}
 		RunResults.subscribeRun(this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
+		this.data = {
+			resultIds: [],
+			results: []
+		}
 		
-		this.dialog = new DiagramDialog();
+		this.dialog = new TimePlotDialog();
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
 	}
-	render() {
+	fetchData() {
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds.map(id => {
+			if (findID(id) === null) {
+				this.dialog.removeIdToDisplay(id);
+			}
+		});
+		this.fetchedIds = this.dialog.getIdsToDisplay();
 		
-		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		this.data.resultIds = ["time"].concat(this.fetchedIds);
+		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+	}
+	render() {
+		// Remove deleted primitves 
+		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
-		this.primitive.value.setAttribute("Primitives", IdsToDisplay.join(","));
+		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
 		this.primitive.value.setAttribute("Sides", sides.join(","));
 		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
 		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
-		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
-		this.colorsToDisplay = IdsToDisplay.map(findID).map(
-			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
+		this.colorsToDisplay = idsToDisplay.map(findID).map(
+			(node) => node.getAttribute("color") ? node.getAttribute("color") : defaultStroke
 		);
-		this.patternsToDisplay = IdsToDisplay.map(findID).map(
-			node => {
+		this.pattersToDisplay = idsToDisplay.map(findID).map(
+			( node ) => {
 				let type = get_object(node.id).type;
-				if (type == "variable" || type == "converter") {
-					return ".";
-				} else if (type == "flow") {
-					return "-";
-				} else {
-					return "_";
+				switch(type) {
+					case("variable"):
+					case("constant"):
+						return ".";
+					case("flow"):
+						return "-";
+					default:
+						return "_";
 				}
 			}
 		);
 
-		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
-		if (results.length == 0) {
+		if (this.data.results.length == 0) {
 			// We can't render anything with no data
 			return;
 		}
 
-		var filteredResults = [];
-		let startTime = results[0][0];
-		let numSaved = 0;
-		for(let row of results) {
-			let currentTime = row[0];
-			if (startTime+numSaved*this.dialog.plotPer <= currentTime ) {
-				filteredResults.push(row);
-				numSaved++;
-			}
-		}
-		// Append Last value 
-		filteredResults.push(results[results.length-1]);
-		
 		this.minLValue = 0;
 		this.maxLValue = 0;
 		
-		let makeSerie = (resultColumn) => {
-			let serie = [];
-			for(let row of filteredResults) {
-				let time = Number(row[0])
-				let value = Number(row[resultColumn])
-				serie.push([time,value]);
+
+		let makeSerie = (resultColumn, lineCount) => {
+			let serie = []; 
+			let plotPerIdx = Math.floor(this.data.results.length/4);
+			for (let i = 0; i < this.data.results.length; i++) {
+				let row = this.data.results[i];
+				let time = Number(row[0]);
+				let value = Number(row[resultColumn]);
+				if (i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
+					serie.push([time, value, Math.floor(lineCount).toString()]);
+				} else {
+					serie.push([time, value, null]);
+				}
 			}
 			return serie;
 		}
-		
 
-		
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
 		this.serieArray = [];
 		
-		// Make time series
-		for(let i = 1; i <= IdsToDisplay.length; i++) {
-			this.serieArray.push(makeSerie(i));
-		}
-		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-		
-		this.dialog.simulationTime = RunResults.simulationTime;
-		
-		// Make serie settings
-		for(let i in this.namesToDisplay) {
+		// Make time series & Settings 
+		let counter = 0;
+		for(let i = 0; i < idsToDisplay.length; i++) {
+			counter++;
+			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
+			if (index === -1) {
+				this.serieArray.push([null, null, null]);
+			} else {
+				this.serieArray.push(makeSerie(index, counter));
+			}
+
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					label: this.namesToDisplay[i] + ((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : ("")), 
+					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : 1),
+					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
-					color: this.colorsToDisplay[i],
-					linePattern: this.patternsToDisplay[i],
+					linePattern: this.pattersToDisplay[i], 
+					color: (this.dialog.colorFromPrimitive ? this.colorsToDisplay[i] : undefined),
 					shadow: false,
-					showMarker:false
+					showMarker: false,
+					pointLabels: {
+						show: true,
+						edgeTolerance: 0,
+						ypadding: 0,
+						location: "n"
+					}
 				}
 			);
 		}
-		
+
+		do_global_log("serieArray "+JSON.stringify(this.serieArray));
+
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
 		// We need to ad a delay and respond to events first to make this work in firefox
@@ -2559,14 +2541,9 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 	}
 	updateChart() {
 
-		if (this.serieArray == null) {
+		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "No data. Run to create data!";
-			return;
-		}
-		if (this.serieArray.length == 0) {
-			// We have no series to display
-			this.chartDiv.innerHTML = "At least one primitive must be selected!";
+			this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -2605,6 +2582,254 @@ class DiagramVisual extends HtmlOverlayTwoPointer {
 		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
 		this.dialog.minRValue = this.plot.axes.y2axis.min;
 		this.dialog.maxRValue = this.plot.axes.y2axis.max;
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+	}
+	updateGraphics() {
+		super.updateGraphics();
+		
+		let width = $(this.targetElement).width()-10;
+		let height = $(this.targetElement).height()-10;
+		this.chartDiv.style.width = width+"px";
+		this.chartDiv.style.height = height+"px";
+		
+		this.updateChart();
+	}
+	double_click() {
+		this.dialog.show();
+	}
+}
+
+
+// Hold data for ComparePlots 
+class DataGenerations {
+	constructor() {
+		this.reset();
+	}
+	reset() {
+		this.numGenerations = 0;
+		this.numLines = 0;
+		this.idGen = [];
+		this.nameGen = [];
+		this.colorGen = [];
+		this.patternGen = [];
+		this.resultGen = []; 
+		this.plotPers = [];
+	}
+	append(ids, results) {
+		this.resultGen.push(results);
+		this.numGenerations++;
+		this.numLines += ids.length;
+		this.idGen.push(ids);
+		this.nameGen.push(ids.map(findID).map(getName));
+		this.colorGen.push(ids.map(findID).map(
+			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+		));
+		this.patternGen.push(ids.map(findID).map( (node) => {
+				switch(get_object(node.id).type) {
+					case "variable":
+					case "converter":
+						return "."
+					case "flow":
+						return "-";
+					default:
+						return "_";
+				}
+		}));
+	}
+	setCurrent(ids, results) {
+		// Remove last
+		if (this.idGen.length !== 0) {
+			let removedIds = this.idGen.pop();
+			let numRemoved = removedIds.length;
+			this.numLines -= numRemoved;
+			this.numGenerations--;
+			this.nameGen.pop();
+			this.colorGen.pop();
+			this.patternGen.pop();
+			this.resultGen.pop();
+		}
+		
+		// Add new 
+		this.append(ids, results);
+	}
+	getSeriesArray(wantedIds) {
+		let seriesArray = [];
+		let lineCount = 0;
+		// Loop generations 
+		for(let i = 0; i < this.idGen.length; i++) {
+			let currentIds = this.idGen[i];
+			let plotPer = this.plotPers[i];
+			for(let j = 0; j < currentIds.length; j++) {
+				let id = currentIds[j];
+				if(wantedIds.includes(id)) {
+					let tmpArr = [];
+					lineCount++;
+					let plotPerIdx = Math.floor(this.resultGen[i].length/4);
+					for (let k = 0; k < this.resultGen[i].length; k++) {
+						let row = this.resultGen[i][k];
+						let time = Number(row[0]);
+						let value = Number(row[j+1]);
+						if ((k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
+							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
+						} else {
+							tmpArr.push([time, value, null]);
+						}
+					}
+					seriesArray.push(tmpArr);
+				}
+			}
+		}
+		return seriesArray;
+	}
+	getSeriesSettingsArray(wantedIds, colorFromPrimitive) {
+		let seriesSettingsArray = [];
+		let countLine = 0;
+		// Loop generations 
+		for(let i = 0; i < this.idGen.length; i++) {
+			let currentIds = this.idGen[i];
+			for(let j = 0; j < currentIds.length; j++) {
+				let id = currentIds[j];
+				if(wantedIds.includes(id)) {
+					countLine++;
+					seriesSettingsArray.push({
+						showLabel: true, 
+						lineWidth: 1,
+						label: `${countLine}. ${this.nameGen[i][j]}`,
+						linePattern: this.patternGen[i][j],
+						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
+						shadow: false,
+						showMarker: false,
+						pointLabels: {
+							show: true,
+							edgeTolerance: 0,
+							ypadding: 0,
+							location: "n" 
+						}
+					});
+				}
+			}
+		}
+		return seriesSettingsArray;
+	}
+}
+
+class ComparePlotVisual extends HtmlOverlayTwoPointer {
+	constructor(id, type, pos) {		
+		super(id, type, pos);
+		this.runHandler = () => {
+			this.fetchData();
+			this.render();
+		}
+		RunResults.subscribeRun(this.runHandler);
+		this.plot = null;
+		this.serieArray = null;
+		this.gens = new DataGenerations();
+		
+		this.dialog = new ComparePlotDialog();
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
+	}
+	fetchData() {
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds.map(id => {
+			if (findID(id) === null) {
+				this.dialog.removeIdToDisplay(id);
+			}
+		});
+		this.fetchedIds = this.dialog.getIdsToDisplay();
+		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		if(this.dialog.keep) {
+			// add generation 
+			this.gens.append(this.dialog.getIdsToDisplay(), results);
+		} else {
+			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results);
+		}
+	}
+	render() {
+
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
+
+		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		
+		if (this.gens.numGenerations == 0) {
+			// We can't render anything with no data
+			return;
+		}
+		
+		if (this.dialog.clear) {
+			this.gens.reset();
+			this.dialog.clear = false;
+		}
+
+		this.minLValue = 0;
+		this.maxLValue = 0;
+		
+		// Declare series and settings for series
+		this.serieSettingsArray = [];
+		this.serieArray = [];
+		
+		// Make time series
+		this.serieArray = this.gens.getSeriesArray(idsToDisplay);
+
+		do_global_log("serieArray "+JSON.stringify(this.serieArray));
+		
+		// Make serie settings
+		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay, this.dialog.colorFromPrimitive);
+
+		do_global_log(JSON.stringify(this.serieSettingsArray));
+		
+		// We need to ad a delay and respond to events first to make this work in firefox
+		setTimeout(() => {
+			this.updateChart();
+		 },200);
+		
+	}
+	updateChart() {
+
+		if (this.serieArray == null || this.serieArray.length == 0) {
+			// The series are not initialized yet
+			this.chartDiv.innerHTML = "<b>Compare Plot</b><br/> No data. Run to create data!";
+			return;
+		}
+		$(this.chartDiv).empty();
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			title: this.dialog.titleLabel,
+			series: this.serieSettingsArray,
+			grid: {
+				background: "white"
+			},
+			axes: {
+				xaxis: {
+					label: "Time",
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					min: this.dialog.getXMin(),
+					max: this.dialog.getXMax()
+				},
+				yaxis: {
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: this.dialog.leftAxisLabel,
+					min: (this.dialog.yAuto) ? undefined: this.dialog.getYMin(),
+					max: (this.dialog.yAuto) ? undefined: this.dialog.getYMax()
+				}
+			},
+			  legend: {
+					show: true,
+					placement: 'outsideGrid'
+			  }
+		});
+		this.dialog.minValue = this.plot.axes.yaxis.min; 
+		this.dialog.maxValue = this.plot.axes.yaxis.max; 
 	}
 	makeGraphics() {
 		super.makeGraphics();
@@ -2674,6 +2899,8 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 		this.namesToDisplay = [];
 		
 		this.markers = false;
+		this.xAxisColor = defaultStroke;
+		this.yAxisColor = defaultStroke;
 
 		this.minXValue = 0;
 		this.maxXValue = 0;
@@ -2714,6 +2941,11 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.chartDiv.innerHTML = "Exactly two primitives must be selected!";
 			return;
 		}
+
+		let xColor = findID(IdsToDisplay[0]).getAttribute("color");
+		let yColor = findID(IdsToDisplay[1]).getAttribute("color");
+		this.xAxisColor = xColor ? xColor : defaultStroke;
+		this.yAxisColor = yColor ? yColor : defaultStroke;
 		
 		let makeXYSerie = () => {
 			let serie = [];
@@ -2750,18 +2982,12 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 		this.serieArray.push(makeXYSerie());
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
-		
-		this.dialog.minXValue = this.minXValue;
-		this.dialog.maxXValue = this.maxXValue;
-		
-		this.dialog.minYValue = this.minYValue;
-		this.dialog.maxYValue = this.maxYValue;
-		
 		// Make serie settings
 		for(let i in this.namesToDisplay) {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
+					lineWidth: 1, 
 					color: "black",
 					shadow: false,
 					showLine: this.showLine,
@@ -2781,7 +3007,7 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -2798,16 +3024,26 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			  axes: {
 				xaxis: {
 					label: this.serieXName,
-					min: this.dialog.getXMin(),
-					max: this.dialog.getXMax()
+					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
+					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax(),
+					labelOptions: {
+						textColor: this.xAxisColor
+					}
 				},
 				yaxis: {
 					label: this.serieYName,
-					min: this.dialog.getYMin(),
-					max: this.dialog.getYMax()
+					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
+					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax(),
+					labelOptions: {
+						textColor: this.yAxisColor
+					}
 				}
 			}
 		  });
+		  this.dialog.minXValue = this.plot.axes.xaxis.min;
+		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
+		  this.dialog.minYValue = this.plot.axes.yaxis.min;
+		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
 	}
 	updateGraphics() {
 		super.updateGraphics();
@@ -3124,9 +3360,44 @@ class BaseTool {
 		// Is triggered when the tool is deselected
 	}
 }
+
+function getAllNonDefinedVisual() {
+	for (let id in object_array) {
+		let prim = findID(id);
+		let vis = object_array[id];
+		let typesToCheck = ["stock", "variable", "constant", "converter"];
+		if (prim && vis && typesToCheck.includes(vis.type) && ! vis.is_ghost && ! vis.isDefined) {
+			return vis;
+		}
+	}
+	for (let id in connection_array) {
+		let prim = findID(id);
+		let vis = connection_array[id];
+		if (prim && vis && vis.type == "flow" && ! vis.isDefined) {
+			return vis;
+		}
+	}
+	return null;
+}
+
 class RunTool extends BaseTool {
 	static enterTool() {
-		RunResults.runPauseSimulation();
+		/* Check that all primitives are defined */
+		let nonDefinedVis = getAllNonDefinedVisual();
+		if (nonDefinedVis) {
+			let type = type_basename[nonDefinedVis.type]; 
+			let name = nonDefinedVis.primitive.getAttribute("name");
+			let color = nonDefinedVis.color ? nonDefinedVis.color : "black";
+			xAlert(`
+				Modelling Error. <br/>
+				Unable to simulate. <br/> 
+				The ${type} <b style="color:${color};">${name}</b> is undefined
+			`);
+			unselect_all();
+			nonDefinedVis.select();
+		} else {
+			RunResults.runPauseSimulation();
+		}
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3145,19 +3416,6 @@ class ResetTool extends BaseTool {
 	}
 }
 
-class TextTool extends BaseTool {
-	static leftMouseDown(x,y) {
-		unselect_all();
-		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
-		var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
-	}
-	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
-	}
-}
-
 class DeleteTool extends BaseTool {
 	static enterTool() {
 		var selected_ids = Object.keys(get_selected_root_objects());
@@ -3168,6 +3426,7 @@ class DeleteTool extends BaseTool {
 		}
 		delete_selected_objects();
 		History.storeUndoState();
+		updateInfoBar();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -3203,6 +3462,7 @@ class OnePointCreateTool extends BaseTool {
 			this.rightClickMode = false; 
 		} else {
 			this.create(x, y);
+			updateInfoBar();
 		}
 	}
 	static leftMouseUp(x, y) {
@@ -3212,13 +3472,14 @@ class OnePointCreateTool extends BaseTool {
 		this.rightClickMode = true;
 		unselect_all();
 		this.create(x, y);
+		updateInfoBar();
 	}
 }
 
 class NumberboxTool extends OnePointCreateTool {
 	static init() {
 		this.targetPrimitive = null;
-		this.numberboxable_primitives = ["stock", "variable", "converter", "flow"];
+		this.numberboxable_primitives = ["stock", "variable", "constant", "converter", "flow"];
 	}
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
@@ -3301,7 +3562,7 @@ class StraightenLinkTool extends BaseTool {
 class GhostTool extends OnePointCreateTool {
 	static init() {
 		this.id_to_ghost = null;
-		this.ghostable_primitives = ["stock", "variable", "converter"];
+		this.ghostable_primitives = ["stock", "variable", "constant", "converter"];
 	}
 	static create(x, y) {
 		var source = findID(this.id_to_ghost);
@@ -3573,6 +3834,19 @@ class TwoPointerTool extends BaseTool {
 }
 
 class FlowTool extends TwoPointerTool {
+	static init() {
+		super.init();
+		// Is to prevent error if rightdown happens before leftdown 
+		this.hasLeftClicked = false;
+	}
+	static leftMouseDown(x, y) {
+		super.leftMouseDown(x, y);
+		this.hasLeftClicked = true;
+	}
+	static leftMouseUp(x, y) {
+		super.leftMouseUp(x, y);
+		this.hasLeftClicked = false;
+	}
 	static create_TwoPointer_start(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
@@ -3586,6 +3860,7 @@ class FlowTool extends TwoPointerTool {
 		
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y]);
 		this.current_connection.name_pos = rotateName;
+		this.current_connection.select();
 		update_name_pos(this.primitive.id);
 	}
 	static mouseMove(x, y) {
@@ -3615,8 +3890,10 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection.update();
 	}
 	static rightMouseDown(x,y) {
-		do_global_log("Right mouse on: "+x+", "+y);
-		this.current_connection.createAnchorPoint(x, y);
+		if (this.hasLeftClicked) {
+			do_global_log("Right mouse on: "+x+", "+y);
+			this.current_connection.createAnchorPoint(x, y);
+		}
 	}
 
 	static getType() {
@@ -3692,10 +3969,30 @@ class TableTool extends TwoPointerTool {
 }
 TableTool.init();
 
-class DiagramTool extends TwoPointerTool {
+class TimePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Diagram", null,null);
-		this.current_connection = new DiagramVisual(this.primitive.id,this.getType(),[x,y]);
+		this.primitive = createConnector(name, "TimePlot", null, null);
+		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x, y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x, y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "timeplot";
+	}
+}
+
+class ComparePlotTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "ComparePlot", null,null);
+		this.current_connection = new ComparePlotVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -3708,10 +4005,10 @@ class DiagramTool extends TwoPointerTool {
 		this.current_connection.render();
 	}
 	static getType() {
-		return "diagram";
+		return "compareplot";
 	}
 }
-DiagramTool.init();
+ComparePlotTool.init();
 
 class TextAreaTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -3724,10 +4021,9 @@ class TextAreaTool extends TwoPointerTool {
 		super.init();
 	}
 	static getType() {
-		return "diagram";
+		return "text";
 	}
 }
-DiagramTool.init();
 
 class XyPlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -4249,7 +4545,7 @@ function find_elements_under(x, y) {
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
 	//~ let attachable_object_types = ["flow", "stock", "variable"];
-	let attachable_object_types = ["flow", "stock", "variable", "converter"];
+	let attachable_object_types = ["flow", "stock", "constant", "variable", "converter"];
 	for(key in objects) {
 		if (objects[key].type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
@@ -4309,7 +4605,8 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"line":LineTool,
 			"table":TableTool,
-			"diagram":DiagramTool,
+			"timeplot":TimePlotTool,
+			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
@@ -4465,6 +4762,10 @@ $(document).ready(function() {
 			if (event.keyCode == keyboard["P"]) {
 				event.preventDefault();
 				$("#btn_print_model").click();
+			}
+			if (event.keyCode == keyboard["A"]) {
+				for (let id in object_array) { object_array[id].select(); }
+				for (let id in connection_array) { connection_array[id].select(); }
 			}
 			if (event.keyCode == keyboard["Z"]) {
 				History.doUndo();
@@ -4720,16 +5021,12 @@ function syncVisual(tprimitive) {
 		}
 		break;
 		case "Table":
-		case "Diagram":
 		case "XyPlot":
 		{
 			dimClass = null;
 			switch(nodeType) {
 				case "Table":
 					dimClass = TableVisual;
-				break;
-				case "Diagram":
-					dimClass = DiagramVisual;
 				break;
 				case "XyPlot":
 					dimClass = XyPlotVisual;
@@ -4738,7 +5035,48 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, "table",[0,0]);
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
+			connection.create_dummy_start_anchor();
+			connection.create_dummy_end_anchor();			
+			
+			if (tprimitive.getAttribute("color")) {
+				connection.setColor(tprimitive.getAttribute("color"));
+			}
+
+			// Set UI-coordinates to coordinates in primitive
+			connection.start_anchor.set_pos(source_position);
+			// Set UI-coordinates to coordinates in primitive
+			connection.end_anchor.set_pos(target_position);
+			
+			// Insert correct primtives
+			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let idsToDisplay = primitivesString.split(",");
+			if (primitivesString) {
+				connection.dialog.setIdsToDisplay(idsToDisplay);
+			}
+
+			connection.update();
+			connection.render();
+		}
+		break;
+		case "Diagram":
+		case "TimePlot":
+		case "ComparePlot":
+		{
+			dimClass = null;
+			switch(nodeType) {
+				case "Diagram":
+				case "TimePlot":
+					dimClass = TimePlotVisual;
+				break;
+				case "ComparePlot":
+					dimClass = ComparePlotVisual;
+				break;
+			}
+			var source_position = getSourcePosition(tprimitive);
+			var target_position = getTargetPosition(tprimitive);
+			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4756,7 +5094,7 @@ function syncVisual(tprimitive) {
 			let idsToDisplay = primitivesString.split(",");
 			let sidesString = tprimitive.value.getAttribute("Sides");
 			if (primitivesString) {
-				if (nodeType === "Diagram" && sidesString) {
+				if (sidesString) {
 					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
 				} else {
 					connection.dialog.setIdsToDisplay(idsToDisplay);
@@ -4792,7 +5130,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, "table",[0,0]);
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4813,7 +5151,7 @@ function syncVisual(tprimitive) {
 			var source_position = getSourcePosition(tprimitive);
 			var target_position = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id, "table",[0,0]);
+			let connection = new TextAreaVisual(tprimitive.id, "text", [0,0]);
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
@@ -4869,19 +5207,6 @@ function syncVisual(tprimitive) {
 			update_name_pos(tprimitive.id);
 		}
 		break;
-		case "Text":
-		{
-			do_global_log("id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
-			new TextVisual(tprimitive.id, "text",position);
-
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
-
-			set_name(tprimitive.id,tprimitive.getAttribute("name"));
-		}
-		break;
 		case "Ghost":
 		{
 			var source_primitive = findID(tprimitive.getAttribute("Source"));
@@ -4920,9 +5245,9 @@ function syncVisual(tprimitive) {
 			var position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
-				visualObject = new VariableVisual(tprimitive.id, "variable",position);
+				visualObject = new VariableVisual(tprimitive.id, "variable", position);
 			} else {
-				visualObject = new ConstantVisual(tprimitive.id, "variable",position);
+				visualObject = new ConstantVisual(tprimitive.id, "constant", position);
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
@@ -5293,7 +5618,6 @@ class RunResults {
 			setPauseInterval(getTimeStep()*getTimeLength());
 		}
 		this.runState = runStateEnum.running;
-		this.triggerRunFinished();
 		runOverlay.block();
 		this.simulationController = runModel({
 			rate: -1,
@@ -5329,7 +5653,6 @@ class RunResults {
 	static continueRunSimulation() {
 		this.storeResults(this.simulationController);
 		if (this.updateCounter == 0) {
-			this.triggerRunFinished();
 			this.updateCounter = this.updateFrequency;
 		}
 		this.updateCounter -= 1;
@@ -5379,10 +5702,10 @@ class RunResults {
 		$("#runStatusBarOuter").width(progressBarWidth);
 		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
 		let currentTime = this.getRunProgress();
-		let endTime = this.getRunProgressMax();
+		let startTime = this.getRunProgressMin();
+		// let endTime = this.getRunProgressMax();
 		let timeStep = Math.round(this.getTimeStep() * 1000) /1000;
-		$("#runStatusBarText").html(`${currentTime} / ${endTime} (${timeStep})`);
-		
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
@@ -5442,6 +5765,9 @@ class RunResults {
 	}
 	static getRunProgressMax() {
 		return getTimeStart()+getTimeLength()
+	}
+	static getRunProgressMin() {
+		return getTimeStart();
 	}
 	static getLastRow() {
 		//~ alert(this.results.length);
@@ -5503,6 +5829,12 @@ class RunResults {
 			}
 			filteredResults.push(unfilteredResults[row_index]);
 		}
+		// Make sure last value is added
+		if (filteredResults.length !== 0 && unfilteredResults.length !== 0) {
+			if (filteredResults[filteredResults.length-1][0] !== unfilteredResults[unfilteredResults.length-1][0]) {
+				filteredResults.push(unfilteredResults[unfilteredResults.length-1]);
+			}
+		}
 		return filteredResults;
 	}
 	static triggerRunFinished() {
@@ -5542,6 +5874,7 @@ class jqDialog {
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
+		this.dialogDiv.setAttribute("style", "font-size: 13px;");
 		this.dialogDiv.style.display = "none";
 
 		this.dialogContent = document.createElement("div");
@@ -5603,7 +5936,7 @@ class jqDialog {
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
 	applyChanges() {
-		this.afterOkClose();
+		this.makeApply();
 		$(this.dialog).dialog('close');
 		// We add a delay to make sure we closed first
 		
@@ -5612,7 +5945,7 @@ class jqDialog {
 			updateInfoBar();
 		}, 200);
 	}
-	afterOkClose() {
+	makeApply() {
 		
 	}
 	getWidth() {
@@ -5795,7 +6128,7 @@ function saveChangedAlert(continueHandler) {
 	});
 }
 
-// This is the super class dor DiagramDialog and TableDialog
+// This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
 	constructor() {
 		super();
@@ -5875,6 +6208,38 @@ class DisplayDialog extends jqDialog {
 	}
 	afterClose() {
 		this.subscribePool.publish("window closed");
+	}
+	renderPlotPerHtml() {
+		return (`
+			<table class="modernTable" style="margin: 16px 0px" 
+				title="Distance between points in time units. \n (Should not be less then Time Step)"
+			>
+				<tr>
+					<th>
+						&nbsp Plot Period: &nbsp
+					</th>
+					<td>
+						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderColorCheckboxHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+					<b>&nbsp Colour From Primitive: &nbsp</b>
+					<input class="ColorFromPrimitive" type="checkbox" ${checkedHtmlAttribute(this.colorFromPrimitive)}>
+					</td>
+				</tr>
+			</table>
+		`);
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
@@ -5972,15 +6337,16 @@ class DisplayDialog extends jqDialog {
 	}
 }
 
-class DiagramDialog extends DisplayDialog {
+class TimePlotDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("Diagram properties");
+		this.setTitle("Time Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
 		
 		this.markers = false;
+		this.colorFromPrimitive = false;
 
 		this.autoPlotPer = true;
 		this.plotPer = getTimeLength()/100;
@@ -6001,44 +6367,11 @@ class DiagramDialog extends DisplayDialog {
 		this.yRMax = 0;
 		this.yRAuto = true;
 
-		// Automatic value (is set in the DiagramVisual)
+		// Automatic value (is set in the ComparePlotVisual)
 		this.minLValue = 0;
 		this.maxLValue = 0;
 		this.minRValue = 0;
 		this.maxRValue = 0;
-		
-		this.simulationTime = 0;
-	}
-	
-	setDisplayId(id, value, side) {
-		let oldIdIndex = this.displayIdList.indexOf(id);
-		switch(value) {
-			case true:
-				// Check that the id can be added
-				if (!this.acceptsId(id)) {
-					return;
-				}
-				// Check if id already in this.displayIdList
-				if (oldIdIndex != -1 ) {
-					if (this.sides[oldIdIndex] !== side) {
-						this.sides[oldIdIndex] = side;
-					}
-					return;
-				}
-				// Add the value
-				this.displayIdList.push(id.toString());
-				this.sides.push(side);
-
-			break;
-			case false:
-				// Check if id is not in the list
-				if (oldIdIndex == -1) {
-					return;
-				}				
-				this.displayIdList.splice(oldIdIndex,1);
-				this.sides.splice(oldIdIndex, 1);
-			break;
-		}
 	}
 	
 	getDisplayId(id, side) {
@@ -6047,52 +6380,34 @@ class DiagramDialog extends DisplayDialog {
 		return (index != -1 && this.sides[index] === side);
 	}
 	
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+			this.sides.splice(idxToRemove, 1);
+		}
+	}
+
 	setIdsToDisplay(idList, sides) {
 		this.displayIdList = [];
+		this.sides = [];
 		if (sides === undefined || sides.length !== idList.length) {
 			for(let i in idList) {
-				this.setDisplayId(idList[i], true, "L");
+				this.displayIdList.push(idList[i]);
+				this.sides.push("L");
 			}
 		} else {
 			for(let i in idList) {
-				this.setDisplayId(idList[i], true, sides[i]);
-			}
-		}
-	}
-	clearRemovedIds() {
-		for(let id of this.displayIdList) {
-			if (findID(id) == null) {
-				this.setDisplayId(id, false, "L");
-				this.setDisplayId(id, false, "R");
+				this.displayIdList.push(idList[i]);
+				this.sides.push(sides[i]);
 			}
 		}
 	}
 	getIdsToDisplay() {
-		this.clearRemovedIds();
 		return this.displayIdList;
 	}
 	getSidesToDisplay() {
 		return this.sides;
-	}
-	renderPlotPerHtml() {
-		return (`
-			<table class="modernTable" style="margin-bottom: 16px" 
-				title="Distance between points in time units. \n (Should not be less then Time Step)"
-			>
-				<tr>
-					<th>
-						&nbsp Plot Period: &nbsp
-					</th>
-					<td>
-						<input style="" class="plotPer intervalsettings" type="text" value="${this.plotPer}"/>
-					</td>
-					<td>
-						Auto
-						<input style="" class="autoPlotPer intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
-					</td>
-				</tr>
-			</table>
-		`);
 	}
 	renderAxisNamesHtml() {
 		return (`
@@ -6100,19 +6415,19 @@ class DiagramDialog extends DisplayDialog {
 				<tr>
 					<th>&nbsp Title: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="TitleLabel" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>&nbsp Left Label: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>&nbsp Right Label: &nbsp</th>
 					<td>
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -6129,21 +6444,21 @@ class DiagramDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td><input class="xMin intervalsettings" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td><input class="yLMin intervalsettings" type="text" value="${this.getYLMin()}"></td>
-				<td><input class="yLMax intervalsettings" type="text" value="${this.getYLMax()}"></td>
-				<td><input class="yLAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
+				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
+				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td><input class="yRMin intervalsettings" type="text" value="${this.getYRMin()}"></td>
-				<td><input class="yRMax intervalsettings" type="text" value="${this.getYRMax()}"></td>
-				<td><input class="yRAuto intervalsettings" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
+				<td><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
+				<td><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
+				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 			</tr>
 		</table>
 		`);
@@ -6213,7 +6528,7 @@ class DiagramDialog extends DisplayDialog {
 						</td>
 						<td style="text-align: center;">
 							<input 
-								class="primitive_checkbox" 
+								class="primitive_checkbox enterApply" 
 								type="checkbox" 
 								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
 								data-name="${getName(p)}" 
@@ -6223,7 +6538,7 @@ class DiagramDialog extends DisplayDialog {
 						</td>
 						<td style="text-align: center;">
 							<input 
-								class="primitive_checkbox"
+								class="primitive_checkbox enterApply"
 								type="checkbox"
 								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
 								data-name="${getName(p)}" 
@@ -6240,8 +6555,6 @@ class DiagramDialog extends DisplayDialog {
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
 			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
 			let side = $(clickedElement).attr("data-side");
 			
 			// Remove opposite checkmark
@@ -6252,14 +6565,33 @@ class DiagramDialog extends DisplayDialog {
 				$(commonParent[0].children[2].children[0]).removeAttr("checked");
 			}
 			
-			this.setDisplayId(idClicked, checked, side);
 			this.subscribePool.publish("primitive check changed");
 		});
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
+		});
 	}
-	afterOkClose() {
+	makeApply() {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
+
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		this.sides = [];
+		this.displayIdList = [];
+		for(let i = 0; i < primitiveCheckboxes.length; i++) {
+			let box = primitiveCheckboxes[i];
+			let id = box.getAttribute("data-id");
+			let side = box.getAttribute("data-side");
+			let name = box.getAttribute("data-name");
+			if (box.checked) {
+				this.displayIdList.push(id.toString());
+				this.sides.push(side);
+			}
+		}
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -6275,6 +6607,7 @@ class DiagramDialog extends DisplayDialog {
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
+						${this.renderColorCheckboxHtml()}
 					</td>
 				</tr>
 			</table>			
@@ -6296,8 +6629,6 @@ class DiagramDialog extends DisplayDialog {
 	}
 	getXMax() {
 		if (this.xAuto) {
-			// Uncomment if you want the diagram to grow dynamicly as more data is produced
-			//~ return this.simulationTime;
 			return getTimeStart() + getTimeLength();
 		} else {
 			return this.xMax;
@@ -6317,10 +6648,233 @@ class DiagramDialog extends DisplayDialog {
 	}
 }
 
+class ComparePlotDialog extends DisplayDialog {
+	constructor() {
+		super();
+		this.setTitle("Compare Simulations Plot Properties");
+		this.titleLabel = "";
+		this.leftAxisLabel = "";
+		
+		this.markers = false;
+		this.colorFromPrimitive = false;
+
+		this.keep = false;
+		this.clear = false;
+
+		this.autoPlotPer = true;
+		this.plotPer = getTimeLength()/100;
+
+		// Values choosen by user
+		this.xMin = 0;
+		this.xMax = 0;
+		this.xAuto  = true;
+		
+		this.yMin = 0;
+		this.yMax = 0;
+		this.yAuto  = true;
+
+		// Automatic value (is set in the ComparePlotVisual)
+		this.minValue = 0;
+		this.maxValue = 0;
+	}
+	
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
+	}
+
+	getDisplayId(id) {
+		id = id.toString();
+		let index = this.displayIdList.indexOf(id)
+		return (index != -1);
+	}
+	
+	setIdsToDisplay(idList) {
+		this.displayIdList = [];
+		for(let i in idList) {
+			this.displayIdList.push(idList[i]);
+		}
+	}
+	getIdsToDisplay() {
+		return this.displayIdList;
+	}
+	renderKeepHtml() {
+		return (`
+			<table class="modernTable" style="width:100%; text-align:center;">
+				<tr>
+					<td style="width:50%">
+						&nbsp Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
+					</td>
+					<td>
+						<button class="keepButton enterApply">Clear Results</button>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisNamesHtml() {
+		return (`
+			<table class="modernTable" style="margin-bottom: 16px;">
+				<tr>
+					<th>&nbsp Title: &nbsp</th>
+					<td>
+						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
+					</td>
+				</tr>
+				<tr>
+					<th>&nbsp Y-axis Label: &nbsp</th>
+					<td>
+						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderAxisLimitsHTML() {
+		return (`
+		<table class="modernTable" style="margin:16px 0px;">
+			<tr>
+				<th>Axis</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Time</td>
+				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+			</tr>
+			<tr>
+				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
+				<td><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
+				<td><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
+				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+			</tr>
+		</table>
+		`);
+	}
+	updateInterval() {
+		this.xMin = Number($(this.dialogContent).find(".xMin").val());
+		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
+		
+		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		
+		$(this.dialogContent).find(".xMin").val(this.getXMin());
+		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		
+		// Update Left Min Max values
+		this.yMin = Number($(this.dialogContent).find(".yMin").val());
+		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
+		
+		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
+		
+		$(this.dialogContent).find(".yMin").val(this.getYMin());
+		$(this.dialogContent).find(".yMax").val(this.getYMax());
+
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.plotPer = getTimeLength()/100; 
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+	}
+	bindPrimitiveListEvents() {
+		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+			this.subscribePool.publish("primitive check changed");
+		});
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				this.applyChanges();
+			}
+		});
+		$(this.dialogContent).find(".keepButton").click((event) => {
+			this.clear = true;
+		});
+	}
+	makeApply() {
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
+
+		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
+
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		this.displayIdList = [];
+		for(let i = 0; i < primitiveCheckboxes.length; i++) {
+			let box = primitiveCheckboxes[i];
+			let id = box.getAttribute("data-id");
+			let name = box.getAttribute("data-name");
+			if (box.checked) {
+				this.displayIdList.push(id.toString());
+			}
+		}
+	}
+	beforeShow() {
+		// We store the selected variables inside the dialog
+		// The dialog is owned by the table to which it belongs
+
+		let contentHTML = `
+			<table class="invisibleTable">
+				<tr class="invisibleTable">
+					<td class="invisibleTable">
+						${this.renderPrimitiveListHtml()}
+					</td>
+					<td class="invisibleTable">
+						${this.renderKeepHtml()}
+						${this.renderPlotPerHtml()}
+						${this.renderAxisLimitsHTML()}
+						${this.renderAxisNamesHtml()}
+						${this.renderColorCheckboxHtml()}
+					</td>
+				</tr>
+			</table>			
+		`;
+		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
+		this.setHtml(contentHTML);
+		
+		this.bindPrimitiveListEvents();
+		this.bindAxisLimitsEvents();
+		
+		this.updateInterval();
+	}
+	getXMin() {
+		if (this.xAuto) {
+			return getTimeStart();
+		} else {
+			return this.xMin;
+		}
+	}
+	getXMax() {
+		if (this.xAuto) {
+			return getTimeStart() + getTimeLength();
+		} else {
+			return this.xMax;
+		}
+	}
+	getYMin() {
+		return (this.yAuto) ? this.minValue : this.yMin;
+	}
+	getYMax() {
+		return (this.yAuto) ? this.maxValue : this.yMax;
+	}
+}
+
 class XyPlotDialog extends DisplayDialog {
 	constructor() {
 		super();
-		this.setTitle("XY-plot properties");
+		this.setTitle("XY-plot Properties");
 
 		this.markersChecked = false;
 		this.lineChecked = true;
@@ -6444,34 +6998,32 @@ class TableDialog extends DisplayDialog {
 	constructor() {
 		super();
 		this.start = getTimeStart();
-		//this.end = getTimeLength() + getTimeStart();
-		this.length = getTimeLength();
+		this.end = getTimeLength() + getTimeStart();
 		this.step = getTimeStep();
-		this.setTitle("Table properties");
+		this.setTitle("Table Properties");
 		
 		this.startAuto  = true;
-		this.lengthAuto = true;
+		this.endAuto = true;
 		this.stepAuto = true;
 	}
 	renderTableLimitsHTML() {
 		return (`
 		<table class="modernTable">
 			<tr>
-				<td class="text">Start Time</td>
+				<th class="text">&nbsp From &nbsp</th>
 				<td><input class="intervalsettings start" name="start" value="${this.start}" type="text"></td>
 				<td>Auto <input class="intervalsettings start_auto" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
 			</tr><tr>
-				<td class="text">Length</td>
-				<td><input class="intervalsettings length" name="length" value="${this.length}" type="text"></td>
-				<td>Auto <input class="intervalsettings length_auto" type="checkbox"  ${checkedHtmlAttribute(this.lengthAuto)}/></td>
-			</tr><tr>
-				<td class="text">Time Step</td>
+				<th class="text">&nbsp To &nbsp</th>
+				<td><input class="intervalsettings end" name="end" value="${this.end}" type="text"></td>
+				<td>Auto <input class="intervalsettings end_auto" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
+			</tr><tr title="Step &#8805; DT should hold">
+				<th class="text">&nbsp Step &nbsp</th>
 				<td><input class="intervalsettings step" name="step" value="${this.step}" type="text"></td>
 				<td>Auto <input class="intervalsettings step_auto" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
 			</tr>
 		</table>
 		`);
-
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -6496,16 +7048,17 @@ class TableDialog extends DisplayDialog {
 	}
 	updateInterval()  {
 		this.start = Number($(this.dialogContent).find(".start").val());
-		this.length = Number($(this.dialogContent).find(".length").val());
-		this.step = Number($(this.dialogContent).find(".step").val());
+		this.end = Number($(this.dialogContent).find(".end").val());
+		let step = Number($(this.dialogContent).find(".step").val());
+		this.step = (step < getTimeStep()) ? getTimeStep() : step;
 		
 		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
 		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
 		$(this.dialogContent).find(".start").val(this.getStart());
 		
-		this.lengthAuto = $(this.dialogContent).find(".length_auto").prop("checked");
-		$(this.dialogContent).find(".length").prop("disabled", this.lengthAuto);
-		$(this.dialogContent).find(".length").val(this.getLength());
+		this.endAuto = $(this.dialogContent).find(".end_auto").prop("checked");
+		$(this.dialogContent).find(".end").prop("disabled", this.endAuto);
+		$(this.dialogContent).find(".end").val(this.getLength()+this.getStart());
 		
 		this.stepAuto = $(this.dialogContent).find(".step_auto").prop("checked");
 		$(this.dialogContent).find(".step").prop("disabled",this.stepAuto);
@@ -6521,12 +7074,12 @@ class TableDialog extends DisplayDialog {
 		}
 	}
 	getLength() {
-		if (this.LengthAuto) {
+		if (this.endAuto) {
 			// Fetch from IM engine
 			return getTimeLength();
 		} else {
 			// Fetch from user input
-			return this.end;
+			return this.end-this.start;
 		}
 	}
 	getStep() {
@@ -6543,7 +7096,7 @@ class TableDialog extends DisplayDialog {
 class SimulationSettings extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Simulation settings");
+		this.setTitle("Simulation Settings");
 		
 	}
 	beforeShow() {
@@ -6553,19 +7106,25 @@ class SimulationSettings extends jqDialog {
 		this.setHtml(`
 			<table class="modernTable">
 			<tr>
-				<td>Start Time</td>
-				<td><input class="input_start" name="start" value="${start}" type="text"></td>
+				<td>&nbsp Start Time &nbsp</td>
+				<td><input class="input_start" name="start" style="width:100px;" value="${start}" type="text"></td>
 			</tr><tr>
-				<td>Length</td>
-				<td><input class="input_length" name="length" value="${length}" type="text"></td>
+				<td>&nbsp Length &nbsp</td>
+				<td><input class="input_length" name="length" style="width:100px;" value="${length}" type="text"></td>
 			</tr><tr>
-				<td>Time Step</td>
-				<td><input class="input_step" name="step" value="${step}" type="text"></td>
+				<td>&nbsp Time Step &nbsp</td>
+				<td><input class="input_step" name="step" style="width:100px;" value="${step}" type="text"></td>
+			</tr><tr>
+				<td>&nbsp Method &nbsp</td>
+				<td><select class="input_method" style="width:100px">
+				<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
+				<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
+				</select></td>
 			</tr>
 			</table>
 		`);
 	}
-	afterOkClose() {
+	makeApply() {
 		let timeStart =$(this.dialogContent).find(".input_start").val();
 		setTimeStart(timeStart);
 		
@@ -6574,6 +7133,9 @@ class SimulationSettings extends jqDialog {
 		
 		let timeStep = $(this.dialogContent).find(".input_step").val();
 		setTimeStep(timeStep);
+
+		let method = $(".input_method :selected").val();
+		setAlgorithm(method);
 	}
 }
 
@@ -6595,32 +7157,10 @@ class NumberBoxDialog extends jqDialog {
 	}
 }
 
-class TextBoxDialog extends jqDialog {
-	constructor(id) {
-		super();
-		this.id = id;
-		this.setTitle("Info");
-		let text = getName(findID(this.id));
-		this.setHtml(`
-			Text:<br/>
-			<input class="textfieldText textInput" type="text" style="width: 200px" value="${text}"/>
-		`);
-	}
-	afterShow() {
-		let field = $(this.dialogContent).find(".textInput").get(0);
-		let inputLength = field.value.length;  
-		field.setSelectionRange(0, inputLength);
-	}
-	afterOkClose() {
-		let name = $(this.dialogContent).find(".textInput").val();
-		setName(findID(this.id),name);
-	}
-}
-
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Converter Settings");
+		this.setTitle("Converter Properties");
 		this.setHtml(`
 			<div class="primitiveSettings" style="padding: 10px 0px">
 				Name:<br/>
@@ -6684,7 +7224,7 @@ class ConverterDialog extends jqDialog {
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
-	afterOkClose() {
+	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.valueField).val();
@@ -6757,7 +7297,17 @@ class AboutDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("About");
-		this.setHtml(aboutText);
+		this.setHtml(`
+			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
+			<b>StochSD version 180801</b><br/>
+			<br/>
+			<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of 	stochastic modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
+			<br/>
+			StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> 	developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as 	well as modifications and extensions. The file handling system is also rewritten (although the IM file specification is preserved). Finally a number of tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
+			<br/>
+			StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
+			Mail: magnus.ja.gustafsson@gmail.com.
+		`);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
@@ -6773,7 +7323,7 @@ class EquationEditor extends jqDialog {
 	constructor() {
 		super();
 		this.accordionBuilt = false;
-		this.setTitle("Equation editor");
+		this.setTitle("Equation Editor");
 		this.primitive = null;
 		
 		
@@ -6784,10 +7334,10 @@ class EquationEditor extends jqDialog {
 					<div class="table-row">
 						<div class="table-cell" style="width: 300px">
 							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-								Name:<br/>
+								<b>Name:</b><br/>
 								<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
-								Definition:<br/>
-								<textarea class="valueField" style="width: 100%; height: 200px;"></textarea>
+								<b>Definition:</b><br/>
+								<textarea class="valueField" style="width: 100%; height: 70px;"></textarea>
 								<br/>
 								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -6799,8 +7349,8 @@ class EquationEditor extends jqDialog {
 				</div>
 			</div>
     	<div class="table-cell">
-    		<div style="overflow-y: scroll; width: 300px; height: 300px; padding:  10px 20px 20px 0px;">
-					<div class="accordionCluster">
+    		<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
+				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>
   		</div>
@@ -6923,7 +7473,7 @@ class EquationEditor extends jqDialog {
 		
 		var oldName = makePrimitiveName(getName(this.primitive));
 		
-		this.setTitle(typeName+" settings");
+		this.setTitle(typeName+" Properties");
 
 		$(this.nameField).val(oldName);
 		$(this.valueField).val(oldValue);
@@ -6956,14 +7506,14 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;`;
+				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
 		
 		let referenceHTML = "";
 		if (referenceList.length > 0) {
-			referenceHTML = "Linked primitives: <br/>"+referenceListToHtml(referenceList);
+			referenceHTML = "<b>Linked primitives:</b><br/>"+referenceListToHtml(referenceList);
 		} else {
 			referenceHTML = "No linked primitives";
 		}
@@ -7019,7 +7569,7 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
-	afterOkClose() {
+	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
@@ -7095,7 +7645,7 @@ class MacroDialog extends jqDialog {
 		this.dialogParameters.width = "500";
 		this.dialogParameters.height = "400";
 	}
-	afterOkClose() {
+	makeApply() {
 		let newMacro = $(this.dialogContent).find(".macroText").val();
 		setMacros(newMacro);
 	}
@@ -7131,7 +7681,7 @@ class TextAreaDialog extends jqDialog {
 		this.dialogParameters.width = "500";
 		this.dialogParameters.height = "400";
 	}
-	afterOkClose() {
+	makeApply() {
 		let newText = $(this.dialogContent).find(".text").val();
 		setName(this.primitive, newText);
 	}
