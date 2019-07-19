@@ -20,18 +20,19 @@ var nwjsGui = null;
 var nwjsWindow = null;
 var nwjsApp = null;
 
-class nwController{
+
+
+const appName = "StochSD";
+
+class nwController {
 	static init() {
-		this.nwActive = null;
-		if (typeof require === "undefined") {
-			this.nwActive = false;
-		} else {
-			this.nwActive = true;
-			this.maximize = this.unsafeNwMaximize;
-			this.getWindow = this.unsafeGetWindow;
-			this.getParams = this.unsafeGetParams;
-			this.ready = this.unsafeReady;	
-			this.openFile = this.unsafeOpenFile;	
+		if (isRunningNwjs()) {
+			this.nwActive = true
+			this.maximize = this.unsafeNwMaximize
+			this.getWindow = this.unsafeGetWindow
+			this.getParams = this.unsafeGetParams
+			this.ready = this.unsafeReady
+			this.openFile = this.unsafeOpenFile
 		}
 	}
 	static ready() {
@@ -41,11 +42,11 @@ class nwController{
 		//~ NwZoomController.zoomReset();
 		NwZoomController.zoomLoadFromStorage();
 		let params = this.getParams();
-		if(params.length >= 1) {
+		if (params.length >= 1) {
 			let parameterFilename = params[0];
 			fileManager.loadFromFile(parameterFilename);
 		}
-		
+
 		var ngui = this.unsafeGetGui();
 		var nwin = this.unsafeGetWindow();
 		var app = this.unsafeGetApp();
@@ -53,14 +54,11 @@ class nwController{
 		nwjsWindow = nwin;
 		nwjsApp = app;
 
-		// This save before closing handler only works when we run without StochSD tools.
+		// This save before closing handler only works when we run without plugin tools.
 		// Otherwise it makes it impossible to quit
-		nwin.on("close",function(event) {
+		nwin.on("close", function (event) {
 			quitQuestion();
 		});
-	}
-	static isNwActive() {
-		return this.nwActive;
 	}
 	static getWindow() {
 		// This is replaced in init if NW is running
@@ -72,7 +70,7 @@ class nwController{
 	static unsafeGetWindow() {
 		var ngui = require("nw.gui");
 		var nwin = ngui.Window.get();
-		return nwin;		
+		return nwin;
 	}
 	static unsafeGetApp() {
 		var nwgui = require("nw.gui");
@@ -89,46 +87,44 @@ class nwController{
 		nwin.maximize();
 	}
 	static getParams() {
-		
+
 	}
 	static unsafeGetParams() {
 		var nwgui = require("nw.gui");
 		return nwgui.App.argv;
 	}
 	static openFile() {
-		
+
 	}
 	static unsafeOpenFile(fileName) {
 		nwjsGui.Shell.openItem(fileName);
 	}
 }
-nwController.init();
-nwController.maximize();
 
 class NwZoomController {
 	static init() {
-		this.nwWindow=nwController.getWindow();
+		this.nwWindow = nwController.getWindow();
 	}
 	static zoomIn() {
 		do_global_log("Zooming in");
 		this.nwWindow.zoomLevel += 0.1;
-		localStorage.setItem("zoomLevel",this.nwWindow.zoomLevel);
+		localStorage.setItem("zoomLevel", this.nwWindow.zoomLevel);
 	}
 	static zoomOut() {
 		do_global_log("Zooming out");
 		this.nwWindow.zoomLevel -= 0.1;
-		localStorage.setItem("zoomLevel",this.nwWindow.zoomLevel);
+		localStorage.setItem("zoomLevel", this.nwWindow.zoomLevel);
 	}
 	static zoomReset() {
 		do_global_log("Reseting zoom");
 		this.nwWindow.zoomLevel = Settings.nwInitZoom;
-		localStorage.setItem("zoomLevel",this.nwWindow.zoomLevel);
+		localStorage.setItem("zoomLevel", this.nwWindow.zoomLevel);
 	}
-	
+
 	static zoomLoadFromStorage() {
 		do_global_log("loading from storage zoom");
 		let loadedZoomLevel = localStorage.getItem("zoomLevel");
-		if(loadedZoomLevel==null) {
+		if (loadedZoomLevel == null) {
 			return;
 		}
 		loadedZoomLevel = Number(loadedZoomLevel);
@@ -141,7 +137,7 @@ class BaseFileManager {
 	constructor() {
 		this._fileName = "";
 		this.lastSaved = null;
-		this.softwareName = "StochSD";
+		this.softwareName = appName;
 	}
 	// This is executed when the document is ready
 	ready() {
@@ -161,7 +157,7 @@ class BaseFileManager {
 		History.storeUndoState();
 		// There is no last state is it could not be unsaved
 		History.unsavedChanges = false;
-		this.fileName = null;	
+		this.fileName = null;
 		this.lastSaved = null;
 		this.updateTitle();
 		// Optional handler for when saving is finished
@@ -183,7 +179,8 @@ class BaseFileManager {
 	loadModel() {
 		// Override this
 	}
-	setTitle(newTitle) {;
+	setTitle(newTitle) {
+		;
 		if (window !== window.top) {
 			// In iFrame
 			setParentTitle(newTitle);
@@ -202,32 +199,32 @@ class BaseFileManager {
 	}
 	updateSaveTime() {
 		this.lastSaved = new Date().toLocaleTimeString();
-		
+
 	}
 	updateTitle() {
-		let title = this.softwareName;	
-		if(this._fileName != "") {
-			title += " | "+this.fileName;
-			if(this.lastSaved) {
-				title+=" (last saved: "+this.lastSaved+")";
+		let title = this.softwareName;
+		if (this._fileName != "") {
+			title += " | " + this.fileName;
+			if (this.lastSaved) {
+				title += " (last saved: " + this.lastSaved + ")";
 			}
 		}
 		this.setTitle(title);
 	}
 	set fileName(newFileName) {
-		if(newFileName == null) {
+		if (newFileName == null) {
 			newFileName = "";
 		}
-		this._fileName = newFileName;	
+		this._fileName = newFileName;
 	}
 	get fileName() {
 		return this._fileName;
 	}
-	appendFileExtension(filename,extension) {
-		var extension_position=filename.length-extension.length;
-		var current_extension=filename.substring(extension_position,filename.length);
-		if(current_extension.toLowerCase()!=extension.toLowerCase()) {
-			filename+=extension;
+	appendFileExtension(filename, extension) {
+		var extension_position = filename.length - extension.length;
+		var current_extension = filename.substring(extension_position, filename.length);
+		if (current_extension.toLowerCase() != extension.toLowerCase()) {
+			filename += extension;
 		}
 		return filename;
 	}
@@ -236,45 +233,45 @@ class BaseFileManager {
 class WebFileManager extends BaseFileManager {
 	constructor() {
 		super();
-		this.softwareName = "StochSD Web";
+		this.softwareName = appName + " Web";
 	}
 	download(fileName, data) {
 		// Create Blob and attach it to ObjectURL
-		var blob = new Blob([data], {type: "octet/stream"}),
-		url = window.URL.createObjectURL(blob);
-		
+		var blob = new Blob([data], { type: "octet/stream" }),
+			url = window.URL.createObjectURL(blob);
+
 		// Create download link and click it
 		var a = document.createElement("a");
-		a.style.display="none";
+		a.style.display = "none";
 		a.href = url;
 		a.download = fileName;
 		document.body.appendChild(a);
 		a.click();
-		
+
 		History.unsavedChanges = false;
-		
+
 		// The setTimeout is a fix to make it work in Firefox
 		// Without it, the objectURL is removed before the click-event is triggered
 		// And the download does not work
-		setTimeout(function() {
+		setTimeout(function () {
 			window.URL.revokeObjectURL(url);
 			a.remove();
-		},1);
+		}, 1);
 	}
 	saveModel() {
 		let fileData = createModelFileData();
-		
+
 		let suggesName = (this.fileName) ? this.fileName : "model";
-		
-		var fileName=prompt("Filename:",suggesName);
-		if(fileName==null) {
+
+		var fileName = prompt("Filename:", suggesName);
+		if (fileName == null) {
 			return;
 		}
-		this.fileName = this.appendFileExtension(fileName,".InsightMaker");
-		this.download(this.fileName,fileData);
+		this.fileName = this.appendFileExtension(fileName, ".InsightMaker");
+		this.download(this.fileName, fileData);
 		this.updateSaveTime();
 		this.updateTitle();
-		if(this.finishedSaveHandler) {
+		if (this.finishedSaveHandler) {
 			this.finishedSaveHandler();
 		}
 	}
@@ -287,7 +284,7 @@ class WebFileManager extends BaseFileManager {
 				this.fileName = model.name;
 				//~ this.loadModelData(model.contents);
 				//~ this.updateTitle();
-				
+
 				do_global_log("web load file call  back");
 				var fileData = model.contents;
 				History.forceCustomUndoState(fileData);
@@ -297,66 +294,16 @@ class WebFileManager extends BaseFileManager {
 		});
 	}
 }
-class NwFileManager extends BaseFileManager {
+
+class ElectronFileManager extends BaseFileManager {
 	constructor() {
 		super();
-		this.softwareName = "StochSD Desktop";
+		this.softwareName = appName + " Desktop";
 	}
-	
+
 	// This is executed when the document is ready
 	ready() {
 		super.ready();
-		// Prepare model loader
-		this.modelLoaderInput = document.body.appendChild(document.createElement("input"));
-		this.modelLoaderInput.className = "modelLoaderInput";
-		this.modelLoaderInput.addEventListener('change', (event) => {
-			do_global_log("NW: In read file callback");
-			var file = event.target.files[0]; 
-			if (file) {
-				do_global_log("NW: In read file callback has file");
-				this.fileName = file.path;
-				var reader = new FileReader();
-				reader.onload = (reader_event) => { 
-					do_global_log("NW: reader.onload callback");
-					var fileData = reader_event.target.result;
-					History.forceCustomUndoState(fileData);
-					
-					// Add to localStorage.recentFiles
-					this.addToRecent(this.fileName);
-
-					this.updateTitle();
-					preserveRestart();
-				}
-				reader.readAsText(file);
-			}
-		}, false);
-		this.modelLoaderInput.type="file";
-		this.modelLoaderInput.accept=InsightMakerFileExtension;
-		
-		// Prepare model saver
-		//<input type="file" nwsaveas>
-		this.modelSaverInput = document.body.appendChild(document.createElement("input"));
-		this.modelSaverInput.className = "modelSaverInput";
-		this.modelSaverInput.addEventListener('change', (event) => {
-			var file = event.target.files[0]; 
-			if (file) {
-				this.fileName = this.appendFileExtension(file.path,InsightMakerFileExtension);
-				let fileData = createModelFileData();
-				this.writeFile(this.fileName,fileData);
-				
-				// adds to file localStorage.recentFiles list
-				this.addToRecent(this.fileName);
-				
-				this.updateSaveTime();
-				this.updateTitle();
-				if(this.finishedSaveHandler) {
-					this.finishedSaveHandler();
-				}
-			}
-		}, false);
-		this.modelSaverInput.type="file";
-		this.modelSaverInput.nwsaveas="";
-		this.modelSaverInput.accept=InsightMakerFileExtension;
 	}
 	hasSaveAs() {
 		return true;
@@ -375,37 +322,196 @@ class NwFileManager extends BaseFileManager {
 			recentFiles.splice(index, 1);
 		}
 		if (recentFiles.length <= limit) {
-			recentFiles.splice(limit-1);
+			recentFiles.splice(limit - 1);
 		}
 		recentFiles.unshift(filePath);
 		localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
 	}
-	writeFile(fileName,FileData) {
+	writeFile(fileName, FileData) {
 		do_global_log("NW: In write file");
 		//~ if(self.fileName == null) {
-			//~ self.saveModelAs();
-			//~ return;
+		//~ self.saveModelAs();
+		//~ return;
 		//~ }
 		let fs = require('fs');
-		fs.writeFile(fileName,FileData, function(err) {
+		fs.writeFile(fileName, FileData, function (err) {
 			do_global_log("NW: in write file callback");
-			if(err) {
+			if (err) {
 				do_global_log("NW: Error in write file callback");
 				console.error(err);
-				alert("Error in file saving "+getStackTrace());
+				alert("Error in file saving " + getStackTrace());
 			}
 			do_global_log("NW: Success in write file callback");
 			History.unsavedChanges = false;
-		}); 
+		});
+	}
+	saveModel() {
+		do_global_log("Electron: save model triggered");
+		if (this.fileName == "") {
+			this.saveModelAs();
+			return;
+		}
+		this.doSaveModel(this.fileName)
+	}
+	saveModelAs() {
+		const { dialog } = require('electron').remote
+		let filename = dialog.showSaveDialog()
+		console.log("save filename", filename)
+		if (filename) {
+			this.fileName = this.appendFileExtension(filename, InsightMakerFileExtension)
+			this.doSaveModel(this.fileName)
+		}
+		if (this.finishedSaveHandler) {
+			this.finishedSaveHandler();
+		}
+	}
+	doSaveModel(fileName) {
+		let fileData = createModelFileData();
+		this.writeFile(this.fileName, fileData);
+		this.updateSaveTime();
+		this.updateTitle();
+		this.addToRecent(this.fileName);
+	}
+
+	loadModel() {
+		do_global_log("Electron: load model");
+		const { dialog } = require('electron').remote
+		console.log("dialog ", dialog)
+		let filenameArray = dialog.showOpenDialog({ properties: ['openFile'] })
+		console.log("filenameArray", filenameArray)
+		if (filenameArray.length > 0) {
+			this.loadFromFile(filenameArray[0])
+		}
+	}
+	loadFromFile(fileName) {
+		var fs = require('fs')
+		var resolve = require('path').resolve;
+		var absoluteFileName = resolve(fileName);
+
+
+		fs.readFile(fileName, 'utf8', (err, data) => {
+			if (err) {
+				return console.error(err);
+			}
+			console.error(fs);
+			this.fileName = absoluteFileName;
+			this.loadModelData(data);
+			this.updateTitle();
+			this.addToRecent(this.fileName);
+		});
+	}
+}
+
+class NwFileManager extends BaseFileManager {
+	constructor() {
+		super();
+		this.softwareName = appName + " Desktop";
+	}
+
+	// This is executed when the document is ready
+	ready() {
+		super.ready();
+		// Prepare model loader
+
+		this.modelLoaderInput = document.body.appendChild(document.createElement("input"));
+		this.modelLoaderInput.className = "modelLoaderInput";
+		this.modelLoaderInput.addEventListener('change', (event) => {
+			do_global_log("NW: In read file callback");
+			var file = event.target.files[0];
+			if (file) {
+				do_global_log("NW: In read file callback has file");
+				this.fileName = file.path;
+				var reader = new FileReader();
+				reader.onload = (reader_event) => {
+					do_global_log("NW: reader.onload callback");
+					var fileData = reader_event.target.result;
+					History.forceCustomUndoState(fileData);
+
+					// Add to localStorage.recentFiles
+					this.addToRecent(this.fileName);
+
+					this.updateTitle();
+					preserveRestart();
+				}
+				reader.readAsText(file);
+			}
+		}, false);
+		this.modelLoaderInput.type = "file";
+		this.modelLoaderInput.accept = InsightMakerFileExtension;
+
+		// Prepare model saver
+		//<input type="file" nwsaveas>
+		this.modelSaverInput = document.body.appendChild(document.createElement("input"));
+		this.modelSaverInput.className = "modelSaverInput";
+		this.modelSaverInput.addEventListener('change', (event) => {
+			var file = event.target.files[0];
+			if (file) {
+				this.fileName = this.appendFileExtension(file.path, InsightMakerFileExtension);
+				let fileData = createModelFileData();
+				this.writeFile(this.fileName, fileData);
+
+				// adds to file localStorage.recentFiles list
+				this.addToRecent(this.fileName);
+
+				this.updateSaveTime();
+				this.updateTitle();
+				if (this.finishedSaveHandler) {
+					this.finishedSaveHandler();
+				}
+			}
+		}, false);
+		this.modelSaverInput.type = "file";
+		this.modelSaverInput.nwsaveas = "";
+		this.modelSaverInput.accept = InsightMakerFileExtension;
+	}
+	hasSaveAs() {
+		return true;
+	}
+	hasRecentFiles() {
+		return true;
+	}
+	addToRecent(filePath) {
+		let limit = 5;
+		let recentFiles = [];
+		if (localStorage.recentFiles) {
+			recentFiles = JSON.parse(localStorage.recentFiles);
+		}
+		if (recentFiles.includes(filePath)) {
+			let index = recentFiles.indexOf(filePath);
+			recentFiles.splice(index, 1);
+		}
+		if (recentFiles.length <= limit) {
+			recentFiles.splice(limit - 1);
+		}
+		recentFiles.unshift(filePath);
+		localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+	}
+	writeFile(fileName, FileData) {
+		do_global_log("NW: In write file");
+		//~ if(self.fileName == null) {
+		//~ self.saveModelAs();
+		//~ return;
+		//~ }
+		let fs = require('fs');
+		fs.writeFile(fileName, FileData, function (err) {
+			do_global_log("NW: in write file callback");
+			if (err) {
+				do_global_log("NW: Error in write file callback");
+				console.error(err);
+				alert("Error in file saving " + getStackTrace());
+			}
+			do_global_log("NW: Success in write file callback");
+			History.unsavedChanges = false;
+		});
 	}
 	saveModel() {
 		do_global_log("NW: save model triggered");
-		if(this.fileName == "") {
+		if (this.fileName == "") {
 			this.saveModelAs();
 			return;
 		}
 		let fileData = createModelFileData();
-		this.writeFile(this.fileName,fileData);
+		this.writeFile(this.fileName, fileData);
 		this.updateSaveTime();
 		this.updateTitle();
 		this.addToRecent(this.fileName);
@@ -414,15 +520,15 @@ class NwFileManager extends BaseFileManager {
 		do_global_log("NW: save model as ... triggered");
 		this.modelSaverInput.value = "";
 		this.modelSaverInput.click();
-		
+
 		// The following line seems to cause a flicky bug
 		//~ uploader.parentElement.removeChild(uploader);
 	}
-	loadModel() {	
+	loadModel() {
 		do_global_log("NW: load model");
 		this.modelLoaderInput.value = "";
 		this.modelLoaderInput.click();
-		
+
 		// The following line seems to cause a flicky bug
 		//~ uploader.parentElement.removeChild(uploader);
 	}
@@ -430,15 +536,15 @@ class NwFileManager extends BaseFileManager {
 		var fs = require('fs')
 		var resolve = require('path').resolve;
 		var absoluteFileName = resolve(fileName);
-		
-		
-		fs.readFile(fileName, 'utf8', (err,data) => {
+
+
+		fs.readFile(fileName, 'utf8', (err, data) => {
 			if (err) {
 				return console.error(err);
 			}
 			console.error(fs);
 			this.fileName = absoluteFileName;
-			this.loadModelData(data);	
+			this.loadModelData(data);
 			this.updateTitle();
 			this.addToRecent(this.fileName);
 		});
@@ -446,6 +552,9 @@ class NwFileManager extends BaseFileManager {
 }
 
 class BaseEnvironment {
+	getName() {
+		return "base";
+	}
 	constructor() {
 		this.reloadingStarted = false;
 	}
@@ -461,53 +570,87 @@ class BaseEnvironment {
 }
 
 class WebEnvironment extends BaseEnvironment {
+	getName() {
+		return "web";
+	}
 	ready() {
-		window.onbeforeunload=(e)=>{
-			if(this.reloadingStarted) {
+		return null;
+		/*
+		window.onbeforeunload = (e) => {
+			if (this.reloadingStarted) {
 				// We never want to complain if we have initialized a reload
 				// We only want to complain when the user is closing the page
 				return null;
 			}
-			if(History.unsavedChanges) {
+			if (History.unsavedChanges) {
 				return 'You have unsaved changes. Are you sure you want to quit?';
 			} else {
 				return null;
 			}
 		};
+		*/
 	}
 	getFileManager() {
 		return new WebFileManager();
 	}
 }
 
-class NwEnvironment extends BaseEnvironment {
+class ElectronEnvironment extends BaseEnvironment {
+	getName() {
+		return "electron";
+	}
 	ready() {
-		$("#btn_zoom_in").click(function() {
+		const { ipcRenderer } = require('electron')
+		ipcRenderer.on('try-to-close-message', (event, arg) => {
+			quitQuestion()
+		})
+	}
+	getFileManager() {
+		return new ElectronFileManager();
+	}
+	closeWindow() {
+		const { ipcRenderer } = require('electron')
+		ipcRenderer.send('destroy-message', 'ping')
+	}
+}
+
+
+class NwEnvironment extends BaseEnvironment {
+	getName() {
+		return "nwjs";
+	}
+	constructor() {
+		super()
+		nwController.init();
+		nwController.maximize();
+	}
+	ready() {
+		$("#btn_zoom_in").click(function () {
 			NwZoomController.zoomIn();
 		});
-		$("#btn_zoom_out").click(function() {
+		$("#btn_zoom_out").click(function () {
 			NwZoomController.zoomOut();
 		});
-		$("#btn_zoom_reset").click(function() {
+		$("#btn_zoom_reset").click(function () {
 			NwZoomController.zoomReset();
 		});
 		$(".hideUnlessNwjs").removeClass("hideUnlessNwjs");
 	}
 	keyDown(event) {
-		if(event.ctrlKey) {
+		if (event.ctrlKey) {
 			// Does not work in web browsers-since ctrl+N is reserved
-			if(event.keyCode == keyboard["N"]){
+			if (event.keyCode == keyboard["N"]) {
 				event.preventDefault();
 				$("#btn_new").click();
 			}
-			
-			if(event.keyCode == keyboard["+"]) {
+
+			if (event.keyCode == keyboard["+"]) {
 				NwZoomController.zoomIn();
 			}
-			if(event.keyCode == keyboard["-"]) {
+			if (event.keyCode == keyboard["-"]) {
 				NwZoomController.zoomOut();
 			}
-			if(event.keyCode == keyboard["0"]) {
+			if (event.keyCode == keyboard["0"]) {
 				NwZoomController.zoomReset();
 			}
 			updateWindowSize();
@@ -516,17 +659,44 @@ class NwEnvironment extends BaseEnvironment {
 	getFileManager() {
 		return new NwFileManager();
 	}
+	closeWindow() {
+		nwjsWindow.close(true);
+	}
+}
+
+function isRunningElectron() {
+	// https://github.com/electron/electron/issues/2288
+	if (typeof process !== "undefined") {
+		if (typeof process.versions['electron'] !== "undefined") {
+			return true;
+		}
+	}
+	return false;
+}
+
+function isRunningNwjs() {
+	// https://stackoverflow.com/questions/31968355/detect-if-web-app-is-running-in-nwjs
+	try {
+		return (typeof require('nw.gui') !== "undefined");
+	} catch (e) {
+		return false;
+	}
 }
 
 function detectEnvironment() {
-	// Check if we run in node-webkit or in a browser 
-	if(nwController.isNwActive()) {
-		return new NwEnvironment();
+	if (isRunningElectron()) {
+		return new ElectronEnvironment()
+	}
+	else if (isRunningNwjs()) {
+		return new NwEnvironment()
 	} else {
-		return new WebEnvironment();
+		return new WebEnvironment()
 	}
 }
 
 // Set global variable for environment and fileManager 
 var environment = detectEnvironment();
 var fileManager = environment.getFileManager();
+
+// Uncomment for debugging
+// alert("Running in environment " + environment.getName())
