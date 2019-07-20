@@ -4955,8 +4955,6 @@ function stochsd_delete_primitive (id) {
 	}
 }
 
-var InsightMakerFileExtension = ".InsightMaker";
-
 function isLocal() {
 	return true; // Expose additional debugging and error messages
 }
