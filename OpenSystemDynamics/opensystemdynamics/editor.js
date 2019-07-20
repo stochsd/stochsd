@@ -7002,12 +7002,20 @@ class TableData {
 		this.results = [];
 	}
 	exportCSV() {
-		let str = "Time,";
+		let string = this.getAsString(",");
+		fileManager.exportFile(string, ".csv");
+	}
+	exportTSV() {
+		let string = this.getAsString("\t");
+		fileManager.exportFile(string, ".tsv");
+	}
+	getAsString(seperator) {
+		let str = "Time"+seperator;
 		for (let i = 0; i < this.namesToDisplay.length; i++) {
 			let name = this.namesToDisplay[i]; 
 			str += `${name}`;
 			if (i != this.namesToDisplay.length-1) {
-				str += ",";
+				str += seperator;
 			}
 		}
 		str += "\n";
@@ -7018,12 +7026,13 @@ class TableData {
 					str += value.toString(); 
 				}
 				if (i != row.length-1) {
-					str += ",";
+					str += seperator;
 				}
 			}
 			str += "\n";
 		}
-		fileManager.exportFile(str, ".csv");
+		return str;
+		
 	}
 }
 
@@ -7068,6 +7077,13 @@ class TableDialog extends DisplayDialog {
 						</button>
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<button class="exportTSV">
+							Export Table (TSV)
+						</button>
+					</td>
+				</tr>
 			</table>
 		`);
 		
@@ -7094,14 +7110,18 @@ class TableDialog extends DisplayDialog {
 		
 		this.bindPrimitiveListEvents();
 		
-		let a = $(this.dialogContent).find(".exportCSV").click(event => {
-			console.log("export csv");
+		$(this.dialogContent).find(".exportCSV").click(event => {
 			if (this.data) {
 				this.data.exportCSV();
-			} else {
-				console.log("Error data is NULL");
 			}
 		});
+
+		$(this.dialogContent).find(".exportTSV").click(event => {
+			if (this.data) {
+				this.data.exportTSV();
+			}
+		});
+
 
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
