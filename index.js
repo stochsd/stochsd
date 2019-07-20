@@ -29,6 +29,7 @@ if(isRunningElectron()) {
 }
 
 function startInNwjs() {
+  //  Run index.html or OpenSystemDynamics/opensystemdynamics/index.html
   nw.Window.open('index.html', {}, function(win) {});
 }
 
