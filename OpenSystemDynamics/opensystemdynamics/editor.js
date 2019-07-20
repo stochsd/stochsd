@@ -2236,6 +2236,7 @@ class TableVisual extends HtmlTwoPointer {
 			this.render();
 		}
 		RunResults.subscribeRun(this.runHandler);
+		this.data = new TableData();
 	}
 	render() {
 		html = "";
@@ -2244,30 +2245,31 @@ class TableVisual extends HtmlTwoPointer {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
-		let namesToDisplay = IdsToDisplay.map(findID).map(getName);
+		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
-		do_global_log(JSON.stringify(namesToDisplay));
-		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
+		do_global_log(JSON.stringify(this.data.namesToDisplay));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
 		html += "<th>Time</th>";
-		for(let i in namesToDisplay) {
-			html += `<th>${namesToDisplay[i]}</th>`;
+		for(let i in this.data.namesToDisplay) {
+			html += `<th>${this.data.namesToDisplay[i]}</th>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
-		for(let row_index in results) {
+		for(let row_index in this.data.results) {
 			html += "<tr>";
-			for(let column_index in ["Time"].concat(namesToDisplay)) {
+			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
 				// We must get the data in column_index+1 since column 1 is reserved for time
-				html += "<td>"+stocsd_format(results[row_index][column_index],6)+"</td>";
+				html += "<td>"+stocsd_format(this.data.results[row_index][column_index],6)+"</td>";
 			}
 			html += "</tr>";
 		}
 		html += "</tbody></table>";
 		this.updateHTML(html);
+		this.dialog.data = this.data;
 	}
-	
+
 	makeGraphics() {
 		this.dialog = new TableDialog();
 		this.dialog.subscribePool.subscribe(()=>{
@@ -6994,6 +6996,37 @@ class XyPlotDialog extends DisplayDialog {
 	}
 }
 
+class TableData {
+	constructor() {
+		this.namesToDisplay = [];
+		this.results = [];
+	}
+	exportCSV() {
+		let str = "Time,";
+		for (let i = 0; i < this.namesToDisplay.length; i++) {
+			let name = this.namesToDisplay[i]; 
+			str += `${name}`;
+			if (i != this.namesToDisplay.length-1) {
+				str += ",";
+			}
+		}
+		str += "\n";
+		for (let row of this.results) {
+			for (let i = 0; i < row.length; i++) {
+				let value = row[i];
+				if (value) {
+					str += value.toString(); 
+				}
+				if (i != row.length-1) {
+					str += ",";
+				}
+			}
+			str += "\n";
+		}
+		console.log(str);
+	}
+}
+
 class TableDialog extends DisplayDialog {
 	constructor() {
 		super();
@@ -7001,10 +7034,10 @@ class TableDialog extends DisplayDialog {
 		this.end = getTimeLength() + getTimeStart();
 		this.step = getTimeStep();
 		this.setTitle("Table Properties");
-		
 		this.startAuto  = true;
 		this.endAuto = true;
 		this.stepAuto = true;
+		this.data = null;
 	}
 	renderTableLimitsHTML() {
 		return (`
@@ -7025,6 +7058,20 @@ class TableDialog extends DisplayDialog {
 		</table>
 		`);
 	}
+	renderExportHtml() {
+		return (`
+			<table class="modernTable" style="margin:16px 0px">
+				<tr>
+					<td>
+						<button class="exportCSV">
+							Export Table (CSV)
+						</button>
+					</td>
+				</tr>
+			</table>
+		`);
+		
+	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -7032,8 +7079,13 @@ class TableDialog extends DisplayDialog {
 		let contentHTML = `
 			<table class="invisibleTable">
 				<tr>
-					<td>${this.renderPrimitiveListHtml()}</td>
-					<td>${this.renderTableLimitsHTML()}</td>
+					<td>
+						${this.renderPrimitiveListHtml()}
+					</td>
+					<td>
+						${this.renderTableLimitsHTML()}
+						${this.renderExportHtml()}
+					</td>
 				</tr>
 			</table>
 		`;
@@ -7041,6 +7093,16 @@ class TableDialog extends DisplayDialog {
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
+		
+		let a = $(this.dialogContent).find(".exportCSV").click(event => {
+			console.log("export csv");
+			if (this.data) {
+				this.data.exportCSV();
+			} else {
+				console.log("Error data is NULL");
+			}
+		});
+
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
 		});
