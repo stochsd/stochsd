@@ -164,14 +164,25 @@ class BaseFileManager {
 		this.finishedSaveHandler = null;
 		RunResults.resetSimulation();
 	}
+	saveModelAs() {
+		let fileData = createModelFileData();
+		// Only exportFile is implementation specific (different on nwjs and electron)
+		this.exportFile(fileData, InsightMakerFileExtension, (filePath) => {
+			this.fileName = filePath;
+			this.addToRecent(this.fileName);
+
+			this.updateSaveTime();
+			this.updateTitle();
+			if (this.finishedSaveHandler) {
+				this.finishedSaveHandler();
+			}
+		});
+	}
 	hasSaveAs() {
 		return false;
 	}
 	hasRecentFiles() {
 		return false;
-	}
-	saveModelAs() {
-		// Override this where hasSaveAs is true
 	}
 	saveModel() {
 		// Override this
@@ -203,7 +214,7 @@ class BaseFileManager {
 	}
 	updateTitle() {
 		let title = this.softwareName;
-		if (this._fileName != "") {
+		if (this.fileName != "") {
 			title += " | " + this.fileName;
 			if (this.lastSaved) {
 				title += " (last saved: " + this.lastSaved + ")";
@@ -248,8 +259,6 @@ class WebFileManager extends BaseFileManager {
 		document.body.appendChild(a);
 		a.click();
 
-		History.unsavedChanges = false;
-
 		// The setTimeout is a fix to make it work in Firefox
 		// Without it, the objectURL is removed before the click-event is triggered
 		// And the download does not work
@@ -260,22 +269,22 @@ class WebFileManager extends BaseFileManager {
 	}
 	saveModel() {
 		let fileData = createModelFileData();
-
-		let suggesName = (this.fileName) ? this.fileName : "model";
-
-		var fileName = prompt("Filename:", suggesName);
-		if (fileName == null) {
-			return;
-		}
-		this.fileName = this.appendFileExtension(fileName, ".InsightMaker");
-		this.download(this.fileName, fileData);
-		this.updateSaveTime();
-		this.updateTitle();
-		if (this.finishedSaveHandler) {
-			this.finishedSaveHandler();
-		}
+		
+		this.exportFile(fileData,InsightMakerFileExtension, () => {
+			this.updateSaveTime();
+			this.updateTitle();
+			History.unsavedChanges = false;
+			if (this.finishedSaveHandler) {
+				this.finishedSaveHandler();
+			}
+		});
 	}
-	exportFile(dataToSave, fileExtension) {
+	exportFile(dataToSave, fileExtension, onSuccess) {
+		if(onSuccess == undefined) {
+			// On success is optoinal, so if it was not set we set it to an empty function
+			onSuccess = () => {};
+		}
+
 		var fileName = prompt("Filename:", fileExtension);
 		if (fileName == null) {
 			return;
@@ -283,6 +292,9 @@ class WebFileManager extends BaseFileManager {
 		const exportFileName = this.appendFileExtension(fileName, fileExtension);
 		// Wrapper so that also web application can save files (csv and other)
 		this.download(exportFileName, dataToSave);
+		if(onSuccess) {
+			onSuccess(exportFileName);
+		}
 	}
 	loadModel() {
 		openFile({
@@ -361,16 +373,21 @@ class ElectronFileManager extends BaseFileManager {
 		}
 		this.doSaveModel(this.fileName)
 	}
-	saveModelAs() {
-		const { dialog } = require('electron').remote
-		let filename = dialog.showSaveDialog()
-		console.log("save filename", filename)
-		if (filename) {
-			this.fileName = this.appendFileExtension(filename, InsightMakerFileExtension)
-			this.doSaveModel(this.fileName)
+
+	/** A general file export function that can export any kind of file
+	*/
+	exportFile(fileData, fileExtension, onSuccess) {
+		if(onSuccess == undefined) {
+			// On success is optoinal, so if it was not set we set it to an empty function
+			onSuccess = () => {};
 		}
-		if (this.finishedSaveHandler) {
-			this.finishedSaveHandler();
+		const { dialog } = require('electron').remote
+		let fileName = dialog.showSaveDialog()
+		if (fileName) {
+			fileName = this.appendFileExtension(fileName, fileExtension)
+			console.log("save filename", fileName);
+			this.writeFile(fileName, fileData);
+			onSuccess(fileName);
 		}
 	}
 	doSaveModel(fileName) {
@@ -478,19 +495,31 @@ class NwFileManager extends BaseFileManager {
 		//<input type="file" nwsaveas>
 		this.fileExportInput = document.body.appendChild(document.createElement("input"));
 		this.fileExportInput.className = "fileExportInput";
+		this.fileExportInput.onSuccess = function() {
+			alert("On success");
+		};
+		this.fileExportInput.onFailure = function() {
+			alert("On failure");
+		}
 		this.fileExportInput.addEventListener('change', (event) => {
 			var file = event.target.files[0];
 			if (file) {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
 				this.writeFile(exportFilePath, this.dataToExport);
+				this.fileExportInput.onSuccess(exportFilePath);
 			}
 		}, false);
 		this.fileExportInput.type = "file";
 		this.fileExportInput.nwsaveas = "";
 		this.fileExportInput.accept = ".csv";
 	}
-	exportFile(dataToSave, fileExtension) {
+	exportFile(dataToSave, fileExtension, onSuccess) {
+		if(onSuccess == undefined) {
+			// On success is optoinal, so if it was not set we set it to an empty function
+			onSuccess = () => {};
+		}
+		this.fileExportInput.onSuccess = onSuccess;
 		do_global_log("NW: export file");
 		this.fileExportInput.value = "";
 		this.exportFileExtension = fileExtension;
@@ -549,14 +578,6 @@ class NwFileManager extends BaseFileManager {
 		this.updateSaveTime();
 		this.updateTitle();
 		this.addToRecent(this.fileName);
-	}
-	saveModelAs() {
-		do_global_log("NW: save model as ... triggered");
-		this.modelSaverInput.value = "";
-		this.modelSaverInput.click();
-
-		// The following line seems to cause a flicky bug
-		//~ uploader.parentElement.removeChild(uploader);
 	}
 	loadModel() {
 		do_global_log("NW: load model");
