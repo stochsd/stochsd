@@ -7014,7 +7014,7 @@ class TableData {
 		for (let row of this.results) {
 			for (let i = 0; i < row.length; i++) {
 				let value = row[i];
-				if (value) {
+				if (value !== null) {
 					str += value.toString(); 
 				}
 				if (i != row.length-1) {
@@ -7023,7 +7023,7 @@ class TableData {
 			}
 			str += "\n";
 		}
-		console.log(str);
+		fileManager.exportFile(str, ".csv");
 	}
 }
 
