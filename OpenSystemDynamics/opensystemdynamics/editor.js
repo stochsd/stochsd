@@ -2514,7 +2514,7 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : 1),
+					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : this.dialog.lineWidth),
 					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
@@ -2690,7 +2690,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, colorFromPrimitive) {
+	getSeriesSettingsArray(wantedIds, colorFromPrimitive, lineWidth) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2702,7 +2702,7 @@ class DataGenerations {
 					countLine++;
 					seriesSettingsArray.push({
 						showLabel: true, 
-						lineWidth: 1,
+						lineWidth: lineWidth,
 						label: `${countLine}. ${this.nameGen[i][j]}`,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
@@ -2787,7 +2787,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay, this.dialog.colorFromPrimitive);
+		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay, this.dialog.colorFromPrimitive, this.dialog.lineWidth);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
@@ -2989,7 +2989,7 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
-					lineWidth: 1, 
+					lineWidth: this.dialog.lineWidth, 
 					color: "black",
 					shadow: false,
 					showLine: this.showLine,
