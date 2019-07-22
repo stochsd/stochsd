@@ -6137,6 +6137,7 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
+		this.lineWidth = 2;
 	}
 	
 	clearRemovedIds() {
@@ -6231,9 +6232,24 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderColorCheckboxHtml() {
+	renderLineWidthOptionHtml() {
 		return (`
 			<table class="modernTable">
+				<tr>
+					<td>
+					<b>&nbsp Line Width: &nbsp</b>
+						<select class="lineWidth">
+						<option value=1 ${(this.lineWidth == 1) ? "selected" : ""}>Thin</option>
+						<option value=2 ${(this.lineWidth == 2) ? "selected" : ""}>Thick</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderColorCheckboxHtml() {
+		return (`
+			<table class="modernTable" style="margin: 16px 0px">
 				<tr>
 					<td>
 					<b>&nbsp Colour From Primitive: &nbsp</b>
@@ -6294,6 +6310,11 @@ class DisplayDialog extends jqDialog {
 			</tr>
 		</table>
 		`);
+	}
+	makeApply() {
+		if ($(this.dialogContent).find(".lineWidth :selected")) {
+			this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
+		}
 	}
 	bindAxisLimitsEvents() {
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
@@ -6576,6 +6597,7 @@ class TimePlotDialog extends DisplayDialog {
 		});
 	}
 	makeApply() {
+		super.makeApply();
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
@@ -6610,6 +6632,7 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
 						${this.renderColorCheckboxHtml()}
+						${this.renderLineWidthOptionHtml()}
 					</td>
 				</tr>
 			</table>			
@@ -6806,6 +6829,7 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	makeApply() {
+		super.makeApply();
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
@@ -6839,6 +6863,7 @@ class ComparePlotDialog extends DisplayDialog {
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
 						${this.renderColorCheckboxHtml()}
+						${this.renderLineWidthOptionHtml()}
 					</td>
 				</tr>
 			</table>			
@@ -6923,12 +6948,15 @@ class XyPlotDialog extends DisplayDialog {
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
-
 		let contentHTML = `
 			<table class="invisibleTable">
 				<tr>
 					<td>${this.renderPrimitiveListHtml()}</td>
-					<td>${this.renderMarkerRadioHTML()} ${this.renderAxisLimitsHTML()}</td>
+					<td>
+						${this.renderMarkerRadioHTML()} 
+						${this.renderAxisLimitsHTML()}
+						${this.renderLineWidthOptionHtml()}
+					</td>
 				</tr>
 			</table>
 		`;
@@ -6937,7 +6965,6 @@ class XyPlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindMarkersHTML();
-
 		this.updateInterval();
 	}
 
@@ -6964,6 +6991,9 @@ class XyPlotDialog extends DisplayDialog {
 		super.updateInterval();
 		$(this.dialogContent).find(".line")[0].checked = this.lineChecked;
 		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
+	}
+	makeApply() {
+		this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
 	}
 
 	getXMin() {
