@@ -167,7 +167,7 @@ class BaseFileManager {
 	saveModelAs() {
 		let fileData = createModelFileData();
 		// Only exportFile is implementation specific (different on nwjs and electron)
-		this.exportFile(fileData, InsightMakerFileExtension, (filePath) => {
+		this.exportFile(fileData, Settings.fileExtension, (filePath) => {
 			this.fileName = filePath;
 			this.addToRecent(this.fileName);
 
@@ -270,7 +270,7 @@ class WebFileManager extends BaseFileManager {
 	saveModel() {
 		let fileData = createModelFileData();
 		
-		this.exportFile(fileData,InsightMakerFileExtension, () => {
+		this.exportFile(fileData,Settings.fileExtension, () => {
 			this.updateSaveTime();
 			this.updateTitle();
 			History.unsavedChanges = false;
@@ -300,7 +300,7 @@ class WebFileManager extends BaseFileManager {
 		openFile({
 			read: "text",
 			multiple: false,
-			accept: InsightMakerFileExtension,
+			accept: Settings.fileExtension,
 			onCompleted: (model) => {
 				this.fileName = model.name;
 				//~ this.loadModelData(model.contents);
@@ -463,7 +463,7 @@ class NwFileManager extends BaseFileManager {
 			}
 		}, false);
 		this.modelLoaderInput.type = "file";
-		this.modelLoaderInput.accept = InsightMakerFileExtension;
+		this.modelLoaderInput.accept = Settings.fileExtension;
 
 		// Prepare model saver
 		//<input type="file" nwsaveas>
@@ -472,7 +472,7 @@ class NwFileManager extends BaseFileManager {
 		this.modelSaverInput.addEventListener('change', (event) => {
 			var file = event.target.files[0];
 			if (file) {
-				this.fileName = this.appendFileExtension(file.path, InsightMakerFileExtension);
+				this.fileName = this.appendFileExtension(file.path, Settings.fileExtension);
 				let fileData = createModelFileData();
 				this.writeFile(this.fileName, fileData);
 
@@ -488,7 +488,7 @@ class NwFileManager extends BaseFileManager {
 		}, false);
 		this.modelSaverInput.type = "file";
 		this.modelSaverInput.nwsaveas = "";
-		this.modelSaverInput.accept = InsightMakerFileExtension;
+		this.modelSaverInput.accept = Settings.fileExtension;
 
 
 				// Prepare model saver

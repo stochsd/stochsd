@@ -1,4 +1,5 @@
 var Settings = {
+	fileExtension: ".ssd",
 	// Controls the zoom in NW mode
 	nwInitZoom: 0.5,
 	// The font size under the primitives
