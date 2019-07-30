@@ -176,7 +176,71 @@ function setValue2(primitive, value) {
 		valueStr = valueStr.substring(0, value.length-1);
 	}
 	valueStr = valueStr.replace(/\n/g, "\\n");
-	setValue(this.primitive, valueStr);
+	setValue(primitive, valueStr);
+	let error = checkValueErrors(primitive, valueStr);
+	primitive.setAttribute("ValueError", error ? error : "");
+	if (error) {
+		console.log(error);
+	}
+	return error;
+}
+
+const VALUE_ERROR = {
+	"VE1": "Empty Definition",
+	"VE2": "Unknown Reference",
+	"VE3": "Unused Link"
+}
+
+function ValueErrorToString(valueError) {
+	if (valueError) {
+		let errArr = valueError.split(":");
+		let errType = errArr[0];
+		let errArg = errArr[1];
+		let str = VALUE_ERROR[errType];
+		switch(errType) {
+			case("VE1"):
+				return str;
+			case("VE2"):
+				return `${str} <b>${errArg}</b>`;
+			case("VE3"):
+				return `${str} <b>${getName(findID(errArg))}</b>`;
+			default: 
+				return "Unknown error";
+		}
+	}
+}
+
+function checkValueErrors(primitive, value) {
+	// 1. Empty string
+	if (value === "") {
+		// return `Empty definition in <b>${getName(primitive)}</b>`;
+		return "VE1:";
+	}
+	// 2. Unknown reference
+	let valueRefs = value.match(/[^[]+(?=\])/g);
+	let linkedIds = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getID(lnk.source));
+	let linkedRefs = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getName(lnk.source));
+	console.log(linkedRefs);
+	if (valueRefs) {
+		for (let ref of valueRefs) {
+			if (linkedRefs.includes(ref) === false) {
+				// return `Unknown reference <b>${ref}</b> in <b>${getName(primitive)}</b>`;
+				return `VE2:${ref}`
+			}
+		}
+	}
+	
+	// 3. Unused link 
+	for(let i = 0; i < linkedIds.length; i++) {
+		let ref = linkedRefs[i];
+		if (valueRefs.includes(ref) === false) {
+			// return `Unused Link from <b>${ref}</b> in <b>${getName(primitive)}</b>`;
+			return `VE3:${linkedIds[i]}`
+		}
+	}
+
+	// No error 
+	return null;
 }
 
 /* 
