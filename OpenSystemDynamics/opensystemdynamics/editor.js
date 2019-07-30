@@ -7338,11 +7338,7 @@ class ConverterDialog extends jqDialog {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.valueField).val();
-			while(value[value.length-1] === " " || value[value.length-1] === ";" || value[value.length-1] === "\n"){
-				value = value.substring(0, value.length-1);
-			}
-			value = value.replace(/\n/g, "\\n");
-			setValue(this.primitive,value);
+			setValue2(this.primitive,value);
 			
 			// handle name
 			let oldName = getName(this.primitive);
@@ -7683,11 +7679,8 @@ class EquationEditor extends jqDialog {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
-			while(value[value.length-1] === " " || value[value.length-1] === ";" || value[value.length-1] === "\n"){
-				value = value.substring(0, value.length-1);
-			}
-			value = value.replace(/\n/g, "\\n");
-			setValue(this.primitive,value);
+			setValue2(this.primitive,value);
+			
 			
 			// handle name
 			let oldName = getName(this.primitive);

@@ -164,6 +164,21 @@ function isNameFree(newName) {
 	return true;
 }
 
+/*
+	Method: setValue2
+	sets value of primitive aswell as sets isDefined value and defineErrorMessage 
+
+
+*/
+function setValue2(primitive, value) {
+	let valueStr = value; 
+	while(valueStr[valueStr.length-1] === " " || valueStr[valueStr.length-1] === ";" || valueStr[valueStr.length-1] === "\n"){
+		valueStr = valueStr.substring(0, value.length-1);
+	}
+	valueStr = valueStr.replace(/\n/g, "\\n");
+	setValue(this.primitive, valueStr);
+}
+
 /* 
 	Method: findPrimitivesWithOutgoingLinks
 
@@ -174,7 +189,6 @@ function isNameFree(newName) {
 	An array of primitives.
 
 */
-
 function findPrimitivesWithOutgoingLinks(id) {
 	let links = primitives("Link");
 	let outgoingLinks = links.filter((p) => p.source.id == id);
