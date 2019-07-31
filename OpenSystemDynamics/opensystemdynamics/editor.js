@@ -7492,6 +7492,7 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
+					event.preventDefault();
 					this.applyChanges();
 				}
 			}
@@ -7500,6 +7501,7 @@ class EquationEditor extends jqDialog {
 		this.nameField = $(this.dialogContent).find(".nameField").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.keyCode == keyboard["enter"]) {
+				event.preventDefault();
 				this.applyChanges();
 			}
 		})
