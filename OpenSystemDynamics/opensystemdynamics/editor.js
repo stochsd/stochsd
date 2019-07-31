@@ -3384,7 +3384,7 @@ class RunTool extends BaseTool {
 			xAlert(`
 				Unable to simulate. <br/> 
 				Modelling Error on <b style="color:${color};">${name}</b>. <br/>
-				${prim.getAttribute("ValueError")}
+				${ValueErrorToString(prim.getAttribute("ValueError"))}
 			`);
 			unselect_all();
 			let vis = findVisualByID(prim.id);
