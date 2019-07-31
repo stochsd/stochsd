@@ -733,7 +733,6 @@ class BaseObject {
 		this.name_radius = 30;
 		this.superClass = "baseobject";
 		this.color = defaultStroke;
-		this.isDefined = false;
 		// Warning: this.primitve can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
@@ -990,9 +989,9 @@ class OnePointer extends BaseObject {
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		
-		this.checkIsDefined();
+		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons) {
-			this.icons.set("questionmark", (this.isDefined ? "hidden" : "visible"));
+			this.icons.set("questionmark", (prim.getAttribute("ValueError") ? "visible" : "hidden"));
 		}
 
 		if ( ! this.is_ghost) {
@@ -1001,32 +1000,6 @@ class OnePointer extends BaseObject {
 		
 
 		this.afterUpdate();
-	}
-	checkIsDefined() {
-		let id = (this.is_ghost) ? this.primitive.getAttribute("Source") : this.id; 
-		let primitive = findID(id);
-		
-		
-		if(primitive) {
-			let value = getValue(primitive);
-			// console.log(id);
-			// console.log(value);	
-			if (value !== null) {
-				// Check if is value is empty 
-				this.isDefined = (value !== "");
-				if ( ! this.isDefined) {
-					return;
-				}
-
-				// Check if [other_values] are accounted for 
-				let valueRefs = value.match(/[^[]+(?=\])/g);
-				if (valueRefs) {
-					// console.log(valueRefs);
-				}
-				
-			}
-		}
-
 	}
 	updateGhosts() {
 		let ghostIds = (primitives("Ghost").filter(gPrim => {
@@ -2125,11 +2098,9 @@ class FlowVisual extends BaseConnection {
 		}
 
 		if(this.primitive && this.icons) {
-			if(getValue(this.primitive) === "") {
-				this.isDefined = false;
+			if(this.primitive.getAttribute("ValueError")) {
 				this.icons.set("questionmark", "visible");
 			} else {
-				this.isDefined = true;
 				this.icons.set("questionmark", "hidden");
 			}
 		}
@@ -3389,40 +3360,37 @@ class BaseTool {
 	}
 }
 
-function getAllNonDefinedVisual() {
-	for (let id in object_array) {
-		let prim = findID(id);
-		let vis = object_array[id];
-		let typesToCheck = ["stock", "variable", "constant", "converter"];
-		if (prim && vis && typesToCheck.includes(vis.type) && ! vis.is_ghost && ! vis.isDefined) {
-			return vis;
-		}
+function getAllValueErrorPrimitive() {
+	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError"));
+	return ValueErrorPrims;
+}
+
+function findVisualByID(id) {
+	let visual = object_array[id];
+	if (visual === undefined) {
+		visual = connection_array[id];
 	}
-	for (let id in connection_array) {
-		let prim = findID(id);
-		let vis = connection_array[id];
-		if (prim && vis && vis.type == "flow" && ! vis.isDefined) {
-			return vis;
-		}
-	}
-	return null;
+	return visual;
 }
 
 class RunTool extends BaseTool {
 	static enterTool() {
 		/* Check that all primitives are defined */
-		let nonDefinedVis = getAllNonDefinedVisual();
-		if (nonDefinedVis) {
-			let type = type_basename[nonDefinedVis.type]; 
-			let name = nonDefinedVis.primitive.getAttribute("name");
-			let color = nonDefinedVis.color ? nonDefinedVis.color : "black";
+		let valueErrorPrims = getAllValueErrorPrimitive();
+		if (valueErrorPrims.length !== 0) {
+			let prim = valueErrorPrims[0];
+			let name = prim.getAttribute("name");
+			let color = prim.getAttribute("color");
 			xAlert(`
-				Modelling Error. <br/>
 				Unable to simulate. <br/> 
-				The ${type} <b style="color:${color};">${name}</b> is undefined
+				Modelling Error on <b style="color:${color};">${name}</b>. <br/>
+				${prim.getAttribute("ValueError")}
 			`);
 			unselect_all();
-			nonDefinedVis.select();
+			let vis = findVisualByID(prim.id);
+			if (vis) {
+				vis.select();
+			}
 		} else {
 			RunResults.runPauseSimulation();
 		}
