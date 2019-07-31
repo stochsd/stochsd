@@ -179,9 +179,6 @@ function setValue2(primitive, value) {
 	setValue(primitive, valueStr);
 	let error = checkValueErrors(primitive, valueStr);
 	primitive.setAttribute("ValueError", error ? error : "");
-	if (error) {
-		console.log(error);
-	}
 	return error;
 }
 
@@ -220,7 +217,6 @@ function checkValueErrors(primitive, value) {
 	let valueRefs = value.match(/[^[]+(?=\])/g);
 	let linkedIds = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getID(lnk.source));
 	let linkedRefs = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getName(lnk.source));
-	console.log(linkedRefs);
 	if (valueRefs) {
 		for (let ref of valueRefs) {
 			if (linkedRefs.includes(ref) === false) {
