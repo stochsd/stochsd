@@ -166,9 +166,7 @@ function isNameFree(newName) {
 
 /*
 	Method: setValue2
-	sets value of primitive aswell as sets isDefined value and defineErrorMessage 
-
-
+	sets value of primitive aswell as sets ValueError
 */
 function setValue2(primitive, value) {
 	let valueStr = value; 
