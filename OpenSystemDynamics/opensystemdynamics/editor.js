@@ -989,28 +989,54 @@ class OnePointer extends BaseObject {
 	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
-
-		let id = (this.is_ghost) ? this.primitive.getAttribute("Source") : this.id; 
-		let primitive = findID(id);
-
-		if(primitive && this.icons) {
-			this.isDefined = (getValue(primitive) !== "");
+		
+		this.checkIsDefined();
+		if (this.icons) {
 			this.icons.set("questionmark", (this.isDefined ? "hidden" : "visible"));
 		}
 
-		// Update ghosts of object 
 		if ( ! this.is_ghost) {
-			let ghostIds = (primitives("Ghost").filter(gPrim => {
-				return gPrim.getAttribute("Source") == this.id
-			})).map(g => g.value.getAttribute("id"));
-			ghostIds.map(gId => { 
-				if (object_array[gId]) {
-					object_array[gId].update(); 
-				}
-			});
+			this.updateGhosts();
 		}
+		
 
 		this.afterUpdate();
+	}
+	checkIsDefined() {
+		let id = (this.is_ghost) ? this.primitive.getAttribute("Source") : this.id; 
+		let primitive = findID(id);
+		
+		
+		if(primitive) {
+			let value = getValue(primitive);
+			// console.log(id);
+			// console.log(value);	
+			if (value !== null) {
+				// Check if is value is empty 
+				this.isDefined = (value !== "");
+				if ( ! this.isDefined) {
+					return;
+				}
+
+				// Check if [other_values] are accounted for 
+				let valueRefs = value.match(/[^[]+(?=\])/g);
+				if (valueRefs) {
+					// console.log(valueRefs);
+				}
+				
+			}
+		}
+
+	}
+	updateGhosts() {
+		let ghostIds = (primitives("Ghost").filter(gPrim => {
+			return gPrim.getAttribute("Source") == this.id
+		})).map(g => g.value.getAttribute("id"));
+		ghostIds.map(gId => { 
+			if (object_array[gId]) {
+				object_array[gId].update(); 
+			}
+		});
 	}
 	updatePosition() {
 		this.update();
@@ -6033,6 +6059,37 @@ function xAlert(message,closeHandler) {
 	dialog.show();
 }
 
+
+class StayLeaveDialog extends jqDialog {
+	constructor(message, title, dialogToLeave, closeHandler) {
+		super();
+		this.setTitle(title);
+		this.message = message;
+		this.setHtml(message);
+		this.closeHandler = closeHandler;
+		this.answer = "stay";
+		this.dialogToLeave = dialogToLeave;
+	}
+	afterClose() {
+		if (this.closeHandler) {
+			this.closeHandler(this.answer, dialog);
+		}
+	}
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			"Stay":() => {
+				this.answer = "stay";
+				$(this.dialog).dialog('close');
+			},
+			"Leave":() => {
+				this.answer = "leave";
+				$(this.dialog).dialog('close');
+				$(this.dialogToLeave).dialog('close');
+			}
+		};
+	}
+}
+
 class YesNoDialog extends jqDialog {
 	constructor(message,closeHandler) {
 		super();
@@ -7431,7 +7488,7 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
-		
+		this.StayLeaveWindow = new StayLeaveDialog("No Message", "No Title", this.dialog);
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -7675,11 +7732,33 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
+	applyChanges() {
+		let err = this.makeApply();
+		if (err) {
+			this.StayLeaveWindow.setTitle(`ValueError: ${err}`);
+			this.StayLeaveWindow.setHtml(`
+				${ValueErrorToString(err)}
+				</br></br>
+				Are you sure you want to leave?
+			`); 
+			this.StayLeaveWindow.show();
+		} else {
+			$(this.dialog).dialog('close');
+		}
+		
+		// We add a delay to make sure we closed first
+		
+		setTimeout(() => {
+			History.storeUndoState();
+			updateInfoBar();
+		}, 200);
+
+	}
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
-			setValue2(this.primitive,value);
+			let err = setValue2(this.primitive, value);
 			
 			
 			// handle name
@@ -7706,6 +7785,8 @@ class EquationEditor extends jqDialog {
 			if (visualObject) {
 				visualObject.update();
 			}
+			
+			return err;
 		}
 	}
 }
