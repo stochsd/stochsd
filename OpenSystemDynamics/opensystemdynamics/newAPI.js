@@ -221,7 +221,7 @@ function checkValueErrors(primitive, value) {
 		for (let ref of valueRefs) {
 			if (linkedRefs.includes(ref) === false) {
 				// return `Unknown reference <b>${ref}</b> in <b>${getName(primitive)}</b>`;
-				return `VE2:${ref}`
+				return `VE2:${ref}`;
 			}
 		}
 	}
@@ -229,9 +229,13 @@ function checkValueErrors(primitive, value) {
 	// 3. Unused link 
 	for(let i = 0; i < linkedIds.length; i++) {
 		let ref = linkedRefs[i];
-		if (valueRefs.includes(ref) === false) {
-			// return `Unused Link from <b>${ref}</b> in <b>${getName(primitive)}</b>`;
-			return `VE3:${linkedIds[i]}`
+		if (valueRefs) {
+			if (valueRefs.includes(ref) === false) {
+				// return `Unused Link from <b>${ref}</b> in <b>${getName(primitive)}</b>`;
+				return `VE3:${linkedIds[i]}`;
+			}
+		} else {
+			return `VE3:${linkedIds[i]}`;
 		}
 	}
 
