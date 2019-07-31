@@ -183,7 +183,7 @@ function setValue2(primitive, value) {
 const VALUE_ERROR = {
 	"VE1": "Empty Definition",
 	"VE2": "Unknown Reference",
-	"VE3": "Unused Link"
+	"VE3": "Unused Link from"
 }
 
 function ValueErrorToString(valueError) {
@@ -196,7 +196,7 @@ function ValueErrorToString(valueError) {
 			case("VE1"):
 				return str;
 			case("VE2"):
-				return `${str} <b>${errArg}</b>`;
+				return `${str} <b>[${errArg}]</b>`;
 			case("VE3"):
 				return `${str} <b>${getName(findID(errArg))}</b>`;
 			default: 

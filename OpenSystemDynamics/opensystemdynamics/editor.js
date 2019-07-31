@@ -3381,11 +3381,12 @@ class RunTool extends BaseTool {
 			let prim = valueErrorPrims[0];
 			let name = prim.getAttribute("name");
 			let color = prim.getAttribute("color");
-			xAlert(`
-				Unable to simulate. <br/> 
-				Modelling Error on <b style="color:${color};">${name}</b>. <br/>
-				${ValueErrorToString(prim.getAttribute("ValueError"))}
+			let alert = new XAlertDialog(`
+				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
+				&nbsp &nbsp ${ValueErrorToString(prim.getAttribute("ValueError"))}
 			`);
+			alert.setTitle("Unable to Simulate");
+			alert.show();
 			unselect_all();
 			let vis = findVisualByID(prim.id);
 			if (vis) {
@@ -7712,7 +7713,7 @@ class EquationEditor extends jqDialog {
 	applyChanges() {
 		let err = this.makeApply();
 		if (err) {
-			this.StayLeaveWindow.setTitle(`ValueError: ${err}`);
+			this.StayLeaveWindow.setTitle("Definition Error");
 			this.StayLeaveWindow.setHtml(`
 				${ValueErrorToString(err)}
 				</br></br>
