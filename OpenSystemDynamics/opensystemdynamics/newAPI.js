@@ -216,7 +216,7 @@ function checkValueErrors(primitive, value) {
 	// 2. Unknown reference
 	let valueRefs = value.match(/[^[]+(?=\])/g);
 	let linkedIds = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getID(lnk.source));
-	let linkedRefs = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getName(lnk.source));
+	let linkedRefs = linkedIds.map(id => getName(findID(id)));
 	if (valueRefs) {
 		for (let ref of valueRefs) {
 			if (linkedRefs.includes(ref) === false) {
