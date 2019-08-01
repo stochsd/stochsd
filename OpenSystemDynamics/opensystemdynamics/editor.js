@@ -1190,6 +1190,8 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		let VE = checkValueErrors(this.primitive, getValue(this.primitive));
+		this.primitive.setAttribute("ValueError", VE ? VE : "");
 		this.namePosList = [[0, 29], [22, 5], [0, -19], [-22, 5]];
 	}
 
@@ -1358,6 +1360,8 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		let VE = checkValueErrors(this.primitive, getValue(this.primitive));
+		this.primitive.setAttribute("ValueError", VE ? VE : "");
 		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
 	}
 
@@ -1401,7 +1405,7 @@ class VariableVisual extends BasePrimitive {
 
 class ConstantVisual extends VariableVisual {
 	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras)
+		super(id, type, pos, extras);
 	}
 
 	getImage() {
@@ -1742,6 +1746,8 @@ class FlowVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
+		let VE = checkValueErrors(this.primitive, getValue(this.primitive));
+		this.primitive.setAttribute("ValueError", VE ? VE : "");
 		this.namePosList = [[0,36],[28,5],[0,-30],[-28,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
