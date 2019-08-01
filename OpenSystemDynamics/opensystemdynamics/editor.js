@@ -5471,7 +5471,8 @@ function updateRecentsMenu() {
 }
 
 function updateInfoBar() {
-	let infoBar = $("#infoBar");
+	let infoDef = $("#infoDefinition");
+	let infoVE = $("#infoValueError");
 	let selected_hash = get_selected_root_objects();
 	let selected_array = [];
 	for (let key in selected_hash) {
@@ -5479,25 +5480,29 @@ function updateInfoBar() {
 	}
 
 	if (selected_array == 0) {
-		infoBar.html("Nothing selected");
+		infoDef.html("Nothing selected");
+		infoVE.html("");
 	} else if (selected_array.length == 1) {
 		let selected = selected_array[0];
 		primitive = selected_array[0].primitive;
 		let name = primitive.getAttribute("name");
-		let definition = "";
-		definition = removeNewLines(getValue(primitive));
-		
-		if (definition != "") {
-			infoBar.html(`[${name}] = ${definition}`);
+		let definition = getValue(primitive);
+		let VE = primitive.getAttribute("ValueError");
+		infoVE.html(VE ? `<u>Definition Error:</u> ${ValueErrorToString(VE)}` : "" );
+
+		definitionNoLines = removeNewLines(definition);
+		if (definitionNoLines != "") {
+			infoDef.html(`[${name}] = ${definitionNoLines}`);
 		} else {
 			let type = selected.type;
 			
 			// Make first letter uppercase
 			type = type.charAt(0).toUpperCase() + type.slice(1); 
-			infoBar.html(`${type} selected`);
+			infoDef.html(`${type} selected`);
 		}
 	} else {
-		infoBar.html(`${selected_array.length} objects selected`)
+		infoDef.html(`${selected_array.length} objects selected`);
+		infoVE.html("");
 	}
 }
 
