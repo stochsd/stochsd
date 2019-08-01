@@ -175,7 +175,7 @@ function setValue2(primitive, value) {
 	}
 	valueStr = valueStr.replace(/\n/g, "\\n");
 	setValue(primitive, valueStr);
-	let error = checkValueErrors(primitive, valueStr);
+	let error = checkValueError(primitive, valueStr);
 	primitive.setAttribute("ValueError", error ? error : "");
 	return error;
 }
@@ -205,7 +205,7 @@ function ValueErrorToString(valueError) {
 	}
 }
 
-function checkValueErrors(primitive, value) {
+function checkValueError(primitive, value) {
 	// 1. Empty string
 	if (value === "") {
 		// return `Empty definition in <b>${getName(primitive)}</b>`;
