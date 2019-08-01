@@ -762,6 +762,14 @@ class BaseObject {
 		}
 	}
 
+	updateValueError() {
+		if (this.type === "stock" || this.type === "variable" || this.type === "constant" || this.type === "flow") {
+			let VE = checkValueError(this.primitive, getValue(this.primitive));
+			this.primitive.setAttribute("ValueError", VE ? VE : "");
+			this.update();
+		}
+	}
+
 	getBoundRect() {
 		// Override this function
 		// This functions returns a hash map, e.i. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}
@@ -1190,8 +1198,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		let VE = checkValueError(this.primitive, getValue(this.primitive));
-		this.primitive.setAttribute("ValueError", VE ? VE : "");
+		this.updateValueError();
 		this.namePosList = [[0, 29], [22, 5], [0, -19], [-22, 5]];
 	}
 
@@ -1360,8 +1367,7 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		let VE = checkValueError(this.primitive, getValue(this.primitive));
-		this.primitive.setAttribute("ValueError", VE ? VE : "");
+		this.updateValueError();
 		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
 	}
 
@@ -1746,8 +1752,7 @@ class FlowVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
-		let VE = checkValueError(this.primitive, getValue(this.primitive));
-		this.primitive.setAttribute("ValueError", VE ? VE : "");
+		this.updateValueError();
 		this.namePosList = [[0,36],[28,5],[0,-30],[-28,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
@@ -3160,12 +3165,25 @@ class LinkVisual extends BaseConnection {
 		this.click_area.y4 = this.curve.y4;
 		this.click_area.update();
 	}
+	setStartAttach(new_start_attach) {
+		super.setStartAttach(new_start_attach)
+		if (this._end_attach) {
+			this._end_attach.updateValueError();
+		}
+	}
 	setEndAttach(new_end_attach) {
+		let old_end_attach = this._end_attach;
 		super.setEndAttach(new_end_attach);
 		if(new_end_attach != null && new_end_attach.getType() == "stock") {
 			this.dashLine();
 		} else {
 			this.undashLine();
+		}
+		if (old_end_attach) {
+			old_end_attach.updateValueError();
+		}
+		if (new_end_attach) {
+			new_end_attach.updateValueError();
 		}
 	}
 
