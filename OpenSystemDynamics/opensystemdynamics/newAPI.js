@@ -213,7 +213,13 @@ function checkValueError(primitive, value) {
 	}
 	// 2. Unknown reference
 	let valueRefs = value.match(/[^[]+(?=\])/g);
-	let linkedIds = primitives("Link").filter(l => l.target.value.id == primitive.id).map(lnk => getID(lnk.source));
+	let linkedIds = primitives("Link").filter(l => {
+		if (l.target) {
+			return l.target.value.id == primitive.id
+		} else {
+			return false;
+		}		
+	}).map(lnk => getID(lnk.source));
 	let linkedRefs = linkedIds.map(id => getName(findID(id)));
 	if (valueRefs) {
 		for (let ref of valueRefs) {
