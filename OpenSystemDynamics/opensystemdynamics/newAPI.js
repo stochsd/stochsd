@@ -219,7 +219,7 @@ function checkValueError(primitive, value) {
 		} else {
 			return false;
 		}		
-	}).map(lnk => getID(lnk.source));
+	}).filter(link => Boolean(link.source)).map(lnk => getID(lnk.source));
 	let linkedRefs = linkedIds.map(id => getName(findID(id)));
 	if (valueRefs) {
 		for (let ref of valueRefs) {
