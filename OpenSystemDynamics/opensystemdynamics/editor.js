@@ -7514,7 +7514,8 @@ class EquationEditor extends jqDialog {
 						<div class="table-cell" style="width: 300px">
 							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
 								<b>Name:</b><br/>
-								<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/><br/>
+								<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
+								<div class="nameWarningDiv" style="color: red;"></div><br/>
 								<b>Definition:</b><br/>
 								<textarea class="valueField enterApply" style="width: 100%; height: 70px;"></textarea>
 								<br/>
@@ -7528,13 +7529,25 @@ class EquationEditor extends jqDialog {
 				</div>
 			</div>
     	<div class="table-cell">
-    		<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
+    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
 				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>
-  		</div>
-			</div>
+  			</div>
+		</div>
 		`);
+
+		$(this.dialogContent).find(".nameField").keyup((event) => {
+			let newName = stripBrackets($(event.target).val());
+			let nameFree = isNameFree(newName, this.primitive.id);
+			if (nameFree) {
+				$(event.target).css("background-color", "white");
+				$(this.dialogContent).find(".nameWarningDiv").html("");
+			} else {
+				$(event.target).css("background-color", "pink");
+				$(this.dialogContent).find(".nameWarningDiv").html(`Name <b>${newName}</b> is taken.`);
+			}
+		});
 
 		$(this.dialogContent).find(".enterApply").keydown((event) => {
 			if (! event.shiftKey) {
@@ -7626,6 +7639,8 @@ class EquationEditor extends jqDialog {
 	
 	}
 	open(id,defaultFocusSelector = null) {
+		$(this.dialogContent).find(".nameField").css("background-color", "white");
+		$(this.dialogContent).find(".nameWarningDiv").html("");
 		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
 			return;

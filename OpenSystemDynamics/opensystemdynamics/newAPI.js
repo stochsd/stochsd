@@ -151,11 +151,12 @@ function propogateGhosts(cell) {
 	Returns false if taken, and true if free 
 
 */
-function isNameFree(newName) {
+function isNameFree(newName, exepctionId) {
 	let prims = primitives();
 	for(let prim of prims) {
 		let name = getName(prim);
-		if (newName === name) {
+		let id = prim.id;
+		if (newName === name && exepctionId !== id) {
 			return false;
 		}
 	}
