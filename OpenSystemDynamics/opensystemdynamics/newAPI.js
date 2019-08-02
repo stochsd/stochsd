@@ -152,13 +152,11 @@ function propogateGhosts(cell) {
 
 */
 function isNameFree(newName) {
-	for(let obj in object_array) {
-		let prim = object_array[obj].primitive;
-		if (prim) {
-			let otherObjectName = getName(prim);
-			if (otherObjectName === newName) {
-				return false;
-			}
+	let prims = primitives();
+	for(let prim of prims) {
+		let name = getName(prim);
+		if (newName === name) {
+			return false;
 		}
 	}
 	return true;
