@@ -2671,7 +2671,7 @@ class DataGenerations {
 		// Add new 
 		this.append(ids, results);
 	}
-	getSeriesArray(wantedIds) {
+	getSeriesArray(wantedIds, numberedLines) {
 		let seriesArray = [];
 		let lineCount = 0;
 		// Loop generations 
@@ -2688,7 +2688,8 @@ class DataGenerations {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
-						if ((k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
+						let showNumHere = (k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx); 
+						if (showNumHere && numberedLines) {
 							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
 						} else {
 							tmpArr.push([time, value, null]);
@@ -2700,7 +2701,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, colorFromPrimitive, lineWidth) {
+	getSeriesSettingsArray(wantedIds, numberedLines, colorFromPrimitive, lineWidth) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2710,10 +2711,13 @@ class DataGenerations {
 				let id = currentIds[j];
 				if(wantedIds.includes(id)) {
 					countLine++;
+					let label = "";
+					label += (numberedLines ? `${countLine}. ` : "");
+					label += this.nameGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
 						lineWidth: lineWidth,
-						label: `${countLine}. ${this.nameGen[i][j]}`,
+						label: label,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						shadow: false,
@@ -2792,12 +2796,17 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		this.serieArray = [];
 		
 		// Make time series
-		this.serieArray = this.gens.getSeriesArray(idsToDisplay);
+		this.serieArray = this.gens.getSeriesArray(idsToDisplay, this.dialog.numberedLines);
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		this.serieSettingsArray = this.gens.getSeriesSettingsArray(idsToDisplay, this.dialog.colorFromPrimitive, this.dialog.lineWidth);
+		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
+			idsToDisplay, 
+			this.dialog.numberedLines, 
+			this.dialog.colorFromPrimitive, 
+			this.dialog.lineWidth
+		);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 		
@@ -6917,6 +6926,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
+		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
@@ -6946,6 +6956,7 @@ class ComparePlotDialog extends DisplayDialog {
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
+						${this.renderNumberedLinesCheckboxHtml()}
 						${this.renderColorCheckboxHtml()}
 						${this.renderLineWidthOptionHtml()}
 					</td>
