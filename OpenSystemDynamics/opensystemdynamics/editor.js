@@ -3185,6 +3185,12 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 
+	clean() {
+		// remove end_attach to make sure end_attach value error is updated 
+		this.setEndAttach(null);
+		super.clean();
+	}
+
 	setColor(color) {
 		this.color = color;
 		this.primitive.setAttribute("color", this.color);
