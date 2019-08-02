@@ -2493,7 +2493,8 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 				let row = this.data.results[i];
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
-				if (i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx)) {
+				let showNumHere = i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx);
+				if (showNumHere && this.dialog.numberedLines) {
 					serie.push([time, value, Math.floor(lineCount).toString()]);
 				} else {
 					serie.push([time, value, null]);
@@ -2516,12 +2517,15 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			} else {
 				this.serieArray.push(makeSerie(index, counter));
 			}
-
+			let label = "";
+			label += this.dialog.numberedLines ? `${counter}. ` : "";
+			label += this.namesToDisplay[i];
+			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
 					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : this.dialog.lineWidth),
-					label: `${counter}. ${this.namesToDisplay[i]}${((sides.includes("R")) ? ((sides[i] === "L") ? " - L": " - R") : (""))}`, 
+					label: label, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
 					color: (this.dialog.colorFromPrimitive ? this.colorsToDisplay[i] : undefined),
@@ -6194,6 +6198,7 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
+		this.numberedLines = true;
 		this.lineWidth = 2;
 	}
 	
@@ -6284,6 +6289,18 @@ class DisplayDialog extends jqDialog {
 					<td>
 						Auto
 						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	renderNumberedLinesCheckboxHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+						<b>&nbsp Numbered Lines: &nbsp</b>
+						<input class="NumberedLines enterApply" type="checkbox" ${checkedHtmlAttribute(this.numberedLines)}>
 					</td>
 				</tr>
 			</table>
@@ -6666,6 +6683,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
+		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
 
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
@@ -6695,6 +6713,7 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
+						${this.renderNumberedLinesCheckboxHtml()}
 						${this.renderColorCheckboxHtml()}
 						${this.renderLineWidthOptionHtml()}
 					</td>
