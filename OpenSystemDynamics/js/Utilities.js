@@ -85,7 +85,7 @@ function validPrimitiveName(name, primitive) {
 		if (name.length > 0 && (!(/[\[\]\(\)\{\}\<\>\'\"]/.test(name)))) {
 			return true;
 		} else {
-			mxUtils.alert(getText("Primitive names cannot contain brackets, parenthesis, or quotes."));
+			// mxUtils.alert(getText("Primitive names cannot contain brackets, parenthesis, or quotes."));
 			return false;
 		}
 	} else {

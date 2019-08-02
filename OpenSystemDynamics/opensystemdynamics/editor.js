@@ -7540,13 +7540,20 @@ class EquationEditor extends jqDialog {
 		$(this.dialogContent).find(".nameField").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
-			if (nameFree) {
+			let validName = validPrimitiveName(newName, this.primitive);
+			if (nameFree && validName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".nameWarningDiv").html("");
 			} else {
 				$(event.target).css("background-color", "pink");
-				$(this.dialogContent).find(".nameWarningDiv").html(`Name <b>${newName}</b> is taken.`);
-			}
+				if (! nameFree) {
+					$(this.dialogContent).find(".nameWarningDiv").html(`Name <b>${newName}</b> is taken.`);
+				} else if (newName === "") {
+					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot be empty.`);
+				} else if (! validName) {
+					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot contain brackets, parentheses, or quotes`);
+				}
+			} 
 		});
 
 		$(this.dialogContent).find(".enterApply").keydown((event) => {
@@ -7786,12 +7793,11 @@ class EquationEditor extends jqDialog {
 			let value = $(this.dialogContent).find(".valueField").val();
 			let err = setValue2(this.primitive, value);
 			
-			
 			// handle name
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
 			if (oldName != newName) {
-				if (isNameFree(newName)) {
+				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
 					setName(this.primitive, newName);
 					changeReferencesToName(this.primitive.id, oldName, newName);
 				}
