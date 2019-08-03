@@ -234,6 +234,12 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
 			width: 600px;
 			height: 400px;
 		}
+		.infoBox {
+			background: #f0f0f0;
+			margin: 6px;
+			padding: 6px 18px;
+			min-width: 140px;
+		}
 	</style>
 
 
@@ -514,11 +520,12 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
 			</div> <!-- End of runControllArea -->
 		</div> <!-- End of toolPanel-->
 
-		<div id="infoBar" style="display:flex; margin: 6px; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">
-			<div id="infoDefinition" style="flex: 0 0 50%; float:left; width: 50%; margin: 0;" >
+		<div id="infoBar" style="display:flex; margin: 0px; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">
+			<div id="infoDefinition" class="infoBox" style="float:left;" title="Selection" >
 				&nbsp 
 			</div>
-			<div id="infoValueError" style="flex: 1; float:right; width: 50%; margin: 0;" >
+			<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
+			<div id="infoValueError" class="infoBox" style=" color: red; float:right;" title="Definition Error">
 				&nbsp 
 			</div>
 		</div>

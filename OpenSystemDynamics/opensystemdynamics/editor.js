@@ -5523,7 +5523,7 @@ function updateInfoBar() {
 		let name = primitive.getAttribute("name");
 		let definition = getValue(primitive);
 		let VE = primitive.getAttribute("ValueError");
-		infoVE.html(VE ? `<u>Definition Error:</u> ${ValueErrorToString(VE)}` : "" );
+		infoVE.html(VE ? ValueErrorToString(VE) : "" );
 
 		definitionNoLines = removeNewLines(definition);
 		if (definitionNoLines != "") {
