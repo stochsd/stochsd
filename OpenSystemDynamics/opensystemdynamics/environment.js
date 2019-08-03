@@ -131,7 +131,6 @@ class NwZoomController {
 		this.nwWindow.zoomLevel = loadedZoomLevel;
 	}
 }
-NwZoomController.init();
 
 class BaseFileManager {
 	constructor() {
@@ -678,6 +677,7 @@ class NwEnvironment extends BaseEnvironment {
 		super()
 		nwController.init();
 		nwController.maximize();
+		NwZoomController.init();
 	}
 	ready() {
 		$("#btn_zoom_in").click(function () {
