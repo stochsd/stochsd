@@ -195,9 +195,9 @@ function ValueErrorToString(valueError) {
 			case("VE1"):
 				return str;
 			case("VE2"):
-				return `${str} <b>[${errArg}]</b>`;
+				return `${str} [${errArg}]`;
 			case("VE3"):
-				return `${str} <b>${getName(findID(errArg))}</b>`;
+				return `${str} ${getName(findID(errArg))}`;
 			default: 
 				return "Unknown error";
 		}
