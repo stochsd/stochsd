@@ -2820,7 +2820,7 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>Compare Plot</b><br/> No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>Compare Simulations Plot</b><br/> No data. Run to create data!";
 			return;
 		}
 		$(this.chartDiv).empty();
