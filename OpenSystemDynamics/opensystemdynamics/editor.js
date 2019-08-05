@@ -3402,7 +3402,7 @@ class BaseTool {
 }
 
 function getAllValueErrorPrimitive() {
-	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError")).filter(v => v.value.nodeName !== "Ghost");
+	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError")).filter(v => ! isPrimitiveGhost(v));
 	return ValueErrorPrims;
 }
 
