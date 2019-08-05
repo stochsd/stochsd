@@ -5520,6 +5520,9 @@ function updateInfoBar() {
 	} else if (selected_array.length == 1) {
 		let selected = selected_array[0];
 		primitive = selected_array[0].primitive;
+		if (selected.is_ghost) {
+			primitive = findID(primitive.getAttribute("Source"));
+		}
 		let name = primitive.getAttribute("name");
 		let definition = getValue(primitive);
 		let VE = primitive.getAttribute("ValueError");
@@ -5532,8 +5535,22 @@ function updateInfoBar() {
 			let type = selected.type;
 			
 			// Make first letter uppercase
-			type = type.charAt(0).toUpperCase() + type.slice(1); 
-			infoDef.html(`${type} selected`);
+			let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+			switch(type) {
+				case("numberbox"):
+					let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
+					infoDef.html(`Numberbox: Value of [${targetName}]`);
+				break;
+				case("timeplot"):
+				case("compareplot"):
+				case("table"):
+				case("xyplot"):
+					let names = selected.dialog.displayIdList.map(findID).map(getName);
+					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
+				break;
+				default: 
+					infoDef.html(`${Type} selected`);
+			}
 		}
 	} else {
 		infoDef.html(`${selected_array.length} objects selected`);
