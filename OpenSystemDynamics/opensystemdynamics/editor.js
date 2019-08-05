@@ -3542,7 +3542,6 @@ class NumberboxTool extends OnePointCreateTool {
 			ToolBox.setTool("mouse");
 			return;
 		}
-		console.log(selected_ids);
 		if (isPrimitiveGhost(findID(selected_ids[0]))) {
 			this.targetPrimitive = findID(selected_ids[0]).getAttribute("Source");
 		} else {
