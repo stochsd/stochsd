@@ -15,6 +15,7 @@ var macroDialog;
 var equationList;
 var debugDialog;
 var aboutDialog;
+var thirdPartyLicensesDialog;
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
@@ -4910,6 +4911,9 @@ $(document).ready(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_thirdparty").click(function() {
+		thirdPartyLicensesDialog.show();
+	});
 	$("#btn_restart").click(function() {
 		saveChangedAlert(function() {
 			applicationReload();
@@ -4940,6 +4944,7 @@ $(document).ready(function() {
 	equationList = new EquationListDialog();
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
+	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
@@ -7502,7 +7507,18 @@ class DebugDialog extends jqDialog {
 	}
 }
 
-class AboutDialog extends jqDialog {
+class CloseDialog extends jqDialog {
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			"Close":() =>
+			{
+				$(this.dialog).dialog('close');
+			}
+		};
+	}
+}
+
+class AboutDialog extends CloseDialog {
 	constructor() {
 		super();
 		this.setTitle("About");
@@ -7518,13 +7534,58 @@ class AboutDialog extends jqDialog {
 			Mail: magnus.ja.gustafsson@gmail.com.
 		`);
 	}
-	beforeCreateDialog() {
-		this.dialogParameters.buttons = {
-			"Close":() =>
+}
+
+class ThirdPartyLicensesDialog extends CloseDialog {
+	constructor() {
+		super();
+		this.setTitle("Third-party licenses");
+		this.thirdparties = [
 			{
-				$(this.dialog).dialog('close');
+				"name":"Insightmaker",
+				"links": ["https://github.com/scottfr/insightmaker"],
+				"typeoflicense": "",
+				"copyright": "Copyright 2013 ..."
+			},
+			{
+				"name": "jStat",
+				"links": ["https://github.com/jstat/jstat"],
+				"typeoflicense": "MIT License",
+				"copyright": `Copyright (c) 2013 jStat
+
+				Permission is hereby granted, free of charge, to any person obtaining a copy
+				of this software and associated documentation files (the "Software"), to deal
+				in the Software without restriction, including without limitation the rights
+				to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+				copies of the Software, and to permit persons to whom the Software is
+				furnished to do so, subject to the following conditions:
+				
+				The above copyright notice and this permission notice shall be included in
+				all copies or substantial portions of the Software.
+				
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+				LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+				OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+				THE SOFTWARE.`
 			}
-		};
+		];
+		let html = "";
+		for (let party of this.thirdparties) {
+			html += (`
+				<div>	
+					<h1>${party.name}</h1>
+					<ul>
+						${party.links.map(lnks => {`<li>${lnks}</li>`})}
+					</ul>
+					<b>${party.typeoflicense}</b></br>
+					${party.copyright}
+				</div>
+			`);
+		}
+		this.setHtml(html);
 	}
 }
 
