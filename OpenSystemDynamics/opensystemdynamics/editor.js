@@ -2582,7 +2582,10 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.rightAxisLabel,
 					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
-					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax()
+					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax(),
+					tickOptions: {
+						showGridline: false
+					}
 				}
 			},
 			  legend: {
