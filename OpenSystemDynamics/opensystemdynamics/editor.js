@@ -4982,6 +4982,7 @@ function find_end_connections(primitive) {
 }
 	
 function stochsd_delete_primitive (id) {
+	let numboxesIds = primitives("Numberbox").filter(n => n.getAttribute("Target") == id).map(np => np.id);
 	var stochsd_object = get_object(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
@@ -4994,6 +4995,7 @@ function stochsd_delete_primitive (id) {
 	} else {
 		do_global_log("primitive with id "+id+" does not exist");
 	}
+	numboxesIds.map(stochsd_delete_primitive);
 }
 
 function isLocal() {
