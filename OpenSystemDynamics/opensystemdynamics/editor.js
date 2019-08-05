@@ -785,14 +785,14 @@ class BaseObject {
 	}
 
 	clean() {
-			// Clean all children
-			let children = getChildren(this.id);
-			for(let id in children) {
-				children[id].clean();
-				delete object_array[id];
-			}
-			
-			this.clearImage();
+		// Clean all children
+		let children = getChildren(this.id);
+		for(let id in children) {
+			children[id].clean();
+			delete object_array[id];
+		}
+		
+		this.clearImage();
 	}
 	clearImage() {
 		// Do the cleaning
