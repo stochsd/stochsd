@@ -315,3 +315,7 @@ function removeSpacesAtEnd(str) {
 	}
 	return value;
 }
+
+function isPrimitiveGhost(primitive) {
+	return primitive.value.nodeName === "Ghost";
+}
