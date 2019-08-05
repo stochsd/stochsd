@@ -1318,7 +1318,7 @@ class NumberboxVisual extends BasePrimitive {
 		if (lastValue) {
 			valueString += stocsd_format(lastValue,3);
 		} else {
-			valueString += "?";
+			valueString += "_";
 		}
 		let output = `${valueString}`;
 		this.name_element.innerHTML = output;
