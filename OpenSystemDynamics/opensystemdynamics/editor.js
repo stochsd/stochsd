@@ -6872,7 +6872,9 @@ class ComparePlotDialog extends DisplayDialog {
 	setIdsToDisplay(idList) {
 		this.displayIdList = [];
 		for(let i in idList) {
-			this.displayIdList.push(idList[i]);
+			if (this.acceptsId(idList[i])) {
+				this.displayIdList.push(idList[i]);
+			}
 		}
 	}
 	getIdsToDisplay() {
