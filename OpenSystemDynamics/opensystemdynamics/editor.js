@@ -2442,7 +2442,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			this.dialog.removeIdToDisplay(id);
 			this.render();
 		}
-		
 	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
@@ -2566,6 +2565,9 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			return;
 		}
 		$(this.chartDiv).empty();
+		console.log("plotting TimePlot");
+		console.log(this.serieArray);
+		console.log(this.serieSettingsArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -6560,13 +6562,17 @@ class TimePlotDialog extends DisplayDialog {
 		this.sides = [];
 		if (sides === undefined || sides.length !== idList.length) {
 			for(let i in idList) {
-				this.displayIdList.push(idList[i]);
-				this.sides.push("L");
+				if (this.acceptsId(idList[i])) {
+					this.displayIdList.push(idList[i]);
+					this.sides.push("L");
+				}
 			}
 		} else {
 			for(let i in idList) {
-				this.displayIdList.push(idList[i]);
-				this.sides.push(sides[i]);
+				if (this.acceptsId(idList[i])) {
+					this.displayIdList.push(idList[i]);
+					this.sides.push(sides[i]);
+				}
 			}
 		}
 	}
