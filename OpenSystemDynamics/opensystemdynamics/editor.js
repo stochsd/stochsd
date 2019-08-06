@@ -2974,11 +2974,6 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.chartDiv.innerHTML = "Exactly two primitives must be selected!";
 			return;
 		}
-
-		let xColor = findID(IdsToDisplay[0]).getAttribute("color");
-		let yColor = findID(IdsToDisplay[1]).getAttribute("color");
-		this.xAxisColor = xColor ? xColor : defaultStroke;
-		this.yAxisColor = yColor ? yColor : defaultStroke;
 		
 		let makeXYSerie = () => {
 			let serie = [];
@@ -3058,18 +3053,12 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 				xaxis: {
 					label: this.serieXName,
 					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
-					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax(),
-					labelOptions: {
-						textColor: this.xAxisColor
-					}
+					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax()
 				},
 				yaxis: {
 					label: this.serieYName,
 					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
-					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax(),
-					labelOptions: {
-						textColor: this.yAxisColor
-					}
+					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax()
 				}
 			}
 		  });
