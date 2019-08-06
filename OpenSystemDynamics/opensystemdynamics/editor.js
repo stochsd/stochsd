@@ -2437,6 +2437,13 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			this.render();
 		});
 	}
+	removePlotReference(id) {
+		if (this.dialog.displayIdList.includes(id)) {
+			this.dialog.removeIdToDisplay(id);
+			this.render();
+		}
+		
+	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		this.fetchedIds.map(id => {
@@ -4983,8 +4990,30 @@ function find_end_connections(primitive) {
 	return connections_array;
 }
 	
+
+function removePlotReferences(id) {
+	for (let plotId in connection_array) {
+		let visual = connection_array[plotId];
+		let type = visual.type
+		switch(type) {
+			case("timeplot"):
+				visual.removePlotReference(id);
+			break;
+			case("xyplot"):
+			break;
+			case("compareplot"):
+			break;
+			case("table"):
+			break;
+			default:
+				/** Do nothing */
+		}
+	}
+}
+
 function stochsd_delete_primitive (id) {
 	let numboxes = primitives("Numberbox").filter(n => n.getAttribute("Target") == id);
+	removePlotReferences(id);
 	var stochsd_object = get_object(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
