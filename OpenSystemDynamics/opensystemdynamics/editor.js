@@ -7330,13 +7330,12 @@ class SimulationSettings extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("Simulation Settings");
-		
 	}
-	renderSimOptionsHtml() {
+	beforeShow() {
 		let start = getTimeStart();
 		let length = getTimeLength();
 		let step = getTimeStep();
-		return (`
+		this.setHtml(`
 		<table class="modernTable" style="margin:16px;">
 		<tr>
 			<td>&nbsp Start Time &nbsp</td>
@@ -7356,46 +7355,6 @@ class SimulationSettings extends jqDialog {
 		</tr>
 		</table>
 	`);
-	}
-	renderSetRandSeedHtml() {
-		let macro = getMacros();
-		let index = macro.search("SetRandSeed");
-		let isSeedSet = false;
-		let seed = "";
-		if (index !== -1) {
-			isSeedSet = true; 
-			let c = macro.substring(index, macro.length);
-			let regExp = /\(([^)]+)\)/;
-			let matches = regExp.exec(c);
-			seed = matches[1];
-			console.log(seed);
-		}
-		return (`
-		<table class="modernTable" style="margin:16px;"
-		title="SetRandSeed makes stochstics simulations reproducable.\nSetRandSeed can also be set in macro by writing SetRandSeed(Seed). \nE.g. SetRandSeed(17)"
-		>
-			<tr>
-				<td>	
-				&nbsp SetRandSeed &nbsp <input class="seedCheckbox" type="checkbox" ${checkedHtmlAttribute(isSeedSet)}/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				&nbsp Seed = <input class="seedValue enterApply" style="width:100px;" type="text" 
-				value="${seed}" ${isSeedSet ? "" : "disabled"}
-				>
-				</td>
-			</tr>
-		</table>
-		`);
-	}
-	beforeShow() {
-		this.setHtml(`
-		<div>
-			${this.renderSimOptionsHtml()}
-			${this.renderSetRandSeedHtml()}
-		</div>
-		`);
 		$(this.dialogContent).find(".enterApply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
