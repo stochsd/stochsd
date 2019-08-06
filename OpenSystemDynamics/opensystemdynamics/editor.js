@@ -4819,11 +4819,11 @@ $(document).ready(function() {
 				History.doRedo();
 			}
 			if (event.keyCode == keyboard["C"]) {
-				Clipboard.copy();
+				// Clipboard.copy();
 			}
 			if (event.keyCode == keyboard["V"]) {
-				Clipboard.paste();
-				History.storeUndoState();
+				// Clipboard.paste();
+				// History.storeUndoState();
 			}
 		}
 		environment.keyDown(event);
