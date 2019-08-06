@@ -7332,29 +7332,69 @@ class SimulationSettings extends jqDialog {
 		this.setTitle("Simulation Settings");
 		
 	}
-	beforeShow() {
+	renderSimOptionsHtml() {
 		let start = getTimeStart();
 		let length = getTimeLength();
 		let step = getTimeStep();
-		this.setHtml(`
-			<table class="modernTable">
+		return (`
+		<table class="modernTable" style="margin:16px;">
+		<tr>
+			<td>&nbsp Start Time &nbsp</td>
+			<td><input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text"></td>
+		</tr><tr>
+			<td>&nbsp Length &nbsp</td>
+			<td><input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text"></td>
+		</tr><tr>
+			<td>&nbsp Time Step &nbsp</td>
+			<td><input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text"></td>
+		</tr><tr>
+			<td>&nbsp Method &nbsp</td>
+			<td><select class="input_method enterApply" style="width:100px">
+			<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
+			<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
+			</select></td>
+		</tr>
+		</table>
+	`);
+	}
+	renderSetRandSeedHtml() {
+		let macro = getMacros();
+		let index = macro.search("SetRandSeed");
+		let isSeedSet = false;
+		let seed = "";
+		if (index !== -1) {
+			isSeedSet = true; 
+			let c = macro.substring(index, macro.length);
+			let regExp = /\(([^)]+)\)/;
+			let matches = regExp.exec(c);
+			seed = matches[1];
+			console.log(seed);
+		}
+		return (`
+		<table class="modernTable" style="margin:16px;"
+		title="SetRandSeed makes stochstics simulations reproducable.\nSetRandSeed can also be set in macro by writing SetRandSeed(Seed). \nE.g. SetRandSeed(17)"
+		>
 			<tr>
-				<td>&nbsp Start Time &nbsp</td>
-				<td><input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text"></td>
-			</tr><tr>
-				<td>&nbsp Length &nbsp</td>
-				<td><input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text"></td>
-			</tr><tr>
-				<td>&nbsp Time Step &nbsp</td>
-				<td><input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text"></td>
-			</tr><tr>
-				<td>&nbsp Method &nbsp</td>
-				<td><select class="input_method enterApply" style="width:100px">
-				<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
-				<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
-				</select></td>
+				<td>	
+				&nbsp SetRandSeed &nbsp <input class="seedCheckbox" type="checkbox" ${checkedHtmlAttribute(isSeedSet)}/>
+				</td>
 			</tr>
-			</table>
+			<tr>
+				<td>
+				&nbsp Seed = <input class="seedValue enterApply" style="width:100px;" type="text" 
+				value="${seed}" ${isSeedSet ? "" : "disabled"}
+				>
+				</td>
+			</tr>
+		</table>
+		`);
+	}
+	beforeShow() {
+		this.setHtml(`
+		<div>
+			${this.renderSimOptionsHtml()}
+			${this.renderSetRandSeedHtml()}
+		</div>
 		`);
 		$(this.dialogContent).find(".enterApply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
