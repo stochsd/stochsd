@@ -7890,10 +7890,40 @@ class MacroDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("Macro");
+		this.seed = "";
 		this.setHtml(`
-		<textarea class="macroText"></textarea>
+		<table class="invisibleTable" style="vertical-align: top;">
+			<tr>
+				<td>
+					<textarea class="macroText"></textarea>
+				</td>
+				<td style="padding:0;">
+					<table class="modernTable" title="SetRandSeed makes stochstics simulations reproducable.">
+						<tr>	
+							<td>
+								Seed = <input class="seedBox enterApply" type="text" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<button class="setSeedButton" disabled>SetRandSeed</button>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 		`);		
-		this.macroTextArea =$(this.dialogContent).find(".macroText");
+		this.macroTextArea = $(this.dialogContent).find(".macroText");
+		this.setSeedButton = $(this.dialogContent).find(".setSeedButton");
+		$(this.dialogContent).find(".seedBox").keyup((event) => { 
+			this.seed = $(event.target).val();
+			this.setSeedButton.attr("disabled", this.seed.length === 0 );
+		});
+		this.setSeedButton.click((event) => {
+			let macro = this.macroTextArea.val();
+			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
+		});
 	}
 	beforeShow() {
 		let oldMacro = getMacros();
@@ -7908,12 +7938,12 @@ class MacroDialog extends jqDialog {
 	updateSize() {
 		let width = this.getWidth();
 		let height = this.getHeight();
-		this.macroTextArea.width(width-10);
+		this.macroTextArea.width(width-150);
 		this.macroTextArea.height(height-20);
 	}
 	beforeCreateDialog() {
-		this.dialogParameters.width = "500";
-		this.dialogParameters.height = "400";
+		// this.dialogParameters.width = "500";
+		// this.dialogParameters.height = "400";
 	}
 	makeApply() {
 		let newMacro = $(this.dialogContent).find(".macroText").val();
