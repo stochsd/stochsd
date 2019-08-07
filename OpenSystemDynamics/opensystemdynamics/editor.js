@@ -6296,6 +6296,13 @@ class DisplayDialog extends jqDialog {
 		let type = getType(findID(id));
 		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
 	}
+
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
+	}
 	
 	setDisplayId(id,value) {
 		let oldIdIndex = this.displayIdList.indexOf(id);
@@ -6860,13 +6867,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.minValue = 0;
 		this.maxValue = 0;
 	}
-	
-	removeIdToDisplay(id) {
-		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-		}
-	}
 
 	getDisplayId(id) {
 		id = id.toString();
@@ -7108,13 +7108,6 @@ class XyPlotDialog extends DisplayDialog {
 		`);
 	}
 
-	removeIdToDisplay(id) {
-		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-		}
-	}
-
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -7247,12 +7240,6 @@ class TableDialog extends DisplayDialog {
 		this.endAuto = true;
 		this.stepAuto = true;
 		this.data = null;
-	}
-	removeIdToDisplay(id) {
-		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-		}
 	}
 	renderTableLimitsHTML() {
 		return (`
