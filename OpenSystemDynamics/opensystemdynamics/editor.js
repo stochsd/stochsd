@@ -308,7 +308,7 @@ defaultPrimitiveCreatedHandler = function(primitive) {
 }
 
 defaultPrimitiveBeforeDestroyHandler = function(primitive) {
-	stochsd_delete_primitive(getID(primitive));
+	stochsd_delete_primitive(getID(primitive), true);
 }
 
 var sdsMacros = `### Imported Macros from StochSD ###
@@ -5018,9 +5018,12 @@ function removePlotReferences(id) {
 	}
 }
 
-function stochsd_delete_primitive (id) {
-	let numboxes = primitives("Numberbox").filter(n => n.getAttribute("Target") == id);
-	removePlotReferences(id);
+function stochsd_delete_primitive (id, clearReferences) {
+	let numboxes = [];
+	if (clearReferences) {
+		numboxes = primitives("Numberbox").filter(n => n.getAttribute("Target") == id);
+		removePlotReferences(id);
+	}
 	var stochsd_object = get_object(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
@@ -5033,7 +5036,8 @@ function stochsd_delete_primitive (id) {
 	} else {
 		do_global_log("primitive with id "+id+" does not exist");
 	}
-	numboxes.map(removePrimitive);
+	if (clearReferences) { numboxes.map(removePrimitive); }
+	
 }
 
 function isLocal() {
