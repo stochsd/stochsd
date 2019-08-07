@@ -2943,6 +2943,12 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.render();
 		});
 	}
+	removePlotReference(id) {
+		if (this.dialog.displayIdList.includes(id)) {
+			this.dialog.removeIdToDisplay(id);
+			this.render();
+		}
+	}
 	render() {		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.showMarkers = this.dialog.isMarkersChecked();
@@ -4989,9 +4995,8 @@ function removePlotReferences(id) {
 		let type = visual.type
 		switch(type) {
 			case("timeplot"):
-				visual.removePlotReference(id);
-			break;
 			case("xyplot"):
+				visual.removePlotReference(id);
 			break;
 			case("compareplot"):
 			break;
@@ -7091,6 +7096,13 @@ class XyPlotDialog extends DisplayDialog {
 				</tr>
 			</table>
 		`);
+	}
+
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
 	}
 
 	beforeShow() {
