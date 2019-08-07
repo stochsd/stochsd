@@ -2565,9 +2565,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 			return;
 		}
 		$(this.chartDiv).empty();
-		console.log("plotting TimePlot");
-		console.log(this.serieArray);
-		console.log(this.serieSettingsArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
