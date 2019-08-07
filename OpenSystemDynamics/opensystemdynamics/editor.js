@@ -3038,6 +3038,10 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
 			return;
 		}
+		if (this.dialog.getIdsToDisplay().length != 2) {
+			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>Exactly two primitives must be selected!";
+			return;
+		}
 		$(this.chartDiv).empty();
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
