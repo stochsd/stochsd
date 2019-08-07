@@ -2768,6 +2768,12 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 			this.render();
 		});
 	}
+	removePlotReference(id) {
+		if (this.dialog.displayIdList.includes(id)) {
+			this.dialog.removeIdToDisplay(id);
+			this.render();
+		}
+	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		this.fetchedIds.map(id => {
@@ -5003,9 +5009,8 @@ function removePlotReferences(id) {
 			case("timeplot"):
 			case("xyplot"):
 			case("table"):
-				visual.removePlotReference(id);
-			break;
 			case("compareplot"):
+				visual.removePlotReference(id);
 			break;
 			default:
 				/** Do nothing */
