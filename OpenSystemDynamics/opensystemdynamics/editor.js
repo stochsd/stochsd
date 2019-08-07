@@ -2244,6 +2244,12 @@ class TableVisual extends HtmlTwoPointer {
 		RunResults.subscribeRun(this.runHandler);
 		this.data = new TableData();
 	}
+	removePlotReference(id) {
+		if (this.dialog.displayIdList.includes(id)) {
+			this.dialog.removeIdToDisplay(id);
+			this.render();
+		}
+	}
 	render() {
 		html = "";
 		html += "<table class='classicTable'><thead><tr>";
@@ -4996,11 +5002,10 @@ function removePlotReferences(id) {
 		switch(type) {
 			case("timeplot"):
 			case("xyplot"):
+			case("table"):
 				visual.removePlotReference(id);
 			break;
 			case("compareplot"):
-			break;
-			case("table"):
 			break;
 			default:
 				/** Do nothing */
@@ -7237,6 +7242,12 @@ class TableDialog extends DisplayDialog {
 		this.endAuto = true;
 		this.stepAuto = true;
 		this.data = null;
+	}
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
 	}
 	renderTableLimitsHTML() {
 		return (`
