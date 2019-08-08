@@ -456,7 +456,7 @@ function svgDice(stroke, fill, markclass) {
 
 function svgQuestionmark(color) {
 	// svg_text(x, y, text, markclass, extra_attributes) 
-	let newElement = svg_text(0, 8, "?", "questionmark", {"font-size": "26px", "font-weight": "bold"});
+	let newElement = svg_text(0, 6, "?", "questionmark", {"font-size": "18px", "font-weight": "bold"});
 	// newElement.setAttribute("font-weight", "bold");
 	return newElement;
 }
