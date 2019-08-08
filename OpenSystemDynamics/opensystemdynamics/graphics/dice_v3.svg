@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg11302"
+   viewBox="0 0 14.197526 16.439407"
+   version="1.0"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="dice.svg"
+   width="14.197526"
+   height="16.439407">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview3353"
+     showgrid="false"
+     inkscape:zoom="32"
+     inkscape:cx="5.0209219"
+     inkscape:cy="13.725323"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11302"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:snap-nodes="false" />
+  <defs
+     id="defs11304">
+    <filter
+       id="filter11999"
+       y="-0.17114"
+       width="1.3796"
+       x="-0.18982001"
+       height="1.3423001">
+      <feGaussianBlur
+         id="feGaussianBlur12001"
+         stdDeviation="9.8117979"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata3351">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2008-10-25T16:48:57</dc:date>
+        <dc:description>Made for a pacman game</dc:description>
+        <dc:source>https://openclipart.org/detail/19717/ghost-by-mbtwms</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>mbtwms</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>computer game</rdf:li>
+            <rdf:li>ghost</rdf:li>
+            <rdf:li>how i did it</rdf:li>
+            <rdf:li>pacman</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m -0.01757813,-9.4902343 -8.22736657,4.7499999 v 9.5 L -0.01757813,9.5097655 8.2097885,4.7597656 v -9.5 z m 0,0.7312729 7.59650733,4.3832721 V 4.3952206 L -0.01757813,8.7784927 -7.6140854,4.3952206 v -8.7709099 z m -0.06112132,3.4424402 c -0.49205791,-1.372e-4 -0.89077513,0.2528978 -0.89062499,0.5653724 -1.5014e-4,0.3124745 0.39856708,0.5655098 0.89062499,0.5653722 0.49205657,1.378e-4 0.89295936,-0.2528975 0.8928079,-0.5653722 1.5146e-4,-0.3124748 -0.40075132,-0.56551 -0.8928079,-0.5653724 z M 6.1927849,-1.9657628 C 5.9491634,-1.9498448 5.6677726,-1.7462371 5.483341,-1.4265855 5.2371932,-1.0005194 5.2563132,-0.53053277 5.526999,-0.37442556 5.7975347,-0.2180583 6.217555,-0.43500966 6.4634649,-0.86121322 6.7096126,-1.2872777 6.690494,-1.7616328 6.419807,-1.917739 6.352173,-1.956831 6.273992,-1.971069 6.1927849,-1.9657628 Z m -12.4141774,0.034926 c -0.081207,-0.0053 -0.1593882,0.011115 -0.227022,0.050207 -0.2706871,0.1561061 -0.2898056,0.6282782 -0.043658,1.05434275 0.2459098,0.42620296 0.6659302,0.6453379 0.9364661,0.48897058 0.2706858,-0.15610724 0.2898058,-0.62827677 0.043658,-1.05434273 C -5.69638,-1.7113109 -5.9777709,-1.914918 -6.2213925,-1.9308368 Z m 1.9034926,3.3529412 c -0.081207,-0.0053 -0.1593881,0.011115 -0.2270219,0.050207 -0.2706872,0.1561061 -0.2898057,0.6282782 -0.043658,1.0543429 0.2459098,0.4262029 0.6659302,0.6453377 0.936466,0.4889706 C -3.3814281,2.8595176 -3.3623079,2.3873481 -3.6084558,1.961282 -3.7928873,1.6416305 -4.0742783,1.4380235 -4.3178999,1.4221044 Z m 1.9034928,3.265625 c -0.081207,-0.0053 -0.1593883,0.011115 -0.2270221,0.050207 -0.2706871,0.1561061 -0.2898057,0.6282781 -0.043658,1.0543428 0.2459098,0.4262029 0.6659302,0.6453378 0.9364661,0.4889706 0.270686,-0.1561073 0.289806,-0.6282769 0.043658,-1.054343 -0.1844317,-0.3196513 -0.4658226,-0.5232583 -0.709444,-0.5391774 z m 4.7696461,0 C 2.1116175,4.7036485 1.8302265,4.9072555 1.645795,5.2269071 1.3996472,5.6529732 1.4209501,6.1251427 1.6916361,6.28125 1.9621717,6.4376172 2.3800092,6.2184829 2.625919,5.7922794 2.8720666,5.3662148 2.8529481,4.8940427 2.582261,4.7379366 2.5146273,4.6988444 2.4364461,4.6824235 2.355239,4.6877294 Z"
+     id="path940"
+     inkscape:connector-curvature="0" />
+</svg>

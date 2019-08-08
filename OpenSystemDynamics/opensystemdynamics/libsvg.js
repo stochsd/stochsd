@@ -443,6 +443,17 @@ function svgGhost(stroke, fill, markclass) {
 	return newElement;
 }
 
+function svgDice(stroke, fill, markclass) {
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+	newElement.setAttribute("stroke", stroke);
+	newElement.setAttribute("fill", fill);
+	newElement.setAttribute("stroke-width", "1");
+	newElement.setAttribute("d", "M -6.8398438 -7.5996094 L -7.6875 -6.9550781 L -7.6875 7.7285156 L 6.9960938 7.7285156 L 7.84375 7.0839844 L 7.84375 -7.5996094 L -6.8398438 -7.5996094 z M -6.9824219 -6.2480469 L 6.2910156 -6.2480469 L 6.2910156 7.0234375 L -6.9824219 7.0234375 L -6.9824219 -6.2480469 z M -0.35351562 -1.3535156 A 1.7364054 1.7364054 0 0 0 -2.0917969 0.3828125 A 1.7364054 1.7364054 0 0 0 -0.35351562 2.1191406 A 1.7364054 1.7364054 0 0 0 1.3828125 0.3828125 A 1.7364054 1.7364054 0 0 0 -0.35351562 -1.3535156 z ");
+	
+	newElement.setAttribute("class", markclass);
+	return newElement;
+}
+
 function svgQuestionmark(color) {
 	// svg_text(x, y, text, markclass, extra_attributes) 
 	let newElement = svg_text(0, 6, "?", "questionmark", {"style": `fill: ${color}; font-size: 18px;`});
@@ -452,12 +463,14 @@ function svgQuestionmark(color) {
 function svgIcons(stroke, fill, markclass) {
 	let newElement = svg_group([
 		svgGhost(stroke, fill, "ghost"), 
-		svgQuestionmark(stroke)
+		svgQuestionmark(stroke),
+		svgDice(fill, stroke)
 	]);
 	newElement.setAttribute("class", markclass);
 	newElement.elements = {
 		"ghost": newElement.children[0],
-		"questionmark": newElement.children[1]
+		"questionmark": newElement.children[1],
+		"dice": newElement.children[2]
 	};
 
 	for (let child of newElement.children) {
@@ -467,6 +480,7 @@ function svgIcons(stroke, fill, markclass) {
 	newElement.setColor = function (color) {
 		this.elements["ghost"].setAttribute("stroke", color);
 		this.elements["questionmark"].setAttribute("style", `fill: ${color}`);
+		this.elements["dice"].setAttribute("style", `fill: ${color}` );
 	}
 
 	newElement.set = function (icon, visibility) {
