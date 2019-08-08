@@ -1496,6 +1496,20 @@ class ConverterVisual extends BasePrimitive {
 		const yEdge = yEdgeRel + yCenter;
 		return [xEdge, yEdge];
 	}
+	update() {
+		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
+
+		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
+		if (this.icons) {
+			this.icons.set("questionmark", getValue(prim) === "" ? "visible" : "hidden");
+		}
+
+		if ( ! this.is_ghost) {
+			this.updateGhosts();
+		}
+		
+		this.afterUpdate();
+	}
 
 	attachEvent() {
 		do_global_log("this primitive");
