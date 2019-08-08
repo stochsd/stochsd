@@ -1383,11 +1383,11 @@ class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateValueError();
-		this.namePosList = [[0, 29],[18, 5],[0, -19],[-18, 5]];
+		this.namePosList = [[0, 34],[23, 5],[0, -24],[-23, 5]];
 	}
 
 	getRadius() {
-		return 15;
+		return 20;
 	}
 
 	getBoundRect() {
