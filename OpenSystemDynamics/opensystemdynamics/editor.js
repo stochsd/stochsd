@@ -1782,7 +1782,7 @@ class FlowVisual extends BaseConnection {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
 		this.updateValueError();
-		this.namePosList = [[0,36],[28,5],[0,-30],[-28,5]]; 	// Textplacement when rotating text
+		this.namePosList = [[0,37],[29,5],[0,-31],[-29,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
@@ -1798,6 +1798,10 @@ class FlowVisual extends BaseConnection {
 		this.flowPathGroup; // Group element with outer- inner- & arrowHeadPath within.
 		this.valve; 
 		this.variable; 		// variable (only svg group-element with circle and text)
+	}
+
+	getRadius() {
+		return 20;
 	}
 
 	areAllAnchorsSelected() {
@@ -1906,8 +1910,8 @@ class FlowVisual extends BaseConnection {
 		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
-		const dXEdge = safeDivision(dXTarget*15, rTarget);
-		const dYEdge = safeDivision(dYTarget*15, rTarget);
+		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
+		const dYEdge = safeDivision(dYTarget*this.getRadius(), rTarget);
 		const xEdge = dXEdge + xCenter; 
 		const yEdge = dYEdge + yCenter;
 		return [xEdge, yEdge]; 
@@ -1977,11 +1981,12 @@ class FlowVisual extends BaseConnection {
 
 	getBoundRect() {
 		let pos = this.getVariablePos();
+		let radius = this.getRadius();
 		return {
-			"minX": pos[0] - 15, 
-			"maxX": pos[0] + 15,
-			"minY": pos[1] - 15,
-			"maxY": pos[1] + 15
+			"minX": pos[0] - radius, 
+			"maxX": pos[0] + radius,
+			"minY": pos[1] - radius,
+			"maxY": pos[1] + radius
 		};
 	}
 
@@ -2008,15 +2013,15 @@ class FlowVisual extends BaseConnection {
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
 			if (this.variableSide) {
-				variableOffset = [15, 0];
+				variableOffset = [this.getRadius(), 0];
 			} else {
-				variableOffset = [-15, 0];
+				variableOffset = [-this.getRadius(), 0];
 			}
 		} else {
 			if (this.variableSide) {
-				variableOffset = [0, -15];
+				variableOffset = [0, -this.getRadius()];
 			} else {
-				variableOffset = [0, 15];
+				variableOffset = [0, this.getRadius()];
 			}
 		} 
 		let [valveX, valveY] = this.getValvePos();
@@ -2045,11 +2050,11 @@ class FlowVisual extends BaseConnection {
 		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, [1,0], {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M10,10 -10,-10 10,-10 -10,10 Z", this.color, defaultFill, "element");
-		this.name_element = svg_text(0, -15, "vairable", "name_element");
+		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
 		this.icons = svgIcons(defaultStroke, defaultFill, "icons");
 		this.variable = svg_group(
-			[svg_circle(0, 0, 15, this.color, "white", "element"), 
-			svg_circle(0, 0, 13, "none", this.color, "selector"),
+			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"), 
+			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "selector"),
 			this.icons,	
 			this.name_element]
 		);
