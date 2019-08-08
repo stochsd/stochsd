@@ -1214,11 +1214,11 @@ class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateValueError();
-		this.namePosList = [[0, 29], [22, 5], [0, -19], [-22, 5]];
+		this.namePosList = [[0, 32], [27, 5], [0, -22], [-27, 5]];
 	}
 
 	getSize() {
-		return [40, 30];
+		return [50, 38];
 	}
 
 	getBoundRect() {
@@ -1283,9 +1283,12 @@ class StockVisual extends BasePrimitive {
 		// let textElem = svg_text(0, 39, "stock", "name_element");
 		let textElem = svg_text(0, 39, this.primitive.getAttribute("name"), "name_element");
 		textElem.setAttribute("fill", this.color);
+		let size = this.getSize();
+		let w = size[0];
+		let h = size[1];
 		return [
-			svg_rect(-20,-15,40,30,  this.color,  defaultFill, "element"),
-			svg_rect(-18, -13, 36, 26, "none", this.color, "selector"),
+			svg_rect(-w/2,-h/2, w, h,  this.color,  defaultFill, "element"),
+			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "selector"),
 			textElem,
 			svgIcons(defaultStroke, defaultFill, "icons")
 		];
