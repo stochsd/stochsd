@@ -497,6 +497,22 @@ function getFunctionHelpData() {
 	return helpData;
 }
 
+function hasRandomFunction(value) {
+	let helpData;
+	if (value) {
+		helpData = getFunctionHelpData();
+		let randomFunctions = [];
+		for (let help of helpData) {
+			if (help[0] === "Random Number Functions") {
+				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#"))); 
+				break;
+			}
+		}
+		return randomFunctions.some(elem => value.includes(elem));
+	}
+	return false;
+}
+
 // sdsLoadFunctions is and must be called from Functions.js
 function sdsLoadFunctions() {
 	defineFunction("T", {params:[]}, function(x) {
@@ -1000,6 +1016,7 @@ class OnePointer extends BaseObject {
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons) {
 			this.icons.set("questionmark", (prim.getAttribute("ValueError") ? "visible" : "hidden"));
+			this.icons.set("dice", hasRandomFunction(getValue(prim)) ? "visible" : "hidden");
 		}
 
 		if ( ! this.is_ghost) {
@@ -2112,6 +2129,7 @@ class FlowVisual extends BaseConnection {
 			} else {
 				this.icons.set("questionmark", "hidden");
 			}
+			this.icons.set("dice", hasRandomFunction(getValue(this.primitive)) ? "visible" : "hidden");
 		}
 	}
 	
