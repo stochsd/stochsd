@@ -2693,12 +2693,14 @@ class DataGenerations {
 		for(let i = 0; i < this.idGen.length; i++) {
 			let currentIds = this.idGen[i];
 			let plotPer = this.plotPers[i];
+			// Loop through one generation (each simulation run)
 			for(let j = 0; j < currentIds.length; j++) {
 				let id = currentIds[j];
 				if(wantedIds.includes(id)) {
 					let tmpArr = [];
 					lineCount++;
 					let plotPerIdx = Math.floor(this.resultGen[i].length/4);
+					// loop through simulation run (each value)
 					for (let k = 0; k < this.resultGen[i].length; k++) {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
