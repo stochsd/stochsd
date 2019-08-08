@@ -1430,12 +1430,18 @@ class ConstantVisual extends VariableVisual {
 	}
 
 	getImage() {
+		let r = this.getRadius();
+		let rs = r - 3; // Selector radius 
 		return [
-			svg_path("M0,15 15,0 0,-15 -15,0Z", this.color, defaultFill, "element"),
+			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
-			svg_path("M0,12 12,0 0,-12 -12,0Z", "none", this.color, "selector"),
+			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "selector"),
 			svgIcons(defaultStroke, defaultFill, "icons")
 		];
+	}
+
+	getRadius() {
+		return 22;
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
@@ -1446,7 +1452,7 @@ class ConstantVisual extends VariableVisual {
 		const edgeSlope = -sign(targetSlope);
 
 		// Where the line intercepts the x-axis ("m" in the formula: y = kx + m)
-		const edgeIntercept = 15*sign(yTarget - yCenter);
+		const edgeIntercept = this.getRadius()*sign(yTarget - yCenter);
 		
 		// Relative coodinates relative center of ConstantVisual
 		const xEdgeRel = safeDivision(edgeIntercept, targetSlope-edgeSlope);
