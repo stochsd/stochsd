@@ -6415,9 +6415,9 @@ class DisplayDialog extends jqDialog {
 			>
 				<tr>
 					<th>
-						&nbsp Plot Period: &nbsp
+						Plot Period: 
 					</th>
-					<td>
+					<td style="padding:1px;">
 						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
 					</td>
 					<td>
@@ -6433,7 +6433,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-						<b>&nbsp Numbered Lines: &nbsp</b>
+						<b>Numbered Lines:</b>
 						<input class="NumberedLines enterApply" type="checkbox" ${checkedHtmlAttribute(this.numberedLines)}>
 					</td>
 				</tr>
@@ -6445,7 +6445,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-					<b>&nbsp Line Width: &nbsp</b>
+					<b>Line Width:</b>
 						<select class="lineWidth enterApply">
 						<option value=1 ${(this.lineWidth == 1) ? "selected" : ""}>Thin</option>
 						<option value=2 ${(this.lineWidth == 2) ? "selected" : ""}>Thick</option>
@@ -6460,7 +6460,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable" style="margin: 16px 0px">
 				<tr>
 					<td>
-					<b>&nbsp Colour From Primitive: &nbsp</b>
+					<b>Colour From Primitive:</b>
 					<input class="ColorFromPrimitive enterApply" type="checkbox" ${checkedHtmlAttribute(this.colorFromPrimitive)}>
 					</td>
 				</tr>
@@ -6478,7 +6478,7 @@ class DisplayDialog extends jqDialog {
 				${primitives.map(p => `
 					<tr>
 						<td class="text">
-							&nbsp ${getName(p)} &nbsp
+							${getName(p)}
 						</td>
 						<td style="text-align: center;">
 							<input 
@@ -6506,14 +6506,14 @@ class DisplayDialog extends jqDialog {
 			</tr>
 			<tr>
 				<td>X-axis</td>
-				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
 				<td>Y-axis</td>
-				<td><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
-				<td><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
+				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
+				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
 				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 			</tr>
 		</table>
@@ -6654,20 +6654,20 @@ class TimePlotDialog extends DisplayDialog {
 		return (`
 			<table class="modernTable" style="margin-bottom: 16px;">
 				<tr>
-					<th>&nbsp Title: &nbsp</th>
-					<td>
+					<th>Title:</th>
+					<td style="padding:1px;">
 						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
-					<th>&nbsp Left Label: &nbsp</th>
-					<td>
+					<th>Left Label:</th>
+					<td style="padding:1px;">
 						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
-					<th>&nbsp Right Label: &nbsp</th>
-					<td>
+					<th>Right Label:</th>
+					<td style="padding:1px;">
 						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
 					</td>
 				</tr>
@@ -6685,20 +6685,20 @@ class TimePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
-				<td><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
+				<td style="padding:1px;"><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
+				<td style="padding:1px;"><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
 				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
-				<td><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
+				<td style="padding:1px;"><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
+				<td style="padding:1px;"><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
 				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 			</tr>
 		</table>
@@ -6758,14 +6758,14 @@ class TimePlotDialog extends DisplayDialog {
 		return (`
 			<table class="modernTable" style="margin: 0px;">
 			<tr>
-				<th style="text-align: center;" >&nbsp Primitives &nbsp</th>
-				<th>&nbsp Left  &nbsp</th>
-				<th>&nbsp Right &nbsp</th>
+				<th style="text-align: center;" >Primitives</th>
+				<th>Left</th>
+				<th>Right</th>
 			</tr>
 				${primitives.map(p => `
 					<tr>
 						<td class="text">
-							&nbsp ${getName(p)} &nbsp
+							${getName(p)}
 						</td>
 						<td style="text-align: center;">
 							<input 
@@ -6946,7 +6946,7 @@ class ComparePlotDialog extends DisplayDialog {
 			<table class="modernTable" style="width:100%; text-align:center;">
 				<tr>
 					<td style="width:50%">
-						&nbsp Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
+						Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
 					</td>
 					<td>
 						<button class="keepButton enterApply">Clear Results</button>
@@ -6959,14 +6959,14 @@ class ComparePlotDialog extends DisplayDialog {
 		return (`
 			<table class="modernTable" style="margin-bottom: 16px;">
 				<tr>
-					<th>&nbsp Title: &nbsp</th>
-					<td>
+					<th>Title:</th>
+					<td style="padding:1px;">
 						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
-					<th>&nbsp Y-axis Label: &nbsp</th>
-					<td>
+					<th>Y-axis Label:</th>
+					<td style="padding:1px;">
 						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
@@ -6984,14 +6984,14 @@ class ComparePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
-				<td><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
-				<td><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
+				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
+				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
 				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 			</tr>
 		</table>
@@ -7301,16 +7301,16 @@ class TableDialog extends DisplayDialog {
 		return (`
 		<table class="modernTable">
 			<tr>
-				<th class="text">&nbsp From &nbsp</th>
-				<td><input class="intervalsettings start enterApply" name="start" value="${this.start}" type="text"></td>
+				<th class="text">From</th>
+				<td style="padding:1px;"><input class="intervalsettings start enterApply" name="start" value="${this.start}" type="text"></td>
 				<td>Auto <input class="intervalsettings start_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
 			</tr><tr>
-				<th class="text">&nbsp To &nbsp</th>
-				<td><input class="intervalsettings end enterApply" name="end" value="${this.end}" type="text"></td>
+				<th class="text">To</th>
+				<td style="padding:1px;"><input class="intervalsettings end enterApply" name="end" value="${this.end}" type="text"></td>
 				<td>Auto <input class="intervalsettings end_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
 			</tr><tr title="Step &#8805; DT should hold">
-				<th class="text">&nbsp Step &nbsp</th>
-				<td><input class="intervalsettings step enterApply" name="step" value="${this.step}" type="text"></td>
+				<th class="text">Step</th>
+				<td style="padding:1px;"><input class="intervalsettings step enterApply" name="step" value="${this.step}" type="text"></td>
 				<td>Auto <input class="intervalsettings step_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
 			</tr>
 		</table>
@@ -7436,16 +7436,16 @@ class SimulationSettings extends jqDialog {
 		this.setHtml(`
 		<table class="modernTable" style="margin:16px;">
 		<tr>
-			<td>&nbsp Start Time &nbsp</td>
+			<td>Start Time</td>
 			<td><input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text"></td>
 		</tr><tr>
-			<td>&nbsp Length &nbsp</td>
+			<td>Length</td>
 			<td><input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text"></td>
 		</tr><tr>
-			<td>&nbsp Time Step &nbsp</td>
-			<td><input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text"></td>
+			<td>Time Step</td>
+			<td style="padding:1px;"><input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text"></td>
 		</tr><tr>
-			<td>&nbsp Method &nbsp</td>
+			<td>Method</td>
 			<td><select class="input_method enterApply" style="width:100px">
 			<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
 			<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
@@ -7997,7 +7997,7 @@ class MacroDialog extends jqDialog {
 				<td style="padding:0;">
 					<table class="modernTable" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
-							<td>
+							<td style="padding:1px;">
 								Seed = <input class="seedBox enterApply" type="text" />
 							</td>
 						</tr>
