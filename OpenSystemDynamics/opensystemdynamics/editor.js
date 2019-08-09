@@ -8091,11 +8091,11 @@ class EquationListDialog extends jqDialog {
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
-			"Print equations": () =>
+			"Print Equations": () =>
 			{
 				hideAndPrint([$("#coverEverythingDiv").get(0)]);
 			},
-			"Ok":() =>
+			"Leave":() =>
 			{
 				$(this.dialog).dialog('close');
 			}
@@ -8142,6 +8142,25 @@ class EquationListDialog extends jqDialog {
 			return;		
 		}
 		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
+
+		let specs = [
+			["Start", getTimeStart()],
+			["Length", getTimeLength()],
+			["DT", getTimeStep()],
+			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"]
+		];
+
+		htmlOut += `
+		<h3 class="equationListHeader">Specifications</h3>
+		<table>
+			${specs.map(spec => 
+				`<tr>
+					<td>${spec[0]}</td>
+					<td>${spec[1]}</td>
+				</tr>`).join("")
+			}
+		</table>
+		`;
 		this.setHtml(htmlOut);
 	}
 }
