@@ -8108,7 +8108,7 @@ class EquationListDialog extends jqDialog {
 		if (Stocks.length > 0) {
 		htmlOut += `
 		<h3 class="equationListHeader">Stocks</h3>
-			<table>
+			<table class="modernTable">
 				<tr><th>Name</th><td>Initial value</td></tr>
 				${Stocks.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
 			</table>
@@ -8119,7 +8119,7 @@ class EquationListDialog extends jqDialog {
 		if (Flows.length > 0) {
 		htmlOut += `
 		<h3 class="equationListHeader">Flows</h3>
-			<table>
+			<table class="modernTable">
 				<tr><th>Name</th><td>Rate</td></tr>
 				${Flows.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
 			</table>
@@ -8130,7 +8130,7 @@ class EquationListDialog extends jqDialog {
 		if (Variables.length > 0) {
 		htmlOut += `
 		<h3 class="equationListHeader">Variables</h3>
-			<table>
+			<table class="modernTable">
 				<tr><th>Name</th><td>Value</td></tr>
 				${Variables.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
 			</table>
@@ -8152,7 +8152,7 @@ class EquationListDialog extends jqDialog {
 
 		htmlOut += `
 		<h3 class="equationListHeader">Specifications</h3>
-		<table>
+		<table class="modernTable">
 			${specs.map(spec => 
 				`<tr>
 					<td>${spec[0]}</td>
