@@ -8143,12 +8143,32 @@ class EquationListDialog extends jqDialog {
 		}
 		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
 
+		let isSeedSet = false;
+		let seed = "";
+		let macro = getMacros();
+		let index = macro.lastIndexOf("SetRandSeed");
+		if (index !== -1) {
+			isSeedSet = true;
+			let c = macro.substring(index, macro.length);
+			let regExp = /\(([^)]+)\)/;
+			let matches = regExp.exec(c);
+			seed = matches[1];
+			console.log(seed);
+		} 
+
 		let specs = [
 			["Start", getTimeStart()],
 			["Length", getTimeLength()],
 			["DT", getTimeStep()],
 			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"]
 		];
+		if (isSeedSet) {
+			specs.push(["Seed", seed]);
+		}
+		let d = new Date();
+		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+		specs.push(["Date", `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`]);
 
 		htmlOut += `
 		<h3 class="equationListHeader">Specifications</h3>
