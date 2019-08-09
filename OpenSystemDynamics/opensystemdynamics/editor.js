@@ -1792,7 +1792,7 @@ class FlowVisual extends BaseConnection {
 		super(id, type, pos);
 		this.setAttachableTypes(["stock"]);
 		this.updateValueError();
-		this.namePosList = [[0,37],[29,5],[0,-31],[-29,5]]; 	// Textplacement when rotating text
+		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
 		this.anchorPoints = []; 
