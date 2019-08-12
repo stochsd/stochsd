@@ -8101,9 +8101,8 @@ class EquationListDialog extends jqDialog {
 			}
 		};
 	}
-	beforeShow() {
-		let htmlOut = "";
-	
+	renderSpecsInfoHtml() {
+		/** Set filename */
 		let fileName = fileManager.fileName;
 		if (fileName) {
 			let winSplit = fileName.split("\\");
@@ -8114,52 +8113,13 @@ class EquationListDialog extends jqDialog {
 			fileName = "Unnamed file";
 		}
 		
+		/** Get Date */
 		let d = new Date();
 		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
 		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
 		let fullDate = `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`;
 
-		htmlOut += `<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br></br>`;
-
-		let Stocks = primitives("Stock");
-		if (Stocks.length > 0) {
-		htmlOut += `
-		<h3 class="equationListHeader">Stocks</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><td>Initial value</td></tr>
-				${Stocks.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
-			</table>
-		`;
-		}
-		
-		let Flows = primitives("Flow");
-		if (Flows.length > 0) {
-		htmlOut += `
-		<h3 class="equationListHeader">Flows</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><td>Rate</td></tr>
-				${Flows.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
-			</table>
-		`;
-		}
-		
-		let Variables = primitives("Variable");
-		if (Variables.length > 0) {
-		htmlOut += `
-		<h3 class="equationListHeader">Variables & Constants</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><td>Value</td></tr>
-				${Variables.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
-			</table>
-		`;
-		}
-		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length;
-		if (numberOfPrimitives == 0) {
-			this.setHtml("This model is emptry. Build a model to show equation list");	
-			return;		
-		}
-		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
-
+		/** Find seed */
 		let isSeedSet = false;
 		let seed = "";
 		let macro = getMacros();
@@ -8170,7 +8130,6 @@ class EquationListDialog extends jqDialog {
 			let regExp = /\(([^)]+)\)/;
 			let matches = regExp.exec(c);
 			seed = matches[1];
-			console.log(seed);
 		} 
 
 		let specs = [
@@ -8183,17 +8142,54 @@ class EquationListDialog extends jqDialog {
 			specs.push(["Seed", seed]);
 		}
 
-		htmlOut += `
-		<h3 class="equationListHeader">Specifications</h3>
-		<table class="modernTable">
-			${specs.map(spec => 
-				`<tr>
-					<td>${spec[0]}</td>
-					<td>${spec[1]}</td>
-				</tr>`).join("")
-			}
-		</table>
+		return(`
+			<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br>
+			<h3 class="equationListHeader">Specifications</h3>
+			<table class="modernTable">
+				${specs.map(spec => 
+					`<tr>
+						<td>${spec[0]}</td>
+						<td>${spec[1]}</td>
+					</tr>`).join("")
+				}
+			</table>
+		`);
+	}
+	renderPrimitiveListHtml(prims, typeName, valueName) {
+		return `
+			<h3 class="equationListHeader">${typeName}</h3>
+			<table class="modernTable">
+				<tr><th>Name</th><th>${valueName}</th></tr>
+				${prims.map(p => (`<tr><td>${makePrimitiveName(getName(p))}</td><td>${getValue(p)}</td></tr>`)).join('')}
+			</table>
 		`;
+	}
+	beforeShow() {
+		let htmlOut = "";
+		
+		htmlOut += this.renderSpecsInfoHtml();
+
+		let Stocks = primitives("Stock");
+		if (Stocks.length > 0) {
+			htmlOut += this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+		}
+		
+		let Flows = primitives("Flow");
+		if (Flows.length > 0) {
+			htmlOut += this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+		}
+		
+		let Variables = primitives("Variable");
+		if (Variables.length > 0) {
+			htmlOut += this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
+		}
+		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length;
+		if (numberOfPrimitives == 0) {
+			this.setHtml("This model is emptry. Build a model to show equation list");	
+			return;		
+		}
+		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
+
 		this.setHtml(htmlOut);
 	}
 }
