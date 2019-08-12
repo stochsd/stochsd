@@ -8146,7 +8146,7 @@ class EquationListDialog extends jqDialog {
 		let Variables = primitives("Variable");
 		if (Variables.length > 0) {
 		htmlOut += `
-		<h3 class="equationListHeader">Variables</h3>
+		<h3 class="equationListHeader">Variables & Constants</h3>
 			<table class="modernTable">
 				<tr><th>Name</th><td>Value</td></tr>
 				${Variables.map(s => "<tr><td>"+makePrimitiveName(getName(s))+"</td><td>"+getValue(s)+"</td></tr>").join('')}
