@@ -8103,7 +8103,24 @@ class EquationListDialog extends jqDialog {
 	}
 	beforeShow() {
 		let htmlOut = "";
+	
+		let fileName = fileManager.fileName;
+		if (fileName) {
+			let winSplit = fileName.split("\\");
+			fileName = winSplit[winSplit.length-1];
+			let unixSplit = fileName.split("/");
+			fileName = unixSplit[unixSplit.length-1];
+		} else {
+			fileName = "Unnamed file";
+		}
 		
+		let d = new Date();
+		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+		let fullDate = `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`;
+
+		htmlOut += `<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br></br>`;
+
 		let Stocks = primitives("Stock");
 		if (Stocks.length > 0) {
 		htmlOut += `
@@ -8165,10 +8182,6 @@ class EquationListDialog extends jqDialog {
 		if (isSeedSet) {
 			specs.push(["Seed", seed]);
 		}
-		let d = new Date();
-		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
-		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
-		specs.push(["Date", `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`]);
 
 		htmlOut += `
 		<h3 class="equationListHeader">Specifications</h3>
