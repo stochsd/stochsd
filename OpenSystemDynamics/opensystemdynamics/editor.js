@@ -8165,30 +8165,43 @@ class EquationListDialog extends jqDialog {
 		`;
 	}
 	beforeShow() {
-		let htmlOut = "";
-		
-		htmlOut += this.renderSpecsInfoHtml();
-
 		let Stocks = primitives("Stock");
+		let stockHtml = "";
 		if (Stocks.length > 0) {
-			htmlOut += this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+			stockHtml = this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
 		}
 		
 		let Flows = primitives("Flow");
+		let flowHtml = "";
 		if (Flows.length > 0) {
-			htmlOut += this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+			flowHtml = this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
 		}
 		
 		let Variables = primitives("Variable");
+		let variableHtml = "";
 		if (Variables.length > 0) {
-			htmlOut += this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
+			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length;
+		
 		if (numberOfPrimitives == 0) {
 			this.setHtml("This model is emptry. Build a model to show equation list");	
 			return;		
 		}
-		htmlOut += "<br/>Total of "+numberOfPrimitives+" primitives";
+
+		let htmlOut = `
+			<div style="display:flex;">
+				<div>
+					${this.renderSpecsInfoHtml()}
+				</div>
+				<div style="padding-left: 32px; ">
+					${stockHtml}
+					${flowHtml}
+					${variableHtml}
+					<br/>Total of ${numberOfPrimitives} primitives
+				</div>
+			</div>
+		`;
 
 		this.setHtml(htmlOut);
 	}
