@@ -8182,7 +8182,13 @@ class EquationListDialog extends jqDialog {
 		if (Variables.length > 0) {
 			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
 		}
-		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length;
+
+		let Converters = primitives("Converter");
+		let converterHtml = "";
+		if (Converters.length > 0) {
+			converterHtml = this.renderPrimitiveListHtml(Converters, "Converter", "Data");
+		}
+		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
 		if (numberOfPrimitives == 0) {
 			this.setHtml("This model is emptry. Build a model to show equation list");	
@@ -8198,6 +8204,7 @@ class EquationListDialog extends jqDialog {
 					${stockHtml}
 					${flowHtml}
 					${variableHtml}
+					${converterHtml}
 					<br/>Total of ${numberOfPrimitives} primitives
 				</div>
 			</div>
