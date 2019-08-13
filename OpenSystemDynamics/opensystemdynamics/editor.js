@@ -2469,7 +2469,22 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	}
 }
 
-class TimePlotVisual extends HtmlOverlayTwoPointer {
+class PlotVisual extends HtmlOverlayTwoPointer {
+	updateGraphics() {
+		super.updateGraphics();
+		let newWidth = `${$(this.targetElement).width()-10}px`;
+		let newHeight = `${$(this.targetElement).height()-10}px`;
+		let oldWidth = this.chartDiv.style.width;
+		let oldHeight = this.chartDiv.style.height;
+		if (oldWidth !== newWidth || oldHeight !== newHeight) {
+			this.chartDiv.style.width = newWidth;
+			this.chartDiv.style.height = newHeight;
+			this.updateChart();
+		}
+	}
+}
+
+class TimePlotVisual extends PlotVisual {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
@@ -2611,7 +2626,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 		
 	}
 	updateChart() {
-
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
@@ -2664,18 +2678,6 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
 		this.updateHTML(html);
 		this.chartDiv = document.getElementById(this.chartId);
-	}
-	updateGraphics() {
-		super.updateGraphics();
-		let newWidth = `${$(this.targetElement).width()-10}px`;
-		let newHeight = `${$(this.targetElement).height()-10}px`;
-		let oldWidth = this.chartDiv.style.width;
-		let oldHeight = this.chartDiv.style.height;
-		if (oldWidth !== newWidth || oldHeight !== newHeight) {
-			this.chartDiv.style.width = newWidth;
-			this.chartDiv.style.height = newHeight;
-			this.updateChart();
-		}
 	}
 	double_click() {
 		this.dialog.show();
@@ -2802,7 +2804,7 @@ class DataGenerations {
 	}
 }
 
-class ComparePlotVisual extends HtmlOverlayTwoPointer {
+class ComparePlotVisual extends PlotVisual {
 	constructor(id, type, pos) {		
 		super(id, type, pos);
 		this.runHandler = () => {
@@ -2889,7 +2891,6 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		
 	}
 	updateChart() {
-
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
 			this.chartDiv.innerHTML = "<b>Compare Simulations Plot</b><br/> No data. Run to create data!";
@@ -2932,16 +2933,6 @@ class ComparePlotVisual extends HtmlOverlayTwoPointer {
 		this.updateHTML(html);
 		this.chartDiv = document.getElementById(this.chartId);
 	}
-	updateGraphics() {
-		super.updateGraphics();
-		
-		let width = $(this.targetElement).width()-10;
-		let height = $(this.targetElement).height()-10;
-		this.chartDiv.style.width = width+"px";
-		this.chartDiv.style.height = height+"px";
-		
-		this.updateChart();
-	}
 	double_click() {
 		this.dialog.show();
 	}
@@ -2980,7 +2971,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 }
 
-class XyPlotVisual extends HtmlOverlayTwoPointer {
+class XyPlotVisual extends PlotVisual {
 	constructor(id,type,pos) {		
 		super(id,type,pos);
 		this.runHandler = () => {
@@ -3136,16 +3127,6 @@ class XyPlotVisual extends HtmlOverlayTwoPointer {
 		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
-	}
-	updateGraphics() {
-		super.updateGraphics();
-		
-		let width = $(this.targetElement).width()-10;
-		let height = $(this.targetElement).height()-10;
-		this.chartDiv.style.width = width+"px";
-		this.chartDiv.style.height = height+"px";
-		
-		this.updateChart();
 	}
 	makeGraphics() {
 		super.makeGraphics();
