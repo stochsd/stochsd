@@ -1000,9 +1000,6 @@ class OnePointer extends BaseObject {
 			this.icons.setColor(this.color);
 		}
 	}
-	afterUpdate() {
-		
-	}
 	update() {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		
@@ -1016,9 +1013,6 @@ class OnePointer extends BaseObject {
 		if ( ! this.is_ghost) {
 			this.updateGhosts();
 		}
-		
-
-		this.afterUpdate();
 	}
 	updateGhosts() {
 		let ghostIds = findGhostsOfID(this.id);
@@ -1510,8 +1504,6 @@ class ConverterVisual extends BasePrimitive {
 		if ( ! this.is_ghost) {
 			this.updateGhosts();
 		}
-		
-		this.afterUpdate();
 	}
 
 	attachEvent() {
@@ -2362,6 +2354,7 @@ class TableVisual extends HtmlTwoPointer {
 		}
 	}
 	updateGraphics() {
+		console.log("tablevisual.updateGraphics");
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
@@ -4046,7 +4039,7 @@ class TableTool extends TwoPointerTool {
 	}
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
-		super.leftMouseDown(x,y)
+		super.leftMouseDown(x,y);
 		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
 		this.current_connection.render();
 	}
