@@ -6556,7 +6556,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.rightAxisLabel = "";
 		
 		this.markers = false;
-		this.colorFromPrimitive = false;
+		this.colorFromPrimitive = true;
 
 		this.autoPlotPer = true;
 		this.setDefaultPlotPeriod();
