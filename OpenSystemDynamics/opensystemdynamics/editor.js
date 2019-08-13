@@ -650,17 +650,17 @@ function stocsd_format(number, tdecimals) {
 	
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
-	
+	/*
 	if (Math.abs(number)<Math.pow(10, (-tdecimals))) {
         return number.toExponential(2).toUpperCase();
 	}
 	//Check if the number is to big to be view ed in the field
 	if (Math.abs(number)>Math.pow(10, tdecimals)) {
         return number.toExponential(2).toUpperCase();
-	}
+	}*/
 	
 	// Else format it as a regular number, and remove ending zeros
-	var stringified = number.toFixed(tdecimals).toUpperCase();
+	var stringified = number.toPrecision(tdecimals).toUpperCase();
 	
 	// Find the length of stringified, where the ending zeros have been removed
 	var i = stringified.length;
@@ -1337,7 +1337,7 @@ class NumberboxVisual extends BasePrimitive {
 			primitiveName += "Unkown primitive";
 		}
 		if (lastValue || lastValue === 0) {
-			valueString += stocsd_format(lastValue,3);
+			valueString += stocsd_format(lastValue,6);
 		} else {
 			valueString += "_";
 		}
