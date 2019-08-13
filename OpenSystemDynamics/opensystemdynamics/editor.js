@@ -1336,7 +1336,7 @@ class NumberboxVisual extends BasePrimitive {
 		} else {
 			primitiveName += "Unkown primitive";
 		}
-		if (lastValue) {
+		if (lastValue || lastValue === 0) {
 			valueString += stocsd_format(lastValue,3);
 		} else {
 			valueString += "_";
