@@ -1540,7 +1540,6 @@ class TwoPointer extends BaseObject {
 		this.starty = pos[1];
 		this.endx = pos[0];
 		this.endy = pos[1];
-		this.length = 0;
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
 		
@@ -1639,8 +1638,6 @@ class TwoPointer extends BaseObject {
 					do_global_log("No end position");
 				}
 			}
-			let xdiff = (this.endx - this.startx);
-			let ydiff = (this.endy - this.starty);
 			
 			// Force minimum size on TwoPointers
 			const minWidth = 10;
@@ -1649,8 +1646,7 @@ class TwoPointer extends BaseObject {
 				this.endx = this.startx + minWidth;
 				this.endy = this.starty + minHeight;
 			}
-			
-			this.length = Math.sqrt(xdiff*xdiff+ydiff*ydiff);
+
 			this.updateGraphics();
 	}
 	makeGraphics() {
