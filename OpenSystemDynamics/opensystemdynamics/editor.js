@@ -6303,8 +6303,16 @@ class DisplayDialog extends jqDialog {
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 		this.numberedLines = true;
 		this.lineWidth = 2;
+		this.setDefaultPlotPeriod();
 	}
 	
+	setDefaultPlotPeriod() {
+		this.plotPer = getTimeLength()/100;
+		if (this.plotPer < getTimeStep()) {
+			this.plotPer = getTimeStep();
+		}
+	}
+
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
 			if (findID(id) == null) {
@@ -6562,7 +6570,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.colorFromPrimitive = false;
 
 		this.autoPlotPer = true;
-		this.plotPer = getTimeLength()/100;
+		this.setDefaultPlotPeriod();
 
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
@@ -6717,7 +6725,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
 
 		if (this.autoPlotPer) { 
-			this.plotPer = getTimeLength()/100; 
+			this.setDefaultPlotPeriod();
 		} else {
 			this.plotPer = $(this.dialogContent).find(".plotPer").val();
 		}
@@ -6884,7 +6892,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.clear = false;
 
 		this.autoPlotPer = true;
-		this.plotPer = getTimeLength()/100;
+		this.setDefaultPlotPeriod();
 
 		// Values choosen by user
 		this.xMin = 0;
@@ -6999,7 +7007,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
 
 		if (this.autoPlotPer) { 
-			this.plotPer = getTimeLength()/100; 
+			this.setDefaultPlotPeriod();
 		} else {
 			this.plotPer = $(this.dialogContent).find(".plotPer").val();
 		}
@@ -7266,11 +7274,11 @@ class TableDialog extends DisplayDialog {
 		super();
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
-		this.step = getTimeStep();
+		this.plotPer = getTimeStep();
 		this.setTitle("Table Properties");
 		this.startAuto  = true;
 		this.endAuto = true;
-		this.stepAuto = true;
+		this.plotPerAuto = true;
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
@@ -7286,8 +7294,8 @@ class TableDialog extends DisplayDialog {
 				<td>Auto <input class="intervalsettings end_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
-				<td style="padding:1px;"><input class="intervalsettings step enterApply" name="step" value="${this.step}" type="text"></td>
-				<td>Auto <input class="intervalsettings step_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.stepAuto)}/></td>
+				<td style="padding:1px;"><input class="intervalsettings plotPer enterApply" name="plotPer" value="${this.plotPer}" type="text"></td>
+				<td>Auto <input class="intervalsettings plotPer_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.plotPerAuto)}/></td>
 			</tr>
 		</table>
 		`);
@@ -7356,8 +7364,8 @@ class TableDialog extends DisplayDialog {
 	updateInterval()  {
 		this.start = Number($(this.dialogContent).find(".start").val());
 		this.end = Number($(this.dialogContent).find(".end").val());
-		let step = Number($(this.dialogContent).find(".step").val());
-		this.step = (step < getTimeStep()) ? getTimeStep() : step;
+		let plotPer = Number($(this.dialogContent).find(".plotPer").val());
+		this.plotPer = (plotPer < getTimeStep()) ? getTimeStep() : plotPer;
 		
 		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
 		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
@@ -7367,9 +7375,9 @@ class TableDialog extends DisplayDialog {
 		$(this.dialogContent).find(".end").prop("disabled", this.endAuto);
 		$(this.dialogContent).find(".end").val(this.getLength()+this.getStart());
 		
-		this.stepAuto = $(this.dialogContent).find(".step_auto").prop("checked");
-		$(this.dialogContent).find(".step").prop("disabled",this.stepAuto);
-		$(this.dialogContent).find(".step").val(this.getStep());
+		this.plotPerAuto = $(this.dialogContent).find(".plotPer_auto").prop("checked");
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.plotPerAuto);
+		$(this.dialogContent).find(".plotPer").val(this.getStep());
 	}
 	getStart() {
 		if (this.startAuto) {
@@ -7390,12 +7398,12 @@ class TableDialog extends DisplayDialog {
 		}
 	}
 	getStep() {
-		if (this.stepAuto) {
+		if (this.plotPerAuto) {
 			// Fetch from IM engine
 			return getTimeStep();
 		} else {
 			// Fetch from user input
-			return this.step;
+			return this.plotPer;
 		}
 	}
 }
