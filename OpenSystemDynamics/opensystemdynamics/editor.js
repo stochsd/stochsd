@@ -2667,13 +2667,17 @@ class TimePlotVisual extends HtmlOverlayTwoPointer {
 	}
 	updateGraphics() {
 		super.updateGraphics();
-		
+		let originalWidth =  this.chartDiv.style.width;
+		let originalHeight = this.chartDiv.style.height;
+
 		let width = $(this.targetElement).width()-10;
 		let height = $(this.targetElement).height()-10;
 		this.chartDiv.style.width = width+"px";
 		this.chartDiv.style.height = height+"px";
-		
-		this.updateChart();
+
+		if (originalWidth !== this.chartDiv.style.width || originalHeight !== this.chartDiv.style.height) {
+			this.updateChart();
+		}
 	}
 	double_click() {
 		this.dialog.show();
