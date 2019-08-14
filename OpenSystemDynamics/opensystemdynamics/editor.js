@@ -7504,17 +7504,19 @@ class ConverterDialog extends jqDialog {
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="valueField" style="width: 100%; height: 50px;"></textarea>
-				<div>
-					<p style="color:grey; font-size:14px; margin:5px 0px">
-						<b>Definition:</b></br>
-						&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
-						</br>
-						<b>Example:</b></br>
-						&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
-					</p>
-				</div>
+				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
+				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
+				<p style="color:grey; margin:5px 0px">
+					<b>Definition:</b></br>
+					&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
+					</br>
+					<b>Example:</b></br>
+					&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
+				</p>
 			</div>
 		`);
+		console.log("Converter.Constructor");
+		this.inLinkParagraph = $(this.dialogContent).find(".inLink").get(0);
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
@@ -7541,6 +7543,15 @@ class ConverterDialog extends jqDialog {
 			return;
 		}
 		this.show();
+		let linkedIn = findLinkedInPrimitives(id);
+		if (linkedIn.length === 1) {
+			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
+		} else if(linkedIn.length === 0) {
+			this.inLinkParagraph.innerHTML = `<span style="color:red;">No Ingoing Link<span>`;
+		} else {
+			this.inLinkParagraph.innerHTML = `<span style="color:red;">More Then One Ingoing Link<span>`;
+		}
+		
 		this.defaultFocusSelector = defaultFocusSelector;
 		
 		var oldValue = getValue(this.primitive);
