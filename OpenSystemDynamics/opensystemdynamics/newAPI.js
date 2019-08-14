@@ -266,7 +266,7 @@ function checkValueError(primitive, value) {
 */
 function findLinkedOutPrimitives(id) {
 	let links = primitives("Link");
-	let outgoingLinks = links.filter((p) => p.source.id == id);
+	let outgoingLinks = links.filter((p) => (p.source) ? p.source.id == id : false);
 	return outgoingLinks.map(s => s.target).filter(exists => Boolean(exists));
 }
 /* 
@@ -281,7 +281,7 @@ function findLinkedOutPrimitives(id) {
 */
 function findLinkedInPrimitives(id) {
 	let links = primitives("Link");
-	let outgoingLinks = links.filter((p) => p.target.id == id);
+	let outgoingLinks = links.filter((p) => (p.target) ? p.target.id == id : false);
 	return outgoingLinks.map(s => s.source).filter(exists => Boolean(exists));
 }
 
