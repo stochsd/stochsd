@@ -183,8 +183,8 @@ const VALUE_ERROR = {
 	"VE1": "Empty Definition",
 	"VE2": "Unknown Reference",
 	"VE3": "Unused Link from",
-	"VE4": "No ingoing link", // only for converter
-	"VE5": "More then one ingoing link" // only for converter
+	"VE4": "No Ingoing Link", // only for converter
+	"VE5": "More Then One Ingoing Link" // only for converter
 }
 
 function ValueErrorToString(valueError) {
