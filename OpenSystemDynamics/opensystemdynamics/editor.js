@@ -772,7 +772,8 @@ class BaseObject {
 	}
 
 	updateValueError() {
-		if (this.type === "stock" || this.type === "variable" || this.type === "constant" || this.type === "flow") {
+		let valueErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
+		if (valueErrorTypes.includes(this.type)) {
 			let VE = checkValueError(this.primitive, getValue(this.primitive));
 			this.primitive.setAttribute("ValueError", VE ? VE : "");
 			this.update();
