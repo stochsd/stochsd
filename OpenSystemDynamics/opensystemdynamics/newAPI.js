@@ -182,7 +182,9 @@ function setValue2(primitive, value) {
 const VALUE_ERROR = {
 	"VE1": "Empty Definition",
 	"VE2": "Unknown Reference",
-	"VE3": "Unused Link from"
+	"VE3": "Unused Link from",
+	"VE4": "No ingoing link", // only for converter
+	"VE5": "More then one ingoing link" // only for converter
 }
 
 function ValueErrorToString(valueError) {
@@ -198,6 +200,10 @@ function ValueErrorToString(valueError) {
 				return `${str} [${errArg}]`;
 			case("VE3"):
 				return `${str} ${getName(findID(errArg))}`;
+			case("VE4"):
+				return str; 
+			case("VE5"): 
+				return str;
 			default: 
 				return "Unknown error";
 		}
@@ -207,11 +213,10 @@ function ValueErrorToString(valueError) {
 function checkValueError(primitive, value) {
 	// 1. Empty string
 	if (value === "") {
-		// return `Empty definition in <b>${getName(primitive)}</b>`;
 		return "VE1:";
 	}
-	// 2. Unknown reference
-	let valueRefs = value.match(/[^[]+(?=\])/g);
+
+	let primType = primitive.value.nodeName;
 	let linkedIds = primitives("Link").filter(l => {
 		if (l.target) {
 			return l.target.value.id == primitive.id
@@ -219,29 +224,38 @@ function checkValueError(primitive, value) {
 			return false;
 		}		
 	}).filter(link => Boolean(link.source)).map(lnk => getID(lnk.source));
-	let linkedRefs = linkedIds.map(id => getName(findID(id)));
-	if (valueRefs) {
-		for (let ref of valueRefs) {
-			if (linkedRefs.includes(ref) === false) {
-				// return `Unknown reference <b>${ref}</b> in <b>${getName(primitive)}</b>`;
-				return `VE2:${ref}`;
+	if (primType === "Stock" || primType === "Variable" || primType === "Flow") {
+		// 2. Unknown reference
+		let valueRefs = value.match(/[^[]+(?=\])/g);
+		let linkedRefs = linkedIds.map(id => getName(findID(id)));
+		if (valueRefs) {
+			for (let ref of valueRefs) {
+				if (linkedRefs.includes(ref) === false) {
+					return `VE2:${ref}`;
+				}
 			}
 		}
-	}
-	
-	// 3. Unused link 
-	for(let i = 0; i < linkedIds.length; i++) {
-		let ref = linkedRefs[i];
-		if (valueRefs) {
-			if (valueRefs.includes(ref) === false) {
-				// return `Unused Link from <b>${ref}</b> in <b>${getName(primitive)}</b>`;
+
+		// 3. Unused link 
+		for(let i = 0; i < linkedIds.length; i++) {
+			let ref = linkedRefs[i];
+			if (valueRefs) {
+				if (valueRefs.includes(ref) === false) {
+					return `VE3:${linkedIds[i]}`;
+				}
+			} else {
 				return `VE3:${linkedIds[i]}`;
 			}
-		} else {
-			return `VE3:${linkedIds[i]}`;
+		}
+	} else if (primType === "Converter") {
+		if (linkedIds.length === 0) {
+			// 4. No ingoing link 
+			return "VE4:";
+		} else if (linkedIds.length > 1) {
+			// 5. More then one ingoing link 
+			return `VE5:${linkedIds}`;
 		}
 	}
-
 	// No error 
 	return null;
 }
