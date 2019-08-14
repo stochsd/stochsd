@@ -261,20 +261,21 @@ function checkValueError(primitive, value) {
 }
 
 /* 
-	Method: findPrimitivesWithOutgoingLinks
+	Method: findLinkedOutPrimitives
 
-	Finds and returns all primitives in the model.
+	Finds and returns all primitives that primitive with param:id is liked to
 
 	Return:
 
 	An array of primitives.
 
 */
-function findPrimitivesWithOutgoingLinks(id) {
+function findLinkedOutPrimitives(id) {
 	let links = primitives("Link");
 	let outgoingLinks = links.filter((p) => p.source.id == id);
 	return outgoingLinks.map(s => s.target);
 }
+
 /*
 	Method: replaceName
 	replaces all instences of a variable name in a definition (FlowRate, InitialValue, Equation)
@@ -301,7 +302,7 @@ function replaceName(definition, oldName, newName) {
  * @param {string} 				newName 
  */
 function changeReferencesToName(id, oldName, newName) {
-	let objWLinkedPrims = findPrimitivesWithOutgoingLinks(id);
+	let objWLinkedPrims = findLinkedOutPrimitives(id);
 	objWLinkedPrims.map((p) => {
 		switch (p.value.nodeName) {
 			case "Flow":
