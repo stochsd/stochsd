@@ -275,6 +275,21 @@ function findLinkedOutPrimitives(id) {
 	let outgoingLinks = links.filter((p) => p.source.id == id);
 	return outgoingLinks.map(s => s.target).filter(exists => Boolean(exists));
 }
+/* 
+	Method: findLinkedInPrimitives
+
+	Finds and returns all primitives that has ingoing links to param:id 
+
+	Return:
+
+	An array of primitives.
+
+*/
+function findLinkedInPrimitives(id) {
+	let links = primitives("Link");
+	let outgoingLinks = links.filter((p) => p.target.id == id);
+	return outgoingLinks.map(s => s.source).filter(exists => Boolean(exists));
+}
 
 /*
 	Method: replaceName
