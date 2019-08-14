@@ -6843,23 +6843,23 @@ class TimePlotDialog extends DisplayDialog {
 		// The dialog is owned by the table to which it belongs
 
 		let contentHTML = `
-			<table class="invisibleTable">
-				<tr class="invisibleTable">
-					<td class="invisibleTable">
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
 						${this.renderPrimitiveListHtml()}
-					</td>
-					<td class="invisibleTable">
+					</div>
+					
+					<div class="table-cell">
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
 						${this.renderAxisNamesHtml()}
 						${this.renderNumberedLinesCheckboxHtml()}
 						${this.renderColorCheckboxHtml()}
 						${this.renderLineWidthOptionHtml()}
-					</td>
-				</tr>
-			</table>			
+					</div>
+				</div>
+			</div>
 		`;
-		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
@@ -7069,14 +7069,13 @@ class ComparePlotDialog extends DisplayDialog {
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
-
 		let contentHTML = `
-			<table class="invisibleTable">
-				<tr class="invisibleTable">
-					<td class="invisibleTable">
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
 						${this.renderPrimitiveListHtml()}
-					</td>
-					<td class="invisibleTable">
+					</div>
+					<div class="table-cell">
 						${this.renderKeepHtml()}
 						${this.renderPlotPerHtml()}
 						${this.renderAxisLimitsHTML()}
@@ -7084,11 +7083,10 @@ class ComparePlotDialog extends DisplayDialog {
 						${this.renderNumberedLinesCheckboxHtml()}
 						${this.renderColorCheckboxHtml()}
 						${this.renderLineWidthOptionHtml()}
-					</td>
-				</tr>
-			</table>			
+					</div>
+				</div>
+			</div>
 		`;
-		// this.renderAxisNamesHtml() + this.renderPrimitiveListHtml() + this.renderAxisLimitsHTML();
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
@@ -7169,16 +7167,18 @@ class XyPlotDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let contentHTML = `
-			<table class="invisibleTable">
-				<tr>
-					<td>${this.renderPrimitiveListHtml()}</td>
-					<td>
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
+						${this.renderPrimitiveListHtml()}
+					</div>
+					<div class="table-cell">
 						${this.renderMarkerRadioHTML()} 
 						${this.renderAxisLimitsHTML()}
 						${this.renderLineWidthOptionHtml()}
-					</td>
-				</tr>
-			</table>
+					</div>
+				</div>
+			</div>
 		`;
 		this.setHtml(contentHTML);
 		
@@ -7343,17 +7343,17 @@ class TableDialog extends DisplayDialog {
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
 		let contentHTML = `
-			<table class="invisibleTable">
-				<tr>
-					<td>
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
 						${this.renderPrimitiveListHtml()}
-					</td>
-					<td>
+					</div>
+					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
 						${this.renderExportHtml()}
-					</td>
-				</tr>
-			</table>
+					</div>
+				</div>
+			</div>
 		`;
 		// this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
 		this.setHtml(contentHTML);
