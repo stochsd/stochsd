@@ -217,13 +217,7 @@ function checkValueError(primitive, value) {
 	}
 
 	let primType = primitive.value.nodeName;
-	let linkedIds = primitives("Link").filter(l => {
-		if (l.target) {
-			return l.target.value.id == primitive.id
-		} else {
-			return false;
-		}		
-	}).filter(link => Boolean(link.source)).map(lnk => getID(lnk.source));
+	let linkedIds = findLinkedInPrimitives(primitive.id).map(getID);
 	if (primType === "Stock" || primType === "Variable" || primType === "Flow") {
 		// 2. Unknown reference
 		let valueRefs = value.match(/[^[]+(?=\])/g);
