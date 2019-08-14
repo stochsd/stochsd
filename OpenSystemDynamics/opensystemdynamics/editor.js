@@ -2610,7 +2610,8 @@ class TimePlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
+			// this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -2653,11 +2654,49 @@ class TimePlotVisual extends PlotVisual {
 		this.dialog.minRValue = this.plot.axes.y2axis.min;
 		this.dialog.maxRValue = this.plot.axes.y2axis.max;
 	}
+	setEmptyPlot() {
+		let emptyArray = [[
+			[0.0, .62, 'Open to Select'], 
+			[0.0, .32, 'Run to create data']
+		]];
+		$(this.chartDiv).empty();	
+		this.plot = $.jqplot(this.chartId, emptyArray, {
+			title: "Time Plot",
+			grid: {
+				background: "white"
+			},
+			series: [{
+				showLine: false,
+				showMarker: false,
+				pointLabels: {
+					show: true,
+					edgeTolerance: 0,
+					xpadding: 10,
+					location: "e" 
+				}
+			}],
+			axes: {
+				xaxis: {
+					min: 0,
+					max: 1,
+					tickOptions: {
+						showGridline: false
+					},
+					tickInterval: 1.0
+				},
+				yaxis: {
+					min: 0,
+					max: 1,
+					tickInterval: 0.5
+				}
+			}
+		});
+	}
 	makeGraphics() {
 		super.makeGraphics();
 		
 		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		let html = `<div id="${this.chartId}" style="color: black; width:0px; height:0px; z-index: 100;"></div>`;
 		this.updateHTML(html);
 		this.chartDiv = document.getElementById(this.chartId);
 	}
