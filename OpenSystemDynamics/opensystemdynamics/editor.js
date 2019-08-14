@@ -8187,7 +8187,17 @@ class EquationListDialog extends jqDialog {
 		let Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
-			converterHtml = this.renderPrimitiveListHtml(Converters, "Converter", "Data");
+			converterHtml = (`
+				<h3 class="equationListHeader">Converter</h3>
+				<table class="modernTable">
+					<tr><th>Name</th><th>Data</th><th>Ingoing Link</th></tr>
+					${Converters.map(p => (`<tr>
+						<td>${makePrimitiveName(getName(p))}</td>
+						<td>${getValue(p)}</td>
+						<td>${getName(findLinkedInPrimitives(p.id)[0])}</td>
+					</tr>`)).join('')}
+				</table>
+			`);
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
