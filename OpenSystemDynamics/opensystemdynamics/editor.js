@@ -7503,7 +7503,7 @@ class ConverterDialog extends jqDialog {
 				Name:<br/>
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
-				<textarea class="valueField" style="width: 100%; height: 50px;"></textarea>
+				<textarea class="valueField" style="width: 300px; height: 80px;"></textarea>
 				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
