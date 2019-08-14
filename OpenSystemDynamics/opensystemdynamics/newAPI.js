@@ -273,7 +273,7 @@ function checkValueError(primitive, value) {
 function findLinkedOutPrimitives(id) {
 	let links = primitives("Link");
 	let outgoingLinks = links.filter((p) => p.source.id == id);
-	return outgoingLinks.map(s => s.target);
+	return outgoingLinks.map(s => s.target).filter(exists => Boolean(exists));
 }
 
 /*
