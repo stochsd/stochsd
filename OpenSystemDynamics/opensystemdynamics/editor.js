@@ -2339,7 +2339,6 @@ class TableVisual extends HtmlTwoPointer {
 		}
 	}
 	updateGraphics() {
-		console.log("tablevisual.updateGraphics");
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
@@ -7515,7 +7514,6 @@ class ConverterDialog extends jqDialog {
 				</p>
 			</div>
 		`);
-		console.log("Converter.Constructor");
 		this.inLinkParagraph = $(this.dialogContent).find(".inLink").get(0);
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
 		$(this.valueField).keydown((event) => {
