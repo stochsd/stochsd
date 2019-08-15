@@ -170,7 +170,7 @@ function isNameFree(newName, exepctionId) {
 function setValue2(primitive, value) {
 	let valueStr = value; 
 	while(valueStr[valueStr.length-1] === " " || valueStr[valueStr.length-1] === ";" || valueStr[valueStr.length-1] === "\n"){
-		valueStr = valueStr.substring(0, value.length-1);
+		valueStr = valueStr.substring(0, valueStr.length-1);
 	}
 	valueStr = valueStr.replace(/\n/g, "\\n");
 	setValue(primitive, valueStr);
