@@ -184,7 +184,8 @@ const VALUE_ERROR = {
 	"VE2": "Unknown Reference",
 	"VE3": "Unused Link from",
 	"VE4": "No Ingoing Link", // only for converter
-	"VE5": "More Then One Ingoing Link" // only for converter
+	"VE5": "More Then One Ingoing Link", // only for converter
+	"VE6": "A Parameter May Not Have An Ingoing Link" // Only for Parameter (Constant)
 }
 
 function ValueErrorToString(valueError) {
@@ -195,15 +196,14 @@ function ValueErrorToString(valueError) {
 		let str = VALUE_ERROR[errType];
 		switch(errType) {
 			case("VE1"):
+			case("VE4"):
+			case("VE5"): 
+			case("VE6"): 
 				return str;
 			case("VE2"):
 				return `${str} [${errArg}]`;
 			case("VE3"):
 				return `${str} ${getName(findID(errArg))}`;
-			case("VE4"):
-				return str; 
-			case("VE5"): 
-				return str;
 			default: 
 				return "Unknown error";
 		}
@@ -218,6 +218,11 @@ function checkValueError(primitive, value) {
 
 	let primType = primitive.value.nodeName;
 	let linkedIds = findLinkedInPrimitives(primitive.id).map(getID);
+	if (primType === "Variable" && primitive.value.getAttribute("isConstant") === "true") {
+		if (linkedIds.length > 0) {
+			return "VE6:";
+		}
+	}
 	if (primType === "Stock" || primType === "Variable" || primType === "Flow") {
 		// 2. Unknown reference
 		let valueRefs = value.match(/[^[]+(?=\])/g);
