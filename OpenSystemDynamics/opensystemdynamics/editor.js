@@ -32,7 +32,7 @@ const type_basename = {
 	"link":				"Link",
 	"converter":	"Converter",
 	"text":				"Text",
-	"constant":		"Constant"
+	"constant":		"Parameter"
 };
 
 last_connection = null;
@@ -8193,7 +8193,7 @@ class EquationListDialog extends jqDialog {
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
+			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Parameters", "Value");
 		}
 
 		let Converters = primitives("Converter");
