@@ -27,7 +27,7 @@ const type_size = {
 
 const type_basename = {
 	"stock":			"Stock",
-	"variable":		"Variable",
+	"variable":		"Auxiliary",
 	"flow":				"Flow",
 	"link":				"Link",
 	"converter":	"Converter",
@@ -8194,7 +8194,7 @@ class EquationListDialog extends jqDialog {
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Parameters", "Value");
+			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
 		}
 
 		let Converters = primitives("Converter");
