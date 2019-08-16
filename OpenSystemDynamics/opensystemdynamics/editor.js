@@ -2513,6 +2513,7 @@ class TimePlotVisual extends PlotVisual {
 				switch(type) {
 					case("variable"):
 					case("constant"):
+					case("converter"):
 						return ".";
 					case("flow"):
 						return "-";
@@ -2721,10 +2722,11 @@ class DataGenerations {
 		));
 		this.patternGen.push(ids.map(findID).map( (node) => {
 				switch(get_object(node.id).type) {
-					case "variable":
-					case "converter":
-						return "."
-					case "flow":
+					case ("variable"):
+					case("constant"):
+					case ("converter"):
+						return ".";
+					case ("flow"):
 						return "-";
 					default:
 						return "_";
