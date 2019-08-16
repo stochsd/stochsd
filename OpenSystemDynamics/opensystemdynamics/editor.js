@@ -1469,7 +1469,7 @@ class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateValueError();
-		this.namePosList = [[0, 29],[23, 5],[0, -19],[-23, 5]];
+		this.namePosList = [[0, 29],[23, 5],[0, -21],[-23, 5]];
 	}
 	getImage() {
 		return [
