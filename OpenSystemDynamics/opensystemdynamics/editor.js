@@ -1419,6 +1419,7 @@ class VariableVisual extends BasePrimitive {
 class ConstantVisual extends VariableVisual {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
+		this.namePosList = [[0, 36],[25, 5],[0, -26],[-25, 5]];
 	}
 
 	getImage() {
