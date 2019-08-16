@@ -2796,7 +2796,7 @@ class DataGenerations {
 					label += this.nameGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
-						lineWidth: lineWidth,
+						lineWidth: (this.patternGen[i][j] === ".") ? 3 : lineWidth,
 						label: label,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
