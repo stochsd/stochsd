@@ -7569,7 +7569,7 @@ class ConverterDialog extends jqDialog {
 		let oldName = getName(this.primitive);
 		let oldNameBrackets = makePrimitiveName(oldName);
 		
-		this.setTitle(`${oldName} Properties`);
+		this.setTitle(`${oldNameBrackets} properties`);
 
 		$(this.nameField).val(oldNameBrackets);
 		$(this.valueField).val(oldValue);
@@ -7844,7 +7844,7 @@ class EquationEditor extends jqDialog {
 		let oldName = getName(this.primitive);
 		var oldNameBrackets = makePrimitiveName(oldName);
 		
-		this.setTitle(oldName+" Properties");
+		this.setTitle(oldNameBrackets+" properties");
 
 		$(this.nameField).val(oldNameBrackets);
 		$(this.valueField).val(oldValue);
