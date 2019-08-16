@@ -8207,7 +8207,7 @@ class EquationListDialog extends jqDialog {
 					${Converters.map(p => (`<tr>
 						<td>${makePrimitiveName(getName(p))}</td>
 						<td style="max-width: 400px; word-break: break-all;">${getValue(p)}</td>
-						<td>${getName(findLinkedInPrimitives(p.id)[0])}</td>
+						<td>${findLinkedInPrimitives(p.id).length !== 0 ? getName(findLinkedInPrimitives(p.id)[0]) : "None"}</td>
 					</tr>`)).join('')}
 				</table>
 			`);
