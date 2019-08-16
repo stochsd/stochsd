@@ -7883,10 +7883,12 @@ class EquationEditor extends jqDialog {
 		}
 		
 		let referenceHTML = "";
-		if (referenceList.length > 0) {
-			referenceHTML = "<b>Linked primitives:</b><br/>"+referenceListToHtml(referenceList);
-		} else {
-			referenceHTML = "No linked primitives";
+		if (! (this.primitive.value.nodeName === "Variable" && this.primitive.getAttribute("isConstant") === "true")) {
+			if (referenceList.length > 0) {
+				referenceHTML = "<b>Linked primitives:</b><br/>"+referenceListToHtml(referenceList);
+			} else {
+				referenceHTML = "No linked primitives";
+			}
 		}
 		$(this.referenceDiv).html(referenceHTML);
 		
