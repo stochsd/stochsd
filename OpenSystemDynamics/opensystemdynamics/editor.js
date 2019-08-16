@@ -27,12 +27,12 @@ const type_size = {
 
 const type_basename = {
 	"stock":			"Stock",
-	"variable":		"Variable",
+	"variable":		"Auxiliary",
 	"flow":				"Flow",
 	"link":				"Link",
 	"converter":	"Converter",
 	"text":				"Text",
-	"constant":		"Constant"
+	"constant":		"Parameter"
 };
 
 last_connection = null;
@@ -5631,7 +5631,8 @@ function updateInfoBar() {
 			let type = selected.type;
 			
 			// Make first letter uppercase
-			let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+			// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+			let Type = type_basename[type]; 
 			switch(type) {
 				case("numberbox"):
 					let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
@@ -7499,7 +7500,6 @@ class NumberBoxDialog extends jqDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
-		this.setTitle("Converter Properties");
 		this.setHtml(`
 			<div class="primitiveSettings" style="padding: 10px 0px">
 				Name:<br/>
@@ -7558,9 +7558,12 @@ class ConverterDialog extends jqDialog {
 		var oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
-		var oldName = makePrimitiveName(getName(this.primitive));
+		let oldName = getName(this.primitive);
+		let oldNameBrackets = makePrimitiveName(oldName);
+		
+		this.setTitle(`${oldName} Properties`);
 
-		$(this.nameField).val(oldName);
+		$(this.nameField).val(oldNameBrackets);
 		$(this.valueField).val(oldValue);
 		
 		if (this.defaultFocusSelector) {
@@ -7825,19 +7828,17 @@ class EquationEditor extends jqDialog {
 		}
 		this.show();
 		this.defaultFocusSelector = defaultFocusSelector;
-		
-		
-		let typeName = type_basename[getType(this.primitive).toLowerCase()];
-		
+
 		
 		var oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
-		var oldName = makePrimitiveName(getName(this.primitive));
+		let oldName = getName(this.primitive);
+		var oldNameBrackets = makePrimitiveName(oldName);
 		
-		this.setTitle(typeName+" Properties");
+		this.setTitle(oldName+" Properties");
 
-		$(this.nameField).val(oldName);
+		$(this.nameField).val(oldNameBrackets);
 		$(this.valueField).val(oldValue);
 		
 		
@@ -8193,7 +8194,7 @@ class EquationListDialog extends jqDialog {
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Variables & Constants", "Value");
+			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
 		}
 
 		let Converters = primitives("Converter");
