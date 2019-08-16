@@ -26,6 +26,14 @@ const type_size = {
 }
 
 const type_basename = {
+	"timeplot": 	"TimePlot",
+	"compareplot":	"ComparePlot",
+	"xyplot":		"XyPlot",
+	"table":		"Table",
+	"rectangle": 	"Rectangle",
+	"line":			"Line",
+	"numberbox": 	"Numberbox",
+	"text":			"Text",
 	"stock":			"Stock",
 	"variable":		"Auxiliary",
 	"flow":				"Flow",
