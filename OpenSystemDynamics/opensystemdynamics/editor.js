@@ -2646,7 +2646,7 @@ class TimePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		let emptyArray = [[
-			[0.0, .62, 'Open to Select'], 
+			[0.0, .62, 'Open to specify the plot'], 
 			[0.0, .32, 'Run to create data']
 		]];
 		$(this.chartDiv).empty();	
@@ -2677,7 +2677,7 @@ class TimePlotVisual extends PlotVisual {
 				yaxis: {
 					min: 0,
 					max: 1,
-					tickInterval: 0.5
+					tickInterval: 1.0
 				}
 			}
 		});
