@@ -185,7 +185,7 @@ const VALUE_ERROR = {
 	"VE3": "Unused Link from",
 	"VE4": "No Ingoing Link", // only for converter
 	"VE5": "More Then One Ingoing Link", // only for converter
-	"VE6": "A Parameter May Not Have An Ingoing Link" // Only for Parameter (Constant)
+	"VE6": "A Parameter must <u>not</u> have an ingoing link. Please, remove it!" // Only for Parameter (Constant)
 }
 
 function ValueErrorToString(valueError) {
