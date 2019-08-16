@@ -1211,7 +1211,7 @@ class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateValueError();
-		this.namePosList = [[0, 32], [27, 5], [0, -22], [-27, 5]];
+		this.namePosList = [[0, 32], [27, 5], [0, -24], [-27, 5]];
 	}
 
 	getSize() {
@@ -1383,7 +1383,7 @@ class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateValueError();
-		this.namePosList = [[0, 34],[23, 5],[0, -24],[-23, 5]];
+		this.namePosList = [[0, 34],[23, 5],[0, -25],[-23, 5]];
 	}
 
 	getRadius() {
@@ -1427,7 +1427,7 @@ class VariableVisual extends BasePrimitive {
 class ConstantVisual extends VariableVisual {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.namePosList = [[0, 36],[25, 5],[0, -26],[-25, 5]];
+		this.namePosList = [[0, 36],[25, 5],[0, -29],[-25, 5]];
 	}
 
 	getImage() {
