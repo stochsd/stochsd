@@ -5631,7 +5631,8 @@ function updateInfoBar() {
 			let type = selected.type;
 			
 			// Make first letter uppercase
-			let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+			// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+			let Type = type_basename[type]; 
 			switch(type) {
 				case("numberbox"):
 					let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
