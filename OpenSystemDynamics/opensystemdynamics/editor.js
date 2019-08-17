@@ -11,6 +11,7 @@ terms of the Insight Maker Public License (https://InsightMaker.com/impl).
 var equationEditor;
 var converterDialog;
 var simulationSettings;
+var timeUnitDialog;
 var macroDialog;
 var equationList;
 var debugDialog;
@@ -4605,6 +4606,10 @@ function update_name_pos(node_id) {
 
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
+	if (! isTimeUnitOk(getTimeUnits())) {
+		timeUnitDialog.show();
+		return;
+	}
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
@@ -4998,6 +5003,9 @@ $(document).ready(function() {
 		let pluginName = $(event.target).data("plugin-name");
 		loadPlugin(pluginName);
 	});
+	$("#btn_timeunit").click(function() {
+		timeUnitDialog.show();
+	})
 	if (fileManager.hasSaveAs()) {
 		$("#btn_save_as").show();
 	}
@@ -5013,10 +5021,11 @@ $(document).ready(function() {
 	equationEditor = new EquationEditor();
 	converterDialog = new ConverterDialog();
 	simulationSettings = new SimulationSettings();
+	timeUnitDialog = new TimeUnitDialog();
 	equationList = new EquationListDialog();
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
-	
+
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
 	
@@ -5026,6 +5035,13 @@ $(document).ready(function() {
 	environment.ready();
 	fileManager.ready();
 	restoreAfterRestart();
+
+	if (isTimeUnitOk(getTimeUnits())) {
+		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
+	} else {
+		$("#timeUnitParagraph").html("<span style='color: red;'>No Time Unit</span>");
+		timeUnitDialog.show();
+	}
 });
 	
 function find_connections(primitive) {
@@ -5133,7 +5149,7 @@ var blankGraphTemplate = `<mxGraphModel>
 <mxGeometry x="10" y="10" width="64" height="64" as="geometry"/>
 </mxCell>
 </Display>
-<Setting Note="" Version="36" TimeLength="100" TimeStart="0" TimeStep="1" TimeUnits="Years" StrictUnits="true" Units="" HiddenUIGroups="Validation,User Interface" SolutionAlgorithm="RK1" BackgroundColor="white" Throttle="-1" Macros="" SensitivityPrimitives="" SensitivityRuns="50" SensitivityBounds="50, 80, 95, 100" SensitivityShowRuns="false" article="{&quot;comments&quot;:true, &quot;facebookUID&quot;: &quot;&quot;}" StyleSheet="{}" id="2">
+<Setting Note="" Version="36" TimeLength="100" TimeStart="0" TimeStep="1" TimeUnits="" StrictUnits="true" Units="" HiddenUIGroups="Validation,User Interface" SolutionAlgorithm="RK1" BackgroundColor="white" Throttle="-1" Macros="" SensitivityPrimitives="" SensitivityRuns="50" SensitivityBounds="50, 80, 95, 100" SensitivityShowRuns="false" article="{&quot;comments&quot;:true, &quot;facebookUID&quot;: &quot;&quot;}" StyleSheet="{}" id="2">
 <mxCell parent="1" vertex="1" visible="0">
 <mxGeometry x="20" y="20" width="80" height="40" as="geometry"/>
 </mxCell>
@@ -7484,6 +7500,57 @@ class SimulationSettings extends jqDialog {
 
 		let method = $(".input_method :selected").val();
 		setAlgorithm(method);
+	}
+}
+
+class TimeUnitDialog extends jqDialog {
+	constructor() {
+		super();
+		this.validName = false;
+		this.setTitle("Set Time Unit");
+		this.setHtml(`
+			<div style="min-height: 70px; margin: 8px 0px;">
+				Specify the Time Unit to enable model building.</br></br>
+				Time Unit: 
+				<input class="timeUnitInput" style="text-align: left; width:200px;" type="text"/>
+				<div style="margin-top: 4px;" class="complainDiv"></div>
+			</div>
+		`);	
+
+		$(this.dialogContent).find(".timeUnitInput").keyup((event) => {
+			this.showComplain(this.checkValid());
+		});
+	}
+	beforeShow() {
+		$(this.dialogContent).find(".timeUnitInput").val(getTimeUnits());
+	}
+	checkValid() {
+		let value = $(this.dialogContent).find(".timeUnitInput").val();
+		return isTimeUnitOk(value);
+	}
+	showComplain(ok) {
+		let complainDiv = $(this.dialogContent).find(".complainDiv");
+		if (ok) {
+			complainDiv.html("");
+		} else {
+			complainDiv.html(`<span style="color:red;">Time Unit must contain character A-Z or a-z.</span>`);
+		}
+	}
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			"Apply":(event) =>
+			{	
+				if (this.checkValid()) {
+					let timeUnit = $(this.dialogContent).find(".timeUnitInput").val(); 
+					setTimeUnits(timeUnit);
+					$(this.dialog).dialog('close');
+					$("#timeUnitParagraph").html(`Time Unit: ${timeUnit}`);
+					History.storeUndoState();
+				} else {
+					this.showComplain(this.validName);
+				}
+			}
+		};
 	}
 }
 
