@@ -7461,17 +7461,30 @@ class SimulationSettings extends jqDialog {
 		let start = getTimeStart();
 		let length = getTimeLength();
 		let step = getTimeStep();
+		let timeUnit = getTimeUnits();
+		if (timeUnit.length > 1 && timeUnit[timeUnit.length-1].toLowerCase() !== "s") {
+			timeUnit += "(s)";
+		}
 		this.setHtml(`
 		<table class="modernTable" style="margin:16px;">
 		<tr>
 			<td>Start Time</td>
-			<td style="padding:1px;"><input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text"></td>
+			<td style="padding:1px;">
+				<input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text">
+				&nbsp ${timeUnit} &nbsp
+			</td>
 		</tr><tr>
 			<td>Length</td>
-			<td style="padding:1px;"><input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text"></td>
+			<td style="padding:1px;">
+				<input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text">
+				&nbsp ${timeUnit} &nbsp
+			</td>
 		</tr><tr>
 			<td>Time Step</td>
-			<td style="padding:1px;"><input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text"></td>
+			<td style="padding:1px;">
+				<input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text">
+				&nbsp ${timeUnit} &nbsp
+			</td>
 		</tr><tr>
 			<td>Method</td>
 			<td style="padding:1px;"><select class="input_method enterApply" style="width:104px">
