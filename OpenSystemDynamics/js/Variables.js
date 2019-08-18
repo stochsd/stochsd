@@ -252,7 +252,10 @@ primitiveBank.setting.setAttribute('Throttle', '1');
 primitiveBank.setting.setAttribute('TimeLength', '100');
 primitiveBank.setting.setAttribute('TimeStart', '0');
 primitiveBank.setting.setAttribute('TimeStep', '1');
-primitiveBank.setting.setAttribute('TimeUnits', 'Years');
+// Change made here By Magnus Gustafsson (2019-06-27)
+// Original line:
+// primitiveBank.setting.setAttribute('TimeUnits', 'Years');
+primitiveBank.setting.setAttribute('TimeUnits', '');
 primitiveBank.setting.setAttribute('Units', "");
 primitiveBank.setting.setAttribute("SolutionAlgorithm", "RK1");
 primitiveBank.setting.setAttribute("BackgroundColor", "white");

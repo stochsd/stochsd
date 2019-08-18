@@ -348,3 +348,20 @@ function removeSpacesAtEnd(str) {
 function isPrimitiveGhost(primitive) {
 	return primitive.value.nodeName === "Ghost";
 }
+
+/**
+ * must contain charachter between A-Z or a-z 
+ */
+function isTimeUnitOk(timeUnit) {
+	let lowercase = timeUnit.toLowerCase();
+	for (let i = 0; i < timeUnit.length; i++) {
+		if (("a").charCodeAt(0) <= lowercase.charCodeAt(i) && lowercase.charCodeAt(i) <= ("z").charCodeAt(0)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function setTimeUnit(timeUnit) {
+
+}
