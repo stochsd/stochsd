@@ -1304,7 +1304,7 @@ class NumberboxVisual extends BasePrimitive {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(this.runHandler);
+		RunResults.subscribeRun(id, this.runHandler);
 	}
 	setSelectionSizeToText() {
 		var boundingRect = this.name_element.getBoundingClientRect();
@@ -2269,7 +2269,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(this.runHandler);
+		RunResults.subscribeRun(id, this.runHandler);
 		this.data = new TableData();
 	}
 	removePlotReference(id) {
@@ -2472,7 +2472,7 @@ class TimePlotVisual extends PlotVisual {
 			this.fetchData();
 			this.render();
 		}
-		RunResults.subscribeRun(this.runHandler);
+		RunResults.subscribeRun(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
@@ -2833,7 +2833,7 @@ class ComparePlotVisual extends PlotVisual {
 			this.fetchData();
 			this.render();
 		}
-		RunResults.subscribeRun(this.runHandler);
+		RunResults.subscribeRun(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.gens = new DataGenerations();
@@ -2999,7 +2999,7 @@ class XyPlotVisual extends PlotVisual {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(this.runHandler);
+		RunResults.subscribeRun(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
@@ -5727,7 +5727,7 @@ class RunResults {
 		this.varIdList = [];
 		this.varnameList = ["Time"];
 		this.results = [];
-		this.runSubscribers = [];
+		this.runSubscribers = {};
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates everytime updateCounter goes down to zero
 		this.simulationTime = 0;
@@ -5857,7 +5857,7 @@ class RunResults {
 				// Run finished
 				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 				this.storeResults(res);
-				this.updateProgressBar()
+				this.updateProgressBar();
 				this.triggerRunFinished();
 				this.stopSimulation();
 			},
@@ -5942,8 +5942,8 @@ class RunResults {
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
 	}
-	static subscribeRun(handler) {
-		this.runSubscribers.push(handler);
+	static subscribeRun(id, handler) {
+		this.runSubscribers[id] = handler;
 	}
 	static push(newRow) {
 		this.results.push(newRow);
@@ -6055,8 +6055,12 @@ class RunResults {
 		return filteredResults;
 	}
 	static triggerRunFinished() {
-		for(var i in this.runSubscribers) {
-			this.runSubscribers[i]();
+		for(var id in this.runSubscribers) {
+			if (findID(id)) {
+				this.runSubscribers[id]();
+			} else {
+				delete this.runSubscribers[id];
+			}
 		}	
 	}
 }
