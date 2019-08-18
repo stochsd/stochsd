@@ -53,7 +53,8 @@ var object_array = {};
 // Stores state related to mouse
 var last_click_object_clicked = false;
 var last_clicked_element = null; // Points to the object we last clicked
-var mouseisdown = false;
+var leftmouseisdown = false;
+var middlemouseisdown = false;
 var mousedown_x = 0;
 var mousedown_y = 0;
 var lastMouseX = 0;
@@ -3452,7 +3453,22 @@ class LinkVisual extends BaseConnection {
 
 class BaseTool {
 	static init() {
-		
+		this.middleDownX = 0;
+		this.middleDownY = 0;
+		this.downScrollPosX = 0;
+		this.downScrollPosY = 0;
+	}
+	static middleMouseDown(x,y) {
+		this.middleDownX = x;
+		this.middleDownY = y;
+		this.downScrollPosX = $("#svgplanebackground").scrollLeft();
+		this.downScrollPosY = $("#svgplanebackground").scrollTop();
+	}
+	static middleMouseMove(x,y) {
+		let diffX = this.middleDownX - x;
+		let diffY = this.middleDownY - y;
+		$("#svgplanebackground").scrollLeft(this.downScrollPosX + diffX);
+		$("#svgplanebackground").scrollTop( this.downScrollPosY + diffY);
 	}
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
@@ -3473,6 +3489,7 @@ class BaseTool {
 		// Is triggered when the tool is deselected
 	}
 }
+BaseTool.init();
 
 function getAllValueErrorPrimitive() {
 	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError")).filter(v => ! isPrimitiveGhost(v));
@@ -4618,8 +4635,13 @@ function mouseDownHandler(event) {
 	switch (event.which) {
 		case 1:
 			// if left mouse button down
-			mouseisdown = true;
+			leftmouseisdown = true;
 			currentTool.leftMouseDown(x,y);	
+			break;
+		case 2: 
+			event.preventDefault();
+			middlemouseisdown = true;
+			currentTool.middleMouseDown(x,y);
 			break;
 		case 3: 
 			// if right mouse button down
@@ -4631,33 +4653,41 @@ function mouseMoveHandler(event) {
 	var offset = $(svgplane).offset();
 	var x = event.pageX-offset.left;
 	var y = event.pageY-offset.top;
-	
+
 	lastMouseX = x;
 	lastMouseY = y;
 	
-	if (!mouseisdown) {
-		return;
+	if (middlemouseisdown) {
+		event.preventDefault();
+		currentTool.middleMouseMove(x,y);
 	}
-	currentTool.mouseMove(x,y);
+	
+	if (leftmouseisdown) {
+		currentTool.mouseMove(x,y);
+	}
 }
 function mouseUpHandler(event) {
-	if (event.which != 1) {
-		do_global_log("Button other then left mouse was released up");
-		return;
+	switch(event.which) {
+		case(1):
+			if (!leftmouseisdown) {
+				return;
+			}
+			// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
+			do_global_log("mouseUpHandler");
+			var offset = $(svgplane).offset();
+			var x = event.pageX-offset.left;
+			var y = event.pageY-offset.top;
+			
+			currentTool.leftMouseUp(x,y);
+			leftmouseisdown = false;
+			updateInfoBar();
+			History.storeUndoState();
+		break;
+		case(2): 
+			middlemouseisdown = false;
+		break;
 	}
-	if (!mouseisdown) {
-		return;
-	}
-	// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
-	do_global_log("mouseUpHandler");
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
 	
-	currentTool.leftMouseUp(x,y);
-	mouseisdown = false;
-	updateInfoBar();
-	History.storeUndoState();
 }
 
 function find_elements_under(x, y) {	
@@ -7465,9 +7495,6 @@ class SimulationSettings extends jqDialog {
 		let length = getTimeLength();
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
-		if (timeUnit.length > 1 && timeUnit[timeUnit.length-1].toLowerCase() !== "s") {
-			timeUnit += "(s)";
-		}
 		this.setHtml(`
 		<table class="modernTable" style="margin:16px;">
 		<tr>
@@ -8251,11 +8278,11 @@ class EquationListDialog extends jqDialog {
 		} 
 
 		let specs = [
+			["Time Unit", getTimeUnits()],
 			["Start", getTimeStart()],
 			["Length", getTimeLength()],
 			["DT", getTimeStep()],
-			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"],
-			["Time Unit", getTimeUnits()]
+			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"]
 		];
 		if (isSeedSet) {
 			specs.push(["Seed", seed]);
