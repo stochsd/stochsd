@@ -5045,6 +5045,10 @@ $(document).ready(function() {
 			$(`#btn_recent_${i}`).click(function(event) {
 				let filePath = event.target.getAttribute("filePath");
 				fileManager.loadFromFile(filePath);
+				setTimeout(() => {
+					updateTimeUnitButton();
+					updateInfoBar();
+				 },200);
 			});
 		}
 	}
