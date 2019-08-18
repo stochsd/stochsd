@@ -8281,11 +8281,11 @@ class EquationListDialog extends jqDialog {
 		} 
 
 		let specs = [
+			["Time Unit", getTimeUnits()],
 			["Start", getTimeStart()],
 			["Length", getTimeLength()],
 			["DT", getTimeStep()],
-			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"],
-			["Time Unit", getTimeUnits()]
+			["Method", getAlgorithm() === "RK1" ? "Euler" : "RK4"]
 		];
 		if (isSeedSet) {
 			specs.push(["Seed", seed]);
