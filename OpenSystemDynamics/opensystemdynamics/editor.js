@@ -5067,16 +5067,17 @@ $(document).ready(function() {
 	fileManager.ready();
 	restoreAfterRestart();
 
+	updateTimeUnitButton();
+});
+	
+function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
 		$("#timeUnitParagraph").html("<span style='color: red;'>No Time Unit</span>");
-		setTimeout(() => {
-			timeUnitDialog.show();	
-		 },200);
 	}
-});
-	
+}
+
 function find_connections(primitive) {
 	return find_start_connections(primitive).concat(find_end_connections(primitive));
 }
