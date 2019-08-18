@@ -5041,7 +5041,9 @@ $(document).ready(function() {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
 		$("#timeUnitParagraph").html("<span style='color: red;'>No Time Unit</span>");
-		timeUnitDialog.show();
+		setTimeout(() => {
+			timeUnitDialog.show();	
+		 },200);
 	}
 });
 	
