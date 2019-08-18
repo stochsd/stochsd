@@ -7525,13 +7525,21 @@ class TimeUnitDialog extends jqDialog {
 			<div style="min-height: 70px; margin: 8px 0px;">
 				Specify the Time Unit to enable model building.</br></br>
 				Time Unit: 
-				<input class="timeUnitInput" style="text-align: left; width:200px;" type="text"/>
+				<input class="timeUnitInput enterApply" style="text-align: left; width:200px;" type="text"/>
 				<div style="margin-top: 4px;" class="complainDiv"></div>
 			</div>
 		`);	
 
 		$(this.dialogContent).find(".timeUnitInput").keyup((event) => {
 			this.showComplain(this.checkValid());
+		});
+		$(this.dialogContent).find(".enterApply").keydown((event) => {
+			if (! event.shiftKey) {
+				if (event.keyCode == keyboard["enter"]) {
+					event.preventDefault();
+					this.dialogParameters.buttons["Apply"]();
+				}
+			}
 		});
 	}
 	beforeShow() {
