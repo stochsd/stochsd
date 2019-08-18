@@ -7495,9 +7495,6 @@ class SimulationSettings extends jqDialog {
 		let length = getTimeLength();
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
-		if (timeUnit.length > 1 && timeUnit[timeUnit.length-1].toLowerCase() !== "s") {
-			timeUnit += "(s)";
-		}
 		this.setHtml(`
 		<table class="modernTable" style="margin:16px;">
 		<tr>
