@@ -7789,11 +7789,11 @@ class AboutDialog extends jqDialog {
 			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
 			<b>StochSD version 190901</b><br/>
 			<br/>
-			<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of 	<b>stochastic</b> modelling. In particular, you can make statistical analyses from multiple simulation runs.<br/>
+			<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of 	<b>stochastic modelling</b>. In particular, you can make statistical analyses from multiple simulation runs.<br/>
 			<br/>
 			StochSD is an open source program based on the <a target="_blank" href="http://insightmaker.com">Insight Maker engine</a> (insightmaker.com) developed by Scott Fortmann-Roe. However, the graphic package of Insight Maker is replaced to make StochSD open for use as well as modifications and extensions. The file handling system is also rewritten. Finally, tools for optimisation, sensitivity analysis and statistical analysis are supplemented.<br/>
 			<br/>
-			StochSD was developed by Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
+			StochSD was developed by Leif Gustafsson, Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
 			Mail: leif.gunnar.gustafsson@gmail.com 
 		`);
 	}
