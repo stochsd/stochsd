@@ -1,6 +1,6 @@
 {
 	"name": "StochSD",
-	"version": "2018.08.01",
+	"version": "2019.09.01",
 	"description": "Stochastic Simulation application",
 	"author": "stochsdteam",
 	"main": "index.js",
