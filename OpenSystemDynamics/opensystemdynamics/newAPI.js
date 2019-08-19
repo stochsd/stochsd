@@ -361,7 +361,3 @@ function isTimeUnitOk(timeUnit) {
 	}
 	return false;
 }
-
-function setTimeUnit(timeUnit) {
-
-}
