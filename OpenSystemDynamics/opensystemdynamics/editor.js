@@ -5072,6 +5072,8 @@ $(document).ready(function() {
 	restoreAfterRestart();
 
 	updateTimeUnitButton();
+	
+	History.storeUndoState();
 });
 	
 function updateTimeUnitButton() {
