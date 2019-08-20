@@ -12,8 +12,9 @@
 		"nwjs-builder-phoenix": "^1.14.8"
 	},
 	"dependencies": {
+		"electron": "^5.0.6",
 		"gulp": "^3.9.1",
-		"electron": "^5.0.6"
+		"jstat": "^1.9.0"
 	},
 	"scripts": {
 		"build": "node_modules/gulp/bin/gulp.js",
