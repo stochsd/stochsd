@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.24748737"
-     inkscape:cx="-576.66531"
-     inkscape:cy="-3428.7801"
+     inkscape:cx="2118.9595"
+     inkscape:cy="-5646.5394"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1097,7 +1097,7 @@
          id="tspan1978"
          x="946.45233"
          y="393.67627"
-         style="stroke-width:0.26458332"></tspan></text>
+         style="stroke-width:0.26458332" /></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot2120"
@@ -1608,7 +1608,7 @@
        xml:space="preserve"
        id="flowRoot2927"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:21.33333397px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.87373876,0,0,0.87373876,-35.587635,1014.7606)"><flowRegion
+       transform="matrix(0.87373876,0,0,0.87373876,-263.30128,1014.7606)"><flowRegion
          id="flowRegion2923"
          style="text-align:center;text-anchor:middle;fill:#000000"><rect
            id="rect2921"
@@ -2168,7 +2168,7 @@
     </g>
     <g
        id="g4025"
-       transform="translate(-627.44048,-491.36905)">
+       transform="matrix(1.2924603,0,0,1.2924603,-656.5684,-1187.6525)">
       <text
          id="text1582"
          y="2148.9448"
@@ -2524,12 +2524,12 @@
        width="591.4917"
        height="62.022892"
        x="-619.13397"
-       y="2085.0635" />
+       y="2109.6523" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot4035"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:21.33333397px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.87373876,0,0,0.87373876,-755.35411,1636.1535)"><flowRegion
+       transform="matrix(0.87373876,0,0,0.87373876,-755.35411,1660.7423)"><flowRegion
          id="flowRegion4031"
          style="fill:#000000"><rect
            id="rect4029"
@@ -2550,5 +2550,124 @@
          y="1177.2789"
          id="tspan4118"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.61509323px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#0000ff;stroke-width:1.12515843px">ToolBox</tspan></text>
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1327"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-27.796029,-128.28937)"><flowRegion
+         id="flowRegion1329"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'"><rect
+           id="rect1331"
+           width="1854.6401"
+           height="189.90831"
+           x="1789.9904"
+           y="6048.0234"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'" /></flowRegion><flowPara
+         id="flowPara1333"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:74.66666412px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'">Visuals are the graphical representations of system dynamic primitives.</flowPara></flowRoot>    <text
+       id="text988"
+       y="1911.0924"
+       x="94.345894"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.366364px;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.44719705px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:31.48960876px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#0000ff;stroke-width:0.44719705px"
+         id="tspan986"
+         y="1911.0924"
+         x="94.345894"
+         sodipodi:role="line">History</tspan></text>
+    <rect
+       y="1924.981"
+       x="26.835154"
+       height="77.229752"
+       width="366.79535"
+       id="rect1211"
+       style="opacity:1;fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <flowRoot
+       transform="matrix(0.70720605,0,0,0.70720605,-393.10011,1880.7599)"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.33333397px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot1221"
+       xml:space="preserve"><flowRegion
+         id="flowRegion1215"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000"><rect
+           y="76.997559"
+           x="619.72858"
+           height="136.2645"
+           width="477.17645"
+           id="rect1213"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000" /></flowRegion><flowPara
+         id="flowPara1219"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000">The History class is responsile for keeping track of undo and redo. It saves up to 10 versions of the file</flowPara></flowRoot>    <text
+       id="text1538"
+       y="2082.7375"
+       x="55.596691"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:25.33038521px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1.8997786"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:25.33038521px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#0000ff;stroke-width:1.8997786"
+         y="2082.7375"
+         x="55.596691"
+         id="tspan1536"
+         sodipodi:role="line">Clipboard</tspan></text>
+    <rect
+       y="2096.9512"
+       x="30.775112"
+       height="75.46933"
+       width="440.87701"
+       id="rect1540"
+       style="opacity:1;fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <flowRoot
+       transform="matrix(0.80905754,0,0,0.80905754,-466.47645,2041.2965)"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:21.33333397px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot1550"
+       xml:space="preserve"><flowRegion
+         id="flowRegion1544"><rect
+           y="76.997559"
+           x="619.72858"
+           height="87.494469"
+           width="531.77948"
+           id="rect1542" /></flowRegion><flowPara
+         id="flowPara1548"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:'Roboto Italic';fill:#000000">The clipboard is supposed to keep track of Copy-Paste. But this function does not work currently (2019 Aug). Therefor the copy-paste commands are commented out.</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:25.33038521px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1.8997786"
+       x="246.75757"
+       y="2082.7378"
+       id="text1554"><tspan
+         sodipodi:role="line"
+         id="tspan1552"
+         x="246.75757"
+         y="2082.7378"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:25.33038521px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#0000ff;stroke-width:1.8997786">ClipboardItem</tspan></text>
+    <text
+       id="text1578"
+       y="1726.9015"
+       x="79.884315"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:24.82411194px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Condensed';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1.8618083"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.21756172px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#0000ff;stroke-width:1.8618083"
+         y="1726.9015"
+         x="79.884315"
+         id="tspan1576"
+         sodipodi:role="line">RunResults</tspan></text>
+    <rect
+       style="opacity:1;fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1726"
+       width="303.72321"
+       height="89.657997"
+       x="31.04739"
+       y="1735.4177" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1736"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.33333397px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.9021077,0,0,0.9021077,-512.63282,1671.5091)"><flowRegion
+         id="flowRegion1730"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:'Roboto Italic'"><rect
+           id="rect1728"
+           width="317.69296"
+           height="90.913727"
+           x="619.72858"
+           y="76.997559"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:'Roboto Italic'" /></flowRegion><flowPara
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:'Roboto Italic';fill:#000000"
+         id="flowPara1734">Handles simulation and updates the plots and tables.</flowPara></flowRoot>  </g>
 </svg>
