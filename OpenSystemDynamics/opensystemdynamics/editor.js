@@ -2134,12 +2134,13 @@ class FlowVisual extends BaseConnection {
 		}
 
 		if(this.primitive && this.icons) {
-			if(this.primitive.getAttribute("ValueError")) {
+			let VE = this.primitive.getAttribute("ValueError");
+			if (VE) {
 				this.icons.set("questionmark", "visible");
 			} else {
 				this.icons.set("questionmark", "hidden");
 			}
-			this.icons.set("dice", hasRandomFunction(getValue(this.primitive)) ? "visible" : "hidden");
+			this.icons.set("dice", (! VE && hasRandomFunction(getValue(this.primitive)) ) ? "visible" : "hidden");
 		}
 	}
 	
