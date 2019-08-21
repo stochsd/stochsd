@@ -8170,7 +8170,9 @@ class EquationEditor extends jqDialog {
 	templateClick(event) {
 		let templateData = $(event.target).data("template");
 		let start = this.valueField.selectionStart;
-		
+		if (typeof templateData == "object") {
+			templateData = "["+templateData.toString()+"]";
+		}
 		let oldValue = $(this.valueField).val();
 		let newValue = oldValue.slice(0, this.valueSelectionStart) + templateData + oldValue.slice(this.valueSelectionEnd);
 		$(this.valueField).val(newValue);
