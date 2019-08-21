@@ -7542,27 +7542,97 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 		this.setTitle("Third-party licenses");
 		this.thirdparties = [
 			{
-				"name":"Insightmaker",
-				"links": ["https://github.com/scottfr/insightmaker"],
+				"name":"Insight Maker",
+				"links": ["https://github.com/scottfr/insightmaker","https://InsightMaker.com/impl"],
 				"typeoflicense": "",
-				"copyright": "Copyright 2013 ..."
+				"license_text": `Unless otherwise noted, all contents are copyright 2010-2016 Scott Fortmann-Roe. All rights reserved. <br/>
+				<br/>
+				Unless otherwise noted, all files are released under the Insight Maker Public License (https://InsightMaker.com/impl). These files may be redistributed and modified according to the terms of that license.<br/>
+				`
 			},
 			{
-				"name": "jStat",
-				"links": ["https://github.com/jstat/jstat"],
-				"typeoflicense": "MIT License",
-				"copyright": `Copyright (c) 2013 jStat
-
+				"name":"jqPlot",
+				"links": ["https://github.com/jqPlot/jqPlot"],
+				"typeoflicense":"MIT License",
+				"license_text":`Copyright (c) 2009-2013 Chris Leonello<br/>
+				<br/>
 				Permission is hereby granted, free of charge, to any person obtaining a copy
 				of this software and associated documentation files (the "Software"), to deal
 				in the Software without restriction, including without limitation the rights
 				to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 				copies of the Software, and to permit persons to whom the Software is
-				furnished to do so, subject to the following conditions:
-				
+				furnished to do so, subject to the following conditions:<br/>
+				<br/>
 				The above copyright notice and this permission notice shall be included in
-				all copies or substantial portions of the Software.
-				
+				all copies or substantial portions of the Software.<br/>
+				<br/>
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+				LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+				OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+				THE SOFTWARE.`,
+			},
+			{
+				"name":"jquery-ui",
+				"links": ["https://github.com/jquery/jquery-ui", "https://jquery.org/"],
+				"typeoflicense":"",
+				"license_text": `Copyright jQuery Foundation and other contributors, https://jquery.org/ <br/>
+				<br/>
+				This software consists of voluntary contributions made by many
+				individuals. For exact contribution history, see the revision history
+				available at https://github.com/jquery/jquery-ui<br/>
+				<br/>
+				The following license applies to all parts of this software except as
+				documented below:<br/>
+				<br/>
+				====<br/>
+				<br/>
+				Permission is hereby granted, free of charge, to any person obtaining
+				a copy of this software and associated documentation files (the
+				"Software"), to deal in the Software without restriction, including
+				without limitation the rights to use, copy, modify, merge, publish,
+				distribute, sublicense, and/or sell copies of the Software, and to
+				permit persons to whom the Software is furnished to do so, subject to
+				the following conditions:<br/>
+				<br/>
+				The above copyright notice and this permission notice shall be
+				included in all copies or substantial portions of the Software.
+				<br/>
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+				EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+				MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+				NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+				LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+				OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+				WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+				<br/>
+				====<br/>
+				<br/>
+				Copyright and related rights for sample code are waived via CC0. Sample
+				code is defined as all source code contained within the demos directory.<br/>
+				<br/>
+				CC0: http://creativecommons.org/publicdomain/zero/1.0/<br/>
+				<br/>
+				`,
+			},
+			{
+				"name": "jStat",
+				"links": ["https://github.com/jstat/jstat"],
+				"typeoflicense": "MIT License",
+				"license_text": `Copyright (c) 2013 jStat <br/>
+				<br/>
+				Permission is hereby granted, free of charge, to any person obtaining a copy
+				of this software and associated documentation files (the "Software"), to deal
+				in the Software without restriction, including without limitation the rights
+				to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+				copies of the Software, and to permit persons to whom the Software is
+				furnished to do so, subject to the following conditions:<br/>
+				<br/>
+				The above copyright notice and this permission notice shall be included in
+				all copies or substantial portions of the Software.<br/>
+				<br/>
 				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -7578,14 +7648,15 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 				<div>	
 					<h1>${party.name}</h1>
 					<ul>
-						${party.links.map(lnks => {`<li>${lnks}</li>`})}
+						${party.links.map(lnks => `<li><a href="${lnks}" target="_blank">${lnks}</a></li>`).join('')}
 					</ul>
 					<b>${party.typeoflicense}</b></br>
-					${party.copyright}
+					${party.license_text}
 				</div>
+				<hr style="width:98%;"/>
 			`);
 		}
-		this.setHtml(html);
+		this.setHtml(`<div style="width: 700px; height: 700px; overflow-y: auto;">${html}</div>`);
 	}
 }
 
