@@ -12,7 +12,7 @@ for windows or unix. This creates folder `./build` that contains `./build/packag
 
 - Move a copy of `package.nw` into the 64bit and 32bit folders respectively.
 
-- Change name of nw.exe in folder to stochism.exe
+- Change name of nw.exe in folder to stochsd.exe
 
 - Change icon of stochsd.exe using ResourceHacker (http://www.angusj.com/resourcehacker/)
 
