@@ -1,8 +1,11 @@
 const gulp = require('gulp');
 const useref = require('gulp-useref');
-gulp.task('default' , function() {
+gulp.task('default' , function(done) {
 	buildForWeb("build/stochsd-web/");
 	buildForDesktop("build/package.nw/");
+
+	// https://stackoverflow.com/questions/36897877/gulp-error-the-following-tasks-did-not-complete-did-you-forget-to-signal-async
+	done();
 });
 
 function buildForDesktop(rootFolder) {
@@ -12,6 +15,10 @@ function buildForDesktop(rootFolder) {
 
 	// Launcher
 	gulp.src('index.html')
+	.pipe(gulp.dest(rootFolder));
+
+	// index.js
+	gulp.src('index.js')
 	.pipe(gulp.dest(rootFolder));
 
 	// OpenSystemDynamics
