@@ -1,14 +1,16 @@
 # Todo list for uploading new version
 
 - Download nw.js (normal not sdk) versions for windows 64bit, windows 32bit and ...
-- Change folder names to: `StochSD-WindowsXXbit-yyyy-mm-dd` 
+- Change folder name of nwjs folder to: `StochSD-WindowsXXbit-yyyy-mm-dd` 
 - Build Desktop and Web version in repo directory with:
 
  `node node_modules\gulp\bin\gulp.js` or `node node_modules/gulp/bin/gulp.js`
 
+Note: If problems arise with gulp, set latest versions of [gulp](https://www.npmjs.com/package/gulp) and [gulp-useref](https://www.npmjs.com/package/gulp-useref)
+
 learn more at https://www.udemy.com/starting-with-gulp/learn/v4/content
 
-for windows or unix. This creates folder `./build` that contains `./build/package.nw`  and  `./build/stochsd-web`
+for windows or unix. This creates folder `./build` that contains `./build/package.nw`  (for desktop) and  `./build/stochsd-web` (for web)
 
 - Move a copy of `package.nw` into the 64bit and 32bit folders respectively.
 
