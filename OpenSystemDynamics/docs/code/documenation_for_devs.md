@@ -33,6 +33,10 @@ for windows or unix. This creates folder `./build` that contains `./build/packag
 
   
 
+  ## If nw.exe wont respond?
+
+  It might be because more then one version of nwjs was started and has created conflicting info in `c:/user/[username]/AppData/StochSD`. Delete this folder, and restart if necessary.
+
   #To update website 
 
 - Open repo `website_stochsd` 
