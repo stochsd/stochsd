@@ -1,6 +1,6 @@
 # Todo list for uploading new version
 
-- Download nw.js (normal not sdk) versions for windows 64bit, windows 32bit and ...
+- Download nw.js (normal not sdk) versions for windows 64bit, windows 32bit (0.15.4 is last one to work with WinXP)
 - Change folder name of nwjs folder to: `StochSD-WindowsXXbit-yyyy-mm-dd` 
 - Build Desktop and Web version in repo directory with:
 
@@ -20,13 +20,14 @@ for windows or unix. This creates folder `./build` that contains `./build/packag
 
 - Zip folders for uploading
 
-- Upload these files (StochSD Desktop) to SourceForge via the website.
+- Upload these files (StochSD Desktop) to SourceForge via the website. 
 
 - To upload StochSD Web with FileZilla
 
   - Host: [web.sourceforge.net](http://web.sourceforge.net)  
   - User: mrmagnus  
-  - Default remote (root) folder: `/home/project-web/s/st/stochsd/htdocs`
+  - Default folder for file upload: `/home/pfs/project/stochsd` 
+  - Default remote (root) web-folder: `/home/project-web/s/st/stochsd/htdocs`
 
 - Upload `build/stochsd-web` and replace folder `/home/project-web/s/st/stochsd/htdocs/software` with same name.
 
