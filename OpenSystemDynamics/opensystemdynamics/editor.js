@@ -7846,13 +7846,7 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 				The above copyright notice and this permission notice shall be included in
 				all copies or substantial portions of the Software.<br/>
 				<br/>
-				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-				THE SOFTWARE.`,
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
 			},
 			{
 				"name":"jquery-ui",
@@ -7860,42 +7854,38 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 				"typeoflicense":"",
 				"license_text": `Copyright jQuery Foundation and other contributors, https://jquery.org/ <br/>
 				<br/>
-				This software consists of voluntary contributions made by many
-				individuals. For exact contribution history, see the revision history
-				available at https://github.com/jquery/jquery-ui<br/>
+				This software consists of voluntary contributions made by many individuals. For exact contribution history, see the revision history available at https://github.com/jquery/jquery-ui<br/>
 				<br/>
-				The following license applies to all parts of this software except as
-				documented below:<br/>
+				The following license applies to all parts of this software except as documented below:<br/>
 				<br/>
 				====<br/>
 				<br/>
-				Permission is hereby granted, free of charge, to any person obtaining
-				a copy of this software and associated documentation files (the
-				"Software"), to deal in the Software without restriction, including
-				without limitation the rights to use, copy, modify, merge, publish,
-				distribute, sublicense, and/or sell copies of the Software, and to
-				permit persons to whom the Software is furnished to do so, subject to
-				the following conditions:<br/>
+				Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 				<br/>
-				The above copyright notice and this permission notice shall be
-				included in all copies or substantial portions of the Software.
+				The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 				<br/>
-				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-				EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-				MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-				NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-				LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-				OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-				WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BELIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
 				<br/>
 				====<br/>
 				<br/>
-				Copyright and related rights for sample code are waived via CC0. Sample
-				code is defined as all source code contained within the demos directory.<br/>
+				Copyright and related rights for sample code are waived via CC0. Sample code is defined as all source code contained within the demos directory.<br/>
 				<br/>
 				CC0: http://creativecommons.org/publicdomain/zero/1.0/<br/>
+				<br/>`
+			},
+			{
+				"name": "NW.js",
+				"links": ["https://github.com/nwjs/nw.js"],
+				"typeoflicense": "",
+				"license_text": `Copyright (c) 2011-2019 NW.js Authors <br/>
+				Copyright (c) 2011-2019 The Chromium Authors <br/>
+				Copyright (c) 2011-2018 Intel Corp <br/>
 				<br/>
-				`,
+				Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: <br/>
+				<br/>
+				The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+				<br/>
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>`
 			},
 			{
 				"name": "jStat",
@@ -7903,23 +7893,11 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 				"typeoflicense": "MIT License",
 				"license_text": `Copyright (c) 2013 jStat <br/>
 				<br/>
-				Permission is hereby granted, free of charge, to any person obtaining a copy
-				of this software and associated documentation files (the "Software"), to deal
-				in the Software without restriction, including without limitation the rights
-				to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				copies of the Software, and to permit persons to whom the Software is
-				furnished to do so, subject to the following conditions:<br/>
+				Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 				<br/>
-				The above copyright notice and this permission notice shall be included in
-				all copies or substantial portions of the Software.<br/>
+				The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
 				<br/>
-				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-				THE SOFTWARE.`
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
 			}
 		];
 		let html = "";
