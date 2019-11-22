@@ -83,7 +83,8 @@ function preserveRestart() {
 	applicationReload();
 }
 
-function restoreAfterRestart() {	
+function restoreAfterRestart() {
+	setTimeUnits("tu");
 	do_global_log("restoring");
 	let reloadPending = localStorage.getItem("reloadPending");
 	
