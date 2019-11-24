@@ -44,15 +44,18 @@ function buildForWeb(rootFolder) {
 	.pipe(gulp.dest(rootFolder));
 
 	// OpenSystemDynamics
-	gulp.src('OpenSystemDynamics/opensystemdynamics/index.html')
+	gulp.src('OpenSystemDynamics/src/index.html')
 	.pipe(useref())
-	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics'));
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/src'));
+	
+	gulp.src('OpenSystemDynamics/src/third-party-licenses.html')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/src'));
 
-	gulp.src('OpenSystemDynamics/opensystemdynamics/graphics/**')
-	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/graphics'));
+	gulp.src('OpenSystemDynamics/src/graphics/**')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/src/graphics'));
 
-	gulp.src('OpenSystemDynamics/opensystemdynamics/jquery-ui-1.12.1/images/**')
-	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/opensystemdynamics/images'));
+	gulp.src('OpenSystemDynamics/src/jquery-ui-1.12.1/images/**')
+	.pipe(gulp.dest(rootFolder+'OpenSystemDynamics/src/images'));
 
 	// MultiSimulationAnalyser
 	gulp.src('MultiSimulationAnalyser/index.html')
