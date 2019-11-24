@@ -1,0 +1,10 @@
+{
+	"name": "StochSD",
+	"version": "2019.09.01",
+	"description": "Stochastic Simulation application",
+	"author": "stochsdteam",
+	"main": "start.html",
+	"window": {
+		"icon": "icons/stochsd.png"
+	}
+}

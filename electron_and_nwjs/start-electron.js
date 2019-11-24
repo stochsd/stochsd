@@ -1,3 +1,4 @@
+const ENTRY_POINT = '../start.html';
 
 /* This file is for launching StocSD in Electron or NWjs. The environment to use is auto-detected by this file */
 
@@ -30,7 +31,7 @@ if(isRunningElectron()) {
 
 function startInNwjs() {
   //  Run index.html or OpenSystemDynamics/opensystemdynamics/index.html
-  nw.Window.open('index.html', {}, function(win) {});
+  nw.Window.open(ENTRY_POINT, {}, function(win) {});
 }
 
 
@@ -54,7 +55,7 @@ function startInElectron() {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile('OpenSystemDynamics/opensystemdynamics/index.html')
+    mainWindow.loadFile(ENTRY_POINT)
     //  mainWindow.loadURL('https://gmail.com')
     mainWindow.maximize();
 
