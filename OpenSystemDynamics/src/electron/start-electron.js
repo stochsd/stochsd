@@ -30,7 +30,7 @@ else if(isRunningElectron()) {
 }
 
 function startInNwjs() {
-  nw.Window.open('opensystemdynamics/index.html', {}, function(win) {});
+  nw.Window.open('index.html', {}, function(win) {});
 }
 
 
@@ -54,7 +54,7 @@ function startInElectron() {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile('opensystemdynamics/index.html')
+    mainWindow.loadFile('../index.html')
     //  mainWindow.loadURL('https://gmail.com')
     mainWindow.maximize();
 

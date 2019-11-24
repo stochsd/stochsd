@@ -1,6 +1,6 @@
 {
 	"name": "OpenSystemDynamics",
-	"main": "start.js",
+	"main": "start-electron.js",
 	"author": "stochsdteam",
 	"version": "2019.07.19",
 	"devDependencies": {
