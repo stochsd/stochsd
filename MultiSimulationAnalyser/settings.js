@@ -23,7 +23,7 @@ settings.force_start_url=true;
 //settings.start_url="dummy.html";
 
 //~ settings.start_url=get_parent_folder()+"/newim/examples/full.html";
-settings.start_url=get_parent_folder()+"/OpenSystemDynamics/opensystemdynamics/index.html";
+settings.start_url=get_parent_folder()+"/OpenSystemDynamics/src/index.html";
 
 
 

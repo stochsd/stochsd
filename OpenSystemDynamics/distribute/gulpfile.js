@@ -5,6 +5,9 @@ gulp.task('default' , function() {
 	.pipe(useref())
 	.pipe(gulp.dest('build'));
 	
+	gulp.src('../src/third-party-licenses.html')
+	.pipe(gulp.dest('build'));
+	
 	gulp.src('../src/graphics/**')
 	.pipe(gulp.dest('build/graphics'));
 });
