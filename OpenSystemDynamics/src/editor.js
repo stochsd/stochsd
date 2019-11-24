@@ -7823,7 +7823,7 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 		this.setTitle("Third-party licenses");
 		
 		this.setHtml(`
-		<iframe style="width: 700px; height: 500px;" src="third-party-licenses/third-party-licenses.html"/>
+		<iframe style="width: 700px; height: 500px;" src="third-party-licenses.html"/>
 		</div>
 		`);
 	}

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 thirdparties = [
 			{
 				"name":"Insight Maker",
@@ -86,10 +88,10 @@ jqPlot is currently available for use in all personal or commercial projects und
 
 jqPlot includes date instance methods and printf/sprintf functions by other authors:
 
-<h3>Date instance methods</h3>
+Date instance methods
 Author: Ken Snyder (ken d snyder at gmail dot com) Date: 2008-09-10 Version: 2.0.2 (http://kendsnyder.com/sandbox/date/) License: Creative Commons Attribution License 3.0 (http://creativecommons.org/licenses/by/3.0/)
 
-<h3>JavaScript printf/sprintf functions</h3>
+JavaScript printf/sprintf functions
 Author: Ash Searle Version: 2007.04.27 http://hexmen.com/blog/2007/03/printf-sprintf/ http://hexmen.com/js/sprintf.js The author (Ash Searle) has placed this code in the public domain: \"This code is unrestricted: you are free to use it however you like.\"
 `
 			},
@@ -252,38 +254,59 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ];
 		
 		
-let html = `
-<html>
-<head>
-</head>
-<body>
-`;
-for (let party of thirdparties) {
-	html += (`
-		<div>	
-			<h1>${party.name}</h1>
-			<ul>
-				${party.links.map(lnks => `<li><a href="${lnks}" target="_blank">${lnks}</a></li>`).join('')}
-			</ul>
-			<b>${party.typeoflicense}</b></br>
-			${party.license_text.replace(/\n/g, "<br />")}
-		</div>
-		<hr style="width:98%;"/>
-	`);
+function generateHtml() {
+	let html = `
+	<html>
+	<head>
+	</head>
+	<body>
+	`;
+	for (let party of thirdparties) {
+		html += (`
+			<div>	
+				<h1>${party.name}</h1>
+				<ul>
+					${party.links.map(lnks => `<li><a href="${lnks}" target="_blank">${lnks}</a></li>`).join('')}
+				</ul>
+				<b>${party.typeoflicense}</b></br>
+				${party.license_text.replace(/\n/g, "<br />")}
+			</div>
+			<hr style="width:98%;"/>
+		`);
+	}
+	html+=`
+	</body>
+	</html>
+	`;
+	return html;
 }
-html+=`
-</body>
-</html>
-`;
+
+function generateMarkDown() {
+	// Line breaks are made with double space in markdown https://gist.github.com/shaunlebron/746476e6e7a4d698b373
+	let text = '';
+	for (let party of thirdparties) {
+			text+="# "+party.name+"  \n"
+			for (link of party.links)  {
+				text+=link+"  \n"
+			}
+			text+="**"+party.typeoflicense+"**  \n";
+			// text+=party.license_text.replace(/\t/g, 'tab').replace(/\s\s+/g, 'hej').replace(/\n/g, "\n  ")
+			text+=party.license_text.replace(/\t/g, '').replace(/    +/g, '').replace(/\n/g, "  \n")+"  \n"
+	}
+	return text;
+}
 
 const fs = require('fs');
 
-const licenseFile = "third-party-licenses.html";
-fs.writeFile("third-party-licenses.html", html, function(err) {
 
-    if(err) {
-        return console.log(err);
-    }
+function writeLicenseFile(filename, text) {
+	fs.writeFile(filename, text, function(err) {
+		if(err) {
+			return console.log(err);
+		}
+		console.log("Licenses written to "+filename);
+	}); 
+}
 
-    console.log("Licenses written to "+licenseFile);
-}); 
+writeLicenseFile("../../src/third-party-licenses.html", generateHtml());
+writeLicenseFile("../../third-party-licenses.md", generateMarkDown());
