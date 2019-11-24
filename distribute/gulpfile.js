@@ -12,20 +12,17 @@ gulp.task('default' , function(done) {
 });
 
 function buildForDesktop(destFolder) {
-	process.chdir(__dirname +'/..');
-	console.log("2")
-	console.log(process.cwd())
 
 	// License
 	gulp.src('LICENSE.txt')
 	.pipe(gulp.dest(destFolder));
 
 	// Launcher
-	gulp.src('index.html')
+	gulp.src('start.html')
 	.pipe(gulp.dest(destFolder));
-
-	// index.js
-	gulp.src('index.js')
+	
+	// package.json. Needed for running "nw ." in output folder
+	gulp.src('package.json')
 	.pipe(gulp.dest(destFolder));
 
 	// OpenSystemDynamics
@@ -42,13 +39,9 @@ function buildForDesktop(destFolder) {
 }
 
 function buildForWeb(destFolder) {
-	process.chdir(__dirname +'/..');
-
-	console.log("3")
-	console.log(process.cwd())
-
+	
 	// Launcher
-	gulp.src('index.html')
+	gulp.src('start.html')
 	.pipe(gulp.dest(destFolder));
 
 	// OpenSystemDynamics
