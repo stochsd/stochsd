@@ -1,0 +1,76 @@
+<!--
+
+Copyright 2017 Erik Gustafsson. All rights reserved.
+
+This file may distributed and/or modified under the
+terms of the Insight Maker Public License (https://InsightMaker.com/impl).
+
+-->
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+			var MultiSimulationAnalyserPath = "../../MultiSimulationAnalyser/index.html"
+
+
+            
+            function is_ie() {
+				// Method found at
+				// http://stackoverflow.com/questions/19999388/jquery-check-if-user-is-using-ie
+				var IE_agents=["MSIE","Trident","Edge"];
+				for(var i=0;i<IE_agents.length;i++) {
+					if(String(navigator.userAgent).indexOf(IE_agents[i])>0) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			function init_maxmized() {
+				// Code for activating maxmimized.
+				// This is stored as a string,
+				// so that the program can run
+				// even if we don't run it from nwjs
+				var fullscreen_code = '\
+				var ngui = require("nw.gui");\
+				var nwin = ngui.Window.get();\
+				nwin.show();\
+				nwin.maximize();';
+				
+				// Make it work without nw.js
+				//if(typeof(require)!=="function") {
+				if(true) {
+					return;
+
+				}
+				// eval(fullscreen_code);
+				
+				
+			}
+			
+			function load() {
+				
+				init_maxmized();
+				
+				if(is_ie()) {
+					var error_message=document.getElementById("error_message");
+					error_message.style.display="block"
+				} else {
+					window.location = MultiSimulationAnalyserPath;
+				}
+            }
+        </script>
+    </head>
+    <body onload="load()">
+		<!--
+		IE fix
+		http://stackoverflow.com/questions/7038724/how-to-automaticaly-allow-blocked-content-in-ie-->
+        <div id="error_message" style="display:none">
+		Internet explorer is not supported. StochSD is tested and works well in Firefox, Chrome and Safari<br/>
+		Firefox is used for developing StochSD, and Firefox is therefore the recommended browser.<br/>
+        <a href="http://www.getfirefox.net">http://www.getfirefox.net</a>
+		</div>
+    </body>
+	
+</html>

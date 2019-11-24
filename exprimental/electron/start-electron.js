@@ -1,4 +1,4 @@
-const ENTRY_POINT = '../start.html';
+const ENTRY_POINT = 'electron.html';
 
 /* This file is for launching StocSD in Electron or NWjs. The environment to use is auto-detected by this file */
 
