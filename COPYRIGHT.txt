@@ -1,0 +1,6 @@
+StochSD is released under Affero General Public License, http://www.gnu.org/licenses/agpl-3.0.html
+Copyright StochSD-Team and Scott Fortmann-Roe, who contributed the Insight Maker engine (http://insightmaker.com).
+StochSD-Team consists of Erik Gustafsson, Magnus Gustafsson and Leif Gustafsson.
+
+## StochSDs relation to Insight Maker
+StochSD consists of the Open source engine from Insight Maker. The closed source components of Insight Maker (the user interface dependencies ExtJS and mxGraph) has been removed, and are not a part of StochSD.
