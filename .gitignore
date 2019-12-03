@@ -2,6 +2,8 @@ OpenSystemDynamics/build/
 OpenSystemDynamics/node_modules/
 OpenSystemDynamics/package-lock.json
 node_modules/
+distribute/node_modules
+distribute/output
 package-lock.json
 build/
 dist/

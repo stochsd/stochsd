@@ -3,9 +3,14 @@ const useref = require('gulp-useref');
 const process = require('process');
 
 gulp.task('default' , function(done) {
+	// The difference between the web build and the nwjs build is that the web build compresses everything to one single .js file
+	// To load faster over the web
+	// When we run locally in nwjs we have no intressed in doing so, and instead just run the code as is
+	// Which makes it easier to debug
+
 	process.chdir(__dirname +'/..');
-	buildForWeb("distribute/build/stochsd-web/");
-	buildForDesktop("distribute/build/package.nw/");
+	buildForWeb("distribute/output/stochsd-web/");
+	buildForDesktop("distribute/output/package.nw/");
 
 	// https://stackoverflow.com/questions/36897877/gulp-error-the-following-tasks-did-not-complete-did-you-forget-to-signal-async
 	done();
@@ -45,17 +50,14 @@ function buildForWeb(destFolder) {
 	.pipe(gulp.dest(destFolder));
 
 	// OpenSystemDynamics
-	gulp.src('OpenSystemDynamics/src/index.html')
+	gulp.src('OpenSystemDynamics/src/*.html')
 	.pipe(useref())
-	.pipe(gulp.dest(destFolder+'OpenSystemDynamics/src'));
-	
-	gulp.src('OpenSystemDynamics/src/third-party-licenses.html')
 	.pipe(gulp.dest(destFolder+'OpenSystemDynamics/src'));
 
 	gulp.src('OpenSystemDynamics/src/graphics/**')
 	.pipe(gulp.dest(destFolder+'OpenSystemDynamics/src/graphics'));
 
-	gulp.src('OpenSystemDynamics/src/jquery-ui-1.12.1/images/**')
+	gulp.src('OpenSystemDynamics/src/jquery/jquery-ui-1.12.1/images/**')
 	.pipe(gulp.dest(destFolder+'OpenSystemDynamics/src/images'));
 
 	// MultiSimulationAnalyser

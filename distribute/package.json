@@ -12,13 +12,11 @@
 		"nwjs-builder-phoenix": "^1.14.8"
 	},
 	"dependencies": {
-		"electron": "^5.0.6",
 		"gulp": "4.0.2",
 		"jstat": "^1.9.0"
 	},
 	"scripts": {
 		"build": "node_modules/gulp/bin/gulp.js",
-		"dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
-		"start": "electron ."
+		"dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ ."
 	}
 }
