@@ -5073,7 +5073,7 @@ $(document).ready(function() {
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
-	licenseDialog = new LicensesDialog();
+	licenseDialog = new LicenseDialog();
 	
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
@@ -6111,7 +6111,7 @@ class jqDialog {
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
-		this.dialogDiv.setAttribute("style", "font-size: 13px;");
+		this.dialogDiv.setAttribute("style", "font-size: 13px; display: inline-block");
 		this.dialogDiv.style.display = "none";
 
 		this.dialogContent = document.createElement("div");
@@ -6119,6 +6119,9 @@ class jqDialog {
 		
 		this.dialogDiv.appendChild(this.dialogContent);	
 		document.body.appendChild(this.dialogDiv);
+
+		this.dialogContent.setAttribute("style", "display: inline-block");
+		
 		
 		this.dialogParameters = {
 			autoOpen: false,
@@ -7824,6 +7827,24 @@ class AboutDialog extends CloseDialog {
 	}
 }
 
+class LicenseDialog extends CloseDialog {
+	constructor() {
+		super();
+		this.setTitle("License");
+		
+		this.setHtml(`
+		<p style="display: inline-block">
+		Copyright 2010-2019 StochSD-Team and Scott Fortmann-Roe. All rights reserved.<br/>
+
+		The Insight Maker Engine was contributed to StochSD project from
+		Insight Maker project by Scott Fortmann-Roe, <a target="_blank" href="https://insightmaker.com">https://Insightmaker.com<a><br/>
+		</p><br/>
+		<iframe style="width: 700px; height: 500px;" src="license.html"/>
+		</div>
+		`);
+	}
+}
+
 class ThirdPartyLicensesDialog extends CloseDialog {
 	constructor() {
 		super();
@@ -7831,18 +7852,6 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 		
 		this.setHtml(`
 		<iframe style="width: 700px; height: 500px;" src="third-party-licenses.html"/>
-		</div>
-		`);
-	}
-}
-
-class LicensesDialog extends CloseDialog {
-	constructor() {
-		super();
-		this.setTitle("License");
-		
-		this.setHtml(`
-		<iframe style="width: 700px; height: 500px;" src="license.html"/>
 		</div>
 		`);
 	}
