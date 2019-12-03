@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const useref = require('gulp-useref');
+const rename = require('gulp-rename');
 const process = require('process');
 
 gulp.task('default' , function(done) {
@@ -47,6 +48,7 @@ function buildForWeb(destFolder) {
 	
 	// Launcher
 	gulp.src('start.html')
+	.pipe(rename('index.html'))
 	.pipe(gulp.dest(destFolder));
 
 	// OpenSystemDynamics
