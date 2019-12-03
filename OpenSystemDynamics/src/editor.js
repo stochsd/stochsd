@@ -20,6 +20,7 @@ var debugDialog;
 var aboutDialog;
 var thirdPartyLicensesDialog;
 var licenseDialog;
+var newModelDialog;
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
@@ -87,7 +88,7 @@ function preserveRestart() {
 }
 
 function restoreAfterRestart() {
-	setTimeUnits("tu");
+	makeNewModel();
 	do_global_log("restoring");
 	let reloadPending = localStorage.getItem("reloadPending");
 	
@@ -4867,7 +4868,10 @@ function hashUpdate() {
 	}
 }
 
-$(document).ready(function() {
+
+// https://stackoverflow.com/questions/7083693/detect-if-page-has-finished-loading
+// Initilzing without everything load = $(document).ready caused bugs. $(window).load solves this
+$(window).load(function() {
 	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
@@ -5074,6 +5078,7 @@ $(document).ready(function() {
 	aboutDialog = new AboutDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	licenseDialog = new LicenseDialog();
+	newModelDialog = new NewModelDialog();
 	
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
@@ -7510,6 +7515,62 @@ class TableDialog extends DisplayDialog {
 			// Fetch from user input
 			return this.plotPer;
 		}
+	}
+}
+
+function makeNewModel() {
+	// Keep this comment, in case we want to switch to default values instead of dialog
+	// setTimeUnits("tu");
+	newModelDialog.show();
+}
+
+class NewModelDialog extends jqDialog {
+	constructor() {
+		super();
+		this.setTitle("New model");
+	}
+	beforeShow() {
+		this.setHtml(`
+		<table class="modernTable" style="margin:16px;">
+		<tr>
+			<td>Time units</td>
+			<td style="padding:1px;">
+				<input class="input_timeunits enterApply textInput" name="length" style="width:100px;" value="" type="text">
+				<button class="input_timeunits_default_value" data-default-value="Years">Years</button>
+				<button class="input_timeunits_default_value" data-default-value="Minutes">Minutes</button>
+			</td>
+		</tr>
+		</table>
+	`);
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				event.preventDefault();
+				this.applyChanges();
+			}
+		});
+		$(this.dialogContent).find(".input_timeunits_default_value").click((event) => {
+			let selectedUnit = $(event.srcElement).data("default-value");
+			$(this.dialogContent).find(".input_timeunits").val(selectedUnit);
+		});
+	}
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			"Create":() =>
+			{
+				this.makeApply();
+			}
+		};
+	}
+	makeApply() {
+		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
+		if(timeUnits.trim() == "") {
+			xAlert("You have to enter a time unit for the model, e.g. Years or Minutes");
+			return;
+		}
+		setTimeUnits(timeUnits);
+		updateTimeUnitButton();
+
+		$(this.dialog).dialog('close');
 	}
 }
 
