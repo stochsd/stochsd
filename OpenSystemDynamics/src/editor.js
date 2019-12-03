@@ -7519,6 +7519,7 @@ class TableDialog extends DisplayDialog {
 }
 
 function makeNewModel() {
+
 	if(Settings.newModelWindow) {
 		newModelDialog.show();
 	} else {
@@ -7530,7 +7531,6 @@ function makeModelWithDefaults() {
 	setTimeUnits("tu");
 	updateTimeUnitButton();
 }
-
 
 class NewModelDialog extends jqDialog {
 	constructor() {
