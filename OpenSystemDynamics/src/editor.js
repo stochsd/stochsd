@@ -19,6 +19,7 @@ var equationList;
 var debugDialog;
 var aboutDialog;
 var thirdPartyLicensesDialog;
+var licenseDialog;
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
@@ -5027,6 +5028,9 @@ $(document).ready(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_license").click(function() {
+		licenseDialog.show();
+	});
 	$("#btn_thirdparty").click(function() {
 		thirdPartyLicensesDialog.show();
 	});
@@ -5069,6 +5073,7 @@ $(document).ready(function() {
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
+	licenseDialog = new LicensesDialog();
 	
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
@@ -7820,6 +7825,18 @@ class AboutDialog extends CloseDialog {
 }
 
 class ThirdPartyLicensesDialog extends CloseDialog {
+	constructor() {
+		super();
+		this.setTitle("Third-party licenses");
+		
+		this.setHtml(`
+		<iframe style="width: 700px; height: 500px;" src="third-party-licenses.html"/>
+		</div>
+		`);
+	}
+}
+
+class LicensesDialog extends CloseDialog {
 	constructor() {
 		super();
 		this.setTitle("Third-party licenses");
