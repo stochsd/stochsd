@@ -7579,6 +7579,13 @@ class NewModelDialog extends jqDialog {
 			}
 		};
 	}
+	beforeClose() {
+		// If the users closes the window without choosing anything
+		if($(this.dialogContent).find(".input_timeunits").val().trim()=="") {
+			setTimeUnits("tu");
+			updateTimeUnitButton();
+		}
+	}
 	makeApply() {
 		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
 		if(timeUnits.trim() == "") {
