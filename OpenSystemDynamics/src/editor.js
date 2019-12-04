@@ -7559,6 +7559,7 @@ class NewModelDialog extends jqDialog {
 		$(this.dialogContent).find(".input_timeunits_default_value").click((event) => {
 			let selectedUnit = $(event.srcElement).data("default-value");
 			$(this.dialogContent).find(".input_timeunits").val(selectedUnit);
+			this.makeApply();
 		});
 	}
 	beforeCreateDialog() {
