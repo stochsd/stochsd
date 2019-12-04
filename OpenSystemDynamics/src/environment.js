@@ -623,6 +623,13 @@ class BaseEnvironment {
 	getFileManager() {
 		// Override this
 	}
+	openLink(url) {
+		// Returns true or false
+		// if returning true, the caller will do e.preventDefault()
+		// to not trying to open the link the the browsers default way
+		// Default: false
+		return false;
+	}
 }
 
 class WebEnvironment extends BaseEnvironment {
@@ -718,6 +725,15 @@ class NwEnvironment extends BaseEnvironment {
 	}
 	closeWindow() {
 		nwjsWindow.close(true);
+	}
+	openLink(url) {
+		// Returns true or false
+		// if returning true, the caller will do e.preventDefault()
+		// to not trying to open the link the the browsers default way
+		// Default: false
+		nwjsGui.Shell.openExternal(url);
+		// Return true, because we dont want it to Also open it the default way
+		return true;
 	}
 }
 

@@ -4872,6 +4872,15 @@ function hashUpdate() {
 // https://stackoverflow.com/questions/7083693/detect-if-page-has-finished-loading
 // Initilzing without everything load = $(document).ready caused bugs. $(window).load solves this
 $(window).load(function() {
+	$("a").click((e) => {
+		// Important to use "currentTarget" instead of "target", because sometimes
+		// the <a> element is outside a <button>
+		// .currentTarget will point to the <a> but .target will point to the <button>
+		let url=e.currentTarget.href;
+		if(environment.openLink(url)) {			
+			e.preventDefault();
+		}
+	});
 	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
@@ -7557,7 +7566,7 @@ class NewModelDialog extends jqDialog {
 			}
 		});
 		$(this.dialogContent).find(".input_timeunits_default_value").click((event) => {
-			let selectedUnit = $(event.srcElement).data("default-value");
+			let selectedUnit = $(event.target).data("default-value");
 			$(this.dialogContent).find(".input_timeunits").val(selectedUnit);
 			this.makeApply();
 		});
