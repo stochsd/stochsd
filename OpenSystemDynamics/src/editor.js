@@ -7544,8 +7544,10 @@ class NewModelDialog extends jqDialog {
 			<td>Time units</td>
 			<td style="padding:1px;">
 				<input class="input_timeunits enterApply textInput" name="length" style="width:100px;" value="" type="text">
+				<!--
 				<button class="input_timeunits_default_value" data-default-value="Years">Years</button>
 				<button class="input_timeunits_default_value" data-default-value="Minutes">Minutes</button>
+				-->
 			</td>
 		</tr>
 		</table>
@@ -7572,7 +7574,7 @@ class NewModelDialog extends jqDialog {
 	}
 	makeApply() {
 		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
-		if(timeUnits.trim() == "") {
+		if(!isTimeUnitOk(timeUnits.trim())) {
 			xAlert("You have to enter a time unit for the model, e.g. Years or Minutes");
 			return;
 		}
