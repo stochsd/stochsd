@@ -7971,9 +7971,9 @@ class EquationEditor extends jqDialog {
 								<br/>
 								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
-						<div class="positiveOnlyDiv">
+						<div class="restrictNonNegativeDiv">
 							<br/>
-							<label><input class="restrictPositive enterApply" type="checkbox"/> Restrict to positive values</label>
+							<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
 						</div>
 					</div>
 				</div>
@@ -8018,8 +8018,8 @@ class EquationEditor extends jqDialog {
 		this.valueField = $(this.dialogContent).find(".valueField").get(0);
 		this.nameField = $(this.dialogContent).find(".nameField").get(0);
 		this.referenceDiv = $(this.dialogContent).find(".referenceDiv").get(0);
-		this.restrictPositiveCheckbox = $(this.dialogContent).find(".restrictPositive").get(0);
-		this.positiveOnlyDiv = $(this.dialogContent).find(".positiveOnlyDiv").get(0);
+		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrictNonNegative").get(0);
+		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrictNonNegativeDiv").get(0);
 		
 		let helpData = getFunctionHelpData();
 	
@@ -8129,15 +8129,15 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).val(oldValue);
 		
 		
-		// Handle restrict to positive
+		// Handle restrict to non-negative
 		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
-			// If element has restrict to positive
-			$(this.positiveOnlyDiv).show();
-			let restrictPositive = getNonNegative(this.primitive);
-			$(this.restrictPositiveCheckbox).prop("checked",restrictPositive);
+			// If element has restrict to non-negative
+			$(this.restrictNonNegativeDiv).show();
+			let restrictNonNegative = getNonNegative(this.primitive);
+			$(this.restrictNonNegativeCheckbox).prop("checked",restrictNonNegative);
 		} else {
 			// Otherwise hide that option
-			$(this.positiveOnlyDiv).hide();
+			$(this.restrictNonNegativeDiv).hide();
 		}
 		
 		// Create reference list
@@ -8261,9 +8261,9 @@ class EquationEditor extends jqDialog {
 				}
 			}
 			
-			// Handle restrict to positive
-			let restrictPositive = $(this.restrictPositiveCheckbox).prop("checked");
-			setNonNegative(this.primitive,restrictPositive);
+			// Handle restrict to non-negative
+			let restrictNonNegative = $(this.restrictNonNegativeCheckbox).prop("checked");
+			setNonNegative(this.primitive,restrictNonNegative);
 			
 			let visualObject = object_array[this.primitive.id];
 			if (visualObject) {
