@@ -8079,7 +8079,13 @@ class EquationEditor extends jqDialog {
 		
 		
 		
+		/* Positioning 
+			This is done to avoid blocking the button with the tooltip
+			https://api.jqueryui.com/position/
+		*/
 		$(".accordionCluster").tooltip({
+		  position: { my: "left+5 center", at: "right center" },
+		  classes: {"ui-tooltip": "tooltip"},
 		  content: function () {
               return $(this).prop('title');
           }
