@@ -5068,7 +5068,7 @@ $(window).load(function() {
 		$("#btn_save_as").show();
 	}
 	if (fileManager.hasRecentFiles()) {
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 			$(`#btn_recent_${i}`).click(function(event) {
 				let filePath = event.target.getAttribute("filePath");
 				fileManager.loadFromFile(filePath);

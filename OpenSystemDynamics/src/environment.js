@@ -330,7 +330,7 @@ class ElectronFileManager extends BaseFileManager {
 		return true;
 	}
 	addToRecent(filePath) {
-		let limit = 5;
+		let limit = Settings.MaxRecentFiles;
 		let recentFiles = [];
 		if (localStorage.recentFiles) {
 			recentFiles = JSON.parse(localStorage.recentFiles);
@@ -531,7 +531,7 @@ class NwFileManager extends BaseFileManager {
 		return true;
 	}
 	addToRecent(filePath) {
-		let limit = 5;
+		let limit = Settings.MaxRecentFiles;
 		let recentFiles = [];
 		if (localStorage.recentFiles) {
 			recentFiles = JSON.parse(localStorage.recentFiles);
