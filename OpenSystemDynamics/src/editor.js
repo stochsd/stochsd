@@ -280,7 +280,13 @@ function updateWindowSize() {
 		$("#svgplanebackground").height(windowHeight-svgPosition.top);
 	},100);
 	
+	updateLinkBar();
 
+}
+
+function updateLinkBar() {
+	let linkBarLeft = $(window).width()-30-$(".linkBar").width();
+	$(".linkBar").css("left", linkBarLeft)
 }
 
 defaultAttributeChangeHandler = function(primitive, attributeName, value) {
@@ -5741,6 +5747,7 @@ function updateInfoBar() {
 		infoDef.html(`${selected_array.length} objects selected`);
 		infoVE.html("");
 	}
+	updateLinkBar();
 }
 
 class RunResults {
