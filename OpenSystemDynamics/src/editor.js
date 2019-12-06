@@ -7906,7 +7906,7 @@ class AboutDialog extends CloseDialog {
 		this.setTitle("About");
 		this.setHtml(`
 			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
-			<b>StochSD version 190901</b><br/>
+			<b>StochSD version 2019.12.06 (YYYY.MM.DD)</b><br/>
 			<br/>
 			<b>StochSD</b> (<u>Stoch</u>astic <u>S</u>ystem <u>D</u>ynamics) is an extension of System Dynamics into the field of 	<b>stochastic modelling</b>. In particular, you can make statistical analyses from multiple simulation runs.<br/>
 			<br/>
