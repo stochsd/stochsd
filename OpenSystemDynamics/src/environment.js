@@ -187,8 +187,19 @@ class BaseFileManager {
 	loadModel() {
 		// Override this
 	}
-	setTitle(newTitle) {
-		;
+	setTitle(newTitleRaw) {
+		// None breaking space
+		const nbsp = String.fromCharCode(160);
+		// string.replace does not work with char(160) for some reason, so we had to make our own
+		let newTitle = "";
+		for (var i = 0; i < newTitleRaw.length; i++) {
+			let tchar = newTitleRaw.charAt(i);
+			if(tchar == " ") {
+				newTitle = newTitle + nbsp;
+			} else {
+				newTitle = newTitle + tchar;
+			}
+		}
 		if (window !== window.top) {
 			// In iFrame
 			setParentTitle(newTitle);
@@ -209,16 +220,17 @@ class BaseFileManager {
 		this.lastSaved = new Date().toLocaleTimeString();
 
 	}
-	updateTitle() {
+    updateTitle() {
 		let title = this.softwareName;
-		if (this.fileName != "") {
-			title += " | " + this.fileName;
-			if (this.lastSaved) {
-				title += " (last saved: " + this.lastSaved + ")";
-			}
+		const nbsp = String.fromCharCode(160);
+        if (this.fileName != "") {
+            title += "   |   " + this.fileName;
+            if (this.lastSaved) {
+                title += "   (last saved: " + this.lastSaved + ")";
+            }
 		}
-		this.setTitle(title);
-	}
+        this.setTitle(title);
+    }
 	set fileName(newFileName) {
 		if (newFileName == null) {
 			newFileName = "";
