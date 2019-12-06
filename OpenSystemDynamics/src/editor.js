@@ -7534,14 +7534,7 @@ function makeNewModel() {
 
 	if(Settings.newModelWindow) {
 		newModelDialog.show();
-	} else {
-		makeModelWithDefaults();
 	}
-}
-
-function makeModelWithDefaults() {
-	setTimeUnits("tu");
-	updateTimeUnitButton();
 }
 
 class NewModelDialog extends jqDialog {
@@ -7586,10 +7579,11 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeClose() {
 		// If the users closes the window without choosing anything
-		if($(this.dialogContent).find(".input_timeunits").val().trim()=="") {
-			setTimeUnits("tu");
-			updateTimeUnitButton();
-		}
+		// We currently does not use default values for this
+		// if($(this.dialogContent).find(".input_timeunits").val().trim()=="") {
+		// 	setTimeUnits("tu");
+		//	updateTimeUnitButton();
+		//}
 	}
 	makeApply() {
 		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
