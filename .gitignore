@@ -1,4 +1,5 @@
 distribute/build-for-linux/tmp/
+distribute/build-for-windows/tmp/
 OpenSystemDynamics/build/
 OpenSystemDynamics/node_modules/
 OpenSystemDynamics/package-lock.json

@@ -3,8 +3,9 @@
 set -x
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 [NWJS_URL]"
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 [NWJS_URL] [PLATFORM_NAME]"
+  echo "PLATFORM_NAME=[win32 or win64]"
   exit 1
 fi
 
@@ -17,6 +18,8 @@ echo "NWJS_URL: "$NWJS_URL
 echo "NWJS_FILENAME: "$NWJS_FILENAME
 echo "NWJS_FOLDERNAME: "$NWJS_FOLDERNAME
 
+PLATFORM_NAME=$2
+
 STOCHSD_VERSION=$(node ../get-stochsd-version.js)
 echo "Building stochsd version "$STOCHSD_VERSION
 
@@ -25,7 +28,7 @@ mkdir tmp
 cp ${NWJS_FILENAME}.md5 tmp/
 cd tmp
 
-RELEASE_NAME="stochsd-$STOCHSD_VERSION-win32"
+RELEASE_NAME="stochsd-${STOCHSD_VERSION}-${PLATFORM_NAME}"
 cd $(dirname $0)
 if ! md5sum --check ${NWJS_FILENAME}.md5
 then
