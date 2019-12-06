@@ -3,11 +3,15 @@
 set -x
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
+STOCHSD_VERSION=$(node ../get-stochsd-version.js)
+echo "Building stochsd version "$STOCHSD_VERSION
+
 # Work in a temporary directory
 mkdir tmp
+cp md5sum.nwjs-linux tmp/
 cd tmp
 
-RELEASE_NAME="stochsd-2019.12.06-linux"
+RELEASE_NAME="stochsd-$STOCHSD_VERSION-linux"
 cd $(dirname $0)
 if ! md5sum --check md5sum.nwjs-linux
 then
