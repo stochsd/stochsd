@@ -4,7 +4,7 @@ set -x
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
 if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 [NWJS_URL] [PLATFORM_NAME]"
+  echo "Usage: $0 [NWJS_FOLDERNAME] [PLATFORM_NAME]"
   echo "PLATFORM_NAME=[win32 or win64]"
   echo "Call ./build-for-win32.sh or ./build-for-win64.sh instead."
   exit 1
