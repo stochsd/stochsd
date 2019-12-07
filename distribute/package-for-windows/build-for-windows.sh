@@ -1,6 +1,6 @@
 #!/bin/bash
 # A dependency for running this script is to build the javascript output to output/ by running build.sh
-set -x
+set -ex
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
 if [ "$#" -ne 2 ]; then
@@ -27,8 +27,7 @@ STOCHSD_VERSION=$(node ../get-stochsd-version.js)
 echo "Building stochsd version "$STOCHSD_VERSION
 
 # Work in a temporary directory
-mkdir tmp
-cp ${NWJS_FILENAME}.md5 tmp/
+mkdir -p tmp
 cd tmp
 
 RELEASE_NAME="stochsd-${STOCHSD_VERSION}-${PLATFORM_NAME}"
@@ -42,3 +41,5 @@ cd $RELEASE_NAME
 cp ../../../../OpenSystemDynamics/src/license.html .
 cp ../../../../OpenSystemDynamics/src/third-party-licenses.html .
 cp -av ../../../output/package.nw package.nw
+cd ..
+zip -r $RELEASE_NAME.zip $RELEASE_NAME
