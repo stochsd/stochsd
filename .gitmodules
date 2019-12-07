@@ -1,0 +1,3 @@
+[submodule "distribute/packaging-templates"]
+	path = distribute/packaging-templates
+	url = https://github.com/stochsd/stochsd-packaging.git
