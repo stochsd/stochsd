@@ -6,19 +6,22 @@ set -x
 if [ "$#" -ne 2 ]; then
   echo "Usage: $0 [NWJS_URL] [PLATFORM_NAME]"
   echo "PLATFORM_NAME=[win32 or win64]"
+  echo "Call ./build-for-win32.sh or ./build-for-win64.sh instead."
   exit 1
 fi
 
-NWJS_URL=$1
-NWJS_FILENAME=$(basename $NWJS_URL)
-echo $NWJS_FILENAME | rev | cut -f 2- -d '.' | rev
-NWJS_FOLDERNAME=${NWJS_FILENAME//\.zip/}
+if ! test -d "../output/package.nw"; then
+	echo "package.nw does not exist. You need to build it first in the /distribute folder"
+	exit 1
+fi
 
-echo "NWJS_URL: "$NWJS_URL
-echo "NWJS_FILENAME: "$NWJS_FILENAME
-echo "NWJS_FOLDERNAME: "$NWJS_FOLDERNAME
-
+NWJS_FOLDERNAME=$1
 PLATFORM_NAME=$2
+
+echo "NWJS_FOLDERNAME: "$NWJS_FOLDERNAME
+echo "PLATFORM_NAME: "$PLATFORM_NAME
+
+
 
 STOCHSD_VERSION=$(node ../get-stochsd-version.js)
 echo "Building stochsd version "$STOCHSD_VERSION
@@ -30,16 +33,11 @@ cd tmp
 
 RELEASE_NAME="stochsd-${STOCHSD_VERSION}-${PLATFORM_NAME}"
 cd $(dirname $0)
-if ! md5sum --check ${NWJS_FILENAME}.md5
-then
-  rm $NWJS_FILENAME
-  wget $NWJS_URL
-fi
-rm -Rf $NWJS_FOLDERNAME
-rm -Rf stochsd
-unzip $NWJS_FILENAME
-mv $NWJS_FOLDERNAME $RELEASE_NAME
+
+# Cloning package templates
+echo "Cloning package templates from submodules... Takes a while"
+git submodule update --init --recursive
+cp -av ../../packaging-templates/$NWJS_FOLDERNAME $RELEASE_NAME
 cd $RELEASE_NAME
 cp -av ../../../output/package.nw package.nw
 pwd
-mv nw.exe stochsd.exe

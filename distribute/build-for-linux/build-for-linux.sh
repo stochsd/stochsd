@@ -3,6 +3,11 @@
 set -x
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
+if ! test -d "../output/package.nw"; then
+       echo "package.nw does not exist. You need to build it first in the /distribute folder"      
+       exit 1
+fi
+
 STOCHSD_VERSION=$(node ../get-stochsd-version.js)
 echo "Building stochsd version "$STOCHSD_VERSION
 

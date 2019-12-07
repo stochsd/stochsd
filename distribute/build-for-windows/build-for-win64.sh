@@ -1,4 +1,4 @@
 #!/bin/bash
 set -x
 
-./build-for-windows.sh "https://dl.nwjs.io/v0.42.6/nwjs-sdk-v0.42.6-win-x64.zip" win64
+./build-for-windows.sh "nwjs-0.24.2-win64-stochsd" win64
