@@ -28,6 +28,8 @@ tar -xzvf nwjs-sdk-v0.32.4-linux-x64.tar.gz
 mv nwjs-sdk-v0.32.4-linux-x64 $RELEASE_NAME
 cd $RELEASE_NAME
 cp -av ../../../output/package.nw package.nw
+cp ../../../../OpenSystemDynamics/src/license.html .
+cp ../../../../OpenSystemDynamics/src/third-party-licenses.html .
 mv nw stochsd
 cd ..
 tar -czvf $RELEASE_NAME.tar.gz $RELEASE_NAME/
