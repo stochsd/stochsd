@@ -1,5 +1,5 @@
-distribute/build-for-linux/tmp/
-distribute/build-for-windows/tmp/
+distribute/package-for-linux/tmp/
+distribute/package-for-windows/tmp/
 OpenSystemDynamics/build/
 OpenSystemDynamics/node_modules/
 OpenSystemDynamics/package-lock.json

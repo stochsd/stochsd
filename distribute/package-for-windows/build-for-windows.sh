@@ -39,5 +39,6 @@ echo "Cloning package templates from submodules... Takes a while"
 git submodule update --init --recursive
 cp -av ../../packaging-templates/$NWJS_FOLDERNAME $RELEASE_NAME
 cd $RELEASE_NAME
+cp ../../../../OpenSystemDynamics/src/license.html .
+cp ../../../../OpenSystemDynamics/src/third-party-licenses.html .
 cp -av ../../../output/package.nw package.nw
-pwd
