@@ -1,5 +1,7 @@
 distribute/package-for-linux/tmp/
 distribute/package-for-windows/tmp/
+distribute/package-for-mac/download
+distribute/package-for-mac/output
 OpenSystemDynamics/build/
 OpenSystemDynamics/node_modules/
 OpenSystemDynamics/package-lock.json
@@ -9,3 +11,4 @@ distribute/output
 package-lock.json
 build/
 dist/
+.DS_Store
