@@ -6,5 +6,8 @@
 	"main": "start.html",
 	"window": {
 		"icon": "icons/stochsd.png"
+	},
+	"scripts": {
+		"start": "nw ."
 	}
 }
