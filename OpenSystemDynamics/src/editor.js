@@ -7952,6 +7952,9 @@ class EquationEditor extends jqDialog {
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
+			<style>
+				.clickFunction { cursor: pointer; }
+			</style>
 			<div class="table">
   			<div class="table-row">
 					<div class="table-row">
