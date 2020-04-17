@@ -33,6 +33,7 @@ const type_basename = {
 	"xyplot":		"XyPlot",
 	"table":		"Table",
 	"rectangle": 	"Rectangle",
+	"circle": 		"Circle",
 	"line":			"Line",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
@@ -2262,6 +2263,37 @@ class RectangleVisual extends TwoPointer {
 	}
 }
 
+
+class CircleVisual extends TwoPointer {
+	makeGraphics() {
+		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, defaultFill,"element");
+		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+
+		this.selectorCoordRect = new CoordRect();
+		this.selectorCoordRect.element = this.selector;
+	}
+	updateGraphics() {
+		this.element.setAttribute("cx", (this.startx + this.endx)/2);
+		this.element.setAttribute("cy", (this.starty + this.endy)/2);
+		this.element.setAttribute("rx", Math.abs(this.startx - this.endx)/2);
+		this.element.setAttribute("ry", Math.abs(this.starty - this.endy)/2);
+		this.selectorCoordRect.x1 = this.startx;
+		this.selectorCoordRect.y1 = this.starty;
+		this.selectorCoordRect.x2 = this.endx;
+		this.selectorCoordRect.y2 = this.endy;
+		this.selectorCoordRect.update();	
+	}
+
+	select() {
+		super.select();
+		this.selector.setAttribute("visibility", "visible");
+	}
+	unselect() {
+		super.unselect();
+		this.selector.setAttribute("visibility", "hidden");
+	}
+}
+
 class HtmlTwoPointer extends TwoPointer {
 	updateHTML(html) {
 		this.htmlElement.contentDiv.innerHTML = html;
@@ -4078,6 +4110,16 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
+class CircleTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Circle", null, null);
+		this.current_connection = new CircleVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	getType() {
+		return "circle";
+	}
+}
+
 class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
@@ -4762,6 +4804,7 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
+			"circle":CircleTool,
 			"line":LineTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
