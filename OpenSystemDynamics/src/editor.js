@@ -7747,7 +7747,7 @@ class ConverterDialog extends jqDialog {
 				Name:<br/>
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
-				<textarea class="valueField" style="width: 300px; height: 80px;"></textarea>
+				<textarea class="valueField" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
 				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
@@ -7961,7 +7961,7 @@ class EquationEditor extends jqDialog {
 								<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
 								<div class="nameWarningDiv" style="color: red;"></div><br/>
 								<b>Definition:</b><br/>
-								<textarea class="valueField enterApply" style="width: 100%; height: 70px;"></textarea>
+								<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 								<br/>
 								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
