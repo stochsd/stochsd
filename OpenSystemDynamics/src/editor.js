@@ -4289,12 +4289,7 @@ class CoordRect {
 		this.element = null; // This is set at page ready
 	}
 	setVisible(new_visible) {
-		if (new_visible) {
-			this.element.setAttribute("visibility", "visible");
-		}
-		else {
-			this.element.setAttribute("visibility", "hidden");
-		}
+		this.element.setAttribute("visibility", new_visible ? "visible" : "hidden");
 	}
 	xmin() {
 		return this.x1 < this.x2 ? this.x1 : this.x2;
