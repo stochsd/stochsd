@@ -2259,24 +2259,35 @@ class RectangleVisual extends TwoPointer {
 		this.clickCoordRect.x2 = this.endx;
 		this.clickCoordRect.y2 = this.endy;
 		this.clickCoordRect.update();
-
 	}
 }
 
 
 class CircleVisual extends TwoPointer {
 	makeGraphics() {
-		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, defaultFill,"element");
+		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
+		this.clickCircle = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
 		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
+		this.element_array = [this.element];
+		this.group = svg_group( [this.element, this.clickCircle]);
+		this.group.setAttribute("node_id", this.id);
 	}
 	updateGraphics() {
-		this.element.setAttribute("cx", (this.startx + this.endx)/2);
-		this.element.setAttribute("cy", (this.starty + this.endy)/2);
-		this.element.setAttribute("rx", Math.abs(this.startx - this.endx)/2);
-		this.element.setAttribute("ry", Math.abs(this.starty - this.endy)/2);
+		let cx = (this.startx + this.endx)/2;
+		let cy = (this.starty + this.endy)/2;
+		let rx = Math.max(Math.abs(this.startx - this.endx)/2, 1);
+		let ry = Math.max(Math.abs(this.starty - this.endy)/2, 1);
+		this.element.setAttribute("cx", cx);
+		this.element.setAttribute("cy", cy);
+		this.element.setAttribute("rx", rx);
+		this.element.setAttribute("ry", ry);
+		this.clickCircle.setAttribute("cx", cx);
+		this.clickCircle.setAttribute("cy", cy);
+		this.clickCircle.setAttribute("rx", rx);
+		this.clickCircle.setAttribute("ry", ry);
 		this.selectorCoordRect.x1 = this.startx;
 		this.selectorCoordRect.y1 = this.starty;
 		this.selectorCoordRect.x2 = this.endx;
