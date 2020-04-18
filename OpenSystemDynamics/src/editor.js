@@ -5392,6 +5392,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Line":
 		case "Rectangle":
+		case "Circle":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5400,6 +5401,9 @@ function syncVisual(tprimitive) {
 				break;
 				case "Rectangle":
 					dimClass = RectangleVisual;
+				break;
+				case "Circle":
+					dimClass = CircleVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);
