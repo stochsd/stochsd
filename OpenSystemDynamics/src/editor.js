@@ -2273,7 +2273,7 @@ class CircleVisual extends TwoPointer {
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.group = svg_group( [this.element, this.clickCircle]);
+		this.group = svg_group( [this.element, this.clickCircle, this.selector]);
 		this.group.setAttribute("node_id", this.id);
 	}
 	updateGraphics() {
