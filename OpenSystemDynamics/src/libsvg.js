@@ -354,57 +354,6 @@ function svgWidePath(width, color, extraAttributes) {
 	return newElement;
 }
 
-class svgsFlowArrow {
-	constructor() {
-		this.points = [[0,0],[10,10]]; // path for arrow - (Arbitrary starting values)
-		this.outerLine = svgWidePath(7, "black");
-		this.innerLine = svgWidePath(5, "white");
-		this.arrow = svgArrowHead("black", this.getDirection());
-		this.setPoints(points);
-	}
-
-
-	setPoints(points) {
-		this.points = points;
-		this.outerLine.setPoints(this.shortenLastPoint(12));
-		this.innerLine.setPoints(this.shortenLastPoint(11));
-		this.arrow.newPos(points[points.length-1], this.getDirection());
-	}
-
-	shortenLastPoint(shortenAmount) {
-		let points = this.points.slice();
-		if (points.length < 2) {
-			return points;
-		} else {
-			let last = points[points.length-1];
-			let sndlast = points[points.length-2];
-			let sine = sin(last, sndlast);
-			let cosine = cos(last, sndlast);
-			let newLast = rotate([shortenAmount, 0], sine, cosine);
-			newLast = translate(newLast, last);
-			points[points.length-1] = newLast;
-			return points;
-		}
-	}
-
-	update() {
-		this.outerLine.update();
-		this.innerLine.update();
-		this.arrow.update();
-	}
-
-	getDirection() {
-		let len = this.points.length;
-		if (len < 2) {
-			return [0,0];
-		} else {
-			let p1 = this.points[len-1];
-			let p2 = this.points[len-2];
-			return [p2[0]-p1[0], p2[1]-p1[1]];
-		}
-	} 
-}
-
 function svgCloud(stroke, fill, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
