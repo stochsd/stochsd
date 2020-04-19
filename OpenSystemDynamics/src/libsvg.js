@@ -257,11 +257,8 @@ function svgEllipse(cx, cy, rx, ry, stroke, fill, markclass, extraAttributes) {
 }
 
 // Drawing primitive for drawing svg circles
-function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attributes) {
+function svg_line(x1, y1, x2, y2, stroke, fill,markclass,extra_attributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-	if(dasharray!=undefined && dasharray!="") {
-		newElement.setAttribute("stroke-dasharray",dasharray);
-	}
 	newElement.setAttribute("class",markclass); // Set path's data
 	newElement.setAttribute("x1",x1); // Set path's data
 	newElement.setAttribute("y1",y1); // Set path's data
