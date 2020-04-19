@@ -3221,8 +3221,6 @@ class LineVisual extends TwoPointer {
 		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
 		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
 		this.clickLine.setAttribute("stroke-width", "10");
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
 		this.group = svg_group([this.element, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
