@@ -35,6 +35,7 @@ const type_basename = {
 	"rectangle": 	"Rectangle",
 	"circle": 		"Circle",
 	"line":			"Line",
+	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
 	"stock":			"Stock",
@@ -3241,6 +3242,12 @@ class LineVisual extends TwoPointer {
 	}
 }
 
+class ArrowVisual extends TwoPointer {
+	makeGraphics() {
+		this.element = svg_line(0, 0, 10 , 10, defaultStroke, defaultFill);
+	}
+}
+
 class LinkVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
@@ -4142,6 +4149,16 @@ class LineTool extends TwoPointerTool {
 }
 LineTool.init();
 
+class ArrowTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Arrow", null, null);
+		this.current_connection = new ArrowVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	static getType() {
+		return "arrow";
+	}
+}
+
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
@@ -4812,6 +4829,7 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"circle":CircleTool,
 			"line":LineTool,
+			"arrow":ArrowTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
