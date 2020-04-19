@@ -2048,7 +2048,7 @@ class FlowVisual extends BaseConnection {
 		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
 		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
 		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, [1,0], {"class": "element"});
+		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");

@@ -280,7 +280,7 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,extra_attributes) {
 	return newElement;
 }
 
-function svgArrowHead(stroke, fill, directionVector, extraAttributes = null) {
+function svgArrowHead(stroke, fill, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
