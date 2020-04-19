@@ -3242,7 +3242,25 @@ class LineVisual extends TwoPointer {
 
 class ArrowVisual extends TwoPointer {
 	makeGraphics() {
-		this.element = svg_line(0, 0, 10 , 10, defaultStroke, defaultFill);
+		this.element = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
+		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
+		
+		this.group = svg_group([this.element, this.clickLine]);
+		this.group.setAttribute("node_id",this.id);
+		this.element_array = [this.element];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+	}
+	updateGraphics() {
+		this.element.setAttribute("x1",this.startx);
+		this.element.setAttribute("y1",this.starty);
+		this.element.setAttribute("x2",this.endx);
+		this.element.setAttribute("y2",this.endy);
+		this.clickLine.setAttribute("x1", this.startx);
+		this.clickLine.setAttribute("y1", this.starty);
+		this.clickLine.setAttribute("x2", this.endx);
+		this.clickLine.setAttribute("y2", this.endy);
 	}
 }
 
