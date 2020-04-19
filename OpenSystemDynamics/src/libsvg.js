@@ -284,7 +284,8 @@ function svgArrowHead(stroke, fill, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
-	this.pointsA = [[0,0], [10,10]]; // Arbitrary start points
+	newElement.templateArrowPoints = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
+	newElement.arrowPoints = [];
 
 	if (extraAttributes) {
 		for(var key in extraAttributes) {
@@ -292,20 +293,21 @@ function svgArrowHead(stroke, fill, extraAttributes = null) {
 		}
 	}
 
-	newElement.setPos = function (pos, directionVector=[1,0]) {
-		let points = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
+	newElement.setTemplatePoints = function(newPoints) {
+		this.templateArrowPoints = newPoints;
+	}
+
+	newElement.setPos = function(pos, directionVector=[1,0]) {
 		let sine = sin([0,0], directionVector);
 		let cosine = cos([0,0], directionVector);
-		points = rotatePoints(points, sine, cosine);
-		points = tranlatePoints(points, pos);
-		this.pointsArrow = points;
+		this.arrowPoints = rotatePoints(this.templateArrowPoints, sine, cosine);
+		this.arrowPoints = tranlatePoints(this.arrowPoints, pos);
 	};
 
-	newElement.update = function () {
-		var points = this.pointsArrow;
-		let d = "M"+points[0][0]+","+points[0][1];
-		for (i = 1; i < this.pointsArrow.length; i++) {
-			d += "L"+points[i][0]+","+points[i][1]+" ";
+	newElement.update = function() {
+		let d = "M"+this.arrowPoints[0][0]+","+this.arrowPoints[0][1];
+		for (i = 1; i < this.arrowPoints.length; i++) {
+			d += "L"+this.arrowPoints[i][0]+","+this.arrowPoints[i][1]+" ";
 		}
 		// d += "Z";
 		this.setAttribute("d", d);
