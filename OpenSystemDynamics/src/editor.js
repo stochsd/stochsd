@@ -3563,10 +3563,10 @@ class BaseTool {
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouseMove(x,y) {
+	static mouseMove(x,y, ctrlKey) {
 		// Is triggered when mouse moves
 	}
-	static leftMouseUp(x,y) {
+	static leftMouseUp(x,y, ctrlKey) {
 		// Is triggered when mouse goes up for this tool
 	}
 	static rightMouseDown(x,y) {
@@ -4018,16 +4018,26 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 	}
-	static mouseMove(x,y) {
+	static mouseMove(x, y, ctrlKey) {
 		if (this.current_connection == null) {
 			return;
 		}
-		this.current_connection.endx = x;
-		this.current_connection.endy = y;
+		if (ctrlKey) {
+			let sideX = x - this.current_connection.startx;
+			let sideY = y - this.current_connection.starty;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let signX = Math.sign(sideX);
+			let signY = Math.sign(sideY);
+			this.current_connection.endx = this.current_connection.startx + signX*shortSideLength;
+			this.current_connection.endy = this.current_connection.starty + signY*shortSideLength;
+		} else {
+			this.current_connection.endx = x;
+			this.current_connection.endy = y;
+		}
 		this.current_connection.update();
 	}
-	static leftMouseUp(x,y) {
-		this.mouseMove(x,y);
+	static leftMouseUp(x, y, ctrlKey) {
+		this.mouseMove(x, y, ctrlKey);
 		if (this.current_connection.end_anchor == null) {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
@@ -4761,14 +4771,14 @@ function mouseMoveHandler(event) {
 
 	lastMouseX = x;
 	lastMouseY = y;
-	
+
 	if (middlemouseisdown) {
 		event.preventDefault();
 		currentTool.middleMouseMove(x,y);
 	}
 	
 	if (leftmouseisdown) {
-		currentTool.mouseMove(x,y);
+		currentTool.mouseMove(x, y, event.ctrlKey);
 	}
 }
 function mouseUpHandler(event) {
@@ -4783,7 +4793,7 @@ function mouseUpHandler(event) {
 			var x = event.pageX-offset.left;
 			var y = event.pageY-offset.top;
 			
-			currentTool.leftMouseUp(x,y);
+			currentTool.leftMouseUp(x, y, event.ctrlKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
