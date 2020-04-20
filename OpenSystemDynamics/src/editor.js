@@ -4029,10 +4029,21 @@ class TwoPointerTool extends BaseTool {
 			let sideX = x - this.current_connection.startx;
 			let sideY = y - this.current_connection.starty;
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
-			let signX = Math.sign(sideX);
-			let signY = Math.sign(sideY);
-			this.current_connection.endx = this.current_connection.startx + signX*shortSideLength;
-			this.current_connection.endy = this.current_connection.starty + signY*shortSideLength;
+			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
+			if (3*shortSideLength < longSideLength) { 	// place horizontal or vertical
+				if (Math.abs(sideX) < Math.abs(sideY)) {
+					this.current_connection.endx = this.current_connection.startx;
+					this.current_connection.endy = y;
+				} else {
+					this.current_connection.endx = x;
+					this.current_connection.endy = this.current_connection.starty;
+				}
+			} else {									// place at 45 degree angle
+				let signX = Math.sign(sideX);
+				let signY = Math.sign(sideY);
+				this.current_connection.endx = this.current_connection.startx + signX*shortSideLength;
+				this.current_connection.endy = this.current_connection.starty + signY*shortSideLength;
+			}
 		} else {
 			this.current_connection.endx = x;
 			this.current_connection.endy = y;
