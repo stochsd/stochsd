@@ -2251,14 +2251,17 @@ class RectangleVisual extends TwoPointer {
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		// Prevent width from being 0 (then rect is not visible)
+		let endx = (this.startx != this.endx) ? this.endx : this.startx + 1;
+		let endy = (this.starty != this.endy) ? this.endy : this.starty + 1;
+		this.coordRect.x2 = endx;
+		this.coordRect.y2 = endy;
 		this.coordRect.update();
 
 		this.clickCoordRect.x1 = this.startx;
 		this.clickCoordRect.y1 = this.starty;
-		this.clickCoordRect.x2 = this.endx;
-		this.clickCoordRect.y2 = this.endy;
+		this.clickCoordRect.x2 = endx;
+		this.clickCoordRect.y2 = endy;
 		this.clickCoordRect.update();
 	}
 }
