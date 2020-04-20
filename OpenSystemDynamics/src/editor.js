@@ -3259,8 +3259,15 @@ class ArrowVisual extends TwoPointer {
 		this.arrowHead.update();
 		this.line.setAttribute("x1",this.startx);
 		this.line.setAttribute("y1",this.starty);
-		this.line.setAttribute("x2",this.endx);
-		this.line.setAttribute("y2",this.endy);
+		/* Shorten line as not to go past arrowHead */
+		let shortenAmount = 12;
+		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
+		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
+		let endOffset = rotate([shortenAmount, 0], sine, cosine);
+		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
+		/***/
+		this.line.setAttribute("x2", lineEndPos[0]);
+		this.line.setAttribute("y2", lineEndPos[1]);
 		this.clickLine.setAttribute("x1", this.startx);
 		this.clickLine.setAttribute("y1", this.starty);
 		this.clickLine.setAttribute("x2", this.endx);
