@@ -33,7 +33,9 @@ const type_basename = {
 	"xyplot":		"XyPlot",
 	"table":		"Table",
 	"rectangle": 	"Rectangle",
+	"circle": 		"Circle",
 	"line":			"Line",
+	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
 	"stock":			"Stock",
@@ -2046,7 +2048,7 @@ class FlowVisual extends BaseConnection {
 		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
 		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
 		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, [1,0], {"class": "element"});
+		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
@@ -2249,16 +2251,61 @@ class RectangleVisual extends TwoPointer {
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		// Prevent width from being 0 (then rect is not visible)
+		let endx = (this.startx != this.endx) ? this.endx : this.startx + 1;
+		let endy = (this.starty != this.endy) ? this.endy : this.starty + 1;
+		this.coordRect.x2 = endx;
+		this.coordRect.y2 = endy;
 		this.coordRect.update();
 
 		this.clickCoordRect.x1 = this.startx;
 		this.clickCoordRect.y1 = this.starty;
-		this.clickCoordRect.x2 = this.endx;
-		this.clickCoordRect.y2 = this.endy;
+		this.clickCoordRect.x2 = endx;
+		this.clickCoordRect.y2 = endy;
 		this.clickCoordRect.update();
+	}
+}
 
+
+class CircleVisual extends TwoPointer {
+	makeGraphics() {
+		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
+		this.clickCircle = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
+		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+
+		this.selectorCoordRect = new CoordRect();
+		this.selectorCoordRect.element = this.selector;
+		this.element_array = [this.element];
+		this.group = svg_group( [this.element, this.clickCircle, this.selector]);
+		this.group.setAttribute("node_id", this.id);
+	}
+	updateGraphics() {
+		let cx = (this.startx + this.endx)/2;
+		let cy = (this.starty + this.endy)/2;
+		let rx = Math.max(Math.abs(this.startx - this.endx)/2, 1);
+		let ry = Math.max(Math.abs(this.starty - this.endy)/2, 1);
+		this.element.setAttribute("cx", cx);
+		this.element.setAttribute("cy", cy);
+		this.element.setAttribute("rx", rx);
+		this.element.setAttribute("ry", ry);
+		this.clickCircle.setAttribute("cx", cx);
+		this.clickCircle.setAttribute("cy", cy);
+		this.clickCircle.setAttribute("rx", rx);
+		this.clickCircle.setAttribute("ry", ry);
+		this.selectorCoordRect.x1 = this.startx;
+		this.selectorCoordRect.y1 = this.starty;
+		this.selectorCoordRect.x2 = this.endx;
+		this.selectorCoordRect.y2 = this.endy;
+		this.selectorCoordRect.update();	
+	}
+
+	select() {
+		super.select();
+		this.selector.setAttribute("visibility", "visible");
+	}
+	unselect() {
+		super.unselect();
+		this.selector.setAttribute("visibility", "hidden");
 	}
 }
 
@@ -3177,8 +3224,6 @@ class LineVisual extends TwoPointer {
 		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
 		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
 		this.clickLine.setAttribute("stroke-width", "10");
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
 		this.group = svg_group([this.element, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
@@ -3195,6 +3240,45 @@ class LineVisual extends TwoPointer {
 		this.clickLine.setAttribute("y1", this.starty);
 		this.clickLine.setAttribute("x2", this.endx);
 		this.clickLine.setAttribute("y2", this.endy);
+	}
+}
+
+class ArrowVisual extends TwoPointer {
+	makeGraphics() {
+		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
+		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
+		this.arrowHead = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHead.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		
+		this.group = svg_group([this.line, this.arrowHead, this.clickLine]);
+		this.group.setAttribute("node_id",this.id);
+		this.element_array = [this.line, this.arrowHead];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+	}
+	updateGraphics() {
+		this.arrowHead.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
+		this.arrowHead.update();
+		this.line.setAttribute("x1",this.startx);
+		this.line.setAttribute("y1",this.starty);
+		/* Shorten line as not to go past arrowHead */
+		let shortenAmount = 12;
+		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
+		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
+		let endOffset = rotate([shortenAmount, 0], sine, cosine);
+		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
+		/***/
+		this.line.setAttribute("x2", lineEndPos[0]);
+		this.line.setAttribute("y2", lineEndPos[1]);
+		this.clickLine.setAttribute("x1", this.startx);
+		this.clickLine.setAttribute("y1", this.starty);
+		this.clickLine.setAttribute("x2", this.endx);
+		this.clickLine.setAttribute("y2", this.endy);
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.arrowHead.setAttribute("fill", color);
 	}
 }
 
@@ -3320,9 +3404,9 @@ class LinkVisual extends BaseConnection {
 		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
 		this.b2_anchor.makeSquare();
 
-		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
-		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", "5,5");
-		
+		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
+
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
@@ -3482,10 +3566,10 @@ class BaseTool {
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouseMove(x,y) {
+	static mouseMove(x,y, ctrlKey) {
 		// Is triggered when mouse moves
 	}
-	static leftMouseUp(x,y) {
+	static leftMouseUp(x,y, ctrlKey) {
 		// Is triggered when mouse goes up for this tool
 	}
 	static rightMouseDown(x,y) {
@@ -3937,16 +4021,37 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 	}
-	static mouseMove(x,y) {
+	static mouseMove(x, y, ctrlKey) {
 		if (this.current_connection == null) {
 			return;
 		}
-		this.current_connection.endx = x;
-		this.current_connection.endy = y;
+		if (ctrlKey) {
+			let sideX = x - this.current_connection.startx;
+			let sideY = y - this.current_connection.starty;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
+			if (3*shortSideLength < longSideLength) { 	// place horizontal or vertical
+				if (Math.abs(sideX) < Math.abs(sideY)) {
+					this.current_connection.endx = this.current_connection.startx;
+					this.current_connection.endy = y;
+				} else {
+					this.current_connection.endx = x;
+					this.current_connection.endy = this.current_connection.starty;
+				}
+			} else {									// place at 45 degree angle
+				let signX = Math.sign(sideX);
+				let signY = Math.sign(sideY);
+				this.current_connection.endx = this.current_connection.startx + signX*shortSideLength;
+				this.current_connection.endy = this.current_connection.starty + signY*shortSideLength;
+			}
+		} else {
+			this.current_connection.endx = x;
+			this.current_connection.endy = y;
+		}
 		this.current_connection.update();
 	}
-	static leftMouseUp(x,y) {
-		this.mouseMove(x,y);
+	static leftMouseUp(x, y, ctrlKey) {
+		this.mouseMove(x, y, ctrlKey);
 		if (this.current_connection.end_anchor == null) {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
@@ -4078,6 +4183,16 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
+class CircleTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Circle", null, null);
+		this.current_connection = new CircleVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	getType() {
+		return "circle";
+	}
+}
+
 class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
@@ -4088,6 +4203,16 @@ class LineTool extends TwoPointerTool {
 	}
 }
 LineTool.init();
+
+class ArrowTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Arrow", null, null);
+		this.current_connection = new ArrowVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	static getType() {
+		return "arrow";
+	}
+}
 
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -4236,12 +4361,7 @@ class CoordRect {
 		this.element = null; // This is set at page ready
 	}
 	setVisible(new_visible) {
-		if (new_visible) {
-			this.element.setAttribute("visibility", "visible");
-		}
-		else {
-			this.element.setAttribute("visibility", "hidden");
-		}
+		this.element.setAttribute("visibility", new_visible ? "visible" : "hidden");
 	}
 	xmin() {
 		return this.x1 < this.x2 ? this.x1 : this.x2;
@@ -4665,14 +4785,14 @@ function mouseMoveHandler(event) {
 
 	lastMouseX = x;
 	lastMouseY = y;
-	
+
 	if (middlemouseisdown) {
 		event.preventDefault();
 		currentTool.middleMouseMove(x,y);
 	}
 	
 	if (leftmouseisdown) {
-		currentTool.mouseMove(x,y);
+		currentTool.mouseMove(x, y, event.ctrlKey);
 	}
 }
 function mouseUpHandler(event) {
@@ -4687,7 +4807,7 @@ function mouseUpHandler(event) {
 			var x = event.pageX-offset.left;
 			var y = event.pageY-offset.top;
 			
-			currentTool.leftMouseUp(x,y);
+			currentTool.leftMouseUp(x, y, event.ctrlKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
@@ -4762,7 +4882,9 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
+			"circle":CircleTool,
 			"line":LineTool,
+			"arrow":ArrowTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
@@ -5343,6 +5465,8 @@ function syncVisual(tprimitive) {
 		break;
 		case "Line":
 		case "Rectangle":
+		case "Circle":
+		case "Arrow":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5351,6 +5475,12 @@ function syncVisual(tprimitive) {
 				break;
 				case "Rectangle":
 					dimClass = RectangleVisual;
+				break;
+				case "Circle":
+					dimClass = CircleVisual;
+				break;
+				case "Arrow":
+					dimClass = ArrowVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);

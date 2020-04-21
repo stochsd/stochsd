@@ -144,7 +144,7 @@ function svg_text(x, y, text, markclass, extra_attributes) {
 }
 
 // Drawing primitive for drawing svg rects
-function svg_rect(x, y, width, height, stroke, fill, markclass) {
+function svg_rect(x, y, width, height, stroke, fill, markclass, extraAttributes) {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); // Create a path in SVG's namespace
 	newElement.setAttribute("class",markclass); // Set path's data
@@ -154,6 +154,13 @@ function svg_rect(x, y, width, height, stroke, fill, markclass) {
 	newElement.setAttribute("height", height); // Set path's data
 	newElement.setAttribute("fill", fill);
 	newElement.setAttribute("stroke", stroke);
+
+	if (extraAttributes) {
+		for(var key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]);
+		}
+	}
+
 	svgplane.appendChild(newElement);
 	return newElement;
 }
@@ -225,12 +232,33 @@ function svg_circle(cx, cy, r, stroke, fill, markclass, extraAttributes) {
 	return newElement;
 }
 
-// Drawing primitive for drawing svg circles
-function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attributes) {
-	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
-	if(dasharray!=undefined && dasharray!="") {
-		newElement.setAttribute("stroke-dasharray",dasharray);
+
+function svgEllipse(cx, cy, rx, ry, stroke, fill, markclass, extraAttributes) {
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'ellipse');
+
+	newElement.setAttribute("class", markclass);
+	newElement.setAttribute("cx", cx);
+	newElement.setAttribute("cy", cy);
+	newElement.setAttribute("rx", rx);
+	newElement.setAttribute("ry", ry);
+	newElement.setAttribute("fill", fill);
+	newElement.setAttribute("stroke", stroke);
+	newElement.setAttribute("data-attr", "selected");
+	
+	if (extraAttributes) {
+		for (let key in extraAttributes) {
+			newElement.setAttribute(key, extraAttributes[key]);
+			
+		}
 	}
+
+	svgplane.appendChild(newElement);
+	return newElement;
+}
+
+// Drawing primitive for drawing svg circles
+function svg_line(x1, y1, x2, y2, stroke, fill,markclass,extra_attributes) {
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'line'); //Create a path in SVG's namespace
 	newElement.setAttribute("class",markclass); // Set path's data
 	newElement.setAttribute("x1",x1); // Set path's data
 	newElement.setAttribute("y1",y1); // Set path's data
@@ -252,11 +280,12 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,dasharray,extra_attribu
 	return newElement;
 }
 
-function svgArrowHead(stroke, fill, directionVector, extraAttributes = null) {
+function svgArrowHead(stroke, fill, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
-	this.pointsA = [[0,0], [10,10]]; // Arbitrary start points
+	newElement.templateArrowPoints = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
+	newElement.arrowPoints = [];
 
 	if (extraAttributes) {
 		for(var key in extraAttributes) {
@@ -264,20 +293,21 @@ function svgArrowHead(stroke, fill, directionVector, extraAttributes = null) {
 		}
 	}
 
-	newElement.setPos = function (pos, directionVector=[1,0]) {
-		let points = [[12, -2],[12, -6], [0,0], [12, 6],[12, 2]];
+	newElement.setTemplatePoints = function(newPoints) {
+		this.templateArrowPoints = newPoints;
+	}
+
+	newElement.setPos = function(pos, directionVector=[1,0]) {
 		let sine = sin([0,0], directionVector);
 		let cosine = cos([0,0], directionVector);
-		points = rotatePoints(points, sine, cosine);
-		points = tranlatePoints(points, pos);
-		this.pointsArrow = points;
+		this.arrowPoints = rotatePoints(this.templateArrowPoints, sine, cosine);
+		this.arrowPoints = tranlatePoints(this.arrowPoints, pos);
 	};
 
-	newElement.update = function () {
-		var points = this.pointsArrow;
-		let d = "M"+points[0][0]+","+points[0][1];
-		for (i = 1; i < this.pointsArrow.length; i++) {
-			d += "L"+points[i][0]+","+points[i][1]+" ";
+	newElement.update = function() {
+		let d = "M"+this.arrowPoints[0][0]+","+this.arrowPoints[0][1];
+		for (i = 1; i < this.arrowPoints.length; i++) {
+			d += "L"+this.arrowPoints[i][0]+","+this.arrowPoints[i][1]+" ";
 		}
 		// d += "Z";
 		this.setAttribute("d", d);
@@ -321,57 +351,6 @@ function svgWidePath(width, color, extraAttributes) {
 	// newElement.update();
 	svgplane.appendChild(newElement);
 	return newElement;
-}
-
-class svgsFlowArrow {
-	constructor() {
-		this.points = [[0,0],[10,10]]; // path for arrow - (Arbitrary starting values)
-		this.outerLine = svgWidePath(7, "black");
-		this.innerLine = svgWidePath(5, "white");
-		this.arrow = svgArrowHead("black", this.getDirection());
-		this.setPoints(points);
-	}
-
-
-	setPoints(points) {
-		this.points = points;
-		this.outerLine.setPoints(this.shortenLastPoint(12));
-		this.innerLine.setPoints(this.shortenLastPoint(11));
-		this.arrow.newPos(points[points.length-1], this.getDirection());
-	}
-
-	shortenLastPoint(shortenAmount) {
-		let points = this.points.slice();
-		if (points.length < 2) {
-			return points;
-		} else {
-			let last = points[points.length-1];
-			let sndlast = points[points.length-2];
-			let sine = sin(last, sndlast);
-			let cosine = cos(last, sndlast);
-			let newLast = rotate([shortenAmount, 0], sine, cosine);
-			newLast = translate(newLast, last);
-			points[points.length-1] = newLast;
-			return points;
-		}
-	}
-
-	update() {
-		this.outerLine.update();
-		this.innerLine.update();
-		this.arrow.update();
-	}
-
-	getDirection() {
-		let len = this.points.length;
-		if (len < 2) {
-			return [0,0];
-		} else {
-			let p1 = this.points[len-1];
-			let p2 = this.points[len-2];
-			return [p2[0]-p1[0], p2[1]-p1[1]];
-		}
-	} 
 }
 
 function svgCloud(stroke, fill, extraAttributes) {
