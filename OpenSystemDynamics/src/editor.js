@@ -2336,7 +2336,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 	render() {
 		html = "";
-		html += "<table class='classicTable'><thead><tr>";
+		html += "<table class='stickyTable'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
