@@ -163,14 +163,28 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		td.text {
 			text-align: left;		
 		}
-		.classicTable table, .classicTable tr, .classicTable td {
-			border: 1px solid black;
-			text-align: right;
+		table.stickyTable th {
+			position: sticky;
+			top: 0;
+			background-color: #f4f4f4;
 		}
-		.classicTable th {
-			border: 1px solid black;
-			text-align: center;
+		table.stickyTable th::after {
+			/* Make border-bottom since border does follow element with sticky */
+			content: "";
+			position: absolute;
+			background: black;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 1px;
 		}
+		table.stickyTable th, table.stickyTable td {
+			border: 1px solid #ddd;
+		} 
+		table.stickyTable tr:nth-child(even) {
+			background-color: #f4f4f4;
+		}
+
 		.modernTable tr:nth-child(even){
 			background-color: #f4f4f4;
 		}
