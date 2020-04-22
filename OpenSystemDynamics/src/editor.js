@@ -7862,12 +7862,25 @@ class TimeUnitDialog extends jqDialog {
 class NumberBoxDialog extends jqDialog {
 	constructor(id) {
 		super();
-		this.setTitle("Info");
+		this.setTitle("Numberbox Info");
 		let imPrimitive = findID(id);
 		if (imPrimitive) {
 			let primitiveName = makePrimitiveName(getName(imPrimitive));
 			this.setHtml(`
-				Value of ${primitiveName}
+				<div>
+					<p>Value of ${primitiveName}</p>
+					<table class="modernTable">
+						<tr>
+							<td>
+								<input type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input type="text" value="1e-12"/>
+							</td>
+							<td>
+								<button>Set default</button>
+							</td>
+						</tr>
+					</table>
+					<p class="numberbox-warning" style="color: red;">... is not acceptable value</p>
+				</div>
 			`);
 		} else {
 			this.setHtml(`
