@@ -646,42 +646,50 @@ class EditorControll {
 	}
 }
 
-stocsd_eformat = false;
 // But where the lines can be as long as required to print the variable
-function stocsd_format(number, tdecimals) {
+function stocsd_format(number, tdecimals, roundToZeroAt) {
 	// tdecimals is optional and sets the number of decimals. It is rarly used (only in some tables)
 	// Since the numbers automaticly goes to e-format when low enought
-	
+
 	// Used when e.g. the actuall error is reseted to null
-	if (number == null) {
+	if(number == null) {
 		return "";
 	}
-    
-    // If we force e-format we just convert here and return
-    if (stocsd_eformat) {
-        return number.toExponential(2).toUpperCase();
-    }
-	
+
 	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if (number == 0) {
+    if(number == 0) {
 		return "0";
+	}
+	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
+		// Round to zero when close 
+		if (roundToZeroAt) {
+			return "0+";
+		} else {
+			return "0-";
+		}
+	}
+	// Check if number is to small to be viewed in field
+	// If so, force e-format
+
+	if(Math.abs(number)<Math.pow(10,(-tdecimals))) {
+        return number.toExponential(2);
+	}
+	//Check if the number is to big to be view ed in the field
+	if(Math.abs(number)>Math.pow(10,tdecimals)) {
+        return number.toExponential(2);
 	}
 
 	// Else format it as a regular number, and remove ending zeros
-	var stringified = number.toPrecision(tdecimals).toUpperCase();
-	if (stringified.includes("E")) {
-		stringified = stringified.split("E");
-		stringified.splice(1, 0, " E");
-		stringified = stringified.join("");
-	}
+	var stringified = number.toFixed(tdecimals);
+
 	// Find the length of stringified, where the ending zeros have been removed
 	var i = stringified.length;
-	while(stringified.charAt(i-1) == '0') {
-		i = i-1;
+	while(stringified.charAt(i-1)=='0') {
+		i=i-1;
 		// If we find a dot. Stop removing decimals
-		if (stringified.charAt(i-1) == '.') {
-			i = i-1;
+		if(stringified.charAt(i-1)=='.') {
+			i=i-1;
 			break;
 		}
 	}
