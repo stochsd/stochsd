@@ -663,7 +663,7 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	}
 	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
 		// Round to zero when close 
-		if (roundToZeroAt) {
+		if (number > 0) {
 			return "0+";
 		} else {
 			return "0-";
