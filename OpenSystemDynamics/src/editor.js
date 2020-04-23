@@ -7878,22 +7878,49 @@ class NumberBoxDialog extends jqDialog {
 					<table class="modernTable">
 						<tr>
 							<td>
-								<input class="roundToZero" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt" type="text" value="1e-12"/>
+								<input class="roundToZero" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt" type="text" value="no value"/>
 							</td>
 							<td>
 								<button class="defaultNumberboxBtn">Set default</button>
 							</td>
 						</tr>
 					</table>
-					<p class="numberbox-warning" style="color: red;">... is not acceptable value</p>
+					<p class="numberboxWarning" style="color: red;">Warning Text Here</p>
 				</div>
 			`);
-			// find and set primitive.roundToZero is set
+			let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
+			let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
+			let numberboxWarning = $(this.dialogContent).find(".numberboxWarning");
+
+			// sync RoundToZero with primitive
 			if(this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null) {
-				$(this.dialogContent).find(".roundToZero").prop('checked', true);
+				roundToZeroCheckbox.prop("checked", true);
 			} else {
-				$(this.dialogContent).find(".roundToZero").prop('checked', false);
+				roundToZeroCheckbox.prop("checked", false);
 			}
+			roundToZeroField.prop("disabled", ! roundToZeroCheckbox.prop("checked"));
+			roundToZeroCheckbox.click((event) => {
+				roundToZeroField.prop("disabled", ! roundToZeroCheckbox.prop("checked"));
+			});
+
+			// sync roundToZeroAtValue with primitive
+			let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+			if (roundToZeroAtValue !== null) {
+				roundToZeroField.val(roundToZeroAtValue); 
+			} else {
+				roundToZeroField.val(this.defaultRoundToZeroAtValue);
+			}
+			roundToZeroField.keyup((event) => {
+				if (isNaN(roundToZeroField.val())) {
+					numberboxWarning.css("visibility", "visible");
+					numberboxWarning.html(`<b>${roundToZeroField.val()}</b> is not an acceptable value.`);
+				} else if (roundToZeroField.val() == "") {
+					numberboxWarning.css("visibility", "visible");
+					numberboxWarning.html("No value choosen.");
+				} else {
+					numberboxWarning.css("visibility", "hidden");
+				}
+			});
 			
 			// find and set primitive.roundToZeroAt
 			this.setDefaultNumberboxBtn = $(this.dialogContent).find(".defaultNumberboxBtn").get(0);
