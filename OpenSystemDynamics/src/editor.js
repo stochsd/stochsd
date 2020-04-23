@@ -1338,15 +1338,15 @@ class NumberboxVisual extends BasePrimitive {
 		}
 	}
 	render() {
-		if (this.targetPrimitive == null) {
+		if (this.targetID == null) {
 			this.name_element.innerHTML = "-";
 			this.setSelectionSizeToText();
 			return;		
 		}
 		let valueString = "";
 		let primitiveName = "";
-		let lastValue = RunResults.getLastValue(this.targetPrimitive);
-		let imPrimtiive = findID(this.targetPrimitive);
+		let lastValue = RunResults.getLastValue(this.targetID);
+		let imPrimtiive = findID(this.targetID);
 		if (imPrimtiive) {
 			primitiveName += makePrimitiveName(getName(imPrimtiive));
 		} else {
@@ -1361,11 +1361,11 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
 	}
-	get targetPrimitive() {
+	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
 	}
-	set targetPrimitive(newTargetPrimitive) {
-		this.primitive.setAttribute("Target",newTargetPrimitive);
+	set targetID(newTargetID) {
+		this.primitive.setAttribute("Target",newTargetID);
 		this.render();
 	}
 	afterNameChange() {
@@ -1394,7 +1394,7 @@ class NumberboxVisual extends BasePrimitive {
 		this.double_click();
 	}
 	double_click() {
-		let dialog = new NumberBoxDialog(this.targetPrimitive);
+		let dialog = new NumberBoxDialog(this.id, this.targetID);
 		dialog.show();
 	}
 }
@@ -7860,32 +7860,53 @@ class TimeUnitDialog extends jqDialog {
 }
 
 class NumberBoxDialog extends jqDialog {
-	constructor(id) {
+	constructor(ownID, targetID) {
 		super();
+		this.primitive = findID(ownID);
+		this.targetPrimitive = findID(targetID);
+		this.defaultRoundToZero = true;
+		this.defaultRoundToZeroAtValue = 1e-12;
+	}
+
+	beforeShow() {
 		this.setTitle("Numberbox Info");
-		let imPrimitive = findID(id);
-		if (imPrimitive) {
-			let primitiveName = makePrimitiveName(getName(imPrimitive));
+		if (this.targetPrimitive) {
+			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
 					<table class="modernTable">
 						<tr>
 							<td>
-								<input type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input type="text" value="1e-12"/>
+								<input class="roundToZero" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt" type="text" value="1e-12"/>
 							</td>
 							<td>
-								<button>Set default</button>
+								<button class="defaultNumberboxBtn">Set default</button>
 							</td>
 						</tr>
 					</table>
 					<p class="numberbox-warning" style="color: red;">... is not acceptable value</p>
 				</div>
 			`);
+			// find and set primitive.roundToZero is set
+			if(this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null) {
+				$(this.dialogContent).find(".roundToZero").prop('checked', true);
+			} else {
+				$(this.dialogContent).find(".roundToZero").prop('checked', false);
+			}
+			
+			// find and set primitive.roundToZeroAt
+			this.setDefaultNumberboxBtn = $(this.dialogContent).find(".defaultNumberboxBtn").get(0);
 		} else {
 			this.setHtml(`
 				Target primitive not found
 			`);	
+		}
+	}
+	makeApply() {
+		if (this.primitive) {
+			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+			this.primitive.setAttribute("RoundToZero", roundToZero);
 		}
 	}
 }
