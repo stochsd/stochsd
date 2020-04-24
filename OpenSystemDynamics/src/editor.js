@@ -7887,10 +7887,10 @@ class NumberBoxDialog extends jqDialog {
 					<table class="modernTable">
 						<tr>
 							<td>
-								<input class="roundToZero" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt" type="text" value="no value"/>
+								<input class="roundToZero enterApply" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 							</td>
 							<td>
-								<button class="defaultNumberboxBtn">Set default</button>
+								<button class="defaultNumberboxBtn enterApply">Set default</button>
 							</td>
 						</tr>
 					</table>
@@ -7919,8 +7919,12 @@ class NumberBoxDialog extends jqDialog {
 				this.checkValidRoundAtZeroAtField();
 			});
 			
-			// find and set primitive.roundToZeroAt
-			this.setDefaultNumberboxBtn = $(this.dialogContent).find(".defaultNumberboxBtn").get(0);
+			$(this.dialogContent).find(".enterApply").keydown((event) =>{
+				if(event.keyCode == keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
+			});
 		} else {
 			this.setHtml(`
 				Target primitive not found
