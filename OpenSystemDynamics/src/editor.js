@@ -1323,6 +1323,11 @@ class NumberboxVisual extends BasePrimitive {
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
+
+		this.dialog = new NumberboxDialog(this.id, this.targetID);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
 	}
 	setSelectionSizeToText() {
 		var boundingRect = this.name_element.getBoundingClientRect();
@@ -1405,8 +1410,7 @@ class NumberboxVisual extends BasePrimitive {
 		// Do nothing - otherwise double clicked is called twice 
 	}
 	double_click() {
-		let dialog = new NumberboxDialog(this.id, this.targetID);
-		dialog.show();
+		this.dialog.show();
 	}
 }
 
@@ -7870,7 +7874,7 @@ class TimeUnitDialog extends jqDialog {
 	}
 }
 
-class NumberboxDialog extends jqDialog {
+class NumberboxDialog extends DisplayDialog {
 	constructor(ownID, targetID) {
 		super();
 		this.primitive = findID(ownID);
