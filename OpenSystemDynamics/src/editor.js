@@ -6667,6 +6667,21 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
+	renderRoundToZeroHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+						<input class="roundToZero enterApply" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+					</td>
+					<td>
+						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
+					</td>
+				</tr>
+			</table>
+			<p class="numberboxWarning" style="color: red;">Warning Text Here</p>
+		`);
+	}
 	renderPlotPerHtml() {
 		return (`
 			<table class="modernTable" style="margin: 16px 0px" 
@@ -7888,17 +7903,7 @@ class NumberboxDialog extends DisplayDialog {
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
-					<table class="modernTable">
-						<tr>
-							<td>
-								<input class="roundToZero enterApply" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
-							</td>
-							<td>
-								<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
-							</td>
-						</tr>
-					</table>
-					<p class="numberboxWarning" style="color: red;">Warning Text Here</p>
+					${this.renderRoundToZeroHtml()}
 				</div>
 			`);
 			let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
