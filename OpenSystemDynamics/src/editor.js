@@ -1363,7 +1363,7 @@ class NumberboxVisual extends BasePrimitive {
 			if (roundToZero === "true" || roundToZero === null) {
 				roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
 				if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
-					roundToZeroAtValue = 1e-12;
+					roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
 				} else {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
@@ -7879,7 +7879,6 @@ class NumberboxDialog extends DisplayDialog {
 		super();
 		this.primitive = findID(ownID);
 		this.targetPrimitive = findID(targetID);
-		this.defaultRoundToZeroAtValue = 1e-12;
 	}
 
 	beforeShow() {
@@ -7907,13 +7906,13 @@ class NumberboxDialog extends DisplayDialog {
 
 			let roundToZero = this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null;
 			let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-			roundToZeroField.val( (roundToZeroAtValue === null) ? this.defaultRoundToZeroAtValue : roundToZeroAtValue );
+			roundToZeroField.val( (roundToZeroAtValue === null) ? Settings["defaultRoundToZeroAtValue"] : roundToZeroAtValue );
 			this.setRoundToZero(roundToZero);
 
 			// set default button listener
 			$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
 				this.setRoundToZero(true);
-				roundToZeroField.val(this.defaultRoundToZeroAtValue);
+				roundToZeroField.val(Settings["defaultRoundToZeroAtValue"]);
 			});
 
 			roundToZeroCheckbox.click(() => {
