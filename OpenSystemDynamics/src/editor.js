@@ -1353,7 +1353,17 @@ class NumberboxVisual extends BasePrimitive {
 			primitiveName += "Unkown primitive";
 		}
 		if (lastValue || lastValue === 0) {
-			valueString += stocsd_format(lastValue,6,1e-12);
+			let roundToZero = this.primitive.getAttribute("RoundToZero");
+			let roundToZeroAtValue = -1;
+			if (roundToZero === "true" || roundToZero === null) {
+				roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+				if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+					roundToZeroAtValue = 1e-12;
+				} else {
+					roundToZeroAtValue = Number(roundToZeroAtValue);
+				}
+			}
+			valueString += stocsd_format(lastValue, 6, roundToZeroAtValue);
 		} else {
 			valueString += "_";
 		}
@@ -7933,7 +7943,9 @@ class NumberBoxDialog extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+			let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
 			this.primitive.setAttribute("RoundToZero", roundToZero);
+			this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
 		}
 	}
 }
