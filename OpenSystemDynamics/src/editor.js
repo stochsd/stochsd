@@ -1405,7 +1405,7 @@ class NumberboxVisual extends BasePrimitive {
 		// Do nothing - otherwise double clicked is called twice 
 	}
 	double_click() {
-		let dialog = new NumberBoxDialog(this.id, this.targetID);
+		let dialog = new NumberboxDialog(this.id, this.targetID);
 		dialog.show();
 	}
 }
@@ -7870,7 +7870,7 @@ class TimeUnitDialog extends jqDialog {
 	}
 }
 
-class NumberBoxDialog extends jqDialog {
+class NumberboxDialog extends jqDialog {
 	constructor(ownID, targetID) {
 		super();
 		this.primitive = findID(ownID);
