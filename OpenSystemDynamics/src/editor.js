@@ -1401,7 +1401,8 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.setAttribute("fill", this.color);
 	}
 	name_double_click() {
-		this.double_click();
+		// Override this function
+		// Do nothing - otherwise double clicked is called twice 
 	}
 	double_click() {
 		let dialog = new NumberBoxDialog(this.id, this.targetID);
