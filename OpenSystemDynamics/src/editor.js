@@ -7894,7 +7894,7 @@ class NumberboxDialog extends DisplayDialog {
 								<input class="roundToZero enterApply" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 							</td>
 							<td>
-								<button class="defaultNumberboxBtn enterApply">Set default</button>
+								<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
 							</td>
 						</tr>
 					</table>
