@@ -7874,7 +7874,6 @@ class NumberBoxDialog extends jqDialog {
 		super();
 		this.primitive = findID(ownID);
 		this.targetPrimitive = findID(targetID);
-		this.defaultRoundToZero = true;
 		this.defaultRoundToZeroAtValue = 1e-12;
 	}
 
@@ -7900,36 +7899,24 @@ class NumberBoxDialog extends jqDialog {
 			`);
 			let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
 			let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
-			let numberboxWarning = $(this.dialogContent).find(".numberboxWarning");
 
-			// sync RoundToZero with primitive
-			if(this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null) {
-				roundToZeroCheckbox.prop("checked", true);
-			} else {
-				roundToZeroCheckbox.prop("checked", false);
-			}
-			roundToZeroField.prop("disabled", ! roundToZeroCheckbox.prop("checked"));
-			roundToZeroCheckbox.click((event) => {
-				roundToZeroField.prop("disabled", ! roundToZeroCheckbox.prop("checked"));
+			let roundToZero = this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null;
+			let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+			roundToZeroField.val( (roundToZeroAtValue === null) ? this.defaultRoundToZeroAtValue : roundToZeroAtValue );
+			this.setRoundToZero(roundToZero);
+
+			// set default button listener
+			$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
+				this.setRoundToZero(true);
+				roundToZeroField.val(this.defaultRoundToZeroAtValue);
 			});
 
-			// sync roundToZeroAtValue with primitive
-			let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-			if (roundToZeroAtValue !== null) {
-				roundToZeroField.val(roundToZeroAtValue); 
-			} else {
-				roundToZeroField.val(this.defaultRoundToZeroAtValue);
-			}
+			roundToZeroCheckbox.click(() => {
+				this.setRoundToZero(roundToZeroCheckbox.prop("checked"));
+			});
+
 			roundToZeroField.keyup((event) => {
-				if (isNaN(roundToZeroField.val())) {
-					numberboxWarning.css("visibility", "visible");
-					numberboxWarning.html(`<b>${roundToZeroField.val()}</b> is not an acceptable value.`);
-				} else if (roundToZeroField.val() == "") {
-					numberboxWarning.css("visibility", "visible");
-					numberboxWarning.html("No value choosen.");
-				} else {
-					numberboxWarning.css("visibility", "hidden");
-				}
+				this.checkValidRoundAtZeroAtField();
 			});
 			
 			// find and set primitive.roundToZeroAt
@@ -7940,12 +7927,53 @@ class NumberBoxDialog extends jqDialog {
 			`);	
 		}
 	}
+
+	setRoundToZero(roundToZero) {
+		$(this.dialogContent).find(".roundToZero").prop("checked", roundToZero);
+		$(this.dialogContent).find(".roundToZeroAt").prop("disabled", ! roundToZero);
+		this.checkValidRoundAtZeroAtField();
+	}
+
+	checkValidRoundAtZeroAtField() {
+		let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+		let roundToZeroFieldValue = $(this.dialogContent).find(".roundToZeroAt").val();
+		let numberboxWarning = $(this.dialogContent).find(".numberboxWarning");
+		if (roundToZero) {
+			if (isNaN(roundToZeroFieldValue)) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html(`<b>${roundToZeroFieldValue}</b> is not a number.`);
+				return false;
+			} else if (roundToZeroFieldValue == "") {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("No value choosen.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) >= 1) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("Value must be less then 1.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) <= 0) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("Value must be strictly positive.");
+				return false;
+			} else {
+				numberboxWarning.css("visibility", "hidden");
+				return true;
+			}
+		} else {
+			numberboxWarning.css("visibility", "hidden");
+			return false;
+		}
+	}
+
 	makeApply() {
 		if (this.primitive) {
 			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
-			let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
 			this.primitive.setAttribute("RoundToZero", roundToZero);
-			this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
+			
+			if ( this.checkValidRoundAtZeroAtField() ) {
+				let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
+				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
+			}
 		}
 	}
 }
