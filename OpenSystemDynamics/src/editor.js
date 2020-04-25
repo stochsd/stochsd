@@ -1323,8 +1323,8 @@ class NumberboxVisual extends BasePrimitive {
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
-
-		this.dialog = new NumberboxDialog(this.id, this.targetID);
+		console.log(this.primitive.getAttribute("Target"));
+		this.dialog = new NumberboxDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -7890,14 +7890,14 @@ class TimeUnitDialog extends jqDialog {
 }
 
 class NumberboxDialog extends DisplayDialog {
-	constructor(ownID, targetID) {
+	constructor(ownID) {
 		super();
 		this.primitive = findID(ownID);
-		this.targetPrimitive = findID(targetID);
 	}
 
 	beforeShow() {
 		this.setTitle("Numberbox Info");
+		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
 		if (this.targetPrimitive) {
 			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
 			this.setHtml(`
