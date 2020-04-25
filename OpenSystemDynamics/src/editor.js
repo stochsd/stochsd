@@ -1323,7 +1323,7 @@ class NumberboxVisual extends BasePrimitive {
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
-		
+
 		this.dialog = new NumberboxDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
@@ -7704,6 +7704,7 @@ class TableDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
+						${this.renderRoundToZeroHtml()}
 						${this.renderExportHtml()}
 					</div>
 				</div>
