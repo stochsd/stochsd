@@ -6681,7 +6681,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="numberboxWarning" style="color: red;">Warning Text Here</p>
+			<p class="numberboxWarning" style="color: red; margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	roundToZeroBeforeShow() {
@@ -6765,7 +6765,7 @@ class DisplayDialog extends jqDialog {
 	/* RoundToZero html and logic ends here */
 	renderPlotPerHtml() {
 		return (`
-			<table class="modernTable" style="margin: 16px 0px" 
+			<table class="modernTable" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
 			>
 				<tr>
@@ -6812,7 +6812,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderColorCheckboxHtml() {
 		return (`
-			<table class="modernTable" style="margin: 16px 0px">
+			<table class="modernTable">
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
@@ -6852,7 +6852,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin: 16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -7007,7 +7007,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px;">
+			<table class="modernTable">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -7031,7 +7031,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin:16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7111,7 +7111,7 @@ class TimePlotDialog extends DisplayDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table class="modernTable" style="margin: 0px;">
+			<table class="modernTable">
 			<tr>
 				<th style="text-align: center;" >Primitives</th>
 				<th>Left</th>
@@ -7205,10 +7205,15 @@ class TimePlotDialog extends DisplayDialog {
 					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisNamesHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7312,7 +7317,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px;">
+			<table class="modernTable">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -7330,7 +7335,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin:16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7431,11 +7436,17 @@ class ComparePlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderKeepHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderPlotPerHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisNamesHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7528,7 +7539,9 @@ class XyPlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderMarkerRadioHTML()} 
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7673,7 +7686,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderExportHtml() {
 		return (`
-			<table class="modernTable" style="margin:16px 0px">
+			<table class="modernTable">
 				<tr>
 					<td>
 						<button class="exportCSV">
@@ -7704,7 +7717,9 @@ class TableDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderRoundToZeroHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderExportHtml()}
 					</div>
 				</div>
@@ -7794,7 +7809,7 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeShow() {
 		this.setHtml(`
-		<table class="modernTable" style="margin:16px;">
+		<table class="modernTable">
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
@@ -7859,7 +7874,7 @@ class SimulationSettings extends jqDialog {
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
 		this.setHtml(`
-		<table class="modernTable" style="margin:16px;">
+		<table class="modernTable">
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
