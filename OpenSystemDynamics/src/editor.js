@@ -2380,7 +2380,18 @@ class TableVisual extends HtmlTwoPointer {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
 				// We must get the data in column_index+1 since column 1 is reserved for time
-				html += "<td>"+stocsd_format(this.data.results[row_index][column_index],6)+"</td>";
+				let roundToZero = this.primitive.getAttribute("RoundToZero");
+				let roundToZeroAtValue = -1;
+				if (roundToZero === "true" || roundToZero === null) {
+					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+					if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+						roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
+					} else {
+						roundToZeroAtValue = Number(roundToZeroAtValue);
+					}
+				}
+				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
+				html += `<td>${valueString}</td>`;
 			}
 			html += "</tr>";
 		}
@@ -2390,7 +2401,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 
 	makeGraphics() {
-		this.dialog = new TableDialog();
+		this.dialog = new TableDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -7654,8 +7665,9 @@ class TableData {
 }
 
 class TableDialog extends DisplayDialog {
-	constructor() {
+	constructor(id) {
 		super();
+		this.primitive = findID(id);
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
 		this.plotPer = getTimeStep();
@@ -7709,7 +7721,7 @@ class TableDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = `
+		this.setHtml(`
 			<div class="table">
 				<div class="table-row">
 					<div class="table-cell">
@@ -7724,10 +7736,9 @@ class TableDialog extends DisplayDialog {
 					</div>
 				</div>
 			</div>
-		`;
-		// this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
-		this.setHtml(contentHTML);
-		
+		`);
+
+		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
 		
 		$(this.dialogContent).find(".exportCSV").click(event => {
@@ -7792,6 +7803,10 @@ class TableDialog extends DisplayDialog {
 			// Fetch from user input
 			return this.plotPer;
 		}
+	}
+	makeApply() {
+		super.makeApply();
+		this.roundToZeroMakeApply();
 	}
 }
 
