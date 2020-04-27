@@ -3118,7 +3118,7 @@ class XyPlotVisual extends PlotVisual {
 		this.minYValue = 0;
 		this.maxYValue = 0;
 		
-		this.dialog = new XyPlotDialog();
+		this.dialog = new XyPlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -3185,8 +3185,6 @@ class XyPlotVisual extends PlotVisual {
 			serie[serie.length-1][3] = "end";
 			return serie;
 		}
-		
-
 		
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
@@ -7529,8 +7527,9 @@ class ComparePlotDialog extends DisplayDialog {
 }
 
 class XyPlotDialog extends DisplayDialog {
-	constructor() {
+	constructor(id) {
 		super();
+		this.primitive = findID(id);
 		this.setTitle("XY-plot Properties");
 
 		this.markersChecked = false;
@@ -7575,6 +7574,21 @@ class XyPlotDialog extends DisplayDialog {
 		`);
 	}
 
+	renderTitleHtml() {
+		let title = this.primitive.getAttribute("TitleLabel");
+		title = (title !== null ? title : "");
+		return (
+			`<table class="modernTable">
+				<tr>
+					<th>Title:</th>
+					<td style="padding:1px;">
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${title}">
+					</td>
+				</tr>
+			</table>`
+		);
+	}
+
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -7588,6 +7602,8 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderMarkerRadioHTML()} 
 						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
+						${this.renderTitleHtml()}
 						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
@@ -7628,6 +7644,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
+		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
 	}
 
 	getXMin() {
