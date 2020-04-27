@@ -3164,8 +3164,9 @@ class XyPlotVisual extends PlotVisual {
 			this.serieYName = this.namesToDisplay[1];
 			
 			for(let row of results) {
-				let x = Number(row[1])
-				let y = Number(row[2])
+				let x = Number(row[1]);
+				let y = Number(row[2]);
+				let t = Number(row[0]);
 				if (x < this.minXValue) {
 					this.minXValue = x;
 				}
@@ -3178,7 +3179,7 @@ class XyPlotVisual extends PlotVisual {
 				if (y > this.maxYValue) {
 					this.maxYValue = y;
 				}
-				serie.push([x,y]);
+				serie.push([x,y,t]);
 			}
 			return serie;
 		}
@@ -3251,11 +3252,12 @@ class XyPlotVisual extends PlotVisual {
 			highlighter: {
 				show: true,
 				sizeAdjust: 1.5,
-				tooltipAxes: "xy",
+				yvalues: 2,
 				formatString: (`
 					<table class="jqplot-highlighter" style="color: black;">
         				<tr><td>${this.serieXName} </td><td> = </td><td>%.5p</td></tr>
-        				<tr><td>${this.serieYName} </td><td> = </td><td>%.5p</td></tr>
+						<tr><td>${this.serieYName} </td><td> = </td><td>%.5p</td></tr>
+						<tr><td>Time </td><td> = </td><td>%.5p</td></tr>
 					</table>
 				`),
 				useAxesFormatters: false
