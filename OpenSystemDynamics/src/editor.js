@@ -6876,8 +6876,8 @@ class DisplayDialog extends jqDialog {
 		return (`
 			<table class="modernTable" >
 			<tr>
-				${primitives.map(p => `
-					<tr>
+				${primitives.map((p, idx, prims) => `
+					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
 						<td class="text">
 							${getName(p)}
 						</td>
@@ -7163,8 +7163,8 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Left</th>
 				<th>Right</th>
 			</tr>
-				${primitives.map(p => `
-					<tr>
+				${primitives.map((p, idx, prims) => `
+					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
 						<td class="text">
 							${getName(p)}
 						</td>
