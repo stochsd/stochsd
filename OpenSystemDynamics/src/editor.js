@@ -3179,8 +3179,10 @@ class XyPlotVisual extends PlotVisual {
 				if (y > this.maxYValue) {
 					this.maxYValue = y;
 				}
-				serie.push([x,y,t]);
+				serie.push([x,y,t,null]);
 			}
+			serie[0][3] = "start";
+			serie[serie.length-1][3] = "end";
 			return serie;
 		}
 		
@@ -3203,7 +3205,13 @@ class XyPlotVisual extends PlotVisual {
 					color: "black",
 					shadow: false,
 					showLine: this.showLine,
-					showMarker: this.showMarkers  
+					showMarker: this.showMarkers,
+					pointLabels: {
+						show: true,
+						edgeTolerance: 0,
+						ypadding: 0,
+						location: "n"
+					}
 				}
 			);
 		}
