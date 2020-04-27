@@ -7056,19 +7056,19 @@ class TimePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Left Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Right Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" spellcheck="false" type="text" value="${this.rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7366,13 +7366,13 @@ class ComparePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" type="text" value="${this.titleLabel}">
+						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Y-axis Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7582,7 +7582,7 @@ class XyPlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" type="text" value="${title}">
+						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${title}">
 					</td>
 				</tr>
 			</table>`
