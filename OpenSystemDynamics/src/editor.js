@@ -6685,7 +6685,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show "0+/-" if <b>abs(value) &lt;</b> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0+</b> or <b>0-</b> if <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 					</td>
 					<td>
 						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
