@@ -3036,10 +3036,17 @@ class ComparePlotVisual extends PlotVisual {
 					max: (this.dialog.yAuto) ? undefined: this.dialog.getYMax()
 				}
 			},
-			  legend: {
-					show: true,
-					placement: 'outsideGrid'
-			  }
+			highlighter: {
+				show: true,
+				sizeAdjust: 1.5,
+				tooltipAxes: "xy",
+				formatString: "Time = %.5p<br/>Value = %.5p",
+				useAxesFormatters: false
+			},
+			legend: {
+				show: true,
+				placement: 'outsideGrid'
+			 }
 		});
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
