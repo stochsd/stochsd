@@ -646,42 +646,50 @@ class EditorControll {
 	}
 }
 
-stocsd_eformat = false;
 // But where the lines can be as long as required to print the variable
-function stocsd_format(number, tdecimals) {
+function stocsd_format(number, tdecimals, roundToZeroAt) {
 	// tdecimals is optional and sets the number of decimals. It is rarly used (only in some tables)
 	// Since the numbers automaticly goes to e-format when low enought
-	
+
 	// Used when e.g. the actuall error is reseted to null
-	if (number == null) {
+	if(number == null) {
 		return "";
 	}
-    
-    // If we force e-format we just convert here and return
-    if (stocsd_eformat) {
-        return number.toExponential(2).toUpperCase();
-    }
-	
+
 	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if (number == 0) {
+    if(number == 0) {
 		return "0";
+	}
+	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
+		// Round to zero when close 
+		if (number > 0) {
+			return "0+";
+		} else {
+			return "0-";
+		}
+	}
+	// Check if number is to small to be viewed in field
+	// If so, force e-format
+
+	if(Math.abs(number)<Math.pow(10,(-tdecimals))) {
+        return number.toExponential(2);
+	}
+	//Check if the number is to big to be view ed in the field
+	if(Math.abs(number)>Math.pow(10,tdecimals)) {
+        return number.toExponential(2);
 	}
 
 	// Else format it as a regular number, and remove ending zeros
-	var stringified = number.toPrecision(tdecimals).toUpperCase();
-	if (stringified.includes("E")) {
-		stringified = stringified.split("E");
-		stringified.splice(1, 0, " E");
-		stringified = stringified.join("");
-	}
+	var stringified = number.toFixed(tdecimals);
+
 	// Find the length of stringified, where the ending zeros have been removed
 	var i = stringified.length;
-	while(stringified.charAt(i-1) == '0') {
-		i = i-1;
+	while(stringified.charAt(i-1)=='0') {
+		i=i-1;
 		// If we find a dot. Stop removing decimals
-		if (stringified.charAt(i-1) == '.') {
-			i = i-1;
+		if(stringified.charAt(i-1)=='.') {
+			i=i-1;
 			break;
 		}
 	}
@@ -1315,6 +1323,11 @@ class NumberboxVisual extends BasePrimitive {
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
+
+		this.dialog = new NumberboxDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
 	}
 	setSelectionSizeToText() {
 		var boundingRect = this.name_element.getBoundingClientRect();
@@ -1330,22 +1343,32 @@ class NumberboxVisual extends BasePrimitive {
 		}
 	}
 	render() {
-		if (this.targetPrimitive == null) {
+		if (this.targetID == null) {
 			this.name_element.innerHTML = "-";
 			this.setSelectionSizeToText();
 			return;		
 		}
 		let valueString = "";
 		let primitiveName = "";
-		let lastValue = RunResults.getLastValue(this.targetPrimitive);
-		let imPrimtiive = findID(this.targetPrimitive);
+		let lastValue = RunResults.getLastValue(this.targetID);
+		let imPrimtiive = findID(this.targetID);
 		if (imPrimtiive) {
 			primitiveName += makePrimitiveName(getName(imPrimtiive));
 		} else {
 			primitiveName += "Unkown primitive";
 		}
 		if (lastValue || lastValue === 0) {
-			valueString += stocsd_format(lastValue,6);
+			let roundToZero = this.primitive.getAttribute("RoundToZero");
+			let roundToZeroAtValue = -1;
+			if (roundToZero === "true" || roundToZero === null) {
+				roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+				if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+					roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
+				} else {
+					roundToZeroAtValue = Number(roundToZeroAtValue);
+				}
+			}
+			valueString += stocsd_format(lastValue, 6, roundToZeroAtValue);
 		} else {
 			valueString += "_";
 		}
@@ -1353,11 +1376,11 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
 	}
-	get targetPrimitive() {
+	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
 	}
-	set targetPrimitive(newTargetPrimitive) {
-		this.primitive.setAttribute("Target",newTargetPrimitive);
+	set targetID(newTargetID) {
+		this.primitive.setAttribute("Target",newTargetID);
 		this.render();
 	}
 	afterNameChange() {
@@ -1383,11 +1406,11 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.setAttribute("fill", this.color);
 	}
 	name_double_click() {
-		this.double_click();
+		// Override this function
+		// Do nothing - otherwise double clicked is called twice 
 	}
 	double_click() {
-		let dialog = new NumberBoxDialog(this.targetPrimitive);
-		dialog.show();
+		this.dialog.show();
 	}
 }
 
@@ -2357,7 +2380,18 @@ class TableVisual extends HtmlTwoPointer {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
 				// We must get the data in column_index+1 since column 1 is reserved for time
-				html += "<td>"+stocsd_format(this.data.results[row_index][column_index],6)+"</td>";
+				let roundToZero = this.primitive.getAttribute("RoundToZero");
+				let roundToZeroAtValue = -1;
+				if (roundToZero === "true" || roundToZero === null) {
+					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+					if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+						roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
+					} else {
+						roundToZeroAtValue = Number(roundToZeroAtValue);
+					}
+				}
+				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
+				html += `<td>${valueString}</td>`;
 			}
 			html += "</tr>";
 		}
@@ -2367,7 +2401,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 
 	makeGraphics() {
-		this.dialog = new TableDialog();
+		this.dialog = new TableDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -6644,9 +6678,105 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
+
+	/* RoundToZero html and logic starts here */
+	renderRoundToZeroHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0+</b> or <b>0-</b> if <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+					</td>
+					<td>
+						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
+					</td>
+				</tr>
+			</table>
+			<p class="numberboxWarning" style="color: red; margin: 5px 0px;">Warning Text Here</p>
+		`);
+	}
+	roundToZeroBeforeShow() {
+		let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
+		let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
+
+		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null;
+		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+		roundToZeroField.val( (roundToZeroAtValue === null) ? Settings["defaultRoundToZeroAtValue"] : roundToZeroAtValue );
+		this.setRoundToZero(roundToZero);
+
+		// set default button listener
+		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
+			this.setRoundToZero(true);
+			roundToZeroField.val(Settings["defaultRoundToZeroAtValue"]);
+		});
+
+		roundToZeroCheckbox.click(() => {
+			this.setRoundToZero(roundToZeroCheckbox.prop("checked"));
+		});
+
+		roundToZeroField.keyup((event) => {
+			this.checkValidRoundAtZeroAtField();
+		});
+		
+		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+			if(event.keyCode == keyboard["enter"]) {
+				event.preventDefault();
+				this.applyChanges();
+			}
+		});
+	}
+	setRoundToZero(roundToZero) {
+		$(this.dialogContent).find(".roundToZero").prop("checked", roundToZero);
+		$(this.dialogContent).find(".roundToZeroAt").prop("disabled", ! roundToZero);
+		this.checkValidRoundAtZeroAtField();
+	}
+
+	checkValidRoundAtZeroAtField() {
+		let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+		let roundToZeroFieldValue = $(this.dialogContent).find(".roundToZeroAt").val();
+		let numberboxWarning = $(this.dialogContent).find(".numberboxWarning");
+		if (roundToZero) {
+			if (isNaN(roundToZeroFieldValue)) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html(`<b>${roundToZeroFieldValue}</b> is not a number.`);
+				return false;
+			} else if (roundToZeroFieldValue == "") {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("No value choosen.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) >= 1) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("Value must be less then 1.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) <= 0) {
+				numberboxWarning.css("visibility", "visible");
+				numberboxWarning.html("Value must be strictly positive.");
+				return false;
+			} else {
+				numberboxWarning.css("visibility", "hidden");
+				return true;
+			}
+		} else {
+			numberboxWarning.css("visibility", "hidden");
+			return false;
+		}
+	}
+
+	roundToZeroMakeApply() {
+		if (this.primitive) {
+			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+			this.primitive.setAttribute("RoundToZero", roundToZero);
+			
+			if ( this.checkValidRoundAtZeroAtField() ) {
+				let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
+				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
+			}
+		}
+	}
+	/* RoundToZero html and logic ends here */
 	renderPlotPerHtml() {
 		return (`
-			<table class="modernTable" style="margin: 16px 0px" 
+			<table class="modernTable" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
 			>
 				<tr>
@@ -6693,7 +6823,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderColorCheckboxHtml() {
 		return (`
-			<table class="modernTable" style="margin: 16px 0px">
+			<table class="modernTable">
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
@@ -6733,7 +6863,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin: 16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -6888,7 +7018,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px;">
+			<table class="modernTable">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -6912,7 +7042,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin:16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -6992,7 +7122,7 @@ class TimePlotDialog extends DisplayDialog {
 		let primitives = this.getAcceptedPrimitiveList();
 		
 		return (`
-			<table class="modernTable" style="margin: 0px;">
+			<table class="modernTable">
 			<tr>
 				<th style="text-align: center;" >Primitives</th>
 				<th>Left</th>
@@ -7086,10 +7216,15 @@ class TimePlotDialog extends DisplayDialog {
 					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisNamesHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7193,7 +7328,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable" style="margin-bottom: 16px;">
+			<table class="modernTable">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -7211,7 +7346,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable" style="margin:16px 0px;">
+		<table class="modernTable">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7312,11 +7447,17 @@ class ComparePlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderKeepHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderPlotPerHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisNamesHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7409,7 +7550,9 @@ class XyPlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderMarkerRadioHTML()} 
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="verticalSpace"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7522,8 +7665,9 @@ class TableData {
 }
 
 class TableDialog extends DisplayDialog {
-	constructor() {
+	constructor(id) {
 		super();
+		this.primitive = findID(id);
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
 		this.plotPer = getTimeStep();
@@ -7554,7 +7698,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderExportHtml() {
 		return (`
-			<table class="modernTable" style="margin:16px 0px">
+			<table class="modernTable">
 				<tr>
 					<td>
 						<button class="exportCSV">
@@ -7577,7 +7721,7 @@ class TableDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		let contentHTML = `
+		this.setHtml(`
 			<div class="table">
 				<div class="table-row">
 					<div class="table-cell">
@@ -7585,14 +7729,16 @@ class TableDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
+						<div class="verticalSpace"></div>
+						${this.renderRoundToZeroHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderExportHtml()}
 					</div>
 				</div>
 			</div>
-		`;
-		// this.renderPrimitiveListHtml()+this.renderTableLimitsHTML();
-		this.setHtml(contentHTML);
-		
+		`);
+
+		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
 		
 		$(this.dialogContent).find(".exportCSV").click(event => {
@@ -7658,6 +7804,10 @@ class TableDialog extends DisplayDialog {
 			return this.plotPer;
 		}
 	}
+	makeApply() {
+		super.makeApply();
+		this.roundToZeroMakeApply();
+	}
 }
 
 function makeNewModel() {
@@ -7674,7 +7824,7 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeShow() {
 		this.setHtml(`
-		<table class="modernTable" style="margin:16px;">
+		<table class="modernTable">
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
@@ -7739,7 +7889,7 @@ class SimulationSettings extends jqDialog {
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
 		this.setHtml(`
-		<table class="modernTable" style="margin:16px;">
+		<table class="modernTable">
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
@@ -7851,21 +8001,33 @@ class TimeUnitDialog extends jqDialog {
 	}
 }
 
-class NumberBoxDialog extends jqDialog {
-	constructor(id) {
+class NumberboxDialog extends DisplayDialog {
+	constructor(ownID) {
 		super();
-		this.setTitle("Info");
-		let imPrimitive = findID(id);
-		if (imPrimitive) {
-			let primitiveName = makePrimitiveName(getName(imPrimitive));
+		this.primitive = findID(ownID);
+	}
+
+	beforeShow() {
+		this.setTitle("Numberbox Info");
+		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
+		if (this.targetPrimitive) {
+			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
 			this.setHtml(`
-				Value of ${primitiveName}
+				<div>
+					<p>Value of ${primitiveName}</p>
+					${this.renderRoundToZeroHtml()}
+				</div>
 			`);
+			this.roundToZeroBeforeShow();
 		} else {
 			this.setHtml(`
 				Target primitive not found
 			`);	
 		}
+	}
+
+	makeApply() {
+		this.roundToZeroMakeApply();
 	}
 }
 
