@@ -3247,6 +3247,18 @@ class XyPlotVisual extends PlotVisual {
 					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
 					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax()
 				}
+			},
+			highlighter: {
+				show: true,
+				sizeAdjust: 1.5,
+				tooltipAxes: "xy",
+				formatString: (`
+					<table class="jqplot-highlighter" style="color: black;">
+        				<tr><td>${this.serieXName} </td><td> = </td><td>%.5p</td></tr>
+        				<tr><td>${this.serieYName} </td><td> = </td><td>%.5p</td></tr>
+					</table>
+				`),
+				useAxesFormatters: false
 			}
 		  });
 		  this.dialog.minXValue = this.plot.axes.xaxis.min;
