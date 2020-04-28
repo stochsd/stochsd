@@ -2937,7 +2937,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.serieArray = null;
 		this.gens = new DataGenerations();
 		
-		this.dialog = new ComparePlotDialog();
+		this.dialog = new ComparePlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -6619,8 +6619,9 @@ function saveChangedAlert(continueHandler) {
 
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
-	constructor() {
+	constructor(id) {
 		super();
+		this.primitive = findID(id);
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
@@ -6984,8 +6985,7 @@ class DisplayDialog extends jqDialog {
 
 class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
-		super();
-		this.primitive = findID(id);
+		super(id);
 		this.setTitle("Time Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
@@ -7315,8 +7315,8 @@ class TimePlotDialog extends DisplayDialog {
 }
 
 class ComparePlotDialog extends DisplayDialog {
-	constructor() {
-		super();
+	constructor(id) {
+		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
@@ -7543,8 +7543,7 @@ class ComparePlotDialog extends DisplayDialog {
 
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
-		super();
-		this.primitive = findID(id);
+		super(id);
 		this.setTitle("XY-plot Properties");
 
 		this.markersChecked = false;
@@ -7734,8 +7733,7 @@ class TableData {
 
 class TableDialog extends DisplayDialog {
 	constructor(id) {
-		super();
-		this.primitive = findID(id);
+		super(id);
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
 		this.plotPer = getTimeStep();
@@ -8070,10 +8068,6 @@ class TimeUnitDialog extends jqDialog {
 }
 
 class NumberboxDialog extends DisplayDialog {
-	constructor(ownID) {
-		super();
-		this.primitive = findID(ownID);
-	}
 
 	beforeShow() {
 		this.setTitle("Numberbox Info");
