@@ -3032,6 +3032,7 @@ class ComparePlotVisual extends PlotVisual {
 					max: this.dialog.getXMax()
 				},
 				yaxis: {
+					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.leftAxisLabel,
 					min: (this.dialog.yAuto) ? undefined: this.dialog.getYMin(),
@@ -7379,18 +7380,21 @@ class ComparePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
+				<th>Log</th>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
 				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
 				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
 				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
 				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+				<td><input class="yLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
 			</tr>
 		</table>
 		`);
@@ -7449,6 +7453,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
 		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
+		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
