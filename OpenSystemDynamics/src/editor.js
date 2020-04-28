@@ -2674,7 +2674,7 @@ class TimePlotVisual extends PlotVisual {
 					label: label, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
-					color: (this.dialog.colorFromPrimitive ? this.colorsToDisplay[i] : undefined),
+					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
 					showMarker: false,
 					pointLabels: {
@@ -3001,7 +3001,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
 			idsToDisplay, 
 			hasNumberedLines, 
-			this.dialog.colorFromPrimitive, 
+			this.primitive.getAttribute("ColorFromPrimitive") === "true", 
 			this.dialog.lineWidth
 		);
 
@@ -6875,7 +6875,7 @@ class DisplayDialog extends jqDialog {
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
-					<input class="ColorFromPrimitive enterApply" type="checkbox" ${checkedHtmlAttribute(this.colorFromPrimitive)}>
+					<input class="ColorFromPrimitive enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
 					</td>
 				</tr>
 			</table>
@@ -6973,7 +6973,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.rightAxisLabel = "";
 		
 		this.markers = false;
-		this.colorFromPrimitive = true;
 
 		this.autoPlotPer = true;
 		this.setDefaultPlotPeriod();
@@ -7214,8 +7213,8 @@ class TimePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
-		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
 
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
@@ -7304,7 +7303,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = "";
 		
 		this.markers = false;
-		this.colorFromPrimitive = false;
 
 		this.keep = false;
 		this.clear = false;
@@ -7454,7 +7452,8 @@ class ComparePlotDialog extends DisplayDialog {
 		super.makeApply();
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
-		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
+
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 
