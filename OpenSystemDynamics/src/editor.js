@@ -6743,6 +6743,7 @@ class DisplayDialog extends jqDialog {
 		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
 			this.setRoundToZero(true);
 			roundToZeroField.val(Settings["defaultRoundToZeroAtValue"]);
+			this.checkValidRoundAtZeroAtField();
 		});
 
 		roundToZeroCheckbox.click(() => {
@@ -6767,33 +6768,37 @@ class DisplayDialog extends jqDialog {
 	}
 
 	checkValidRoundAtZeroAtField() {
-		let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
 		let roundToZeroFieldValue = $(this.dialogContent).find(".roundToZeroAt").val();
-		let numberboxWarning = $(this.dialogContent).find(".numberboxWarning");
-		if (roundToZero) {
+		if ($(this.dialogContent).find(".roundToZero").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
-				numberboxWarning.css("visibility", "visible");
-				numberboxWarning.html(`<b>${roundToZeroFieldValue}</b> is not a number.`);
+				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a number.`);
 				return false;
 			} else if (roundToZeroFieldValue == "") {
-				numberboxWarning.css("visibility", "visible");
-				numberboxWarning.html("No value choosen.");
+				this.setNumberboxWarning(true, "No value choosen.");
 				return false;
 			} else if (Number(roundToZeroFieldValue) >= 1) {
-				numberboxWarning.css("visibility", "visible");
-				numberboxWarning.html("Value must be less then 1.");
+				this.setNumberboxWarning(true, "Value must be less then 1.");
 				return false;
 			} else if (Number(roundToZeroFieldValue) <= 0) {
-				numberboxWarning.css("visibility", "visible");
-				numberboxWarning.html("Value must be strictly positive.");
+				this.setNumberboxWarning(true, "Value must be strictly positive.");
 				return false;
 			} else {
-				numberboxWarning.css("visibility", "hidden");
+				this.setNumberboxWarning(false);
 				return true;
 			}
 		} else {
-			numberboxWarning.css("visibility", "hidden");
+			this.setNumberboxWarning(false);
 			return false;
+		}
+	}
+
+	setNumberboxWarning(isVisible, htmlMessage) {
+		if (isVisible) {
+			$(this.dialogContent).find(".numberboxWarning").html(htmlMessage);
+			$(this.dialogContent).find(".numberboxWarning").css("visibility", "visible");
+		} else {
+			$(this.dialogContent).find(".numberboxWarning").html("");
+			$(this.dialogContent).find(".numberboxWarning").css("visibility", "hidden");
 		}
 	}
 
