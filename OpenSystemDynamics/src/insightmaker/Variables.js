@@ -60,10 +60,14 @@ primitiveBank.generic = doc.createElement('Generic');
 setValuedProperties(primitiveBank.generic);
 
 primitiveBank.numberbox = doc.createElement('Numberbox');
+primitiveBank.numberbox.setAttribute("RoundToZero", true);
+primitiveBank.numberbox.setAttribute("RoundToZeroAtValue", 1e-12);
 setValuedProperties(primitiveBank.numberbox);
 
 primitiveBank.table = doc.createElement('Table');
 primitiveBank.table.setAttribute('Primitives', '');
+primitiveBank.table.setAttribute("RoundToZero", true);
+primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
 setValuedProperties(primitiveBank.table);
 
 primitiveBank.diagram = doc.createElement('Diagram');
@@ -72,10 +76,15 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
+primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
+primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.timeplot);
+
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
+primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');

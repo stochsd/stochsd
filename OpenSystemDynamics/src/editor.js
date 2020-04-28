@@ -1360,9 +1360,9 @@ class NumberboxVisual extends BasePrimitive {
 		if (lastValue || lastValue === 0) {
 			let roundToZero = this.primitive.getAttribute("RoundToZero");
 			let roundToZeroAtValue = -1;
-			if (roundToZero === "true" || roundToZero === null) {
+			if (roundToZero === "true") {
 				roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-				if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+				if (isNaN(roundToZeroAtValue)) {
 					roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
 				} else {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
@@ -2382,9 +2382,9 @@ class TableVisual extends HtmlTwoPointer {
 				// We must get the data in column_index+1 since column 1 is reserved for time
 				let roundToZero = this.primitive.getAttribute("RoundToZero");
 				let roundToZeroAtValue = -1;
-				if (roundToZero === "true" || roundToZero === null) {
+				if (roundToZero === "true") {
 					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-					if (isNaN(roundToZeroAtValue) || roundToZeroAtValue === null) {
+					if (isNaN(roundToZeroAtValue)) {
 						roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
 					} else {
 						roundToZeroAtValue = Number(roundToZeroAtValue);
@@ -2630,7 +2630,7 @@ class TimePlotVisual extends PlotVisual {
 
 		this.minLValue = 0;
 		this.maxLValue = 0;
-		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null);
+		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 
 		let makeSerie = (resultColumn, lineCount) => {
 			let serie = []; 
@@ -2990,7 +2990,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.serieSettingsArray = [];
 		this.serieArray = [];
 
-		let hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null;
+		let hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true";
 
 		// Make time series
 		this.serieArray = this.gens.getSeriesArray(idsToDisplay, hasNumberedLines);
@@ -6741,9 +6741,9 @@ class DisplayDialog extends jqDialog {
 		let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
 		let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
 
-		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true" || this.primitive.getAttribute("RoundToZero") === null;
+		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
 		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-		roundToZeroField.val( (roundToZeroAtValue === null) ? Settings["defaultRoundToZeroAtValue"] : roundToZeroAtValue );
+		roundToZeroField.val(roundToZeroAtValue);
 		this.setRoundToZero(roundToZero);
 
 		// set default button listener
@@ -6842,7 +6842,7 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	renderNumberedLinesCheckboxHtml() {
-		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null);
+		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 		return (`
 			<table class="modernTable">
 				<tr>
