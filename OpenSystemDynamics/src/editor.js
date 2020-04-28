@@ -2630,7 +2630,7 @@ class TimePlotVisual extends PlotVisual {
 
 		this.minLValue = 0;
 		this.maxLValue = 0;
-		
+		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null);
 
 		let makeSerie = (resultColumn, lineCount) => {
 			let serie = []; 
@@ -2640,7 +2640,7 @@ class TimePlotVisual extends PlotVisual {
 				let time = Number(row[0]);
 				let value = Number(row[resultColumn]);
 				let showNumHere = i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx);
-				if (showNumHere && this.dialog.numberedLines) {
+				if (showNumHere && hasNumberedLines) {
 					serie.push([time, value, Math.floor(lineCount).toString()]);
 				} else {
 					serie.push([time, value, null]);
@@ -2664,7 +2664,7 @@ class TimePlotVisual extends PlotVisual {
 				this.serieArray.push(makeSerie(index, counter));
 			}
 			let label = "";
-			label += this.dialog.numberedLines ? `${counter}. ` : "";
+			label += hasNumberedLines ? `${counter}. ` : "";
 			label += this.namesToDisplay[i];
 			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
 			this.serieSettingsArray.push(
@@ -2858,7 +2858,7 @@ class DataGenerations {
 		// Add new 
 		this.append(ids, results);
 	}
-	getSeriesArray(wantedIds, numberedLines) {
+	getSeriesArray(wantedIds, hasNumberedLines) {
 		let seriesArray = [];
 		let lineCount = 0;
 		// Loop generations 
@@ -2878,7 +2878,7 @@ class DataGenerations {
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
 						let showNumHere = (k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx); 
-						if (showNumHere && numberedLines) {
+						if (showNumHere && hasNumberedLines) {
 							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
 						} else {
 							tmpArr.push([time, value, null]);
@@ -2890,7 +2890,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, numberedLines, colorFromPrimitive, lineWidth) {
+	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive, lineWidth) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2901,7 +2901,7 @@ class DataGenerations {
 				if(wantedIds.includes(id)) {
 					countLine++;
 					let label = "";
-					label += (numberedLines ? `${countLine}. ` : "");
+					label += (hasNumberedLines ? `${countLine}. ` : "");
 					label += this.nameGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
@@ -2989,16 +2989,18 @@ class ComparePlotVisual extends PlotVisual {
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
 		this.serieArray = [];
-		
+
+		let hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null;
+
 		// Make time series
-		this.serieArray = this.gens.getSeriesArray(idsToDisplay, this.dialog.numberedLines);
+		this.serieArray = this.gens.getSeriesArray(idsToDisplay, hasNumberedLines);
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
 			idsToDisplay, 
-			this.dialog.numberedLines, 
+			hasNumberedLines, 
 			this.dialog.colorFromPrimitive, 
 			this.dialog.lineWidth
 		);
@@ -6628,7 +6630,6 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
-		this.numberedLines = true;
 		this.lineWidth = 2;
 		this.setDefaultPlotPeriod();
 	}
@@ -6841,12 +6842,13 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	renderNumberedLinesCheckboxHtml() {
+		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true" || this.primitive.getAttribute("HasNumberedLines") === null);
 		return (`
 			<table class="modernTable">
 				<tr>
 					<td>
 						<b>Numbered Lines:</b>
-						<input class="NumberedLines enterApply" type="checkbox" ${checkedHtmlAttribute(this.numberedLines)}>
+						<input class="NumberedLines enterApply" type="checkbox" ${checkedHtmlAttribute(hasNumberedLines)}>
 					</td>
 				</tr>
 			</table>
@@ -7213,7 +7215,8 @@ class TimePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
-		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
+
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
 
@@ -7452,7 +7455,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
-		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
