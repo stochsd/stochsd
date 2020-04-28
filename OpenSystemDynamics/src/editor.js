@@ -2571,7 +2571,7 @@ class TimePlotVisual extends PlotVisual {
 			results: []
 		}
 		
-		this.dialog = new TimePlotDialog();
+		this.dialog = new TimePlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
@@ -2713,18 +2713,20 @@ class TimePlotVisual extends PlotVisual {
 			},
 			axes: {
 				xaxis: {
-					label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					label: "Time",
 					min: this.dialog.getXMin(),
 					max: this.dialog.getXMax()
 				},
 				yaxis: {
+					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.leftAxisLabel,
 					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
 					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
 				},
 				y2axis: {
+					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.dialog.rightAxisLabel,
 					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
@@ -6981,8 +6983,9 @@ class DisplayDialog extends jqDialog {
 }
 
 class TimePlotDialog extends DisplayDialog {
-	constructor() {
+	constructor(id) {
 		super();
+		this.primitive = findID(id);
 		this.setTitle("Time Plot Properties");
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
@@ -7088,24 +7091,28 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
+				<th>Log</th>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
 				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
 				<td style="padding:1px;"><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
 				<td style="padding:1px;"><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
 				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
+				<td><input class="leftLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
 				<td style="padding:1px;"><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
 				<td style="padding:1px;"><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
 				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
+				<td><input class="rightLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
 			</tr>
 		</table>
 		`);
@@ -7228,6 +7235,8 @@ class TimePlotDialog extends DisplayDialog {
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 		this.colorFromPrimitive = $(this.dialogContent).find(".ColorFromPrimitive")[0].checked; 
 		this.numberedLines = $(this.dialogContent).find(".NumberedLines")[0].checked;
+		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
+		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
 
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
