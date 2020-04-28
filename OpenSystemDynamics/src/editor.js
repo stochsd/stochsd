@@ -1363,7 +1363,7 @@ class NumberboxVisual extends BasePrimitive {
 			if (roundToZero === "true") {
 				roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
 				if (isNaN(roundToZeroAtValue)) {
-					roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
+					roundToZeroAtValue = getDefaultAttributeValue("numberbox", "RoundToZeroAtValue");
 				} else {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
@@ -2385,7 +2385,7 @@ class TableVisual extends HtmlTwoPointer {
 				if (roundToZero === "true") {
 					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
 					if (isNaN(roundToZeroAtValue)) {
-						roundToZeroAtValue = Settings["defaultRoundToZeroAtValue"];
+						roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
 					} else {
 						roundToZeroAtValue = Number(roundToZeroAtValue);
 					}
