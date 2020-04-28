@@ -3249,11 +3249,13 @@ class XyPlotVisual extends PlotVisual {
 			  axes: {
 				xaxis: {
 					label: this.serieXName,
+					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
 					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax()
 				},
 				yaxis: {
 					label: this.serieYName,
+					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
 					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax()
 				}
@@ -6904,30 +6906,6 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderAxisLimitsHTML() {
-		return (`
-		<table class="modernTable">
-			<tr>
-				<th></th>
-				<th>Min</th>
-				<th>Max</th>
-				<th>Auto</th>
-			</tr>
-			<tr>
-				<td>X-axis</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
-			</tr>
-			<tr>
-				<td>Y-axis</td>
-				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
-			</tr>
-		</table>
-		`);
-	}
 	makeApply() {
 		if ($(this.dialogContent).find(".lineWidth :selected")) {
 			this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
@@ -7563,7 +7541,33 @@ class XyPlotDialog extends DisplayDialog {
 		this.minYValue = 0;
 		this.maxYValue = 0;
 	}
-	
+	renderAxisLimitsHTML() {
+		return (`
+		<table class="modernTable">
+			<tr>
+				<th></th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Auto</th>
+				<th>Log</th>
+			</tr>
+			<tr>
+				<td>X-axis</td>
+				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
+				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td><input class="xLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("XLogScale") === "true")}></td>
+			</tr>
+			<tr>
+				<td>Y-axis</td>
+				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
+				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
+				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
+				<td><input class="yLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
+			</tr>
+		</table>
+		`);
+	}
 	renderMarkerRadioHTML() {
 		return (`
 			<table class="modernTable" style="text-align: left;">
@@ -7659,6 +7663,8 @@ class XyPlotDialog extends DisplayDialog {
 	makeApply() {
 		this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
+		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
+		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 	}
 
 	getXMin() {
