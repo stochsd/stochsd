@@ -31,6 +31,7 @@ const type_basename = {
 	"timeplot": 	"TimePlot",
 	"compareplot":	"ComparePlot",
 	"xyplot":		"XyPlot",
+	"histoplot":	"HistoPlot",
 	"table":		"Table",
 	"rectangle": 	"Rectangle",
 	"circle": 		"Circle",
@@ -2553,6 +2554,14 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 			this.updateChart();
 		}
 	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+	}
 }
 
 class TimePlotVisual extends PlotVisual {
@@ -2790,14 +2799,6 @@ class TimePlotVisual extends PlotVisual {
 				}
 			}
 		});
-	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="color: black; width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
 	}
 	double_click() {
 		this.dialog.show();
@@ -3056,14 +3057,6 @@ class ComparePlotVisual extends PlotVisual {
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
 	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-	}
 	double_click() {
 		this.dialog.show();
 	}
@@ -3099,6 +3092,26 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 				this.updateTextFromName();
 			break;
 		}
+	}
+}
+
+class HistoPlotVisual extends PlotVisual {
+	constructor(id,type,pos) {
+		super(id,type,pos);
+		this.runHandler = () => {
+			this.render();
+		}
+		RunResults.subscribeRun(id, this.runHandler);
+		this.plot = null;
+
+		this.dialog = new HistoPlotDialog(id);
+	}
+
+	render() {
+		this.chartDiv.innerHTML = "<p>chartDiv.innerHTML</p>";
+	}
+	updateChart() {
+		
 	}
 }
 
@@ -3281,14 +3294,6 @@ class XyPlotVisual extends PlotVisual {
 		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
-	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
 	}
 	double_click() {
 		this.dialog.show();
@@ -4388,6 +4393,21 @@ class XyPlotTool extends TwoPointerTool {
 }
 XyPlotTool.init();
 
+
+class HistoPlotTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "HistoPlot", null, null);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static getType() {
+		return "histoplot";
+	}
+}
+
 function attach_selected_anchor(selectedAnchor) {
 	[x,y]=selectedAnchor.get_pos();
 	let parentConnection = get_parent(selectedAnchor);
@@ -4965,6 +4985,7 @@ class ToolBox {
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
+			"histoplot":HistoPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
 			"step":StepTool,
@@ -7522,6 +7543,14 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	getYMax() {
 		return (this.yAuto) ? this.maxValue : this.yMax;
+	}
+}
+
+
+class HistoPlotDialog extends DisplayDialog {
+	constructor(id) {
+		super(id);
+		this.setTitle("Histogram Plot Properties");
 	}
 }
 

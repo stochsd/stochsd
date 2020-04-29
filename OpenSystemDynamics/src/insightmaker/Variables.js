@@ -19,7 +19,7 @@ var doc = document.implementation.createDocument("","",null);
 // This is a list of all primitives that can be loaded and saved
 // Important: The order of the array is the order which primitives are saved.
 // Therefor Flows and Links must be at the end since they depend on Stocks and Variables for their connections
-const saveblePrimitiveTypes = ["TextArea","Rectangle","Circle","Line","Arrow","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","Flow","Link"];
+const saveblePrimitiveTypes = ["TextArea","Rectangle","Circle","Line","Arrow","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","HistoPlot","Flow","Link"];
 
 // A list of all primitives, inclduing Generic which is used non-savable primitives
 const allPrimitiveTypes = ["Generic"].concat(saveblePrimitiveTypes);
@@ -93,6 +93,11 @@ primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
 primitiveBank.xyplot.setAttribute('LineWidth', 2);
 setValuedProperties(primitiveBank.xyplot);
+
+primitiveBank.histoplot = doc.createElement('HistoPlot');
+primitiveBank.histoplot.setAttribute('Primitives', '');
+setValuedProperties(primitiveBank.histoplot);
+
 
 primitiveBank.line = doc.createElement('Line');
 setValuedProperties(primitiveBank.line);
