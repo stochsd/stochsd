@@ -2539,6 +2539,9 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		super.clean();
 		this.targetElement.remove();
 	}
+	double_click() {
+		this.dialog.show();
+	}
 }
 
 class PlotVisual extends HtmlOverlayTwoPointer {
@@ -2800,9 +2803,6 @@ class TimePlotVisual extends PlotVisual {
 			}
 		});
 	}
-	double_click() {
-		this.dialog.show();
-	}
 }
 
 
@@ -3057,9 +3057,6 @@ class ComparePlotVisual extends PlotVisual {
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
 	}
-	double_click() {
-		this.dialog.show();
-	}
 }
 
 class TextAreaVisual extends HtmlOverlayTwoPointer {
@@ -3077,9 +3074,6 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	makeGraphics() {
 		super.makeGraphics();
 		this.updateTextFromName();
-	}
-	double_click() {
-		this.dialog.show();
 	}
 	updateTextFromName() {
 		let newText = getName(this.primitive);
@@ -3294,9 +3288,6 @@ class XyPlotVisual extends PlotVisual {
 		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
-	}
-	double_click() {
-		this.dialog.show();
 	}
 }
 
