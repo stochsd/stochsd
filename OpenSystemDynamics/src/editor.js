@@ -2670,7 +2670,7 @@ class TimePlotVisual extends PlotVisual {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : this.dialog.lineWidth),
+					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : Number(this.primitive.getAttribute("LineWidth"))),
 					label: label, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.pattersToDisplay[i], 
@@ -3002,7 +3002,7 @@ class ComparePlotVisual extends PlotVisual {
 			idsToDisplay, 
 			hasNumberedLines, 
 			this.primitive.getAttribute("ColorFromPrimitive") === "true", 
-			this.dialog.lineWidth
+			this.primitive.getAttribute("LineWidth")
 		);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
@@ -3204,7 +3204,7 @@ class XyPlotVisual extends PlotVisual {
 			this.serieSettingsArray.push(
 				{
 					label: this.namesToDisplay[i], 
-					lineWidth: this.dialog.lineWidth, 
+					lineWidth: this.primitive.getAttribute("LineWidth"), 
 					color: "black",
 					shadow: false,
 					showLine: this.showLine,
@@ -6630,7 +6630,6 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
-		this.lineWidth = 2;
 		this.setDefaultPlotPeriod();
 	}
 	
@@ -6861,8 +6860,8 @@ class DisplayDialog extends jqDialog {
 					<td>
 					<b>Line Width:</b>
 						<select class="lineWidth enterApply">
-						<option value=1 ${(this.lineWidth == 1) ? "selected" : ""}>Thin</option>
-						<option value=2 ${(this.lineWidth == 2) ? "selected" : ""}>Thick</option>
+						<option value=1 ${(this.primitive.getAttribute("LineWidth") == 1) ? "selected" : ""}>Thin</option>
+						<option value=2 ${(this.primitive.getAttribute("LineWidth") == 2) ? "selected" : ""}>Thick</option>
 						</select>
 					</td>
 				</tr>
@@ -6911,7 +6910,7 @@ class DisplayDialog extends jqDialog {
 	}
 	makeApply() {
 		if ($(this.dialogContent).find(".lineWidth :selected")) {
-			this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
+			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
 		}
 	}
 	bindAxisLimitsEvents() {
@@ -7668,7 +7667,7 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
 	}
 	makeApply() {
-		this.lineWidth = Number($(this.dialogContent).find(".lineWidth :selected").val());
+		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));

@@ -76,6 +76,7 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
+primitiveBank.timeplot.setAttribute('LineWidth', 2);
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.timeplot);
@@ -83,12 +84,14 @@ setValuedProperties(primitiveBank.timeplot);
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute('LineWidth', 2);
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute('LineWidth', 2);
 setValuedProperties(primitiveBank.xyplot);
 
 primitiveBank.line = doc.createElement('Line');
