@@ -5533,6 +5533,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Table":
 		case "XyPlot":
+		case "HistoPlot":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5541,6 +5542,9 @@ function syncVisual(tprimitive) {
 				break;
 				case "XyPlot":
 					dimClass = XyPlotVisual;
+				break;
+				case "HistoPlot":
+					dimClass = HistoPlotVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);
@@ -7617,6 +7621,10 @@ class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
+	}
+	makeApply() {
+		super.makeApply();
+		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 	}
 }
 
