@@ -3012,7 +3012,6 @@ class ComparePlotVisual extends PlotVisual {
 		setTimeout(() => {
 			this.updateChart();
 		 },200);
-		
 	}
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
@@ -3099,13 +3098,83 @@ class HistoPlotVisual extends PlotVisual {
 		this.plot = null;
 
 		this.dialog = new HistoPlotDialog(id);
+		this.dialog.subscribePool.subscribe(() => {
+			this.render();
+		});
 	}
 
 	render() {
-		this.chartDiv.innerHTML = "<p>chartDiv.innerHTML</p>";
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		console.log("HistoPlotVisual.render");
+		if (idsToDisplay.length === 0) {
+			this.chartDiv.innerHTML = "<p>No primitives selected.</p>";
+			return;
+		} else if (idsToDisplay.length > 1) {
+			this.chartDiv.innerHTML = (`
+				<p><b>${idsToDisplay.map(findID).map(getName)}</b> selected. <br/>
+				Exactly one primitive must be selected</p>
+			`);
+			return;
+		}
+		let results = RunResults.getSelectiveIdResults(idsToDisplay);
+
+		if (results.length === 0) {
+			// We can't render anything with no data	
+			return;
+		}
+
+		let makeSerie = () => {
+			let serie = [];
+			for(let row in results) {
+				let time = Number(row[0]);
+				serie.push(["text here", time]);
+			}
+			return serie;
+		}
+
+		// Declare series and settings for series
+		this.serieSettingsArray = [];
+		this.serieArray = [];
+
+		// Make time series
+		this.serieArray.push(makeSerie());
+
+		// Make serie settings
+		this.serieSettingsArray.push(
+			{
+				color: "black",
+				shadow: false
+			}
+		);
+
+		// We need to ad a delay and respond to events first to make this work in firefox
+		setTimeout(() => {
+			this.updateChart();
+		 },200);
 	}
 	updateChart() {
-		
+		if (this.serieArray == null) {
+			// The series are not initialized yet
+			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>No data. Run to create data!";
+			return;
+		}
+		if (this.dialog.getIdsToDisplay().length !== 1) {
+			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>Exactly one primitives must be selected!";
+			return;
+		}
+		$(this.chartDiv).empty();
+
+		this.plot = $.jqplot(this.chartId, [[2, 3, 4, 6]], {  
+			series: this.serieSettingsArray,
+			seriesDefaults: {
+				renderer: $.jqplot.BarRenderer
+			},
+			axes: {
+				xaxis: {
+					renderer: $.jqplot.CategoryAxisRenderer
+				}
+			}
+		  });
 	}
 }
 
@@ -4393,6 +4462,12 @@ class HistoPlotTool extends TwoPointerTool {
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
+	}
+	static leftMouseDown(x,y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x,y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
 	}
 	static getType() {
 		return "histoplot";
