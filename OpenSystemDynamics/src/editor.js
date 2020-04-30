@@ -7624,7 +7624,7 @@ class HistoPlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
 	}
 }
 
