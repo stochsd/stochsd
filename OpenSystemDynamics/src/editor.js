@@ -3124,10 +3124,12 @@ class HistoPlotVisual extends PlotVisual {
 		}
 
 		let makeSerie = () => {
+			console.log("results");
+			console.log(results);
 			let serie = [];
-			for(let row in results) {
-				let time = Number(row[0]);
-				serie.push(["text here", time]);
+			for(let row of results) {
+				let time = Number(row[1]);
+				serie.push(time);
 			}
 			return serie;
 		}
@@ -3142,7 +3144,7 @@ class HistoPlotVisual extends PlotVisual {
 		// Make serie settings
 		this.serieSettingsArray.push(
 			{
-				color: "black",
+				// color: "black",
 				shadow: false
 			}
 		);
@@ -3163,15 +3165,23 @@ class HistoPlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
+		console.log("this.serieArray");
+		console.log(this.serieArray);
 
-		this.plot = $.jqplot(this.chartId, [[2, 3, 4, 6]], {  
+		$.jqplot.config.enablePlugins = true;
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
 			seriesDefaults: {
-				renderer: $.jqplot.BarRenderer
+				renderer: $.jqplot.BarRenderer,
+				rendererOptions: {
+					varyBarColor: true,
+					barMargin: 20,
+					groups: 0
+				},
 			},
 			axes: {
 				xaxis: {
-					renderer: $.jqplot.CategoryAxisRenderer
+					renderer: $.jqplot.CategoryAxisRenderer,
 				}
 			}
 		  });
