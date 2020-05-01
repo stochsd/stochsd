@@ -7632,6 +7632,64 @@ class HistoPlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
 	}
+	renderHistogramOptionsHtml() {
+		return(`
+			<table class="modernTable">
+				<tr>
+					<th></th>
+					<th>Value</th>
+					<th>Auto</th>
+				</tr>
+				<tr>
+					<td>Upper bound</td>
+					<td><input type="text"/></td>
+					<td><input type="checkbox"></td>
+				</tr>
+				<tr>
+					<td>Lower bound</td>
+					<td><input type="text"/></td>
+					<td><input type="checkbox"></td>
+				</tr>
+				<tr>
+					<td>No. Bars</td>
+					<td><input type="text"/></td>
+					<td><input type="checkbox"></td>
+				</tr>
+			</table>
+		`);
+	}
+	renderHistOrPDFHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+					<b>Type:</b>
+						<select class="lineWidth enterApply">
+							<option>Histogram</option>
+							<option>Probability Density Function</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	beforeShow() {
+		this.setHtml(`
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
+						${this.renderPrimitiveListHtml()}
+					</div>
+					<div class="table-cell">
+						${this.renderHistogramOptionsHtml()}
+						<div class="verticalSpace"></div>
+						${this.renderHistOrPDFHtml()}
+					</div>
+				</div>
+			</div>`
+		);
+		this.bindPrimitiveListEvents();
+	}
 	makeApply() {
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
