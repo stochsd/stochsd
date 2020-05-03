@@ -3169,7 +3169,7 @@ class HistoPlotVisual extends PlotVisual {
 		console.log(this.serieArray);
 
 		$.jqplot.config.enablePlugins = true;
-		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+		this.plot = $.jqplot(this.chartId, [[1,2,3,4]], {  
 			series: this.serieSettingsArray,
 			seriesDefaults: {
 				renderer: $.jqplot.BarRenderer,
@@ -3182,6 +3182,7 @@ class HistoPlotVisual extends PlotVisual {
 			axes: {
 				xaxis: {
 					renderer: $.jqplot.CategoryAxisRenderer,
+					ticks: ["hej", "erik", "hoppas", "det fungerar"]
 				}
 			}
 		  });
