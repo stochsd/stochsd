@@ -3121,7 +3121,7 @@ class HistoPlotVisual extends PlotVisual {
 		}
 		if (this.primitive.getAttribute("NumberOfBarsAuto" === "true")) {
 			histogram.numBars = Number(getDefaultAttributeValue("histoplot", "NumberOfBars"));
-			this.primitive.setAttribute("NumberOfBars") = histogram.numBars;
+			this.primitive.setAttribute("NumberOfBars", histogram.numBars);
 		} else {
 			histogram.numBars = this.primitive.getAttribute("NumberOfBars");
 		}
