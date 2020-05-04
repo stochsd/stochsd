@@ -3103,9 +3103,35 @@ class HistoPlotVisual extends PlotVisual {
 		});
 	}
 
+	calcHistogram(results) {
+		let histogram = {};
+		histogram.data = results.map(row => Number(row[1]));
+		histogram.max = Math.max.apply(null, histogram.data);
+		histogram.min = Math.min.apply(null, histogram.data);
+		histogram.numBars = 10;
+		histogram.intervalWidth = (histogram.max-histogram.min)/histogram.numBars; 
+		histogram.bars = [];
+
+		for(i = 0; i < histogram.numBars; i++) {
+			histogram.bars.push({
+				lowerLimit: histogram.min+	  i*histogram.intervalWidth,
+				upperLimit: histogram.min+(i+1)*histogram.intervalWidth,
+				data: []
+			});
+		}
+		for(let dataPoint of histogram.data) {
+			let pos = Math.floor((dataPoint-histogram.min)/histogram.intervalWidth);
+			if(0 <= pos && pos < histogram.numBars) {
+				histogram.bars[pos].data.push(dataPoint);
+			} else if (dataPoint === histogram.max) {
+				histogram.bars[histogram.numBars-1].data.push(dataPoint);
+			}
+		}
+		return histogram;
+	}
+
 	render() {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		console.log("HistoPlotVisual.render");
 		if (idsToDisplay.length === 0) {
 			this.chartDiv.innerHTML = "<p>No primitives selected.</p>";
 			return;
@@ -3123,29 +3149,46 @@ class HistoPlotVisual extends PlotVisual {
 			return;
 		}
 
-		let makeSerie = () => {
-			console.log("results");
-			console.log(results);
-			let serie = [];
-			for(let row of results) {
-				let time = Number(row[1]);
-				serie.push(time);
-			}
-			return serie;
-		}
 
-		// Declare series and settings for series
-		this.serieSettingsArray = [];
+		// [0, value, 0, value, ..., 0]
+		// length = n_values*2 + 1
 		this.serieArray = [];
 
-		// Make time series
-		this.serieArray.push(makeSerie());
+		// ['','value','','value', ... ,'']
+		// length = n_values*2 + 1
+		this.labels = [];
+
+		// ['start', '', 'limit', '', 'limit', '', ... , 'end']
+		// length = n_values*2 + 1
+		this.ticks = [];
+		
+		// Declare series and settings for series
+		this.serieSettingsArray = [];
+		
+		this.histogram = this.calcHistogram(results);
+
+		for( let bar of this.histogram.bars) {
+			this.serieArray.push(0);
+			this.labels.push("");
+			this.ticks.push(bar.lowerLimit.toFixed(2));
+
+			this.serieArray.push(bar.data.length);
+			this.labels.push(bar.data.length.toString());
+			this.ticks.push("");
+		}
+		this.serieArray.push(0);
+		this.labels.push("");
+		this.ticks.push(this.histogram.max.toFixed(2));
 
 		// Make serie settings
 		this.serieSettingsArray.push(
 			{
 				// color: "black",
-				shadow: false
+				shadow: false,
+				pointLabels: {
+					show: true,
+					labels: this.labels
+				}
 			}
 		);
 
@@ -3165,27 +3208,28 @@ class HistoPlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		console.log("this.serieArray");
-		console.log(this.serieArray);
 
 		$.jqplot.config.enablePlugins = true;
-		this.plot = $.jqplot(this.chartId, [[1,2,3,4]], {  
+		this.plot = $.jqplot(this.chartId, [this.serieArray], {  
 			series: this.serieSettingsArray,
+			grid: {
+				background: "white"
+			},
 			seriesDefaults: {
 				renderer: $.jqplot.BarRenderer,
-				rendererOptions: {
-					varyBarColor: true,
-					barMargin: 20,
-					groups: 0
-				},
 			},
 			axes: {
 				xaxis: {
 					renderer: $.jqplot.CategoryAxisRenderer,
-					ticks: ["hej", "erik", "hoppas", "det fungerar"]
+					ticks: this.ticks,
+					tickOptions: {
+						showGridline: false
+					}
 				}
 			}
-		  });
+		});
+		this.plot.series[0].barWidth *= 3;
+		this.plot.redraw();
 	}
 }
 
