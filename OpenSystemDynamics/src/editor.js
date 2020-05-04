@@ -3203,10 +3203,12 @@ class HistoPlotVisual extends PlotVisual {
 		this.labels.push("");
 		this.ticks.push(this.histogram.max.toFixed(2));
 
+		let targetPrim = findID(idsToDisplay[0]);
+		
 		// Make serie settings
 		this.serieSettingsArray.push(
 			{
-				// color: "black",
+				color: targetPrim.getAttribute("color") ? targetPrim.getAttribute("color") : "black",
 				shadow: false,
 				pointLabels: {
 					show: true,
