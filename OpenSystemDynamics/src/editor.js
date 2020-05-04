@@ -3223,7 +3223,8 @@ class HistoPlotVisual extends PlotVisual {
 					renderer: $.jqplot.CategoryAxisRenderer,
 					ticks: this.ticks,
 					tickOptions: {
-						showGridline: false
+						showGridline: false,
+						mark: null
 					}
 				}
 			}
