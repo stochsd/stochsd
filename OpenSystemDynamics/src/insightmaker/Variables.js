@@ -96,6 +96,13 @@ setValuedProperties(primitiveBank.xyplot);
 
 primitiveBank.histoplot = doc.createElement('HistoPlot');
 primitiveBank.histoplot.setAttribute('Primitives', '');
+primitiveBank.histoplot.setAttribute('NumberOfBars', 10);
+primitiveBank.histoplot.setAttribute('NumberOfBarsAuto', true);
+primitiveBank.histoplot.setAttribute('LowerBound', 0);
+primitiveBank.histoplot.setAttribute('LowerBoundAuto', true);
+primitiveBank.histoplot.setAttribute('UpperBound', 1);
+primitiveBank.histoplot.setAttribute('UpperBoundAuto', true);
+primitiveBank.histoplot.setAttribute('IsPDF', false); 
 setValuedProperties(primitiveBank.histoplot);
 
 
