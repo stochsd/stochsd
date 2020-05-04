@@ -3106,9 +3106,26 @@ class HistoPlotVisual extends PlotVisual {
 	calcHistogram(results) {
 		let histogram = {};
 		histogram.data = results.map(row => Number(row[1]));
-		histogram.max = Math.max.apply(null, histogram.data);
-		histogram.min = Math.min.apply(null, histogram.data);
-		histogram.numBars = 10;
+		
+		if (this.primitive.getAttribute("UpperBoundAuto") === "true") {
+			histogram.max = Math.max.apply(null, histogram.data);
+			this.primitive.setAttribute("UpperBound", histogram.max);
+		} else {
+			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
+		}
+		if (this.primitive.getAttribute("LowerBoundAuto") === "true") {
+			histogram.min = Math.min.apply(null, histogram.data);
+			this.primitive.setAttribute("LowerBound", histogram.min);
+		} else {
+			histogram.min = Number(this.primitive.getAttribute("LowerBound"));
+		}
+		if (this.primitive.getAttribute("NumberOfBarsAuto" === "true")) {
+			histogram.numBars = Number(getDefaultAttributeValue("histoplot", "NumberOfBars"));
+			this.primitive.setAttribute("NumberOfBars") = histogram.numBars;
+		} else {
+			histogram.numBars = this.primitive.getAttribute("NumberOfBars");
+		}
+
 		histogram.intervalWidth = (histogram.max-histogram.min)/histogram.numBars; 
 		histogram.bars = [];
 
@@ -7694,21 +7711,40 @@ class HistoPlotDialog extends DisplayDialog {
 				</tr>
 				<tr>
 					<td>Upper bound</td>
-					<td><input type="text"/></td>
-					<td><input type="checkbox"></td>
+					<td><input class="upperBoundField enterApply" type="text"/></td>
+					<td><input class="upperBoundCheckbox enterApply" type="checkbox" ></td>
 				</tr>
 				<tr>
 					<td>Lower bound</td>
-					<td><input type="text"/></td>
-					<td><input type="checkbox"></td>
+					<td><input class="lowerBoundField enterApply" type="text"/></td>
+					<td><input class="lowerBoundCheckbox enterApply" type="checkbox"></td>
 				</tr>
 				<tr>
 					<td>No. Bars</td>
-					<td><input type="text"/></td>
-					<td><input type="checkbox"></td>
+					<td><input class="numBarsField enterApply" type="text"/></td>
+					<td><input class="numBarsCheckbox enterApply" type="checkbox"></td>
 				</tr>
 			</table>
 		`);
+	}
+	histogramOptionsBeforeShow() {
+
+		let bindAndSetValue = (checkboxTag, fieldTag, attributeName) => {
+			// set values at start 
+			$(this.dialogContent).find(fieldTag).prop("value", this.primitive.getAttribute(attributeName));
+			let auto = (this.primitive.getAttribute(`${attributeName}Auto`) === "true");
+			$(this.dialogContent).find(checkboxTag).prop("checked", auto);
+			$(this.dialogContent).find(fieldTag).prop("disabled", auto);
+			
+			// bind checkbox click
+			$(this.dialogContent).find(checkboxTag).click((event) => {
+				$(this.dialogContent).find(fieldTag).prop("disabled", $(event.target).prop("checked"));
+			});
+		}
+
+		bindAndSetValue(".upperBoundCheckbox", ".upperBoundField", "UpperBound");
+		bindAndSetValue(".lowerBoundCheckbox", ".lowerBoundField", "LowerBound");
+		bindAndSetValue(".numBarsCheckbox", ".numBarsField", "NumberOfBars");
 	}
 	renderHistOrPDFHtml() {
 		return (`
@@ -7741,11 +7777,35 @@ class HistoPlotDialog extends DisplayDialog {
 			</div>`
 		);
 		this.bindPrimitiveListEvents();
+
+		this.histogramOptionsBeforeShow();
 	}
 	makeApply() {
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
 		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scaleType :selected").val());
+		let upperBoundAuto = $(this.dialogContent).find(".upperBoundCheckbox").prop("checked");
+		let lowerBoundAuto = $(this.dialogContent).find(".lowerBoundCheckbox").prop("checked");
+		let numBarsAuto = $(this.dialogContent).find(".numBarsCheckbox").prop("checked");
+		let upperBound = $(this.dialogContent).find(".upperBoundField").val();
+		let lowerBound = $(this.dialogContent).find(".lowerBoundField").val();
+		let numBars = $(this.dialogContent).find(".numBarsField").val();
+		
+		this.primitive.setAttribute("UpperBoundAuto", upperBoundAuto);
+		this.primitive.setAttribute("LowerBoundAuto", lowerBoundAuto);
+		this.primitive.setAttribute("NumberOfBarsAuto", numBarsAuto);
+
+		if ( ! upperBoundAuto && ! isNaN(upperBound) && ! isNaN(lowerBound) && Number(lowerBound) < Number(upperBound) ) {
+			this.primitive.setAttribute("UpperBound", upperBound);
+		}
+
+		if ( ! lowerBoundAuto && ! isNaN(lowerBound) && ! isNaN(upperBound) && Number(lowerBound) < Number(upperBound) ) {
+			this.primitive.setAttribute("LowerBound", lowerBound);
+		}
+		
+		if ( ! numBarsAuto && ! isNaN(numBars) && numBars > 0) {
+			this.primitive.setAttribute("NumberOfBars", numBars);
+		}
 	}
 }
 
