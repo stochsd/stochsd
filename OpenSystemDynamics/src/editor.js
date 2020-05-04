@@ -3168,12 +3168,18 @@ class HistoPlotVisual extends PlotVisual {
 		this.histogram = this.calcHistogram(results);
 
 		for( let bar of this.histogram.bars) {
+			let barValue = bar.data.length;
+			let UsePDF = (this.primitive.getAttribute("ScaleType") === "PDF");
+			if (UsePDF) {
+				barValue = bar.data.length/this.histogram.data.length;
+			} 
+			
 			this.serieArray.push(0);
 			this.labels.push("");
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
-			this.serieArray.push(bar.data.length);
-			this.labels.push(bar.data.length.toString());
+			this.serieArray.push(barValue);
+			this.labels.push(UsePDF ? barValue.toFixed(3) : barValue.toString());
 			this.ticks.push("");
 		}
 		this.serieArray.push(0);
@@ -7710,9 +7716,9 @@ class HistoPlotDialog extends DisplayDialog {
 				<tr>
 					<td>
 					<b>Type:</b>
-						<select class="lineWidth enterApply">
-							<option>Histogram</option>
-							<option>Probability Density Function</option>
+						<select class="scaleType enterApply">
+							<option ${this.primitive.getAttribute("ScaleType") === "Histogram" ? "selected": ""} value="Histogram" >Histogram</option>
+							<option ${this.primitive.getAttribute("ScaleType") === "PDF" ? "selected": ""} value="PDF" >P.D.F</option>
 						</select>
 					</td>
 				</tr>
@@ -7739,6 +7745,7 @@ class HistoPlotDialog extends DisplayDialog {
 	makeApply() {
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
+		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scaleType :selected").val());
 	}
 }
 
