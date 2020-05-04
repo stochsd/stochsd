@@ -3250,6 +3250,9 @@ class HistoPlotVisual extends PlotVisual {
 						mark: null
 					}
 				}
+			},
+			highlighter: {
+				show: false 
 			}
 		});
 		this.plot.series[0].barWidth *= 3;
