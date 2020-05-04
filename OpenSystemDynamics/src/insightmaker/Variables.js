@@ -102,7 +102,7 @@ primitiveBank.histoplot.setAttribute('LowerBound', 0);
 primitiveBank.histoplot.setAttribute('LowerBoundAuto', true);
 primitiveBank.histoplot.setAttribute('UpperBound', 1);
 primitiveBank.histoplot.setAttribute('UpperBoundAuto', true);
-primitiveBank.histoplot.setAttribute('IsPDF', false); 
+primitiveBank.histoplot.setAttribute('ScaleType', "Histogram"); 
 setValuedProperties(primitiveBank.histoplot);
 
 
