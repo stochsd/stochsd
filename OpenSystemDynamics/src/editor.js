@@ -6115,6 +6115,7 @@ function updateInfoBar() {
 				case("compareplot"):
 				case("table"):
 				case("xyplot"):
+				case("histoplot"):
 					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 				break;
