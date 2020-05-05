@@ -3271,6 +3271,9 @@ class HistoPlotVisual extends PlotVisual {
 				yaxis: {
 					min: 0
 				}
+			},
+			highlighter: {
+				show: false
 			}
 		});
 		
