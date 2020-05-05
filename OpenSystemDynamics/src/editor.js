@@ -2717,6 +2717,8 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
+		console.log("TimePlot serie Array:");
+		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -3190,26 +3192,28 @@ class HistoPlotVisual extends PlotVisual {
 		this.serieSettingsArray = [];
 		
 		this.histogram = this.calcHistogram(results);
-
-		for( let bar of this.histogram.bars) {
+		let serie = [];
+		for(let i = 0; i < this.histogram.bars.length; i++) {
+			let bar = this.histogram.bars[i];
 			let barValue = bar.data.length;
 			let UsePDF = (this.primitive.getAttribute("ScaleType") === "PDF");
 			if (UsePDF) {
 				barValue = bar.data.length/this.histogram.data.length;
 			} 
-			
-			this.serieArray.push(0);
+
+			serie.push([bar.lowerLimit.toFixed(2), barValue]);
 			this.labels.push("");
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
-			this.serieArray.push(barValue);
-			this.labels.push(UsePDF ? barValue.toFixed(3) : barValue.toString());
+			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
+			this.labels.push(barValue.toFixed(2));
+			this.ticks.push("");
+			
+			serie.push([bar.upperLimit.toFixed(2), barValue]);
+			this.labels.push("");
 			this.ticks.push("");
 		}
-		this.serieArray.push(0);
-		this.labels.push("");
-		this.ticks.push(this.histogram.max.toFixed(2));
-
+		this.serieArray.push(serie);
 		let targetPrim = findID(idsToDisplay[0]);
 		
 		// Make serie settings
@@ -3242,30 +3246,29 @@ class HistoPlotVisual extends PlotVisual {
 		$(this.chartDiv).empty();
 
 		$.jqplot.config.enablePlugins = true;
-		this.plot = $.jqplot(this.chartId, [this.serieArray], {  
+		console.log("this.serieArray");
+		console.log(this.serieArray);
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
 			grid: {
 				background: "white"
 			},
 			seriesDefaults: {
-				renderer: $.jqplot.BarRenderer,
+				step: true,
+				fill: true
 			},
 			axes: {
 				xaxis: {
-					renderer: $.jqplot.CategoryAxisRenderer,
-					ticks: this.ticks,
-					tickOptions: {
-						showGridline: false,
-						mark: null
-					}
+					label: "X axis here",
+					pad: 0,
+					// ticks: this.ticks
+				},
+				yaxis: {
+					min: 0
 				}
-			},
-			highlighter: {
-				show: false 
 			}
 		});
-		this.plot.series[0].barWidth *= 3;
-		this.plot.redraw();
+		
 		let HistoInfoID = `${getID(this.primitive)}_histoinfo`;
 		let scaleType = this.primitive.getAttribute("ScaleType");
 		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
