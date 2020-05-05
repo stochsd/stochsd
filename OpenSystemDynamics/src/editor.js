@@ -3266,6 +3266,24 @@ class HistoPlotVisual extends PlotVisual {
 		});
 		this.plot.series[0].barWidth *= 3;
 		this.plot.redraw();
+		let HistoInfoID = `${getID(this.primitive)}_histoinfo`;
+		let scaleType = this.primitive.getAttribute("ScaleType");
+		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+		$(this.chartDiv).append(`
+			<div id="${HistoInfoID}">
+				${scaleType} Of ${targetPrimName} <br/>
+				${this.histogram.below_data.length} values below ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}<br/>
+				${this.histogram.above_data.length} values above ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
+			</div>
+		`);
+		$(`#${HistoInfoID}`).css("z-index", "9999");
+		$(`#${HistoInfoID}`).css("position", "absolute");
+		$(`#${HistoInfoID}`).css("top",   "8px");
+		$(`#${HistoInfoID}`).css("right", "8px");
+		$(`#${HistoInfoID}`).css("padding", "4px 8px");
+		$(`#${HistoInfoID}`).css("background", "#ffffffcc");
+		// $(`#${HistoInfoID}`).css("border", "1px solid gray");
+		$(`#${HistoInfoID}`).css("font-size", "0.8em");
 	}
 }
 
