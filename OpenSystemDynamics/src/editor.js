@@ -2717,8 +2717,6 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		console.log("TimePlot serie Array:");
-		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -3196,8 +3194,8 @@ class HistoPlotVisual extends PlotVisual {
 		for(let i = 0; i < this.histogram.bars.length; i++) {
 			let bar = this.histogram.bars[i];
 			let barValue = bar.data.length;
-			let UsePDF = (this.primitive.getAttribute("ScaleType") === "PDF");
-			if (UsePDF) {
+			let usePDF = (this.primitive.getAttribute("ScaleType") === "PDF");
+			if (usePDF) {
 				barValue = bar.data.length/this.histogram.data.length;
 			} 
 
@@ -3206,7 +3204,7 @@ class HistoPlotVisual extends PlotVisual {
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
 			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
-			this.labels.push(barValue.toFixed(2));
+			this.labels.push(usePDF ? barValue.toFixed(2): barValue.toString());
 			this.ticks.push("");
 			
 			serie.push([bar.upperLimit.toFixed(2), barValue]);
@@ -3250,9 +3248,11 @@ class HistoPlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 
+		
+		let scaleType = this.primitive.getAttribute("ScaleType");
+		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+
 		$.jqplot.config.enablePlugins = true;
-		console.log("this.serieArray");
-		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
 			grid: {
@@ -3264,7 +3264,7 @@ class HistoPlotVisual extends PlotVisual {
 			},
 			axes: {
 				xaxis: {
-					label: "X axis here",
+					label: `${scaleType} of ${targetPrimName}`,
 					pad: 0,
 					ticks: this.ticks
 				},
@@ -3274,24 +3274,29 @@ class HistoPlotVisual extends PlotVisual {
 			}
 		});
 		
-		let HistoInfoID = `${getID(this.primitive)}_histoinfo`;
-		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+		let outsideLimitInfoID = [`${getID(this.primitive)}_histoBelow`, `${getID(this.primitive)}_histoAbove`];
 		$(this.chartDiv).append(`
-			<div id="${HistoInfoID}">
-				${scaleType} Of ${targetPrimName} <br/>
-				${this.histogram.below_data.length} values below ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}<br/>
-				${this.histogram.above_data.length} values above ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
-			</div>
+				<div id="${outsideLimitInfoID[0]}">
+					${this.histogram.below_data.length} values below ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}
+				</div>
 		`);
-		$(`#${HistoInfoID}`).css("z-index", "9999");
-		$(`#${HistoInfoID}`).css("position", "absolute");
-		$(`#${HistoInfoID}`).css("top",   "8px");
-		$(`#${HistoInfoID}`).css("right", "8px");
-		$(`#${HistoInfoID}`).css("padding", "4px 8px");
-		$(`#${HistoInfoID}`).css("background", "#ffffffcc");
-		// $(`#${HistoInfoID}`).css("border", "1px solid gray");
-		$(`#${HistoInfoID}`).css("font-size", "0.8em");
+		$(this.chartDiv).append(`
+				<div id="${outsideLimitInfoID[1]}">
+					${this.histogram.above_data.length} values above ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
+				</div>
+		`);
+		$(`#${outsideLimitInfoID[0]}`).css("left", "8px");
+		$(`#${outsideLimitInfoID[1]}`).css("right", "8px");
+		for (let i in outsideLimitInfoID) {
+			$(`#${outsideLimitInfoID[i]}`).css("z-index", "9999");
+			$(`#${outsideLimitInfoID[i]}`).css("position", "absolute");
+			$(`#${outsideLimitInfoID[i]}`).css("padding", "4px 8px");
+			$(`#${outsideLimitInfoID[i]}`).css("bottom",   "0px");
+			$(`#${outsideLimitInfoID[i]}`).css("background", "#f0f0f0");
+			// $(`#${outsideLimitInfoID[i]}`).css("border", "1px solid gray");
+			$(`#${outsideLimitInfoID[i]}`).css("font-size", "0.8em");
+		}
+		
 	}
 }
 
