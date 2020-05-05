@@ -3201,7 +3201,7 @@ class HistoPlotVisual extends PlotVisual {
 				barValue = bar.data.length/this.histogram.data.length;
 			} 
 
-			serie.push([bar.lowerLimit.toFixed(2), barValue]);
+			serie.push([bar.lowerLimit, barValue]);
 			this.labels.push("");
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
@@ -3213,6 +3213,11 @@ class HistoPlotVisual extends PlotVisual {
 			this.labels.push("");
 			this.ticks.push("");
 		}
+
+		serie.push([this.histogram.max, 0]);
+		this.labels.push("");
+		this.ticks.push(this.histogram.max.toFixed(2));
+
 		this.serieArray.push(serie);
 		let targetPrim = findID(idsToDisplay[0]);
 		
@@ -3261,7 +3266,7 @@ class HistoPlotVisual extends PlotVisual {
 				xaxis: {
 					label: "X axis here",
 					pad: 0,
-					// ticks: this.ticks
+					ticks: this.ticks
 				},
 				yaxis: {
 					min: 0
