@@ -3173,17 +3173,8 @@ class HistoPlotVisual extends PlotVisual {
 			return;
 		}
 
-
-		// [0, value, 0, value, ..., 0]
-		// length = n_values*2 + 1
 		this.serieArray = [];
-
-		// ['','value','','value', ... ,'']
-		// length = n_values*2 + 1
 		this.labels = [];
-
-		// ['start', '', 'limit', '', 'limit', '', ... , 'end']
-		// length = n_values*2 + 1
 		this.ticks = [];
 		
 		// Declare series and settings for series
