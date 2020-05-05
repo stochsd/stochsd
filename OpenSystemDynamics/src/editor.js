@@ -3128,6 +3128,9 @@ class HistoPlotVisual extends PlotVisual {
 
 		histogram.intervalWidth = (histogram.max-histogram.min)/histogram.numBars; 
 		histogram.bars = [];
+		// Data points below resp. below the lower and upper boundary 
+		histogram.below_data = [];
+		histogram.above_data = [];
 
 		for(i = 0; i < histogram.numBars; i++) {
 			histogram.bars.push({
@@ -3142,6 +3145,10 @@ class HistoPlotVisual extends PlotVisual {
 				histogram.bars[pos].data.push(dataPoint);
 			} else if (dataPoint === histogram.max) {
 				histogram.bars[histogram.numBars-1].data.push(dataPoint);
+			} else if (pos < 0) {
+				histogram.below_data.push(dataPoint);
+			} else {
+				histogram.above_data.push(dataPoint);
 			}
 		}
 		return histogram;
