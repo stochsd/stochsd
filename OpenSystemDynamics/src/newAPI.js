@@ -359,3 +359,15 @@ function isTimeUnitOk(timeUnit) {
 	}
 	return false;
 }
+
+/**
+ * Get the default value from primitiveBank 
+ * 
+ * @param {string} lowercaseNodeName 
+ * @param {string} attribute 
+ */
+
+
+function getDefaultAttributeValue(lowercaseNodeName, attribute) {
+	return primitiveBank[lowercaseNodeName].getAttribute(attribute);
+}

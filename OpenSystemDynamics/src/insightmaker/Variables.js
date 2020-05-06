@@ -19,7 +19,7 @@ var doc = document.implementation.createDocument("","",null);
 // This is a list of all primitives that can be loaded and saved
 // Important: The order of the array is the order which primitives are saved.
 // Therefor Flows and Links must be at the end since they depend on Stocks and Variables for their connections
-const saveblePrimitiveTypes = ["TextArea","Rectangle","Circle","Line","Arrow","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","Flow","Link"];
+const saveblePrimitiveTypes = ["TextArea","Rectangle","Circle","Line","Arrow","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","HistoPlot","Flow","Link"];
 
 // A list of all primitives, inclduing Generic which is used non-savable primitives
 const allPrimitiveTypes = ["Generic"].concat(saveblePrimitiveTypes);
@@ -60,10 +60,14 @@ primitiveBank.generic = doc.createElement('Generic');
 setValuedProperties(primitiveBank.generic);
 
 primitiveBank.numberbox = doc.createElement('Numberbox');
+primitiveBank.numberbox.setAttribute("RoundToZero", true);
+primitiveBank.numberbox.setAttribute("RoundToZeroAtValue", 1e-12);
 setValuedProperties(primitiveBank.numberbox);
 
 primitiveBank.table = doc.createElement('Table');
 primitiveBank.table.setAttribute('Primitives', '');
+primitiveBank.table.setAttribute("RoundToZero", true);
+primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
 setValuedProperties(primitiveBank.table);
 
 primitiveBank.diagram = doc.createElement('Diagram');
@@ -72,15 +76,35 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
+primitiveBank.timeplot.setAttribute('LineWidth', 2);
+primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
+primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.timeplot);
+
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute('LineWidth', 2);
+primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
+primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
 setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute('LineWidth', 2);
 setValuedProperties(primitiveBank.xyplot);
+
+primitiveBank.histoplot = doc.createElement('HistoPlot');
+primitiveBank.histoplot.setAttribute('Primitives', '');
+primitiveBank.histoplot.setAttribute('NumberOfBars', 10);
+primitiveBank.histoplot.setAttribute('NumberOfBarsAuto', true);
+primitiveBank.histoplot.setAttribute('LowerBound', 0);
+primitiveBank.histoplot.setAttribute('LowerBoundAuto', true);
+primitiveBank.histoplot.setAttribute('UpperBound', 1);
+primitiveBank.histoplot.setAttribute('UpperBoundAuto', true);
+primitiveBank.histoplot.setAttribute('ScaleType', "Histogram"); 
+setValuedProperties(primitiveBank.histoplot);
+
 
 primitiveBank.line = doc.createElement('Line');
 setValuedProperties(primitiveBank.line);

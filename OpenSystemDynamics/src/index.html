@@ -59,11 +59,24 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script src="transform.js"></script>
 	<script src="libsvg.js"></script>
 	<script src="jquery/jquery-1.8.3.min.js"></script>
-	<script class="include" type="text/javascript" src="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
+	<!--<script class="include" type="text/javascript" src="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.barRenderer.js"></script>
+	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.logAxisRenderer.js"></script>
+	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.highlighter.js"></script>
 	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.pointLabels.js"></script>
 	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasTextRenderer.js"></script>
 	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasAxisLabelRenderer.js"></script>
-
+	-->
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.barRenderer.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.pointLabels.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.logAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.highlighter.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
 	<script src="jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="emenu.js"></script>
 	<script src="editor.js"></script>
@@ -276,6 +289,11 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		}
 		#infoDefinition {
 			font-family: monospace;
+		}
+		.jqplot-highlighter-tooltip {
+			/* Overwrite CSS highlighter tool tip*/
+    		z-index: 2;
+    		background: white!IMPORTANT;
 		}
 	</style>
 
@@ -559,6 +577,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			</button>
 			<button id="btn_xyplot" title="XY-Plot" class="toolButton" data-tool="xyplot">
 				<img src="graphics/xyplot.svg"/>
+			</button>
+			<button id="btn_histoplot" title="Histogram Plot" class="toolButton" data-tool="histoplot">
+				<img src="graphics/histoplot.svg"/>
 			</button>
 			<div class="toolBoxSeparator">
 			</div>
