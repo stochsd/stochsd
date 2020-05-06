@@ -2476,6 +2476,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.targetElement.style.position = "absolute";
 		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
+		this.targetElement.style.overflow = "hidden";
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
