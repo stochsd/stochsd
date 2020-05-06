@@ -51,7 +51,7 @@ var optim=new function() {
             optim.saved_time=optim.run_time;
         }
         if(new_run_state=="none") {
-            optim_cmd_optimise.text("Optimise");
+            optim_cmd_optimise.text("Optimize");
             optim.saved_time=0;
             // We want to make sure the variables are reseted after every update and other thing is finished
             // Since this asyncrone with InsightMaker events trigger StocSD events its hard to predict the order
@@ -64,7 +64,7 @@ var optim=new function() {
 			}, 500);
         }
         if(new_run_state=="ended") {
-            optim_cmd_optimise.text("Optimise");
+            optim_cmd_optimise.text("Optimize");
         }
         optim_optimiser.update();
     }
