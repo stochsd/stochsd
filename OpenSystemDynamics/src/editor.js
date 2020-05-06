@@ -34,7 +34,7 @@ const type_basename = {
 	"histoplot":	"HistoPlot",
 	"table":		"Table",
 	"rectangle": 	"Rectangle",
-	"circle": 		"Circle",
+	"ellipse": 		"Ellipse",
 	"line":			"Line",
 	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
@@ -2291,16 +2291,16 @@ class RectangleVisual extends TwoPointer {
 }
 
 
-class CircleVisual extends TwoPointer {
+class EllipseVisual extends TwoPointer {
 	makeGraphics() {
 		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickCircle = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
+		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
 		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.group = svg_group( [this.element, this.clickCircle, this.selector]);
+		this.group = svg_group( [this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
 	}
 	updateGraphics() {
@@ -2312,10 +2312,10 @@ class CircleVisual extends TwoPointer {
 		this.element.setAttribute("cy", cy);
 		this.element.setAttribute("rx", rx);
 		this.element.setAttribute("ry", ry);
-		this.clickCircle.setAttribute("cx", cx);
-		this.clickCircle.setAttribute("cy", cy);
-		this.clickCircle.setAttribute("rx", rx);
-		this.clickCircle.setAttribute("ry", ry);
+		this.clickEllipse.setAttribute("cx", cx);
+		this.clickEllipse.setAttribute("cy", cy);
+		this.clickEllipse.setAttribute("rx", rx);
+		this.clickEllipse.setAttribute("ry", ry);
 		this.selectorCoordRect.x1 = this.startx;
 		this.selectorCoordRect.y1 = this.starty;
 		this.selectorCoordRect.x2 = this.endx;
@@ -2476,6 +2476,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.targetElement.style.position = "absolute";
 		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
+		this.targetElement.style.overflow = "hidden";
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
@@ -3257,7 +3258,7 @@ class HistoPlotVisual extends PlotVisual {
 						// Tick placement can not be choosen with this method
 						// axes.xaxis.ticks attribute must be removed for this
 						// formatString: '<%5p≤'
-					},
+					}, 
 					label: `${scaleType} of ${targetPrimName}`,
 					pad: 0,
 					ticks: this.ticks
@@ -3826,10 +3827,10 @@ class BaseTool {
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouseMove(x,y, ctrlKey) {
+	static mouseMove(x,y, shiftKey) {
 		// Is triggered when mouse moves
 	}
-	static leftMouseUp(x,y, ctrlKey) {
+	static leftMouseUp(x,y, shiftKey) {
 		// Is triggered when mouse goes up for this tool
 	}
 	static rightMouseDown(x,y) {
@@ -4281,11 +4282,11 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 	}
-	static mouseMove(x, y, ctrlKey) {
+	static mouseMove(x, y, shiftKey) {
 		if (this.current_connection == null) {
 			return;
 		}
-		if (ctrlKey) {
+		if (shiftKey) {
 			let sideX = x - this.current_connection.startx;
 			let sideY = y - this.current_connection.starty;
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
@@ -4310,8 +4311,8 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.update();
 	}
-	static leftMouseUp(x, y, ctrlKey) {
-		this.mouseMove(x, y, ctrlKey);
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseMove(x, y, shiftKey);
 		if (this.current_connection.end_anchor == null) {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
@@ -4443,13 +4444,13 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
-class CircleTool extends TwoPointerTool {
+class EllipseTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Circle", null, null);
-		this.current_connection = new CircleVisual(this.primitive.id, this.getType(), [x,y]);
+		this.primitive = createConnector(name, "Ellipse", null, null);
+		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y]);
 	}
 	getType() {
-		return "circle";
+		return "ellipse";
 	}
 }
 
@@ -5073,7 +5074,7 @@ function mouseMoveHandler(event) {
 	}
 	
 	if (leftmouseisdown) {
-		currentTool.mouseMove(x, y, event.ctrlKey);
+		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 }
 function mouseUpHandler(event) {
@@ -5088,7 +5089,7 @@ function mouseUpHandler(event) {
 			var x = event.pageX-offset.left;
 			var y = event.pageY-offset.top;
 			
-			currentTool.leftMouseUp(x, y, event.ctrlKey);
+			currentTool.leftMouseUp(x, y, event.shiftKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
@@ -5163,7 +5164,7 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
-			"circle":CircleTool,
+			"ellipse":EllipseTool,
 			"line":LineTool,
 			"arrow":ArrowTool,
 			"table":TableTool,
@@ -5751,7 +5752,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Line":
 		case "Rectangle":
-		case "Circle":
+		case "Ellipse":
 		case "Arrow":
 		{
 			dimClass = null;
@@ -5762,8 +5763,8 @@ function syncVisual(tprimitive) {
 				case "Rectangle":
 					dimClass = RectangleVisual;
 				break;
-				case "Circle":
-					dimClass = CircleVisual;
+				case "Ellipse":
+					dimClass = EllipseVisual;
 				break;
 				case "Arrow":
 					dimClass = ArrowVisual;
