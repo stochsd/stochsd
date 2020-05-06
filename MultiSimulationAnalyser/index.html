@@ -373,47 +373,31 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			<div class="hidden" id="optim_help">
 					<b>Optim</b> is a SIMPLEX OPTIMIZER for parameter<br/>
 				  estimation or optimization of StochSD models.<br/><br/>
-				  To use Optim you have to :<br/><br/>
-				 <p>1. Build or load a StochSD model.</p>
-			
-				<p>2. Specify and <b>Add</b> the Parameters:</p>
-			
-				<p>a. Name the Parameter.</p>
-			
-				<p>b. Specify starting values of the parameter.</p>
-			
-				<p>c. Specify edge size of the initial simplex in the parameter’s direction.</p>
-			
-				<p>d. Press <b>Add</b>.</p>
-			
-				<p> 3. Enter the Name of the Objective Function.</p>
-			
-				<p> 4. Select <b>Minimize</b> or <b>Maximize</b>. (Default=Minimize)</p>
-			
-				<p> 5. Enter Requested Accuracy. </p>
-			
-				<p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>| becomes smaller </p>
-			
-				<p>than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the</p>
-			
-				<p>Objective Function.)</p>
-			
-				<p>[ 6. Enter Maximum Number of Iterations (Default=200). ]</p>
-			
-				<p>[ 7. <b>Lock Seed</b> is only required for a stochastic model (i.e. a model using</p>
-			
-				<p>[ random numbers). The Seed can then be chosen and locked from Optim. ]</p>
-			
-				<p> 8. Press the <b>Optimize</b> button.</p>
-			
-				<p>[ 9. When ended, the optimization may be continued after ]</p>
-			
-				<p>[ change of Max Iterations or Required Accuracy. ]</p>
-			
-				<p>[ You may also <b>Halt</b> and/or <b>Reset</b> the optimization. ]</p>
-			
-				<p>10. The <b>Print</b> button prints the Optim form as shown.</p>
-			
+                  To use Optim you have to :
+                  <ol>
+                    <li>Build or load a StochSD model.</li>
+                    <li>Specify and <b>Add</b> the Parameters:</li>
+                    <ol type="a">
+                        <li>Name the Parameter.</li>
+                        <li>Specify starting values of the parameter.</li>
+				        <li>Specify edge size of the initial simplex in the parameter’s direction.</li>
+				        <li>Press <b>Add</b>.</li>
+                    </ol>
+                    <li>Enter the Name of the Objective Function.</li>
+                    <li>Select <b>Minimize</b> or <b>Maximize</b>. (Default=Minimize)</li>
+                    <li>Enter Requested Accuracy. </li>
+                    <p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>| becomes smaller<br/>
+                        than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the<br/> 
+                        Objective Function.)</p>
+                    <li>[ Enter Maximum Number of Iterations (Default=200). ]</li>
+                    <li>[ <b>Lock Seed</b> is only required for a stochastic model (i.e. a model using</li>
+                    <p>random numbers). The Seed can then be chosen and locked from Optim. ]</p>
+                    <li>Press the <b>Optimize</b> button.</li>
+                    <li>[ When ended, the optimization may be continued after </li>
+                    <p>change of Max Iterations or Required Accuracy.</p>
+                    <p>You may also <b>Halt</b> and/or <b>Reset</b> the optimization. ]</p>
+                    <li>The <b>Print</b> button prints the Optim form as shown.</li>
+                  </ol>
 				<p><br />
 				</p>
 			</div>
