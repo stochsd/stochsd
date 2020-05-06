@@ -3195,11 +3195,9 @@ class HistoPlotVisual extends PlotVisual {
 
 			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
 			this.labels.push(usePDF ? barValue.toFixed(3): barValue.toString());
-			this.ticks.push("");
 			
-			serie.push([bar.upperLimit.toFixed(2), barValue]);
+			serie.push([bar.upperLimit, barValue]);
 			this.labels.push("");
-			this.ticks.push("");
 		}
 
 		serie.push([this.histogram.max, 0]);
