@@ -3254,6 +3254,12 @@ class HistoPlotVisual extends PlotVisual {
 			},
 			axes: {
 				xaxis: {
+					tickOptions: {
+						// alternative way of showing ticks, will be displayed as: <value≤
+						// Tick placement can not be choosen with this method
+						// axes.xaxis.ticks attribute must be removed for this
+						// formatString: '<%5p≤'
+					},
 					label: `${scaleType} of ${targetPrimName}`,
 					pad: 0,
 					ticks: this.ticks
