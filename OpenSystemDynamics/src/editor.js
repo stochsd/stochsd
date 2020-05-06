@@ -3826,10 +3826,10 @@ class BaseTool {
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouseMove(x,y, ctrlKey) {
+	static mouseMove(x,y, shiftKey) {
 		// Is triggered when mouse moves
 	}
-	static leftMouseUp(x,y, ctrlKey) {
+	static leftMouseUp(x,y, shiftKey) {
 		// Is triggered when mouse goes up for this tool
 	}
 	static rightMouseDown(x,y) {
@@ -4281,11 +4281,11 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 	}
-	static mouseMove(x, y, ctrlKey) {
+	static mouseMove(x, y, shiftKey) {
 		if (this.current_connection == null) {
 			return;
 		}
-		if (ctrlKey) {
+		if (shiftKey) {
 			let sideX = x - this.current_connection.startx;
 			let sideY = y - this.current_connection.starty;
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
@@ -4310,8 +4310,8 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.update();
 	}
-	static leftMouseUp(x, y, ctrlKey) {
-		this.mouseMove(x, y, ctrlKey);
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseMove(x, y, shiftKey);
 		if (this.current_connection.end_anchor == null) {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
@@ -5073,7 +5073,7 @@ function mouseMoveHandler(event) {
 	}
 	
 	if (leftmouseisdown) {
-		currentTool.mouseMove(x, y, event.ctrlKey);
+		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 }
 function mouseUpHandler(event) {
@@ -5088,7 +5088,7 @@ function mouseUpHandler(event) {
 			var x = event.pageX-offset.left;
 			var y = event.pageY-offset.top;
 			
-			currentTool.leftMouseUp(x, y, event.ctrlKey);
+			currentTool.leftMouseUp(x, y, event.shiftKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
