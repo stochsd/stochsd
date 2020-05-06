@@ -3107,17 +3107,18 @@ class HistoPlotVisual extends PlotVisual {
 		let histogram = {};
 		histogram.data = results.map(row => Number(row[1]));
 		
-		if (this.primitive.getAttribute("UpperBoundAuto") === "true") {
-			histogram.max = Math.max.apply(null, histogram.data);
-			this.primitive.setAttribute("UpperBound", histogram.max);
-		} else {
-			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
-		}
 		if (this.primitive.getAttribute("LowerBoundAuto") === "true") {
 			histogram.min = Math.min.apply(null, histogram.data);
 			this.primitive.setAttribute("LowerBound", histogram.min);
 		} else {
 			histogram.min = Number(this.primitive.getAttribute("LowerBound"));
+		}
+		if (this.primitive.getAttribute("UpperBoundAuto") === "true") {
+			histogram.max = Math.max.apply(null, histogram.data);
+			histogram.max += (histogram.max-histogram.min)*0.0001;
+			this.primitive.setAttribute("UpperBound", histogram.max);
+		} else {
+			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
 		}
 		if (this.primitive.getAttribute("NumberOfBarsAuto" === "true")) {
 			histogram.numBars = Number(getDefaultAttributeValue("histoplot", "NumberOfBars"));
@@ -3143,8 +3144,6 @@ class HistoPlotVisual extends PlotVisual {
 			let pos = Math.floor((dataPoint-histogram.min)/histogram.intervalWidth);
 			if(0 <= pos && pos < histogram.numBars) {
 				histogram.bars[pos].data.push(dataPoint);
-			} else if (dataPoint === histogram.max) {
-				histogram.bars[histogram.numBars-1].data.push(dataPoint);
 			} else if (pos < 0) {
 				histogram.below_data.push(dataPoint);
 			} else {
