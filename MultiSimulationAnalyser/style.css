@@ -119,7 +119,7 @@ img.icon {
 }
 
 legend {
- white-space="nowrap"
+ white-space:"nowrap";
 }
 
 fieldset.mediumheight {
