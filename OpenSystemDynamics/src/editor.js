@@ -9150,38 +9150,65 @@ class EquationListDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml(prims, typeName, valueName) {
-		return `
-			<h3 class="equationListHeader">${typeName}</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><th>${valueName}</th></tr>
-				${prims.map(p => (`<tr><td>${makePrimitiveName(getName(p))}</td><td>${getValue(p)}</td></tr>`)).join('')}
-			</table>
-		`;
+	renderPrimitiveListHtml(info) {
+		return (`
+		<h3 class="equationListHeader">${info.title}</h3>
+		<table class="modernTable">
+			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
+				${info.primitives.map(p => `<tr>
+					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">
+						${col.cellFunc(p)}
+					</td>`).join('')}
+			</tr>`).join('')}
+		</table>
+		`);
 	}
 	beforeShow() {
 		let Stocks = primitives("Stock");
 		let stockHtml = "";
 		if (Stocks.length > 0) {
-			stockHtml = this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+			stockHtml = this.renderPrimitiveListHtml({
+				title: "Stocks", 
+				primitives: Stocks,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Flows = primitives("Flow");
 		let flowHtml = "";
 		if (Flows.length > 0) {
-			flowHtml = this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+			flowHtml = this.renderPrimitiveListHtml({
+				title: "Flows", 
+				primitives: Flows,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
+			variableHtml = this.renderPrimitiveListHtml({
+				title: "Auxiliaries & Parameters", 
+				primitives: Variables,
+				tableColumns: [
+					{ header: "Name", 	cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Value", 	cellFunc: getValue, style: "font-family: monospace;" }
+				]
+			});
 		}
 
 		let Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
-			converterHtml = (`
+			/*converterHtml = (`
 				<h3 class="equationListHeader">Converter</h3>
 				<table class="modernTable">
 					<tr><th>Name</th><th>Data</th><th>Ingoing Link</th></tr>
@@ -9191,7 +9218,16 @@ class EquationListDialog extends jqDialog {
 						<td>${findLinkedInPrimitives(p.id).length !== 0 ? getName(findLinkedInPrimitives(p.id)[0]) : "None"}</td>
 					</tr>`)).join('')}
 				</table>
-			`);
+			`);*/
+			converterHtml = this.renderPrimitiveListHtml({
+				title: "Converter",
+				primitives: Converters,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Data", 			cellFunc: getValue, style: "font-family: monospace; max-width: 400px; word-break: break-word;" },
+					{ header: "Ingoing Link", 	cellFunc: (prim) => { return findLinkedInPrimitives(prim.id).length !== 0 ? getName(findLinkedInPrimitives(prim.id)[0]) : "None"; } }
+				]
+			});
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
