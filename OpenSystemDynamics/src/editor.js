@@ -9237,7 +9237,7 @@ class EquationListDialog extends jqDialog {
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
 		if (numberOfPrimitives == 0) {
-			this.setHtml("This model is emptry. Build a model to show equation list");	
+			this.setHtml("This model is empty. Build a model to show equation list");	
 			return;		
 		}
 
