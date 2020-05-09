@@ -6098,7 +6098,9 @@ function printDiagram() {
 	let d = new Date();
 	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
 	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
-	let fullDate = `${d.getFullYear().toString()}-${month}-${day} (yyyy-mm-dd)`;
+	let hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
+	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
+	let fullDate = `${d.getFullYear().toString()}-${month}-${day} ${hours}:${minutes} (yyyy-mm-dd hh:mm)`;
 
 	if (fileName.length > 0) {
 		$(".editor-footer-filepath").html(fileName);
