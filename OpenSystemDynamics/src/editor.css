@@ -219,3 +219,7 @@ h3.equationListHeader {
     z-index: 2;
     background: white!IMPORTANT;
 }
+
+.editor-footer div {
+    display: inline;
+}

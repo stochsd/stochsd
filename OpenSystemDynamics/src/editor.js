@@ -5397,8 +5397,7 @@ $(window).load(function() {
 		equationList.show();
 	});
 	$("#btn_print_model").click(function() {
-		unselect_all();
-		hideAndPrint([$("#topPanel").get(0)]);
+		printDiagram();
 	});
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
@@ -6088,6 +6087,28 @@ function setColorToSelection(color) {
 		get_parent(obj).setColor(color);
 	}
 	History.storeUndoState();
+}
+
+function printDiagram() {
+	unselect_all();
+	updateInfoBar();
+	// Write filename and date into editor-footer 
+	let fileName = fileManager.fileName;
+	
+	let d = new Date();
+	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+	let fullDate = `${d.getFullYear().toString()}-${month}-${day} (yyyy-mm-dd)`;
+
+	if (fileName.length > 0) {
+		$(".editor-footer-filepath").html(fileName);
+	} else {
+		$(".editor-footer-filepath").html("Unnamed file");
+	}
+	
+	$(".editor-footer-date").html(fullDate);
+
+	hideAndPrint([$("#topPanel").get(0)]);
 }
 
 function removeNewLines(string) {
