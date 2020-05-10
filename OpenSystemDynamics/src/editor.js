@@ -449,7 +449,7 @@ function getFunctionHelpData() {
 			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), {5 Years})", "Chooses a new random value every five years"]]
 		]],
 		["Random Number Functions", [
-			["Poisson Flow", "PoFlow(##Lambda$$)", "Short for RandPoisson(DT()*Lambda)/DT()."],
+			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/>This should only be used in flows."],
 			["Uniform Distribution", "Rand(##Minimum$$, ##Maximum$$)", "Generates a uniformly distributed random number between the minimum and maximum. The minimum and maximum are optional and default to 0 and 1 respectively.", ["Rand()", "0.7481"]],
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
@@ -5397,8 +5397,7 @@ $(window).load(function() {
 		equationList.show();
 	});
 	$("#btn_print_model").click(function() {
-		unselect_all();
-		hideAndPrint([$("#topPanel").get(0)]);
+		printDiagram();
 	});
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
@@ -6088,6 +6087,30 @@ function setColorToSelection(color) {
 		get_parent(obj).setColor(color);
 	}
 	History.storeUndoState();
+}
+
+function printDiagram() {
+	unselect_all();
+	updateInfoBar();
+	// Write filename and date into editor-footer 
+	let fileName = fileManager.fileName;
+	
+	let d = new Date();
+	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+	let hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
+	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
+	let fullDate = `${d.getFullYear().toString()}-${month}-${day} ${hours}:${minutes} (yyyy-mm-dd hh:mm)`;
+
+	if (fileName.length > 0) {
+		$(".editor-footer-filepath").html(fileName);
+	} else {
+		$(".editor-footer-filepath").html("Unnamed file");
+	}
+	
+	$(".editor-footer-date").html(fullDate);
+
+	hideAndPrint([$("#topPanel").get(0)]);
 }
 
 function removeNewLines(string) {
@@ -8968,10 +8991,25 @@ class EquationEditor extends jqDialog {
 	}
 }
 
+function printContentInNewWindow(htmlContent) {
+	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
+	printWindow.document.write('<html><head><title>Print DIV Content</title>');  
+	printWindow.document.write('<link rel="stylesheet" type="text/css" href="editor.css">');
+	printWindow.document.write('</head><body >');  
+	printWindow.document.write(htmlContent);
+	printWindow.document.write('</body></html>');  
+	
+	setTimeout(() => {
+		printWindow.print();
+		printWindow.close();
+	},400);
+}
+
 function hideAndPrint(elementsToHide) {
 	for(let element of elementsToHide) {
 		$(element).hide();
 	}
+	console.trace();
 	window.print();
 	for(let element of elementsToHide) {
 		$(element).show();
@@ -9087,7 +9125,8 @@ class EquationListDialog extends jqDialog {
 		this.dialogParameters.buttons = {
 			"Print Equations": () =>
 			{
-				hideAndPrint([$("#coverEverythingDiv").get(0)]);
+				let contentHTML = $(this.dialogContent).html();
+				printContentInNewWindow(contentHTML);
 			},
 			"Leave":() =>
 			{
@@ -9150,57 +9189,83 @@ class EquationListDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml(prims, typeName, valueName) {
-		return `
-			<h3 class="equationListHeader">${typeName}</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><th>${valueName}</th></tr>
-				${prims.map(p => (`<tr><td>${makePrimitiveName(getName(p))}</td><td>${getValue(p)}</td></tr>`)).join('')}
-			</table>
-		`;
+	renderPrimitiveListHtml(info) {
+		return (`
+		<h3 class="equationListHeader">${info.title}</h3>
+		<table class="modernTable">
+			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
+				${info.primitives.map(p => `<tr>
+					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">
+						${col.cellFunc(p)}
+					</td>`).join('')}
+			</tr>`).join('')}
+		</table>
+		`);
 	}
 	beforeShow() {
 		let Stocks = primitives("Stock");
 		let stockHtml = "";
 		if (Stocks.length > 0) {
-			stockHtml = this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+			stockHtml = this.renderPrimitiveListHtml({
+				title: "Stocks", 
+				primitives: Stocks,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Flows = primitives("Flow");
 		let flowHtml = "";
 		if (Flows.length > 0) {
-			flowHtml = this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+			flowHtml = this.renderPrimitiveListHtml({
+				title: "Flows", 
+				primitives: Flows,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
+			variableHtml = this.renderPrimitiveListHtml({
+				title: "Auxiliaries & Parameters", 
+				primitives: Variables,
+				tableColumns: [
+					{ header: "Name", 	cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Value", 	cellFunc: getValue, style: "font-family: monospace;" }
+				]
+			});
 		}
 
 		let Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
-			converterHtml = (`
-				<h3 class="equationListHeader">Converter</h3>
-				<table class="modernTable">
-					<tr><th>Name</th><th>Data</th><th>Ingoing Link</th></tr>
-					${Converters.map(p => (`<tr>
-						<td>${makePrimitiveName(getName(p))}</td>
-						<td style="max-width: 400px; word-break: break-all;">${getValue(p)}</td>
-						<td>${findLinkedInPrimitives(p.id).length !== 0 ? getName(findLinkedInPrimitives(p.id)[0]) : "None"}</td>
-					</tr>`)).join('')}
-				</table>
-			`);
+			converterHtml = this.renderPrimitiveListHtml({
+				title: "Converter",
+				primitives: Converters,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Data", 			cellFunc: getValue, style: "font-family: monospace; max-width: 400px; word-break: break-word;" },
+					{ header: "Ingoing Link", 	cellFunc: (prim) => { return findLinkedInPrimitives(prim.id).length !== 0 ? getName(findLinkedInPrimitives(prim.id)[0]) : "None"; } }
+				]
+			});
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
 		if (numberOfPrimitives == 0) {
-			this.setHtml("This model is emptry. Build a model to show equation list");	
+			this.setHtml("This model is empty. Build a model to show equation list");	
 			return;		
 		}
 
 		let htmlOut = `
+			<h1>Equation List</h1>
 			<div style="display:flex;">
 				<div>
 					${this.renderSpecsInfoHtml()}
