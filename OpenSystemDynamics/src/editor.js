@@ -3189,14 +3189,19 @@ class HistoPlotVisual extends PlotVisual {
 			if (usePDF) {
 				barValue = bar.data.length/this.histogram.data.length;
 			} 
+			//		1___2___3		  ______
+			// _____|		|1___2___3		...
 
+			// (1)
 			serie.push([bar.lowerLimit, barValue]);
 			this.labels.push("");
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
+			// (2) label here 
 			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
 			this.labels.push(usePDF ? barValue.toFixed(3): barValue.toString());
 			
+			// (3)
 			serie.push([bar.upperLimit, barValue]);
 			this.labels.push("");
 		}
