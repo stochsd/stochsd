@@ -3244,6 +3244,7 @@ class HistoPlotVisual extends PlotVisual {
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
+			sortData: false,
 			grid: {
 				background: "white"
 			},
