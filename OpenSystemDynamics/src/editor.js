@@ -8999,7 +8999,7 @@ class EquationEditor extends jqDialog {
 
 function printContentInNewWindow(htmlContent) {
 	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
-	printWindow.document.write('<html><head><title>Print DIV Content</title>');  
+	printWindow.document.write('<html><head><title>Equation List</title>');
 	printWindow.document.write('<link rel="stylesheet" type="text/css" href="editor.css">');
 	printWindow.document.write('</head><body >');  
 	printWindow.document.write(htmlContent);
