@@ -3432,11 +3432,11 @@ class XyPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>No data. Run to create data!";
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>Exactly two primitives must be selected!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>Exactly two primitives must be selected!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -7883,7 +7883,7 @@ class HistoPlotDialog extends DisplayDialog {
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
-		this.setTitle("XY-plot Properties");
+		this.setTitle("XY Plot Properties");
 
 		this.markersChecked = false;
 		this.lineChecked = true;
