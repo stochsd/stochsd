@@ -2236,6 +2236,13 @@ function getStackTrace() {
 }
 
 class RectangleVisual extends TwoPointer {
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new RectangleDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
 		this.element = svg_rect(
 			this.startx, 
@@ -2270,6 +2277,13 @@ class RectangleVisual extends TwoPointer {
 		for(var key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
+
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
+	}
+	double_click() {
+		this.dialog.show();
 	}
 	updateGraphics() {
 		// Update rect to fit start and end position
@@ -3507,6 +3521,9 @@ class LineVisual extends TwoPointer {
 		this.clickLine.setAttribute("y1", this.starty);
 		this.clickLine.setAttribute("x2", this.endx);
 		this.clickLine.setAttribute("y2", this.endy);
+	}
+	double_click() {
+		console.log("double clicked");
 	}
 }
 
@@ -8431,6 +8448,34 @@ class TimeUnitDialog extends jqDialog {
 				}
 			}
 		};
+	}
+}
+
+
+class GeometryDialog extends DisplayDialog {
+	renderStrokeHtml() {
+		return (`
+			stroke html here
+		`);
+	}
+
+	beforeShow() {
+		if (this.primitive) {
+			this.setHtml(`
+				<div>
+					${this.renderStrokeHtml()}
+				</div>
+			`);
+		} else {
+			this.setHtml("Error: No Rectangle primitive found");
+		}
+	}
+}
+
+class RectangleDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Rectangle Properties");
+		super.beforeShow();
 	}
 }
 
