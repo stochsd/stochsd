@@ -106,6 +106,8 @@ primitiveBank.histoplot.setAttribute('ScaleType', "Histogram");
 setValuedProperties(primitiveBank.histoplot);
 
 primitiveBank.line = doc.createElement('Line');
+primitiveBank.line.setAttribute("ArrowHeadStart", false);
+primitiveBank.line.setAttribute("ArrowHeadEnd", true);
 setValuedProperties(primitiveBank.line);
 
 primitiveBank.rectangle = doc.createElement('Rectangle');
