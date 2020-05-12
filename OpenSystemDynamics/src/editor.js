@@ -36,7 +36,6 @@ const type_basename = {
 	"rectangle": 	"Rectangle",
 	"ellipse": 		"Ellipse",
 	"line":			"Line",
-	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
 	"stock":			"Stock",
@@ -3519,33 +3518,13 @@ class XyPlotVisual extends PlotVisual {
 }
 
 class LineVisual extends TwoPointer {
-	makeGraphics() {
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
-		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
-		this.clickLine.setAttribute("stroke-width", "10");
-		this.group = svg_group([this.element, this.clickLine]);
-		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.element];
-		for(var key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
-		}
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new LineDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
 	}
-	updateGraphics() {
-		this.element.setAttribute("x1",this.startx);
-		this.element.setAttribute("y1",this.starty);
-		this.element.setAttribute("x2",this.endx);
-		this.element.setAttribute("y2",this.endy);
-		this.clickLine.setAttribute("x1", this.startx);
-		this.clickLine.setAttribute("y1", this.starty);
-		this.clickLine.setAttribute("x2", this.endx);
-		this.clickLine.setAttribute("y2", this.endy);
-	}
-	double_click() {
-		console.log("double clicked");
-	}
-}
-
-class ArrowVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
@@ -3560,6 +3539,12 @@ class ArrowVisual extends TwoPointer {
 		for(var key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
+	}
+	double_click() {
+		this.dialog.show();
 	}
 	updateGraphics() {
 		this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
@@ -4513,16 +4498,6 @@ class LineTool extends TwoPointerTool {
 }
 LineTool.init();
 
-class ArrowTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Arrow", null, null);
-		this.current_connection = new ArrowVisual(this.primitive.id, this.getType(), [x,y]);
-	}
-	static getType() {
-		return "arrow";
-	}
-}
-
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
@@ -5214,7 +5189,6 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"ellipse":EllipseTool,
 			"line":LineTool,
-			"arrow":ArrowTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
@@ -5800,7 +5774,6 @@ function syncVisual(tprimitive) {
 		case "Line":
 		case "Rectangle":
 		case "Ellipse":
-		case "Arrow":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5812,9 +5785,6 @@ function syncVisual(tprimitive) {
 				break;
 				case "Ellipse":
 					dimClass = EllipseVisual;
-				break;
-				case "Arrow":
-					dimClass = ArrowVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);
@@ -8527,6 +8497,13 @@ class RectangleDialog extends GeometryDialog {
 class EllipseDialog extends GeometryDialog {
 	beforeShow() {
 		this.setTitle("Ellipse Properties");
+		super.beforeShow();
+	}
+}
+
+class LineDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Arrow/Line Properties");
 		super.beforeShow();
 	}
 }
