@@ -3549,28 +3549,34 @@ class ArrowVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHead = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHead.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadStart.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadEnd.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
 		
-		this.group = svg_group([this.line, this.arrowHead, this.clickLine]);
+		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.line, this.arrowHead];
+		this.element_array = [this.line, this.arrowHeadEnd];
 		for(var key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
-		this.arrowHead.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
-		this.arrowHead.update();
-		this.line.setAttribute("x1",this.startx);
-		this.line.setAttribute("y1",this.starty);
-		/* Shorten line as not to go past arrowHead */
+		this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
+		this.arrowHeadStart.update();
+		this.arrowHeadEnd.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
+		this.arrowHeadEnd.update();
+		
+		/* Shorten line as not to go past arrowHeadEnd */
 		let shortenAmount = 12;
 		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
 		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
 		let endOffset = rotate([shortenAmount, 0], sine, cosine);
+		let lineStartPos = translate(neg(endOffset), [this.startx, this.starty]);
 		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
 		/***/
+		this.line.setAttribute("x1", lineStartPos[0]);
+		this.line.setAttribute("y1", lineStartPos[1]);
 		this.line.setAttribute("x2", lineEndPos[0]);
 		this.line.setAttribute("y2", lineEndPos[1]);
 		this.clickLine.setAttribute("x1", this.startx);
@@ -3580,7 +3586,8 @@ class ArrowVisual extends TwoPointer {
 	}
 	setColor(color) {
 		super.setColor(color);
-		this.arrowHead.setAttribute("fill", color);
+		this.arrowHeadStart.setAttribute("fill", color);
+		this.arrowHeadEnd.setAttribute("fill", color);
 	}
 }
 
