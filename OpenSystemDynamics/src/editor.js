@@ -2286,6 +2286,7 @@ class RectangleVisual extends TwoPointer {
 		this.dialog.show();
 	}
 	updateGraphics() {
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
@@ -2340,6 +2341,7 @@ class EllipseVisual extends TwoPointer {
 		this.element.setAttribute("cy", cy);
 		this.element.setAttribute("rx", rx);
 		this.element.setAttribute("ry", ry);
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
 		this.clickEllipse.setAttribute("cx", cx);
 		this.clickEllipse.setAttribute("cy", cy);
 		this.clickEllipse.setAttribute("rx", rx);
@@ -8469,7 +8471,21 @@ class TimeUnitDialog extends jqDialog {
 class GeometryDialog extends DisplayDialog {
 	renderStrokeHtml() {
 		return (`
-			stroke html here
+			<table class="modernTable">
+				<tr>
+					<td>Line Width: </td>
+					<td>option here </td>
+				</tr>
+				<tr>
+					<td>Dashes: </td>
+					<td>
+						<select class="dashSelect enterApply">
+						<option value="" 	${this.primitive.getAttribute("StrokeDashArray") === "" ? "selected" : ""}	 >––––––</option>
+						<option value="8 4" ${this.primitive.getAttribute("StrokeDashArray") === "8 4" ? "selected" : ""}>– – – –</option>
+						</select>
+					</td>
+				</tr>
+			</table>
 		`);
 	}
 
@@ -8482,6 +8498,12 @@ class GeometryDialog extends DisplayDialog {
 			`);
 		} else {
 			this.setHtml("Error: No Rectangle primitive found");
+		}
+	}
+	makeApply() {
+		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
+		if(dashArray !== undefined) {
+			this.primitive.setAttribute("StrokeDashArray", dashArray);
 		}
 	}
 }
