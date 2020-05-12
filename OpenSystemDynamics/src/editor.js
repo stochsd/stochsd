@@ -8502,9 +8502,34 @@ class EllipseDialog extends GeometryDialog {
 }
 
 class LineDialog extends GeometryDialog {
+	renderArrowCheckboxHtml() {
+		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>Show Start Arrow at Start:</td>
+					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
+				</tr>
+				<tr>
+					<td>Show Arrow at End:</td>
+					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
+				</tr>
+			</table>
+		`);
+	}
 	beforeShow() {
 		this.setTitle("Arrow/Line Properties");
-		super.beforeShow();
+		this.setHtml(`<div>
+			${this.renderArrowCheckboxHtml()}	
+			<div class="verticalSpace"></div>
+			${this.renderStrokeHtml()}
+		</div>`);
+	}
+	makeApply() {
+		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrowStartCheck").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrowEndCheck").prop("checked"));
+		super.makeApply();
 	}
 }
 
