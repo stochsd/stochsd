@@ -2306,6 +2306,13 @@ class RectangleVisual extends TwoPointer {
 
 
 class EllipseVisual extends TwoPointer {
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new EllipseDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
 		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
 		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
@@ -2316,6 +2323,13 @@ class EllipseVisual extends TwoPointer {
 		this.element_array = [this.element];
 		this.group = svg_group( [this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
+
+		$(this.group).dblclick(() => {
+			this.double_click();
+		});
+	}
+	double_click() {
+			this.dialog.show();
 	}
 	updateGraphics() {
 		let cx = (this.startx + this.endx)/2;
@@ -8475,6 +8489,13 @@ class GeometryDialog extends DisplayDialog {
 class RectangleDialog extends GeometryDialog {
 	beforeShow() {
 		this.setTitle("Rectangle Properties");
+		super.beforeShow();
+	}
+}
+
+class EllipseDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Ellipse Properties");
 		super.beforeShow();
 	}
 }
