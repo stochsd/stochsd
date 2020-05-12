@@ -108,6 +108,8 @@ setValuedProperties(primitiveBank.histoplot);
 primitiveBank.line = doc.createElement('Line');
 primitiveBank.line.setAttribute("ArrowHeadStart", false);
 primitiveBank.line.setAttribute("ArrowHeadEnd", true);
+primitiveBank.line.setAttribute("StrokeWidth", "1");
+primitiveBank.line.setAttribute("StrokeDashArray", "");
 setValuedProperties(primitiveBank.line);
 
 primitiveBank.rectangle = doc.createElement('Rectangle');
