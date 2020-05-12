@@ -2287,6 +2287,7 @@ class RectangleVisual extends TwoPointer {
 	}
 	updateGraphics() {
 		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
@@ -2342,6 +2343,7 @@ class EllipseVisual extends TwoPointer {
 		this.element.setAttribute("rx", rx);
 		this.element.setAttribute("ry", ry);
 		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		this.clickEllipse.setAttribute("cx", cx);
 		this.clickEllipse.setAttribute("cy", cy);
 		this.clickEllipse.setAttribute("rx", rx);
@@ -8470,11 +8472,19 @@ class TimeUnitDialog extends jqDialog {
 
 class GeometryDialog extends DisplayDialog {
 	renderStrokeHtml() {
+		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
+		let primWidth = this.primitive.getAttribute("StrokeWidth");
 		return (`
 			<table class="modernTable">
 				<tr>
 					<td>Line Width: </td>
-					<td>option here </td>
+					<td>
+						<select class="widthSelect enterApply">
+						${strokeWidths.map(w => (`
+							<option value="${w}" ${primWidth === w ? "selected" : ""}>${w}</option>
+						`))}
+						</select>
+					</td>
 				</tr>
 				<tr>
 					<td>Dashes: </td>
@@ -8490,21 +8500,13 @@ class GeometryDialog extends DisplayDialog {
 	}
 
 	beforeShow() {
-		if (this.primitive) {
-			this.setHtml(`
-				<div>
-					${this.renderStrokeHtml()}
-				</div>
-			`);
-		} else {
-			this.setHtml("Error: No Rectangle primitive found");
-		}
+		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
 	}
 	makeApply() {
 		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
-		if(dashArray !== undefined) {
-			this.primitive.setAttribute("StrokeDashArray", dashArray);
-		}
+		let strokeWidth = $(this.dialogContent).find(".widthSelect :selected").val();
+		this.primitive.setAttribute("StrokeDashArray", dashArray);
+		this.primitive.setAttribute("StrokeWidth", strokeWidth);
 	}
 }
 
