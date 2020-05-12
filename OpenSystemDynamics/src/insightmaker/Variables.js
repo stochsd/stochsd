@@ -113,9 +113,13 @@ primitiveBank.arrow = doc.createElement('Arrow');
 setValuedProperties(primitiveBank.arrow);
 
 primitiveBank.rectangle = doc.createElement('Rectangle');
+primitiveBank.rectangle.setAttribute("strokeWidth", "1");
+primitiveBank.rectangle.setAttribute("strokeDashArray", "");
 setValuedProperties(primitiveBank.rectangle);
 
 primitiveBank.ellipse = doc.createElement('Ellipse');
+primitiveBank.ellipse.setAttribute("strokeWidth", "1");
+primitiveBank.ellipse.setAttribute("strokeDashArray", "");
 setValuedProperties(primitiveBank.ellipse);
 
 primitiveBank.textarea = doc.createElement('TextArea');
