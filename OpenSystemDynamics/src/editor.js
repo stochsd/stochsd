@@ -3547,19 +3547,30 @@ class LineVisual extends TwoPointer {
 		this.dialog.show();
 	}
 	updateGraphics() {
-		this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
-		this.arrowHeadStart.update();
-		this.arrowHeadEnd.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
-		this.arrowHeadEnd.update();
+		let lineStartPos = [this.startx, this.starty];
+		let lineEndPos = [this.endx, this.endy];
+		let arrowHeadStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowHeadEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		this.arrowHeadStart.setAttribute("visibility", arrowHeadStart ? "visible" : "hidden");
+		this.arrowHeadEnd.setAttribute("visibility", arrowHeadEnd ? "visible" : "hidden");
+		if (arrowHeadStart || arrowHeadEnd) {
+			/* Shorten line as not to go past arrowHeadEnd */
+			let shortenAmount = 12;
+			let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
+			let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
+			let endOffset = rotate([shortenAmount, 0], sine, cosine);
+			if (arrowHeadStart) {
+				lineStartPos = translate(neg(endOffset), [this.startx, this.starty]);
+				this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
+				this.arrowHeadStart.update();
+			}
+			if (arrowHeadEnd) {
+				lineEndPos = translate(endOffset, [this.endx, this.endy]);
+				this.arrowHeadEnd.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
+				this.arrowHeadEnd.update();
+			}
+		}
 		
-		/* Shorten line as not to go past arrowHeadEnd */
-		let shortenAmount = 12;
-		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
-		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
-		let endOffset = rotate([shortenAmount, 0], sine, cosine);
-		let lineStartPos = translate(neg(endOffset), [this.startx, this.starty]);
-		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
-		/***/
 		this.line.setAttribute("x1", lineStartPos[0]);
 		this.line.setAttribute("y1", lineStartPos[1]);
 		this.line.setAttribute("x2", lineEndPos[0]);
@@ -8521,7 +8532,7 @@ class LineDialog extends GeometryDialog {
 	beforeShow() {
 		this.setTitle("Arrow/Line Properties");
 		this.setHtml(`<div>
-			${this.renderArrowCheckboxHtml()}	
+			${this.renderArrowCheckboxHtml()}
 			<div class="verticalSpace"></div>
 			${this.renderStrokeHtml()}
 		</div>`);
