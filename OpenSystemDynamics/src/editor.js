@@ -3526,7 +3526,7 @@ class LineVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
+		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
@@ -3547,6 +3547,9 @@ class LineVisual extends TwoPointer {
 		this.dialog.show();
 	}
 	updateGraphics() {
+		this.line.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
+		this.line.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+
 		let lineStartPos = [this.startx, this.starty];
 		let lineEndPos = [this.endx, this.endy];
 		let arrowHeadStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
