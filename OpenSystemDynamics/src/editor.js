@@ -3096,28 +3096,27 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		
 		this.primitive = findID(id);
 		
-		this.dialog = new TextAreaDialog(findID(id));
-		//~ this.dialog.subscribePool.subscribe(()=>{
-			//~ this.render();
-		//~ });
-		this.updateTextFromName();
+		this.dialog = new TextAreaDialog(id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
+		this.render();
 	}
 	makeGraphics() {
 		super.makeGraphics();
-		this.updateTextFromName();
+		this.render();
 	}
-	updateTextFromName() {
+	render() {
 		let newText = getName(this.primitive);
+		let hideFrame = this.primitive.getAttribute("HideFrame") === "true";
+		if(hideFrame && removeSpacesAtEnd(newText).length !== 0) {
+			this.element.setAttribute("visibility", "hidden");
+		} else {
+			this.element.setAttribute("visibility", "visible");
+		}
 		// Replace 							new line 		and 	space
 		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
 		this.updateHTML(formatedText);
-	}
-	attributeChangeHandler(attributeName, value) {
-		switch(attributeName) {
-			case "name":
-				this.updateTextFromName();
-			break;
-		}
 	}
 }
 
@@ -9200,10 +9199,9 @@ class MacroDialog extends jqDialog {
 	}
 }
 
-class TextAreaDialog extends jqDialog {
-	constructor(primitive) {
-		super();
-		this.primitive = primitive;
+class TextAreaDialog extends DisplayDialog {
+	constructor(id) {
+		super(id);
 		this.setTitle("Text");
 		this.setHtml(`
 		<div style="height: 100%;">
