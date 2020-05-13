@@ -123,6 +123,7 @@ primitiveBank.ellipse.setAttribute("StrokeDashArray", "");
 setValuedProperties(primitiveBank.ellipse);
 
 primitiveBank.textarea = doc.createElement('TextArea');
+primitiveBank.textarea.setAttribute("HideFrame", false);
 setValuedProperties(primitiveBank.textarea);
 
 primitiveBank.display = doc.createElement('Display');
