@@ -9211,15 +9211,17 @@ class TextAreaDialog extends jqDialog {
 			<div class="verticalSpace"></div>
 			<table class="modernTable"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td class="HideFrameCheckbox"><input type="checkbox"/></td>
+				<td class="hideFrameCheckbox"><input type="checkbox"/></td>
 			</tr></table>
 		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
+		this.hideFrameCheckbox = $(this.dialogContent).find(".hideFrameCheckbox");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
 		this.textArea.val(oldText);
+		this.hideFrameCheckbox.prop("checked", this.primitive.getAttribute("HideFrame") === "true");
 	}
 	afterShow() {
 		this.updateSize();
@@ -9240,6 +9242,7 @@ class TextAreaDialog extends jqDialog {
 	makeApply() {
 		let newText = $(this.dialogContent).find(".text").val();
 		setName(this.primitive, newText);
+		this.primitive.setAttribute("HideFrame", this.hideFrameCheckbox.prop("checked"));
 	}
 }
 
