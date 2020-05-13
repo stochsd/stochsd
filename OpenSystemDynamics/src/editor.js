@@ -9211,7 +9211,7 @@ class TextAreaDialog extends jqDialog {
 			<div class="verticalSpace"></div>
 			<table class="modernTable"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td class="hideFrameCheckbox"><input type="checkbox"/></td>
+				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
 			</tr></table>
 		</div>
 		`);		
