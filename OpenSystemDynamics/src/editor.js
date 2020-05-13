@@ -9206,7 +9206,14 @@ class TextAreaDialog extends jqDialog {
 		this.primitive = primitive;
 		this.setTitle("Text");
 		this.setHtml(`
-		<textarea class="text"></textarea>
+		<div style="height: 100%;">
+			<textarea class="text" style="resize: none;"></textarea>
+			<div class="verticalSpace"></div>
+			<table class="modernTable"><tr title="Only hides when there is any text.">
+				<td>Hide frame when there is text:</td>
+				<td class="HideFrameCheckbox"><input type="checkbox"/></td>
+			</tr></table>
+		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
 	}
@@ -9224,7 +9231,7 @@ class TextAreaDialog extends jqDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-20);
+		this.textArea.height(height-40);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
