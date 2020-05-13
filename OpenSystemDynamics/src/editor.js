@@ -3108,7 +3108,8 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 	updateTextFromName() {
 		let newText = getName(this.primitive);
-		let formatedText = newText.replace(/\n/g, "<br/>");
+		// Replace 							new line 		and 	space
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
 		this.updateHTML(formatedText);
 	}
 	attributeChangeHandler(attributeName, value) {
