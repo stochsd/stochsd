@@ -288,12 +288,12 @@ var parmest_view=`
 </div>
 
 <div class="hidden" id="parmest_help">
-    After optimisation or parameter estimation (using e.g. Optim),<br/>
+    After optimization or parameter estimation (using e.g. Optim),<br/>
     you may ask how accurate the estimation of the parameters were.<br/>
     With other words you want confidence intervals around your<br/>
     parameter estimates. This can be achieved by using ParmVar on<br/>
     a stochastic version of the model used for the<br/>
-    optimisation or parameter estimation. <br/>
+    optimization or parameter estimation. <br/>
     <br/>
     WARNING: This requires that the expected value of the<br/>
     objective function of the stochastic model is the same as <br/>
@@ -341,7 +341,7 @@ fitted to the STOCHASTIC MODEL.<br/>
   <br/>
 C) An OBJECTIVE FUNCTION (here V) to compare the DETERMINISTIC MODEL to<br/>
 STOCHASTIC MODEL. V is initiated to zero and will accumulate the squared<br/>
-difference: &Delta;t&middot;(X_s-X)&sup2; for each time-step. V is to be minimised with<br/>
+difference: &Delta;t&middot;(X_s-X)&sup2; for each time-step. V is to be minimized with<br/>
 respect to the parameters, just as with Optim. (But here it is performed<br/>
 many times to allow the stochastic model to display its varying behaviour.)<br/>
 <img style="width: 500px" src="img/ParmEst_model.png"/>

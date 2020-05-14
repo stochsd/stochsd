@@ -124,7 +124,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                   		<table WIDTH="100%"><tr>
                     <td><button style="white-space: nowrap" id="cmd_openmodel" onclick="cmd_open_im_fileview_click()">Select model</button></td>
                     <td WIDTH="100%">
-                        <input id="txt_model_url" disabled="disabled" class="largesmall" style="width: 100%; 10px; background-color: #f2f3ad" type="text" value=""></input>
+                        <input id="txt_model_url" disabled="disabled" class="largesmall" style="width: 100%; background-color: #f2f3ad" type="text" value=""></input>
                     </td>
                     </tr>
                     <tr>
@@ -153,7 +153,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
         </div>
         </div>
 
-        <div style="display: none" class="gui_background" id="frm_histogram" title="StatRes IM Histogram">
+        <div style="display: none" class="gui_background" id="frm_histogram" title="StatRes Histogram">
             <div class="histogram dialog">
                     <div class="minbox">
                         <!--min:<br/>-->
@@ -172,6 +172,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                         <p id="lbl_histogram_min" class="label">Lowest:&nbsp;<input class="txt_histogram_min medium" size="3" class="min" type="text" value="0"/></p>
                         <p id="lbl_histogram_max" class="label">Highest:&nbsp;<input class="txt_histogram_max medium" size="3" class="max" type="text" value="10"/></p>
                     </fieldset>
+                    <button title="Update Histogram" id="cmd_histogram_update" type="button">Update</button>
                     <button title="Auto set lowest and highest" id="cmd_histogram_auto" type="button">Auto</button>
                     <button id="cmd_histogram_print" type="button">Print</button>
                     <button id="cmd_histogram_close" type="button">Close</button>
@@ -184,7 +185,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
             </div>
         </div>
 
-        <div style="display: none" class="gui_background dialog" id="frm_scatterplot" title="StatRes IM Scatter plot">
+        <div style="display: none" class="gui_background dialog" id="frm_scatterplot" title="StatRes Scatter plot">
             <div class="scatterplot dialog">
                     <div class="chart" id="scatterplot_chart" style="margin-top:20px; margin-left:20px; width:300px; height:300px; -moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;">
                     </div>
@@ -199,7 +200,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
         </div>
 
 
-        <div style="display: none" class="gui_background" id="form_help_template" title="StatRes IM Help">
+        <div style="display: none" class="gui_background" id="form_help_template" title="StatRes Help">
             <div class="help_content_container" style="overflow-x: visible; overflow-y: auto;width: 550px;">
             <span class="help_content" style="font-size: 13px">
                 <!--The help content is loaded here-->
@@ -213,12 +214,12 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                 
 
                 
-        <div style="display: none" class="gui_background" id="frm_openurl" title="StatRes IM Open URL">
+        <div style="display: none" class="gui_background" id="frm_openurl" title="StatRes Open URL">
             <p>Copy and paste a model URL here<br/>e.g. http://insightmaker.com/insight/14157</p>
             <input id="txt_open_url" style="position: static;" class="large" type="text">
             <button onclick="cmd_open_url_click()" style="position: static;" id="cmd_open_url" type="button">Open</button>
         </div>
-        <div style="display: none" class="gui_background" id="frm_openmodel" title="StatRes IM Open Model">
+        <div style="display: none" class="gui_background" id="frm_openmodel" title="StatRes Open Model">
             <div style="position: static" class="openmodel">
                 <button class="openbutton" id="cmd_open_form_url" onclick="cmd_open_url_form_click()">Open URL</button>
                 <button class="openbutton" disabled="disabled" id="cmd_open_file">Open file</button><br/>
@@ -272,13 +273,13 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                 After <i>N</i> simulations statistics can be calculated: <br/> <br/>
                 
                 Avg = M = &sum;(X<sub>1</sub>...X<sub>N</sub>)/N. <br/>
-                StdDev. = s = <span style="font-size: 1.2em">&radic;</span><span style="text-decoration: overline">&sum;[(X<sub>i</sub>-M)(X<sub>i</sub>-M)]</span> / (N-1). <br/> <br/>
+                StdDev. = s = <span style="font-size: 1.4em">&radic;</span><span style="border-top:1px solid black">&sum;[(X<sub>i</sub>-M)(X<sub>i</sub>-M)]</span> / <span style="font-size: 1.4em">&radic;</span><span style="border-top:1px solid black">(N-1)</span>. <br/> <br/>
                 
                 Choose 1-sided or 2-sided conf intervals. <br/>
                 Confidence limits for the mean are set by 1-&alpha; (e.g. 90%, 95%, etc.) <br/>
                 The corresponding &lambda; (= &lambda;<sub>&alpha;</sub> or &lambda;<sub>&alpha;/2</sub>) is then calculated (see Figure). <br/> <br/>
 
-                Confidence limits around the SYSTEM mean estimate are calculated using <br/>
+                Confidence limits around a mean estimate are calculated using <br/>
                 the Normal approximation. (This requires at least N=20 simulations.) <br/> <br/>
                 
                 The Confidence Interval is then: <br/> <br/>
@@ -371,49 +372,33 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			</p>
 			
 			<div class="hidden" id="optim_help">
-					<b>Optim</b> is a SIMPLEX OPTIMISER for parameter<br/>
-				  estimation or optimisation of StochSD models.<br/><br/>
-				  To use Optim you have to :<br/><br/>
-				 <p>1. Build or load a StochSD model.</p>
-			
-				<p>2. Specify and <b>Add</b> the Parameters:</p>
-			
-				<p>a. Name the Parameter.</p>
-			
-				<p>b. Specify starting values of the parameter.</p>
-			
-				<p>c. Specify edge size of the initial simplex in the parameter’s direction.</p>
-			
-				<p>d. Press <b>Add</b>.</p>
-			
-				<p> 3. Enter the Name of the Objective Function.</p>
-			
-				<p> 4. Select <b>Minimise</b> or <b>Maximise</b>. (Default=Minimise)</p>
-			
-				<p> 5. Enter Requested Accuracy. </p>
-			
-				<p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>| becomes smaller </p>
-			
-				<p>than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the</p>
-			
-				<p>Objective Function.)</p>
-			
-				<p>[ 6. Enter Maximum Number of Iterations (Default=200). ]</p>
-			
-				<p>[ 7. <b>Lock Seed</b> is only required for a stochastic model (i.e. a model using</p>
-			
-				<p>[ random numbers). The Seed can then be chosen and locked from Optim. ]</p>
-			
-				<p> 8. Press the <b>Optimise</b> button.</p>
-			
-				<p>[ 9. When ended, the optimisation may be continued after ]</p>
-			
-				<p>[ change of Max Iterations or Required Accuracy. ]</p>
-			
-				<p>[ You may also <b>Halt</b> and/or <b>Reset</b> the optimisation. ]</p>
-			
-				<p>10. The <b>Print</b> button prints the Optim form as shown.</p>
-			
+					<b>Optim</b> is a SIMPLEX OPTIMIZER for parameter<br/>
+				  estimation or optimization of StochSD models.<br/><br/>
+                  To use Optim you have to :
+                  <ol>
+                    <li>Build or load a StochSD model.</li>
+                    <li>Specify and <b>Add</b> the Parameters:</li>
+                    <ol type="a">
+                        <li>Name the Parameter.</li>
+                        <li>Specify starting values of the parameter.</li>
+				        <li>Specify edge size of the initial simplex in the parameter’s direction.</li>
+				        <li>Press <b>Add</b>.</li>
+                    </ol>
+                    <li>Enter the Name of the Objective Function.</li>
+                    <li>Select <b>Minimize</b> or <b>Maximize</b>. (Default=Minimize)</li>
+                    <li>Enter Requested Accuracy. </li>
+                    <p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>| becomes smaller<br/>
+                        than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the<br/> 
+                        Objective Function.)</p>
+                    <li>[ Enter Maximum Number of Iterations (Default=200). ]</li>
+                    <li>[ <b>Lock Seed</b> is only required for a stochastic model (i.e. a model using</li>
+                    <p>random numbers). The Seed can then be chosen and locked from Optim. ]</p>
+                    <li>Press the <b>Optimize</b> button.</li>
+                    <li>[ When ended, the optimization may be continued after </li>
+                    <p>change of Max Iterations or Required Accuracy.</p>
+                    <p>You may also <b>Halt</b> and/or <b>Reset</b> the optimization. ]</p>
+                    <li>The <b>Print</b> button prints the Optim form as shown.</li>
+                  </ol>
 				<p><br />
 				</p>
 			</div>

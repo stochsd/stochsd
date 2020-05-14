@@ -78,7 +78,12 @@ background       : rgb(255,0,0) !important;
 }
 
 fieldset.disabled {
-	background-color: lightgray;
+    background-color: lightgray;
+}
+
+fieldset.disabled input, fieldset.disabled button {
+    background: #bbb;
+    cursor: default;
 }
 
 .help_title{
@@ -119,7 +124,7 @@ img.icon {
 }
 
 legend {
- white-space="nowrap"
+ white-space:"nowrap";
 }
 
 fieldset.mediumheight {

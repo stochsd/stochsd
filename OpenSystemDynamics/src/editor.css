@@ -1,0 +1,225 @@
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    /* Force print to show all color, this shows gray color in table at Print Equations */
+    /* -webkit-print-color-adjust: exact; */
+}
+
+
+.hideUnlessNwjs {
+    display: none !important;
+}
+button {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #ccc;
+}
+#recent_title {
+    background-color: #ddd; 
+}
+svg {
+        border-width: 0px;
+}
+svg * {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */
+}
+
+.tooltip {
+    width: 400px;
+}
+
+@media print
+{    
+    #topPanel
+    {
+        display: none !important;
+    }
+}
+#coverEverythingDiv {
+    overflow:hidden;
+    /* Disable heightlighting text */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.toolBoxSeparator {
+    display: inline-block;
+    width: 12px;
+    /*width: 20px;*/
+}
+button.pressed {
+    background-color: #777;
+}
+.toolButton {
+    padding: 0px;
+    margin: 0px;
+    
+    width: 30px;
+    height:  30px;
+
+    /*
+    width: 40px;
+    height:  40px;
+    */
+}
+.toolSupplement {
+    padding: 0px;
+    margin: 0px;
+    
+    width: 30px;
+    height:  30px;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+#btn_timeunit {
+    height:30px; 
+    vertical-align: top; 
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block; 
+    margin-top: 1px;
+}
+button svg {
+    border-width: 0px;
+}
+.fileToolBox {
+    margin-bottom: 5px;
+}
+table {
+    border-collapse: collapse;
+}
+td.text {
+    text-align: left;		
+}
+table.stickyTable {
+    width: 100%;
+}
+table.stickyTable th {
+    position: sticky;
+    top: 0;
+    background-color: #f4f4f4;
+}
+table.stickyTable th::after {
+    /* Make border-bottom since border does follow element with sticky */
+    content: "";
+    position: absolute;
+    background: black;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+table.stickyTable th, table.stickyTable td {
+    border: 1px solid #ddd;
+} 
+table.stickyTable tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+div.verticalSpace {
+    height: 12px;
+}
+.modernTable tr:nth-child(even){
+    background-color: #f4f4f4;
+}
+.modernTable td, .modernTable th {
+    border: 1px solid #ddd;
+    padding: 1px 8px;
+    vertical-align: text-top;
+}
+.invisibleTable table,tr,th, .invisibleTable td {
+    border: 0px;
+    vertical-align: top;
+    padding: 0px 10px;
+}
+input[type="text"] {
+    width: 50px;
+    text-align: right;
+}
+input[type="text"].textInput {
+    text-align: left !important;
+}
+/* Overlays */
+.ui-widget-overlay {
+    background: #000000;
+    opacity: 0.3 !important;
+}
+button.toolButton img {
+    width: 100%; 
+    height: 100%; 
+    display: inline;
+}
+.primitiveSettings .nameField, .primitiveSettings .valueField {
+    width: 200px;
+}
+.accordion div {
+    width: 200px;
+}
+
+.table{
+  display: table;
+  width:100%;
+}
+  .table-row{
+    display: table-row;
+  }
+.table-cell {
+  display: table-cell;
+  padding: 6px;
+  /*border: black 1px solid;*/ /*Turn on for debuggning */
+}
+h3.equationListHeader {
+    margin: 5px 0px 0px 0px;
+}
+
+.accordionCluster ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+.ui-accordion-content {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+.functionHelp {
+    color: black;
+}
+.functionHelp:hover {
+    color: black;
+    text-shadow:0px 0px 1px black;
+}
+.linkedReference {
+    color: black;
+}
+.linkedReference:hover {
+    color: black;
+    text-shadow:0px 0px 1px black;
+}
+.macroText {
+    width: 600px;
+    height: 400px;
+}
+.infoBox {
+    /* background: #f0f0f0; */ 
+    margin: 6px 12px;
+    /* padding: 6px 18px; */
+    min-width: 140px;
+}
+#infoDefinition {
+    font-family: monospace;
+}
+.jqplot-highlighter-tooltip {
+    /* Overwrite CSS highlighter tool tip*/
+    z-index: 2;
+    background: white!IMPORTANT;
+}
+
+.editor-footer div {
+    display: inline;
+}

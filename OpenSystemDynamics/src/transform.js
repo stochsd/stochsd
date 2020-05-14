@@ -4,6 +4,9 @@ This file may distributed and/or modified under the
 terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0.html).
 
 */
+function neg(vector) {
+	return vector.map(x => -x);
+}
 
 function translate(point, translation) {
 	return [point[0]+translation[0], point[1]+translation[1]];

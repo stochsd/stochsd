@@ -19,7 +19,7 @@ var doc = document.implementation.createDocument("","",null);
 // This is a list of all primitives that can be loaded and saved
 // Important: The order of the array is the order which primitives are saved.
 // Therefor Flows and Links must be at the end since they depend on Stocks and Variables for their connections
-const saveblePrimitiveTypes = ["TextArea","Rectangle","Circle","Line","Arrow","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","Flow","Link"];
+const saveblePrimitiveTypes = ["TextArea","Rectangle","Ellipse","Line","Setting","Stock","Variable","Converter","Ghost","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","HistoPlot","Flow","Link"];
 
 // A list of all primitives, inclduing Generic which is used non-savable primitives
 const allPrimitiveTypes = ["Generic"].concat(saveblePrimitiveTypes);
@@ -94,19 +94,36 @@ primitiveBank.xyplot.setAttribute('Primitives', '');
 primitiveBank.xyplot.setAttribute('LineWidth', 2);
 setValuedProperties(primitiveBank.xyplot);
 
+primitiveBank.histoplot = doc.createElement('HistoPlot');
+primitiveBank.histoplot.setAttribute('Primitives', '');
+primitiveBank.histoplot.setAttribute('NumberOfBars', 10);
+primitiveBank.histoplot.setAttribute('NumberOfBarsAuto', true);
+primitiveBank.histoplot.setAttribute('LowerBound', 0);
+primitiveBank.histoplot.setAttribute('LowerBoundAuto', true);
+primitiveBank.histoplot.setAttribute('UpperBound', 1);
+primitiveBank.histoplot.setAttribute('UpperBoundAuto', true);
+primitiveBank.histoplot.setAttribute('ScaleType', "Histogram"); 
+setValuedProperties(primitiveBank.histoplot);
+
 primitiveBank.line = doc.createElement('Line');
+primitiveBank.line.setAttribute("ArrowHeadStart", false);
+primitiveBank.line.setAttribute("ArrowHeadEnd", true);
+primitiveBank.line.setAttribute("StrokeWidth", "3");
+primitiveBank.line.setAttribute("StrokeDashArray", "");
 setValuedProperties(primitiveBank.line);
 
-primitiveBank.arrow = doc.createElement('Arrow');
-setValuedProperties(primitiveBank.arrow);
-
 primitiveBank.rectangle = doc.createElement('Rectangle');
+primitiveBank.rectangle.setAttribute("StrokeWidth", "1");
+primitiveBank.rectangle.setAttribute("StrokeDashArray", "");
 setValuedProperties(primitiveBank.rectangle);
 
-primitiveBank.circle = doc.createElement('Circle');
-setValuedProperties(primitiveBank.circle);
+primitiveBank.ellipse = doc.createElement('Ellipse');
+primitiveBank.ellipse.setAttribute("StrokeWidth", "1");
+primitiveBank.ellipse.setAttribute("StrokeDashArray", "");
+setValuedProperties(primitiveBank.ellipse);
 
 primitiveBank.textarea = doc.createElement('TextArea');
+primitiveBank.textarea.setAttribute("HideFrame", false);
 setValuedProperties(primitiveBank.textarea);
 
 primitiveBank.display = doc.createElement('Display');

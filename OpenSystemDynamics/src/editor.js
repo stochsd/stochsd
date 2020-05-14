@@ -31,11 +31,11 @@ const type_basename = {
 	"timeplot": 	"TimePlot",
 	"compareplot":	"ComparePlot",
 	"xyplot":		"XyPlot",
+	"histoplot":	"HistoPlot",
 	"table":		"Table",
 	"rectangle": 	"Rectangle",
-	"circle": 		"Circle",
+	"ellipse": 		"Ellipse",
 	"line":			"Line",
-	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
 	"stock":			"Stock",
@@ -448,7 +448,7 @@ function getFunctionHelpData() {
 			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), {5 Years})", "Chooses a new random value every five years"]]
 		]],
 		["Random Number Functions", [
-			["Poisson Flow", "PoFlow(##Lambda$$)", "Short for RandPoisson(DT()*Lambda)/DT()."],
+			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/>This should only be used in flows."],
 			["Uniform Distribution", "Rand(##Minimum$$, ##Maximum$$)", "Generates a uniformly distributed random number between the minimum and maximum. The minimum and maximum are optional and default to 0 and 1 respectively.", ["Rand()", "0.7481"]],
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
@@ -2235,6 +2235,13 @@ function getStackTrace() {
 }
 
 class RectangleVisual extends TwoPointer {
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new RectangleDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
 		this.element = svg_rect(
 			this.startx, 
@@ -2269,8 +2276,17 @@ class RectangleVisual extends TwoPointer {
 		for(var key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
+
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
+	}
+	double_click() {
+		this.dialog.show();
 	}
 	updateGraphics() {
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		// Update rect to fit start and end position
 		this.coordRect.x1 = this.startx;
 		this.coordRect.y1 = this.starty;
@@ -2290,17 +2306,31 @@ class RectangleVisual extends TwoPointer {
 }
 
 
-class CircleVisual extends TwoPointer {
+class EllipseVisual extends TwoPointer {
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new EllipseDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
 		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickCircle = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
+		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
 		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.group = svg_group( [this.element, this.clickCircle, this.selector]);
+		this.group = svg_group( [this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
+
+		$(this.group).dblclick(() => {
+			this.double_click();
+		});
+	}
+	double_click() {
+			this.dialog.show();
 	}
 	updateGraphics() {
 		let cx = (this.startx + this.endx)/2;
@@ -2311,10 +2341,12 @@ class CircleVisual extends TwoPointer {
 		this.element.setAttribute("cy", cy);
 		this.element.setAttribute("rx", rx);
 		this.element.setAttribute("ry", ry);
-		this.clickCircle.setAttribute("cx", cx);
-		this.clickCircle.setAttribute("cy", cy);
-		this.clickCircle.setAttribute("rx", rx);
-		this.clickCircle.setAttribute("ry", ry);
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
+		this.clickEllipse.setAttribute("cx", cx);
+		this.clickEllipse.setAttribute("cy", cy);
+		this.clickEllipse.setAttribute("rx", rx);
+		this.clickEllipse.setAttribute("ry", ry);
 		this.selectorCoordRect.x1 = this.startx;
 		this.selectorCoordRect.y1 = this.starty;
 		this.selectorCoordRect.x2 = this.endx;
@@ -2475,6 +2507,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.targetElement.style.position = "absolute";
 		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
+		this.targetElement.style.overflow = "hidden";
 		this.targetElement.innerHTML = "hej";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
@@ -2538,6 +2571,9 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		super.clean();
 		this.targetElement.remove();
 	}
+	double_click() {
+		this.dialog.show();
+	}
 }
 
 class PlotVisual extends HtmlOverlayTwoPointer {
@@ -2552,6 +2588,14 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 			this.chartDiv.style.height = newHeight;
 			this.updateChart();
 		}
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
 	}
 }
 
@@ -2791,17 +2835,6 @@ class TimePlotVisual extends PlotVisual {
 			}
 		});
 	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="color: black; width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-	}
-	double_click() {
-		this.dialog.show();
-	}
 }
 
 
@@ -3011,7 +3044,6 @@ class ComparePlotVisual extends PlotVisual {
 		setTimeout(() => {
 			this.updateChart();
 		 },200);
-		
 	}
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
@@ -3056,17 +3088,6 @@ class ComparePlotVisual extends PlotVisual {
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
 	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-	}
-	double_click() {
-		this.dialog.show();
-	}
 }
 
 class TextAreaVisual extends HtmlOverlayTwoPointer {
@@ -3075,30 +3096,242 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		
 		this.primitive = findID(id);
 		
-		this.dialog = new TextAreaDialog(findID(id));
-		//~ this.dialog.subscribePool.subscribe(()=>{
-			//~ this.render();
-		//~ });
-		this.updateTextFromName();
+		this.dialog = new TextAreaDialog(id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
+		this.render();
 	}
 	makeGraphics() {
 		super.makeGraphics();
-		this.updateTextFromName();
+		this.render();
 	}
-	double_click() {
-		this.dialog.show();
-	}
-	updateTextFromName() {
+	render() {
 		let newText = getName(this.primitive);
-		let formatedText = newText.replace(/\n/g, "<br/>");
+		let hideFrame = this.primitive.getAttribute("HideFrame") === "true";
+		if(hideFrame && removeSpacesAtEnd(newText).length !== 0) {
+			this.element.setAttribute("visibility", "hidden");
+		} else {
+			this.element.setAttribute("visibility", "visible");
+		}
+		// Replace 							new line 		and 	space
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
 		this.updateHTML(formatedText);
 	}
-	attributeChangeHandler(attributeName, value) {
-		switch(attributeName) {
-			case "name":
-				this.updateTextFromName();
-			break;
+}
+
+class HistoPlotVisual extends PlotVisual {
+	constructor(id,type,pos) {
+		super(id,type,pos);
+		this.runHandler = () => {
+			this.render();
 		}
+		RunResults.subscribeRun(id, this.runHandler);
+		this.plot = null;
+
+		this.dialog = new HistoPlotDialog(id);
+		this.dialog.subscribePool.subscribe(() => {
+			this.render();
+		});
+	}
+
+	calcHistogram(results) {
+		let histogram = {};
+		histogram.data = results.map(row => Number(row[1]));
+		
+		if (this.primitive.getAttribute("LowerBoundAuto") === "true") {
+			histogram.min = Math.min.apply(null, histogram.data);
+			this.primitive.setAttribute("LowerBound", histogram.min);
+		} else {
+			histogram.min = Number(this.primitive.getAttribute("LowerBound"));
+		}
+		if (this.primitive.getAttribute("UpperBoundAuto") === "true") {
+			histogram.max = Math.max.apply(null, histogram.data);
+			histogram.max += (histogram.max-histogram.min)*0.0001;
+			this.primitive.setAttribute("UpperBound", histogram.max);
+		} else {
+			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
+		}
+		if (this.primitive.getAttribute("NumberOfBarsAuto" === "true")) {
+			histogram.numBars = Number(getDefaultAttributeValue("histoplot", "NumberOfBars"));
+			this.primitive.setAttribute("NumberOfBars", histogram.numBars);
+		} else {
+			histogram.numBars = this.primitive.getAttribute("NumberOfBars");
+		}
+
+		histogram.intervalWidth = (histogram.max-histogram.min)/histogram.numBars; 
+		histogram.bars = [];
+		// Data points below resp. below the lower and upper boundary 
+		histogram.below_data = [];
+		histogram.above_data = [];
+
+		for(i = 0; i < histogram.numBars; i++) {
+			histogram.bars.push({
+				lowerLimit: histogram.min+	  i*histogram.intervalWidth,
+				upperLimit: histogram.min+(i+1)*histogram.intervalWidth,
+				data: []
+			});
+		}
+		for(let dataPoint of histogram.data) {
+			let pos = Math.floor((dataPoint-histogram.min)/histogram.intervalWidth);
+			if(0 <= pos && pos < histogram.numBars) {
+				histogram.bars[pos].data.push(dataPoint);
+			} else if (pos < 0) {
+				histogram.below_data.push(dataPoint);
+			} else {
+				histogram.above_data.push(dataPoint);
+			}
+		}
+		return histogram;
+	}
+
+	render() {
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		if (idsToDisplay.length === 0) {
+			this.chartDiv.innerHTML = "<p>No primitives selected.</p>";
+			return;
+		} else if (idsToDisplay.length > 1) {
+			this.chartDiv.innerHTML = (`
+				<p><b>${idsToDisplay.map(findID).map(getName)}</b> selected. <br/>
+				Exactly one primitive must be selected</p>
+			`);
+			return;
+		}
+		let results = RunResults.getSelectiveIdResults(idsToDisplay);
+
+		if (results.length === 0) {
+			// We can't render anything with no data	
+			return;
+		}
+
+		this.serieArray = [];
+		this.labels = [];
+		this.ticks = [];
+		
+		// Declare series and settings for series
+		this.serieSettingsArray = [];
+		
+		this.histogram = this.calcHistogram(results);
+		let serie = [];
+		for(let i = 0; i < this.histogram.bars.length; i++) {
+			let bar = this.histogram.bars[i];
+			let barValue = bar.data.length;
+			let usePDF = (this.primitive.getAttribute("ScaleType") === "PDF");
+			if (usePDF) {
+				barValue = bar.data.length/this.histogram.data.length;
+			} 
+			//		1___2___3		  ______
+			// _____|		|1___2___3		...
+
+			// (1)
+			serie.push([bar.lowerLimit, barValue]);
+			this.labels.push("");
+			this.ticks.push(bar.lowerLimit.toFixed(2));
+
+			// (2) label here 
+			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
+			this.labels.push(usePDF ? barValue.toFixed(3): barValue.toString());
+			
+			// (3)
+			serie.push([bar.upperLimit, barValue]);
+			this.labels.push("");
+		}
+
+		serie.push([this.histogram.max, 0]);
+		this.labels.push("");
+		this.ticks.push(this.histogram.max.toFixed(2));
+
+		this.serieArray.push(serie);
+		let targetPrim = findID(idsToDisplay[0]);
+		
+		// Make serie settings
+		this.serieSettingsArray.push(
+			{
+				color: targetPrim.getAttribute("color") ? targetPrim.getAttribute("color") : "black",
+				shadow: false,
+				pointLabels: {
+					show: true,
+					labels: this.labels
+				}
+			}
+		);
+
+		// We need to ad a delay and respond to events first to make this work in firefox
+		setTimeout(() => {
+			this.updateChart();
+		 },200);
+	}
+	updateChart() {
+		if (this.serieArray == null) {
+			// The series are not initialized yet
+			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>No data. Run to create data!";
+			return;
+		}
+		if (this.dialog.getIdsToDisplay().length !== 1) {
+			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>Exactly one primitives must be selected!";
+			return;
+		}
+		$(this.chartDiv).empty();
+
+		
+		let scaleType = this.primitive.getAttribute("ScaleType");
+		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+
+		$.jqplot.config.enablePlugins = true;
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			series: this.serieSettingsArray,
+			sortData: false,
+			grid: {
+				background: "white"
+			},
+			seriesDefaults: {
+				step: true,
+				fill: true
+			},
+			axes: {
+				xaxis: {
+					tickOptions: {
+						// alternative way of showing ticks, will be displayed as: <value≤
+						// Tick placement can not be choosen with this method
+						// axes.xaxis.ticks attribute must be removed for this
+						// formatString: '<%5p≤'
+					}, 
+					label: `${scaleType} of ${targetPrimName}`,
+					pad: 0,
+					ticks: this.ticks
+				},
+				yaxis: {
+					min: 0
+				}
+			},
+			highlighter: {
+				show: false
+			}
+		});
+		
+		let outsideLimitInfoID = [`${getID(this.primitive)}_histoBelow`, `${getID(this.primitive)}_histoAbove`];
+		$(this.chartDiv).append(`
+				<div id="${outsideLimitInfoID[0]}">
+					${this.histogram.below_data.length} values below ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}
+				</div>
+		`);
+		$(this.chartDiv).append(`
+				<div id="${outsideLimitInfoID[1]}">
+					${this.histogram.above_data.length} values above ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
+				</div>
+		`);
+		$(`#${outsideLimitInfoID[0]}`).css("left", "8px");
+		$(`#${outsideLimitInfoID[1]}`).css("right", "8px");
+		for (let i in outsideLimitInfoID) {
+			$(`#${outsideLimitInfoID[i]}`).css("z-index", "9999");
+			$(`#${outsideLimitInfoID[i]}`).css("position", "absolute");
+			$(`#${outsideLimitInfoID[i]}`).css("padding", "4px 8px");
+			$(`#${outsideLimitInfoID[i]}`).css("bottom",   "0px");
+			$(`#${outsideLimitInfoID[i]}`).css("background", "#f0f0f0");
+			// $(`#${outsideLimitInfoID[i]}`).css("border", "1px solid gray");
+			$(`#${outsideLimitInfoID[i]}`).css("font-size", "0.8em");
+		}
+		
 	}
 }
 
@@ -3230,11 +3463,11 @@ class XyPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>No data. Run to create data!";
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>Exactly two primitives must be selected!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>Exactly two primitives must be selected!";
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -3282,69 +3515,67 @@ class XyPlotVisual extends PlotVisual {
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
 	}
+}
+
+class LineVisual extends TwoPointer {
+	constructor(id, type, pos) {
+		super(id, type, pos);
+		this.dialog = new LineDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
-		super.makeGraphics();
+		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
+		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
+		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadStart.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadEnd.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
 		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
+		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
+		this.group.setAttribute("node_id",this.id);
+		this.element_array = [this.line, this.arrowHeadEnd];
+		for(var key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
 	}
 	double_click() {
 		this.dialog.show();
 	}
-}
-
-class LineVisual extends TwoPointer {
-	makeGraphics() {
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
-		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
-		this.clickLine.setAttribute("stroke-width", "10");
-		this.group = svg_group([this.element, this.clickLine]);
-		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.element];
-		for(var key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
-		}
-	}
 	updateGraphics() {
-		this.element.setAttribute("x1",this.startx);
-		this.element.setAttribute("y1",this.starty);
-		this.element.setAttribute("x2",this.endx);
-		this.element.setAttribute("y2",this.endy);
-		this.clickLine.setAttribute("x1", this.startx);
-		this.clickLine.setAttribute("y1", this.starty);
-		this.clickLine.setAttribute("x2", this.endx);
-		this.clickLine.setAttribute("y2", this.endy);
-	}
-}
+		this.line.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
+		this.line.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
 
-class ArrowVisual extends TwoPointer {
-	makeGraphics() {
-		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
-		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHead = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHead.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		let lineStartPos = [this.startx, this.starty];
+		let lineEndPos = [this.endx, this.endy];
+		let arrowHeadStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowHeadEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		this.arrowHeadStart.setAttribute("visibility", arrowHeadStart ? "visible" : "hidden");
+		this.arrowHeadEnd.setAttribute("visibility", arrowHeadEnd ? "visible" : "hidden");
+		if (arrowHeadStart || arrowHeadEnd) {
+			/* Shorten line as not to go past arrowHeadEnd */
+			let shortenAmount = 12;
+			let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
+			let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
+			let endOffset = rotate([shortenAmount, 0], sine, cosine);
+			if (arrowHeadStart) {
+				lineStartPos = translate(neg(endOffset), [this.startx, this.starty]);
+				this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
+				this.arrowHeadStart.update();
+			}
+			if (arrowHeadEnd) {
+				lineEndPos = translate(endOffset, [this.endx, this.endy]);
+				this.arrowHeadEnd.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
+				this.arrowHeadEnd.update();
+			}
+		}
 		
-		this.group = svg_group([this.line, this.arrowHead, this.clickLine]);
-		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.line, this.arrowHead];
-		for(var key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
-		}
-	}
-	updateGraphics() {
-		this.arrowHead.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
-		this.arrowHead.update();
-		this.line.setAttribute("x1",this.startx);
-		this.line.setAttribute("y1",this.starty);
-		/* Shorten line as not to go past arrowHead */
-		let shortenAmount = 12;
-		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
-		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
-		let endOffset = rotate([shortenAmount, 0], sine, cosine);
-		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
-		/***/
+		this.line.setAttribute("x1", lineStartPos[0]);
+		this.line.setAttribute("y1", lineStartPos[1]);
 		this.line.setAttribute("x2", lineEndPos[0]);
 		this.line.setAttribute("y2", lineEndPos[1]);
 		this.clickLine.setAttribute("x1", this.startx);
@@ -3354,7 +3585,8 @@ class ArrowVisual extends TwoPointer {
 	}
 	setColor(color) {
 		super.setColor(color);
-		this.arrowHead.setAttribute("fill", color);
+		this.arrowHeadStart.setAttribute("fill", color);
+		this.arrowHeadEnd.setAttribute("fill", color);
 	}
 }
 
@@ -3642,10 +3874,10 @@ class BaseTool {
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
-	static mouseMove(x,y, ctrlKey) {
+	static mouseMove(x,y, shiftKey) {
 		// Is triggered when mouse moves
 	}
-	static leftMouseUp(x,y, ctrlKey) {
+	static leftMouseUp(x,y, shiftKey) {
 		// Is triggered when mouse goes up for this tool
 	}
 	static rightMouseDown(x,y) {
@@ -4097,11 +4329,11 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 	}
-	static mouseMove(x, y, ctrlKey) {
+	static mouseMove(x, y, shiftKey) {
 		if (this.current_connection == null) {
 			return;
 		}
-		if (ctrlKey) {
+		if (shiftKey) {
 			let sideX = x - this.current_connection.startx;
 			let sideY = y - this.current_connection.starty;
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
@@ -4126,8 +4358,8 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.update();
 	}
-	static leftMouseUp(x, y, ctrlKey) {
-		this.mouseMove(x, y, ctrlKey);
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseMove(x, y, shiftKey);
 		if (this.current_connection.end_anchor == null) {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_end_anchor();
@@ -4259,13 +4491,13 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
-class CircleTool extends TwoPointerTool {
+class EllipseTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Circle", null, null);
-		this.current_connection = new CircleVisual(this.primitive.id, this.getType(), [x,y]);
+		this.primitive = createConnector(name, "Ellipse", null, null);
+		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y]);
 	}
 	getType() {
-		return "circle";
+		return "ellipse";
 	}
 }
 
@@ -4279,16 +4511,6 @@ class LineTool extends TwoPointerTool {
 	}
 }
 LineTool.init();
-
-class ArrowTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Arrow", null, null);
-		this.current_connection = new ArrowVisual(this.primitive.id, this.getType(), [x,y]);
-	}
-	static getType() {
-		return "arrow";
-	}
-}
 
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
@@ -4387,6 +4609,27 @@ class XyPlotTool extends TwoPointerTool {
 	}
 }
 XyPlotTool.init();
+
+
+class HistoPlotTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "HistoPlot", null, null);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x,y]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x,y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x,y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "histoplot";
+	}
+}
 
 function attach_selected_anchor(selectedAnchor) {
 	[x,y]=selectedAnchor.get_pos();
@@ -4868,7 +5111,7 @@ function mouseMoveHandler(event) {
 	}
 	
 	if (leftmouseisdown) {
-		currentTool.mouseMove(x, y, event.ctrlKey);
+		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 }
 function mouseUpHandler(event) {
@@ -4883,7 +5126,7 @@ function mouseUpHandler(event) {
 			var x = event.pageX-offset.left;
 			var y = event.pageY-offset.top;
 			
-			currentTool.leftMouseUp(x, y, event.ctrlKey);
+			currentTool.leftMouseUp(x, y, event.shiftKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
@@ -4958,13 +5201,13 @@ class ToolBox {
 			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
-			"circle":CircleTool,
+			"ellipse":EllipseTool,
 			"line":LineTool,
-			"arrow":ArrowTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
+			"histoplot":HistoPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
 			"step":StepTool,
@@ -5190,8 +5433,7 @@ $(window).load(function() {
 		equationList.show();
 	});
 	$("#btn_print_model").click(function() {
-		unselect_all();
-		hideAndPrint([$("#topPanel").get(0)]);
+		printDiagram();
 	});
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
@@ -5446,6 +5688,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Table":
 		case "XyPlot":
+		case "HistoPlot":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5454,6 +5697,9 @@ function syncVisual(tprimitive) {
 				break;
 				case "XyPlot":
 					dimClass = XyPlotVisual;
+				break;
+				case "HistoPlot":
+					dimClass = HistoPlotVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);
@@ -5541,8 +5787,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Line":
 		case "Rectangle":
-		case "Circle":
-		case "Arrow":
+		case "Ellipse":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5552,11 +5797,8 @@ function syncVisual(tprimitive) {
 				case "Rectangle":
 					dimClass = RectangleVisual;
 				break;
-				case "Circle":
-					dimClass = CircleVisual;
-				break;
-				case "Arrow":
-					dimClass = ArrowVisual;
+				case "Ellipse":
+					dimClass = EllipseVisual;
 				break;
 			}
 			var source_position = getSourcePosition(tprimitive);
@@ -5879,6 +6121,30 @@ function setColorToSelection(color) {
 	History.storeUndoState();
 }
 
+function printDiagram() {
+	unselect_all();
+	updateInfoBar();
+	// Write filename and date into editor-footer 
+	let fileName = fileManager.fileName;
+	
+	let d = new Date();
+	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+	let hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
+	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
+	let fullDate = `${d.getFullYear().toString()}-${month}-${day} ${hours}:${minutes} (yyyy-mm-dd hh:mm)`;
+
+	if (fileName.length > 0) {
+		$(".editor-footer-filepath").html(fileName);
+	} else {
+		$(".editor-footer-filepath").html("Unnamed file");
+	}
+	
+	$(".editor-footer-date").html(fullDate);
+
+	hideAndPrint([$("#topPanel").get(0)]);
+}
+
 function removeNewLines(string) {
 	let newString = string;
 	newString = newString.replace(/\\n/g, " ");
@@ -5942,6 +6208,7 @@ function updateInfoBar() {
 				case("compareplot"):
 				case("table"):
 				case("xyplot"):
+				case("histoplot"):
 					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 				break;
@@ -7525,10 +7792,124 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 }
 
+
+class HistoPlotDialog extends DisplayDialog {
+	constructor(id) {
+		super(id);
+		this.setTitle("Histogram Plot Properties");
+	}
+	renderHistogramOptionsHtml() {
+		return(`
+			<table class="modernTable">
+				<tr>
+					<th></th>
+					<th>Value</th>
+					<th>Auto</th>
+				</tr>
+				<tr>
+					<td>Upper bound</td>
+					<td><input class="upperBoundField enterApply" type="text"/></td>
+					<td><input class="upperBoundCheckbox enterApply" type="checkbox" ></td>
+				</tr>
+				<tr>
+					<td>Lower bound</td>
+					<td><input class="lowerBoundField enterApply" type="text"/></td>
+					<td><input class="lowerBoundCheckbox enterApply" type="checkbox"></td>
+				</tr>
+				<tr>
+					<td>No. Bars</td>
+					<td><input class="numBarsField enterApply" type="text"/></td>
+					<td><input class="numBarsCheckbox enterApply" type="checkbox"></td>
+				</tr>
+			</table>
+		`);
+	}
+	histogramOptionsBeforeShow() {
+
+		let bindAndSetValue = (checkboxTag, fieldTag, attributeName) => {
+			// set values at start 
+			$(this.dialogContent).find(fieldTag).prop("value", this.primitive.getAttribute(attributeName));
+			let auto = (this.primitive.getAttribute(`${attributeName}Auto`) === "true");
+			$(this.dialogContent).find(checkboxTag).prop("checked", auto);
+			$(this.dialogContent).find(fieldTag).prop("disabled", auto);
+			
+			// bind checkbox click
+			$(this.dialogContent).find(checkboxTag).click((event) => {
+				$(this.dialogContent).find(fieldTag).prop("disabled", $(event.target).prop("checked"));
+			});
+		}
+
+		bindAndSetValue(".upperBoundCheckbox", ".upperBoundField", "UpperBound");
+		bindAndSetValue(".lowerBoundCheckbox", ".lowerBoundField", "LowerBound");
+		bindAndSetValue(".numBarsCheckbox", ".numBarsField", "NumberOfBars");
+	}
+	renderHistOrPDFHtml() {
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>
+					<b>Type:</b>
+						<select class="scaleType enterApply">
+							<option ${this.primitive.getAttribute("ScaleType") === "Histogram" ? "selected": ""} value="Histogram" >Histogram</option>
+							<option ${this.primitive.getAttribute("ScaleType") === "PDF" ? "selected": ""} value="PDF" >P.D.F</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	beforeShow() {
+		this.setHtml(`
+			<div class="table">
+				<div class="table-row">
+					<div class="table-cell">
+						${this.renderPrimitiveListHtml()}
+					</div>
+					<div class="table-cell">
+						${this.renderHistogramOptionsHtml()}
+						<div class="verticalSpace"></div>
+						${this.renderHistOrPDFHtml()}
+					</div>
+				</div>
+			</div>`
+		);
+		this.bindPrimitiveListEvents();
+
+		this.histogramOptionsBeforeShow();
+	}
+	makeApply() {
+		super.makeApply();
+		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
+		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scaleType :selected").val());
+		let upperBoundAuto = $(this.dialogContent).find(".upperBoundCheckbox").prop("checked");
+		let lowerBoundAuto = $(this.dialogContent).find(".lowerBoundCheckbox").prop("checked");
+		let numBarsAuto = $(this.dialogContent).find(".numBarsCheckbox").prop("checked");
+		let upperBound = $(this.dialogContent).find(".upperBoundField").val();
+		let lowerBound = $(this.dialogContent).find(".lowerBoundField").val();
+		let numBars = $(this.dialogContent).find(".numBarsField").val();
+		
+		this.primitive.setAttribute("UpperBoundAuto", upperBoundAuto);
+		this.primitive.setAttribute("LowerBoundAuto", lowerBoundAuto);
+		this.primitive.setAttribute("NumberOfBarsAuto", numBarsAuto);
+
+		if ( ! upperBoundAuto && ! isNaN(upperBound) && ! isNaN(lowerBound) && Number(lowerBound) < Number(upperBound) ) {
+			this.primitive.setAttribute("UpperBound", upperBound);
+		}
+
+		if ( ! lowerBoundAuto && ! isNaN(lowerBound) && ! isNaN(upperBound) && Number(lowerBound) < Number(upperBound) ) {
+			this.primitive.setAttribute("LowerBound", lowerBound);
+		}
+		
+		if ( ! numBarsAuto && ! isNaN(numBars) && numBars > 0) {
+			this.primitive.setAttribute("NumberOfBars", numBars);
+		}
+	}
+}
+
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
-		this.setTitle("XY-plot Properties");
+		this.setTitle("XY Plot Properties");
 
 		this.markersChecked = false;
 		this.lineChecked = true;
@@ -8076,6 +8457,93 @@ class TimeUnitDialog extends jqDialog {
 				}
 			}
 		};
+	}
+}
+
+
+class GeometryDialog extends DisplayDialog {
+	renderStrokeHtml() {
+		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
+		let primWidth = this.primitive.getAttribute("StrokeWidth");
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>Line Width: </td>
+					<td>
+						<select class="widthSelect enterApply">
+						${strokeWidths.map(w => (`
+							<option value="${w}" ${primWidth === w ? "selected" : ""}>${w}</option>
+						`))}
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Dashes: </td>
+					<td>
+						<select class="dashSelect enterApply">
+						<option value="" 	${this.primitive.getAttribute("StrokeDashArray") === "" ? "selected" : ""}	 >––––––</option>
+						<option value="8 4" ${this.primitive.getAttribute("StrokeDashArray") === "8 4" ? "selected" : ""}>– – – –</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+
+	beforeShow() {
+		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
+	}
+	makeApply() {
+		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
+		let strokeWidth = $(this.dialogContent).find(".widthSelect :selected").val();
+		this.primitive.setAttribute("StrokeDashArray", dashArray);
+		this.primitive.setAttribute("StrokeWidth", strokeWidth);
+	}
+}
+
+class RectangleDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Rectangle Properties");
+		super.beforeShow();
+	}
+}
+
+class EllipseDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Ellipse Properties");
+		super.beforeShow();
+	}
+}
+
+class LineDialog extends GeometryDialog {
+	renderArrowCheckboxHtml() {
+		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>Show Start Arrow at Start:</td>
+					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
+				</tr>
+				<tr>
+					<td>Show Arrow at End:</td>
+					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
+				</tr>
+			</table>
+		`);
+	}
+	beforeShow() {
+		this.setTitle("Arrow/Line Properties");
+		this.setHtml(`<div>
+			${this.renderArrowCheckboxHtml()}
+			<div class="verticalSpace"></div>
+			${this.renderStrokeHtml()}
+		</div>`);
+	}
+	makeApply() {
+		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrowStartCheck").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrowEndCheck").prop("checked"));
+		super.makeApply();
 	}
 }
 
@@ -8642,10 +9110,25 @@ class EquationEditor extends jqDialog {
 	}
 }
 
+function printContentInNewWindow(htmlContent) {
+	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
+	printWindow.document.write('<html><head><title>Equation List</title>');
+	printWindow.document.write('<link rel="stylesheet" type="text/css" href="editor.css">');
+	printWindow.document.write('</head><body >');  
+	printWindow.document.write(htmlContent);
+	printWindow.document.write('</body></html>');  
+	
+	setTimeout(() => {
+		printWindow.print();
+		printWindow.close();
+	},400);
+}
+
 function hideAndPrint(elementsToHide) {
 	for(let element of elementsToHide) {
 		$(element).hide();
 	}
+	console.trace();
 	window.print();
 	for(let element of elementsToHide) {
 		$(element).show();
@@ -8716,19 +9199,27 @@ class MacroDialog extends jqDialog {
 	}
 }
 
-class TextAreaDialog extends jqDialog {
-	constructor(primitive) {
-		super();
-		this.primitive = primitive;
+class TextAreaDialog extends DisplayDialog {
+	constructor(id) {
+		super(id);
 		this.setTitle("Text");
 		this.setHtml(`
-		<textarea class="text"></textarea>
+		<div style="height: 100%;">
+			<textarea class="text" style="resize: none;"></textarea>
+			<div class="verticalSpace"></div>
+			<table class="modernTable"><tr title="Only hides when there is any text.">
+				<td>Hide frame when there is text:</td>
+				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
+			</tr></table>
+		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
+		this.hideFrameCheckbox = $(this.dialogContent).find(".hideFrameCheckbox");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
 		this.textArea.val(oldText);
+		this.hideFrameCheckbox.prop("checked", this.primitive.getAttribute("HideFrame") === "true");
 	}
 	afterShow() {
 		this.updateSize();
@@ -8740,7 +9231,7 @@ class TextAreaDialog extends jqDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-20);
+		this.textArea.height(height-40);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
@@ -8749,6 +9240,7 @@ class TextAreaDialog extends jqDialog {
 	makeApply() {
 		let newText = $(this.dialogContent).find(".text").val();
 		setName(this.primitive, newText);
+		this.primitive.setAttribute("HideFrame", this.hideFrameCheckbox.prop("checked"));
 	}
 }
 
@@ -8761,7 +9253,8 @@ class EquationListDialog extends jqDialog {
 		this.dialogParameters.buttons = {
 			"Print Equations": () =>
 			{
-				hideAndPrint([$("#coverEverythingDiv").get(0)]);
+				let contentHTML = $(this.dialogContent).html();
+				printContentInNewWindow(contentHTML);
 			},
 			"Leave":() =>
 			{
@@ -8824,57 +9317,83 @@ class EquationListDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml(prims, typeName, valueName) {
-		return `
-			<h3 class="equationListHeader">${typeName}</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><th>${valueName}</th></tr>
-				${prims.map(p => (`<tr><td>${makePrimitiveName(getName(p))}</td><td>${getValue(p)}</td></tr>`)).join('')}
-			</table>
-		`;
+	renderPrimitiveListHtml(info) {
+		return (`
+		<h3 class="equationListHeader">${info.title}</h3>
+		<table class="modernTable">
+			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
+				${info.primitives.map(p => `<tr>
+					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">
+						${col.cellFunc(p)}
+					</td>`).join('')}
+			</tr>`).join('')}
+		</table>
+		`);
 	}
 	beforeShow() {
 		let Stocks = primitives("Stock");
 		let stockHtml = "";
 		if (Stocks.length > 0) {
-			stockHtml = this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+			stockHtml = this.renderPrimitiveListHtml({
+				title: "Stocks", 
+				primitives: Stocks,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Flows = primitives("Flow");
 		let flowHtml = "";
 		if (Flows.length > 0) {
-			flowHtml = this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+			flowHtml = this.renderPrimitiveListHtml({
+				title: "Flows", 
+				primitives: Flows,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
+			variableHtml = this.renderPrimitiveListHtml({
+				title: "Auxiliaries & Parameters", 
+				primitives: Variables,
+				tableColumns: [
+					{ header: "Name", 	cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Value", 	cellFunc: getValue, style: "font-family: monospace;" }
+				]
+			});
 		}
 
 		let Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
-			converterHtml = (`
-				<h3 class="equationListHeader">Converter</h3>
-				<table class="modernTable">
-					<tr><th>Name</th><th>Data</th><th>Ingoing Link</th></tr>
-					${Converters.map(p => (`<tr>
-						<td>${makePrimitiveName(getName(p))}</td>
-						<td style="max-width: 400px; word-break: break-all;">${getValue(p)}</td>
-						<td>${findLinkedInPrimitives(p.id).length !== 0 ? getName(findLinkedInPrimitives(p.id)[0]) : "None"}</td>
-					</tr>`)).join('')}
-				</table>
-			`);
+			converterHtml = this.renderPrimitiveListHtml({
+				title: "Converter",
+				primitives: Converters,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Data", 			cellFunc: getValue, style: "font-family: monospace; max-width: 400px; word-break: break-word;" },
+					{ header: "Ingoing Link", 	cellFunc: (prim) => { return findLinkedInPrimitives(prim.id).length !== 0 ? getName(findLinkedInPrimitives(prim.id)[0]) : "None"; } }
+				]
+			});
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
 		if (numberOfPrimitives == 0) {
-			this.setHtml("This model is emptry. Build a model to show equation list");	
+			this.setHtml("This model is empty. Build a model to show equation list");	
 			return;		
 		}
 
 		let htmlOut = `
+			<h1>Equation List</h1>
 			<div style="display:flex;">
 				<div>
 					${this.renderSpecsInfoHtml()}
