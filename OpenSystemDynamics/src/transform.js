@@ -60,6 +60,14 @@ function rotatePoints(points, sine, cosine) {
 	return newPoints;
 }
 
+
+function scale(point, pivot, scaleFactor) {
+	let a = translate(point, neg(pivot));
+	let b = [a[0]*scaleFactor, a[1]*scaleFactor];
+	return translate(b, pivot);
+}
+
+
 // Returns "north, east, west or south. Closest direction to the two points vector."
 function neswDirection(point1, point2) {
 	let sine = sin(point1, point2);

@@ -3586,6 +3586,10 @@ class LineVisual extends TwoPointer {
 class LinkVisual extends BaseConnection {
 	constructor(id, type, pos) {
 		super(id, type, pos);
+		// Used to keep a local coordinate system between start- and endAnchor
+		// startLocal = [0,0], endLocal = [1,0]
+		this.b1Local = [0.3, 0.5];
+		this.b2Local = [0.7, -0.5];
 	}
 	unselect() {
 		this.selected = false;
@@ -3811,6 +3815,30 @@ class LinkVisual extends BaseConnection {
 		this.afterAnchorUpdate(anchorTypeEnum.bezier1);
 		this.afterAnchorUpdate(anchorTypeEnum.bezier2);	
 	}
+	worldToLocal(worldPos) {
+		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pWorld = translate(worldPos, neg(origoWorld));
+		let RS_pWorld = rotate(S_pWorld, -sine, cosine);
+		let posWorld = scale(RS_pWorld, [0,0], 1/scaleFactor);
+		return posWorld;
+	}
+	localToWorld(localPos) {
+		// worldPos(localPos) = T*R*S*localPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pLocal = scale(localPos, [0,0], scaleFactor);
+		let RS_pLocal = rotate(S_pLocal, sine, cosine);
+		let posWorld = translate(RS_pLocal, origoWorld);
+		return posWorld;
+	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
@@ -3818,7 +3846,7 @@ class LinkVisual extends BaseConnection {
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
 		
-		//let connectionCenter = this.b1_anchor.get_pos();
+		let anchorMoved = false;
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
 			if (this.getStartAttach().get_pos) {
@@ -3827,6 +3855,7 @@ class LinkVisual extends BaseConnection {
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
+					anchorMoved = true;
 				}
 			}
 		}
@@ -3837,8 +3866,13 @@ class LinkVisual extends BaseConnection {
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
+					anchorMoved = true;
 				}
 			}
+		}
+		if (anchorMoved) {
+			this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
+			this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
 		}
 		super.update();
 	}
