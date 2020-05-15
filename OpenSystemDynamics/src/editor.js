@@ -4877,7 +4877,8 @@ function update_relevant_objects(ids) {
 		object_array[key].update();
 	}
 	for(var key in connection_array) {
-		if(connection_array[key].type === "table") {
+		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot","table"];
+		if( onlyIfRelevant.includes(connection_array[key].type) ) {
 			if (ids.includes(key)) {
 				connection_array[key].update();
 			}
