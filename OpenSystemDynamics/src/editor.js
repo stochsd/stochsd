@@ -758,10 +758,6 @@ function default_double_click(id) {
 	equationEditor.open(id, ".valueField");
 }
 
-function calc_distance(xdiff, ydiff) {
-	return Math.sqrt((xdiff*xdiff) + (ydiff*ydiff));
-}
-
 class BaseObject {
 	constructor(id,type,pos) {
 		this.id = id;
@@ -1205,11 +1201,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 	}
 }
 
-function pointDistance(point1,point2) {
-	let distance = calc_distance(point1[0]-point2[0], point1[1]-point2[1]);
-	return distance;
-}
-
 function safeDivision(nominator, denominator) { 
 	// Make sure division by Zero does not happen 
 	if (denominator == 0) {
@@ -1448,7 +1439,7 @@ class VariableVisual extends BasePrimitive {
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
-		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
 		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
@@ -1931,7 +1922,7 @@ class FlowVisual extends BaseConnection {
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.getVariablePos();
-		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
 		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
