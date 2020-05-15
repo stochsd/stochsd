@@ -3879,7 +3879,7 @@ class LinkVisual extends BaseConnection {
 				}
 			}
 		}
-		if (anchorMoved) {
+		if (this.getStartAttach() && this.getEndAttach() && anchorMoved) {
 			this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
 			this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
 		}
