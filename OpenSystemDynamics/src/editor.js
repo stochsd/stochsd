@@ -6763,37 +6763,6 @@ function xAlert(message,closeHandler) {
 	dialog.show();
 }
 
-
-class StayLeaveDialog extends jqDialog {
-	constructor(message, title, dialogToLeave, closeHandler) {
-		super();
-		this.setTitle(title);
-		this.message = message;
-		this.setHtml(message);
-		this.closeHandler = closeHandler;
-		this.answer = "stay";
-		this.dialogToLeave = dialogToLeave;
-	}
-	afterClose() {
-		if (this.closeHandler) {
-			this.closeHandler(this.answer, dialog);
-		}
-	}
-	beforeCreateDialog() {
-		this.dialogParameters.buttons = {
-			"Stay":() => {
-				this.answer = "stay";
-				$(this.dialog).dialog('close');
-			},
-			"Leave":() => {
-				this.answer = "leave";
-				$(this.dialog).dialog('close');
-				$(this.dialogToLeave).dialog('close');
-			}
-		};
-	}
-}
-
 class YesNoDialog extends jqDialog {
 	constructor(message,closeHandler) {
 		super();
@@ -8782,7 +8751,6 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
-		this.StayLeaveWindow = new StayLeaveDialog("No Message", "No Title", this.dialog);
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -9054,34 +9022,11 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
-	applyChanges() {
-		let err = this.makeApply();
-		if (err) {
-			this.StayLeaveWindow.setTitle("Definition Error");
-			this.StayLeaveWindow.setHtml(`
-				${ValueErrorToString(err)}
-				</br></br>
-				Are you sure you want to leave?
-			`); 
-			this.StayLeaveWindow.show();
-		} else {
-			$(this.dialog).dialog('close');
-		}
-		
-		// We add a delay to make sure we closed first
-		
-		setTimeout(() => {
-			History.storeUndoState();
-			updateInfoBar();
-		}, 200);
-
-	}
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
-			let err = setValue2(this.primitive, value);
-			
+			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
@@ -9104,8 +9049,6 @@ class EquationEditor extends jqDialog {
 			if (visualObject) {
 				visualObject.update();
 			}
-			
-			return err;
 		}
 	}
 }
