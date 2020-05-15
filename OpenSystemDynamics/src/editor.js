@@ -3878,7 +3878,7 @@ class BaseTool {
 	static rightMouseDown(x,y) {
 		// Is triggered when right mouse is clicked for this tool 
 	}
-	static enterTool() {
+	static enterTool(mouseButton) {
 		// Is triggered when the tool is selected
 	}
 	static leaveTool() {
@@ -3976,26 +3976,25 @@ class OnePointCreateTool extends BaseTool {
 	constructor() {
 		this.rightClickMode = false;
 	}
+	static enterTool(mouseButton) {
+		this.rightClickMode = (mouseButton === mouse.right);
+	}
 	static create(x, y) {
 		// This function should be over written
 	}
 	static leftMouseDown(x, y) {
 		unselect_all();
-		if (this.rightClickMode) {
-			ToolBox.setTool("mouse");
-			this.rightClickMode = false; 
-		} else {
-			this.create(x, y);
-			updateInfoBar();
-		}
+		this.create(x, y);
+		updateInfoBar();
 	}
 	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
+		if (! this.rightClickMode) {
+			ToolBox.setTool("mouse");
+		}
 	}
 	static rightMouseDown(x, y) {
-		this.rightClickMode = true;
 		unselect_all();
-		this.create(x, y);
+		ToolBox.setTool("mouse");
 		updateInfoBar();
 	}
 }
@@ -5210,14 +5209,14 @@ class ToolBox {
 			"reset":ResetTool
 		};
 	}
-	static setTool(toolName) {
+	static setTool(toolName, whichMouseButton) {
 		if (toolName in this.tools) {
 			$(".toolButton").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
 			currentTool.leaveTool();
 			currentTool = this.tools[toolName];
-			currentTool.enterTool();
+			currentTool.enterTool(whichMouseButton);
 		} else {
 			errorPopUp("The tool "+toolName+" does not exist");
 		}
@@ -5327,7 +5326,7 @@ $(window).load(function() {
 	
 	$(".toolButton").mousedown(function(event) {
 		var toolName = $(this).attr("data-tool");
-		ToolBox.setTool(toolName);
+		ToolBox.setTool(toolName, event.which);
 	});
 	
 	$(window).bind( 'hashchange', hashUpdate);
