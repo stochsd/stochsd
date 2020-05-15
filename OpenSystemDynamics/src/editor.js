@@ -266,6 +266,10 @@ function makeKeyboardCodes() {
 
 const keyboard = makeKeyboardCodes();
 
+// NOTE: values for event.which should be used
+// event.button will give incorrect results 
+const mouse = {"left": 1, "middle": 2, "right": 3};
+
 function updateWindowSize() {
 	let windowWidth = $(window).width();
 	let windowHeight = $(window).height();
@@ -5073,17 +5077,17 @@ function mouseDownHandler(event) {
 	var y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
 	switch (event.which) {
-		case 1:
+		case mouse.left:
 			// if left mouse button down
 			leftmouseisdown = true;
 			currentTool.leftMouseDown(x,y);	
 			break;
-		case 2: 
+		case mouse.middle: 
 			event.preventDefault();
 			middlemouseisdown = true;
 			currentTool.middleMouseDown(x,y);
 			break;
-		case 3: 
+		case mouse.right: 
 			// if right mouse button down
 			currentTool.rightMouseDown(x,y);
 			break;
