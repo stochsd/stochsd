@@ -938,6 +938,9 @@ class OnePointer extends BaseObject {
 	}
 
 	set_pos(pos) {
+		if(this.type === "dummy_anchor") {
+			// console.trace();
+		}
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
@@ -1130,8 +1133,14 @@ class AnchorPoint extends OnePointer {
 		}
 	}
 	updatePosition() {
-		this.update();
 		let parent = get_parent(this);
+		if (new RegExp(/[0-9]+\.b1_anchor/).test(this.id)) {
+			parent.b1Local = parent.worldToLocal(this.pos);
+		} else if (new RegExp(/[0-9]+\.b2_anchor/).test(this.id))  {
+			parent.b2Local = parent.worldToLocal(this.pos);
+		}
+		
+		this.update();
 		if (parent.start_anchor && parent.end_anchor)  {
 			parent.afterAnchorUpdate(this.anchorType);	
 		}
@@ -3841,7 +3850,7 @@ class LinkVisual extends BaseConnection {
 	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
-		
+
 		// Get start position from attach
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
