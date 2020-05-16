@@ -1561,8 +1561,6 @@ class TwoPointer extends BaseObject {
 		this.id = id;
 		this.type = type;
 		this.selected = false;
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
 		
@@ -1571,6 +1569,10 @@ class TwoPointer extends BaseObject {
 			var node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
+
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
+		
 		last_connection = this;
 		this.update();
 	}
@@ -1785,25 +1787,10 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_rect(
-			this.startX, 
-			this.startY, 
-			this.endX, 
-			this.endY, 
-			defaultStroke, 
-			"none", 
-			"element"
-		);
+		this.element = svg_rect(0,0,0,0, defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(
-			this.startX, 
-			this.startY, 
-			this.endX, 
-			this.endY, 
-			"transparent", 
-			"none"
-		);
+		this.clickRect = svg_rect(0, 0, 0, 0, "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
