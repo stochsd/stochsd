@@ -1589,13 +1589,6 @@ class TwoPointer extends BaseObject {
 		this.start_anchor.setColor(color);
 		this.end_anchor.setColor(color);
 	}
-
-	// create_dummy_start_anchor() {
-	// 	this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
-	// }
-	// create_dummy_end_anchor() {
-	// 	this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
-	// }
 	
 	get startX() { return this.start_anchor.get_pos()[0]; }
 	get startY() { return this.start_anchor.get_pos()[1]; }
@@ -5106,22 +5099,15 @@ function syncVisual(tprimitive) {
 					dimClass = EllipseVisual;
 				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);	
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));
 			}
 
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
-			
 			connection.update();
 		}
 		break;
