@@ -5066,7 +5066,7 @@ function update_name_pos(node_id) {
 
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
-	if (! isTimeUnitOk(getTimeUnits())) {
+	if (! isTimeUnitOk(getTimeUnits()) && Settings.forceTimeUnit) {
 		event.preventDefault();
 		timeUnitDialog.show();
 		return;
