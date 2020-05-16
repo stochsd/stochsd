@@ -3762,8 +3762,17 @@ class MouseTool extends BaseTool {
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger empty_click_down
-		var move_array = get_selected_objects();
-		
+		let move_array = get_selected_objects();
+		let num_objects_selected = 0;
+		let keys = [];
+		for(let key in move_array) { num_objects_selected++; keys.push(key)}
+		if(num_objects_selected === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1]) ) {
+			// 1. Get object type to know what tool to use e.g.
+			// 		RectangleVisual => RectangleTool
+			// 		LinkVisual => LinkTool
+			// 2. XTool.moveuMoveObject(x, y, shiftKey, child_node_id);
+		} 
+			// 3. else ...
 		var objectMoved = false;
 		for(var key in move_array) {
 			if (move_array[key].draggable == undefined) {
@@ -3871,6 +3880,7 @@ class TwoPointerTool extends BaseTool {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = get_object(node_id);
 		let parent = get_parent(moveObject);
+		parent.select();
 		moveObject.set_pos([x,y]);
 		parent.update();
 	}
