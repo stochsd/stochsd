@@ -3858,11 +3858,19 @@ class TwoPointerTool extends BaseTool {
 		}
 	}
 	static mouseMove(x, y, shiftKey) {
+		// Function used during creation of twopointer
 		if (this.current_connection == null) {
 			return;
 		}
-		this.current_connection.end_anchor.set_pos([x,y]);
-		this.current_connection.update();
+		let move_node_id = `${this.current_connection.id}.end_anchor`;
+		this.mouseMoveObject(x,y, shiftKey, move_node_id);
+	}
+	static mouseMoveObject(x,y, shiftKey, node_id) {
+		// Function used both during creation and later moving of anchor point 
+		let moveObject = get_object(node_id);
+		let parent = get_parent(moveObject);
+		moveObject.set_pos([x,y]);
+		parent.update();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.mouseMove(x, y, shiftKey);
