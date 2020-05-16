@@ -3795,7 +3795,9 @@ class MouseTool extends BaseTool {
 			for (let key in move_array) {
 				ids.push(move_array[key].id);
 			}
-			update_relevant_objects(ids);
+			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
+			// Therefore they must be updated seprately 
+			update_twopointer_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -4173,10 +4175,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 
 
 // only updates diagrams, tables, and XyPlots if needed 
-function update_relevant_objects(ids) {
-	for(var key in object_array) {
-		object_array[key].update();
-	}
+function update_twopointer_objects(ids) {
 	for(var key in connection_array) {
 		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot","table"];
 		if( onlyIfRelevant.includes(connection_array[key].type) ) {
