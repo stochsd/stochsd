@@ -4016,23 +4016,19 @@ class CoordRect {
 }
 var rectselector = new CoordRect();
 
-function in_selection(node_id) {
-	if (
-		object_array[node_id].pos[0] >= rectselector.xmin()
-	&&  object_array[node_id].pos[1] >= rectselector.ymin()
-	&&  object_array[node_id].pos[0] <= rectselector.xmin()+rectselector.width()
-	&&  object_array[node_id].pos[1] <= rectselector.ymin()+rectselector.height()
-	) {
-		return true;
-	} else {
-		return false;
-	}
+function is_in_selection(node_id) {
+	return (
+		object_array[node_id].pos[0] >= rectselector.xmin() &&
+		object_array[node_id].pos[1] >= rectselector.ymin() &&
+		object_array[node_id].pos[0] <= rectselector.xmin()+rectselector.width() &&
+		object_array[node_id].pos[1] <= rectselector.ymin()+rectselector.height()
+	);
 }
 
 function get_objects_in_rectselect() {
 	var return_array = {};
 	for(var key in object_array) {
-		if (in_selection(key)) {
+		if (is_in_selection(key)) {
 			return_array[key] = object_array[key];
 		}
 	}
