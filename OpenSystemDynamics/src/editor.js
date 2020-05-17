@@ -1673,8 +1673,8 @@ class TwoPointer extends BaseObject {
 }
 
 class BaseConnection extends TwoPointer {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this._start_attach = null;
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
@@ -3120,9 +3120,6 @@ class LineVisual extends TwoPointer {
 }
 
 class LinkVisual extends BaseConnection {
-	constructor(id, type, pos) {
-		super(id, type, pos);
-	}
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
@@ -3226,9 +3223,9 @@ class LinkVisual extends BaseConnection {
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowHead,this.endx,this.endy);
-		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black", "stroke-width":"1"});
+		svg_translate(this.arrowHead, 0, 0);
+		this.click_area = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
@@ -3236,13 +3233,13 @@ class LinkVisual extends BaseConnection {
 		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 		
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
 		this.b1_anchor.makeSquare();
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
 		this.b2_anchor.makeSquare();
 
-		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
-		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b1_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b2_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
 
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
@@ -3929,6 +3926,20 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
+class LinkTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "Link", null,null);
+		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
+	}
+	static create_TwoPointer_end() {
+		cleanUnconnectedLinks();
+	}
+	static getType() {
+		return "link";
+	}
+}
+LinkTool.init();
+
 function attach_selected_anchor(selectedAnchor) {
 	[x,y]=selectedAnchor.get_pos();
 	let parentConnection = get_parent(selectedAnchor);
@@ -4508,7 +4519,7 @@ class ToolBox {
 			"variable":VariableTool,
 			"constant":ConstantTool,
 			// "flow":FlowTool,
-			// "link":LinkTool,
+			"link":LinkTool,
 			"rotatename":RotateNameTool,
 			"movevalve":MoveValveTool,
 			"straightenlink": StraightenLinkTool,
@@ -5292,13 +5303,10 @@ function syncVisual(tprimitive) {
 		break;
 		case "Link":
 		{
-			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
+			var source_pos = getSourcePosition(tprimitive);
+			var target_pos = getTargetPosition(tprimitive);
 
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
-
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();
+			let connection = new LinkVisual(tprimitive.id, "link", source_pos, target_pos);
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));

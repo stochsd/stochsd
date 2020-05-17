@@ -498,20 +498,6 @@ class FlowTool extends TwoPointerTool {
 }
 FlowTool.init();
 
-class LinkTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Link", null,null);
-		this.current_connection = new LinkVisual(this.primitive.id,this.getType(),[x,y]);
-	}
-	static create_TwoPointer_end() {
-		cleanUnconnectedLinks();
-	}
-	static getType() {
-		return "link";
-	}
-}
-LinkTool.init();
-
 class EllipseTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Ellipse", null, null);
