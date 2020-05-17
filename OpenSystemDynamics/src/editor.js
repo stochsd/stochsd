@@ -3716,7 +3716,7 @@ class ConstantTool extends OnePointCreateTool {
 }
 
 function get_only_selected_anchor_id() {
-	// returns null if more is selected, else returns object {parent_id: ... , child_id: ... }
+	// returns null if more is selected than one anchor is selected, else returns object {parent_id: ... , child_id: ... }
 	let selection = get_selected_objects();
 	let keys = [];
 	for(let key in selection) { 
@@ -3767,17 +3767,17 @@ class MouseTool extends BaseTool {
 		if (!last_click_object_clicked) {
 			rectselector_start();
 		}
-		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor = this.get_single_selected_anchor();
-		if (selectedAnchor && get_parent(selectedAnchor).getStartAttach) {
-			let parentObject = get_parent(selectedAnchor);
-			switch(selectedAnchor.getAnchorType()) {
-			case anchorTypeEnum.start:
-				parentObject.setStartAttach(null);
-				break;
-			case anchorTypeEnum.end:
-				parentObject.setEndAttach(null);
-				break;
+
+		let selected_anchor = get_only_selected_anchor_id();
+		// Only one anchor is selected AND that that anchor has attaching capabilities 
+		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
+			let parent = connection_array[selected_anchor.parent_id];
+			// Detach anchor 
+			switch(object_array[selected_anchor.child_id].getAnchorType()) {
+				case anchorTypeEnum.start:
+					parent.setStartAttach(null);
+				case anchorTypeEnum.end:
+					parent.setEndAttach(null);
 			}
 		}
 			
