@@ -3113,6 +3113,37 @@ class LineVisual extends TwoPointer {
 }
 
 class LinkVisual extends BaseConnection {
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
+		// Used to keep a local coordinate system between start- and endAnchor
+		// startLocal = [0,0], endLocal = [1,0]
+		this.b1Local = [0.3, 0.5];
+		this.b2Local = [0.7, -0.5];
+	}
+	worldToLocal(worldPos) {
+		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pWorld = translate(worldPos, neg(origoWorld));
+		let RS_pWorld = rotate(S_pWorld, -sine, cosine);
+		let posWorld = scale(RS_pWorld, [0,0], 1/scaleFactor);
+		return posWorld;
+	}
+	localToWorld(localPos) {
+		// worldPos(localPos) = T*R*S*localPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pLocal = scale(localPos, [0,0], scaleFactor);
+		let RS_pLocal = rotate(S_pLocal, sine, cosine);
+		let posWorld = translate(RS_pLocal, origoWorld);
+		return posWorld;
+	}
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
