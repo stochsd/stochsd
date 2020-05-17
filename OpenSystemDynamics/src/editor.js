@@ -4014,7 +4014,7 @@ class CoordRect {
 		this.element.setAttribute("height",this.height());
 	}
 }
-rectselector = new CoordRect();
+var rectselector = new CoordRect();
 
 function in_selection(node_id) {
 	if (
