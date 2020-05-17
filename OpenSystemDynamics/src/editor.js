@@ -3773,38 +3773,38 @@ class MouseTool extends BaseTool {
 			let tool = ToolBox.tools[parent.type];
 			tool.mouseMoveObject(x,y, shiftKey, child.id);
 		} else {
-			var objectMoved = false;
-			for(var key in move_array) {
-				if (move_array[key].draggable == undefined) {
-			
-				//~ console.error("Drag and drop for connections not implemented yet");
+			this.defaultRelativeMove(move_array, diff_x, diff_y);
+		}
+	}
+	static defaultRelativeMove(move_objects, diff_x, diff_y) {
+		var objectMoved = false;
+		for(var key in move_objects) {
+			if (move_objects[key].draggable == undefined) {
 				continue;
-				}
-				if (move_array[key].draggable == false) {
-					do_global_log("skipping because of no draggable");
+			} 
+			if (move_objects[key].draggable == false) {
+				do_global_log("skipping because of no draggable");
+				continue;
+			} 
+			if (move_objects[key].type == "dummy_anchor") {
+				if (move_objects[key].isAttached()) {
+					// We can't drug and drop attached anchors
 					continue;
 				}
-		
-				// We can't drug and drop attached anchors
-				if (move_array[key].type == "dummy_anchor") {
-					if (move_array[key].isAttached()) {
-						continue;
-					}
-				}
+			} 
 
-				objectMoved = true;
-				// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-				rel_move(key,diff_x,diff_y);
+			objectMoved = true;
+			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
+			rel_move(key,diff_x,diff_y);
+		}
+		if (objectMoved) {
+			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
+			// Therefore they must be updated seprately 
+			let ids = [];
+			for (let key in move_objects) {
+				ids.push(move_objects[key].id);
 			}
-			if (objectMoved) {
-				// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
-				// Therefore they must be updated seprately 
-				let ids = [];
-				for (let key in move_array) {
-					ids.push(move_array[key].id);
-				}
-				update_twopointer_objects(ids);
-			}
+			update_twopointer_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
