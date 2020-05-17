@@ -3715,6 +3715,29 @@ class ConstantTool extends OnePointCreateTool {
 	}
 }
 
+function get_only_selected_anchor_id() {
+	// returns null if more is selected, else returns object {parent_id: ... , child_id: ... }
+	let selection = get_selected_objects();
+	let keys = [];
+	for(let key in selection) { 
+		keys.push(key);
+	}
+	if(keys.length === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1])) {
+		let parent_id = null;
+		let child_id = null;
+		if (get_parent_id(keys[0]) === keys[0]) {
+			child_id = keys[1];
+			parent_id = keys[0];
+		} else {
+			child_id = keys[0];
+			parent_id = keys[1];
+		}
+		return { "parent_id": parent_id, "child_id": child_id };
+	} else {
+		return null;
+	}
+}
+
 class MouseTool extends BaseTool {
 	static get_single_selected_anchor() {
 		// Check if we selected only 1 anchor element. Return that anchor else return null
@@ -3773,27 +3796,16 @@ class MouseTool extends BaseTool {
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger empty_click_down
-		let move_array = get_selected_objects();
-		let num_objects_selected = 0;
-		let keys = [];
-		for(let key in move_array) { num_objects_selected++; keys.push(key)}
-		if(num_objects_selected === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1]) ) {
-			// Get object type to know what tool to use e.g.
+		let only_selected_anchor = get_only_selected_anchor_id();
+		if( only_selected_anchor ) {
+			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
-			let parent = null;
-			let child = null;
-			if (get_parent_id(keys[0]) === keys[0]) {
-				child = move_array[keys[1]];
-				parent = move_array[keys[0]];
-			} else {
-				child = move_array[keys[0]];
-				parent = move_array[keys[1]];
-			}
-			// Use approriate tool to move anchor 
+			let parent = connection_array[only_selected_anchor.parent_id];
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveObject(x,y, shiftKey, child.id);
+			tool.mouseMoveObject(x,y, shiftKey, only_selected_anchor.child_id);
 		} else {
+			let move_array = get_selected_objects();
 			this.defaultRelativeMove(move_array, diff_x, diff_y);
 		}
 	}
