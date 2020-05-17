@@ -3740,7 +3740,7 @@ class MouseTool extends BaseTool {
 		// Reset it for use next time
 		last_click_object_clicked = false;
 	}
-	static mouseMove(x,y) {
+	static mouseMove(x,y,shiftKey) {
 		var diff_x = x-mousedown_x;
 		var diff_y = y-mousedown_y;
 		mousedown_x = x;
@@ -3767,46 +3767,54 @@ class MouseTool extends BaseTool {
 		let keys = [];
 		for(let key in move_array) { num_objects_selected++; keys.push(key)}
 		if(num_objects_selected === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1]) ) {
-			// 1. Get object type to know what tool to use e.g.
-			// 		RectangleVisual => RectangleTool
-			// 		LinkVisual => LinkTool
-			// 2. XTool.moveuMoveObject(x, y, shiftKey, child_node_id);
-		} 
-			// 3. else ...
-		var objectMoved = false;
-		for(var key in move_array) {
-			if (move_array[key].draggable == undefined) {
-				
+			// Get object type to know what tool to use e.g.
+			// 	RectangleVisual => RectangleTool
+			// 	LinkVisual => LinkTool
+			let parent = null;
+			let child = null;
+			if (get_parent_id(keys[0]) === keys[0]) {
+				child = move_array[keys[1]];
+				parent = move_array[keys[0]];
+			} else {
+				child = move_array[keys[0]];
+				parent = move_array[keys[1]];
+			}
+			// Use approriate tool to move anchor 
+			let tool = ToolBox.tools[parent.type];
+			tool.mouseMoveObject(x,y, shiftKey, child.id);
+		} else {
+			var objectMoved = false;
+			for(var key in move_array) {
+				if (move_array[key].draggable == undefined) {
+			
 				//~ console.error("Drag and drop for connections not implemented yet");
 				continue;
-			}
-			if (move_array[key].draggable == false) {
-				do_global_log("skipping because of no draggable");
-				continue;
-			}
-			
-			// We can't drug and drop attached anchors
-			if (move_array[key].type == "dummy_anchor") {
-				if (move_array[key].isAttached()) {
+				}
+				if (move_array[key].draggable == false) {
+					do_global_log("skipping because of no draggable");
 					continue;
 				}
+		
+				// We can't drug and drop attached anchors
+				if (move_array[key].type == "dummy_anchor") {
+					if (move_array[key].isAttached()) {
+						continue;
+					}
+				}
+
+				objectMoved = true;
+				// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
+				rel_move(key,diff_x,diff_y);
 			}
-			
-			
-			objectMoved = true;
-			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-			rel_move(key,diff_x,diff_y);
-			
-		}
-		if (objectMoved) {
-			// update_all_objects();
-			let ids = [];
-			for (let key in move_array) {
-				ids.push(move_array[key].id);
+			if (objectMoved) {
+				// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
+				// Therefore they must be updated seprately 
+				let ids = [];
+				for (let key in move_array) {
+					ids.push(move_array[key].id);
+				}
+				update_twopointer_objects(ids);
 			}
-			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
-			// Therefore they must be updated seprately 
-			update_twopointer_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -3873,6 +3881,7 @@ class TwoPointerTool extends BaseTool {
 		if (this.current_connection == null) {
 			return;
 		}
+		this.current_connection.select();
 		let move_node_id = `${this.current_connection.id}.end_anchor`;
 		this.mouseMoveObject(x,y, shiftKey, move_node_id);
 	}
@@ -3880,7 +3889,6 @@ class TwoPointerTool extends BaseTool {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = get_object(node_id);
 		let parent = get_parent(moveObject);
-		parent.select();
 		moveObject.set_pos([x,y]);
 		parent.update();
 	}
