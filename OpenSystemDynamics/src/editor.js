@@ -3721,7 +3721,7 @@ class MouseTool extends BaseTool {
 		mousedown_y = y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
 		if (!last_click_object_clicked) {
-			empty_click();
+			rectselector_start();
 		}
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selectedAnchor = this.get_single_selected_anchor();
@@ -3746,18 +3746,8 @@ class MouseTool extends BaseTool {
 		mousedown_x = x;
 		mousedown_y = y;
 		
-		if (empty_click_down) {				
-			rectselector.x2 = mousedown_x;
-			rectselector.y2 = mousedown_y;
-			rectselector.setVisible(true);
-			rectselector.update();
-			unselect_all();
-			var select_array = get_objects_in_rectselect();
-			for(var key in select_array) {
-				let parent = get_parent(select_array[key]);
-				parent.select(false); // We also select the parent but not all of its anchors
-				select_array[key].select();
-			}
+		if (empty_click_down) {
+			rectselector_move();
 			return;
 		}
 		// We only come here if some object is being dragged
@@ -3824,11 +3814,7 @@ class MouseTool extends BaseTool {
 			attach_selected_anchor(selectedAnchor);
 		}
 		if (empty_click_down) {
-			rectselector.setVisible(false);
-			var select_array = get_objects_in_rectselect();
-			for(var key in select_array) {
-				select_array[key].select();
-			}
+			rectselector_stop();
 			empty_click_down = false;
 		}
 	}
@@ -4016,7 +4002,40 @@ class CoordRect {
 }
 var rectselector = new CoordRect();
 
-function is_in_selection(node_id) {
+function rectselector_start() {
+	empty_click_down = true;
+	unselect_all();
+	rectselector.setVisible(true);
+	rectselector.x1 = mousedown_x;
+	rectselector.y1 = mousedown_y;
+	rectselector.x2 = mousedown_x;
+	rectselector.y2 = mousedown_y;
+	rectselector.update();
+}
+
+function rectselector_move() {
+	// select with rectseletor
+	rectselector.x2 = mousedown_x;
+	rectselector.y2 = mousedown_y;
+	rectselector.update();
+	unselect_all();
+	let select_array = get_objects_in_rectselect();
+	for(let key in select_array) {
+		let parent = get_parent(select_array[key]);
+		parent.select(false); // We also select the parent but not all of its anchors
+		select_array[key].select();
+	}
+}
+
+function rectselector_stop() {
+	rectselector.setVisible(false);
+	var select_array = get_objects_in_rectselect();
+	for(var key in select_array) {
+		select_array[key].select();
+	}
+}
+
+function is_in_rectselecor(node_id) {
 	return (
 		object_array[node_id].pos[0] >= rectselector.xmin() &&
 		object_array[node_id].pos[1] >= rectselector.ymin() &&
@@ -4028,7 +4047,7 @@ function is_in_selection(node_id) {
 function get_objects_in_rectselect() {
 	var return_array = {};
 	for(var key in object_array) {
-		if (is_in_selection(key)) {
+		if (is_in_rectselecor(key)) {
 			return_array[key] = object_array[key];
 		}
 	}
@@ -4304,16 +4323,6 @@ function unselect_all_but_family(id) {
 			connection_array[key].unselect();
 		}
 	}
-}
-
-function empty_click() {
-	empty_click_down = true;
-	unselect_all();
-	rectselector.x1 = mousedown_x;
-	rectselector.y1 = mousedown_y;
-	rectselector.x2 = mousedown_x;
-	rectselector.y2 = mousedown_y;
-	rectselector.update();
 }
 
 function rotate_name(node_id) {
