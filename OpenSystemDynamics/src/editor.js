@@ -1052,10 +1052,6 @@ class OnePointer extends BaseObject {
 	}
 	updatePosition() {
 		this.update();
-		this.afterUpdatePosition();
-	}
-	afterUpdatePosition() {
-		
 	}
 	getImage() {
 		return false;
@@ -1132,15 +1128,12 @@ class AnchorPoint extends OnePointer {
 			}
 		}
 	}
-	afterUpdatePosition() {
+	updatePosition() {
+		this.update();
 		let parent = get_parent(this);
 		if (parent.start_anchor && parent.end_anchor)  {
 			parent.afterAnchorUpdate(this.anchorType);	
 		}
-	}
-	updatePosition() {
-		this.update();
-		this.afterUpdatePosition();
 	}
 	getImage() {
 		if (this.isSquare) {
