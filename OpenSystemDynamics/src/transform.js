@@ -28,6 +28,12 @@ function distance(point1, point2) {
 	return Math.sqrt(dx*dx + dy*dy);
 }
 
+function scale(point, pivot, scaleFactor) { 
+	let a = translate(point, neg(pivot)); 
+	let b = [a[0]*scaleFactor, a[1]*scaleFactor]; 
+	return translate(b, pivot); 
+} 
+
 function cos(point1 ,point2){
 	const dist = distance(point1, point2)
 	if (dist == 0) {
