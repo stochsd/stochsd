@@ -3899,21 +3899,12 @@ class TwoPointerTool extends BaseTool {
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.mouseMove(x, y, shiftKey);
-		if (this.current_connection.end_anchor == null) {
-			// a dummy anchor has no attached object
-			this.current_connection.create_dummy_end_anchor();
-		}
-		// if (this.current_connection.start_anchor == null) {
-		// 	// a dummy anchor has no attached object
-		// 	this.current_connection.create_dummy_start_anchor();
-		// }
 		if (this.current_connection.getStartAttach) {
 			attach_selected_anchor(this.current_connection.end_anchor);
 		}
 		
 		this.current_connection.update();
 		this.current_connection.finishCreate();
-		this.create_TwoPointer_end();
 		
 		this.current_connection = null;
 		last_clicked_element = null;
