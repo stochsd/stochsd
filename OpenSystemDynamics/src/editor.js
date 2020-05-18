@@ -1610,37 +1610,8 @@ class TwoPointer extends BaseObject {
 	}
 	
 	update() {
-		// Get start position from anchor
-		if (this.start_anchor != null) {
-				if (this.start_anchor.get_pos) {
-					var start_pos = this.start_anchor.get_pos();
-					this.startx = start_pos[0];
-					this.starty = start_pos[1];
-				} else {
-					do_global_log("No start position");
-				}
-			}
-			
-			// Get end position from anchor
-			if (this.end_anchor != null) {
-				if (this.end_anchor.get_pos) {
-					var end_pos = this.end_anchor.get_pos();
-					this.endx = end_pos[0];
-					this.endy = end_pos[1];
-				} else {
-					do_global_log("No end position");
-				}
-			}
-			
-			// Force minimum size on TwoPointers
-			const minWidth = 10;
-			const minHeight = 10;
-			if (this.getWidth() < minWidth && this.getHeight() < minHeight) {
-				this.endx = this.startx + minWidth;
-				this.endy = this.starty + minHeight;
-			}
-
-			this.updateGraphics();
+		console.trace();
+		this.updateGraphics();
 	}
 	makeGraphics() {
 		
@@ -3386,7 +3357,7 @@ class LinkVisual extends BaseConnection {
 		if (anchorMoved) {
 			this.keepRelativeHandlePositions();
 		}
-		super.update();
+		this.updateGraphics();
 	}
 	keepRelativeHandlePositions() {
 		this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
