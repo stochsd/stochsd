@@ -1795,17 +1795,17 @@ class RectangleVisual extends TwoPointer {
 		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
 		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
 		// Prevent width from being 0 (then rect is not visible)
-		let endx = (this.startx != this.endx) ? this.endx : this.startx + 1;
-		let endy = (this.starty != this.endy) ? this.endy : this.starty + 1;
+		let endx = (this.startX != this.endX) ? this.endX : this.startX + 1;
+		let endy = (this.startY != this.endY) ? this.endY : this.startY + 1;
 		this.coordRect.x2 = endx;
 		this.coordRect.y2 = endy;
 		this.coordRect.update();
 
-		this.clickCoordRect.x1 = this.startx;
-		this.clickCoordRect.y1 = this.starty;
+		this.clickCoordRect.x1 = this.startX;
+		this.clickCoordRect.y1 = this.startY;
 		this.clickCoordRect.x2 = endx;
 		this.clickCoordRect.y2 = endy;
 		this.clickCoordRect.update();
