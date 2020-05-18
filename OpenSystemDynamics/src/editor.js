@@ -937,10 +937,6 @@ class OnePointer extends BaseObject {
 	}
 
 	set_pos(pos) {
-		if (this.type === "dummy_anchor" && this.getAnchorType() === anchorTypeEnum.bezier1) {
-			console.log(this);
-			console.trace();
-		}
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
@@ -3109,7 +3105,6 @@ class LinkVisual extends BaseConnection {
 		// startLocal = [0,0], endLocal = [1,0]
 		this.b1Local = [0.3, 0.0];
 		this.b2Local = [0.7, 0.0];
-		console.log(this.primitive.value);
 	}
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
