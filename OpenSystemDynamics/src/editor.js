@@ -3722,7 +3722,9 @@ function get_only_selected_anchor_id() {
 	for(let key in selection) { 
 		keys.push(key);
 	}
-	if(keys.length === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1])) {
+	if (keys.length === 1 && selection[keys[0]].getType() === "dummy_anchor") {
+		return {"parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
+	} else if(keys.length === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1])) {
 		let parent_id = null;
 		let child_id = null;
 		if (get_parent_id(keys[0]) === keys[0]) {
@@ -3739,27 +3741,6 @@ function get_only_selected_anchor_id() {
 }
 
 class MouseTool extends BaseTool {
-	static get_single_selected_anchor() {
-		// Check if we selected only 1 anchor element. Return that anchor else return null
-		
-		let selectedAnchors = [];
-		let selectedObjects = get_selected_objects();
-	
-		// Get the selected anchors
-		for(var i in selectedObjects) {
-			if (selectedObjects[i].type == "dummy_anchor") {
-				selectedAnchors.push(selectedObjects[i]);
-			}
-		}
-		
-		// If the number of selected anchors is exactly 1 return it
-		if (selectedAnchors.length == 1) {
-			return selectedAnchors[0];
-		} else {
-			// More then one or no anchor selected
-			return null;
-		}
-	}
 	static leftMouseDown(x,y) {
 		mousedown_x = x;
 		mousedown_y = y;
@@ -3842,10 +3823,11 @@ class MouseTool extends BaseTool {
 	}
 	static leftMouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor = this.get_single_selected_anchor();
-		if (selectedAnchor) {
-			attach_selected_anchor(selectedAnchor);
+		let selected_anchor = get_only_selected_anchor_id();
+		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
+			attach_selected_anchor(object_array[selected_anchor.child_id]);
 		}
+
 		if (empty_click_down) {
 			rectselector_stop();
 			empty_click_down = false;
