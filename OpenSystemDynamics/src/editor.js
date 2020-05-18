@@ -3107,8 +3107,8 @@ class LinkVisual extends BaseConnection {
 		super(id, type, pos0, pos1);
 		// Used to keep a local coordinate system between start- and endAnchor
 		// startLocal = [0,0], endLocal = [1,0]
-		this.b1Local = [0.3, 0.5];
-		this.b2Local = [0.7, -0.5];
+		this.b1Local = [0.3, 0.0];
+		this.b2Local = [0.7, 0.0];
 		console.log(this.primitive.value);
 	}
 	worldToLocal(worldPos) {
