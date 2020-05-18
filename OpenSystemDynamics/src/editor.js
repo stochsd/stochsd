@@ -3318,7 +3318,6 @@ class LinkVisual extends BaseConnection {
 		break;
 		case anchorTypeEnum.bezier2:
 		{
-			let b2pos = this.b2_anchor.get_pos();
 			this.curve.x3 = b2pos[0];
 			this.curve.y3 = b2pos[1];
 			this.curve.update();
