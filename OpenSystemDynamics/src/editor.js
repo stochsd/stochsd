@@ -937,6 +937,10 @@ class OnePointer extends BaseObject {
 	}
 
 	set_pos(pos) {
+		if (this.type === "dummy_anchor" && this.getAnchorType() === anchorTypeEnum.bezier1) {
+			console.log(this);
+			console.trace();
+		}
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
@@ -3105,6 +3109,7 @@ class LinkVisual extends BaseConnection {
 		// startLocal = [0,0], endLocal = [1,0]
 		this.b1Local = [0.3, 0.5];
 		this.b2Local = [0.7, -0.5];
+		console.log(this.primitive.value);
 	}
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
@@ -3397,11 +3402,9 @@ class LinkVisual extends BaseConnection {
 	}
 	setHandle1Pos(newPos) {
 		this.b1Local = this.worldToLocal(newPos);
-		this.update();
 	}
 	setHandle2Pos(newPos) {
 		this.b2Local = this.worldToLocal(newPos);
-		this.update();
 	}
 }
 
@@ -3966,9 +3969,11 @@ class LinkTool extends TwoPointerTool {
 		} else if (anchor_type === "b1_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
 			parent.setHandle1Pos([x,y]);
+			parent.update();
 		} else if (anchor_type === "b2_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
 			parent.setHandle2Pos([x,y]);
+			parent.update();
 		}
 	}
 	static create_TwoPointer_end() {
@@ -5366,7 +5371,6 @@ function syncVisual(tprimitive) {
 				// Set UI-coordinates to coordinates in primitive
 				connection.end_anchor.set_pos(target_position);
 			}
-			connection.update();
 			let bezierPoints = [
 				tprimitive.value.getAttribute("b1x"),
 				tprimitive.value.getAttribute("b1y"),
@@ -5375,8 +5379,8 @@ function syncVisual(tprimitive) {
 			];
 
 			if (bezierPoints.indexOf(null) == -1) {
-				connection.b1_anchor.set_pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
-				connection.b2_anchor.set_pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
+				connection.setHandle1Pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
+				connection.setHandle2Pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
 			} else {
 				// bezierPoints does not exist. Create them
 				connection.resetBezierPoints();
