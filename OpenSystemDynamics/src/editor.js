@@ -1567,7 +1567,6 @@ class TwoPointer extends BaseObject {
 		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
 		
 		last_connection = this;
-		this.update();
 	}
 
 	getBoundRect() {
