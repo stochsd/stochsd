@@ -3911,8 +3911,6 @@ class TwoPointerTool extends BaseTool {
 			attach_selected_anchor(this.current_connection.end_anchor);
 		}
 		
-		this.current_connection.start_anchor.updatePosition();
-		this.current_connection.end_anchor.updatePosition();
 		this.current_connection.update();
 		this.current_connection.finishCreate();
 		this.create_TwoPointer_end();
