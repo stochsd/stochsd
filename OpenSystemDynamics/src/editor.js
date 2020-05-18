@@ -1746,20 +1746,6 @@ class BaseConnection extends TwoPointer {
 	updateGraphics() {			
 
 	}
-	linearInterpolation(progress) {
-		// Find a point at the progress place along a line between start and end
-		// progress is between 0 and 1
-		if (this.getStartAttach() != null) {
-			[this.startx, this.starty] = this.start_anchor.get_pos();
-		}
-		if (this.getEndAttach() != null) {
-			[this.endx, this.endy] = this.end_anchor.get_pos();
-		}
-		let start = [this.startx, this.starty];
-		let end = [this.endx, this.endy];
-		let result = [start[0]*(1-progress)+end[0]*progress,start[1]*(1-progress)+end[1]*progress];
-		return result;
-	}
 }
 
 function getStackTrace() {
@@ -3288,10 +3274,10 @@ class LinkVisual extends BaseConnection {
 		this.update();
 	}
 	resetBezier1() {
-		this.b1_anchor.set_pos(this.linearInterpolation((1/3)));
+		this.b1Local = [0.3, 0];
 	}
 	resetBezier2() {
-		this.b2_anchor.set_pos(this.linearInterpolation((2/3)));
+		this.b2Local = [0.7, 0];
 	}
 	afterAnchorUpdate(anchorType) {
 		super.afterAnchorUpdate(anchorType);
