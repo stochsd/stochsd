@@ -3726,21 +3726,27 @@ function get_only_selected_anchor_id() {
 		keys.push(key);
 	}
 	if (keys.length === 1 && selection[keys[0]].getType() === "dummy_anchor") {
+		// only one anchor in selection
 		return {"parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
-	} else if(keys.length === 2 && get_parent_id(keys[0]) === get_parent_id(keys[1])) {
-		let parent_id = null;
-		let child_id = null;
-		if (get_parent_id(keys[0]) === keys[0]) {
-			child_id = keys[1];
-			parent_id = keys[0];
-		} else {
-			child_id = keys[0];
-			parent_id = keys[1];
+	} else if (keys.length === 2) {
+		if (get_object(keys[0]).getType() === "dummy_anchor" && get_object(keys[0]).getType() === "dummy_anchor") {
+			// both anchors are dummies 
+			return null;
+		} else if(get_parent_id(keys[0]) === get_parent_id(keys[1])) {
+			// one anchor and parent object selected 
+			let parent_id = null;
+			let child_id = null;
+			if (get_parent_id(keys[0]) === keys[0]) {
+				child_id = keys[1];
+				parent_id = keys[0];
+			} else {
+				child_id = keys[0];
+				parent_id = keys[1];
+			}
+			return { "parent_id": parent_id, "child_id": child_id };
 		}
-		return { "parent_id": parent_id, "child_id": child_id };
-	} else {
-		return null;
-	}
+	} 
+	return null;
 }
 
 class MouseTool extends BaseTool {
