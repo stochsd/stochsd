@@ -1610,7 +1610,6 @@ class TwoPointer extends BaseObject {
 	}
 	
 	update() {
-		console.trace();
 		this.updateGraphics();
 	}
 	makeGraphics() {
