@@ -3376,7 +3376,7 @@ class LinkVisual extends BaseConnection {
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
 		
-		//let connectionCenter = this.b1_anchor.get_pos();
+		let anchorMoved = false;
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
 			if (this.getStartAttach().get_pos) {
@@ -3385,6 +3385,7 @@ class LinkVisual extends BaseConnection {
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
+					anchorMoved = true;
 				}
 			}
 		}
@@ -3395,10 +3396,26 @@ class LinkVisual extends BaseConnection {
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
+					anchorMoved = true;
 				}
 			}
 		}
+		if (anchorMoved) {
+			this.keepRelativeHandlePositions();
+		}
 		super.update();
+	}
+	keepRelativeHandlePositions() {
+		this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
+		this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
+	}
+	setHandle1Pos(newPos) {
+		this.b1Local = this.worldToLocal(newPos);
+		this.update();
+	}
+	setHandle2Pos(newPos) {
+		this.b2Local = this.worldToLocal(newPos);
+		this.update();
 	}
 }
 
@@ -3948,6 +3965,19 @@ class LinkTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
+	}
+	static mouseMoveObject(x, y, shiftKey, node_id) {
+		// super.mouseMoveObject(x, y, shiftKey, node_id);
+		let anchor_type = node_id.split(".")[1];
+		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
+			super.mouseMoveObject(x, y, shiftKey, node_id);
+		} else if (anchor_type === "b1_anchor") {
+			let parent = connection_array[get_parent_id(node_id)];
+			parent.setHandle1Pos([x,y]);
+		} else if (anchor_type === "b2_anchor") {
+			let parent = connection_array[get_parent_id(node_id)];
+			parent.setHandle2Pos([x,y]);
+		}
 	}
 	static create_TwoPointer_end() {
 		cleanUnconnectedLinks();
