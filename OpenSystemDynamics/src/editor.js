@@ -3104,6 +3104,10 @@ class LinkVisual extends BaseConnection {
 		// startLocal = [0,0], endLocal = [1,0]
 		this.b1Local = [0.3, 0.0];
 		this.b2Local = [0.7, 0.0];
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
+		this.b1_anchor.makeSquare();
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
+		this.b2_anchor.makeSquare();
 	}
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
@@ -3241,11 +3245,6 @@ class LinkVisual extends BaseConnection {
 		
 		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
-		
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
-		this.b1_anchor.makeSquare();
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
-		this.b2_anchor.makeSquare();
 
 		this.b1_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
 		this.b2_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
