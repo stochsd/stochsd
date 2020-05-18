@@ -3337,14 +3337,14 @@ class LinkVisual extends BaseConnection {
 		// The arrow is pointed from the second bezier point to the end
 		let b2pos = this.b2_anchor.get_pos();
 		
-		let xdiff = this.endx-b2pos[0];
-		let ydiff = this.endy-b2pos[1];
+		let xdiff = this.endX-b2pos[0];
+		let ydiff = this.endY-b2pos[1];
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead, this.endX, this.endY, angle, 1);
 		
 		// Update end position so that we get the drawing effect when link is created
-		this.curve.x4 = this.endx;
-		this.curve.y4 = this.endy;
+		this.curve.x4 = this.endX;
+		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
 	finishCreate() {
