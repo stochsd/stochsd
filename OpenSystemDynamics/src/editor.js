@@ -4748,6 +4748,13 @@ function primitive_mousedown(node_id, event, new_primitive) {
 	last_click_object_clicked = true;
 }
 
+// only updates diagrams, tables, and XyPlots if needed 
+function update_relevant_objects(ids) {
+	for(let key in object_array) {
+		object_array[key].update();
+	}
+	update_twopointer_objects(ids);
+}
 
 // only updates diagrams, tables, and XyPlots if needed 
 function update_twopointer_objects(ids) {
