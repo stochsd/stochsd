@@ -3758,7 +3758,7 @@ class MouseTool extends BaseTool {
 			// 	LinkVisual => LinkTool
 			let parent = connection_array[only_selected_anchor.parent_id];
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveObject(x,y, shiftKey, only_selected_anchor.child_id);
+			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor.child_id);
 		} else {
 			let move_array = get_selected_objects();
 			this.defaultRelativeMove(move_array, diff_x, diff_y);
@@ -3858,9 +3858,9 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.select();
 		let move_node_id = `${this.current_connection.id}.end_anchor`;
-		this.mouseMoveObject(x,y, shiftKey, move_node_id);
+		this.mouseMoveSingleAnchor(x,y, shiftKey, move_node_id);
 	}
-	static mouseMoveObject(x,y, shiftKey, node_id) {
+	static mouseMoveSingleAnchor(x,y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = get_object(node_id);
 		let parent = get_parent(moveObject);
@@ -3912,11 +3912,10 @@ class LinkTool extends TwoPointerTool {
 		this.primitive = createConnector(name, "Link", null,null);
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
 	}
-	static mouseMoveObject(x, y, shiftKey, node_id) {
-		// super.mouseMoveObject(x, y, shiftKey, node_id);
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		let anchor_type = node_id.split(".")[1];
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
-			super.mouseMoveObject(x, y, shiftKey, node_id);
+			super.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
 		} else if (anchor_type === "b1_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
 			parent.setHandle1Pos([x,y]);
