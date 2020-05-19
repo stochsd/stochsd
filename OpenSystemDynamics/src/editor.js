@@ -1970,10 +1970,6 @@ class TableVisual extends HtmlTwoPointer {
 }
 
 class HtmlOverlayTwoPointer extends TwoPointer {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
-	}
-	
 	updateHTML(html) {
 		this.targetElement.innerHTML = html;
 	}
@@ -2004,15 +2000,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 		
-		this.element = svg_rect(this.startx,
-			this.starty,
-			this.endx,
-			this.endy, 
-			defaultStroke, 
-			"white", 
-			"element",
-			""
-		);
+		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -2028,10 +2016,10 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
 		
 		let svgoffset = $("#svgplane").offset();
@@ -2077,8 +2065,8 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 }
 
 class TimePlotVisual extends PlotVisual {
-	constructor(id, type, pos) {		
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.fetchData();
 			this.render();
@@ -3936,6 +3924,26 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
+class TimePlotTool extends TwoPointerTool {
+	static create_TwoPointer_start(x,y,name) {
+		this.primitive = createConnector(name, "TimePlot", null, null);
+		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x, y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x, y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "timeplot";
+	}
+}
+
 class LinkTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
@@ -4558,7 +4566,7 @@ class ToolBox {
 			// "ellipse":EllipseTool,
 			// "line":LineTool,
 			// "table":TableTool,
-			// "timeplot":TimePlotTool,
+			"timeplot":TimePlotTool,
 			// "compareplot":ComparePlotTool,
 			// "xyplot":XyPlotTool,
 			// "histoplot":HistoPlotTool,
