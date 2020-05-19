@@ -3714,6 +3714,36 @@ function get_only_selected_anchor_id() {
 	return null;
 }
 
+function get_single_primitive_id_selected() {
+	// will give object { "parent_id": ..., "children_ids": [...] } or null if more objects selected 
+	let selection = get_selected_objects();
+	let keys = [];
+	for(let key in selection) { 
+		keys.push(key);
+	}
+	let object_ids = {"children_ids": []};
+	if (keys.length > 0) {
+		object_ids["parent_id"] = get_parent_id(keys[0]);
+		for(let key of keys) {
+			if ( get_parent_id(key) !== object_ids["parent_id"] ) {
+				return null;
+			} else if ( get_parent_id(key) !== key ) {
+				object_ids["children_ids"].push(key);
+			}
+		}
+		return object_ids;
+	} 
+	return null;
+}
+
+function get_only_link_selected() {
+	let object_ids = get_single_primitive_id_selected();
+	if (object_ids !== null && get_object(object_ids["parent_id"]).getType() === "link") {
+		return object_ids;
+	} 
+	return null;
+}
+
 class MouseTool extends BaseTool {
 	static leftMouseDown(x,y) {
 		mousedown_x = x;
@@ -3752,6 +3782,7 @@ class MouseTool extends BaseTool {
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger empty_click_down
 		let only_selected_anchor = get_only_selected_anchor_id();
+		let only_selected_link = get_only_link_selected();
 		if( only_selected_anchor ) {
 			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
@@ -3759,6 +3790,10 @@ class MouseTool extends BaseTool {
 			let parent = connection_array[only_selected_anchor.parent_id];
 			let tool = ToolBox.tools[parent.type];
 			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor.child_id);
+		} else if ( only_selected_link ) {
+			// special exeption for links of links is being draged directly 
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b1_anchor");
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b2_anchor");
 		} else {
 			let move_array = get_selected_objects();
 			this.defaultRelativeMove(move_array, diff_x, diff_y);
@@ -3925,6 +3960,10 @@ class LinkTool extends TwoPointerTool {
 			parent.setHandle2Pos([x,y]);
 			parent.update();
 		}
+	}
+	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
+		let start_pos = get_object(move_node_id).get_pos();
+		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
 	}
 	static create_TwoPointer_end() {
 		cleanUnconnectedLinks();
