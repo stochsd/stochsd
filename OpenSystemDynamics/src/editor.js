@@ -4292,6 +4292,8 @@ class TwoPointerTool extends BaseTool {
 			// a dummy anchor has no attached object
 			this.current_connection.create_dummy_start_anchor();
 		}
+		// make sure start anchor is synced with primitive 
+		this.current_connection.afterAnchorUpdate(anchorTypeEnum.start);
 	}
 	static mouseMove(x, y, shiftKey) {
 		// Function used during creation of twopointer
@@ -5607,21 +5609,14 @@ function syncVisual(tprimitive) {
 					dimClass = ComparePlotVisual;
 				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			var source_pos = getSourcePosition(tprimitive);
+			var target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));
 			}
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
 			
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
