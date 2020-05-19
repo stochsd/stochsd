@@ -3329,8 +3329,6 @@ class LinkVisual extends BaseConnection {
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
 		
-		let anchorMoved = false;
-
 		if (this.getStartAttach() != null && this.start_anchor != null) {
 			if (this.getStartAttach().get_pos) {
 				let oldPos = this.start_anchor.get_pos();
@@ -3338,7 +3336,6 @@ class LinkVisual extends BaseConnection {
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.set_pos(newPos);
-					anchorMoved = true;
 				}
 			}
 		}
@@ -3349,13 +3346,10 @@ class LinkVisual extends BaseConnection {
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.set_pos(newPos);
-					anchorMoved = true;
 				}
 			}
 		}
-		if (anchorMoved) {
-			this.keepRelativeHandlePositions();
-		}
+		this.keepRelativeHandlePositions();
 		this.updateGraphics();
 	}
 	keepRelativeHandlePositions() {
