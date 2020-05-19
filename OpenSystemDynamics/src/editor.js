@@ -1132,7 +1132,7 @@ class AnchorPoint extends OnePointer {
 		this.update();
 		let parent = get_parent(this);
 		if (parent.start_anchor && parent.end_anchor)  {
-			parent.afterAnchorUpdate(this.anchorType);	
+			parent.syncAnchorToPrimitive(this.anchorType);	
 		}
 	}
 	getImage() {
@@ -1618,7 +1618,8 @@ class TwoPointer extends BaseObject {
 	updateGraphics() {
 		
 	}
-	afterAnchorUpdate(anchorType) {
+	syncAnchorToPrimitive(anchorType) {
+		// This function should sync anchor position to primitive 
 		let Primitive = findID(this.id);
 		switch(anchorType) {
 			case anchorTypeEnum.start:
@@ -1779,9 +1780,9 @@ class FlowVisual extends BaseConnection {
 		} 
 	}
 
-	afterAnchorUpdate(anchorType) {
+	syncAnchorToPrimitive(anchorType) {
 		// Save middle anchor points to primitive
-		super.afterAnchorUpdate(anchorType);
+		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
 		for (i = 1; i < this.anchorPoints.length-1; i++) {
 			let pos = this.anchorPoints[i].get_pos();
@@ -3660,8 +3661,8 @@ class LinkVisual extends BaseConnection {
 	resetBezier2() {
 		this.b2Local = [0.7, 0];
 	}
-	afterAnchorUpdate(anchorType) {
-		super.afterAnchorUpdate(anchorType);
+	syncAnchorToPrimitive(anchorType) {
+		super.syncAnchorToPrimitive(anchorType);
 		
 		let startpos = this.start_anchor.get_pos();
 		let endpos = this.end_anchor.get_pos();
@@ -3732,8 +3733,8 @@ class LinkVisual extends BaseConnection {
 	finishCreate() {
 		this.resetBezierPoints();
 		// Update the lines to fit the bezier anchors
-		this.afterAnchorUpdate(anchorTypeEnum.bezier1);
-		this.afterAnchorUpdate(anchorTypeEnum.bezier2);	
+		this.syncAnchorToPrimitive(anchorTypeEnum.bezier1);
+		this.syncAnchorToPrimitive(anchorTypeEnum.bezier2);	
 	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
@@ -4293,7 +4294,7 @@ class TwoPointerTool extends BaseTool {
 			this.current_connection.create_dummy_start_anchor();
 		}
 		// make sure start anchor is synced with primitive 
-		this.current_connection.afterAnchorUpdate(anchorTypeEnum.start);
+		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
 	}
 	static mouseMove(x, y, shiftKey) {
 		// Function used during creation of twopointer
