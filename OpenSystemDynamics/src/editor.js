@@ -1591,7 +1591,7 @@ class TwoPointer extends BaseObject {
 
 	get_pos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
 	getMinX() { return Math.min(this.startX, this.endX); }
-	getMinY() { return Math.min(this.startX, this.endX) }
+	getMinY() { return Math.min(this.startY, this.endY); }
 	getWidth() { return Math.abs(this.startX - this.endX); }
 	getHeight() { return Math.abs(this.startY - this.endY); }
 
