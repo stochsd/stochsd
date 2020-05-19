@@ -4283,11 +4283,26 @@ class FlowTool extends TwoPointerTool {
 		this.hasLeftClicked = false;
 	}
 	static leftMouseDown(x, y) {
-		super.leftMouseDown(x, y);
+		// super.leftMouseDown(x, y);
 		this.hasLeftClicked = true;
 	}
+	static mouseMove(x, y) {
+		if (this.current_connection) {
+			super.mouseMove(x, y);
+			// this.mouseMoveSingleAnchor(x, y, false, this.current_connection.end_anchor);
+		} else {
+			// First time moving mouse 
+			this.firstLeftMouseMove(x, y);
+		}
+	}
+	static firstLeftMouseMove(x, y) {
+		// does not create anything until the first leftMouseMove have been triggered 
+		super.leftMouseDown(x, y);
+	}
 	static leftMouseUp(x, y) {
-		super.leftMouseUp(x, y);
+		if (this.current_connection) {
+			super.leftMouseUp(x, y);
+		}
 		this.hasLeftClicked = false;
 	}
 	static create_TwoPointer_start(x, y, name) {
@@ -4333,10 +4348,13 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection.update();
 	}*/
 	static rightMouseDown(x,y) {
-		if (this.hasLeftClicked) {
-			do_global_log("Right mouse on: "+x+", "+y);
-			this.current_connection.createAnchorPoint(x, y);
+		if (this.current_connection) {
+			if (this.hasLeftClicked) {
+				do_global_log("Right mouse on: "+x+", "+y);
+				this.current_connection.createAnchorPoint(x, y);
+			}
 		}
+		
 	}
 
 	static getType() {
