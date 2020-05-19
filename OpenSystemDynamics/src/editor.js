@@ -1185,16 +1185,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 		this.changed = true;
 		this.index = index;
 	}
-	
-	afterMove(diff_x, diff_y) {
-		super.afterMove(diff_x, diff_y);
-		do_global_log("OrthoAnchor - afterMove() -"+this.id);
-		let parent = get_parent(this);
-		// Add adjust nighbor to FlowVisual
-		if ( ! get_parent(this).areAllAnchorsSelected()) {
-			parent.adjustNeighbors(this.index); 
-		}
-	}
 }
 
 function safeDivision(nominator, denominator) { 
@@ -1793,46 +1783,6 @@ class FlowVisual extends BaseConnection {
 		this.primitive.value.setAttribute("MiddlePoints", middlePoints);
 	}
 
-	adjustNeighborAnchor(masterAnchor, slaveAnchor) {
-		let masterPos = masterAnchor.get_pos();
-		let slavePos = slaveAnchor.get_pos();
-		let dir = neswDirection(masterPos, slavePos);
-		let dist = 15; 		// mininum distance from master and slave anchor
-		if (dir == "north" || dir == "south") {
-
-			// Keep masterAnchor at distance from slaveAnchor 
-			if (slavePos[1]-dist < masterPos[1] && masterPos[1] <= slavePos[1]) { // if too close above
-				masterAnchor.set_pos([masterPos[0], slavePos[1]+dist]);			// switch side
-			} else if (slavePos[1] <= masterPos[1] && masterPos[1] < slavePos[1]+dist) { // if too close below 
-				masterAnchor.set_pos([masterPos[0], slavePos[1]-dist]); 		// switch side
-			}
-			
-			slaveAnchor.set_pos([masterPos[0], slavePos[1]]);
-		} else {
-
-			// Keep masterAnchor at distance from slaveAnchor 
-			if ((slavePos[0]-dist < masterPos[0]) && (masterPos[0] <= slavePos[0])) { // if to close left
-				masterAnchor.set_pos([slavePos[0]+dist, masterPos[1]]);				// switch to right side
-			} else if (slavePos[0] <= masterPos[0] && masterPos[0] < slavePos[0]+dist) { // if to close to right side
-				masterAnchor.set_pos([slavePos[0]-dist, masterPos[1]]);				// switch to left side 
-			}
-
-			slaveAnchor.set_pos([slavePos[0], masterPos[1]]);
-		}
-	}
-
-	adjustNeighbors(anchorIndex) {
-		let anchor = this.anchorPoints[anchorIndex];
-
-		// Adjust previous Neighbor
-		let prevAnchor = this.getPreviousAnchor(anchorIndex);
-		this.adjustNeighborAnchor(anchor, prevAnchor);
-
-		// Adjust next Neighbor
-		let nextAnchor = this.getNextAnchor(anchorIndex);
-		this.adjustNeighborAnchor(anchor, nextAnchor);
-	}
-
 	create_dummy_start_anchor() {
 		this.start_anchor = new OrthoAnchorPoint(
 			this.id+".start_anchor", 
@@ -2088,10 +2038,6 @@ class FlowVisual extends BaseConnection {
 			}
 		}
 		super.update();
-		if (this.anchorPoints.length > 2) {
-			this.adjustNeighborAnchor(this.anchorPoints[0], this.anchorPoints[1]);
-			this.adjustNeighborAnchor(this.anchorPoints[this.anchorPoints.length-1], this.anchorPoints[this.anchorPoints.length-2]);
-		}
 
 		if(this.primitive && this.icons) {
 			let VE = this.primitive.getAttribute("ValueError");
