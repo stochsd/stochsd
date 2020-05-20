@@ -85,3 +85,7 @@ function neswDirection(point1, point2) {
 function isInLimits(lowerLimit, value, upperLimit) {
 	return (lowerLimit < value && value < upperLimit);
 }
+
+function clampValue(value, min, max) {
+	return Math.max(Math.min(value, max), min);
+}
