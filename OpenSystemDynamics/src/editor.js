@@ -1676,6 +1676,10 @@ class BaseConnection extends TwoPointer {
 			return;		// Will not attach if not acceptable attachType
 		}
 		
+		if (new_end_attach === null) {
+			console.trace();
+		}
+		
 		// Update the attachment primitive
 		this._end_attach = new_end_attach;
 		let targetPrimitive = null;
@@ -1792,51 +1796,64 @@ class FlowVisual extends BaseConnection {
 		return null;
 	}
 
+	requestNewAnchorDim(value, anchor_id, dimIndex) {
+		// value is x or y 
+		let anchor = object_array[anchor_id];
+		let anchorAttach = false;
+		let newValue = value;
+		if (anchor.getAnchorType() === anchorTypeEnum.start) {
+			anchorAttach = this._start_attach;
+		} else if (anchor.getAnchorType() === anchorTypeEnum.end) {
+			anchorAttach = this._end_attach;
+		}
+		// if anchor is attached limit movement 
+		if (anchorAttach) {
+			// stockX or stochY
+			let stockDim = anchorAttach.get_pos()[dimIndex];
+			// stockWidth or stochHeight
+			let stockSpanSize = anchorAttach.getSize()[dimIndex];
+			newValue = clampValue(value, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
+		} 
+		let pos = anchor.get_pos();
+		pos[dimIndex] = newValue;
+		anchor.set_pos(pos);
+		return newValue;
+	}
+
 	requestNewAnchorX(x, anchor_id) {
-		
+		return this.requestNewAnchorDim(x, anchor_id, 0);
 	}
 
 	requestNewAnchorY(y, anchor_id) {
-		
+		return this.requestNewAnchorDim(y, anchor_id, 1);
 	}
 
 	requestNewAnchorPos(newPos, anchor_id) {
-		let [newX, newY] = newPos;
+		let [x, y] = newPos;
 		let mainAnchor = object_array[anchor_id];
-		let allowXMovement = true;
-		let allowYMovement = true;
-		let prevCanMove = true;
-		let nextCanMove = true;
 
 		let prevAnchor = this.getPreviousAnchor(anchor_id);
 		let nextAnchor = this.getNextAnchor(anchor_id);
 
 
-		if (prevAnchor !== null) {
+		if (prevAnchor) {
 			// Get direction of movement or direction of previous anchor 
-			prevCanMove = (prevAnchor.getAnchorType() === anchorTypeEnum.start) && (this._start_attach === null);
-			
 			let prevAnchorPos = prevAnchor.get_pos();
-			let prevMoveInY = Math.abs(prevAnchorPos[0] - newX) > Math.abs(prevAnchorPos[1] - newY);
-			let prevMoveInX = ! prevMoveInY;
-
-			if (prevMoveInX && ! prevCanMove) {
-				// do movment in x!
-				allowXMovement = false;
-			} else if (prevMoveInY && ! prevCanMove) {
-				allowYMovement = false;
+			if ( Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y) ) {
+				x = this.requestNewAnchorX(x, prevAnchor.id);
+			} else {
+				y = this.requestNewAnchorY(y, prevAnchor.id);
 			}
-
-			if (prevMoveInX && allowXMovement) {
-				prevAnchor.set_pos([newX, prevAnchorPos[1]]);
-			} else if (prevMoveInY && allowYMovement) {
-				prevAnchor.set_pos([prevAnchorPos[0], newY]);
+		}
+		if (nextAnchor) {
+			let nextAnchorPos = nextAnchor.get_pos();
+			if ( Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y) ) {
+				x = this.requestNewAnchorX(x, nextAnchor.id);
+			} else {
+				y = this.requestNewAnchorY(y, nextAnchor.id);
 			}
 		}
 
-		let [oldX, oldY] = mainAnchor.get_pos();
-		let x = allowXMovement ? newX : oldX;
-		let y = allowYMovement ? newY : oldY;
 		mainAnchor.set_pos([x,y]);
 
 	}
