@@ -1916,16 +1916,20 @@ class FlowVisual extends BaseConnection {
 		update_relevant_objects("");
 	}
 
-	createAnchorPoint(x, y) {
+	createMiddleAnchorPoint(x, y) {
 		let index = this.anchorPoints.length;
 		let newAnchor = new OrthoAnchorPoint(
 			this.id+".point"+index, 
 			"dummy_anchor", 
-			[this.endx, this.endy], 
+			[x, y], 
 			anchorTypeEnum.orthoMiddle, 
 			index
 		);
 		this.anchorPoints.push(newAnchor);
+	}
+
+	removeLastAnchorPoint() {
+		// to be written 
 	}
 	
 	parseMiddlePoints(middlePointsString) {
@@ -2087,6 +2091,7 @@ class FlowVisual extends BaseConnection {
 		if (points.length == 0) {
 			points = [[this.startX, this.startY], [this.endX, this.endY]];
 		} else if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
+			points.unshift([this.startX, this.startY]);
 			points.push([this.endX, this.endY]);
 		}
 		return points;
@@ -4446,7 +4451,7 @@ class FlowTool extends TwoPointerTool {
 		if (this.current_connection) {
 			if (this.hasLeftClicked) {
 				do_global_log("Right mouse on: "+x+", "+y);
-				this.current_connection.createAnchorPoint(x, y);
+				this.current_connection.createMiddleAnchorPoint(x, y);
 			}
 		}
 		
