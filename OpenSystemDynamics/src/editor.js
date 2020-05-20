@@ -1676,10 +1676,6 @@ class BaseConnection extends TwoPointer {
 			return;		// Will not attach if not acceptable attachType
 		}
 		
-		if (new_end_attach === null) {
-			console.trace();
-		}
-		
 		// Update the attachment primitive
 		this._end_attach = new_end_attach;
 		let targetPrimitive = null;
