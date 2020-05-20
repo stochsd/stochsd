@@ -1754,21 +1754,93 @@ class FlowVisual extends BaseConnection {
 		return true;
 	}
 
-	getPreviousAnchor(index) { // Index is index of Anchor in this.anchorPoints
-		if (index == 0) {
-			return this.start_anchor;
-		} else {
-			return this.anchorPoints[index-1];
+	getPreviousAnchor(anchor_id) { // Index is index of Anchor in this.anchorPoints
+		let suffix = anchor_id.split(".")[1];
+		if (suffix === "end_anchor") {
+			if (this.anchorPoints.length > 0) {
+				return this.anchorPoints[this.anchorPoints.length-1];
+			} else {
+				return this.start_anchor;
+			}
+		} else if (suffix.slice(0,5) === "points") {
+			let middle_index = Number(suffix.slice(6));
+			if (middle_index === 0) {
+				return this.start_anchor;
+			} else {
+				return this.anchorPoints[middle_index-1];
+			}
 		}
+		return null;
 	}
 
-	getNextAnchor(index) { // Index is index of Anchor in this.anchorPoints
-		if (this.anchorPoints.length-1 == index) {
-			return this.end_anchor;
-		} else {
-			return this.anchorPoints[index+1];
-		} 
+	getNextAnchor(anchor_id) { // Index is index of Anchor in this.anchorPoints
+		let suffix = anchor_id.split(".")[1];
+		if (suffix === "start_anchor") {
+			if (this.anchorPoints.length > 0) {
+				return this.anchorPoints[0];
+			} else {
+				return this.end_anchor;
+			}
+		} else if (suffix.slice(0,5) === "points") {
+			let middle_index = Number(suffix.slice(6));
+			if (middle_index === this.anchorPoints.length-1) {
+				return this.end_anchor;
+			} else {
+				this.anchorPoints[middle_index+1];
+			}
+		}
+		return null;
 	}
+
+	requestNewAnchorX(x, anchor_id) {
+		
+	}
+
+	requestNewAnchorY(y, anchor_id) {
+		
+	}
+
+	requestNewAnchorPos(newPos, anchor_id) {
+		let [newX, newY] = newPos;
+		let mainAnchor = object_array[anchor_id];
+		let allowXMovement = true;
+		let allowYMovement = true;
+		let prevCanMove = true;
+		let nextCanMove = true;
+
+		let prevAnchor = this.getPreviousAnchor(anchor_id);
+		let nextAnchor = this.getNextAnchor(anchor_id);
+
+
+		if (prevAnchor !== null) {
+			// Get direction of movement or direction of previous anchor 
+			prevCanMove = (prevAnchor.getAnchorType() === anchorTypeEnum.start) && (this._start_attach === null);
+			
+			let prevAnchorPos = prevAnchor.get_pos();
+			let prevMoveInY = Math.abs(prevAnchorPos[0] - newX) > Math.abs(prevAnchorPos[1] - newY);
+			let prevMoveInX = ! prevMoveInY;
+
+			if (prevMoveInX && ! prevCanMove) {
+				// do movment in x!
+				allowXMovement = false;
+			} else if (prevMoveInY && ! prevCanMove) {
+				allowYMovement = false;
+			}
+
+			if (prevMoveInX && allowXMovement) {
+				prevAnchor.set_pos([newX, prevAnchorPos[1]]);
+			} else if (prevMoveInY && allowYMovement) {
+				prevAnchor.set_pos([prevAnchorPos[0], newY]);
+			}
+		}
+
+		let [oldX, oldY] = mainAnchor.get_pos();
+		let x = allowXMovement ? newX : oldX;
+		let y = allowYMovement ? newY : oldY;
+		mainAnchor.set_pos([x,y]);
+
+	}
+
 
 	syncAnchorToPrimitive(anchorType) {
 		// Save middle anchor points to primitive
@@ -4281,15 +4353,15 @@ class FlowTool extends TwoPointerTool {
 		super.init();
 		// Is to prevent error if rightdown happens before leftdown 
 		this.hasLeftClicked = false;
+		// can be either "x" or "y" 
+		this.direction = "";
 	}
 	static leftMouseDown(x, y) {
-		// super.leftMouseDown(x, y);
 		this.hasLeftClicked = true;
 	}
 	static mouseMove(x, y) {
 		if (this.current_connection) {
-			super.mouseMove(x, y);
-			// this.mouseMoveSingleAnchor(x, y, false, this.current_connection.end_anchor);
+			this.mouseMoveSingleAnchor(x, y, false, this.current_connection.end_anchor.id);
 		} else {
 			// First time moving mouse 
 			this.firstLeftMouseMove(x, y);
@@ -4298,6 +4370,14 @@ class FlowTool extends TwoPointerTool {
 	static firstLeftMouseMove(x, y) {
 		// does not create anything until the first leftMouseMove have been triggered 
 		super.leftMouseDown(x, y);
+	}
+	static mouseMoveSingleAnchor(x,y, shiftKey, anchor_id) {
+		// Function used both during creation and later moving of anchor point 
+		let mainAnchor = get_object(anchor_id);
+		let parent = get_parent(mainAnchor);
+
+		parent.requestNewAnchorPos([x, y], anchor_id);
+		parent.update();
 	}
 	static leftMouseUp(x, y) {
 		if (this.current_connection) {
