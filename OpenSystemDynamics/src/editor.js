@@ -1762,8 +1762,8 @@ class FlowVisual extends BaseConnection {
 			} else {
 				return this.start_anchor;
 			}
-		} else if (suffix.slice(0,5) === "points") {
-			let middle_index = Number(suffix.slice(6));
+		} else if (suffix.slice(0,5) === "point") {
+			let middle_index = Number(suffix.slice(5));
 			if (middle_index === 0) {
 				return this.start_anchor;
 			} else {
@@ -1781,12 +1781,12 @@ class FlowVisual extends BaseConnection {
 			} else {
 				return this.end_anchor;
 			}
-		} else if (suffix.slice(0,5) === "points") {
-			let middle_index = Number(suffix.slice(6));
+		} else if (suffix.slice(0,5) === "point") {
+			let middle_index = Number(suffix.slice(5));
 			if (middle_index === this.anchorPoints.length-1) {
 				return this.end_anchor;
 			} else {
-				this.anchorPoints[middle_index+1];
+				return this.anchorPoints[middle_index+1];
 			}
 		}
 		return null;
@@ -1831,7 +1831,6 @@ class FlowVisual extends BaseConnection {
 		let prevAnchor = this.getPreviousAnchor(anchor_id);
 		let nextAnchor = this.getNextAnchor(anchor_id);
 
-
 		if (prevAnchor) {
 			// Get direction of movement or direction of previous anchor 
 			let prevAnchorPos = prevAnchor.get_pos();
@@ -1849,9 +1848,7 @@ class FlowVisual extends BaseConnection {
 				y = this.requestNewAnchorY(y, nextAnchor.id);
 			}
 		}
-
 		mainAnchor.set_pos([x,y]);
-
 	}
 
 
