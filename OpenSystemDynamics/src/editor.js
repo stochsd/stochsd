@@ -4204,8 +4204,10 @@ class MouseTool extends BaseTool {
 			switch(object_array[selected_anchor.child_id].getAnchorType()) {
 				case anchorTypeEnum.start:
 					parent.setStartAttach(null);
+				break;
 				case anchorTypeEnum.end:
 					parent.setEndAttach(null);
+				break;
 			}
 		}
 			
