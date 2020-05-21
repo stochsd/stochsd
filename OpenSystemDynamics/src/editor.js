@@ -5561,21 +5561,37 @@ var blankGraphTemplate = `<mxGraphModel>
 </mxGraphModel>`;
 loadXML(blankGraphTemplate);
 
+function addMissingPrimitiveAttributes(prim) {
+	// default primitive to get missing attributes 
+	let default_primitive = primitiveBank[prim.value.nodeName.toLowerCase()];
+	if (default_primitive === null) {
+		for (let attr of default_primitive.attributes) {
+			// check fow missing attributes 
+			if (prim.getAttribute(attr.name) === null) {
+				prim.setAttribute(attr.name, attr.value);
+			}
+		}
+	} else {
+		console.error(`No default primitive for ${prim.value.nodeName}`);
+	}
+}
+
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
 	var stochsd_object = get_object(tprimitive.id);
 	if (stochsd_object != false) {
 		return false;
 	}
+
+	addMissingPrimitiveAttributes(tprimitive);
+
 	let nodeType = tprimitive.value.nodeName;
 	switch(nodeType) {
 		case "Numberbox":
 		{
 			var position = getCenterPosition(tprimitive);
 			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
-			if (tprimitive.getAttribute("Color")) {
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 			visualObject.render();
 		}
 		break;
@@ -5602,9 +5618,7 @@ function syncVisual(tprimitive) {
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			// Set UI-coordinates to coordinates in primitive
 			connection.start_anchor.set_pos(source_position);
@@ -5641,9 +5655,7 @@ function syncVisual(tprimitive) {
 			
 			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 			
 			// Insert correct primtives
 			let primitivesString = tprimitive.value.getAttribute("Primitives");
@@ -5692,9 +5704,7 @@ function syncVisual(tprimitive) {
 			
 			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);	
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			connection.update();
 		}
@@ -5708,9 +5718,7 @@ function syncVisual(tprimitive) {
 			connection.create_dummy_start_anchor();
 			connection.create_dummy_end_anchor();			
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			// Set UI-coordinates to coordinates in primitive
 			connection.start_anchor.set_pos(source_position);
@@ -5726,9 +5734,7 @@ function syncVisual(tprimitive) {
 			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("Color")) {
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
@@ -5746,9 +5752,7 @@ function syncVisual(tprimitive) {
 			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("Color")) {
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
@@ -5784,9 +5788,7 @@ function syncVisual(tprimitive) {
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 
-			if (tprimitive.getAttribute("Color")) {
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));			
 
 			visualObject.name_pos = tprimitive.getAttribute("RotateName");
 			update_name_pos(tprimitive.id);
@@ -5804,9 +5806,7 @@ function syncVisual(tprimitive) {
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("Color")) {
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
@@ -5835,9 +5835,7 @@ function syncVisual(tprimitive) {
 
 			connection.loadMiddlePoints();
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			if (tprimitive.getAttribute("ValveIndex")) {
 				connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
@@ -5863,9 +5861,7 @@ function syncVisual(tprimitive) {
 
 			let connection = new LinkVisual(tprimitive.id, "link", source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("Color")) {
-				connection.setColor(tprimitive.getAttribute("Color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			if (tprimitive.source != null) {
 				// Attach to object
