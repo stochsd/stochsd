@@ -1752,15 +1752,6 @@ class FlowVisual extends BaseConnection {
 		return anchors;
 	}
 
-	areAllAnchorsSelected() {
-		for (i = 0; i < this.middleAnchors.length; i++) {
-			if ( ! this.middleAnchors[i].is_selected()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	getPreviousAnchor(anchor_id) { 
 		let suffix = anchor_id.split(".")[1];
 		if (suffix === "end_anchor") {
