@@ -5564,7 +5564,7 @@ loadXML(blankGraphTemplate);
 function addMissingPrimitiveAttributes(prim) {
 	// default primitive to get missing attributes 
 	let default_primitive = primitiveBank[prim.value.nodeName.toLowerCase()];
-	if (default_primitive === null) {
+	if (default_primitive) {
 		for (let attr of default_primitive.attributes) {
 			// check fow missing attributes 
 			if (prim.getAttribute(attr.name) === null) {
