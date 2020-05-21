@@ -1884,8 +1884,8 @@ class FlowVisual extends BaseConnection {
 		}
 		this.variableSide = !this.variableSide;
 
-		this.primitive.setAttribute("valveIndex", this.valveIndex);
-		this.primitive.setAttribute("variableSide", this.variableSide);
+		this.primitive.setAttribute("ValveIndex", this.valveIndex);
+		this.primitive.setAttribute("VariableSide", this.variableSide);
 
 		// update_all_objects();
 		update_relevant_objects("");
@@ -5826,10 +5826,9 @@ function syncVisual(tprimitive) {
 			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
 
 			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
+			// Force all flows to have a RotateName
 			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
+				tprimitive.setAttribute("RotateName", 0);
 			}
 			connection.name_pos = rotateName;
 			update_name_pos(tprimitive.id);
@@ -5840,9 +5839,9 @@ function syncVisual(tprimitive) {
 				connection.setColor(tprimitive.getAttribute("color"));
 			}
 
-			if (tprimitive.getAttribute("valveIndex")) {
-				connection.valveIndex = parseInt(tprimitive.getAttribute("valveIndex"));
-				connection.variableSide = (tprimitive.getAttribute("variableSide") == "true");
+			if (tprimitive.getAttribute("ValveIndex")) {
+				connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
+				connection.variableSide = (tprimitive.getAttribute("VariableSide") === "true");
 			}
 			
 			if (tprimitive.source != null) {

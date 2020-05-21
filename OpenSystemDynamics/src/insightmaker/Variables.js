@@ -267,6 +267,10 @@ primitiveBank.converter.setAttribute('LabelPosition', "Middle");
 primitiveBank.flow = doc.createElement('Flow');
 primitiveBank.flow.setAttribute('name', getText('Flow'));
 primitiveBank.flow.setAttribute('Note', '');
+primitiveBank.flow.setAttribute('MiddlePoints', '');
+primitiveBank.flow.setAttribute('RotateName', 0);
+primitiveBank.flow.setAttribute('ValveIndex', 0);
+primitiveBank.flow.setAttribute('VariableSide', false);
 // Change made here By Magnus Gustafsson (2019-06-27)
 // Original line:
 // primitiveBank.flow.setAttribute('FlowRate', '0');
