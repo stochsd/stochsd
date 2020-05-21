@@ -5736,13 +5736,7 @@ function syncVisual(tprimitive) {
 			
 			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
@@ -5754,13 +5748,7 @@ function syncVisual(tprimitive) {
 			
 			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
@@ -5790,7 +5778,7 @@ function syncVisual(tprimitive) {
 
 			visualObject.setColor(tprimitive.getAttribute("Color"));			
 
-			visualObject.name_pos = tprimitive.getAttribute("RotateName");
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
@@ -5808,13 +5796,7 @@ function syncVisual(tprimitive) {
 			
 			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
@@ -5825,12 +5807,7 @@ function syncVisual(tprimitive) {
 
 			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all flows to have a RotateName
-			if (!rotateName) {
-				tprimitive.setAttribute("RotateName", 0);
-			}
-			connection.name_pos = rotateName;
+			connection.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 
 			connection.loadMiddlePoints();
