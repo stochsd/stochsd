@@ -62,6 +62,7 @@ setValuedProperties(primitiveBank.generic);
 primitiveBank.numberbox = doc.createElement('Numberbox');
 primitiveBank.numberbox.setAttribute("RoundToZero", true);
 primitiveBank.numberbox.setAttribute("RoundToZeroAtValue", 1e-12);
+primitiveBank.numberbox.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.numberbox);
 
 primitiveBank.table = doc.createElement('Table');
