@@ -1865,28 +1865,6 @@ class FlowVisual extends BaseConnection {
 		this.primitive.value.setAttribute("MiddlePoints", middlePoints);
 	}
 
-	create_dummy_start_anchor() {
-		this.start_anchor = new OrthoAnchorPoint(
-			this.id+".start_anchor", 
-			"dummy_anchor", 
-			[this.startx, this.starty], 
-			anchorTypeEnum.start, 
-			0
-		);
-		this.anchorPoints[0] = (this.start_anchor);
-	}
-	
-	create_dummy_end_anchor() {
-		this.end_anchor = new OrthoAnchorPoint(
-			this.id+".end_anchor", 
-			"dummy_anchor", 
-			[this.endx, this.endy],
-			anchorTypeEnum.end,
-			this.anchorPoints.length
-		)
-		this.anchorPoints[this.anchorPoints.length] = this.end_anchor; 
-	}
-
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.getVariablePos();
@@ -4324,10 +4302,6 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.set_name(primitive_name);
 		
-		if (this.current_connection.start_anchor == null) {
-			// a dummy anchor has no attached object
-			this.current_connection.create_dummy_start_anchor();
-		}
 		// make sure start anchor is synced with primitive 
 		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
 	}
@@ -4756,7 +4730,6 @@ function delete_connection(key) {
 	connection_array[key].group.remove();
 	delete connection_array[key];
 	
-	
 	// Must be done last otherwise the anchors will respawn	
 	delete_object(start_anchor.id);
 	delete_object(end_anchor.id);
@@ -4766,14 +4739,6 @@ function delete_object(node_id) {
 	var object_to_delete = object_array[node_id];
 	
 	// Delete all references to the object in the connections
-	for(var key in connection_array) {
-		if (connection_array[key].start_anchor == object_to_delete) {
-			connection_array[key].create_dummy_start_anchor();
-		}
-		if (connection_array[key].end_anchor == object_to_delete) {
-			connection_array[key].create_dummy_end_anchor();
-		}
-	}
 	if (object_to_delete.hasOwnProperty("parent_id")) {
 		delete_connection(object_to_delete.parent_id);
 	}
@@ -5671,8 +5636,8 @@ function syncVisual(tprimitive) {
 					dimClass = ComparePlotVisual;
 				break;
 			}
-			var source_pos = getSourcePosition(tprimitive);
-			var target_pos = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
 			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
@@ -5854,7 +5819,11 @@ function syncVisual(tprimitive) {
 		}
 		break;
 		case "Flow":
-			let connection = new FlowVisual(tprimitive.id, "flow", [0,0]);
+
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
+
+			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
 
 			let rotateName = tprimitive.getAttribute("RotateName");
 			// Force all stocks to have a RotateName
@@ -5865,12 +5834,7 @@ function syncVisual(tprimitive) {
 			connection.name_pos = rotateName;
 			update_name_pos(tprimitive.id);
 
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
-
-			connection.create_dummy_start_anchor();
 			connection.loadMiddlePoints();
-			connection.create_dummy_end_anchor();
 			
 			if (tprimitive.getAttribute("color")) {
 				connection.setColor(tprimitive.getAttribute("color"));
@@ -5880,9 +5844,6 @@ function syncVisual(tprimitive) {
 				connection.valveIndex = parseInt(tprimitive.getAttribute("valveIndex"));
 				connection.variableSide = (tprimitive.getAttribute("variableSide") == "true");
 			}
-
-			connection.start_anchor.set_pos(source_position);
-			connection.end_anchor.set_pos(target_position);
 			
 			if (tprimitive.source != null) {
 				// Attach to object
@@ -5898,8 +5859,8 @@ function syncVisual(tprimitive) {
 		break;
 		case "Link":
 		{
-			var source_pos = getSourcePosition(tprimitive);
-			var target_pos = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 
 			let connection = new LinkVisual(tprimitive.id, "link", source_pos, target_pos);
 			
