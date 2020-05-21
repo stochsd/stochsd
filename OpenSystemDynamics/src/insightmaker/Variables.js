@@ -96,6 +96,9 @@ setValuedProperties(primitiveBank.compareplot);
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
 primitiveBank.xyplot.setAttribute('LineWidth', 2);
+primitiveBank.xyplot.setAttribute('TitleLabel', '');
+primitiveBank.xyplot.setAttribute('XLogScale', false);
+primitiveBank.xyplot.setAttribute('YLogScale', false);
 primitiveBank.xyplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.xyplot);
 

@@ -3376,7 +3376,7 @@ class XyPlotVisual extends PlotVisual {
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			  series: this.serieSettingsArray,
-			  title: this.primitive.getAttribute("TitleLabel") ? this.primitive.getAttribute("TitleLabel") : "",
+			  title: this.primitive.getAttribute("TitleLabel"),
 			  grid: {
 				  background: "white"
 			  },
