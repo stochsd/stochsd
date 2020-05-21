@@ -1753,41 +1753,21 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getPreviousAnchor(anchor_id) { 
-		let suffix = anchor_id.split(".")[1];
-		if (suffix === "end_anchor") {
-			if (this.middleAnchors.length > 0) {
-				return this.middleAnchors[this.middleAnchors.length-1];
-			} else {
-				return this.start_anchor;
-			}
-		} else if (suffix.slice(0,5) === "point") {
-			let middle_index = Number(suffix.slice(5));
-			if (middle_index === 0) {
-				return this.start_anchor;
-			} else {
-				return this.middleAnchors[middle_index-1];
-			}
-		}
-		return null;
+		let anchors = this.getAnchors();
+		let anchor_ids = anchors.map(anchor => anchor.id);
+		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
+		return prev_index >= 0 ? anchors[prev_index] : null;
 	}
 
 	getNextAnchor(anchor_id) { 
-		let suffix = anchor_id.split(".")[1];
-		if (suffix === "start_anchor") {
-			if (this.middleAnchors.length > 0) {
-				return this.middleAnchors[0];
-			} else {
-				return this.end_anchor;
-			}
-		} else if (suffix.slice(0,5) === "point") {
-			let middle_index = Number(suffix.slice(5));
-			if (middle_index === this.middleAnchors.length-1) {
-				return this.end_anchor;
-			} else {
-				return this.middleAnchors[middle_index+1];
-			}
+		let anchors = this.getAnchors();
+		let anchor_ids = anchors.map(anchor => anchor.id);
+		let index = anchor_ids.indexOf(anchor_id);
+		if (index === -1 && index === anchors.length-1) {
+			return null;
+		} else {
+			return anchors[index+1];
 		}
-		return null;
 	}
 
 	requestNewAnchorDim(value, anchor_id, dimIndex) {
