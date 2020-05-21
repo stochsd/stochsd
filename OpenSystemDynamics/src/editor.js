@@ -1745,6 +1745,13 @@ class FlowVisual extends BaseConnection {
 		return 20;
 	}
 
+	getAnchors() {
+		let anchors = [this.start_anchor];
+		anchors = anchors.concat(this.middleAnchors);
+		anchors = anchors.concat([this.end_anchor]);
+		return anchors;
+	}
+
 	areAllAnchorsSelected() {
 		for (i = 0; i < this.middleAnchors.length; i++) {
 			if ( ! this.middleAnchors[i].is_selected()) {
@@ -1956,14 +1963,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
 		let valveY = (points[this.valveIndex][1]+points[this.valveIndex+1][1])/2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -1973,7 +1980,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getVariablePos() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -2042,7 +2049,7 @@ class FlowVisual extends BaseConnection {
 	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let len = points.length;
 		let p1 = points[len-1];
 		let p2 = points[len-2];
@@ -2050,7 +2057,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let last = points[points.length-1];
 		let secondLast = points[points.length-2];
 		let sine = sin(last, secondLast);
@@ -2061,24 +2068,13 @@ class FlowVisual extends BaseConnection {
 		return points;
 	}
 
-	getPathPoints() {
-		let points = this.middleAnchors.map(point => point.get_pos());
-		if (points.length == 0) {
-			points = [[this.startX, this.startY], [this.endX, this.endY]];
-		} else if (this.middleAnchors[this.middleAnchors.length-1].getAnchorType() != anchorTypeEnum.end) {
-			points.unshift([this.startX, this.startY]);
-			points.push([this.endX, this.endY]);
-		}
-		return points;
-	}
-
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 		
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length-2]; 
 
@@ -2116,7 +2112,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPos(points[0], points[1]);
