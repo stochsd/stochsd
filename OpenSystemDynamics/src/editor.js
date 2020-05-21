@@ -794,7 +794,7 @@ class BaseObject {
 			}
 		}
 		if (this.primitive) {
-			// AnchorPoints has no primitve
+			// AnchorPoint has no primitve
 			this.primitive.setAttribute("Color", this.color);
 		}
 	}
@@ -1725,8 +1725,8 @@ class FlowVisual extends BaseConnection {
 		this.updateValueError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
-		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
-		this.anchorPoints = []; 
+		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoint]
+		this.middleAnchors = []; 
 
 		this.valveIndex; 	// index to indicate what inbetween path valve is placed
 		this.variableSide;	// bool to indicate what side of path variable is placed
@@ -1746,19 +1746,19 @@ class FlowVisual extends BaseConnection {
 	}
 
 	areAllAnchorsSelected() {
-		for (i = 0; i < this.anchorPoints.length; i++) {
-			if ( ! this.anchorPoints[i].is_selected()) {
+		for (i = 0; i < this.middleAnchors.length; i++) {
+			if ( ! this.middleAnchors[i].is_selected()) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	getPreviousAnchor(anchor_id) { // Index is index of Anchor in this.anchorPoints
+	getPreviousAnchor(anchor_id) { 
 		let suffix = anchor_id.split(".")[1];
 		if (suffix === "end_anchor") {
-			if (this.anchorPoints.length > 0) {
-				return this.anchorPoints[this.anchorPoints.length-1];
+			if (this.middleAnchors.length > 0) {
+				return this.middleAnchors[this.middleAnchors.length-1];
 			} else {
 				return this.start_anchor;
 			}
@@ -1767,26 +1767,26 @@ class FlowVisual extends BaseConnection {
 			if (middle_index === 0) {
 				return this.start_anchor;
 			} else {
-				return this.anchorPoints[middle_index-1];
+				return this.middleAnchors[middle_index-1];
 			}
 		}
 		return null;
 	}
 
-	getNextAnchor(anchor_id) { // Index is index of Anchor in this.anchorPoints
+	getNextAnchor(anchor_id) { 
 		let suffix = anchor_id.split(".")[1];
 		if (suffix === "start_anchor") {
-			if (this.anchorPoints.length > 0) {
-				return this.anchorPoints[0];
+			if (this.middleAnchors.length > 0) {
+				return this.middleAnchors[0];
 			} else {
 				return this.end_anchor;
 			}
 		} else if (suffix.slice(0,5) === "point") {
 			let middle_index = Number(suffix.slice(5));
-			if (middle_index === this.anchorPoints.length-1) {
+			if (middle_index === this.middleAnchors.length-1) {
 				return this.end_anchor;
 			} else {
-				return this.anchorPoints[middle_index+1];
+				return this.middleAnchors[middle_index+1];
 			}
 		}
 		return null;
@@ -1856,8 +1856,8 @@ class FlowVisual extends BaseConnection {
 		// Save middle anchor points to primitive
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
-		for (i = 1; i < this.anchorPoints.length-1; i++) {
-			let pos = this.anchorPoints[i].get_pos();
+		for (i = 1; i < this.middleAnchors.length-1; i++) {
+			let pos = this.middleAnchors[i].get_pos();
 			let x = pos[0];
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
@@ -1880,7 +1880,7 @@ class FlowVisual extends BaseConnection {
 
 	moveValve () {
 		if (this.variableSide) {
-			this.valveIndex = (this.valveIndex+1)%(this.anchorPoints.length-1);
+			this.valveIndex = (this.valveIndex+1)%(this.middleAnchors.length-1);
 		}
 		this.variableSide = !this.variableSide;
 
@@ -1892,7 +1892,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	createMiddleAnchorPoint(x, y) {
-		let index = this.anchorPoints.length;
+		let index = this.middleAnchors.length;
 		let newAnchor = new OrthoAnchorPoint(
 			this.id+".point"+index, 
 			"dummy_anchor", 
@@ -1900,7 +1900,7 @@ class FlowVisual extends BaseConnection {
 			anchorTypeEnum.orthoMiddle, 
 			index
 		);
-		this.anchorPoints.push(newAnchor);
+		this.middleAnchors.push(newAnchor);
 	}
 
 	removeLastAnchorPoint() {
@@ -1932,7 +1932,7 @@ class FlowVisual extends BaseConnection {
 		}
 		let points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
-			let index = this.anchorPoints.length;
+			let index = this.middleAnchors.length;
 			let newAnchor = new OrthoAnchorPoint(
 				this.id+".point"+index, 
 				"dummy_anchor", 
@@ -1940,7 +1940,7 @@ class FlowVisual extends BaseConnection {
 				anchorTypeEnum.orthoMiddle, 
 				index
 			);
-			this.anchorPoints.push(newAnchor);
+			this.middleAnchors.push(newAnchor);
 		}
 	}
 
@@ -2004,7 +2004,7 @@ class FlowVisual extends BaseConnection {
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
 		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
-		this.anchorPoints.map(anchor => anchor.setColor(color));
+		this.middleAnchors.map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
@@ -2024,7 +2024,7 @@ class FlowVisual extends BaseConnection {
 			this.name_element]
 		);
 		this.icons.setColor("white");
-		this.anchorPoints = [];
+		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
 		
@@ -2062,10 +2062,10 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getPathPoints() {
-		let points = this.anchorPoints.map(point => point.get_pos());
+		let points = this.middleAnchors.map(point => point.get_pos());
 		if (points.length == 0) {
 			points = [[this.startX, this.startY], [this.endX, this.endY]];
-		} else if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
+		} else if (this.middleAnchors[this.middleAnchors.length-1].getAnchorType() != anchorTypeEnum.end) {
 			points.unshift([this.startX, this.startY]);
 			points.push([this.endX, this.endY]);
 		}
@@ -4242,7 +4242,7 @@ class MouseTool extends BaseTool {
 			rel_move(key,diff_x,diff_y);
 		}
 		if (objectMoved) {
-			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoints, Stocks, Auxiliaries etc.)
+			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
 			let ids = [];
 			for (let key in move_objects) {
@@ -4392,32 +4392,6 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection.select();
 		update_name_pos(this.primitive.id);
 	}
-	/*static mouseMove(x, y) {
-		let dir;
-		if (this.current_connection.anchorPoints.length == 2) {
-			dir = neswDirection(this.current_connection.anchorPoints[0].get_pos(), [x, y]);
-			if (dir == "north" || dir == "south") {
-				this.current_connection.endx = this.current_connection.anchorPoints[0].get_pos()[0];
-				this.current_connection.endy = y;
-			} else {
-				this.current_connection.endx = x;
-				this.current_connection.endy = this.current_connection.anchorPoints[0].get_pos()[1];
-			}
-		} else {
-			let anchorPoints = this.current_connection.anchorPoints;
-			let lastAnchor = anchorPoints[anchorPoints.length-1];
-			let secondLastAnchor = anchorPoints[anchorPoints.length-2];
-			dir = neswDirection(secondLastAnchor.get_pos(), lastAnchor.get_pos());
-			if (dir == "north" || dir == "south") {
-				this.current_connection.endx = x;
-				this.current_connection.endy = lastAnchor.get_pos()[1];
-			} else {
-				this.current_connection.endx = lastAnchor.get_pos()[0];
-				this.current_connection.endy = y;
-			}
-		}
-		this.current_connection.update();
-	}*/
 	static rightMouseDown(x,y) {
 		if (this.current_connection) {
 			if (this.hasLeftClicked) {
