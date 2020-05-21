@@ -5783,11 +5783,8 @@ function syncVisual(tprimitive) {
 			connection.loadMiddlePoints();
 			
 			connection.setColor(tprimitive.getAttribute("Color"));
-
-			if (tprimitive.getAttribute("ValveIndex")) {
-				connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
-				connection.variableSide = (tprimitive.getAttribute("VariableSide") === "true");
-			}
+			connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
+			connection.variableSide = (tprimitive.getAttribute("VariableSide") === "true");
 			
 			if (tprimitive.source != null) {
 				// Attach to object
