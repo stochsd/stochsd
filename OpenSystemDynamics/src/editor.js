@@ -2551,7 +2551,7 @@ class TimePlotVisual extends PlotVisual {
 		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
-			(node) => node.getAttribute("Color") ? node.getAttribute("Color") : defaultStroke
+			(node) => node.getAttribute("Color")
 		);
 		this.pattersToDisplay = idsToDisplay.map(findID).map(
 			( node ) => {
@@ -3149,7 +3149,7 @@ class HistoPlotVisual extends PlotVisual {
 		// Make serie settings
 		this.serieSettingsArray.push(
 			{
-				color: targetPrim.getAttribute("Color") ? targetPrim.getAttribute("Color") : "black",
+				color: targetPrim.getAttribute("Color"),
 				shadow: false,
 				pointLabels: {
 					show: true,
