@@ -2011,7 +2011,7 @@ class FlowVisual extends BaseConnection {
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
 		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
-		this.middleAnchors.map(anchor => anchor.setColor(color));
+		this.getAnchors().map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
