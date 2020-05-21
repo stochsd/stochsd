@@ -68,6 +68,7 @@ primitiveBank.table = doc.createElement('Table');
 primitiveBank.table.setAttribute('Primitives', '');
 primitiveBank.table.setAttribute("RoundToZero", true);
 primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
+primitiveBank.table.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.table);
 
 primitiveBank.diagram = doc.createElement('Diagram');
@@ -79,6 +80,7 @@ primitiveBank.timeplot.setAttribute('Primitives', '');
 primitiveBank.timeplot.setAttribute('LineWidth', 2);
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.timeplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.timeplot);
 
 
@@ -87,11 +89,13 @@ primitiveBank.compareplot.setAttribute('Primitives', '');
 primitiveBank.compareplot.setAttribute('LineWidth', 2);
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.compareplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
 primitiveBank.xyplot.setAttribute('LineWidth', 2);
+primitiveBank.xyplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.xyplot);
 
 primitiveBank.histoplot = doc.createElement('HistoPlot');
@@ -103,6 +107,7 @@ primitiveBank.histoplot.setAttribute('LowerBoundAuto', true);
 primitiveBank.histoplot.setAttribute('UpperBound', 1);
 primitiveBank.histoplot.setAttribute('UpperBoundAuto', true);
 primitiveBank.histoplot.setAttribute('ScaleType', "Histogram"); 
+primitiveBank.histoplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.histoplot);
 
 primitiveBank.line = doc.createElement('Line');
@@ -110,20 +115,24 @@ primitiveBank.line.setAttribute("ArrowHeadStart", false);
 primitiveBank.line.setAttribute("ArrowHeadEnd", true);
 primitiveBank.line.setAttribute("StrokeWidth", "3");
 primitiveBank.line.setAttribute("StrokeDashArray", "");
+primitiveBank.line.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.line);
 
 primitiveBank.rectangle = doc.createElement('Rectangle');
 primitiveBank.rectangle.setAttribute("StrokeWidth", "1");
 primitiveBank.rectangle.setAttribute("StrokeDashArray", "");
+primitiveBank.rectangle.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.rectangle);
 
 primitiveBank.ellipse = doc.createElement('Ellipse');
 primitiveBank.ellipse.setAttribute("StrokeWidth", "1");
 primitiveBank.ellipse.setAttribute("StrokeDashArray", "");
+primitiveBank.ellipse.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.ellipse);
 
 primitiveBank.textarea = doc.createElement('TextArea');
 primitiveBank.textarea.setAttribute("HideFrame", false);
+primitiveBank.textarea.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.textarea);
 
 primitiveBank.display = doc.createElement('Display');
@@ -175,6 +184,7 @@ primitiveBank.stock.setAttribute('Image', 'None');
 primitiveBank.stock.setAttribute('FlipHorizontal', false);
 primitiveBank.stock.setAttribute('FlipVertical', false);
 primitiveBank.stock.setAttribute('LabelPosition', "Middle");
+primitiveBank.stock.setAttribute("Color", "black");
 
 primitiveBank.state = doc.createElement('State');
 primitiveBank.state.setAttribute('name', getText('New State'));
@@ -239,6 +249,7 @@ primitiveBank.variable.setAttribute('isConstant', false);
 primitiveBank.variable.setAttribute('FlipHorizontal', false);
 primitiveBank.variable.setAttribute('FlipVertical', false);
 primitiveBank.variable.setAttribute('LabelPosition', "Middle");
+primitiveBank.variable.setAttribute("Color", "black");
 
 primitiveBank.button = doc.createElement('Button');
 primitiveBank.button.setAttribute('name', getText('New Button'));
@@ -263,6 +274,7 @@ primitiveBank.converter.setAttribute('Image', 'None');
 primitiveBank.converter.setAttribute('FlipHorizontal', false);
 primitiveBank.converter.setAttribute('FlipVertical', false);
 primitiveBank.converter.setAttribute('LabelPosition', "Middle");
+primitiveBank.converter.setAttribute("Color", "black");
 
 primitiveBank.flow = doc.createElement('Flow');
 primitiveBank.flow.setAttribute('name', getText('Flow'));
@@ -277,12 +289,14 @@ primitiveBank.flow.setAttribute('VariableSide', false);
 primitiveBank.flow.setAttribute('FlowRate', '');
 primitiveBank.flow.setAttribute('OnlyPositive', true);
 primitiveBank.flow.setAttribute('TimeIndependent', false);
+primitiveBank.flow.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.flow);
 
 primitiveBank.link = doc.createElement('Link');
 primitiveBank.link.setAttribute('name', getText('Link'));
 primitiveBank.link.setAttribute('Note', '');
 primitiveBank.link.setAttribute('BiDirectional', false);
+primitiveBank.link.setAttribute("Color", "black");
 
 primitiveBank.setting = doc.createElement('Setting');
 primitiveBank.setting.setAttribute('Note', '');
