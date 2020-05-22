@@ -1809,18 +1809,38 @@ class FlowVisual extends BaseConnection {
 		let prevAnchor = this.getPreviousAnchor(anchor_id);
 		let nextAnchor = this.getNextAnchor(anchor_id);
 
+		let prev_moveInX = true;
+		let next_moveInX = true;
+
+		if (prevAnchor && this.middleAnchors.length === 0) {
+			let prevAnchorPos = prevAnchor.get_pos();
+			prev_moveInX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
+			next_moveInX = ! prev_moveInX;
+		} else if (nextAnchor && this.middleAnchors.length === 0) {
+			let nextAnchorPos = nextAnchor.get_pos();
+			next_moveInX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
+			prev_moveInX = ! next_moveInX;
+		} else {
+			// if more than two anchor 
+			let anchors = this.getAnchors();
+			let [x1, y1] = anchors[0].get_pos();
+			let [x2, y2] = anchors[1].get_pos();
+			let flow_start_direction_x = Math.abs(x1 - x2) < Math.abs(y1 - y2);
+			let index = anchors.map(anchor => anchor.id).indexOf(anchor_id);			
+			prev_moveInX = ((index%2) === 1) === flow_start_direction_x;
+			next_moveInX = ! prev_moveInX;
+		}
+
 		if (prevAnchor) {
 			// Get direction of movement or direction of previous anchor 
-			let prevAnchorPos = prevAnchor.get_pos();
-			if ( Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y) ) {
+			if ( prev_moveInX ) {
 				x = this.requestNewAnchorX(x, prevAnchor.id);
 			} else {
 				y = this.requestNewAnchorY(y, prevAnchor.id);
 			}
 		}
 		if (nextAnchor) {
-			let nextAnchorPos = nextAnchor.get_pos();
-			if ( Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y) ) {
+			if ( next_moveInX ) {
 				x = this.requestNewAnchorX(x, nextAnchor.id);
 			} else {
 				y = this.requestNewAnchorY(y, nextAnchor.id);
