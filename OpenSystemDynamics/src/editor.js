@@ -1770,11 +1770,11 @@ class FlowVisual extends BaseConnection {
 		}
 	}
 
-	requestNewAnchorDim(value, anchor_id, dimIndex) {
-		// value is x or y 
+	requestNewAnchorDim(reqValue, anchor_id, dimIndex) {
+		// reqValue is x or y 
 		let anchor = object_array[anchor_id];
 		let anchorAttach = false;
-		let newValue = value;
+		let newValue = reqValue;
 		if (anchor.getAnchorType() === anchorTypeEnum.start) {
 			anchorAttach = this._start_attach;
 		} else if (anchor.getAnchorType() === anchorTypeEnum.end) {
@@ -1782,12 +1782,29 @@ class FlowVisual extends BaseConnection {
 		}
 		// if anchor is attached limit movement 
 		if (anchorAttach) {
-			// stockX or stochY
+			// stockX or stockY
 			let stockDim = anchorAttach.get_pos()[dimIndex];
-			// stockWidth or stochHeight
+			// stockWidth or stockHeight
 			let stockSpanSize = anchorAttach.getSize()[dimIndex];
-			newValue = clampValue(value, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
-		} 
+			newValue = clampValue(reqValue, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
+		} else {	
+			// dont allow being closer than minDistance units to a neightbour node 
+			let minDistance = 10;
+			let prevAnchor = this.getPreviousAnchor(anchor_id);
+			let nextAnchor = this.getNextAnchor(anchor_id);
+
+			let requestPos = anchor.get_pos();
+			requestPos[dimIndex] = reqValue;
+			if ((prevAnchor && distance(requestPos, prevAnchor.get_pos()) < minDistance) ||
+			  	(nextAnchor && distance(requestPos, nextAnchor.get_pos()) < minDistance) ) {
+				// set old value of anchor 
+				newValue = anchor.get_pos()[dimIndex];
+			} else {
+				// set requested value 
+				newValue = reqValue;
+			}
+		}
+		
 		let pos = anchor.get_pos();
 		pos[dimIndex] = newValue;
 		anchor.set_pos(pos);
