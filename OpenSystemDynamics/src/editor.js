@@ -4987,7 +4987,7 @@ function mouseMoveHandler(event) {
 }
 function mouseUpHandler(event) {
 	switch(event.which) {
-		case(1):
+		case(mouse.left):
 			if (!leftmouseisdown) {
 				return;
 			}
@@ -5002,7 +5002,7 @@ function mouseUpHandler(event) {
 			updateInfoBar();
 			History.storeUndoState();
 		break;
-		case(2): 
+		case(mouse.middle): 
 			middlemouseisdown = false;
 		break;
 	}
