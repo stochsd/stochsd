@@ -4281,7 +4281,7 @@ class TwoPointerTool extends BaseTool {
 	static getType() {
 		return "none";
 	}
-	static create_TwoPointer_start(x, y, name) {
+	static createTwoPointer(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
 		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
@@ -4294,7 +4294,7 @@ class TwoPointerTool extends BaseTool {
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
 		var primitive_name = findFreeName(type_basename[this.getType()]);
-		this.create_TwoPointer_start(x,y,primitive_name);
+		this.createTwoPointer(x,y,primitive_name);
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
@@ -4377,7 +4377,7 @@ class FlowTool extends TwoPointerTool {
 		}
 		this.hasLeftClicked = false;
 	}
-	static create_TwoPointer_start(x, y, name) {
+	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
 		
@@ -4415,7 +4415,7 @@ function cleanUnconnectedLinks() {
 
 
 class RectangleTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
 		this.current_connection = new RectangleVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
@@ -4426,7 +4426,7 @@ class RectangleTool extends TwoPointerTool {
 RectangleTool.init();
 
 class TimePlotTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "TimePlot", null, null);
 		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
 	}
@@ -4446,7 +4446,7 @@ class TimePlotTool extends TwoPointerTool {
 }
 
 class LinkTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
 	}
