@@ -4384,15 +4384,8 @@ class FlowTool extends TwoPointerTool {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
 		
-		let rotateName = this.primitive.getAttribute("RotateName");
-		// Force all stocks to have a RotateName
-		if (!rotateName) {
-			rotateName = "0";
-			this.primitive.setAttribute("RotateName", rotateName);
-		}		
-		
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
-		this.current_connection.name_pos = rotateName;
+		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 		this.current_connection.select();
 		update_name_pos(this.primitive.id);
 	}
