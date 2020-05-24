@@ -4271,7 +4271,7 @@ class MouseTool extends BaseTool {
 		let only_selected_anchor = get_only_selected_anchor_id();
 		if (only_selected_anchor &&
 		connection_array[only_selected_anchor["parent_id"]].getType() === "flow" &&
-		object_array[only_selected_anchor["child_id"]].getAnchorType()) {
+		object_array[only_selected_anchor["child_id"]].getAnchorType() === anchorTypeEnum.end) {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}
