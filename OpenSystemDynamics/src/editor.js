@@ -3996,8 +3996,8 @@ class StockTool extends OnePointCreateTool {
 
 class RotateNameTool extends BaseTool {
 	static enterTool() {
-		var object_array = get_selected_objects();
-		for(var node_id in object_array) {
+		let selection = get_selected_objects();
+		for(var node_id in selection) {
 			rotate_name(node_id);
 		}
 		ToolBox.setTool("mouse");
@@ -4009,8 +4009,8 @@ class RotateNameTool extends BaseTool {
 
 class MoveValveTool extends BaseTool {
 	static enterTool() {
-		var object_array = get_selected_objects();
-		for (var node_id in object_array) {
+		let selection = get_selected_objects();
+		for (var node_id in selection) {
 			let obj = get_object(node_id);
 			if (obj.type == "flow") {
 				obj.moveValve();
@@ -4678,8 +4678,8 @@ function get_root_objects() {
 
 function delete_selected_objects() {
 	// Delete all objects that are selected
-	var object_array = get_selected_root_objects();
-	for(var key in object_array) {
+	let selection = get_selected_root_objects();
+	for(var key in selection) {
 		// check if object not already deleted
 		// e.i. link gets deleted automatically if any of it's attachments gets deleted
 		if (get_object(key)) {
