@@ -4286,9 +4286,6 @@ class TwoPointerTool extends BaseTool {
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
 		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
 	}
-	static create_TwoPointer_end() {
-		// Override this
-	}
 	static leftMouseDown(x,y) {
 		unselect_all();
 
@@ -4470,9 +4467,6 @@ class LinkTool extends TwoPointerTool {
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = get_object(move_node_id).get_pos();
 		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
-	}
-	static create_TwoPointer_end() {
-		cleanUnconnectedLinks();
 	}
 	static getType() {
 		return "link";
