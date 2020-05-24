@@ -1893,9 +1893,9 @@ class FlowVisual extends BaseConnection {
 		return [xEdge, yEdge]; 
 	}
 
-	moveValve () {
+	moveValve() {
 		if (this.variableSide) {
-			this.valveIndex = (this.valveIndex+1)%(this.middleAnchors.length-1);
+			this.valveIndex = (this.valveIndex+1)%(this.middleAnchors.length+1);
 		}
 		this.variableSide = !this.variableSide;
 
@@ -1919,7 +1919,10 @@ class FlowVisual extends BaseConnection {
 	}
 
 	removeLastMiddleAnchorPoint() {
-		// to be written 
+		// set valveIndex to 0 to avoid valveplacement bug 
+		if (this.valveIndex === this.middleAnchors.length) {
+			this.valveIndex = this.middleAnchors.length-1;
+		}
 		let removedAnchor = this.middleAnchors.pop();
 		delete_object(removedAnchor.id);
 	}
