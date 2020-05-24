@@ -4267,6 +4267,14 @@ class MouseTool extends BaseTool {
 			empty_click_down = false;
 		}
 	}
+	static rightMouseDown(x, y) {
+		let only_selected_anchor = get_only_selected_anchor_id();
+		if (only_selected_anchor &&
+		connection_array[only_selected_anchor["parent_id"]].getType() === "flow" &&
+		object_array[only_selected_anchor["child_id"]].getAnchorType()) {
+			FlowTool.rightMouseDown(x, y);
+		}
+	}
 }
 
 class TwoPointerTool extends BaseTool {
@@ -4344,12 +4352,11 @@ class FlowTool extends TwoPointerTool {
 	static init() {
 		super.init();
 		// Is to prevent error if rightdown happens before leftdown 
-		this.hasLeftClicked = false;
 		// can be either "x" or "y" 
 		this.direction = "";
 	}
 	static leftMouseDown(x, y) {
-		this.hasLeftClicked = true;
+
 	}
 	static mouseMove(x, y) {
 		if (this.current_connection) {
@@ -4375,7 +4382,6 @@ class FlowTool extends TwoPointerTool {
 		if (this.current_connection) {
 			super.leftMouseUp(x, y);
 		}
-		this.hasLeftClicked = false;
 	}
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
@@ -4387,13 +4393,18 @@ class FlowTool extends TwoPointerTool {
 		update_name_pos(this.primitive.id);
 	}
 	static rightMouseDown(x,y) {
-		if (this.current_connection) {
-			if (this.hasLeftClicked) {
-				do_global_log("Right mouse on: "+x+", "+y);
-				this.current_connection.createMiddleAnchorPoint(x, y);
+		if (leftmouseisdown) {
+			let only_selected_anchor = get_only_selected_anchor_id();
+			if (only_selected_anchor) {
+				let parent = connection_array[only_selected_anchor["parent_id"]];
+				let child = object_array[only_selected_anchor["child_id"]];
+				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
+					parent.createMiddleAnchorPoint(x, y);
+					unselect_all();
+					child.select();
+				}
 			}
 		}
-		
 	}
 
 	static getType() {
