@@ -1918,8 +1918,10 @@ class FlowVisual extends BaseConnection {
 		this.middleAnchors.push(newAnchor);
 	}
 
-	removeLastAnchorPoint() {
+	removeLastMiddleAnchorPoint() {
 		// to be written 
+		let removedAnchor = this.middleAnchors.pop();
+		delete_object(removedAnchor.id);
 	}
 	
 	parseMiddlePoints(middlePointsString) {
@@ -4389,7 +4391,8 @@ class FlowTool extends TwoPointerTool {
 		
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
-		this.current_connection.select();
+
+		unselect_all_other_anchors(this.current_connection.id, this.current_connection.end_anchor.id);
 		update_name_pos(this.primitive.id);
 	}
 	static rightMouseDown(x,y) {
@@ -4399,9 +4402,17 @@ class FlowTool extends TwoPointerTool {
 				let parent = connection_array[only_selected_anchor["parent_id"]];
 				let child = object_array[only_selected_anchor["child_id"]];
 				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
-					parent.createMiddleAnchorPoint(x, y);
-					unselect_all();
-					child.select();
+					let prevAnchorPos = parent.getPreviousAnchor(child.id).get_pos();
+					if (distance(prevAnchorPos, [x ,y]) < 10) {
+						if (parent.middleAnchors.length > 0) {
+							// remove last middle anchor
+							parent.removeLastMiddleAnchorPoint();
+						}
+					} else {
+						// Add middle anchor 
+						parent.createMiddleAnchorPoint(x, y);
+						unselect_all_other_anchors(parent.id, child.id);
+					}
 				}
 			}
 		}
@@ -4731,26 +4742,27 @@ function delete_object(node_id) {
 }
 function primitive_mousedown(node_id, event, new_primitive) {
 	last_clicked_element = get_object(node_id);
-	
-	// If we click directly on the anchors we dont want anything but them selected
-	if (last_clicked_element.type == "dummy_anchor") {
-		let elementId = get_parent_id(last_clicked_element.id);
-		unselect_all_but(elementId);
-	}
-	if (last_clicked_element.is_selected()) {
-		if (event.shiftKey) {
-			last_clicked_element.unselect();
+	// If we left click directly on the anchors we dont want anything but them selected
+	if (event.which === mouse.left) {
+		if (last_clicked_element.type == "dummy_anchor") {
+			let elementId = get_parent_id(last_clicked_element.id);
+			unselect_all_but(elementId);
 		}
-	} else {
-		if (!event.shiftKey) {
-			// We don't want to unselect an eventual parent
-			// As that will hide other anchors
-			var parent_id = get_parent_id(node_id);
-			unselect_all_but(parent_id);
+		if (last_clicked_element.is_selected()) {
+			if (event.shiftKey) {
+				last_clicked_element.unselect();
+			}
+		} else {
+			if (!event.shiftKey) {
+				// We don't want to unselect an eventual parent
+				// As that will hide other anchors
+				var parent_id = get_parent_id(node_id);
+				unselect_all_but(parent_id);
+			}
+			last_clicked_element.select();
 		}
-		last_clicked_element.select();
+		last_click_object_clicked = true;
 	}
-	last_click_object_clicked = true;
 }
 
 // only updates diagrams, tables, and XyPlots if needed 
@@ -4842,6 +4854,18 @@ function rel_move(node_id,diff_x,diff_y) {
 
 function positionToModel() {
 	
+}
+
+
+function unselect_all_other_anchors(parent_id, child_id_to_select) {
+	unselect_all();
+	let parent = connection_array[parent_id];
+	parent.select();
+	for(let anchor of get_anchors(parent_id)) {
+		if (anchor.id !== child_id_to_select) {
+			anchor.unselect();
+		}
+	}
 }
 
 function unselect_all() {
