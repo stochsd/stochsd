@@ -1559,6 +1559,10 @@ class TwoPointer extends BaseObject {
 		last_connection = this;
 	}
 
+	getAnchors() {
+		return [this.start_anchor, this.end_anchor];
+	}
+
 	getBoundRect() {
 		return {
 			"minX": this.getMinX(),
@@ -1587,13 +1591,13 @@ class TwoPointer extends BaseObject {
 
 	unselect() {
 		this.selected = false;
-		for(var anchor of get_anchors(this.id)) {
+		for(var anchor of this.getAnchors()) {
 			anchor.setVisible(false);
 		}
 	}
 	select() {
 		this.selected = true;
-		for(var anchor of get_anchors(this.id)) {
+		for(var anchor of this.getAnchors()) {
 			anchor.select();
 			anchor.setVisible(true);
 		}
@@ -3513,6 +3517,10 @@ class LinkVisual extends BaseConnection {
 		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
 		this.b2_anchor.makeSquare();
 	}
+	getAnchors() {
+		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
+	}
+
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
 		let origoWorld = this.start_anchor.get_pos();
@@ -3572,7 +3580,7 @@ class LinkVisual extends BaseConnection {
 		
 		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
-			for(var anchor of get_anchors(this.id)) {
+			for(var anchor of this.getAnchors()) {
 				anchor.select();
 				anchor.setVisible(true);
 			}
@@ -4810,16 +4818,6 @@ function get_all_objects() {
 	return result;
 }
 
-function get_anchors(id) {
-	var result = []
-	for(var key in object_array) {
-		if (key.startsWith(id+".") && object_array[key].type == "dummy_anchor") {
-			result.push(object_array[key]);
-		}
-	}
-	return result;
-}
-
 function get_object(id) {
 	if (typeof object_array[id] != "undefined") {
 		return object_array[id];
@@ -4864,7 +4862,7 @@ function unselect_all_other_anchors(parent_id, child_id_to_select) {
 	unselect_all();
 	let parent = connection_array[parent_id];
 	parent.select();
-	for(let anchor of get_anchors(parent_id)) {
+	for(let anchor of parent.getAnchors()) {
 		if (anchor.id !== child_id_to_select) {
 			anchor.unselect();
 		}
