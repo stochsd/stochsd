@@ -1523,10 +1523,10 @@ class ConverterVisual extends BasePrimitive {
 		do_global_log(linkedPrimitives);
 		if (linkedPrimitives.length > 0) {
 			do_global_log("choose yes");
-			this.primitive.value.setAttribute("Source", linkedPrimitives[0].id);
+			this.primitive.setAttribute("Source", linkedPrimitives[0].id);
 		} else {
 			do_global_log("choose no");
-			this.primitive.value.setAttribute("Source", "Time");
+			this.primitive.setAttribute("Source", "Time");
 		}
 	}
 	name_double_click() {
@@ -1881,7 +1881,7 @@ class FlowVisual extends BaseConnection {
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
 		}
-		this.primitive.value.setAttribute("MiddlePoints", middlePoints);
+		this.primitive.setAttribute("MiddlePoints", middlePoints);
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
@@ -2321,7 +2321,7 @@ class TableVisual extends HtmlTwoPointer {
 		html += "<table class='stickyTable'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
@@ -2557,11 +2557,11 @@ class TimePlotVisual extends PlotVisual {
 		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
-		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
-		this.primitive.value.setAttribute("Sides", sides.join(","));
-		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
+		this.primitive.setAttribute("Sides", sides.join(","));
+		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
@@ -2915,11 +2915,11 @@ class ComparePlotVisual extends PlotVisual {
 	render() {
 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 
-		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
 			// We can't render anything with no data
@@ -3286,7 +3286,7 @@ class XyPlotVisual extends PlotVisual {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.showMarkers = this.dialog.isMarkersChecked();
 		this.showLine = this.dialog.isLineChecked();
-		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
@@ -3724,8 +3724,8 @@ class LinkVisual extends BaseConnection {
 			this.b1_line.setAttribute("x2",b1pos[0]);
 			this.b1_line.setAttribute("y2",b1pos[1]);
 			
-			this.primitive.value.setAttribute("b1x",b1pos[0]);
-			this.primitive.value.setAttribute("b1y",b1pos[1]);
+			this.primitive.setAttribute("b1x",b1pos[0]);
+			this.primitive.setAttribute("b1y",b1pos[1]);
 		}
 		break;
 		case anchorTypeEnum.bezier2:
@@ -3737,8 +3737,8 @@ class LinkVisual extends BaseConnection {
 			this.b2_line.setAttribute("x2",b2pos[0]);
 			this.b2_line.setAttribute("y2",b2pos[1]);
 			
-			this.primitive.value.setAttribute("b2x",b2pos[0]);
-			this.primitive.value.setAttribute("b2y",b2pos[1]);
+			this.primitive.setAttribute("b2x",b2pos[0]);
+			this.primitive.setAttribute("b2y",b2pos[1]);
 		}
 		break;
 		}
@@ -5627,7 +5627,7 @@ function syncVisual(tprimitive) {
 			connection.end_anchor.set_pos(target_position);
 			
 			// Insert correct primtives
-			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let primitivesString = tprimitive.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
 			if (primitivesString) {
 				connection.dialog.setIdsToDisplay(idsToDisplay);
@@ -5659,9 +5659,9 @@ function syncVisual(tprimitive) {
 			connection.setColor(tprimitive.getAttribute("Color"));
 			
 			// Insert correct primtives
-			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let primitivesString = tprimitive.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
-			let sidesString = tprimitive.value.getAttribute("Sides");
+			let sidesString = tprimitive.getAttribute("Sides");
 			if (primitivesString) {
 				if (sidesString) {
 					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
@@ -5671,13 +5671,13 @@ function syncVisual(tprimitive) {
 			}
 			
 			// This is only for Diagram 
-			let titleLabel = tprimitive.value.getAttribute("TitleLabel");
+			let titleLabel = tprimitive.getAttribute("TitleLabel");
 			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
 			
-			let leftAxisLabel = tprimitive.value.getAttribute("LeftAxisLabel");
+			let leftAxisLabel = tprimitive.getAttribute("LeftAxisLabel");
 			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
 			
-			let rightAxisLabel = tprimitive.value.getAttribute("RightAxisLabel");
+			let rightAxisLabel = tprimitive.getAttribute("RightAxisLabel");
 			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
 
 			connection.update();
@@ -5853,10 +5853,10 @@ function syncVisual(tprimitive) {
 				connection.end_anchor.set_pos(target_position);
 			}
 			let bezierPoints = [
-				tprimitive.value.getAttribute("b1x"),
-				tprimitive.value.getAttribute("b1y"),
-				tprimitive.value.getAttribute("b2x"),
-				tprimitive.value.getAttribute("b2y")
+				tprimitive.getAttribute("b1x"),
+				tprimitive.getAttribute("b1y"),
+				tprimitive.getAttribute("b2x"),
+				tprimitive.getAttribute("b2y")
 			];
 
 			if (bezierPoints.indexOf(null) == -1) {
