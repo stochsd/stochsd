@@ -4225,9 +4225,10 @@ class MouseTool extends BaseTool {
 			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
-			let parent = connection_array[only_selected_anchor.parent_id];
+			let parent = connection_array[only_selected_anchor["parent_id"]];
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor.child_id);
+			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor["child_id"]);
+			update_twopointer_objects([parent.id, only_selected_anchor["child_id"]]);
 		} else if ( only_selected_link ) {
 			// special exeption for links of links is being draged directly 
 			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b1_anchor");
