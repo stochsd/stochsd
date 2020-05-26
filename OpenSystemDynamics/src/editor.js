@@ -945,7 +945,6 @@ class OnePointer extends BaseObject {
 		// Recreating the array is intentional to avoid copying a reference
 		//~ alert(" old pos "+this.pos[0]+","+this.pos[1]+" new pos "+pos[0]+","+pos[1]);
 		this.pos = [pos[0],pos[1]];
-		this.updatePosition();
 	}
 		
 	get_pos() {
@@ -3944,6 +3943,7 @@ class OnePointCreateTool extends BaseTool {
 	static leftMouseDown(x, y) {
 		unselect_all();
 		this.create(x, y);
+		update_relevant_objects([]);
 		updateInfoBar();
 	}
 	static leftMouseUp(x, y) {
@@ -4228,11 +4228,15 @@ class MouseTool extends BaseTool {
 			let parent = connection_array[only_selected_anchor["parent_id"]];
 			let tool = ToolBox.tools[parent.type];
 			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor["child_id"]);
-			update_twopointer_objects([parent.id, only_selected_anchor["child_id"]]);
+			parent.update();
+			parent.getAnchors().map(anchor => anchor.updatePosition() );
 		} else if ( only_selected_link ) {
 			// special exeption for links of links is being draged directly 
 			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b1_anchor");
 			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b2_anchor");
+			let parent = connection_array[only_selected_link["parent_id"]];
+			parent.update();
+			parent.getAnchors().map(anchor => anchor.updatePosition() );
 		} else {
 			let move_array = get_selected_objects();
 			this.defaultRelativeMove(move_array, diff_x, diff_y);
@@ -4266,7 +4270,7 @@ class MouseTool extends BaseTool {
 			for (let key in move_objects) {
 				ids.push(move_objects[key].id);
 			}
-			update_twopointer_objects(ids);
+			update_relevant_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
@@ -4274,6 +4278,7 @@ class MouseTool extends BaseTool {
 		let selected_anchor = get_only_selected_anchor_id();
 		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
 			attach_selected_anchor(object_array[selected_anchor.child_id]);
+			object_array[selected_anchor.child_id].updatePosition();
 		}
 
 		if (empty_click_down) {
@@ -4343,6 +4348,7 @@ class TwoPointerTool extends BaseTool {
 		let parent = get_parent(moveObject);
 		moveObject.set_pos([x,y]);
 		parent.update();
+		object_array[node_id].updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.mouseMove(x, y, shiftKey);
@@ -4351,6 +4357,7 @@ class TwoPointerTool extends BaseTool {
 		}
 		
 		this.current_connection.update();
+		this.current_connection.getAnchors().map(anchor => anchor.updatePosition() );
 		this.current_connection.finishCreate();
 		
 		this.current_connection = null;
@@ -4391,6 +4398,7 @@ class FlowTool extends TwoPointerTool {
 
 		parent.requestNewAnchorPos([x, y], anchor_id);
 		parent.update();
+		parent.getAnchors().map(anchor => anchor.updatePosition() );
 	}
 	static leftMouseUp(x, y) {
 		if (this.current_connection) {
@@ -4487,15 +4495,21 @@ class LinkTool extends TwoPointerTool {
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		let anchor_type = node_id.split(".")[1];
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
-			super.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
+			let moveObject = get_object(node_id);
+			let parent = get_parent(moveObject);
+			moveObject.set_pos([x,y]);
+			parent.update();
+			parent.getAnchors().map( anchor => anchor.updatePosition() );
 		} else if (anchor_type === "b1_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
 			parent.setHandle1Pos([x,y]);
 			parent.update();
+			parent.getAnchors().map( anchor => anchor.updatePosition() );
 		} else if (anchor_type === "b2_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
 			parent.setHandle2Pos([x,y]);
 			parent.update();
+			parent.getAnchors().map( anchor => anchor.updatePosition() );
 		}
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
@@ -4780,9 +4794,17 @@ function primitive_mousedown(node_id, event, new_primitive) {
 // only updates diagrams, tables, and XyPlots if needed 
 function update_relevant_objects(ids) {
 	for(let key in object_array) {
-		object_array[key].update();
+		if (object_array[key].type !== "dummy_anchor") {
+			object_array[key].updatePosition();
+		}
 	}
 	update_twopointer_objects(ids);
+	for(let key in object_array) {
+		if (object_array[key].type === "dummy_anchor") {
+			// must update dummy anchors after connection has been updated 
+			object_array[key].updatePosition();
+		}
+	}
 }
 
 // only updates diagrams, tables, and XyPlots if needed 
