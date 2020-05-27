@@ -2250,8 +2250,8 @@ class RectangleVisual extends TwoPointer {
 
 
 class EllipseVisual extends TwoPointer {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.dialog = new EllipseDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.updateGraphics();
@@ -2276,10 +2276,10 @@ class EllipseVisual extends TwoPointer {
 			this.dialog.show();
 	}
 	updateGraphics() {
-		let cx = (this.startx + this.endx)/2;
-		let cy = (this.starty + this.endy)/2;
-		let rx = Math.max(Math.abs(this.startx - this.endx)/2, 1);
-		let ry = Math.max(Math.abs(this.starty - this.endy)/2, 1);
+		let cx = (this.startX + this.endX)/2;
+		let cy = (this.startY + this.endY)/2;
+		let rx = Math.max(Math.abs(this.startX - this.endX)/2, 1);
+		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
 		this.element.setAttribute("cx", cx);
 		this.element.setAttribute("cy", cy);
 		this.element.setAttribute("rx", rx);
@@ -2290,10 +2290,10 @@ class EllipseVisual extends TwoPointer {
 		this.clickEllipse.setAttribute("cy", cy);
 		this.clickEllipse.setAttribute("rx", rx);
 		this.clickEllipse.setAttribute("ry", ry);
-		this.selectorCoordRect.x1 = this.startx;
-		this.selectorCoordRect.y1 = this.starty;
-		this.selectorCoordRect.x2 = this.endx;
-		this.selectorCoordRect.y2 = this.endy;
+		this.selectorCoordRect.x1 = this.startX;
+		this.selectorCoordRect.y1 = this.startY;
+		this.selectorCoordRect.x2 = this.endX;
+		this.selectorCoordRect.y2 = this.endY;
 		this.selectorCoordRect.update();	
 	}
 
@@ -4149,7 +4149,7 @@ function get_only_selected_anchor_id() {
 		// only one anchor in selection
 		return {"parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
 	} else if (keys.length === 2) {
-		if (get_object(keys[0]).getType() === "dummy_anchor" && get_object(keys[0]).getType() === "dummy_anchor") {
+		if (get_object(keys[0]).getType() === "dummy_anchor" && get_object(keys[1]).getType() === "dummy_anchor") {
 			// both anchors are dummies 
 			return null;
 		} else if(get_parent_id(keys[0]) === get_parent_id(keys[1])) {
@@ -4496,6 +4496,17 @@ class RectangleTool extends TwoPointerTool {
 	}
 }
 RectangleTool.init();
+
+
+class EllipseTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "Ellipse", null, null);
+		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static getType() {
+		return "ellipse";
+	}
+}
 
 class TimePlotTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
@@ -5139,7 +5150,7 @@ class ToolBox {
 			"ghost":GhostTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
-			// "ellipse":EllipseTool,
+			"ellipse":EllipseTool,
 			// "line":LineTool,
 			// "table":TableTool,
 			"timeplot":TimePlotTool,

@@ -1,15 +1,5 @@
 /** Tools start here */
 
-class EllipseTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Ellipse", null, null);
-		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y]);
-	}
-	getType() {
-		return "ellipse";
-	}
-}
-
 class LineTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
