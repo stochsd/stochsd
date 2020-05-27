@@ -2095,23 +2095,17 @@ class FlowVisual extends BaseConnection {
 		let connectionEndPos = points[points.length-2]; 
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			if (this.getStartAttach().get_pos) {
-				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
-				// If start point have moved reset b1
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.set_pos(newPos);
-				}
+			let oldPos = this.start_anchor.get_pos();
+			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
+			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
+				this.requestNewAnchorPos(newPos, this.start_anchor.id);
 			}
 		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
-			if (this.getEndAttach().get_pos) {				
-				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
-				// If end point have moved reset b2
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.set_pos(newPos);
-				}
+		if (this.getEndAttach() != null && this.end_anchor != null) {	
+			let oldPos = this.end_anchor.get_pos();
+			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
+			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
+				this.requestNewAnchorPos(newPos, this.end_anchor.id);
 			}
 		}
 		super.update();
