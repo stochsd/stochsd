@@ -5499,7 +5499,7 @@ function find_connections(visual) {
 function find_start_connections(visual) {
 	var connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].getStartAttach() == visual) {
+		if (connection_array[key].getStartAttach && connection_array[key].getStartAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
@@ -5509,7 +5509,7 @@ function find_start_connections(visual) {
 function find_end_connections(visual) {
 	var connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].getEndAttach() == visual) {
+		if (connection_array[key].getEndAttach && connection_array[key].getEndAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
