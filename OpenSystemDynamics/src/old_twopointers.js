@@ -1,17 +1,5 @@
 /** Tools start here */
 
-class LineTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Line", null,null);
-		this.current_connection = new LineVisual(this.primitive.id,this.getType(),[x,y]);
-	}
-	static getType() {
-		return "line";
-	}
-}
-LineTool.init();
-
-
 class TableTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);

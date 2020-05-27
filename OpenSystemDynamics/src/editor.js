@@ -3449,8 +3449,8 @@ class XyPlotVisual extends PlotVisual {
 }
 
 class LineVisual extends TwoPointer {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.dialog = new LineDialog(this.id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.updateGraphics();
@@ -3481,8 +3481,8 @@ class LineVisual extends TwoPointer {
 		this.line.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		this.line.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
 
-		let lineStartPos = [this.startx, this.starty];
-		let lineEndPos = [this.endx, this.endy];
+		let lineStartPos = [this.startX, this.startY];
+		let lineEndPos = [this.endX, this.endY];
 		let arrowHeadStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
 		let arrowHeadEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
 		this.arrowHeadStart.setAttribute("visibility", arrowHeadStart ? "visible" : "hidden");
@@ -3490,17 +3490,17 @@ class LineVisual extends TwoPointer {
 		if (arrowHeadStart || arrowHeadEnd) {
 			/* Shorten line as not to go past arrowHeadEnd */
 			let shortenAmount = 12;
-			let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
-			let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
+			let sine = 		sin([this.endX, this.endY], [this.startX, this.startY]);
+			let cosine = 	cos([this.endX, this.endY], [this.startX, this.startY]);
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
 			if (arrowHeadStart) {
-				lineStartPos = translate(neg(endOffset), [this.startx, this.starty]);
-				this.arrowHeadStart.setPos([this.startx, this.starty], [this.endx-this.startx, this.endy-this.starty]);
+				lineStartPos = translate(neg(endOffset), [this.startX, this.startY]);
+				this.arrowHeadStart.setPos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
 				this.arrowHeadStart.update();
 			}
 			if (arrowHeadEnd) {
-				lineEndPos = translate(endOffset, [this.endx, this.endy]);
-				this.arrowHeadEnd.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
+				lineEndPos = translate(endOffset, [this.endX, this.endY]);
+				this.arrowHeadEnd.setPos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
 				this.arrowHeadEnd.update();
 			}
 		}
@@ -3509,10 +3509,10 @@ class LineVisual extends TwoPointer {
 		this.line.setAttribute("y1", lineStartPos[1]);
 		this.line.setAttribute("x2", lineEndPos[0]);
 		this.line.setAttribute("y2", lineEndPos[1]);
-		this.clickLine.setAttribute("x1", this.startx);
-		this.clickLine.setAttribute("y1", this.starty);
-		this.clickLine.setAttribute("x2", this.endx);
-		this.clickLine.setAttribute("y2", this.endy);
+		this.clickLine.setAttribute("x1", this.startX);
+		this.clickLine.setAttribute("y1", this.startY);
+		this.clickLine.setAttribute("x2", this.endX);
+		this.clickLine.setAttribute("y2", this.endY);
 	}
 	setColor(color) {
 		super.setColor(color);
@@ -4508,6 +4508,18 @@ class EllipseTool extends TwoPointerTool {
 	}
 }
 
+class LineTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "Line", null,null);
+		this.current_connection = new LineVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static getType() {
+		return "line";
+	}
+}
+LineTool.init();
+
+
 class TimePlotTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "TimePlot", null, null);
@@ -5151,7 +5163,7 @@ class ToolBox {
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
 			"ellipse":EllipseTool,
-			// "line":LineTool,
+			"line":LineTool,
 			// "table":TableTool,
 			"timeplot":TimePlotTool,
 			// "compareplot":ComparePlotTool,
