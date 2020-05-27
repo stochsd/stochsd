@@ -3043,8 +3043,8 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 }
 
 class HistoPlotVisual extends PlotVisual {
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -4594,6 +4594,26 @@ class XyPlotTool extends TwoPointerTool {
 XyPlotTool.init();
 
 
+class HistoPlotTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "HistoPlot", null, null);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x,y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x,y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "histoplot";
+	}
+}
+
 class LinkTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
@@ -5222,7 +5242,7 @@ class ToolBox {
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
 			"xyplot":XyPlotTool,
-			// "histoplot":HistoPlotTool,
+			"histoplot":HistoPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
 			"step":StepTool,
