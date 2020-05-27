@@ -3258,8 +3258,8 @@ class HistoPlotVisual extends PlotVisual {
 }
 
 class XyPlotVisual extends PlotVisual {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {		
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -4572,6 +4572,28 @@ class ComparePlotTool extends TwoPointerTool {
 }
 ComparePlotTool.init();
 
+class XyPlotTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "XyPlot", null,null);
+		this.current_connection = new XyPlotVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x,y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x,y)
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "xyplot";
+	}
+}
+XyPlotTool.init();
+
+
 class LinkTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Link", null,null);
@@ -5199,7 +5221,7 @@ class ToolBox {
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
-			// "xyplot":XyPlotTool,
+			"xyplot":XyPlotTool,
 			// "histoplot":HistoPlotTool,
 			"numberbox":NumberboxTool,
 			"run":RunTool,
