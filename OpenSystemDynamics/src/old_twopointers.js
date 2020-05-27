@@ -1,28 +1,5 @@
 /** Tools start here */
 
-class TableTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Table", null,null);
-		this.current_connection = new TableVisual(this.primitive.id,this.getType(),[x,y]);
-	}
-	static init() {
-		this.initialSelectedIds = [];
-		super.init();
-	}
-	static leftMouseDown(x,y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
-		super.leftMouseDown(x,y);
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
-		this.current_connection.render();
-	}
-	static getType() {
-		return "table";
-	}
-}
-TableTool.init();
-
-
-
 class ComparePlotTool extends TwoPointerTool {
 	static create_TwoPointer_start(x,y,name) {
 		this.primitive = createConnector(name, "ComparePlot", null,null);

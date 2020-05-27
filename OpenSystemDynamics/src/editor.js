@@ -2318,8 +2318,8 @@ class HtmlTwoPointer extends TwoPointer {
 }
 
 class TableVisual extends HtmlTwoPointer {
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -2380,17 +2380,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(
-			this.startx,
-			this.starty,
-			this.endx,
-			this.endy,
-			defaultStroke,
-			"none",
-			"element",
-			""
-		);
-		this.htmlElement = svg_foreignobject(this.startx, this.starty, 200, 200, "table not renderd yet", "white");
+		this.element = svg_rect(0, 0, 0, 0,	defaultStroke, "none", "element", "");
+		this.htmlElement = svg_foreignobject(0, 0, 200, 200, "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2416,10 +2407,10 @@ class TableVisual extends HtmlTwoPointer {
 	}
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
 		
 		this.htmlElement.setAttribute("x",this.getMinX());
@@ -4519,6 +4510,26 @@ class LineTool extends TwoPointerTool {
 }
 LineTool.init();
 
+class TableTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "Table", null,null);
+		this.current_connection = new TableVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static leftMouseDown(x,y) {
+		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		super.leftMouseDown(x,y);
+		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		this.current_connection.render();
+	}
+	static getType() {
+		return "table";
+	}
+}
+TableTool.init();
 
 class TimePlotTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
@@ -5164,7 +5175,7 @@ class ToolBox {
 			"rectangle":RectangleTool,
 			"ellipse":EllipseTool,
 			"line":LineTool,
-			// "table":TableTool,
+			"table":TableTool,
 			"timeplot":TimePlotTool,
 			// "compareplot":ComparePlotTool,
 			// "xyplot":XyPlotTool,
@@ -5679,26 +5690,17 @@ function syncVisual(tprimitive) {
 					dimClass = HistoPlotVisual;
 				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
 			connection.setColor(tprimitive.getAttribute("Color"));
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
 			
 			// Insert correct primtives
 			let primitivesString = tprimitive.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
-			if (primitivesString) {
-				connection.dialog.setIdsToDisplay(idsToDisplay);
-			}
+			connection.dialog.setIdsToDisplay(idsToDisplay);
 
 			connection.update();
 			connection.render();
