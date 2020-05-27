@@ -3022,8 +3022,8 @@ class ComparePlotVisual extends PlotVisual {
 }
 
 class TextAreaVisual extends HtmlOverlayTwoPointer {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {		
+		super(id, type, pos0, pos1);
 		
 		this.primitive = findID(id);
 		
@@ -4471,6 +4471,21 @@ function cleanUnconnectedLinks() {
 }
 
 
+class TextAreaTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		let primitive_name = findFreeName(type_basename["text"]);
+		this.primitive = createConnector(primitive_name, "TextArea", null,null);
+		this.current_connection = new TextAreaVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
+	}
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
+	}
+	static getType() {
+		return "text";
+	}
+}
+
 class RectangleTool extends TwoPointerTool {
 	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
@@ -5122,8 +5137,7 @@ class ToolBox {
 			"movevalve":MoveValveTool,
 			"straightenlink": StraightenLinkTool,
 			"ghost":GhostTool,
-			//~ "text":TextTool,
-			// "text":TextAreaTool,
+			"text":TextAreaTool,
 			"rectangle":RectangleTool,
 			// "ellipse":EllipseTool,
 			// "line":LineTool,
@@ -5742,19 +5756,12 @@ function syncVisual(tprimitive) {
 		break;
 		case "TextArea":
 		{
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id, "text", [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new TextAreaVisual(tprimitive.id, "text", source_pos, target_pos);
 			
 			connection.setColor(tprimitive.getAttribute("Color"));
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
 			
 			connection.update();
 		}
