@@ -1225,6 +1225,27 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
+	set_pos(pos) {
+		let diff = translate(neg(this.pos), pos);
+		super.set_pos(pos);
+		let startConn = find_start_connections(this);
+		for(let conn of startConn) {
+			if (conn.type === "flow" && conn.is_selected() === false) {
+				let oldConnPos = conn.start_anchor.get_pos();
+				let newConnPos = translate(oldConnPos, diff);
+				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
+			}
+		}
+		let endConn = find_end_connections(this);
+		for(let conn of endConn) {
+			if (conn.type === "flow" && conn.is_selected() === false) {
+				let oldAnchorPos = conn.end_anchor.get_pos();
+				let newAnchorPos = translate(oldAnchorPos, diff);
+				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
+			}
+		}
+	}
+
 	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
 		const [xCenter, yCenter] = this.get_pos();
