@@ -5457,24 +5457,24 @@ function updateTimeUnitButton() {
 	}
 }
 
-function find_connections(primitive) {
-	return find_start_connections(primitive).concat(find_end_connections(primitive));
+function find_connections(visual) {
+	return find_start_connections(visual).concat(find_end_connections(visual));
 }
 
-function find_start_connections(primitive) {
+function find_start_connections(visual) {
 	var connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].start_anchor == primitive) {
+		if (connection_array[key].getStartAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
 	return connections_array;
 }
 
-function find_end_connections(primitive) {
+function find_end_connections(visual) {
 	var connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].end_anchor == primitive) {
+		if (connection_array[key].getEndAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
