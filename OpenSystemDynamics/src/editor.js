@@ -281,7 +281,7 @@ function updateWindowSize() {
 	// The resize of the toolbar is decided by css depending on how many lines the toolbar is so its very hard if we would calculate this size in advanced
 	// Instead we wait until it is resized and then adopt to the result
 	setTimeout(function() {
-		var svgPosition = $("#svgplanebackground").position();
+		let svgPosition = $("#svgplanebackground").position();
 		$("#svgplanebackground").width(windowWidth-18);
 		$("#svgplanebackground").height(windowHeight-svgPosition.top);
 	},100);
@@ -348,7 +348,7 @@ PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat)
 
 // Add the StocSD macro-script to the beggning of the Macro
 function appendStochSDMacros() {
-	var macros = getMacros();
+	let macros = getMacros();
 	if (macros === undefined) {
 		macros = "";
 	}
@@ -360,7 +360,7 @@ function appendStochSDMacros() {
 
 // Replace macro with the StochSD macro-script
 function setStochSDMacros() {
-	var macros = sdsMacros+"\n\n\n";
+	let macros = sdsMacros+"\n\n\n";
 	setMacros(macros);
 }
 
@@ -392,7 +392,7 @@ function callAPI(e) {
 }
 
 function getFunctionHelpData() {
-		var helpData = [
+	let helpData = [
 		["Mathematical Functions", [
 			["Round", "Round(##Value$$)", "Rounds a number to the nearest integer.", ["Round(3.6)", "4"]],
 			["Round Up", "Ceiling(##Value$$)", "Rounds a number up to the nearest integer.", ["Ceiling(3.6)", "4"]],
@@ -512,8 +512,8 @@ function getFunctionHelpData() {
 
 	];
 	helpData = helpData.sort(function(a, b) {
-		var categoryA = a[0];
-		var categoryB = b[0];
+		let categoryA = a[0];
+		let categoryB = b[0];
 		if (categoryA < categoryB) return -1;
 		if (categoryA > categoryB) return 1;
 		return 0;
@@ -555,7 +555,7 @@ function sdsLoadFunctions() {
         return new Material(simulate.timeEnd.toNum().value);
 	});
     defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x) {
-        var dt = simulate.timeStep.toNum().value;
+        let dt = simulate.timeStep.toNum().value;
         
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
@@ -566,13 +566,13 @@ function sdsLoadFunctions() {
 		// Width can not be set in this version of pulse
 		// Width was parameter x[2] in the old pulse function but here repeat is x[2] instead
 
-		var start = x[0].toNum();
-		var volume = new Material(1);
-		var width = new Material(0);
-		var repeat = new Material(0);
-		var height = null; // Is calculated later
+		let start = x[0].toNum();
+		let volume = new Material(1);
+		let width = new Material(0);
+		let repeat = new Material(0);
+		let height = null; // Is calculated later
 		
-		var DT = simulate.timeStep.toNum().value;
+		let DT = simulate.timeStep.toNum().value;
 
 		if (x.length > 1) {
 			volume = x[1].toNum();
@@ -597,8 +597,8 @@ function sdsLoadFunctions() {
 				return height;
 			}
 		} else if (greaterThanEq(simulate.time(), start)) {
-			var x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
-			var dv = minus(simulate.time(), start);
+			let x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
+			let dv = minus(simulate.time(), start);
 			if (minus(functionBank["round"]([div(dv, repeat)]), div(dv, repeat)).value == 0 || (greaterThanEq(x, start) && lessThanEq(x, plus(start, width)))) {
 				return height;
 			}
@@ -685,10 +685,10 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	}
 
 	// Else format it as a regular number, and remove ending zeros
-	var stringified = number.toFixed(tdecimals);
+	let stringified = number.toFixed(tdecimals);
 
 	// Find the length of stringified, where the ending zeros have been removed
-	var i = stringified.length;
+	let i = stringified.length;
 	while(stringified.charAt(i-1)=='0') {
 		i=i-1;
 		// If we find a dot. Stop removing decimals
@@ -698,12 +698,12 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		}
 	}
 	// Creates a stripped string without ending zeros
-	var stripped = stringified.substring(0,i);
+	let stripped = stringified.substring(0,i);
 	return stripped;
 }
 
 function get_parent_id(id) {
-	var parent_id = id.toString().split(".")[0];
+	let parent_id = id.toString().split(".")[0];
 	//~ do_global_log("x flowa "+parent_id);
 	return parent_id;
 }
@@ -713,8 +713,8 @@ function get_parent(child) {
 }
 
 function is_family(id1, id2) {
-	var parent_id1 = id1.toString().split(".")[0];
-	var parent_id2 = id2.toString().split(".")[0];
+	let parent_id1 = id1.toString().split(".")[0];
+	let parent_id2 = id2.toString().split(".")[0];
 	if (parent_id1 == parent_id2) {
 		return true;
 	} else {
@@ -724,13 +724,13 @@ function is_family(id1, id2) {
 
 // Get a list of all children for a parent
 function getChildren(parentId) {
-	var result = {}
-	for(var key in object_array) {
+	let result = {}
+	for(let key in object_array) {
 		if (get_parent_id(key) == parentId && key != parentId) {
 			result[key] = object_array[key];
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (get_parent_id(key) == parentId && key != parentId) {
 			result[key] = connection_array[key];
 		}
@@ -754,7 +754,7 @@ function hasSelectedChildren(parentId) {
 }
 
 function default_double_click(id) {
-	var primitive_type = getType(findID(id));
+	let primitive_type = getType(findID(id));
 	if (primitive_type == "Ghost") {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
@@ -833,10 +833,10 @@ class BaseObject {
 	}
 	clearImage() {
 		// Do the cleaning
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].remove();
 		}
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].remove();
 		}
 		this.group.remove();
@@ -954,14 +954,14 @@ class OnePointer extends BaseObject {
 
 
 	loadImage() {
-		var element_array = this.getImage();
+		let element_array = this.getImage();
 		if (element_array == false) {
 			alert("getImage() must be overriden to add graphics to this object");
 		}
 		
 		this.element_array = element_array;
 		
-		for(var key in element_array) {
+		for(let key in element_array) {
 			if (element_array[key].getAttribute("class") == "selector") {
 				this.selector_array.push(element_array[key]);
 			}
@@ -981,7 +981,7 @@ class OnePointer extends BaseObject {
 			
 		// Set name element
 		this.name_element = null;
-		for(var key in element_array) {
+		for(let key in element_array) {
 			if (element_array[key].getAttribute("class") == "name_element") {
 				this.name_element = element_array[key];
 				$(this.name_element).dblclick((event) => {
@@ -995,8 +995,8 @@ class OnePointer extends BaseObject {
 		
 		this.update();
 
-		for(var key in this.element_array) {
-			var element = this.element_array[key];
+		for(let key in this.element_array) {
+			let element = this.element_array[key];
 			$(element).on("mousedown",(event) => {
 				primitive_mousedown(this.id, event);
 			});
@@ -1010,7 +1010,7 @@ class OnePointer extends BaseObject {
 	
 	select() {
 		this.selected = true;
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
@@ -1019,7 +1019,7 @@ class OnePointer extends BaseObject {
 	}
 	unselect() {
 		this.selected = false;
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
@@ -1326,11 +1326,11 @@ class NumberboxVisual extends BasePrimitive {
 		});
 	}
 	setSelectionSizeToText() {
-		var boundingRect = this.name_element.getBoundingClientRect();
-		var elementRect = this.element_array[0];
-		var selectorRect = this.selector_array[0];
-		var marginX = 10;
-		var marginY = 2;
+		let boundingRect = this.name_element.getBoundingClientRect();
+		let elementRect = this.element_array[0];
+		let selectorRect = this.selector_array[0];
+		let marginX = 10;
+		let marginY = 2;
 		for(let rect of [elementRect,selectorRect]) {
 			rect.setAttribute("width",boundingRect.width+marginX*2);
 			rect.setAttribute("height",boundingRect.height+marginY*2);
@@ -1568,7 +1568,7 @@ class TwoPointer extends BaseObject {
 		
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event) {
-			var node_id = this.getAttribute("node_id");
+			let node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
 
@@ -1610,13 +1610,13 @@ class TwoPointer extends BaseObject {
 
 	unselect() {
 		this.selected = false;
-		for(var anchor of this.getAnchors()) {
+		for(let anchor of this.getAnchors()) {
 			anchor.setVisible(false);
 		}
 	}
 	select() {
 		this.selected = true;
-		for(var anchor of this.getAnchors()) {
+		for(let anchor of this.getAnchors()) {
 			anchor.select();
 			anchor.setVisible(true);
 		}
@@ -1654,9 +1654,9 @@ class BaseConnection extends TwoPointer {
 		this._start_attach = null;
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
-			var primitive = findID(this.id);
-			var sourcePoint = getSourcePosition(primitive);
-			var targetPoint = getTargetPosition(primitive);
+			let primitive = findID(this.id);
+			let sourcePoint = getSourcePosition(primitive);
+			let targetPoint = getTargetPosition(primitive);
 			this.start_anchor.set_pos(sourcePoint);
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
@@ -1733,7 +1733,7 @@ class BaseConnection extends TwoPointer {
 
 function getStackTrace() {
 	try {
-		var a = {};
+		let a = {};
 		a.debug();
 	} catch(ex) {
 		return ex.stack;
@@ -2215,7 +2215,7 @@ class RectangleVisual extends TwoPointer {
 		this.group = svg_group([this.element, this.clickRect]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 
@@ -2400,7 +2400,7 @@ class TableVisual extends HtmlTwoPointer {
 		
 		this.element_array = [this.element];
 		this.element_array = [this.htmlElement.scrollDiv, this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
@@ -2465,7 +2465,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.group.setAttribute("node_id", this.id);	
 		
 		this.element_array = [this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id", this.id);
 		}
 	}
@@ -3295,7 +3295,7 @@ class XyPlotVisual extends PlotVisual {
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
+		let results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
 			// We can't render anything with no data
 			
@@ -3457,7 +3457,7 @@ class LineVisual extends TwoPointer {
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.line, this.arrowHeadEnd];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 		$(this.group).dblclick((event) => {
@@ -3554,7 +3554,7 @@ class LinkVisual extends BaseConnection {
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
-			for(var i in this.highlight_on_select) {
+			for(let i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}	
 		} else {
@@ -3580,13 +3580,13 @@ class LinkVisual extends BaseConnection {
 				object.setVisible(true);
 			}
 		}
-		for(var i in this.highlight_on_select) {
+		for(let i in this.highlight_on_select) {
 			this.highlight_on_select[i].setAttribute("stroke", "red");
 		}
 		
 		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
-			for(var anchor of this.getAnchors()) {
+			for(let anchor of this.getAnchors()) {
 				anchor.select();
 				anchor.setVisible(true);
 			}
@@ -3909,7 +3909,7 @@ class ResetTool extends BaseTool {
 
 class DeleteTool extends BaseTool {
 	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
+		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length == 0) {
 			xAlert("You must select at least one primitive to delete");
 			ToolBox.setTool("mouse");
@@ -3974,22 +3974,21 @@ class NumberboxTool extends OnePointCreateTool {
 	}
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
+		let primitive_name = findFreeName(type_basename["text"]);
+		let size = type_size["text"];
 		
-		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
 		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
 		this.primitive.setAttribute("Target",this.targetPrimitive);
 	}
 	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
+		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length != 1) {
 			xAlert("You must first select exactly one primitive to watch");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		
-		var selected_object = get_object(selected_ids[0]);
+		let selected_object = get_object(selected_ids[0]);
 		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
 			xAlert("This primitive is not watchable");
 			ToolBox.setTool("mouse");
@@ -4008,16 +4007,16 @@ NumberboxTool.init();
 class StockTool extends OnePointCreateTool {	
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["stock"]);
-		var size = type_size["stock"];
-		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
+		let primitive_name = findFreeName(type_basename["stock"]);
+		let size = type_size["stock"];
+		let new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
 	}
 }
 
 class RotateNameTool extends BaseTool {
 	static enterTool() {
 		let selection = get_selected_objects();
-		for(var node_id in selection) {
+		for(let node_id in selection) {
 			rotate_name(node_id);
 		}
 		ToolBox.setTool("mouse");
@@ -4030,7 +4029,7 @@ class RotateNameTool extends BaseTool {
 class MoveValveTool extends BaseTool {
 	static enterTool() {
 		let selection = get_selected_objects();
-		for (var node_id in selection) {
+		for (let node_id in selection) {
 			let obj = get_object(node_id);
 			if (obj.type == "flow") {
 				obj.moveValve();
@@ -4060,21 +4059,21 @@ class GhostTool extends OnePointCreateTool {
 		this.ghostable_primitives = ["stock", "variable", "constant", "converter"];
 	}
 	static create(x, y) {
-		var source = findID(this.id_to_ghost);
-		var ghost = makeGhost(source,[x,y]);
+		let source = findID(this.id_to_ghost);
+		let ghost = makeGhost(source,[x,y]);
 		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
-		var DIM_ghost = get_object(ghost.getAttribute("id"));
+		let DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static enterTool() {
-		var selected_ids = get_selected_ids();
+		let selected_ids = get_selected_ids();
 		if (selected_ids.length != 1) {
 			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		var selected_object = get_object(selected_ids[0]);
+		let selected_object = get_object(selected_ids[0]);
 		if (selected_object.is_ghost) {
 			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
@@ -4093,18 +4092,18 @@ GhostTool.init();
 class ConverterTool extends OnePointCreateTool {
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["converter"]);
-		var size = type_size["converter"];
-		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
+		let primitive_name = findFreeName(type_basename["converter"]);
+		let size = type_size["converter"];
+		let new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
 }
 
 class VariableTool extends OnePointCreateTool {
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["variable"]);
-		var size = type_size["variable"];
-		var newVariable = createPrimitive(
+		let primitive_name = findFreeName(type_basename["variable"]);
+		let size = type_size["variable"];
+		let newVariable = createPrimitive(
 			primitive_name, 
 			"Variable", 
 			[x-size[0]/2, y-size[1]/2], 
@@ -4217,8 +4216,8 @@ class MouseTool extends BaseTool {
 		last_click_object_clicked = false;
 	}
 	static mouseMove(x,y,shiftKey) {
-		var diff_x = x-mousedown_x;
-		var diff_y = y-mousedown_y;
+		let diff_x = x-mousedown_x;
+		let diff_y = y-mousedown_y;
 		mousedown_x = x;
 		mousedown_y = y;
 		
@@ -4250,8 +4249,8 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static defaultRelativeMove(move_objects, diff_x, diff_y) {
-		var objectMoved = false;
-		for(var key in move_objects) {
+		let objectMoved = false;
+		for(let key in move_objects) {
 			if (move_objects[key].draggable == undefined) {
 				continue;
 			} 
@@ -4324,10 +4323,10 @@ class TwoPointerTool extends BaseTool {
 		unselect_all();
 
 		// Looks for element under mouse. 
-		var start_element = find_element_under(x,y);
+		let start_element = find_element_under(x,y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		var primitive_name = findFreeName(type_basename[this.getType()]);
+		let primitive_name = findFreeName(type_basename[this.getType()]);
 		this.createTwoPointer(x,y,primitive_name);
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
@@ -4698,13 +4697,13 @@ function attach_selected_anchor(selectedAnchor) {
 	[x,y]=selectedAnchor.get_pos();
 	let parentConnection = get_parent(selectedAnchor);
 	
-	var	elements_under = find_elements_under(x,y);
-	var anchor_element = null;
-	var attach_to = null;
+	let	elements_under = find_elements_under(x,y);
+	let anchor_element = null;
+	let attach_to = null;
 	
 
 	// Find unselected stock element
-	for(var i = 0; i < elements_under.length; i++) {
+	for(let i = 0; i < elements_under.length; i++) {
 		let element = elements_under[i];
 		
 		let elemIsNotSelected = ! element.is_selected();
@@ -4794,8 +4793,8 @@ function rectselector_move() {
 
 function rectselector_stop() {
 	rectselector.setVisible(false);
-	var select_array = get_objects_in_rectselect();
-	for(var key in select_array) {
+	let select_array = get_objects_in_rectselect();
+	for(let key in select_array) {
 		select_array[key].select();
 	}
 }
@@ -4810,8 +4809,8 @@ function is_in_rectselecor(node_id) {
 }
 
 function get_objects_in_rectselect() {
-	var return_array = {};
-	for(var key in object_array) {
+	let return_array = {};
+	for(let key in object_array) {
 		if (is_in_rectselecor(key)) {
 			return_array[key] = object_array[key];
 		}
@@ -4820,13 +4819,13 @@ function get_objects_in_rectselect() {
 }
 
 function tool_deletePrimitive(id) {
-	var primitive = findID(id);
+	let primitive = findID(id);
 	
 	removePrimitive(primitive);
 	
 	// Delete ghosts
-	var ghostIDs = findGhostsOfID(id);
-	for(var i in ghostIDs) {
+	let ghostIDs = findGhostsOfID(id);
+	for(let i in ghostIDs) {
 		tool_deletePrimitive(ghostIDs[i]);
 	}
 	cleanUnconnectedLinks();
@@ -4850,9 +4849,9 @@ function detachFlows(id) {
 }
 
 function get_selected_root_objects() {
-	var result = {};
-	var all_objects = get_all_objects();
-	for(var key in all_objects) {
+	let result = {};
+	let all_objects = get_all_objects();
+	for(let key in all_objects) {
 		let parent = get_parent(all_objects[key]);
 		
 		// If any element is selected we add its parent
@@ -4864,9 +4863,9 @@ function get_selected_root_objects() {
 }
 
 function get_root_objects() {
-	var result = {};
-	var all_objects = get_all_objects();
-	for(var key in all_objects) {
+	let result = {};
+	let all_objects = get_all_objects();
+	for(let key in all_objects) {
 		if (key.indexOf(".") == -1) {
 			result[key]=all_objects[key];
 		}
@@ -4877,7 +4876,7 @@ function get_root_objects() {
 function delete_selected_objects() {
 	// Delete all objects that are selected
 	let selection = get_selected_root_objects();
-	for(var key in selection) {
+	for(let key in selection) {
 		// check if object not already deleted
 		// e.i. link gets deleted automatically if any of it's attachments gets deleted
 		if (get_object(key)) {
@@ -4887,13 +4886,13 @@ function delete_selected_objects() {
 }
 
 function get_selected_objects() {
-	var return_array = {};
-	for(var key in object_array) {
+	let return_array = {};
+	for(let key in object_array) {
 		if (object_array[key].is_selected()) {
 			return_array[key] = object_array[key];
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (connection_array[key].is_selected()) {
 			return_array[key] = connection_array[key];
 		}
@@ -4909,9 +4908,9 @@ function delete_connection(key) {
 	if (!(key in connection_array)) {
 		return;
 	}
-	var start_anchor = connection_array[key].start_anchor;
-	var end_anchor = connection_array[key].end_anchor;
-	var auxiliary = connection_array[key].auxiliary;
+	let start_anchor = connection_array[key].start_anchor;
+	let end_anchor = connection_array[key].end_anchor;
+	let auxiliary = connection_array[key].auxiliary;
 	connection_array[key].group.remove();
 	delete connection_array[key];
 	
@@ -4921,17 +4920,17 @@ function delete_connection(key) {
 	delete_object(auxiliary.id);	
 }
 function delete_object(node_id) {
-	var object_to_delete = object_array[node_id];
+	let object_to_delete = object_array[node_id];
 	
 	// Delete all references to the object in the connections
 	if (object_to_delete.hasOwnProperty("parent_id")) {
 		delete_connection(object_to_delete.parent_id);
 	}
 	
-	for(var i in object_to_delete.selector_array) {
+	for(let i in object_to_delete.selector_array) {
 		object_to_delete.selector_array[i].remove();
 	}
-	for(var key in object_to_delete.element_array) {
+	for(let key in object_to_delete.element_array) {
 		object_to_delete.element_array[key].remove();
 	}
 	object_to_delete.group.remove();
@@ -4954,7 +4953,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 			if (!event.shiftKey) {
 				// We don't want to unselect an eventual parent
 				// As that will hide other anchors
-				var parent_id = get_parent_id(node_id);
+				let parent_id = get_parent_id(node_id);
 				unselect_all_but(parent_id);
 			}
 			last_clicked_element.select();
@@ -4976,7 +4975,7 @@ function update_relevant_objects(ids) {
 
 // only updates diagrams, tables, and XyPlots if needed 
 function update_twopointer_objects(ids) {
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot","table"];
 		if( onlyIfRelevant.includes(connection_array[key].type) ) {
 			if (ids.includes(key)) {
@@ -4989,20 +4988,20 @@ function update_twopointer_objects(ids) {
 }
 
 function update_all_objects() {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		object_array[key].update();
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		connection_array[key].update();
 	}
 }
 
 function get_all_objects() {
-	var result = {}
-	for(var key in object_array) {
+	let result = {}
+	for(let key in object_array) {
 		result[key]=object_array[key];
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		result[key]=connection_array[key];
 	}
 	return result;
@@ -5019,7 +5018,7 @@ function get_object(id) {
 }
 
 function set_name(id,new_name) {
-	var tobject = get_object(id);
+	let tobject = get_object(id);
 	if (!tobject)  {
 		return;
 	}
@@ -5060,21 +5059,21 @@ function unselect_all_other_anchors(parent_id, child_id_to_select) {
 }
 
 function unselect_all() {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		object_array[key].unselect();
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		connection_array[key].unselect();
 	}
 }
 
 function unselect_all_but(dont_unselect_id) {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		if (key != dont_unselect_id) {
 			object_array[key].unselect();
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (key != dont_unselect_id) {
 			connection_array[key].unselect();
 		}
@@ -5082,12 +5081,12 @@ function unselect_all_but(dont_unselect_id) {
 }
 
 function unselect_all_but_family(id) {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		if (!is_family(id,key)) {
 			object_array[key].unselect();
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (!is_family(id,key)) {
 			connection_array[key].unselect();
 		}
@@ -5105,8 +5104,8 @@ function rotate_name(node_id) {
 }
 
 function update_name_pos(node_id) {
-	var object = get_object(node_id);
-	var name_element = object.name_element;
+	let object = get_object(node_id);
+	let name_element = object.name_element;
 	// Some objects does not have name element
 	if (name_element == null) {
 		return;
@@ -5160,9 +5159,9 @@ function mouseDownHandler(event) {
 		timeUnitDialog.show();
 		return;
 	}
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
+	let offset = $(svgplane).offset();
+	let x = event.pageX-offset.left;
+	let y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
 	switch (event.which) {
 		case mouse.left:
@@ -5182,9 +5181,9 @@ function mouseDownHandler(event) {
 	}
 }
 function mouseMoveHandler(event) {
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
+	let offset = $(svgplane).offset();
+	let x = event.pageX-offset.left;
+	let y = event.pageY-offset.top;
 
 	lastMouseX = x;
 	lastMouseY = y;
@@ -5206,9 +5205,9 @@ function mouseUpHandler(event) {
 			}
 			// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
 			do_global_log("mouseUpHandler");
-			var offset = $(svgplane).offset();
-			var x = event.pageX-offset.left;
-			var y = event.pageY-offset.top;
+			let offset = $(svgplane).offset();
+			let x = event.pageX-offset.left;
+			let y = event.pageY-offset.top;
 			
 			currentTool.leftMouseUp(x, y, event.shiftKey);
 			leftmouseisdown = false;
@@ -5223,7 +5222,7 @@ function mouseUpHandler(event) {
 }
 
 function find_elements_under(x, y) {	
-	var found_array = [];
+	let found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
 	//~ let attachable_object_types = ["flow", "stock", "variable"];
@@ -5237,7 +5236,7 @@ function find_elements_under(x, y) {
 			// We skip if the object is not attachable
 			continue;
 		}
-		var rect = objects[key].getBoundRect();
+		let rect = objects[key].getBoundRect();
 		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
 			found_array.push(objects[key]);
 		}
@@ -5257,8 +5256,8 @@ function find_element_under(x,y) {
 }
 
 function stochsd_clear_sync() {
-	var root_object_array = get_root_objects();
-	for(var id in root_object_array) {
+	let root_object_array = get_root_objects();
+	for(let id in root_object_array) {
 		if (findID(id) == null) {
 			stochsd_delete_primitive(id);
 		}
@@ -5328,11 +5327,11 @@ class Clipboard {
 		this.copiedItems = [];
 	}
 	static copyObject(clipboardItem) {
-		var parent = graph.children[0].children[0];
-		var vertex = simpleCloneNode2(findID(clipboardItem.id), parent);
+		let parent = graph.children[0].children[0];
+		let vertex = simpleCloneNode2(findID(clipboardItem.id), parent);
 		let relativePosition = clipboardItem.relativePosition;
 		setCenterPosition(vertex,[lastMouseX+relativePosition[0],lastMouseY+relativePosition[1]]);
-		var oldName = getName(vertex);
+		let oldName = getName(vertex);
 		setName(vertex,findFreeName(oldName+"_"));
 		syncAllVisuals();
 	}
@@ -5377,7 +5376,7 @@ class Clipboard {
 		}
 	}
 	static paste() {
-		for(var i in this.copiedItems) {
+		for(let i in this.copiedItems) {
 			this.copyObject(this.copiedItems[i]);
 		}
 	}
@@ -5410,10 +5409,10 @@ $(window).load(function() {
 	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
-	var svgplane = document.getElementById("svgplane");
+	let svgplane = document.getElementById("svgplane");
 	
 	$(".toolButton").mousedown(function(event) {
-		var toolName = $(this).attr("data-tool");
+		let toolName = $(this).attr("data-tool");
 		ToolBox.setTool(toolName, event.which);
 	});
 	
@@ -5642,7 +5641,7 @@ function find_connections(visual) {
 }
 
 function find_start_connections(visual) {
-	var connections_array = Array(0);
+	let connections_array = Array(0);
 	for(key in connection_array) {
 		if (connection_array[key].getStartAttach && connection_array[key].getStartAttach() == visual) {
 			connections_array.push(connection_array[key]);
@@ -5652,7 +5651,7 @@ function find_start_connections(visual) {
 }
 
 function find_end_connections(visual) {
-	var connections_array = Array(0);
+	let connections_array = Array(0);
 	for(key in connection_array) {
 		if (connection_array[key].getEndAttach && connection_array[key].getEndAttach() == visual) {
 			connections_array.push(connection_array[key]);
@@ -5690,7 +5689,7 @@ function stochsd_delete_primitive_and_references(id) {
 }
 
 function stochsd_delete_primitive (id) {
-	var stochsd_object = get_object(id);
+	let stochsd_object = get_object(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
 	}
@@ -5710,11 +5709,11 @@ function isLocal() {
 
 function export_txt(fileName, data) {
 	// Create Blob and attach it to ObjectURL
-	var blob = new Blob([data], {type: "octet/stream"}),
+	let blob = new Blob([data], {type: "octet/stream"}),
 	url = window.URL.createObjectURL(blob);
 	
 	// Create download link and click it
-	var a = document.createElement("a");
+	let a = document.createElement("a");
 	a.style.display = "none";
 	a.href = url;
 	a.download = fileName;
@@ -5768,7 +5767,7 @@ function addMissingPrimitiveAttributes(prim) {
 
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
-	var stochsd_object = get_object(tprimitive.id);
+	let stochsd_object = get_object(tprimitive.id);
 	if (stochsd_object != false) {
 		return false;
 	}
@@ -5779,7 +5778,7 @@ function syncVisual(tprimitive) {
 	switch(nodeType) {
 		case "Numberbox":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
 			visualObject.setColor(tprimitive.getAttribute("Color"));
 			visualObject.render();
@@ -5904,7 +5903,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Stock":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
@@ -5916,7 +5915,7 @@ function syncVisual(tprimitive) {
 		break;
 		case "Converter":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
@@ -5928,10 +5927,10 @@ function syncVisual(tprimitive) {
 		break;
 		case "Ghost":
 		{
-			var source_primitive = findID(tprimitive.getAttribute("Source"));
-			var source_type = source_primitive.value.nodeName;
+			let source_primitive = findID(tprimitive.getAttribute("Source"));
+			let source_type = source_primitive.value.nodeName;
 			//~ do_global_log("id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = null;
 			switch(source_type) {
 					case "Converter":
@@ -5959,7 +5958,7 @@ function syncVisual(tprimitive) {
 		case "Variable":
 		{
 			//~ do_global_log("VARIABLE id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
 				visualObject = new VariableVisual(tprimitive.id, "variable", position);
@@ -6050,7 +6049,7 @@ function syncVisual(tprimitive) {
 // This is executed after loading a file or loading a whole new state such as after undo
 function syncAllVisuals() {
 	for(let type of saveblePrimitiveTypes) {
-		var primitive_list = primitives(type);
+		let primitive_list = primitives(type);
 		for(key in primitive_list) {
 			try {
 				syncVisual(primitive_list[key]);
@@ -6067,8 +6066,8 @@ function syncAllVisuals() {
 }
 
 function findFreeName(basename) {
-	var counter = 0;
-	var testname;
+	let counter = 0;
+	let testname;
 	do {
 		counter++;
 		testname = basename+counter.toString();
@@ -6086,7 +6085,7 @@ class SubscribePool {
 		this.subscribers.push(handler);
 	}
 	publish(message) {
-		for(var i in this.subscribers) {
+		for(let i in this.subscribers) {
 			this.subscribers[i](message);
 		}	
 	}
@@ -6128,7 +6127,7 @@ const runStateEnum = {
 // Not yet implemented
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
-	for(var id in objects) {
+	for(let id in objects) {
 		let obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
@@ -6254,7 +6253,7 @@ class RunResults {
 	}
 	static createHeader() {
 		// Get list of primitives that we want to observe from the model
-		var primitive_array = getPrimitiveList();
+		let primitive_array = getPrimitiveList();
 
 		// Create list of ids
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
@@ -6302,7 +6301,7 @@ class RunResults {
 		while(index < res.periods) {
 			let time = res.times[index];
 			this.simulationTime = res.times[index];
-			var currentRunResults = [];
+			let currentRunResults = [];
 			currentRunResults.push(time);
 			for(let key in this.varIdList) {
 				if (key == 0) {
@@ -6575,7 +6574,7 @@ class RunResults {
 		return filteredResults;
 	}
 	static triggerRunFinished() {
-		for(var id in this.runSubscribers) {
+		for(let id in this.runSubscribers) {
 			if (findID(id)) {
 				this.runSubscribers[id]();
 			} else {
@@ -6611,7 +6610,7 @@ class jqDialog {
 		this.visible = false;
 		// Decides if we this dialog should lock the background
 		this.modal = true;
-		var frm_dialog_resize = true;
+		let frm_dialog_resize = true;
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
@@ -8614,7 +8613,7 @@ class ConverterDialog extends jqDialog {
 		
 		this.defaultFocusSelector = defaultFocusSelector;
 		
-		var oldValue = getValue(this.primitive);
+		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
 		let oldName = getName(this.primitive);
@@ -8662,7 +8661,7 @@ class ConverterDialog extends jqDialog {
 }
 
 function global_log_update() {
-	var log = "";
+	let log = "";
 	log += "<br/>";
 	log += global_log+"<br/>";
 	$(".log").html(log);
@@ -8867,7 +8866,7 @@ class EquationEditor extends jqDialog {
 			return result;
 		};
 	
-		for (var i = 0; i < helpData.length; i++) {
+		for (let i = 0; i < helpData.length; i++) {
 			$(".accordionCluster").append(`<div>
 			<h3 class="functionCategory">${helpData[i][0]}</h3>
 			  <div>
@@ -8908,7 +8907,7 @@ class EquationEditor extends jqDialog {
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
-			var inputLength = valueFieldDom.value.length;  
+			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
 		}
@@ -8930,11 +8929,11 @@ class EquationEditor extends jqDialog {
 		this.defaultFocusSelector = defaultFocusSelector;
 
 		
-		var oldValue = getValue(this.primitive);
+		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
 		let oldName = getName(this.primitive);
-		var oldNameBrackets = makePrimitiveName(oldName);
+		let oldNameBrackets = makePrimitiveName(oldName);
 		
 		this.setTitle(oldNameBrackets+" properties");
 
@@ -8989,7 +8988,7 @@ class EquationEditor extends jqDialog {
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
-			var inputLength = valueFieldDom.value.length;  
+			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
 		}
