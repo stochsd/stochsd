@@ -4418,6 +4418,8 @@ class FlowTool extends TwoPointerTool {
 
 		parent.requestNewAnchorPos([x, y], anchor_id);
 		parent.update();
+		// update connecting links 
+		find_connections(parent).map(conn => conn.update());
 	}
 	static leftMouseUp(x, y) {
 		if (this.current_connection) {
