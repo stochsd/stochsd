@@ -4520,6 +4520,40 @@ class LineTool extends TwoPointerTool {
 	static getType() {
 		return "line";
 	}
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+		// Function used both during creation and later moving of anchor point 
+		let moveObject = get_object(node_id);
+		let parent = get_parent(moveObject);
+		if (shiftKey) {
+			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			if (parent.start_anchor.id === node_id) {
+				[oppositeX, oppositeY] = [parent.endX, parent.endY];
+			}
+			let sideX = x - oppositeX;
+			let sideY = y - oppositeY;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
+			if (3*shortSideLength < longSideLength) {
+				// Place Horizontal or vertical
+				if (Math.abs(sideX) < Math.abs(sideY)) {
+					// place vertical |
+					moveObject.set_pos([oppositeX, y]);
+				} else {
+					// place Horizontal -
+					moveObject.set_pos([x, oppositeY]);
+				}
+			} else {
+				// place at 45 degree angle 
+				let signX = Math.sign(sideX);
+				let signY = Math.sign(sideY);
+				moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+			}
+		} else {
+			moveObject.set_pos([x,y]);
+		}
+		parent.update();
+		object_array[node_id].updatePosition();
+	}
 }
 LineTool.init();
 
