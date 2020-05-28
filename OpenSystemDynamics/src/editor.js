@@ -4350,11 +4350,24 @@ class TwoPointerTool extends BaseTool {
 		let move_node_id = `${this.current_connection.id}.end_anchor`;
 		this.mouseMoveSingleAnchor(x,y, shiftKey, move_node_id);
 	}
-	static mouseMoveSingleAnchor(x,y, shiftKey, node_id) {
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = get_object(node_id);
 		let parent = get_parent(moveObject);
-		moveObject.set_pos([x,y]);
+		if (shiftKey) {
+			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			if (parent.start_anchor.id === node_id) {
+				[oppositeX, oppositeY] = [parent.endX, parent.endY];
+			}
+			let sideX = x - oppositeX;
+			let sideY = y - oppositeY;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let signX = Math.sign(sideX);
+			let signY = Math.sign(sideY);
+			moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+		} else {
+			moveObject.set_pos([x,y]);
+		}
 		parent.update();
 		object_array[node_id].updatePosition();
 	}
