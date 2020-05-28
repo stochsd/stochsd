@@ -804,7 +804,6 @@ class BaseObject {
 		if (valueErrorTypes.includes(this.type)) {
 			let VE = checkValueError(this.primitive, getValue(this.primitive));
 			this.primitive.setAttribute("ValueError", VE ? VE : "");
-			this.update();
 		}
 	}
 
