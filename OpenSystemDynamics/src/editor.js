@@ -4465,7 +4465,7 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
-		attach_selected_anchor(object_array[node_id]);
+		attach_anchor(object_array[node_id]);
 	}
 	static getType() {
 		return "flow";
@@ -4702,7 +4702,7 @@ class LinkTool extends TwoPointerTool {
 		let anchor = object_array[node_id];
 
 		if (anchor.getAnchorType() === anchorTypeEnum.start || anchor.getAnchorType() === anchorTypeEnum.end) {
-			attach_selected_anchor(anchor);
+			attach_anchor(anchor);
 			let parent = get_parent(anchor);
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
@@ -4726,9 +4726,9 @@ class LinkTool extends TwoPointerTool {
 }
 LinkTool.init();
 
-function attach_selected_anchor(selectedAnchor) {
-	[x,y]=selectedAnchor.get_pos();
-	let parentConnection = get_parent(selectedAnchor);
+function attach_anchor(anchor) {
+	[x,y]=anchor.get_pos();
+	let parentConnection = get_parent(anchor);
 	
 	let	elements_under = find_elements_under(x,y);
 	let anchor_element = null;
@@ -4750,7 +4750,7 @@ function attach_selected_anchor(selectedAnchor) {
 		return false;
 	}
 	
-	switch(selectedAnchor.getAnchorType()) {
+	switch(anchor.getAnchorType()) {
 	case anchorTypeEnum.start:
 		parentConnection.setStartAttach(attach_to);
 		break;
