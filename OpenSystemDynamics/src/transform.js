@@ -4,6 +4,9 @@ This file may distributed and/or modified under the
 terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0.html).
 
 */
+function neg(vector) {
+	return vector.map(x => -x);
+}
 
 function translate(point, translation) {
 	return [point[0]+translation[0], point[1]+translation[1]];
@@ -24,6 +27,12 @@ function distance(point1, point2) {
 	const dy = point2[1]-point1[1];
 	return Math.sqrt(dx*dx + dy*dy);
 }
+
+function scale(point, pivot, scaleFactor) { 
+	let a = translate(point, neg(pivot)); 
+	let b = [a[0]*scaleFactor, a[1]*scaleFactor]; 
+	return translate(b, pivot); 
+} 
 
 function cos(point1 ,point2){
 	const dist = distance(point1, point2)
@@ -75,4 +84,8 @@ function neswDirection(point1, point2) {
 
 function isInLimits(lowerLimit, value, upperLimit) {
 	return (lowerLimit < value && value < upperLimit);
+}
+
+function clampValue(value, min, max) {
+	return Math.max(Math.min(value, max), min);
 }

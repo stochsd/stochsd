@@ -36,7 +36,6 @@ const type_basename = {
 	"rectangle": 	"Rectangle",
 	"ellipse": 		"Ellipse",
 	"line":			"Line",
-	"arrow":		"Arrow",
 	"numberbox": 	"Numberbox",
 	"text":			"Text",
 	"stock":			"Stock",
@@ -267,6 +266,10 @@ function makeKeyboardCodes() {
 
 const keyboard = makeKeyboardCodes();
 
+// NOTE: values for event.which should be used
+// event.button will give incorrect results 
+const mouse = {"left": 1, "middle": 2, "right": 3};
+
 function updateWindowSize() {
 	let windowWidth = $(window).width();
 	let windowHeight = $(window).height();
@@ -278,7 +281,7 @@ function updateWindowSize() {
 	// The resize of the toolbar is decided by css depending on how many lines the toolbar is so its very hard if we would calculate this size in advanced
 	// Instead we wait until it is resized and then adopt to the result
 	setTimeout(function() {
-		var svgPosition = $("#svgplanebackground").position();
+		let svgPosition = $("#svgplanebackground").position();
 		$("#svgplanebackground").width(windowWidth-18);
 		$("#svgplanebackground").height(windowHeight-svgPosition.top);
 	},100);
@@ -345,7 +348,7 @@ PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat)
 
 // Add the StocSD macro-script to the beggning of the Macro
 function appendStochSDMacros() {
-	var macros = getMacros();
+	let macros = getMacros();
 	if (macros === undefined) {
 		macros = "";
 	}
@@ -357,7 +360,7 @@ function appendStochSDMacros() {
 
 // Replace macro with the StochSD macro-script
 function setStochSDMacros() {
-	var macros = sdsMacros+"\n\n\n";
+	let macros = sdsMacros+"\n\n\n";
 	setMacros(macros);
 }
 
@@ -389,7 +392,7 @@ function callAPI(e) {
 }
 
 function getFunctionHelpData() {
-		var helpData = [
+	let helpData = [
 		["Mathematical Functions", [
 			["Round", "Round(##Value$$)", "Rounds a number to the nearest integer.", ["Round(3.6)", "4"]],
 			["Round Up", "Ceiling(##Value$$)", "Rounds a number up to the nearest integer.", ["Ceiling(3.6)", "4"]],
@@ -449,7 +452,7 @@ function getFunctionHelpData() {
 			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), {5 Years})", "Chooses a new random value every five years"]]
 		]],
 		["Random Number Functions", [
-			["Poisson Flow", "PoFlow(##Lambda$$)", "Short for RandPoisson(DT()*Lambda)/DT()."],
+			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/>This should only be used in flows."],
 			["Uniform Distribution", "Rand(##Minimum$$, ##Maximum$$)", "Generates a uniformly distributed random number between the minimum and maximum. The minimum and maximum are optional and default to 0 and 1 respectively.", ["Rand()", "0.7481"]],
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
@@ -509,8 +512,8 @@ function getFunctionHelpData() {
 
 	];
 	helpData = helpData.sort(function(a, b) {
-		var categoryA = a[0];
-		var categoryB = b[0];
+		let categoryA = a[0];
+		let categoryB = b[0];
 		if (categoryA < categoryB) return -1;
 		if (categoryA > categoryB) return 1;
 		return 0;
@@ -552,7 +555,7 @@ function sdsLoadFunctions() {
         return new Material(simulate.timeEnd.toNum().value);
 	});
     defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x) {
-        var dt = simulate.timeStep.toNum().value;
+        let dt = simulate.timeStep.toNum().value;
         
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
@@ -563,13 +566,13 @@ function sdsLoadFunctions() {
 		// Width can not be set in this version of pulse
 		// Width was parameter x[2] in the old pulse function but here repeat is x[2] instead
 
-		var start = x[0].toNum();
-		var volume = new Material(1);
-		var width = new Material(0);
-		var repeat = new Material(0);
-		var height = null; // Is calculated later
+		let start = x[0].toNum();
+		let volume = new Material(1);
+		let width = new Material(0);
+		let repeat = new Material(0);
+		let height = null; // Is calculated later
 		
-		var DT = simulate.timeStep.toNum().value;
+		let DT = simulate.timeStep.toNum().value;
 
 		if (x.length > 1) {
 			volume = x[1].toNum();
@@ -594,8 +597,8 @@ function sdsLoadFunctions() {
 				return height;
 			}
 		} else if (greaterThanEq(simulate.time(), start)) {
-			var x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
-			var dv = minus(simulate.time(), start);
+			let x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
+			let dv = minus(simulate.time(), start);
 			if (minus(functionBank["round"]([div(dv, repeat)]), div(dv, repeat)).value == 0 || (greaterThanEq(x, start) && lessThanEq(x, plus(start, width)))) {
 				return height;
 			}
@@ -682,10 +685,10 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	}
 
 	// Else format it as a regular number, and remove ending zeros
-	var stringified = number.toFixed(tdecimals);
+	let stringified = number.toFixed(tdecimals);
 
 	// Find the length of stringified, where the ending zeros have been removed
-	var i = stringified.length;
+	let i = stringified.length;
 	while(stringified.charAt(i-1)=='0') {
 		i=i-1;
 		// If we find a dot. Stop removing decimals
@@ -695,12 +698,12 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		}
 	}
 	// Creates a stripped string without ending zeros
-	var stripped = stringified.substring(0,i);
+	let stripped = stringified.substring(0,i);
 	return stripped;
 }
 
 function get_parent_id(id) {
-	var parent_id = id.toString().split(".")[0];
+	let parent_id = id.toString().split(".")[0];
 	//~ do_global_log("x flowa "+parent_id);
 	return parent_id;
 }
@@ -710,8 +713,8 @@ function get_parent(child) {
 }
 
 function is_family(id1, id2) {
-	var parent_id1 = id1.toString().split(".")[0];
-	var parent_id2 = id2.toString().split(".")[0];
+	let parent_id1 = id1.toString().split(".")[0];
+	let parent_id2 = id2.toString().split(".")[0];
 	if (parent_id1 == parent_id2) {
 		return true;
 	} else {
@@ -721,13 +724,13 @@ function is_family(id1, id2) {
 
 // Get a list of all children for a parent
 function getChildren(parentId) {
-	var result = {}
-	for(var key in object_array) {
+	let result = {}
+	for(let key in object_array) {
 		if (get_parent_id(key) == parentId && key != parentId) {
 			result[key] = object_array[key];
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (get_parent_id(key) == parentId && key != parentId) {
 			result[key] = connection_array[key];
 		}
@@ -751,16 +754,12 @@ function hasSelectedChildren(parentId) {
 }
 
 function default_double_click(id) {
-	var primitive_type = getType(findID(id));
+	let primitive_type = getType(findID(id));
 	if (primitive_type == "Ghost") {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
 	}
 	equationEditor.open(id, ".valueField");
-}
-
-function calc_distance(xdiff, ydiff) {
-	return Math.sqrt((xdiff*xdiff) + (ydiff*ydiff));
 }
 
 class BaseObject {
@@ -795,8 +794,8 @@ class BaseObject {
 			}
 		}
 		if (this.primitive) {
-			// AnchorPoints has no primitve
-			this.primitive.setAttribute("color", this.color);
+			// AnchorPoint has no primitve
+			this.primitive.setAttribute("Color", this.color);
 		}
 	}
 
@@ -805,7 +804,6 @@ class BaseObject {
 		if (valueErrorTypes.includes(this.type)) {
 			let VE = checkValueError(this.primitive, getValue(this.primitive));
 			this.primitive.setAttribute("ValueError", VE ? VE : "");
-			this.update();
 		}
 	}
 
@@ -835,10 +833,10 @@ class BaseObject {
 	}
 	clearImage() {
 		// Do the cleaning
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].remove();
 		}
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].remove();
 		}
 		this.group.remove();
@@ -904,7 +902,6 @@ class OnePointer extends BaseObject {
 		object_array[id] = this;
 		this.id = id;
 		this.type = type; 
-
 		this.element_array = [];
 		this.selector_array = [];
 		this.group = null;
@@ -947,7 +944,6 @@ class OnePointer extends BaseObject {
 		// Recreating the array is intentional to avoid copying a reference
 		//~ alert(" old pos "+this.pos[0]+","+this.pos[1]+" new pos "+pos[0]+","+pos[1]);
 		this.pos = [pos[0],pos[1]];
-		this.updatePosition();
 	}
 		
 	get_pos() {
@@ -958,14 +954,14 @@ class OnePointer extends BaseObject {
 
 
 	loadImage() {
-		var element_array = this.getImage();
+		let element_array = this.getImage();
 		if (element_array == false) {
 			alert("getImage() must be overriden to add graphics to this object");
 		}
 		
 		this.element_array = element_array;
 		
-		for(var key in element_array) {
+		for(let key in element_array) {
 			if (element_array[key].getAttribute("class") == "selector") {
 				this.selector_array.push(element_array[key]);
 			}
@@ -985,7 +981,7 @@ class OnePointer extends BaseObject {
 			
 		// Set name element
 		this.name_element = null;
-		for(var key in element_array) {
+		for(let key in element_array) {
 			if (element_array[key].getAttribute("class") == "name_element") {
 				this.name_element = element_array[key];
 				$(this.name_element).dblclick((event) => {
@@ -999,8 +995,8 @@ class OnePointer extends BaseObject {
 		
 		this.update();
 
-		for(var key in this.element_array) {
-			var element = this.element_array[key];
+		for(let key in this.element_array) {
+			let element = this.element_array[key];
 			$(element).on("mousedown",(event) => {
 				primitive_mousedown(this.id, event);
 			});
@@ -1014,7 +1010,7 @@ class OnePointer extends BaseObject {
 	
 	select() {
 		this.selected = true;
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
@@ -1023,7 +1019,7 @@ class OnePointer extends BaseObject {
 	}
 	unselect() {
 		this.selected = false;
-		for(var i in this.selector_array) {
+		for(let i in this.selector_array) {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
@@ -1054,10 +1050,6 @@ class OnePointer extends BaseObject {
 	}
 	updatePosition() {
 		this.update();
-		this.afterUpdatePosition();
-	}
-	afterUpdatePosition() {
-		
 	}
 	getImage() {
 		return false;
@@ -1134,15 +1126,12 @@ class AnchorPoint extends OnePointer {
 			}
 		}
 	}
-	afterUpdatePosition() {
-		let parent = get_parent(this);
-		if (parent.start_anchor && parent.end_anchor)  {
-			parent.afterAnchorUpdate(this.anchorType);	
-		}
-	}
 	updatePosition() {
 		this.update();
-		this.afterUpdatePosition();
+		let parent = get_parent(this);
+		if (parent.start_anchor && parent.end_anchor)  {
+			parent.syncAnchorToPrimitive(this.anchorType);	
+		}
 	}
 	getImage() {
 		if (this.isSquare) {
@@ -1194,21 +1183,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 		this.changed = true;
 		this.index = index;
 	}
-	
-	afterMove(diff_x, diff_y) {
-		super.afterMove(diff_x, diff_y);
-		do_global_log("OrthoAnchor - afterMove() -"+this.id);
-		let parent = get_parent(this);
-		// Add adjust nighbor to FlowVisual
-		if ( ! get_parent(this).areAllAnchorsSelected()) {
-			parent.adjustNeighbors(this.index); 
-		}
-	}
-}
-
-function pointDistance(point1,point2) {
-	let distance = calc_distance(point1[0]-point2[0], point1[1]-point2[1]);
-	return distance;
 }
 
 function safeDivision(nominator, denominator) { 
@@ -1248,6 +1222,27 @@ class StockVisual extends BasePrimitive {
 			"minY": pos[1] - size[1]/2, 
 			"maxY": pos[1] + size[1]/2 
 		};
+	}
+
+	set_pos(pos) {
+		let diff = translate(neg(this.pos), pos);
+		super.set_pos(pos);
+		let startConn = find_start_connections(this);
+		for(let conn of startConn) {
+			if (conn.type === "flow" && conn.is_selected() === false) {
+				let oldConnPos = conn.start_anchor.get_pos();
+				let newConnPos = translate(oldConnPos, diff);
+				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
+			}
+		}
+		let endConn = find_end_connections(this);
+		for(let conn of endConn) {
+			if (conn.type === "flow" && conn.is_selected() === false) {
+				let oldAnchorPos = conn.end_anchor.get_pos();
+				let newAnchorPos = translate(oldAnchorPos, diff);
+				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
+			}
+		}
 	}
 
 	// Used for FlowVisual
@@ -1331,11 +1326,11 @@ class NumberboxVisual extends BasePrimitive {
 		});
 	}
 	setSelectionSizeToText() {
-		var boundingRect = this.name_element.getBoundingClientRect();
-		var elementRect = this.element_array[0];
-		var selectorRect = this.selector_array[0];
-		var marginX = 10;
-		var marginY = 2;
+		let boundingRect = this.name_element.getBoundingClientRect();
+		let elementRect = this.element_array[0];
+		let selectorRect = this.selector_array[0];
+		let marginX = 10;
+		let marginY = 2;
 		for(let rect of [elementRect,selectorRect]) {
 			rect.setAttribute("width",boundingRect.width+marginX*2);
 			rect.setAttribute("height",boundingRect.height+marginY*2);
@@ -1449,7 +1444,7 @@ class VariableVisual extends BasePrimitive {
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.get_pos();
-		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
 		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
@@ -1547,10 +1542,10 @@ class ConverterVisual extends BasePrimitive {
 		do_global_log(linkedPrimitives);
 		if (linkedPrimitives.length > 0) {
 			do_global_log("choose yes");
-			this.primitive.value.setAttribute("Source", linkedPrimitives[0].id);
+			this.primitive.setAttribute("Source", linkedPrimitives[0].id);
 		} else {
 			do_global_log("choose no");
-			this.primitive.value.setAttribute("Source", "Time");
+			this.primitive.setAttribute("Source", "Time");
 		}
 	}
 	name_double_click() {
@@ -1563,27 +1558,28 @@ class ConverterVisual extends BasePrimitive {
 }
 
 class TwoPointer extends BaseObject {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.id = id;
 		this.type = type;
 		this.selected = false;
-		this.start_anchor = null;
-		this.end_anchor = null;
-		this.startx = pos[0];
-		this.starty = pos[1];
-		this.endx = pos[0];
-		this.endy = pos[1];
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
 		
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event) {
-			var node_id = this.getAttribute("node_id");
+			let node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
+
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
+		
 		last_connection = this;
-		this.update();
+	}
+
+	getAnchors() {
+		return [this.start_anchor, this.end_anchor];
 	}
 
 	getBoundRect() {
@@ -1600,88 +1596,34 @@ class TwoPointer extends BaseObject {
 		this.start_anchor.setColor(color);
 		this.end_anchor.setColor(color);
 	}
-
-	create_dummy_start_anchor() {
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.start);
-	}
-	create_dummy_end_anchor() {
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor",[this.endx,this.endy],anchorTypeEnum.end);
-	}
 	
-	get_pos() {
-		return [(this.startx + this.endx)/2,(this.starty + this.endy)/2];
-	}
-	
-	getMinX() {
-		if (this.startx < this.endx) {
-			return this.startx;
-		} else {
-			return this.endx;
-		}
-	}
+	get startX() { return this.start_anchor.get_pos()[0]; }
+	get startY() { return this.start_anchor.get_pos()[1]; }
+	get endX() { return this.end_anchor.get_pos()[0]; }
+	get endY() { return this.end_anchor.get_pos()[1]; }
 
-	getMinY() {
-		if (this.starty < this.endy) {
-			return this.starty;
-		} else {
-			return this.endy;
-		}
-	}
-	
-	getWidth() {
-		return Math.abs(this.startx - this.endx);
-	}
-
-	getHeight() {
-		return Math.abs(this.starty - this.endy);
-	}
+	get_pos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
+	getMinX() { return Math.min(this.startX, this.endX); }
+	getMinY() { return Math.min(this.startY, this.endY); }
+	getWidth() { return Math.abs(this.startX - this.endX); }
+	getHeight() { return Math.abs(this.startY - this.endY); }
 
 	unselect() {
 		this.selected = false;
-		for(var anchor of get_anchors(this.id)) {
+		for(let anchor of this.getAnchors()) {
 			anchor.setVisible(false);
 		}
 	}
 	select() {
 		this.selected = true;
-		for(var anchor of get_anchors(this.id)) {
+		for(let anchor of this.getAnchors()) {
 			anchor.select();
 			anchor.setVisible(true);
 		}
 	}
 	
 	update() {
-		// Get start position from anchor
-		if (this.start_anchor != null) {
-				if (this.start_anchor.get_pos) {
-					var start_pos = this.start_anchor.get_pos();
-					this.startx = start_pos[0];
-					this.starty = start_pos[1];
-				} else {
-					do_global_log("No start position");
-				}
-			}
-			
-			// Get end position from anchor
-			if (this.end_anchor != null) {
-				if (this.end_anchor.get_pos) {
-					var end_pos = this.end_anchor.get_pos();
-					this.endx = end_pos[0];
-					this.endy = end_pos[1];
-				} else {
-					do_global_log("No end position");
-				}
-			}
-			
-			// Force minimum size on TwoPointers
-			const minWidth = 10;
-			const minHeight = 10;
-			if (this.getWidth() < minWidth && this.getHeight() < minHeight) {
-				this.endx = this.startx + minWidth;
-				this.endy = this.starty + minHeight;
-			}
-
-			this.updateGraphics();
+		this.updateGraphics();
 	}
 	makeGraphics() {
 		
@@ -1689,7 +1631,8 @@ class TwoPointer extends BaseObject {
 	updateGraphics() {
 		
 	}
-	afterAnchorUpdate(anchorType) {
+	syncAnchorToPrimitive(anchorType) {
+		// This function should sync anchor position to primitive 
 		let Primitive = findID(this.id);
 		switch(anchorType) {
 			case anchorTypeEnum.start:
@@ -1706,14 +1649,14 @@ class TwoPointer extends BaseObject {
 }
 
 class BaseConnection extends TwoPointer {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this._start_attach = null;
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
-			var primitive = findID(this.id);
-			var sourcePoint = getSourcePosition(primitive);
-			var targetPoint = getTargetPosition(primitive);
+			let primitive = findID(this.id);
+			let sourcePoint = getSourcePosition(primitive);
+			let targetPoint = getTargetPosition(primitive);
 			this.start_anchor.set_pos(sourcePoint);
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
@@ -1786,31 +1729,27 @@ class BaseConnection extends TwoPointer {
 	updateGraphics() {			
 
 	}
-	linearInterpolation(progress) {
-		// Find a point at the progress place along a line between start and end
-		// progress is between 0 and 1
-		if (this.getStartAttach() != null) {
-			[this.startx, this.starty] = this.start_anchor.get_pos();
-		}
-		if (this.getEndAttach() != null) {
-			[this.endx, this.endy] = this.end_anchor.get_pos();
-		}
-		let start = [this.startx, this.starty];
-		let end = [this.endx, this.endy];
-		let result = [start[0]*(1-progress)+end[0]*progress,start[1]*(1-progress)+end[1]*progress];
-		return result;
+}
+
+function getStackTrace() {
+	try {
+		let a = {};
+		a.debug();
+	} catch(ex) {
+		return ex.stack;
 	}
 }
 
+
 class FlowVisual extends BaseConnection {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.setAttachableTypes(["stock"]);
 		this.updateValueError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
-		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoints]
-		this.anchorPoints = []; 
+		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoint]
+		this.middleAnchors = []; 
 
 		this.valveIndex; 	// index to indicate what inbetween path valve is placed
 		this.variableSide;	// bool to indicate what side of path variable is placed
@@ -1829,110 +1768,145 @@ class FlowVisual extends BaseConnection {
 		return 20;
 	}
 
-	areAllAnchorsSelected() {
-		for (i = 0; i < this.anchorPoints.length; i++) {
-			if ( ! this.anchorPoints[i].is_selected()) {
-				return false;
+	getAnchors() {
+		let anchors = [this.start_anchor];
+		anchors = anchors.concat(this.middleAnchors);
+		anchors = anchors.concat([this.end_anchor]);
+		return anchors;
+	}
+
+	getPreviousAnchor(anchor_id) { 
+		let anchors = this.getAnchors();
+		let anchor_ids = anchors.map(anchor => anchor.id);
+		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
+		return prev_index >= 0 ? anchors[prev_index] : null;
+	}
+
+	getNextAnchor(anchor_id) { 
+		let anchors = this.getAnchors();
+		let anchor_ids = anchors.map(anchor => anchor.id);
+		let index = anchor_ids.indexOf(anchor_id);
+		if (index === -1 && index === anchors.length-1) {
+			return null;
+		} else {
+			return anchors[index+1];
+		}
+	}
+
+	requestNewAnchorDim(reqValue, anchor_id, dimIndex) {
+		// reqValue is x or y 
+		let anchor = object_array[anchor_id];
+		let anchorAttach = false;
+		let newValue = reqValue;
+		if (anchor.getAnchorType() === anchorTypeEnum.start) {
+			anchorAttach = this._start_attach;
+		} else if (anchor.getAnchorType() === anchorTypeEnum.end) {
+			anchorAttach = this._end_attach;
+		}
+		// if anchor is attached limit movement 
+		if (anchorAttach) {
+			// stockX or stockY
+			let stockDim = anchorAttach.get_pos()[dimIndex];
+			// stockWidth or stockHeight
+			let stockSpanSize = anchorAttach.getSize()[dimIndex];
+			newValue = clampValue(reqValue, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
+		} else {	
+			// dont allow being closer than minDistance units to a neightbour node 
+			let minDistance = 10;
+			let prevAnchor = this.getPreviousAnchor(anchor_id);
+			let nextAnchor = this.getNextAnchor(anchor_id);
+
+			let requestPos = anchor.get_pos();
+			requestPos[dimIndex] = reqValue;
+			if ((prevAnchor && distance(requestPos, prevAnchor.get_pos()) < minDistance) ||
+			  	(nextAnchor && distance(requestPos, nextAnchor.get_pos()) < minDistance) ) {
+				// set old value of anchor 
+				newValue = anchor.get_pos()[dimIndex];
+			} else {
+				// set requested value 
+				newValue = reqValue;
 			}
 		}
-		return true;
+		
+		let pos = anchor.get_pos();
+		pos[dimIndex] = newValue;
+		anchor.set_pos(pos);
+		return newValue;
 	}
 
-	getPreviousAnchor(index) { // Index is index of Anchor in this.anchorPoints
-		if (index == 0) {
-			return this.start_anchor;
+	requestNewAnchorX(x, anchor_id) {
+		return this.requestNewAnchorDim(x, anchor_id, 0);
+	}
+
+	requestNewAnchorY(y, anchor_id) {
+		return this.requestNewAnchorDim(y, anchor_id, 1);
+	}
+
+	requestNewAnchorPos(newPos, anchor_id) {
+		let [x, y] = newPos;
+		let mainAnchor = object_array[anchor_id];
+
+		let prevAnchor = this.getPreviousAnchor(anchor_id);
+		let nextAnchor = this.getNextAnchor(anchor_id);
+
+		let prev_moveInX = true;
+		let next_moveInX = true;
+
+		if (prevAnchor && this.middleAnchors.length === 0) {
+			let prevAnchorPos = prevAnchor.get_pos();
+			prev_moveInX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
+			next_moveInX = ! prev_moveInX;
+		} else if (nextAnchor && this.middleAnchors.length === 0) {
+			let nextAnchorPos = nextAnchor.get_pos();
+			next_moveInX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
+			prev_moveInX = ! next_moveInX;
 		} else {
-			return this.anchorPoints[index-1];
+			// if more than two anchor 
+			let anchors = this.getAnchors();
+			let [x1, y1] = anchors[0].get_pos();
+			let [x2, y2] = anchors[1].get_pos();
+			let flow_start_direction_x = Math.abs(x1 - x2) < Math.abs(y1 - y2);
+			let index = anchors.map(anchor => anchor.id).indexOf(anchor_id);			
+			prev_moveInX = ((index%2) === 1) === flow_start_direction_x;
+			next_moveInX = ! prev_moveInX;
 		}
+
+		if (prevAnchor) {
+			// Get direction of movement or direction of previous anchor 
+			if ( prev_moveInX ) {
+				x = this.requestNewAnchorX(x, prevAnchor.id);
+			} else {
+				y = this.requestNewAnchorY(y, prevAnchor.id);
+			}
+		}
+		if (nextAnchor) {
+			if ( next_moveInX ) {
+				x = this.requestNewAnchorX(x, nextAnchor.id);
+			} else {
+				y = this.requestNewAnchorY(y, nextAnchor.id);
+			}
+		}
+		mainAnchor.set_pos([x,y]);
 	}
 
-	getNextAnchor(index) { // Index is index of Anchor in this.anchorPoints
-		if (this.anchorPoints.length-1 == index) {
-			return this.end_anchor;
-		} else {
-			return this.anchorPoints[index+1];
-		} 
-	}
 
-	afterAnchorUpdate(anchorType) {
+	syncAnchorToPrimitive(anchorType) {
 		// Save middle anchor points to primitive
-		super.afterAnchorUpdate(anchorType);
+		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
-		for (i = 1; i < this.anchorPoints.length-1; i++) {
-			let pos = this.anchorPoints[i].get_pos();
+		for (i = 0; i < this.middleAnchors.length; i++) {
+			let pos = this.middleAnchors[i].get_pos();
 			let x = pos[0];
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
 		}
-		this.primitive.value.setAttribute("MiddlePoints", middlePoints);
-	}
-
-	adjustNeighborAnchor(masterAnchor, slaveAnchor) {
-		let masterPos = masterAnchor.get_pos();
-		let slavePos = slaveAnchor.get_pos();
-		let dir = neswDirection(masterPos, slavePos);
-		let dist = 15; 		// mininum distance from master and slave anchor
-		if (dir == "north" || dir == "south") {
-
-			// Keep masterAnchor at distance from slaveAnchor 
-			if (slavePos[1]-dist < masterPos[1] && masterPos[1] <= slavePos[1]) { // if too close above
-				masterAnchor.set_pos([masterPos[0], slavePos[1]+dist]);			// switch side
-			} else if (slavePos[1] <= masterPos[1] && masterPos[1] < slavePos[1]+dist) { // if too close below 
-				masterAnchor.set_pos([masterPos[0], slavePos[1]-dist]); 		// switch side
-			}
-			
-			slaveAnchor.set_pos([masterPos[0], slavePos[1]]);
-		} else {
-
-			// Keep masterAnchor at distance from slaveAnchor 
-			if ((slavePos[0]-dist < masterPos[0]) && (masterPos[0] <= slavePos[0])) { // if to close left
-				masterAnchor.set_pos([slavePos[0]+dist, masterPos[1]]);				// switch to right side
-			} else if (slavePos[0] <= masterPos[0] && masterPos[0] < slavePos[0]+dist) { // if to close to right side
-				masterAnchor.set_pos([slavePos[0]-dist, masterPos[1]]);				// switch to left side 
-			}
-
-			slaveAnchor.set_pos([slavePos[0], masterPos[1]]);
-		}
-	}
-
-	adjustNeighbors(anchorIndex) {
-		let anchor = this.anchorPoints[anchorIndex];
-
-		// Adjust previous Neighbor
-		let prevAnchor = this.getPreviousAnchor(anchorIndex);
-		this.adjustNeighborAnchor(anchor, prevAnchor);
-
-		// Adjust next Neighbor
-		let nextAnchor = this.getNextAnchor(anchorIndex);
-		this.adjustNeighborAnchor(anchor, nextAnchor);
-	}
-
-	create_dummy_start_anchor() {
-		this.start_anchor = new OrthoAnchorPoint(
-			this.id+".start_anchor", 
-			"dummy_anchor", 
-			[this.startx, this.starty], 
-			anchorTypeEnum.start, 
-			0
-		);
-		this.anchorPoints[0] = (this.start_anchor);
-	}
-	
-	create_dummy_end_anchor() {
-		this.end_anchor = new OrthoAnchorPoint(
-			this.id+".end_anchor", 
-			"dummy_anchor", 
-			[this.endx, this.endy],
-			anchorTypeEnum.end,
-			this.anchorPoints.length
-		)
-		this.anchorPoints[this.anchorPoints.length] = this.end_anchor; 
+		this.primitive.setAttribute("MiddlePoints", middlePoints);
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
 		const [xCenter, yCenter] = this.getVariablePos();
-		const rTarget = pointDistance([xCenter, yCenter], [xTarget, yTarget]);
+		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
 		const dXEdge = safeDivision(dXTarget*this.getRadius(), rTarget);
@@ -1942,29 +1916,38 @@ class FlowVisual extends BaseConnection {
 		return [xEdge, yEdge]; 
 	}
 
-	moveValve () {
+	moveValve() {
 		if (this.variableSide) {
-			this.valveIndex = (this.valveIndex+1)%(this.anchorPoints.length-1);
+			this.valveIndex = (this.valveIndex+1)%(this.middleAnchors.length+1);
 		}
 		this.variableSide = !this.variableSide;
 
-		this.primitive.setAttribute("valveIndex", this.valveIndex);
-		this.primitive.setAttribute("variableSide", this.variableSide);
+		this.primitive.setAttribute("ValveIndex", this.valveIndex);
+		this.primitive.setAttribute("VariableSide", this.variableSide);
 
 		// update_all_objects();
 		update_relevant_objects("");
 	}
 
-	createAnchorPoint(x, y) {
-		let index = this.anchorPoints.length;
+	createMiddleAnchorPoint(x, y) {
+		let index = this.middleAnchors.length;
 		let newAnchor = new OrthoAnchorPoint(
 			this.id+".point"+index, 
 			"dummy_anchor", 
-			[this.endx, this.endy], 
+			[x, y], 
 			anchorTypeEnum.orthoMiddle, 
 			index
 		);
-		this.anchorPoints.push(newAnchor);
+		this.middleAnchors.push(newAnchor);
+	}
+
+	removeLastMiddleAnchorPoint() {
+		// set valveIndex to 0 to avoid valveplacement bug 
+		if (this.valveIndex === this.middleAnchors.length) {
+			this.valveIndex = this.middleAnchors.length-1;
+		}
+		let removedAnchor = this.middleAnchors.pop();
+		delete_object(removedAnchor.id);
 	}
 	
 	parseMiddlePoints(middlePointsString) {
@@ -1992,7 +1975,7 @@ class FlowVisual extends BaseConnection {
 		}
 		let points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
-			let index = this.anchorPoints.length;
+			let index = this.middleAnchors.length;
 			let newAnchor = new OrthoAnchorPoint(
 				this.id+".point"+index, 
 				"dummy_anchor", 
@@ -2000,7 +1983,7 @@ class FlowVisual extends BaseConnection {
 				anchorTypeEnum.orthoMiddle, 
 				index
 			);
-			this.anchorPoints.push(newAnchor);
+			this.middleAnchors.push(newAnchor);
 		}
 	}
 
@@ -2016,14 +1999,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
 		let valveY = (points[this.valveIndex][1]+points[this.valveIndex+1][1])/2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -2033,7 +2016,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getVariablePos() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -2055,7 +2038,7 @@ class FlowVisual extends BaseConnection {
 
 	setColor(color) {
 		this.color = color;
-		this.primitive.setAttribute("color", this.color);
+		this.primitive.setAttribute("Color", this.color);
 		this.startCloud.setAttribute("stroke", color);
 		this.endCloud.setAttribute("stroke", color);
 		this.outerPath.setAttribute("stroke", color);
@@ -2064,7 +2047,7 @@ class FlowVisual extends BaseConnection {
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
 		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
-		this.anchorPoints.map(anchor => anchor.setColor(color));
+		this.getAnchors().map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
@@ -2084,7 +2067,7 @@ class FlowVisual extends BaseConnection {
 			this.name_element]
 		);
 		this.icons.setColor("white");
-		this.anchorPoints = [];
+		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
 		
@@ -2102,7 +2085,7 @@ class FlowVisual extends BaseConnection {
 	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let len = points.length;
 		let p1 = points[len-1];
 		let p2 = points[len-2];
@@ -2110,7 +2093,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let last = points[points.length-1];
 		let secondLast = points[points.length-2];
 		let sine = sin(last, secondLast);
@@ -2121,51 +2104,33 @@ class FlowVisual extends BaseConnection {
 		return points;
 	}
 
-	getPathPoints() {
-		let points = this.anchorPoints.map(point => point.get_pos());
-		if (points.length == 0) {
-			points = [[this.startx, this.starty], [this.endx, this.endy]];
-		} else if (this.anchorPoints[this.anchorPoints.length-1].getAnchorType() != anchorTypeEnum.end) {
-			points.push([this.endx, this.endy]);
-		}
-		return points;
-	}
-
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 		
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length-2]; 
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			if (this.getStartAttach().get_pos) {
-				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
-				// If start point have moved reset b1
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.set_pos(newPos);
-				}
+			let oldPos = this.start_anchor.get_pos();
+			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
+			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
+				this.requestNewAnchorPos(newPos, this.start_anchor.id);
 			}
 		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
-			if (this.getEndAttach().get_pos) {				
-				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
-				// If end point have moved reset b2
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.set_pos(newPos);
-				}
+		if (this.getEndAttach() != null && this.end_anchor != null) {	
+			let oldPos = this.end_anchor.get_pos();
+			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
+			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
+				this.requestNewAnchorPos(newPos, this.end_anchor.id);
 			}
 		}
 		super.update();
-		if (this.start_anchor && this.end_anchor) {
-			this.adjustNeighborAnchor(this.anchorPoints[0], this.anchorPoints[1]);
-			this.adjustNeighborAnchor(this.anchorPoints[this.anchorPoints.length-1], this.anchorPoints[this.anchorPoints.length-2]);
-		}
+		// update anchors 
+		this.getAnchors().map( anchor => anchor.updatePosition() );
 
 		if(this.primitive && this.icons) {
 			let VE = this.primitive.getAttribute("ValueError");
@@ -2179,7 +2144,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let points = this.getPathPoints();
+		let points = this.getAnchors().map(anchor => anchor.get_pos());
 		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPos(points[0], points[1]);
@@ -2226,36 +2191,19 @@ class FlowVisual extends BaseConnection {
 	}
 }
 
-function getStackTrace() {
-	try {
-		var a = {};
-		a.debug();
-	} catch(ex) {
-		return ex.stack;
-	}
-}
-
 class RectangleVisual extends TwoPointer {
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
+		this.dialog = new RectangleDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
-		this.element = svg_rect(
-			this.startx, 
-			this.starty, 
-			this.endx, 
-			this.endy, 
-			defaultStroke, 
-			"none", 
-			"element"
-		);
+		this.element = svg_rect(0,0,0,0, defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(
-			this.startx, 
-			this.starty, 
-			this.endx, 
-			this.endy, 
-			"transparent", 
-			"none"
-		);
+		this.clickRect = svg_rect(0, 0, 0, 0, "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2267,23 +2215,32 @@ class RectangleVisual extends TwoPointer {
 		this.group = svg_group([this.element, this.clickRect]);
 		this.group.setAttribute("node_id",this.id);
 		this.element_array = [this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
+
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
+	}
+	double_click() {
+		this.dialog.show();
 	}
 	updateGraphics() {
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
 		// Prevent width from being 0 (then rect is not visible)
-		let endx = (this.startx != this.endx) ? this.endx : this.startx + 1;
-		let endy = (this.starty != this.endy) ? this.endy : this.starty + 1;
+		let endx = (this.startX != this.endX) ? this.endX : this.startX + 1;
+		let endy = (this.startY != this.endY) ? this.endY : this.startY + 1;
 		this.coordRect.x2 = endx;
 		this.coordRect.y2 = endy;
 		this.coordRect.update();
 
-		this.clickCoordRect.x1 = this.startx;
-		this.clickCoordRect.y1 = this.starty;
+		this.clickCoordRect.x1 = this.startX;
+		this.clickCoordRect.y1 = this.startY;
 		this.clickCoordRect.x2 = endx;
 		this.clickCoordRect.y2 = endy;
 		this.clickCoordRect.update();
@@ -2292,6 +2249,13 @@ class RectangleVisual extends TwoPointer {
 
 
 class EllipseVisual extends TwoPointer {
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
+		this.dialog = new EllipseDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
+	}
 	makeGraphics() {
 		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
 		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
@@ -2302,24 +2266,33 @@ class EllipseVisual extends TwoPointer {
 		this.element_array = [this.element];
 		this.group = svg_group( [this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
+
+		$(this.group).dblclick(() => {
+			this.double_click();
+		});
+	}
+	double_click() {
+			this.dialog.show();
 	}
 	updateGraphics() {
-		let cx = (this.startx + this.endx)/2;
-		let cy = (this.starty + this.endy)/2;
-		let rx = Math.max(Math.abs(this.startx - this.endx)/2, 1);
-		let ry = Math.max(Math.abs(this.starty - this.endy)/2, 1);
+		let cx = (this.startX + this.endX)/2;
+		let cy = (this.startY + this.endY)/2;
+		let rx = Math.max(Math.abs(this.startX - this.endX)/2, 1);
+		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
 		this.element.setAttribute("cx", cx);
 		this.element.setAttribute("cy", cy);
 		this.element.setAttribute("rx", rx);
 		this.element.setAttribute("ry", ry);
+		this.element.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+		this.element.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
 		this.clickEllipse.setAttribute("cx", cx);
 		this.clickEllipse.setAttribute("cy", cy);
 		this.clickEllipse.setAttribute("rx", rx);
 		this.clickEllipse.setAttribute("ry", ry);
-		this.selectorCoordRect.x1 = this.startx;
-		this.selectorCoordRect.y1 = this.starty;
-		this.selectorCoordRect.x2 = this.endx;
-		this.selectorCoordRect.y2 = this.endy;
+		this.selectorCoordRect.x1 = this.startX;
+		this.selectorCoordRect.y1 = this.startY;
+		this.selectorCoordRect.x2 = this.endX;
+		this.selectorCoordRect.y2 = this.endY;
 		this.selectorCoordRect.update();	
 	}
 
@@ -2344,8 +2317,8 @@ class HtmlTwoPointer extends TwoPointer {
 }
 
 class TableVisual extends HtmlTwoPointer {
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -2363,7 +2336,7 @@ class TableVisual extends HtmlTwoPointer {
 		html += "<table class='stickyTable'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
@@ -2406,17 +2379,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(
-			this.startx,
-			this.starty,
-			this.endx,
-			this.endy,
-			defaultStroke,
-			"none",
-			"element",
-			""
-		);
-		this.htmlElement = svg_foreignobject(this.startx, this.starty, 200, 200, "table not renderd yet", "white");
+		this.element = svg_rect(0, 0, 0, 0,	defaultStroke, "none", "element", "");
+		this.htmlElement = svg_foreignobject(0, 0, 200, 200, "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2436,16 +2400,16 @@ class TableVisual extends HtmlTwoPointer {
 		
 		this.element_array = [this.element];
 		this.element_array = [this.htmlElement.scrollDiv, this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 	}
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
 		
 		this.htmlElement.setAttribute("x",this.getMinX());
@@ -2462,10 +2426,6 @@ class TableVisual extends HtmlTwoPointer {
 }
 
 class HtmlOverlayTwoPointer extends TwoPointer {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
-	}
-	
 	updateHTML(html) {
 		this.targetElement.innerHTML = html;
 	}
@@ -2496,15 +2456,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.double_click(this.id);
 		});
 		
-		this.element = svg_rect(this.startx,
-			this.starty,
-			this.endx,
-			this.endy, 
-			defaultStroke, 
-			"white", 
-			"element",
-			""
-		);
+		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -2513,17 +2465,17 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.group.setAttribute("node_id", this.id);	
 		
 		this.element_array = [this.element];
-		for(var key in this.element_array) {
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id", this.id);
 		}
 	}
 	
 	updateGraphics() {
 		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startx;
-		this.coordRect.y1 = this.starty;
-		this.coordRect.x2 = this.endx;
-		this.coordRect.y2 = this.endy;
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
 		
 		let svgoffset = $("#svgplane").offset();
@@ -2569,8 +2521,8 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 }
 
 class TimePlotVisual extends PlotVisual {
-	constructor(id, type, pos) {		
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.fetchData();
 			this.render();
@@ -2611,14 +2563,14 @@ class TimePlotVisual extends PlotVisual {
 		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
-		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
-		this.primitive.value.setAttribute("Sides", sides.join(","));
-		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
+		this.primitive.setAttribute("Sides", sides.join(","));
+		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
-			(node) => node.getAttribute("color") ? node.getAttribute("color") : defaultStroke
+			(node) => node.getAttribute("Color")
 		);
 		this.pattersToDisplay = idsToDisplay.map(findID).map(
 			( node ) => {
@@ -2928,8 +2880,8 @@ class DataGenerations {
 }
 
 class ComparePlotVisual extends PlotVisual {
-	constructor(id, type, pos) {		
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {		
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.fetchData();
 			this.render();
@@ -2969,11 +2921,11 @@ class ComparePlotVisual extends PlotVisual {
 	render() {
 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		this.primitive.value.setAttribute("Primitives", idsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 
-		this.primitive.value.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.value.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.value.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
+		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
 			// We can't render anything with no data
@@ -3060,38 +3012,38 @@ class ComparePlotVisual extends PlotVisual {
 }
 
 class TextAreaVisual extends HtmlOverlayTwoPointer {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {		
+		super(id, type, pos0, pos1);
 		
 		this.primitive = findID(id);
 		
-		this.dialog = new TextAreaDialog(findID(id));
-		//~ this.dialog.subscribePool.subscribe(()=>{
-			//~ this.render();
-		//~ });
-		this.updateTextFromName();
+		this.dialog = new TextAreaDialog(id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.render();
+		});
+		this.render();
 	}
 	makeGraphics() {
 		super.makeGraphics();
-		this.updateTextFromName();
+		this.render();
 	}
-	updateTextFromName() {
+	render() {
 		let newText = getName(this.primitive);
-		let formatedText = newText.replace(/\n/g, "<br/>");
-		this.updateHTML(formatedText);
-	}
-	attributeChangeHandler(attributeName, value) {
-		switch(attributeName) {
-			case "name":
-				this.updateTextFromName();
-			break;
+		let hideFrame = this.primitive.getAttribute("HideFrame") === "true";
+		if(hideFrame && removeSpacesAtEnd(newText).length !== 0) {
+			this.element.setAttribute("visibility", "hidden");
+		} else {
+			this.element.setAttribute("visibility", "visible");
 		}
+		// Replace 							new line 		and 	space
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
+		this.updateHTML(formatedText);
 	}
 }
 
 class HistoPlotVisual extends PlotVisual {
-	constructor(id,type,pos) {
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -3189,14 +3141,19 @@ class HistoPlotVisual extends PlotVisual {
 			if (usePDF) {
 				barValue = bar.data.length/this.histogram.data.length;
 			} 
+			//		1___2___3		  ______
+			// _____|		|1___2___3		...
 
+			// (1)
 			serie.push([bar.lowerLimit, barValue]);
 			this.labels.push("");
 			this.ticks.push(bar.lowerLimit.toFixed(2));
 
+			// (2) label here 
 			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
 			this.labels.push(usePDF ? barValue.toFixed(3): barValue.toString());
 			
+			// (3)
 			serie.push([bar.upperLimit, barValue]);
 			this.labels.push("");
 		}
@@ -3211,7 +3168,7 @@ class HistoPlotVisual extends PlotVisual {
 		// Make serie settings
 		this.serieSettingsArray.push(
 			{
-				color: targetPrim.getAttribute("color") ? targetPrim.getAttribute("color") : "black",
+				color: targetPrim.getAttribute("Color"),
 				shadow: false,
 				pointLabels: {
 					show: true,
@@ -3244,6 +3201,7 @@ class HistoPlotVisual extends PlotVisual {
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
+			sortData: false,
 			grid: {
 				background: "white"
 			},
@@ -3299,8 +3257,8 @@ class HistoPlotVisual extends PlotVisual {
 }
 
 class XyPlotVisual extends PlotVisual {
-	constructor(id,type,pos) {		
-		super(id,type,pos);
+	constructor(id, type, pos0, pos1) {		
+		super(id, type, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}
@@ -3334,10 +3292,10 @@ class XyPlotVisual extends PlotVisual {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.showMarkers = this.dialog.isMarkersChecked();
 		this.showLine = this.dialog.isLineChecked();
-		this.primitive.value.setAttribute("Primitives",IdsToDisplay.join(","));
+		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		var results = RunResults.getSelectiveIdResults(IdsToDisplay);
+		let results = RunResults.getSelectiveIdResults(IdsToDisplay);
 		if (results.length == 0) {
 			// We can't render anything with no data
 			
@@ -3426,18 +3384,18 @@ class XyPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>No data. Run to create data!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>No data. Run to create data!";
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
-			this.chartDiv.innerHTML = "<b>XY-Plot</b><br/>Exactly two primitives must be selected!";
+			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>Exactly two primitives must be selected!";
 			return;
 		}
 		$(this.chartDiv).empty();
 		
 		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			  series: this.serieSettingsArray,
-			  title: this.primitive.getAttribute("TitleLabel") ? this.primitive.getAttribute("TitleLabel") : "",
+			  title: this.primitive.getAttribute("TitleLabel"),
 			  grid: {
 				  background: "white"
 			  },
@@ -3481,76 +3439,122 @@ class XyPlotVisual extends PlotVisual {
 }
 
 class LineVisual extends TwoPointer {
-	makeGraphics() {
-		this.element = svg_line(this.startx,this.starty,this.endx,this.endy, defaultStroke, defaultFill , "element");
-		this.clickLine = svg_line(this.startx, this.starty, this.endx, this.endy, "transparent", "none" , "element");
-		this.clickLine.setAttribute("stroke-width", "10");
-		this.group = svg_group([this.element, this.clickLine]);
-		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.element];
-		for(var key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
-		}
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
+		this.dialog = new LineDialog(this.id);
+		this.dialog.subscribePool.subscribe(()=>{
+			this.updateGraphics();
+		});
 	}
-	updateGraphics() {
-		this.element.setAttribute("x1",this.startx);
-		this.element.setAttribute("y1",this.starty);
-		this.element.setAttribute("x2",this.endx);
-		this.element.setAttribute("y2",this.endy);
-		this.clickLine.setAttribute("x1", this.startx);
-		this.clickLine.setAttribute("y1", this.starty);
-		this.clickLine.setAttribute("x2", this.endx);
-		this.clickLine.setAttribute("y2", this.endy);
-	}
-}
-
-class ArrowVisual extends TwoPointer {
 	makeGraphics() {
-		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element", {"stroke-width": "5"});
+		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHead = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHead.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
+		this.arrowHeadStart.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadEnd.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
 		
-		this.group = svg_group([this.line, this.arrowHead, this.clickLine]);
+		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.line, this.arrowHead];
-		for(var key in this.element_array) {
+		this.element_array = [this.line, this.arrowHeadEnd];
+		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
+		$(this.group).dblclick((event) => {
+			this.double_click();
+		});
+	}
+	double_click() {
+		this.dialog.show();
 	}
 	updateGraphics() {
-		this.arrowHead.setPos([this.endx, this.endy], [this.startx-this.endx, this.starty-this.endy]);
-		this.arrowHead.update();
-		this.line.setAttribute("x1",this.startx);
-		this.line.setAttribute("y1",this.starty);
-		/* Shorten line as not to go past arrowHead */
-		let shortenAmount = 12;
-		let sine = 		sin([this.endx, this.endy], [this.startx, this.starty]);
-		let cosine = 	cos([this.endx, this.endy], [this.startx, this.starty]);
-		let endOffset = rotate([shortenAmount, 0], sine, cosine);
-		let lineEndPos = translate(endOffset, [this.endx, this.endy]);
-		/***/
+		this.line.setAttribute("stroke-width", this.primitive.getAttribute("StrokeWidth"));
+		this.line.setAttribute("stroke-dasharray", this.primitive.getAttribute("StrokeDashArray"));
+
+		let lineStartPos = [this.startX, this.startY];
+		let lineEndPos = [this.endX, this.endY];
+		let arrowHeadStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowHeadEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		this.arrowHeadStart.setAttribute("visibility", arrowHeadStart ? "visible" : "hidden");
+		this.arrowHeadEnd.setAttribute("visibility", arrowHeadEnd ? "visible" : "hidden");
+		if (arrowHeadStart || arrowHeadEnd) {
+			/* Shorten line as not to go past arrowHeadEnd */
+			let shortenAmount = 12;
+			let sine = 		sin([this.endX, this.endY], [this.startX, this.startY]);
+			let cosine = 	cos([this.endX, this.endY], [this.startX, this.startY]);
+			let endOffset = rotate([shortenAmount, 0], sine, cosine);
+			if (arrowHeadStart) {
+				lineStartPos = translate(neg(endOffset), [this.startX, this.startY]);
+				this.arrowHeadStart.setPos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
+				this.arrowHeadStart.update();
+			}
+			if (arrowHeadEnd) {
+				lineEndPos = translate(endOffset, [this.endX, this.endY]);
+				this.arrowHeadEnd.setPos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
+				this.arrowHeadEnd.update();
+			}
+		}
+		
+		this.line.setAttribute("x1", lineStartPos[0]);
+		this.line.setAttribute("y1", lineStartPos[1]);
 		this.line.setAttribute("x2", lineEndPos[0]);
 		this.line.setAttribute("y2", lineEndPos[1]);
-		this.clickLine.setAttribute("x1", this.startx);
-		this.clickLine.setAttribute("y1", this.starty);
-		this.clickLine.setAttribute("x2", this.endx);
-		this.clickLine.setAttribute("y2", this.endy);
+		this.clickLine.setAttribute("x1", this.startX);
+		this.clickLine.setAttribute("y1", this.startY);
+		this.clickLine.setAttribute("x2", this.endX);
+		this.clickLine.setAttribute("y2", this.endY);
 	}
 	setColor(color) {
 		super.setColor(color);
-		this.arrowHead.setAttribute("fill", color);
+		this.arrowHeadStart.setAttribute("fill", color);
+		this.arrowHeadEnd.setAttribute("fill", color);
 	}
 }
 
 class LinkVisual extends BaseConnection {
-	constructor(id, type, pos) {
-		super(id, type, pos);
+	constructor(id, type, pos0, pos1) {
+		super(id, type, pos0, pos1);
+		// Used to keep a local coordinate system between start- and endAnchor
+		// startLocal = [0,0], endLocal = [1,0]
+		this.b1Local = [0.3, 0.0];
+		this.b2Local = [0.7, 0.0];
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
+		this.b1_anchor.makeSquare();
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
+		this.b2_anchor.makeSquare();
+	}
+	getAnchors() {
+		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
+	}
+
+	worldToLocal(worldPos) {
+		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pWorld = translate(worldPos, neg(origoWorld));
+		let RS_pWorld = rotate(S_pWorld, -sine, cosine);
+		let posWorld = scale(RS_pWorld, [0,0], 1/scaleFactor);
+		return posWorld;
+	}
+	localToWorld(localPos) {
+		// worldPos(localPos) = T*R*S*localPos
+		let origoWorld = this.start_anchor.get_pos();
+		let oneZeroWorld = this.end_anchor.get_pos();
+		let scaleFactor = distance(origoWorld, oneZeroWorld);
+		let sine 	= sin(origoWorld, oneZeroWorld);
+		let cosine 	= cos(origoWorld, oneZeroWorld);
+		let S_pLocal = scale(localPos, [0,0], scaleFactor);
+		let RS_pLocal = rotate(S_pLocal, sine, cosine);
+		let posWorld = translate(RS_pLocal, origoWorld);
+		return posWorld;
 	}
 	unselect() {
 		this.selected = false;
 		if (hasSelectedChildren(this.id)) {
-			for(var i in this.highlight_on_select) {
+			for(let i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}	
 		} else {
@@ -3576,13 +3580,13 @@ class LinkVisual extends BaseConnection {
 				object.setVisible(true);
 			}
 		}
-		for(var i in this.highlight_on_select) {
+		for(let i in this.highlight_on_select) {
 			this.highlight_on_select[i].setAttribute("stroke", "red");
 		}
 		
 		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
-			for(var anchor of get_anchors(this.id)) {
+			for(let anchor of this.getAnchors()) {
 				anchor.select();
 				anchor.setVisible(true);
 			}
@@ -3634,7 +3638,7 @@ class LinkVisual extends BaseConnection {
 
 	setColor(color) {
 		this.color = color;
-		this.primitive.setAttribute("color", this.color);
+		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("fill", color);
@@ -3650,23 +3654,18 @@ class LinkVisual extends BaseConnection {
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowHead,this.endx,this.endy);
-		this.click_area = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,this.startx,this.starty,{"stroke":"black", "stroke-width":"1"});
+		svg_translate(this.arrowHead, 0, 0);
+		this.click_area = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
 		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
-		
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier1);
-		this.b1_anchor.makeSquare();
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[this.startx,this.starty],anchorTypeEnum.bezier2);
-		this.b2_anchor.makeSquare();
 
-		this.b1_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
-		this.b2_line = svg_line(this.startx, this.starty, this.startx, this.starty, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b1_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b2_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
 
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
@@ -3691,13 +3690,13 @@ class LinkVisual extends BaseConnection {
 		this.update();
 	}
 	resetBezier1() {
-		this.b1_anchor.set_pos(this.linearInterpolation((1/3)));
+		this.b1Local = [0.3, 0];
 	}
 	resetBezier2() {
-		this.b2_anchor.set_pos(this.linearInterpolation((2/3)));
+		this.b2Local = [0.7, 0];
 	}
-	afterAnchorUpdate(anchorType) {
-		super.afterAnchorUpdate(anchorType);
+	syncAnchorToPrimitive(anchorType) {
+		super.syncAnchorToPrimitive(anchorType);
 		
 		let startpos = this.start_anchor.get_pos();
 		let endpos = this.end_anchor.get_pos();
@@ -3731,13 +3730,12 @@ class LinkVisual extends BaseConnection {
 			this.b1_line.setAttribute("x2",b1pos[0]);
 			this.b1_line.setAttribute("y2",b1pos[1]);
 			
-			this.primitive.value.setAttribute("b1x",b1pos[0]);
-			this.primitive.value.setAttribute("b1y",b1pos[1]);
+			this.primitive.setAttribute("b1x",b1pos[0]);
+			this.primitive.setAttribute("b1y",b1pos[1]);
 		}
 		break;
 		case anchorTypeEnum.bezier2:
 		{
-			let b2pos = this.b2_anchor.get_pos();
 			this.curve.x3 = b2pos[0];
 			this.curve.y3 = b2pos[1];
 			this.curve.update();
@@ -3745,8 +3743,8 @@ class LinkVisual extends BaseConnection {
 			this.b2_line.setAttribute("x2",b2pos[0]);
 			this.b2_line.setAttribute("y2",b2pos[1]);
 			
-			this.primitive.value.setAttribute("b2x",b2pos[0]);
-			this.primitive.value.setAttribute("b2y",b2pos[1]);
+			this.primitive.setAttribute("b2x",b2pos[0]);
+			this.primitive.setAttribute("b2y",b2pos[1]);
 		}
 		break;
 		}
@@ -3756,21 +3754,21 @@ class LinkVisual extends BaseConnection {
 		// The arrow is pointed from the second bezier point to the end
 		let b2pos = this.b2_anchor.get_pos();
 		
-		let xdiff = this.endx-b2pos[0];
-		let ydiff = this.endy-b2pos[1];
+		let xdiff = this.endX-b2pos[0];
+		let ydiff = this.endY-b2pos[1];
 		let angle = Math.atan2(xdiff,-ydiff)*(180/Math.PI);
-		svg_transform(this.arrowHead,this.endx,this.endy,angle,1);
+		svg_transform(this.arrowHead, this.endX, this.endY, angle, 1);
 		
 		// Update end position so that we get the drawing effect when link is created
-		this.curve.x4 = this.endx;
-		this.curve.y4 = this.endy;
+		this.curve.x4 = this.endX;
+		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
 	finishCreate() {
 		this.resetBezierPoints();
 		// Update the lines to fit the bezier anchors
-		this.afterAnchorUpdate(anchorTypeEnum.bezier1);
-		this.afterAnchorUpdate(anchorTypeEnum.bezier2);	
+		this.syncAnchorToPrimitive(anchorTypeEnum.bezier1);
+		this.syncAnchorToPrimitive(anchorTypeEnum.bezier2);	
 	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
@@ -3779,8 +3777,6 @@ class LinkVisual extends BaseConnection {
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
 		
-		//let connectionCenter = this.b1_anchor.get_pos();
-
 		if (this.getStartAttach() != null && this.start_anchor != null) {
 			if (this.getStartAttach().get_pos) {
 				let oldPos = this.start_anchor.get_pos();
@@ -3801,7 +3797,20 @@ class LinkVisual extends BaseConnection {
 				}
 			}
 		}
-		super.update();
+		this.keepRelativeHandlePositions();
+		// update anchors 
+		this.getAnchors().map( anchor => anchor.updatePosition() );
+		this.updateGraphics();
+	}
+	keepRelativeHandlePositions() {
+		this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
+		this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
+	}
+	setHandle1Pos(newPos) {
+		this.b1Local = this.worldToLocal(newPos);
+	}
+	setHandle2Pos(newPos) {
+		this.b2Local = this.worldToLocal(newPos);
 	}
 }
 
@@ -3836,7 +3845,7 @@ class BaseTool {
 	static rightMouseDown(x,y) {
 		// Is triggered when right mouse is clicked for this tool 
 	}
-	static enterTool() {
+	static enterTool(mouseButton) {
 		// Is triggered when the tool is selected
 	}
 	static leaveTool() {
@@ -3865,7 +3874,7 @@ class RunTool extends BaseTool {
 		if (valueErrorPrims.length !== 0) {
 			let prim = valueErrorPrims[0];
 			let name = prim.getAttribute("name");
-			let color = prim.getAttribute("color");
+			let color = prim.getAttribute("Color");
 			let alert = new XAlertDialog(`
 				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
 				&nbsp &nbsp ${ValueErrorToString(prim.getAttribute("ValueError"))}
@@ -3900,7 +3909,7 @@ class ResetTool extends BaseTool {
 
 class DeleteTool extends BaseTool {
 	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
+		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length == 0) {
 			xAlert("You must select at least one primitive to delete");
 			ToolBox.setTool("mouse");
@@ -3934,26 +3943,26 @@ class OnePointCreateTool extends BaseTool {
 	constructor() {
 		this.rightClickMode = false;
 	}
+	static enterTool(mouseButton) {
+		this.rightClickMode = (mouseButton === mouse.right);
+	}
 	static create(x, y) {
 		// This function should be over written
 	}
 	static leftMouseDown(x, y) {
 		unselect_all();
-		if (this.rightClickMode) {
-			ToolBox.setTool("mouse");
-			this.rightClickMode = false; 
-		} else {
-			this.create(x, y);
-			updateInfoBar();
-		}
+		this.create(x, y);
+		update_relevant_objects([]);
+		updateInfoBar();
 	}
 	static leftMouseUp(x, y) {
-		ToolBox.setTool("mouse");
+		if (! this.rightClickMode) {
+			ToolBox.setTool("mouse");
+		}
 	}
 	static rightMouseDown(x, y) {
-		this.rightClickMode = true;
 		unselect_all();
-		this.create(x, y);
+		ToolBox.setTool("mouse");
 		updateInfoBar();
 	}
 }
@@ -3965,22 +3974,21 @@ class NumberboxTool extends OnePointCreateTool {
 	}
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["text"]);
-		var size = type_size["text"];
+		let primitive_name = findFreeName(type_basename["text"]);
+		let size = type_size["text"];
 		
-		//~ var new_text = createPrimitive(primitive_name, "Text", [x-size[0]/2, y-size[1]/2], size);
 		this.primitive = createPrimitive(name, "Numberbox", [x,y],[0,0]);
 		this.primitive.setAttribute("Target",this.targetPrimitive);
 	}
 	static enterTool() {
-		var selected_ids = Object.keys(get_selected_root_objects());
+		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length != 1) {
 			xAlert("You must first select exactly one primitive to watch");
 			ToolBox.setTool("mouse");
 			return;
 		}
 		
-		var selected_object = get_object(selected_ids[0]);
+		let selected_object = get_object(selected_ids[0]);
 		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
 			xAlert("This primitive is not watchable");
 			ToolBox.setTool("mouse");
@@ -3999,16 +4007,16 @@ NumberboxTool.init();
 class StockTool extends OnePointCreateTool {	
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["stock"]);
-		var size = type_size["stock"];
-		var new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
+		let primitive_name = findFreeName(type_basename["stock"]);
+		let size = type_size["stock"];
+		let new_stock = createPrimitive(primitive_name, "Stock", [x-size[0]/2, y-size[1]/2], size);
 	}
 }
 
 class RotateNameTool extends BaseTool {
 	static enterTool() {
-		var object_array = get_selected_objects();
-		for(var node_id in object_array) {
+		let selection = get_selected_objects();
+		for(let node_id in selection) {
 			rotate_name(node_id);
 		}
 		ToolBox.setTool("mouse");
@@ -4020,8 +4028,8 @@ class RotateNameTool extends BaseTool {
 
 class MoveValveTool extends BaseTool {
 	static enterTool() {
-		var object_array = get_selected_objects();
-		for (var node_id in object_array) {
+		let selection = get_selected_objects();
+		for (let node_id in selection) {
 			let obj = get_object(node_id);
 			if (obj.type == "flow") {
 				obj.moveValve();
@@ -4051,21 +4059,21 @@ class GhostTool extends OnePointCreateTool {
 		this.ghostable_primitives = ["stock", "variable", "constant", "converter"];
 	}
 	static create(x, y) {
-		var source = findID(this.id_to_ghost);
-		var ghost = makeGhost(source,[x,y]);
+		let source = findID(this.id_to_ghost);
+		let ghost = makeGhost(source,[x,y]);
 		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
-		var DIM_ghost = get_object(ghost.getAttribute("id"));
+		let DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static enterTool() {
-		var selected_ids = get_selected_ids();
+		let selected_ids = get_selected_ids();
 		if (selected_ids.length != 1) {
 			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		var selected_object = get_object(selected_ids[0]);
+		let selected_object = get_object(selected_ids[0]);
 		if (selected_object.is_ghost) {
 			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
@@ -4084,18 +4092,18 @@ GhostTool.init();
 class ConverterTool extends OnePointCreateTool {
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["converter"]);
-		var size = type_size["converter"];
-		var new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
+		let primitive_name = findFreeName(type_basename["converter"]);
+		let size = type_size["converter"];
+		let new_converter = createPrimitive(primitive_name, "Converter", [x-size[0]/2, y-size[1]/2], size);
 	}
 }
 
 class VariableTool extends OnePointCreateTool {
 	static create(x, y) {
 		// The right place to  create primitives and elements is in the tools-layers
-		var primitive_name = findFreeName(type_basename["variable"]);
-		var size = type_size["variable"];
-		var newVariable = createPrimitive(
+		let primitive_name = findFreeName(type_basename["variable"]);
+		let size = type_size["variable"];
+		let newVariable = createPrimitive(
 			primitive_name, 
 			"Variable", 
 			[x-size[0]/2, y-size[1]/2], 
@@ -4119,45 +4127,87 @@ class ConstantTool extends OnePointCreateTool {
 	}
 }
 
-class MouseTool extends BaseTool {
-	static get_single_selected_anchor() {
-		// Check if we selected only 1 anchor element. Return that anchor else return null
-		
-		let selectedAnchors = [];
-		let selectedObjects = get_selected_objects();
-	
-		// Get the selected anchors
-		for(var i in selectedObjects) {
-			if (selectedObjects[i].type == "dummy_anchor") {
-				selectedAnchors.push(selectedObjects[i]);
+function get_only_selected_anchor_id() {
+	// returns null if more is selected than one anchor is selected, else returns object {parent_id: ... , child_id: ... }
+	let selection = get_selected_objects();
+	let keys = [];
+	for(let key in selection) { 
+		keys.push(key);
+	}
+	if (keys.length === 1 && selection[keys[0]].getType() === "dummy_anchor") {
+		// only one anchor in selection
+		return {"parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
+	} else if (keys.length === 2) {
+		if (get_object(keys[0]).getType() === "dummy_anchor" && get_object(keys[1]).getType() === "dummy_anchor") {
+			// both anchors are dummies 
+			return null;
+		} else if(get_parent_id(keys[0]) === get_parent_id(keys[1])) {
+			// one anchor and parent object selected 
+			let parent_id = null;
+			let child_id = null;
+			if (get_parent_id(keys[0]) === keys[0]) {
+				child_id = keys[1];
+				parent_id = keys[0];
+			} else {
+				child_id = keys[0];
+				parent_id = keys[1];
+			}
+			return { "parent_id": parent_id, "child_id": child_id };
+		}
+	} 
+	return null;
+}
+
+function get_single_primitive_id_selected() {
+	// will give object { "parent_id": ..., "children_ids": [...] } or null if more objects selected 
+	let selection = get_selected_objects();
+	let keys = [];
+	for(let key in selection) { 
+		keys.push(key);
+	}
+	let object_ids = {"children_ids": []};
+	if (keys.length > 0) {
+		object_ids["parent_id"] = get_parent_id(keys[0]);
+		for(let key of keys) {
+			if ( get_parent_id(key) !== object_ids["parent_id"] ) {
+				return null;
+			} else if ( get_parent_id(key) !== key ) {
+				object_ids["children_ids"].push(key);
 			}
 		}
-		
-		// If the number of selected anchors is exactly 1 return it
-		if (selectedAnchors.length == 1) {
-			return selectedAnchors[0];
-		} else {
-			// More then one or no anchor selected
-			return null;
-		}
-	}
+		return object_ids;
+	} 
+	return null;
+}
+
+function get_only_link_selected() {
+	let object_ids = get_single_primitive_id_selected();
+	if (object_ids !== null && get_object(object_ids["parent_id"]).getType() === "link") {
+		return object_ids;
+	} 
+	return null;
+}
+
+class MouseTool extends BaseTool {
 	static leftMouseDown(x,y) {
 		mousedown_x = x;
 		mousedown_y = y;
 		do_global_log("last_click_object_clicked "+last_click_object_clicked);
 		if (!last_click_object_clicked) {
-			empty_click();
+			rectselector_start();
 		}
-		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor = this.get_single_selected_anchor();
-		if (selectedAnchor && get_parent(selectedAnchor).getStartAttach) {
-			let parentObject = get_parent(selectedAnchor);
-			switch(selectedAnchor.getAnchorType()) {
-			case anchorTypeEnum.start:
-				parentObject.setStartAttach(null);
+
+		let selected_anchor = get_only_selected_anchor_id();
+		// Only one anchor is selected AND that that anchor has attaching capabilities 
+		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
+			let parent = connection_array[selected_anchor.parent_id];
+			// Detach anchor 
+			switch(object_array[selected_anchor.child_id].getAnchorType()) {
+				case anchorTypeEnum.start:
+					parent.setStartAttach(null);
 				break;
-			case anchorTypeEnum.end:
-				parentObject.setEndAttach(null);
+				case anchorTypeEnum.end:
+					parent.setEndAttach(null);
 				break;
 			}
 		}
@@ -4165,77 +4215,89 @@ class MouseTool extends BaseTool {
 		// Reset it for use next time
 		last_click_object_clicked = false;
 	}
-	static mouseMove(x,y) {
-		var diff_x = x-mousedown_x;
-		var diff_y = y-mousedown_y;
+	static mouseMove(x,y,shiftKey) {
+		let diff_x = x-mousedown_x;
+		let diff_y = y-mousedown_y;
 		mousedown_x = x;
 		mousedown_y = y;
 		
-		if (empty_click_down) {				
-			rectselector.x2 = mousedown_x;
-			rectselector.y2 = mousedown_y;
-			rectselector.setVisible(true);
-			rectselector.update();
-			unselect_all();
-			var select_array = get_objects_in_rectselect();
-			for(var key in select_array) {
-				let parent = get_parent(select_array[key]);
-				parent.select(false); // We also select the parent but not all of its anchors
-				select_array[key].select();
-			}
+		if (empty_click_down) {
+			rectselector_move();
 			return;
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger empty_click_down
-		var move_array = get_selected_objects();
-		
-		var objectMoved = false;
-		for(var key in move_array) {
-			if (move_array[key].draggable == undefined) {
-				
-				//~ console.error("Drag and drop for connections not implemented yet");
+		let only_selected_anchor = get_only_selected_anchor_id();
+		let only_selected_link = get_only_link_selected();
+		if( only_selected_anchor ) {
+			// Use equivalent tool type
+			// 	RectangleVisual => RectangleTool
+			// 	LinkVisual => LinkTool
+			let parent = connection_array[only_selected_anchor["parent_id"]];
+			let tool = ToolBox.tools[parent.type];
+			tool.mouseMoveSingleAnchor(x,y, shiftKey, only_selected_anchor["child_id"]);
+			parent.update();
+		} else if ( only_selected_link ) {
+			// special exeption for links of links is being draged directly 
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b1_anchor");
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"]+".b2_anchor");
+			let parent = connection_array[only_selected_link["parent_id"]];
+			parent.update();
+		} else {
+			let move_array = get_selected_objects();
+			this.defaultRelativeMove(move_array, diff_x, diff_y);
+		}
+	}
+	static defaultRelativeMove(move_objects, diff_x, diff_y) {
+		let objectMoved = false;
+		for(let key in move_objects) {
+			if (move_objects[key].draggable == undefined) {
 				continue;
-			}
-			if (move_array[key].draggable == false) {
+			} 
+			if (move_objects[key].draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
-			}
-			
-			// We can't drug and drop attached anchors
-			if (move_array[key].type == "dummy_anchor") {
-				if (move_array[key].isAttached()) {
+			} 
+			if (move_objects[key].type == "dummy_anchor") {
+				if (move_objects[key].isAttached()) {
+					// We can't drug and drop attached anchors
 					continue;
 				}
-			}
-			
-			
+			} 
+
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
 			rel_move(key,diff_x,diff_y);
-			
 		}
 		if (objectMoved) {
-			// update_all_objects();
+			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
+			// Therefore they must be updated seprately 
 			let ids = [];
-			for (let key in move_array) {
-				ids.push(move_array[key].id);
+			for (let key in move_objects) {
+				ids.push(move_objects[key].id);
 			}
 			update_relevant_objects(ids);
 		}
 	}
 	static leftMouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
-		let selectedAnchor = this.get_single_selected_anchor();
-		if (selectedAnchor) {
-			attach_selected_anchor(selectedAnchor);
+		let selected_anchor = get_only_selected_anchor_id();
+		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
+			attach_selected_anchor(object_array[selected_anchor.child_id]);
+			object_array[selected_anchor.child_id].updatePosition();
 		}
+
 		if (empty_click_down) {
-			rectselector.setVisible(false);
-			var select_array = get_objects_in_rectselect();
-			for(var key in select_array) {
-				select_array[key].select();
-			}
+			rectselector_stop();
 			empty_click_down = false;
+		}
+	}
+	static rightMouseDown(x, y) {
+		let only_selected_anchor = get_only_selected_anchor_id();
+		if (only_selected_anchor &&
+		connection_array[only_selected_anchor["parent_id"]].getType() === "flow" &&
+		object_array[only_selected_anchor["child_id"]].getAnchorType() === anchorTypeEnum.end) {
+			FlowTool.rightMouseDown(x, y);
 		}
 	}
 }
@@ -4252,23 +4314,20 @@ class TwoPointerTool extends BaseTool {
 	static getType() {
 		return "none";
 	}
-	static create_TwoPointer_start(x, y, name) {
+	static createTwoPointer(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
 		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
-	}
-	static create_TwoPointer_end() {
-		// Override this
 	}
 	static leftMouseDown(x,y) {
 		unselect_all();
 
 		// Looks for element under mouse. 
-		var start_element = find_element_under(x,y);
+		let start_element = find_element_under(x,y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		var primitive_name = findFreeName(type_basename[this.getType()]);
-		this.create_TwoPointer_start(x,y,primitive_name);
+		let primitive_name = findFreeName(type_basename[this.getType()]);
+		this.createTwoPointer(x,y,primitive_name);
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
@@ -4277,59 +4336,47 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.set_name(primitive_name);
 		
-		if (this.current_connection.start_anchor == null) {
-			// a dummy anchor has no attached object
-			this.current_connection.create_dummy_start_anchor();
-		}
+		// make sure start anchor is synced with primitive 
+		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
 	}
 	static mouseMove(x, y, shiftKey) {
+		// Function used during creation of twopointer
 		if (this.current_connection == null) {
 			return;
 		}
+		this.current_connection.select();
+		let move_node_id = `${this.current_connection.id}.end_anchor`;
+		this.mouseMoveSingleAnchor(x,y, shiftKey, move_node_id);
+	}
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+		// Function used both during creation and later moving of anchor point 
+		let moveObject = get_object(node_id);
+		let parent = get_parent(moveObject);
 		if (shiftKey) {
-			let sideX = x - this.current_connection.startx;
-			let sideY = y - this.current_connection.starty;
-			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
-			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
-			if (3*shortSideLength < longSideLength) { 	// place horizontal or vertical
-				if (Math.abs(sideX) < Math.abs(sideY)) {
-					this.current_connection.endx = this.current_connection.startx;
-					this.current_connection.endy = y;
-				} else {
-					this.current_connection.endx = x;
-					this.current_connection.endy = this.current_connection.starty;
-				}
-			} else {									// place at 45 degree angle
-				let signX = Math.sign(sideX);
-				let signY = Math.sign(sideY);
-				this.current_connection.endx = this.current_connection.startx + signX*shortSideLength;
-				this.current_connection.endy = this.current_connection.starty + signY*shortSideLength;
+			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			if (parent.start_anchor.id === node_id) {
+				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
+			let sideX = x - oppositeX;
+			let sideY = y - oppositeY;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let signX = Math.sign(sideX);
+			let signY = Math.sign(sideY);
+			moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
 		} else {
-			this.current_connection.endx = x;
-			this.current_connection.endy = y;
+			moveObject.set_pos([x,y]);
 		}
-		this.current_connection.update();
+		parent.update();
+		object_array[node_id].updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.mouseMove(x, y, shiftKey);
-		if (this.current_connection.end_anchor == null) {
-			// a dummy anchor has no attached object
-			this.current_connection.create_dummy_end_anchor();
-		}
-		// if (this.current_connection.start_anchor == null) {
-		// 	// a dummy anchor has no attached object
-		// 	this.current_connection.create_dummy_start_anchor();
-		// }
 		if (this.current_connection.getStartAttach) {
 			attach_selected_anchor(this.current_connection.end_anchor);
 		}
 		
-		this.current_connection.start_anchor.updatePosition();
-		this.current_connection.end_anchor.updatePosition();
 		this.current_connection.update();
 		this.current_connection.finishCreate();
-		this.create_TwoPointer_end();
 		
 		this.current_connection = null;
 		last_clicked_element = null;
@@ -4344,62 +4391,69 @@ class FlowTool extends TwoPointerTool {
 	static init() {
 		super.init();
 		// Is to prevent error if rightdown happens before leftdown 
-		this.hasLeftClicked = false;
+		// can be either "x" or "y" 
+		this.direction = "";
 	}
 	static leftMouseDown(x, y) {
+
+	}
+	static mouseMove(x, y) {
+		if (this.current_connection) {
+			this.mouseMoveSingleAnchor(x, y, false, this.current_connection.end_anchor.id);
+		} else {
+			// First time moving mouse 
+			this.firstLeftMouseMove(x, y);
+		}
+	}
+	static firstLeftMouseMove(x, y) {
+		// does not create anything until the first leftMouseMove have been triggered 
 		super.leftMouseDown(x, y);
-		this.hasLeftClicked = true;
+	}
+	static mouseMoveSingleAnchor(x,y, shiftKey, anchor_id) {
+		// Function used both during creation and later moving of anchor point 
+		let mainAnchor = get_object(anchor_id);
+		let parent = get_parent(mainAnchor);
+
+		parent.requestNewAnchorPos([x, y], anchor_id);
+		parent.update();
+		// update connecting links 
+		find_connections(parent).map(conn => conn.update());
 	}
 	static leftMouseUp(x, y) {
-		super.leftMouseUp(x, y);
-		this.hasLeftClicked = false;
+		if (this.current_connection) {
+			super.leftMouseUp(x, y);
+		}
 	}
-	static create_TwoPointer_start(x, y, name) {
+	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
 		
-		let rotateName = this.primitive.getAttribute("RotateName");
-		// Force all stocks to have a RotateName
-		if (!rotateName) {
-			rotateName = "0";
-			this.primitive.setAttribute("RotateName", rotateName);
-		}		
-		
-		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y]);
-		this.current_connection.name_pos = rotateName;
-		this.current_connection.select();
+		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
+		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
+
+		unselect_all_other_anchors(this.current_connection.id, this.current_connection.end_anchor.id);
 		update_name_pos(this.primitive.id);
 	}
-	static mouseMove(x, y) {
-		let dir;
-		if (this.current_connection.anchorPoints.length == 1) {
-			dir = neswDirection(this.current_connection.anchorPoints[0].get_pos(), [x, y]);
-			if (dir == "north" || dir == "south") {
-				this.current_connection.endx = this.current_connection.anchorPoints[0].get_pos()[0];
-				this.current_connection.endy = y;
-			} else {
-				this.current_connection.endx = x;
-				this.current_connection.endy = this.current_connection.anchorPoints[0].get_pos()[1];
-			}
-		} else {
-			let anchorPoints = this.current_connection.anchorPoints;
-			let lastAnchor = anchorPoints[anchorPoints.length-1];
-			let secondLastAnchor = anchorPoints[anchorPoints.length-2];
-			dir = neswDirection(secondLastAnchor.get_pos(), lastAnchor.get_pos());
-			if (dir == "north" || dir == "south") {
-				this.current_connection.endx = x;
-				this.current_connection.endy = lastAnchor.get_pos()[1];
-			} else {
-				this.current_connection.endx = lastAnchor.get_pos()[0];
-				this.current_connection.endy = y;
-			}
-		}
-		this.current_connection.update();
-	}
 	static rightMouseDown(x,y) {
-		if (this.hasLeftClicked) {
-			do_global_log("Right mouse on: "+x+", "+y);
-			this.current_connection.createAnchorPoint(x, y);
+		if (leftmouseisdown) {
+			let only_selected_anchor = get_only_selected_anchor_id();
+			if (only_selected_anchor) {
+				let parent = connection_array[only_selected_anchor["parent_id"]];
+				let child = object_array[only_selected_anchor["child_id"]];
+				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
+					let prevAnchorPos = parent.getPreviousAnchor(child.id).get_pos();
+					if (distance(prevAnchorPos, [x ,y]) < 10) {
+						if (parent.middleAnchors.length > 0) {
+							// remove last middle anchor
+							parent.removeLastMiddleAnchorPoint();
+						}
+					} else {
+						// Add middle anchor 
+						parent.createMiddleAnchorPoint(x, y);
+						unselect_all_other_anchors(parent.id, child.id);
+					}
+				}
+			}
 		}
 	}
 
@@ -4408,6 +4462,7 @@ class FlowTool extends TwoPointerTool {
 	}
 }
 FlowTool.init();
+
 
 function cleanUnconnectedLinks() {
 	let allLinks = primitives("Link");
@@ -4419,24 +4474,26 @@ function cleanUnconnectedLinks() {
 	}
 }
 
-class LinkTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Link", null,null);
-		this.current_connection = new LinkVisual(this.primitive.id,this.getType(),[x,y]);
+
+class TextAreaTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		let primitive_name = findFreeName(type_basename["text"]);
+		this.primitive = createConnector(primitive_name, "TextArea", null,null);
+		this.current_connection = new TextAreaVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
-	static create_TwoPointer_end() {
-		cleanUnconnectedLinks();
+	static init() {
+		this.initialSelectedIds = [];
+		super.init();
 	}
 	static getType() {
-		return "link";
+		return "text";
 	}
 }
-LinkTool.init();
 
 class RectangleTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Rectangle", null,null);
-		this.current_connection = new RectangleVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new RectangleVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static getType() {
 		return "rectangle";
@@ -4444,41 +4501,66 @@ class RectangleTool extends TwoPointerTool {
 }
 RectangleTool.init();
 
+
 class EllipseTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Ellipse", null, null);
-		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y]);
+		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
-	getType() {
+	static getType() {
 		return "ellipse";
 	}
 }
 
 class LineTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Line", null,null);
-		this.current_connection = new LineVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new LineVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static getType() {
 		return "line";
 	}
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+		// Function used both during creation and later moving of anchor point 
+		let moveObject = get_object(node_id);
+		let parent = get_parent(moveObject);
+		if (shiftKey) {
+			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			if (parent.start_anchor.id === node_id) {
+				[oppositeX, oppositeY] = [parent.endX, parent.endY];
+			}
+			let sideX = x - oppositeX;
+			let sideY = y - oppositeY;
+			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
+			if (3*shortSideLength < longSideLength) {
+				// Place Horizontal or vertical
+				if (Math.abs(sideX) < Math.abs(sideY)) {
+					// place vertical |
+					moveObject.set_pos([oppositeX, y]);
+				} else {
+					// place Horizontal -
+					moveObject.set_pos([x, oppositeY]);
+				}
+			} else {
+				// place at 45 degree angle 
+				let signX = Math.sign(sideX);
+				let signY = Math.sign(sideY);
+				moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+			}
+		} else {
+			moveObject.set_pos([x,y]);
+		}
+		parent.update();
+		object_array[node_id].updatePosition();
+	}
 }
 LineTool.init();
 
-class ArrowTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		this.primitive = createConnector(name, "Arrow", null, null);
-		this.current_connection = new ArrowVisual(this.primitive.id, this.getType(), [x,y]);
-	}
-	static getType() {
-		return "arrow";
-	}
-}
-
 class TableTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "Table", null,null);
-		this.current_connection = new TableVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new TableVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4497,9 +4579,9 @@ class TableTool extends TwoPointerTool {
 TableTool.init();
 
 class TimePlotTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "TimePlot", null, null);
-		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y]);
+		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4517,9 +4599,9 @@ class TimePlotTool extends TwoPointerTool {
 }
 
 class ComparePlotTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "ComparePlot", null,null);
-		this.current_connection = new ComparePlotVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new ComparePlotVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4537,25 +4619,10 @@ class ComparePlotTool extends TwoPointerTool {
 }
 ComparePlotTool.init();
 
-class TextAreaTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
-		let primitive_name = findFreeName(type_basename["text"]);
-		this.primitive = createConnector(primitive_name, "TextArea", null,null);
-		this.current_connection = new TextAreaVisual(this.primitive.id,this.getType(),[x,y]);
-	}
-	static init() {
-		this.initialSelectedIds = [];
-		super.init();
-	}
-	static getType() {
-		return "text";
-	}
-}
-
 class XyPlotTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "XyPlot", null,null);
-		this.current_connection = new XyPlotVisual(this.primitive.id,this.getType(),[x,y]);
+		this.current_connection = new XyPlotVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4575,9 +4642,9 @@ XyPlotTool.init();
 
 
 class HistoPlotTool extends TwoPointerTool {
-	static create_TwoPointer_start(x,y,name) {
+	static createTwoPointer(x,y,name) {
 		this.primitive = createConnector(name, "HistoPlot", null, null);
-		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x,y]);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x,y], [x+1,y+1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -4594,17 +4661,49 @@ class HistoPlotTool extends TwoPointerTool {
 	}
 }
 
+class LinkTool extends TwoPointerTool {
+	static createTwoPointer(x,y,name) {
+		this.primitive = createConnector(name, "Link", null,null);
+		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x,y], [x+1, y+1]);
+	}
+	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+		let anchor_type = node_id.split(".")[1];
+		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
+			let moveObject = get_object(node_id);
+			let parent = get_parent(moveObject);
+			moveObject.set_pos([x,y]);
+			parent.update();
+		} else if (anchor_type === "b1_anchor") {
+			let parent = connection_array[get_parent_id(node_id)];
+			parent.setHandle1Pos([x,y]);
+			parent.update();
+		} else if (anchor_type === "b2_anchor") {
+			let parent = connection_array[get_parent_id(node_id)];
+			parent.setHandle2Pos([x,y]);
+			parent.update();
+		}
+	}
+	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
+		let start_pos = get_object(move_node_id).get_pos();
+		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
+	}
+	static getType() {
+		return "link";
+	}
+}
+LinkTool.init();
+
 function attach_selected_anchor(selectedAnchor) {
 	[x,y]=selectedAnchor.get_pos();
 	let parentConnection = get_parent(selectedAnchor);
 	
-	var	elements_under = find_elements_under(x,y);
-	var anchor_element = null;
-	var attach_to = null;
+	let	elements_under = find_elements_under(x,y);
+	let anchor_element = null;
+	let attach_to = null;
 	
 
 	// Find unselected stock element
-	for(var i = 0; i < elements_under.length; i++) {
+	for(let i = 0; i < elements_under.length; i++) {
 		let element = elements_under[i];
 		
 		let elemIsNotSelected = ! element.is_selected();
@@ -4665,25 +4764,54 @@ class CoordRect {
 		this.element.setAttribute("height",this.height());
 	}
 }
-rectselector = new CoordRect();
+var rectselector = new CoordRect();
 
-function in_selection(node_id) {
-	if (
-		object_array[node_id].pos[0] >= rectselector.xmin()
-	&&  object_array[node_id].pos[1] >= rectselector.ymin()
-	&&  object_array[node_id].pos[0] <= rectselector.xmin()+rectselector.width()
-	&&  object_array[node_id].pos[1] <= rectselector.ymin()+rectselector.height()
-	) {
-		return true;
-	} else {
-		return false;
+function rectselector_start() {
+	empty_click_down = true;
+	unselect_all();
+	rectselector.setVisible(true);
+	rectselector.x1 = mousedown_x;
+	rectselector.y1 = mousedown_y;
+	rectselector.x2 = mousedown_x;
+	rectselector.y2 = mousedown_y;
+	rectselector.update();
+}
+
+function rectselector_move() {
+	// select with rectseletor
+	rectselector.x2 = mousedown_x;
+	rectselector.y2 = mousedown_y;
+	rectselector.update();
+	unselect_all();
+	let select_array = get_objects_in_rectselect();
+	for(let key in select_array) {
+		let parent = get_parent(select_array[key]);
+		parent.select(false); // We also select the parent but not all of its anchors
+		select_array[key].select();
 	}
 }
 
+function rectselector_stop() {
+	rectselector.setVisible(false);
+	let select_array = get_objects_in_rectselect();
+	for(let key in select_array) {
+		select_array[key].select();
+	}
+}
+
+function is_in_rectselecor(node_id) {
+	return (
+		object_array[node_id].pos[0] >= rectselector.xmin() &&
+		object_array[node_id].pos[1] >= rectselector.ymin() &&
+		object_array[node_id].pos[0] <= rectselector.xmin()+rectselector.width() &&
+		object_array[node_id].pos[1] <= rectselector.ymin()+rectselector.height()
+	);
+}
+
 function get_objects_in_rectselect() {
-	var return_array = {};
-	for(var key in object_array) {
-		if (in_selection(key)) {
+	let return_array = {};
+	for(let key in object_array) {
+		if (is_in_rectselecor(key)) {
 			return_array[key] = object_array[key];
 		}
 	}
@@ -4691,13 +4819,13 @@ function get_objects_in_rectselect() {
 }
 
 function tool_deletePrimitive(id) {
-	var primitive = findID(id);
+	let primitive = findID(id);
 	
 	removePrimitive(primitive);
 	
 	// Delete ghosts
-	var ghostIDs = findGhostsOfID(id);
-	for(var i in ghostIDs) {
+	let ghostIDs = findGhostsOfID(id);
+	for(let i in ghostIDs) {
 		tool_deletePrimitive(ghostIDs[i]);
 	}
 	cleanUnconnectedLinks();
@@ -4721,9 +4849,9 @@ function detachFlows(id) {
 }
 
 function get_selected_root_objects() {
-	var result = {};
-	var all_objects = get_all_objects();
-	for(var key in all_objects) {
+	let result = {};
+	let all_objects = get_all_objects();
+	for(let key in all_objects) {
 		let parent = get_parent(all_objects[key]);
 		
 		// If any element is selected we add its parent
@@ -4735,9 +4863,9 @@ function get_selected_root_objects() {
 }
 
 function get_root_objects() {
-	var result = {};
-	var all_objects = get_all_objects();
-	for(var key in all_objects) {
+	let result = {};
+	let all_objects = get_all_objects();
+	for(let key in all_objects) {
 		if (key.indexOf(".") == -1) {
 			result[key]=all_objects[key];
 		}
@@ -4747,8 +4875,8 @@ function get_root_objects() {
 
 function delete_selected_objects() {
 	// Delete all objects that are selected
-	var object_array = get_selected_root_objects();
-	for(var key in object_array) {
+	let selection = get_selected_root_objects();
+	for(let key in selection) {
 		// check if object not already deleted
 		// e.i. link gets deleted automatically if any of it's attachments gets deleted
 		if (get_object(key)) {
@@ -4758,13 +4886,13 @@ function delete_selected_objects() {
 }
 
 function get_selected_objects() {
-	var return_array = {};
-	for(var key in object_array) {
+	let return_array = {};
+	for(let key in object_array) {
 		if (object_array[key].is_selected()) {
 			return_array[key] = object_array[key];
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (connection_array[key].is_selected()) {
 			return_array[key] = connection_array[key];
 		}
@@ -4780,12 +4908,11 @@ function delete_connection(key) {
 	if (!(key in connection_array)) {
 		return;
 	}
-	var start_anchor = connection_array[key].start_anchor;
-	var end_anchor = connection_array[key].end_anchor;
-	var auxiliary = connection_array[key].auxiliary;
+	let start_anchor = connection_array[key].start_anchor;
+	let end_anchor = connection_array[key].end_anchor;
+	let auxiliary = connection_array[key].auxiliary;
 	connection_array[key].group.remove();
 	delete connection_array[key];
-	
 	
 	// Must be done last otherwise the anchors will respawn	
 	delete_object(start_anchor.id);
@@ -4793,25 +4920,17 @@ function delete_connection(key) {
 	delete_object(auxiliary.id);	
 }
 function delete_object(node_id) {
-	var object_to_delete = object_array[node_id];
+	let object_to_delete = object_array[node_id];
 	
 	// Delete all references to the object in the connections
-	for(var key in connection_array) {
-		if (connection_array[key].start_anchor == object_to_delete) {
-			connection_array[key].create_dummy_start_anchor();
-		}
-		if (connection_array[key].end_anchor == object_to_delete) {
-			connection_array[key].create_dummy_end_anchor();
-		}
-	}
 	if (object_to_delete.hasOwnProperty("parent_id")) {
 		delete_connection(object_to_delete.parent_id);
 	}
 	
-	for(var i in object_to_delete.selector_array) {
+	for(let i in object_to_delete.selector_array) {
 		object_to_delete.selector_array[i].remove();
 	}
-	for(var key in object_to_delete.element_array) {
+	for(let key in object_to_delete.element_array) {
 		object_to_delete.element_array[key].remove();
 	}
 	object_to_delete.group.remove();
@@ -4820,36 +4939,45 @@ function delete_object(node_id) {
 }
 function primitive_mousedown(node_id, event, new_primitive) {
 	last_clicked_element = get_object(node_id);
-	
-	// If we click directly on the anchors we dont want anything but them selected
-	if (last_clicked_element.type == "dummy_anchor") {
-		let elementId = get_parent_id(last_clicked_element.id);
-		unselect_all_but(elementId);
-	}
-	if (last_clicked_element.is_selected()) {
-		if (event.shiftKey) {
-			last_clicked_element.unselect();
+	// If we left click directly on the anchors we dont want anything but them selected
+	if (event.which === mouse.left) {
+		if (last_clicked_element.type == "dummy_anchor") {
+			let elementId = get_parent_id(last_clicked_element.id);
+			unselect_all_but(elementId);
 		}
-	} else {
-		if (!event.shiftKey) {
-			// We don't want to unselect an eventual parent
-			// As that will hide other anchors
-			var parent_id = get_parent_id(node_id);
-			unselect_all_but(parent_id);
+		if (last_clicked_element.is_selected()) {
+			if (event.shiftKey) {
+				last_clicked_element.unselect();
+			}
+		} else {
+			if (!event.shiftKey) {
+				// We don't want to unselect an eventual parent
+				// As that will hide other anchors
+				let parent_id = get_parent_id(node_id);
+				unselect_all_but(parent_id);
+			}
+			last_clicked_element.select();
 		}
-		last_clicked_element.select();
+		last_click_object_clicked = true;
 	}
-	last_click_object_clicked = true;
 }
-
 
 // only updates diagrams, tables, and XyPlots if needed 
 function update_relevant_objects(ids) {
-	for(var key in object_array) {
-		object_array[key].update();
+	for(let key in object_array) {
+		// dont update dummy_anchors, the twopointer parent of the dummy anchor has responsibility of the dummy_anchors 
+		if (object_array[key].type !== "dummy_anchor") {
+			object_array[key].update();
+		}
 	}
-	for(var key in connection_array) {
-		if(connection_array[key].type === "table") {
+	update_twopointer_objects(ids);
+}
+
+// only updates diagrams, tables, and XyPlots if needed 
+function update_twopointer_objects(ids) {
+	for(let key in connection_array) {
+		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot","table"];
+		if( onlyIfRelevant.includes(connection_array[key].type) ) {
 			if (ids.includes(key)) {
 				connection_array[key].update();
 			}
@@ -4860,31 +4988,21 @@ function update_relevant_objects(ids) {
 }
 
 function update_all_objects() {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		object_array[key].update();
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		connection_array[key].update();
 	}
 }
 
 function get_all_objects() {
-	var result = {}
-	for(var key in object_array) {
+	let result = {}
+	for(let key in object_array) {
 		result[key]=object_array[key];
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		result[key]=connection_array[key];
-	}
-	return result;
-}
-
-function get_anchors(id) {
-	var result = []
-	for(var key in object_array) {
-		if (key.startsWith(id+".") && object_array[key].type == "dummy_anchor") {
-			result.push(object_array[key]);
-		}
 	}
 	return result;
 }
@@ -4900,7 +5018,7 @@ function get_object(id) {
 }
 
 function set_name(id,new_name) {
-	var tobject = get_object(id);
+	let tobject = get_object(id);
 	if (!tobject)  {
 		return;
 	}
@@ -4928,22 +5046,34 @@ function positionToModel() {
 	
 }
 
+
+function unselect_all_other_anchors(parent_id, child_id_to_select) {
+	unselect_all();
+	let parent = connection_array[parent_id];
+	parent.select();
+	for(let anchor of parent.getAnchors()) {
+		if (anchor.id !== child_id_to_select) {
+			anchor.unselect();
+		}
+	}
+}
+
 function unselect_all() {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		object_array[key].unselect();
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		connection_array[key].unselect();
 	}
 }
 
 function unselect_all_but(dont_unselect_id) {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		if (key != dont_unselect_id) {
 			object_array[key].unselect();
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (key != dont_unselect_id) {
 			connection_array[key].unselect();
 		}
@@ -4951,26 +5081,16 @@ function unselect_all_but(dont_unselect_id) {
 }
 
 function unselect_all_but_family(id) {
-	for(var key in object_array) {
+	for(let key in object_array) {
 		if (!is_family(id,key)) {
 			object_array[key].unselect();
 		}
 	}
-	for(var key in connection_array) {
+	for(let key in connection_array) {
 		if (!is_family(id,key)) {
 			connection_array[key].unselect();
 		}
 	}
-}
-
-function empty_click() {
-	empty_click_down = true;
-	unselect_all();
-	rectselector.x1 = mousedown_x;
-	rectselector.y1 = mousedown_y;
-	rectselector.x2 = mousedown_x;
-	rectselector.y2 = mousedown_y;
-	rectselector.update();
 }
 
 function rotate_name(node_id) {
@@ -4984,8 +5104,8 @@ function rotate_name(node_id) {
 }
 
 function update_name_pos(node_id) {
-	var object = get_object(node_id);
-	var name_element = object.name_element;
+	let object = get_object(node_id);
+	let name_element = object.name_element;
 	// Some objects does not have name element
 	if (name_element == null) {
 		return;
@@ -5034,36 +5154,36 @@ function update_name_pos(node_id) {
 
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
-	if (! isTimeUnitOk(getTimeUnits())) {
+	if (! isTimeUnitOk(getTimeUnits()) && Settings.forceTimeUnit) {
 		event.preventDefault();
 		timeUnitDialog.show();
 		return;
 	}
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
+	let offset = $(svgplane).offset();
+	let x = event.pageX-offset.left;
+	let y = event.pageY-offset.top;
 	do_global_log("x:"+x+" y:"+y);
 	switch (event.which) {
-		case 1:
+		case mouse.left:
 			// if left mouse button down
 			leftmouseisdown = true;
 			currentTool.leftMouseDown(x,y);	
 			break;
-		case 2: 
+		case mouse.middle: 
 			event.preventDefault();
 			middlemouseisdown = true;
 			currentTool.middleMouseDown(x,y);
 			break;
-		case 3: 
+		case mouse.right: 
 			// if right mouse button down
 			currentTool.rightMouseDown(x,y);
 			break;
 	}
 }
 function mouseMoveHandler(event) {
-	var offset = $(svgplane).offset();
-	var x = event.pageX-offset.left;
-	var y = event.pageY-offset.top;
+	let offset = $(svgplane).offset();
+	let x = event.pageX-offset.left;
+	let y = event.pageY-offset.top;
 
 	lastMouseX = x;
 	lastMouseY = y;
@@ -5079,22 +5199,22 @@ function mouseMoveHandler(event) {
 }
 function mouseUpHandler(event) {
 	switch(event.which) {
-		case(1):
+		case(mouse.left):
 			if (!leftmouseisdown) {
 				return;
 			}
 			// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
 			do_global_log("mouseUpHandler");
-			var offset = $(svgplane).offset();
-			var x = event.pageX-offset.left;
-			var y = event.pageY-offset.top;
+			let offset = $(svgplane).offset();
+			let x = event.pageX-offset.left;
+			let y = event.pageY-offset.top;
 			
 			currentTool.leftMouseUp(x, y, event.shiftKey);
 			leftmouseisdown = false;
 			updateInfoBar();
 			History.storeUndoState();
 		break;
-		case(2): 
+		case(mouse.middle): 
 			middlemouseisdown = false;
 		break;
 	}
@@ -5102,7 +5222,7 @@ function mouseUpHandler(event) {
 }
 
 function find_elements_under(x, y) {	
-	var found_array = [];
+	let found_array = [];
 	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
 	//~ let attachable_object_types = ["flow", "stock", "variable"];
@@ -5116,7 +5236,7 @@ function find_elements_under(x, y) {
 			// We skip if the object is not attachable
 			continue;
 		}
-		var rect = objects[key].getBoundRect();
+		let rect = objects[key].getBoundRect();
 		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
 			found_array.push(objects[key]);
 		}
@@ -5136,8 +5256,8 @@ function find_element_under(x,y) {
 }
 
 function stochsd_clear_sync() {
-	var root_object_array = get_root_objects();
-	for(var id in root_object_array) {
+	let root_object_array = get_root_objects();
+	for(let id in root_object_array) {
 		if (findID(id) == null) {
 			stochsd_delete_primitive(id);
 		}
@@ -5161,12 +5281,10 @@ class ToolBox {
 			"movevalve":MoveValveTool,
 			"straightenlink": StraightenLinkTool,
 			"ghost":GhostTool,
-			//~ "text":TextTool,
 			"text":TextAreaTool,
 			"rectangle":RectangleTool,
 			"ellipse":EllipseTool,
 			"line":LineTool,
-			"arrow":ArrowTool,
 			"table":TableTool,
 			"timeplot":TimePlotTool,
 			"compareplot":ComparePlotTool,
@@ -5178,14 +5296,14 @@ class ToolBox {
 			"reset":ResetTool
 		};
 	}
-	static setTool(toolName) {
+	static setTool(toolName, whichMouseButton) {
 		if (toolName in this.tools) {
 			$(".toolButton").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
 			currentTool.leaveTool();
 			currentTool = this.tools[toolName];
-			currentTool.enterTool();
+			currentTool.enterTool(whichMouseButton);
 		} else {
 			errorPopUp("The tool "+toolName+" does not exist");
 		}
@@ -5209,11 +5327,11 @@ class Clipboard {
 		this.copiedItems = [];
 	}
 	static copyObject(clipboardItem) {
-		var parent = graph.children[0].children[0];
-		var vertex = simpleCloneNode2(findID(clipboardItem.id), parent);
+		let parent = graph.children[0].children[0];
+		let vertex = simpleCloneNode2(findID(clipboardItem.id), parent);
 		let relativePosition = clipboardItem.relativePosition;
 		setCenterPosition(vertex,[lastMouseX+relativePosition[0],lastMouseY+relativePosition[1]]);
-		var oldName = getName(vertex);
+		let oldName = getName(vertex);
 		setName(vertex,findFreeName(oldName+"_"));
 		syncAllVisuals();
 	}
@@ -5258,7 +5376,7 @@ class Clipboard {
 		}
 	}
 	static paste() {
-		for(var i in this.copiedItems) {
+		for(let i in this.copiedItems) {
 			this.copyObject(this.copiedItems[i]);
 		}
 	}
@@ -5291,11 +5409,11 @@ $(window).load(function() {
 	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
-	var svgplane = document.getElementById("svgplane");
+	let svgplane = document.getElementById("svgplane");
 	
 	$(".toolButton").mousedown(function(event) {
-		var toolName = $(this).attr("data-tool");
-		ToolBox.setTool(toolName);
+		let toolName = $(this).attr("data-tool");
+		ToolBox.setTool(toolName, event.which);
 	});
 	
 	$(window).bind( 'hashchange', hashUpdate);
@@ -5397,8 +5515,7 @@ $(window).load(function() {
 		equationList.show();
 	});
 	$("#btn_print_model").click(function() {
-		unselect_all();
-		hideAndPrint([$("#topPanel").get(0)]);
+		printDiagram();
 	});
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
@@ -5519,24 +5636,24 @@ function updateTimeUnitButton() {
 	}
 }
 
-function find_connections(primitive) {
-	return find_start_connections(primitive).concat(find_end_connections(primitive));
+function find_connections(visual) {
+	return find_start_connections(visual).concat(find_end_connections(visual));
 }
 
-function find_start_connections(primitive) {
-	var connections_array = Array(0);
+function find_start_connections(visual) {
+	let connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].start_anchor == primitive) {
+		if (connection_array[key].getStartAttach && connection_array[key].getStartAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
 	return connections_array;
 }
 
-function find_end_connections(primitive) {
-	var connections_array = Array(0);
+function find_end_connections(visual) {
+	let connections_array = Array(0);
 	for(key in connection_array) {
-		if (connection_array[key].end_anchor == primitive) {
+		if (connection_array[key].getEndAttach && connection_array[key].getEndAttach() == visual) {
 			connections_array.push(connection_array[key]);
 		}
 	}
@@ -5572,7 +5689,7 @@ function stochsd_delete_primitive_and_references(id) {
 }
 
 function stochsd_delete_primitive (id) {
-	var stochsd_object = get_object(id);
+	let stochsd_object = get_object(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
 	}
@@ -5592,11 +5709,11 @@ function isLocal() {
 
 function export_txt(fileName, data) {
 	// Create Blob and attach it to ObjectURL
-	var blob = new Blob([data], {type: "octet/stream"}),
+	let blob = new Blob([data], {type: "octet/stream"}),
 	url = window.URL.createObjectURL(blob);
 	
 	// Create download link and click it
-	var a = document.createElement("a");
+	let a = document.createElement("a");
 	a.style.display = "none";
 	a.href = url;
 	a.download = fileName;
@@ -5633,21 +5750,37 @@ var blankGraphTemplate = `<mxGraphModel>
 </mxGraphModel>`;
 loadXML(blankGraphTemplate);
 
+function addMissingPrimitiveAttributes(prim) {
+	// default primitive to get missing attributes 
+	let default_primitive = primitiveBank[prim.value.nodeName.toLowerCase()];
+	if (default_primitive) {
+		for (let attr of default_primitive.attributes) {
+			// check fow missing attributes 
+			if (prim.getAttribute(attr.name) === null) {
+				prim.setAttribute(attr.name, attr.value);
+			}
+		}
+	} else {
+		console.error(`No default primitive for ${prim.value.nodeName}`);
+	}
+}
+
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
-	var stochsd_object = get_object(tprimitive.id);
+	let stochsd_object = get_object(tprimitive.id);
 	if (stochsd_object != false) {
 		return false;
 	}
+
+	addMissingPrimitiveAttributes(tprimitive);
+
 	let nodeType = tprimitive.value.nodeName;
 	switch(nodeType) {
 		case "Numberbox":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new NumberboxVisual(tprimitive.id, "numberbox",position);
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 			visualObject.render();
 		}
 		break;
@@ -5667,28 +5800,17 @@ function syncVisual(tprimitive) {
 					dimClass = HistoPlotVisual;
 				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
+			connection.setColor(tprimitive.getAttribute("Color"));
 			
 			// Insert correct primtives
-			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let primitivesString = tprimitive.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
-			if (primitivesString) {
-				connection.dialog.setIdsToDisplay(idsToDisplay);
-			}
+			connection.dialog.setIdsToDisplay(idsToDisplay);
 
 			connection.update();
 			connection.render();
@@ -5708,26 +5830,17 @@ function syncVisual(tprimitive) {
 					dimClass = ComparePlotVisual;
 				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
+			connection.setColor(tprimitive.getAttribute("Color"));
 			
 			// Insert correct primtives
-			let primitivesString = tprimitive.value.getAttribute("Primitives");
+			let primitivesString = tprimitive.getAttribute("Primitives");
 			let idsToDisplay = primitivesString.split(",");
-			let sidesString = tprimitive.value.getAttribute("Sides");
+			let sidesString = tprimitive.getAttribute("Sides");
 			if (primitivesString) {
 				if (sidesString) {
 					connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
@@ -5737,13 +5850,13 @@ function syncVisual(tprimitive) {
 			}
 			
 			// This is only for Diagram 
-			let titleLabel = tprimitive.value.getAttribute("TitleLabel");
+			let titleLabel = tprimitive.getAttribute("TitleLabel");
 			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
 			
-			let leftAxisLabel = tprimitive.value.getAttribute("LeftAxisLabel");
+			let leftAxisLabel = tprimitive.getAttribute("LeftAxisLabel");
 			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
 			
-			let rightAxisLabel = tprimitive.value.getAttribute("RightAxisLabel");
+			let rightAxisLabel = tprimitive.getAttribute("RightAxisLabel");
 			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
 
 			connection.update();
@@ -5753,7 +5866,6 @@ function syncVisual(tprimitive) {
 		case "Line":
 		case "Rectangle":
 		case "Ellipse":
-		case "Arrow":
 		{
 			dimClass = null;
 			switch(nodeType) {
@@ -5766,96 +5878,59 @@ function syncVisual(tprimitive) {
 				case "Ellipse":
 					dimClass = EllipseVisual;
 				break;
-				case "Arrow":
-					dimClass = ArrowVisual;
-				break;
 			}
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);	
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
-			
 			connection.update();
 		}
 		break;
 		case "TextArea":
 		{
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 			
-			let connection = new TextAreaVisual(tprimitive.id, "text", [0,0]);
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();			
+			let connection = new TextAreaVisual(tprimitive.id, "text", source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
-
-			// Set UI-coordinates to coordinates in primitive
-			connection.start_anchor.set_pos(source_position);
-			// Set UI-coordinates to coordinates in primitive
-			connection.end_anchor.set_pos(target_position);
+			connection.setColor(tprimitive.getAttribute("Color"));
 			
 			connection.update();
 		}
 		break;
 		case "Stock":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new StockVisual(tprimitive.id, "stock",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
 		case "Converter":
 		{
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = new ConverterVisual(tprimitive.id, "converter",position);
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
 		case "Ghost":
 		{
-			var source_primitive = findID(tprimitive.getAttribute("Source"));
-			var source_type = source_primitive.value.nodeName;
+			let source_primitive = findID(tprimitive.getAttribute("Source"));
+			let source_type = source_primitive.value.nodeName;
 			//~ do_global_log("id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject = null;
 			switch(source_type) {
 					case "Converter":
@@ -5874,18 +5949,16 @@ function syncVisual(tprimitive) {
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));			
 
-			visualObject.name_pos = tprimitive.getAttribute("RotateName");
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
 		case "Variable":
 		{
 			//~ do_global_log("VARIABLE id is "+tprimitive.id);
-			var position = getCenterPosition(tprimitive);
+			let position = getCenterPosition(tprimitive);
 			let visualObject;
 			if (tprimitive.getAttribute("isConstant") == "false") {
 				visualObject = new VariableVisual(tprimitive.id, "variable", position);
@@ -5894,50 +5967,27 @@ function syncVisual(tprimitive) {
 			}
 			set_name(tprimitive.id,tprimitive.getAttribute("name"));
 			
-			if (tprimitive.getAttribute("color")) {
-				visualObject.setColor(tprimitive.getAttribute("color"));
-			}
+			visualObject.setColor(tprimitive.getAttribute("Color"));
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			visualObject.name_pos = rotateName;
+			visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 		}
 		break;
 		case "Flow":
-			let connection = new FlowVisual(tprimitive.id, "flow", [0,0]);
 
-			let rotateName = tprimitive.getAttribute("RotateName");
-			// Force all stocks to have a RotateName
-			if (!rotateName) {
-				rotateName = "0";
-				tprimitive.setAttribute("RotateName",rotateName);
-			}
-			connection.name_pos = rotateName;
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
+
+			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
+
+			connection.name_pos = Number(tprimitive.getAttribute("RotateName"));
 			update_name_pos(tprimitive.id);
 
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
-
-			connection.create_dummy_start_anchor();
 			connection.loadMiddlePoints();
-			connection.create_dummy_end_anchor();
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
-
-			if (tprimitive.getAttribute("valveIndex")) {
-				connection.valveIndex = parseInt(tprimitive.getAttribute("valveIndex"));
-				connection.variableSide = (tprimitive.getAttribute("variableSide") == "true");
-			}
-
-			connection.start_anchor.set_pos(source_position);
-			connection.end_anchor.set_pos(target_position);
+			connection.setColor(tprimitive.getAttribute("Color"));
+			connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
+			connection.variableSide = (tprimitive.getAttribute("VariableSide") === "true");
 			
 			if (tprimitive.source != null) {
 				// Attach to object
@@ -5953,17 +6003,12 @@ function syncVisual(tprimitive) {
 		break;
 		case "Link":
 		{
-			let connection = new LinkVisual(tprimitive.id, "link",[0,0]);
+			let source_pos = getSourcePosition(tprimitive);
+			let target_pos = getTargetPosition(tprimitive);
 
-			var source_position = getSourcePosition(tprimitive);
-			var target_position = getTargetPosition(tprimitive);
-
-			connection.create_dummy_start_anchor();
-			connection.create_dummy_end_anchor();
+			let connection = new LinkVisual(tprimitive.id, "link", source_pos, target_pos);
 			
-			if (tprimitive.getAttribute("color")) {
-				connection.setColor(tprimitive.getAttribute("color"));
-			}
+			connection.setColor(tprimitive.getAttribute("Color"));
 
 			if (tprimitive.source != null) {
 				// Attach to object
@@ -5979,17 +6024,16 @@ function syncVisual(tprimitive) {
 				// Set UI-coordinates to coordinates in primitive
 				connection.end_anchor.set_pos(target_position);
 			}
-			connection.update();
 			let bezierPoints = [
-				tprimitive.value.getAttribute("b1x"),
-				tprimitive.value.getAttribute("b1y"),
-				tprimitive.value.getAttribute("b2x"),
-				tprimitive.value.getAttribute("b2y")
+				tprimitive.getAttribute("b1x"),
+				tprimitive.getAttribute("b1y"),
+				tprimitive.getAttribute("b2x"),
+				tprimitive.getAttribute("b2y")
 			];
 
 			if (bezierPoints.indexOf(null) == -1) {
-				connection.b1_anchor.set_pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
-				connection.b2_anchor.set_pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
+				connection.setHandle1Pos([Number(bezierPoints[0]),Number(bezierPoints[1])]);
+				connection.setHandle2Pos([Number(bezierPoints[2]),Number(bezierPoints[3])]);
 			} else {
 				// bezierPoints does not exist. Create them
 				connection.resetBezierPoints();
@@ -6005,7 +6049,7 @@ function syncVisual(tprimitive) {
 // This is executed after loading a file or loading a whole new state such as after undo
 function syncAllVisuals() {
 	for(let type of saveblePrimitiveTypes) {
-		var primitive_list = primitives(type);
+		let primitive_list = primitives(type);
 		for(key in primitive_list) {
 			try {
 				syncVisual(primitive_list[key]);
@@ -6022,8 +6066,8 @@ function syncAllVisuals() {
 }
 
 function findFreeName(basename) {
-	var counter = 0;
-	var testname;
+	let counter = 0;
+	let testname;
 	do {
 		counter++;
 		testname = basename+counter.toString();
@@ -6041,7 +6085,7 @@ class SubscribePool {
 		this.subscribers.push(handler);
 	}
 	publish(message) {
-		for(var i in this.subscribers) {
+		for(let i in this.subscribers) {
 			this.subscribers[i](message);
 		}	
 	}
@@ -6083,11 +6127,35 @@ const runStateEnum = {
 // Not yet implemented
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
-	for(var id in objects) {
+	for(let id in objects) {
 		let obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
 	History.storeUndoState();
+}
+
+function printDiagram() {
+	unselect_all();
+	updateInfoBar();
+	// Write filename and date into editor-footer 
+	let fileName = fileManager.fileName;
+	
+	let d = new Date();
+	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+	let hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
+	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
+	let fullDate = `${d.getFullYear().toString()}-${month}-${day} ${hours}:${minutes} (yyyy-mm-dd hh:mm)`;
+
+	if (fileName.length > 0) {
+		$(".editor-footer-filepath").html(fileName);
+	} else {
+		$(".editor-footer-filepath").html("Unnamed file");
+	}
+	
+	$(".editor-footer-date").html(fullDate);
+
+	hideAndPrint([$("#topPanel").get(0)]);
 }
 
 function removeNewLines(string) {
@@ -6185,7 +6253,7 @@ class RunResults {
 	}
 	static createHeader() {
 		// Get list of primitives that we want to observe from the model
-		var primitive_array = getPrimitiveList();
+		let primitive_array = getPrimitiveList();
 
 		// Create list of ids
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
@@ -6233,7 +6301,7 @@ class RunResults {
 		while(index < res.periods) {
 			let time = res.times[index];
 			this.simulationTime = res.times[index];
-			var currentRunResults = [];
+			let currentRunResults = [];
 			currentRunResults.push(time);
 			for(let key in this.varIdList) {
 				if (key == 0) {
@@ -6506,7 +6574,7 @@ class RunResults {
 		return filteredResults;
 	}
 	static triggerRunFinished() {
-		for(var id in this.runSubscribers) {
+		for(let id in this.runSubscribers) {
 			if (findID(id)) {
 				this.runSubscribers[id]();
 			} else {
@@ -6542,7 +6610,7 @@ class jqDialog {
 		this.visible = false;
 		// Decides if we this dialog should lock the background
 		this.modal = true;
-		var frm_dialog_resize = true;
+		let frm_dialog_resize = true;
 		
 		this.dialogDiv = document.createElement("div");
 		this.dialogDiv.setAttribute("title",this.title);
@@ -6706,37 +6774,6 @@ class XAlertDialog extends jqDialog {
 function xAlert(message,closeHandler) {
 	let dialog = new XAlertDialog(message,closeHandler);
 	dialog.show();
-}
-
-
-class StayLeaveDialog extends jqDialog {
-	constructor(message, title, dialogToLeave, closeHandler) {
-		super();
-		this.setTitle(title);
-		this.message = message;
-		this.setHtml(message);
-		this.closeHandler = closeHandler;
-		this.answer = "stay";
-		this.dialogToLeave = dialogToLeave;
-	}
-	afterClose() {
-		if (this.closeHandler) {
-			this.closeHandler(this.answer, dialog);
-		}
-	}
-	beforeCreateDialog() {
-		this.dialogParameters.buttons = {
-			"Stay":() => {
-				this.answer = "stay";
-				$(this.dialog).dialog('close');
-			},
-			"Leave":() => {
-				this.answer = "leave";
-				$(this.dialog).dialog('close');
-				$(this.dialogToLeave).dialog('close');
-			}
-		};
-	}
 }
 
 class YesNoDialog extends jqDialog {
@@ -7854,7 +7891,7 @@ class HistoPlotDialog extends DisplayDialog {
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
-		this.setTitle("XY-plot Properties");
+		this.setTitle("XY Plot Properties");
 
 		this.markersChecked = false;
 		this.lineChecked = true;
@@ -8405,6 +8442,93 @@ class TimeUnitDialog extends jqDialog {
 	}
 }
 
+
+class GeometryDialog extends DisplayDialog {
+	renderStrokeHtml() {
+		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
+		let primWidth = this.primitive.getAttribute("StrokeWidth");
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>Line Width: </td>
+					<td>
+						<select class="widthSelect enterApply">
+						${strokeWidths.map(w => (`
+							<option value="${w}" ${primWidth === w ? "selected" : ""}>${w}</option>
+						`))}
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>Dashes: </td>
+					<td>
+						<select class="dashSelect enterApply">
+						<option value="" 	${this.primitive.getAttribute("StrokeDashArray") === "" ? "selected" : ""}	 >––––––</option>
+						<option value="8 4" ${this.primitive.getAttribute("StrokeDashArray") === "8 4" ? "selected" : ""}>– – – –</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+
+	beforeShow() {
+		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
+	}
+	makeApply() {
+		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
+		let strokeWidth = $(this.dialogContent).find(".widthSelect :selected").val();
+		this.primitive.setAttribute("StrokeDashArray", dashArray);
+		this.primitive.setAttribute("StrokeWidth", strokeWidth);
+	}
+}
+
+class RectangleDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Rectangle Properties");
+		super.beforeShow();
+	}
+}
+
+class EllipseDialog extends GeometryDialog {
+	beforeShow() {
+		this.setTitle("Ellipse Properties");
+		super.beforeShow();
+	}
+}
+
+class LineDialog extends GeometryDialog {
+	renderArrowCheckboxHtml() {
+		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
+		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
+		return (`
+			<table class="modernTable">
+				<tr>
+					<td>Show Start Arrow at Start:</td>
+					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
+				</tr>
+				<tr>
+					<td>Show Arrow at End:</td>
+					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
+				</tr>
+			</table>
+		`);
+	}
+	beforeShow() {
+		this.setTitle("Arrow/Line Properties");
+		this.setHtml(`<div>
+			${this.renderArrowCheckboxHtml()}
+			<div class="verticalSpace"></div>
+			${this.renderStrokeHtml()}
+		</div>`);
+	}
+	makeApply() {
+		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrowStartCheck").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrowEndCheck").prop("checked"));
+		super.makeApply();
+	}
+}
+
 class NumberboxDialog extends DisplayDialog {
 
 	beforeShow() {
@@ -8489,7 +8613,7 @@ class ConverterDialog extends jqDialog {
 		
 		this.defaultFocusSelector = defaultFocusSelector;
 		
-		var oldValue = getValue(this.primitive);
+		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
 		let oldName = getName(this.primitive);
@@ -8537,7 +8661,7 @@ class ConverterDialog extends jqDialog {
 }
 
 function global_log_update() {
-	var log = "";
+	let log = "";
 	log += "<br/>";
 	log += global_log+"<br/>";
 	$(".log").html(log);
@@ -8640,7 +8764,6 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
-		this.StayLeaveWindow = new StayLeaveDialog("No Message", "No Title", this.dialog);
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -8743,7 +8866,7 @@ class EquationEditor extends jqDialog {
 			return result;
 		};
 	
-		for (var i = 0; i < helpData.length; i++) {
+		for (let i = 0; i < helpData.length; i++) {
 			$(".accordionCluster").append(`<div>
 			<h3 class="functionCategory">${helpData[i][0]}</h3>
 			  <div>
@@ -8784,7 +8907,7 @@ class EquationEditor extends jqDialog {
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
-			var inputLength = valueFieldDom.value.length;  
+			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
 		}
@@ -8806,11 +8929,11 @@ class EquationEditor extends jqDialog {
 		this.defaultFocusSelector = defaultFocusSelector;
 
 		
-		var oldValue = getValue(this.primitive);
+		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		
 		let oldName = getName(this.primitive);
-		var oldNameBrackets = makePrimitiveName(oldName);
+		let oldNameBrackets = makePrimitiveName(oldName);
 		
 		this.setTitle(oldNameBrackets+" properties");
 
@@ -8865,7 +8988,7 @@ class EquationEditor extends jqDialog {
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
-			var inputLength = valueFieldDom.value.length;  
+			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
 		}
@@ -8912,34 +9035,11 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
 	}
-	applyChanges() {
-		let err = this.makeApply();
-		if (err) {
-			this.StayLeaveWindow.setTitle("Definition Error");
-			this.StayLeaveWindow.setHtml(`
-				${ValueErrorToString(err)}
-				</br></br>
-				Are you sure you want to leave?
-			`); 
-			this.StayLeaveWindow.show();
-		} else {
-			$(this.dialog).dialog('close');
-		}
-		
-		// We add a delay to make sure we closed first
-		
-		setTimeout(() => {
-			History.storeUndoState();
-			updateInfoBar();
-		}, 200);
-
-	}
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
 			let value = $(this.dialogContent).find(".valueField").val();
-			let err = setValue2(this.primitive, value);
-			
+			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
@@ -8962,16 +9062,29 @@ class EquationEditor extends jqDialog {
 			if (visualObject) {
 				visualObject.update();
 			}
-			
-			return err;
 		}
 	}
+}
+
+function printContentInNewWindow(htmlContent) {
+	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
+	printWindow.document.write('<html><head><title>Equation List</title>');
+	printWindow.document.write('<link rel="stylesheet" type="text/css" href="editor.css">');
+	printWindow.document.write('</head><body >');  
+	printWindow.document.write(htmlContent);
+	printWindow.document.write('</body></html>');  
+	
+	setTimeout(() => {
+		printWindow.print();
+		printWindow.close();
+	},400);
 }
 
 function hideAndPrint(elementsToHide) {
 	for(let element of elementsToHide) {
 		$(element).hide();
 	}
+	console.trace();
 	window.print();
 	for(let element of elementsToHide) {
 		$(element).show();
@@ -9042,19 +9155,27 @@ class MacroDialog extends jqDialog {
 	}
 }
 
-class TextAreaDialog extends jqDialog {
-	constructor(primitive) {
-		super();
-		this.primitive = primitive;
+class TextAreaDialog extends DisplayDialog {
+	constructor(id) {
+		super(id);
 		this.setTitle("Text");
 		this.setHtml(`
-		<textarea class="text"></textarea>
+		<div style="height: 100%;">
+			<textarea class="text" style="resize: none;"></textarea>
+			<div class="verticalSpace"></div>
+			<table class="modernTable"><tr title="Only hides when there is any text.">
+				<td>Hide frame when there is text:</td>
+				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
+			</tr></table>
+		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
+		this.hideFrameCheckbox = $(this.dialogContent).find(".hideFrameCheckbox");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
 		this.textArea.val(oldText);
+		this.hideFrameCheckbox.prop("checked", this.primitive.getAttribute("HideFrame") === "true");
 	}
 	afterShow() {
 		this.updateSize();
@@ -9066,7 +9187,7 @@ class TextAreaDialog extends jqDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-20);
+		this.textArea.height(height-40);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
@@ -9075,6 +9196,7 @@ class TextAreaDialog extends jqDialog {
 	makeApply() {
 		let newText = $(this.dialogContent).find(".text").val();
 		setName(this.primitive, newText);
+		this.primitive.setAttribute("HideFrame", this.hideFrameCheckbox.prop("checked"));
 	}
 }
 
@@ -9087,7 +9209,8 @@ class EquationListDialog extends jqDialog {
 		this.dialogParameters.buttons = {
 			"Print Equations": () =>
 			{
-				hideAndPrint([$("#coverEverythingDiv").get(0)]);
+				let contentHTML = $(this.dialogContent).html();
+				printContentInNewWindow(contentHTML);
 			},
 			"Leave":() =>
 			{
@@ -9150,57 +9273,83 @@ class EquationListDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml(prims, typeName, valueName) {
-		return `
-			<h3 class="equationListHeader">${typeName}</h3>
-			<table class="modernTable">
-				<tr><th>Name</th><th>${valueName}</th></tr>
-				${prims.map(p => (`<tr><td>${makePrimitiveName(getName(p))}</td><td>${getValue(p)}</td></tr>`)).join('')}
-			</table>
-		`;
+	renderPrimitiveListHtml(info) {
+		return (`
+		<h3 class="equationListHeader">${info.title}</h3>
+		<table class="modernTable">
+			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
+				${info.primitives.map(p => `<tr>
+					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">
+						${col.cellFunc(p)}
+					</td>`).join('')}
+			</tr>`).join('')}
+		</table>
+		`);
 	}
 	beforeShow() {
 		let Stocks = primitives("Stock");
 		let stockHtml = "";
 		if (Stocks.length > 0) {
-			stockHtml = this.renderPrimitiveListHtml(Stocks, "Stocks", "Initial Value");
+			stockHtml = this.renderPrimitiveListHtml({
+				title: "Stocks", 
+				primitives: Stocks,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Flows = primitives("Flow");
 		let flowHtml = "";
 		if (Flows.length > 0) {
-			flowHtml = this.renderPrimitiveListHtml(Flows, "Flows", "Rate");
+			flowHtml = this.renderPrimitiveListHtml({
+				title: "Flows", 
+				primitives: Flows,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+				]
+			});
 		}
 		
 		let Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
-			variableHtml = this.renderPrimitiveListHtml(Variables, "Auxiliaries & Parameters", "Value");
+			variableHtml = this.renderPrimitiveListHtml({
+				title: "Auxiliaries & Parameters", 
+				primitives: Variables,
+				tableColumns: [
+					{ header: "Name", 	cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Value", 	cellFunc: getValue, style: "font-family: monospace;" }
+				]
+			});
 		}
 
 		let Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
-			converterHtml = (`
-				<h3 class="equationListHeader">Converter</h3>
-				<table class="modernTable">
-					<tr><th>Name</th><th>Data</th><th>Ingoing Link</th></tr>
-					${Converters.map(p => (`<tr>
-						<td>${makePrimitiveName(getName(p))}</td>
-						<td style="max-width: 400px; word-break: break-all;">${getValue(p)}</td>
-						<td>${findLinkedInPrimitives(p.id).length !== 0 ? getName(findLinkedInPrimitives(p.id)[0]) : "None"}</td>
-					</tr>`)).join('')}
-				</table>
-			`);
+			converterHtml = this.renderPrimitiveListHtml({
+				title: "Converter",
+				primitives: Converters,
+				tableColumns: [
+					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
+					{ header: "Data", 			cellFunc: getValue, style: "font-family: monospace; max-width: 400px; word-break: break-word;" },
+					{ header: "Ingoing Link", 	cellFunc: (prim) => { return findLinkedInPrimitives(prim.id).length !== 0 ? getName(findLinkedInPrimitives(prim.id)[0]) : "None"; } }
+				]
+			});
 		}
 		let numberOfPrimitives = Stocks.length+Flows.length+Variables.length+Converters.length;
 		
 		if (numberOfPrimitives == 0) {
-			this.setHtml("This model is emptry. Build a model to show equation list");	
+			this.setHtml("This model is empty. Build a model to show equation list");	
 			return;		
 		}
 
 		let htmlOut = `
+			<h1>Equation List</h1>
 			<div style="display:flex;">
 				<div>
 					${this.renderSpecsInfoHtml()}

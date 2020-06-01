@@ -29,6 +29,9 @@ function frm_histogram_load() {
     cmd_histogram_auto.click(function() {
         cmd_histogram_auto_click()
     });
+    cmd_histogram_update.click(function() {
+        histogram_update();
+    });
     if(vartable[histogram_varname].data < 2) {
         alert("You need at least two data to view a histogram");
         return;
@@ -53,22 +56,25 @@ function frm_histogram_load() {
     frm_histogram_resize();
     
     
-    $(".txt_histogram_min").keyup(function() {
-        histogram_min = $(".txt_histogram_min").val();
-        console.log("updateed histogram min to "+histogram_min);
-        histogram_update();
+    $(".txt_histogram_min").keydown((event) => {
+        // if press enter 
+        if (event.keyCode == 13) {
+            histogram_update();
+        }
     });
     
-    $(".txt_histogram_max").keyup(function() {
-        histogram_max = $(".txt_histogram_max").val();
-        console.log("updateed histogram max to "+histogram_max);
-        histogram_update();
+    $(".txt_histogram_max").keydown((event) => {
+        // if press enter 
+        if(event.keyCode == 13) {
+            histogram_update();
+        }
     });
     
-    $(".txt_histogram_numbars").keyup(function() {
-        histogram_numbars = $(".txt_histogram_numbars").val();
-        console.log("updateed histogram_numbars max to "+histogram_numbars);
-        histogram_update();
+    $(".txt_histogram_numbars").keydown((event) => {
+        // if press enter 
+        if (event.keyCode == 13) {
+            histogram_update();
+        }
     });
     
     
@@ -122,6 +128,9 @@ function frm_histogram_resize() {
     
     $("#lbl_histogram_stats").css("left",20);
     $("#lbl_histogram_stats").css("top",height-110);
+
+    $("#cmd_histogram_update").css("left",width/2-100);
+    $("#cmd_histogram_update").css("top",height-125);
 
     $("#lbl_histogram_min").css("left",20);
     $("#lbl_histogram_numbars").css("left",width/2-100);
@@ -223,6 +232,10 @@ function histogram_update_stats() {
 }
 
 function histogram_update() {
+    histogram_min = $(".txt_histogram_min").val();
+    histogram_max = $(".txt_histogram_max").val();
+    histogram_numbars = $(".txt_histogram_numbars").val();
+
     histogram_data=vartable[histogram_varname].data;
     histogram_var = vartable[histogram_varname];
     histogram_update_stats();
