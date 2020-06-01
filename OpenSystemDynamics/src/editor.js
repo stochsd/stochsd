@@ -8776,27 +8776,25 @@ class EquationEditor extends jqDialog {
 				.clickFunction { cursor: pointer; }
 			</style>
 			<div class="table">
-  			<div class="table-row">
-					<div class="table-row">
-						<div class="table-cell" style="width: 300px">
-							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-								<b>Name:</b><br/>
-								<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
-								<div class="nameWarningDiv" style="color: red;"></div><br/>
-								<b>Definition:</b><br/>
-								<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
-								<br/>
-								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
-							</div>
-						<div class="restrictNonNegativeDiv">
+  				<div class="table-row">
+					<div class="table-cell" style="width: 300px">
+						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+							<b>Name:</b><br/>
+							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
+							<div class="nameWarningDiv" style="color: red;"></div><br/>
+							<b>Definition:</b><br/>
+							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
-							<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
+							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 						</div>
+					<div class="restrictNonNegativeDiv">
+						<br/>
+						<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
 					</div>
 				</div>
 			</div>
     	<div class="table-cell">
-    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
+    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding: 10px 20px 20px 0px;">
 				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>
