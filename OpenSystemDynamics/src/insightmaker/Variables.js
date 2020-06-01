@@ -44,6 +44,7 @@ primitiveBank.folder.setAttribute('LabelPosition', "Middle");
 primitiveBank.folder.setAttribute('AgentBase', "");
 
 primitiveBank.ghost = doc.createElement('Ghost');
+primitiveBank.ghost.setAttribute('Color', 'black');
 primitiveBank.ghost.setAttribute('Source', '');
 
 primitiveBank.picture = doc.createElement('Picture');
