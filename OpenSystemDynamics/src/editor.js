@@ -6433,10 +6433,15 @@ class RunResults {
 		});
 	}
 	static updateProgressBar() {
-		// It just happens to 98 wide so its hardcoded, the alternative of getting the width from the $().css seems to cause a bug of always expanding
-		const progressBarWidth = 98;
-		$("#runStatusBarOuter").width(progressBarWidth);
-		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
+		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
+		$("#runStatusBar").width(`${100*progress}%`);
+		if (this.getRunProgressFraction() === 1) {
+			// set color to green 
+			$("#runStatusBar").css("background", "#aaeeaa");
+		} else {
+			// set color to orange
+			$("#runStatusBar").css("background", "#eed0aa");
+		}
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
