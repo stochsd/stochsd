@@ -1661,17 +1661,21 @@ class BaseConnection extends TwoPointer {
 			this.end_anchor.set_pos(targetPoint);
 			alert("Position got updated");
 		}
-		this.attachableTypes = ["stock", "variable", "constant", "converter", "flow"];
 		last_connection = this;
 	}
-	setAttachableTypes(types) {
-		this.attachableTypes = types;
+
+	isAcceptableStartAttach(attachVisual) {
+		// function to decide if attachVisual is ok allowed to attach start to 
+		return false;
+	}
+	isAcceptableEndAttach(attachVisual) {
+		return false;
 	}
 	setStartAttach(new_start_attach) {
 		if (new_start_attach != null && this.getEndAttach() == new_start_attach) {
 			return;		// Will not attach if other anchor is attached to same
 		}
-		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
+		if (new_start_attach != null && this.isAcceptableStartAttach(new_start_attach) === false) {
 			return; 	// Will not attach if not acceptable attachType
 		}
 		
@@ -1695,7 +1699,7 @@ class BaseConnection extends TwoPointer {
 		if (new_end_attach != null && this.getStartAttach() == new_end_attach) {
 			return; 	// Will not attach if other anchor is attached to same 
 		}
-		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
+		if (new_end_attach != null && this.isAcceptableEndAttach(new_end_attach) === false ) {
 			return;		// Will not attach if not acceptable attachType
 		}
 		
@@ -1744,7 +1748,6 @@ function getStackTrace() {
 class FlowVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
-		this.setAttachableTypes(["stock"]);
 		this.updateValueError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
@@ -1763,6 +1766,14 @@ class FlowVisual extends BaseConnection {
 		this.valve; 
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
+
+	isAcceptableStartAttach(attachVisual) {
+		return attachVisual.getType() === "stock";
+	}	
+
+	isAcceptableEndAttach(attachVisual) {
+		return attachVisual.getType() === "stock";
+	}	
 
 	getRadius() {
 		return 20;
@@ -3608,6 +3619,17 @@ class LinkVisual extends BaseConnection {
 		this.click_area.y4 = this.curve.y4;
 		this.click_area.update();
 	}
+
+	isAcceptableStartAttach(attachVisual) {
+		let okAttachTypes = ["stock", "variable", "constant", "converter", "flow"];
+		return okAttachTypes.includes(attachVisual.getType());
+	}	
+
+	isAcceptableEndAttach(attachVisual) {
+		let okAttachTypes = ["stock", "variable", "converter", "flow"];
+		return okAttachTypes.includes(attachVisual.getType()) && attachVisual.is_ghost !== true;
+	}	
+
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
@@ -4707,9 +4729,8 @@ function attach_selected_anchor(selectedAnchor) {
 		let element = elements_under[i];
 		
 		let elemIsNotSelected = ! element.is_selected();
-		let elemIsOkType = parentConnection.attachableTypes.includes(element.getType());
 		let elemIsNotParentOfAnchor = element[i] != parentConnection;
-		if (elemIsNotSelected && elemIsOkType && elemIsNotParentOfAnchor) {
+		if (elemIsNotSelected && elemIsNotParentOfAnchor) {
 			attach_to = element;
 			break;
 		}
