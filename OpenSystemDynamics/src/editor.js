@@ -6440,7 +6440,7 @@ class RunResults {
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
-		let timeStep = Math.round(this.getTimeStep() * 1000) /1000;
+		let timeStep = this.getTimeStep();
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
