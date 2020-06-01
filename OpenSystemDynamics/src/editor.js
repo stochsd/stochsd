@@ -4427,11 +4427,6 @@ class FlowTool extends TwoPointerTool {
 		// update connecting links 
 		find_connections(parent).map(conn => conn.update());
 	}
-	static leftMouseUp(x, y) {
-		if (this.current_connection) {
-			super.leftMouseUp(x, y);
-		}
-	}
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
@@ -4463,6 +4458,12 @@ class FlowTool extends TwoPointerTool {
 				}
 			}
 		}
+	}
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+		this.current_connection = null;
+		last_clicked_element = null;
+		ToolBox.setTool("mouse");
 	}
 	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
 		attach_anchor(object_array[node_id]);
