@@ -1643,9 +1643,6 @@ class TwoPointer extends BaseObject {
 			break;
 		}
 	}
-	finishCreate() {
-		
-	}
 }
 
 class BaseConnection extends TwoPointer {
@@ -3786,12 +3783,6 @@ class LinkVisual extends BaseConnection {
 		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
-	finishCreate() {
-		this.resetBezierPoints();
-		// Update the lines to fit the bezier anchors
-		this.syncAnchorToPrimitive(anchorTypeEnum.bezier1);
-		this.syncAnchorToPrimitive(anchorTypeEnum.bezier2);	
-	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
@@ -4304,9 +4295,11 @@ class MouseTool extends BaseTool {
 	static leftMouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selected_anchor = get_only_selected_anchor_id();
-		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
-			attach_selected_anchor(object_array[selected_anchor.child_id]);
-			object_array[selected_anchor.child_id].updatePosition();
+
+		if (selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {			
+			let parent = connection_array[selected_anchor.parent_id];
+			let tool = ToolBox.tools[parent.getType()];
+			tool.mouseUpSingleAnchor(x, y, false, selected_anchor.child_id);
 		}
 
 		if (empty_click_down) {
@@ -4392,14 +4385,7 @@ class TwoPointerTool extends BaseTool {
 		object_array[node_id].updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
-		this.mouseMove(x, y, shiftKey);
-		if (this.current_connection.getStartAttach) {
-			attach_selected_anchor(this.current_connection.end_anchor);
-		}
-		
 		this.current_connection.update();
-		this.current_connection.finishCreate();
-		
 		this.current_connection = null;
 		last_clicked_element = null;
 		ToolBox.setTool("mouse");
@@ -4478,7 +4464,9 @@ class FlowTool extends TwoPointerTool {
 			}
 		}
 	}
-
+	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
+		attach_selected_anchor(object_array[node_id]);
+	}
 	static getType() {
 		return "flow";
 	}
@@ -4708,6 +4696,29 @@ class LinkTool extends TwoPointerTool {
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = get_object(move_node_id).get_pos();
 		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
+	}
+	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
+		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
+		let anchor = object_array[node_id];
+
+		if (anchor.getAnchorType() === anchorTypeEnum.start || anchor.getAnchorType() === anchorTypeEnum.end) {
+			attach_selected_anchor(anchor);
+			let parent = get_parent(anchor);
+			parent.update();
+			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
+				// delete link is not attached at both ends 
+				delete_selected_objects();		
+			}
+		} else if (anchor.getAnchorType() === anchorTypeEnum.bezier1 || anchor.getAnchorType() === anchorTypeEnum.bezier2) {
+			parent.update();
+		}
+	}
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+		
+		this.current_connection = null;
+		last_clicked_element = null;
+		ToolBox.setTool("mouse");
 	}
 	static getType() {
 		return "link";
