@@ -6435,7 +6435,7 @@ class RunResults {
 	static updateProgressBar() {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
 		$("#runStatusBar").width(`${100*progress}%`);
-		if (pregress === 1) {
+		if (progress === 1) {
 			// set color to green 
 			$("#runStatusBar").css("background", "#aaeeaa");
 		} else {
