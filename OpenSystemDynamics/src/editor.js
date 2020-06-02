@@ -7942,19 +7942,19 @@ class XyPlotDialog extends DisplayDialog {
 		return (`
 			<table class="modernTable" style="text-align: left;">
 				<tr>
-					<td style="text-align: left">Line</td>	
+					<td style="text-align: left">Show Line</td>	
 					<td><input class="line enterApply" type="checkbox" name="displayType"></td>
 				</tr>
 				<tr>
-					<td style="text-align: left">Markers</td>
+					<td style="text-align: left">Show Markers</td>
 					<td><input class="markers enterApply" type="checkbox" name="displayType"></td>
 				</tr>
 				<tr>
-					<td style="text-align: left">🔴 Mark Start</td>
+					<td style="text-align: left">Mark Start (🔴)</td>
 					<td><input class="markStart enterApply" type="checkbox"></td>
 				</tr>
 				<tr>
-					<td style="text-align: left" >🟩 Mark End</td>
+					<td style="text-align: left" >Mark End (🟩)</td>
 					<td><input class="markEnd enterApply" type="checkbox"></td>
 				</tr>
 			</table>
