@@ -57,7 +57,6 @@ var object_array = {};
 var last_click_object_clicked = false;
 var last_clicked_element = null; // Points to the object we last clicked
 var leftmouseisdown = false;
-var middlemouseisdown = false;
 var mousedown_x = 0;
 var mousedown_y = 0;
 var lastMouseX = 0;
@@ -3834,18 +3833,6 @@ class BaseTool {
 		this.downScrollPosX = 0;
 		this.downScrollPosY = 0;
 	}
-	static middleMouseDown(x,y) {
-		this.middleDownX = x;
-		this.middleDownY = y;
-		this.downScrollPosX = $("#svgplanebackground").scrollLeft();
-		this.downScrollPosY = $("#svgplanebackground").scrollTop();
-	}
-	static middleMouseMove(x,y) {
-		let diffX = this.middleDownX - x;
-		let diffY = this.middleDownY - y;
-		$("#svgplanebackground").scrollLeft(this.downScrollPosX + diffX);
-		$("#svgplanebackground").scrollTop( this.downScrollPosY + diffY);
-	}
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
 	}
@@ -5202,11 +5189,6 @@ function mouseDownHandler(event) {
 			leftmouseisdown = true;
 			currentTool.leftMouseDown(x,y);	
 			break;
-		case mouse.middle: 
-			event.preventDefault();
-			middlemouseisdown = true;
-			currentTool.middleMouseDown(x,y);
-			break;
 		case mouse.right: 
 			// if right mouse button down
 			currentTool.rightMouseDown(x,y);
@@ -5220,38 +5202,27 @@ function mouseMoveHandler(event) {
 
 	lastMouseX = x;
 	lastMouseY = y;
-
-	if (middlemouseisdown) {
-		event.preventDefault();
-		currentTool.middleMouseMove(x,y);
-	}
 	
 	if (leftmouseisdown) {
 		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 }
 function mouseUpHandler(event) {
-	switch(event.which) {
-		case(mouse.left):
-			if (!leftmouseisdown) {
-				return;
-			}
-			// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
-			do_global_log("mouseUpHandler");
-			let offset = $(svgplane).offset();
-			let x = event.pageX-offset.left;
-			let y = event.pageY-offset.top;
-			
-			currentTool.leftMouseUp(x, y, event.shiftKey);
-			leftmouseisdown = false;
-			updateInfoBar();
-			History.storeUndoState();
-		break;
-		case(mouse.middle): 
-			middlemouseisdown = false;
-		break;
-	}
-	
+	if (event.which === mouse.left) {
+		if (!leftmouseisdown) {
+			return;
+		}
+		// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
+		do_global_log("mouseUpHandler");
+		let offset = $(svgplane).offset();
+		let x = event.pageX-offset.left;
+		let y = event.pageY-offset.top;
+		
+		currentTool.leftMouseUp(x, y, event.shiftKey);
+		leftmouseisdown = false;
+		updateInfoBar();
+		History.storeUndoState();
+	}	
 }
 
 function find_elements_under(x, y) {	
