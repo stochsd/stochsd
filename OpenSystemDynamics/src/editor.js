@@ -7141,7 +7141,6 @@ class DisplayDialog extends jqDialog {
 		
 		return (`
 			<table class="modernTable" >
-			<tr>
 				${primitives.map((p, idx, prims) => `
 					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
 						<td class="text">
@@ -7158,7 +7157,6 @@ class DisplayDialog extends jqDialog {
 						</td>
 					</tr>
 				`).join('')}
-			</tr>
 			</table>
 		`);
 	}
