@@ -5457,6 +5457,15 @@ $(window).load(function() {
 		if (event.keyCode == keyboard["delete"]) {
 			DeleteTool.enterTool();
 		}
+		if (event.keyCode == keyboard["enter"]) {
+			// double click on object if only object selected 
+			let selection = get_selected_root_objects();
+			let keys = [];
+			for (let key in selection) { keys.push(key); }
+			if (keys.length === 1 && selection[keys[0]].double_click) {
+				selection[keys[0]].double_click();
+			}
+		}
 		let moveSize = 2;
 		if (event.shiftKey) {
 			moveSize = 16;
