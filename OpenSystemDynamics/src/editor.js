@@ -260,6 +260,10 @@ function makeKeyboardCodes() {
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
 	keyboard["enter"] = 13;
+	keyboard["right"] = 37;
+	keyboard["up"] = 38;
+	keyboard["left"] = 39;
+	keyboard["down"] = 40;
 	return keyboard;
 }
 
@@ -5454,7 +5458,22 @@ $(window).load(function() {
 		if (event.keyCode == keyboard["delete"]) {
 			DeleteTool.enterTool();
 		}
-		
+		let moveSize = 2;
+		if (event.shiftKey) {
+			moveSize = 16;
+		}
+		if (event.keyCode == keyboard["right"]) {
+			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
+		}
+		if (event.keyCode == keyboard["up"]) {
+			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
+		}
+		if (event.keyCode == keyboard["left"]) {
+			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
+		}
+		if (event.keyCode == keyboard["down"]) {
+			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
+		}
 		if (event.ctrlKey) {
 			if (event.keyCode == keyboard["1"]) {
 				event.preventDefault();
