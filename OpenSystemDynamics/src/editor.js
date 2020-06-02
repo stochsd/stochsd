@@ -3345,10 +3345,8 @@ class XyPlotVisual extends PlotVisual {
 				if (y > this.maxYValue) {
 					this.maxYValue = y;
 				}
-				serie.push([x,y,t,null]);
+				serie.push([x,y,t]);
 			}
-			serie[0][3] = "start";
-			serie[serie.length-1][3] = "end";
 			return serie;
 		}
 		
@@ -3357,26 +3355,31 @@ class XyPlotVisual extends PlotVisual {
 		this.serieArray = [];
 		
 		// Make time series
-		this.serieArray.push(makeXYSerie());
+		let dataSerie = makeXYSerie();
+		this.serieArray.push(dataSerie);
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		for(let i in this.namesToDisplay) {
+		this.serieSettingsArray.push(
+			{
+				lineWidth: this.primitive.getAttribute("LineWidth"), 
+				color: "black",
+				shadow: false,
+				showLine: this.showLine,
+				showMarker: this.showMarkers,
+				markerOptions: { shadow: false }
+			}
+		);
+		if (this.primitive.getAttribute("MarkStart") === "true") {
+			this.serieArray.push([dataSerie[0]]);
 			this.serieSettingsArray.push(
-				{
-					label: this.namesToDisplay[i], 
-					lineWidth: this.primitive.getAttribute("LineWidth"), 
-					color: "black",
-					shadow: false,
-					showLine: this.showLine,
-					showMarker: this.showMarkers,
-					pointLabels: {
-						show: true,
-						edgeTolerance: 0,
-						ypadding: 0,
-						location: "n"
-					}
-				}
+				{color: "#ff4444", showLine: false, showMarker: true, markerOptions: {shadow: false}}
+			);
+		} 
+		if (this.primitive.getAttribute("MarkEnd") === "true") {
+			this.serieArray.push([dataSerie[dataSerie.length-1]]);
+			this.serieSettingsArray.push(
+				{color: "#00aa00", showLine: false, showMarker: true, markerOptions: { style: "filledSquare", shadow: false } }
 			);
 		}
 		
