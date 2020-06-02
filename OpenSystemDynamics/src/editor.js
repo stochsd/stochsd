@@ -3300,7 +3300,7 @@ class XyPlotVisual extends PlotVisual {
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		let results = RunResults.getSelectiveIdResults(IdsToDisplay);
+		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if (results.length == 0) {
 			// We can't render anything with no data
 			
@@ -7172,6 +7172,12 @@ class DisplayDialog extends jqDialog {
 		});
 	}
 
+	bindPlotPerEvents() {
+		$(this.dialogContent).find(".intervalsettings").change((event) => {
+			
+		});
+	}
+
 	updateInterval() {
 		this.xMin = Number($(this.dialogContent).find(".xMin").val());
 		this.xMax = Number($(this.dialogContent).find(".xMax").val());
@@ -7988,6 +7994,8 @@ class XyPlotDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderMarkerHTML()} 
 						<div class="verticalSpace"></div>
+						${this.renderPlotPerHtml()}
+						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="verticalSpace"></div>
 						${this.renderTitleHtml()}
@@ -8026,12 +8034,27 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
 		$(this.dialogContent).find(".markStart").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
 		$(this.dialogContent).find(".markEnd").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.setDefaultPlotPeriod();
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
+	}
+
+	setDefaultPlotPeriod() {
+		this.plotPer = getTimeStep();
 	}
 
 	getXMin() {
