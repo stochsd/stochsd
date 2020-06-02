@@ -5813,8 +5813,10 @@ function syncVisual(tprimitive) {
 			
 			// Insert correct primtives
 			let primitivesString = tprimitive.getAttribute("Primitives");
-			let idsToDisplay = primitivesString.split(",");
-			connection.dialog.setIdsToDisplay(idsToDisplay);
+			if (primitivesString !== "") {
+				let idsToDisplay = primitivesString.split(",");
+				connection.dialog.setIdsToDisplay(idsToDisplay);
+			}
 
 			connection.update();
 			connection.render();
