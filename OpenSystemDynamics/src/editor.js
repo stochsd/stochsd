@@ -4310,6 +4310,10 @@ class TwoPointerTool extends BaseTool {
 		this.primitive = null; // The primitive in Insight Maker engine we are creating
 		this.current_connection = null; // The visual we are working on right now
 		this.type = "flow";
+		this.rightClickMode = false;
+	}
+	static enterTool(mouseButton) {
+		this.rightClickMode = (mouseButton === mouse.right);
 	}
 	static set_type() {
 		
@@ -4376,6 +4380,11 @@ class TwoPointerTool extends BaseTool {
 		this.current_connection.update();
 		this.current_connection = null;
 		last_clicked_element = null;
+		if (this.rightClickMode === false) {
+			ToolBox.setTool("mouse");
+		}
+	}
+	static rightMouseDown(x,y) {
 		ToolBox.setTool("mouse");
 	}
 	static leaveTool() {
