@@ -4459,12 +4459,14 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static leftMouseUp(x, y, shiftKey) {
-		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
-		this.current_connection = null;
-		last_clicked_element = null;
-
-		if (this.rightClickMode === false) {
-			ToolBox.setTool("mouse");
+		if (this.current_connection) {
+			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+			this.current_connection = null;
+			last_clicked_element = null;
+	
+			if (this.rightClickMode === false) {
+				ToolBox.setTool("mouse");
+			}
 		}
 	}
 	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
