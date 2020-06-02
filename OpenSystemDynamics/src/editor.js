@@ -4709,10 +4709,9 @@ class LinkTool extends TwoPointerTool {
 	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
 		let anchor = object_array[node_id];
-
+		let parent = get_parent(anchor);
 		if (anchor.getAnchorType() === anchorTypeEnum.start || anchor.getAnchorType() === anchorTypeEnum.end) {
 			attach_anchor(anchor);
-			let parent = get_parent(anchor);
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
