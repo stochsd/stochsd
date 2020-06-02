@@ -7940,25 +7940,24 @@ class XyPlotDialog extends DisplayDialog {
 		</table>
 		`);
 	}
-	renderMarkerRadioHTML() {
+	renderMarkerHTML() {
 		return (`
 			<table class="modernTable" style="text-align: left;">
 				<tr>
-				<td style="text-align: left">
-						Line
-					</td>	
-					<td>
-						<input class="line enterApply" type="checkbox" name="displayType">
-					</td>
-					
+					<td style="text-align: left">Line</td>	
+					<td><input class="line enterApply" type="checkbox" name="displayType"></td>
 				</tr>
 				<tr>
-					<td style="text-align: left">
-						Markers
-					</td>
-					<td>
-						<input class="markers enterApply" type="checkbox" name="displayType">
-					</td>
+					<td style="text-align: left">Markers</td>
+					<td><input class="markers enterApply" type="checkbox" name="displayType"></td>
+				</tr>
+				<tr>
+					<td style="text-align: left">🔴 Mark Start</td>
+					<td><input class="markStart enterApply" type="checkbox"></td>
+				</tr>
+				<tr>
+					<td style="text-align: left" >🟩 Mark End</td>
+					<td><input class="markEnd enterApply" type="checkbox"></td>
 				</tr>
 			</table>
 		`);
@@ -7989,7 +7988,7 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</div>
 					<div class="table-cell">
-						${this.renderMarkerRadioHTML()} 
+						${this.renderMarkerHTML()} 
 						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="verticalSpace"></div>
@@ -8017,6 +8016,12 @@ class XyPlotDialog extends DisplayDialog {
 			this.markersChecked = event.target.checked;
 			this.updateInterval();
 		});
+		$(this.dialogContent).find(".markStart").change((event) => {
+			this.primitive.setAttribute("MarkStart", event.target.checked);
+		});
+		$(this.dialogContent).find(".markEnd").change((event) => {
+			this.primitive.setAttribute("MarkEnd", event.target.checked);
+		});
 	}
 
 	isMarkersChecked() {
@@ -8031,6 +8036,8 @@ class XyPlotDialog extends DisplayDialog {
 		super.updateInterval();
 		$(this.dialogContent).find(".line")[0].checked = this.lineChecked;
 		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
+		$(this.dialogContent).find(".markStart").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
+		$(this.dialogContent).find(".markEnd").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
