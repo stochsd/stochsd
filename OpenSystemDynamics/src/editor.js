@@ -6244,6 +6244,11 @@ function updateInfoBar() {
 					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 				break;
+				case("link"):
+					let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
+					let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
+					infoDef.html(`Link: ${source} -> ${target}`);
+				break;
 				default: 
 					infoDef.html(`${Type} selected`);
 			}
