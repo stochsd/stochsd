@@ -96,6 +96,8 @@ setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute('ShowLine', true);
+primitiveBank.xyplot.setAttribute('ShowMarker', false);
 primitiveBank.xyplot.setAttribute('MarkStart', false);
 primitiveBank.xyplot.setAttribute('MarkEnd', false);
 primitiveBank.xyplot.setAttribute('LineWidth', 2);

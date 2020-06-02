@@ -3297,8 +3297,6 @@ class XyPlotVisual extends PlotVisual {
 	}
 	render() {		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.showMarkers = this.dialog.isMarkersChecked();
-		this.showLine = this.dialog.isLineChecked();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
@@ -3365,8 +3363,8 @@ class XyPlotVisual extends PlotVisual {
 				lineWidth: this.primitive.getAttribute("LineWidth"), 
 				color: "black",
 				shadow: false,
-				showLine: this.showLine,
-				showMarker: this.showMarkers,
+				showLine: this.primitive.getAttribute("ShowLine") === "true",
+				showMarker: this.primitive.getAttribute("ShowMarker") === "true",
 				markerOptions: { shadow: false }
 			}
 		);
@@ -7899,9 +7897,6 @@ class XyPlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("XY Plot Properties");
 
-		this.markersChecked = false;
-		this.lineChecked = true;
-
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
@@ -8012,12 +8007,10 @@ class XyPlotDialog extends DisplayDialog {
 
 	bindMarkersHTML() {
 		$(this.dialogContent).find(".line").change((event) => {
-			this.lineChecked = event.target.checked;
-			this.updateInterval();
+			this.primitive.setAttribute("ShowLine", event.target.checked);
 		});
 		$(this.dialogContent).find(".markers").change((event) => {
-			this.markersChecked = event.target.checked;
-			this.updateInterval();
+			this.primitive.setAttribute("ShowMarker", event.target.checked);
 		});
 		$(this.dialogContent).find(".markStart").change((event) => {
 			this.primitive.setAttribute("MarkStart", event.target.checked);
@@ -8027,18 +8020,10 @@ class XyPlotDialog extends DisplayDialog {
 		});
 	}
 
-	isMarkersChecked() {
-		return this.markersChecked;
-	}
-
-	isLineChecked() {
-		return this.lineChecked;
-	}
-
 	updateInterval() {
 		super.updateInterval();
-		$(this.dialogContent).find(".line")[0].checked = this.lineChecked;
-		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
+		$(this.dialogContent).find(".line").prop("checked", this.primitive.getAttribute("ShowLine") === "true");
+		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
 		$(this.dialogContent).find(".markStart").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
 		$(this.dialogContent).find(".markEnd").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
 	}
