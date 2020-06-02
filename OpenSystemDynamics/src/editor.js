@@ -4716,7 +4716,9 @@ class LinkTool extends TwoPointerTool {
 		
 		this.current_connection = null;
 		last_clicked_element = null;
-		ToolBox.setTool("mouse");
+		if (this.rightClickMode === false) {
+			ToolBox.setTool("mouse");
+		}
 	}
 	static getType() {
 		return "link";
