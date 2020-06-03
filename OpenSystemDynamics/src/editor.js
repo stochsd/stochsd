@@ -873,8 +873,7 @@ class BaseObject {
 	getType() {
 		return this.type;
 	}
-	name_double_click() {
-		//~ alert("hahaha");
+	nameDoubleClick() {
 					
 		if (this.is_ghost) {
 			errorPopUp("You must rename a ghost by renaming the original.");
@@ -988,7 +987,7 @@ class OnePointer extends BaseObject {
 			if (element_array[key].getAttribute("class") == "name_element") {
 				this.name_element = element_array[key];
 				$(this.name_element).dblclick((event) => {
-					this.name_double_click();
+					this.nameDoubleClick();
 				});
 			}
 		}
@@ -1404,7 +1403,7 @@ class NumberboxVisual extends BasePrimitive {
 		super.unselect();
 		this.name_element.setAttribute("fill", this.color);
 	}
-	name_double_click() {
+	nameDoubleClick() {
 		// Override this function
 		// Do nothing - otherwise double clicked is called twice 
 	}
@@ -1551,7 +1550,7 @@ class ConverterVisual extends BasePrimitive {
 			this.primitive.setAttribute("Source", "Time");
 		}
 	}
-	name_double_click() {
+	nameDoubleClick() {
 		converterDialog.open(this.id, ".nameField");
 	}
 	
@@ -2083,7 +2082,7 @@ class FlowVisual extends BaseConnection {
 		this.variableSide = false;
 		
 		$(this.name_element).dblclick((event) => {	
-			this.name_double_click();
+			this.nameDoubleClick();
 		});
 		
 		this.group = svg_group([this.flowPathGroup, this.valve, this.variable]);
