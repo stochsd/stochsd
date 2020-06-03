@@ -233,7 +233,7 @@ function svg_circle(cx, cy, r, stroke, fill, markclass, extraAttributes) {
 }
 
 
-function svgEllipse(cx, cy, rx, ry, stroke, fill, markclass, extraAttributes) {
+function svg_ellipse(cx, cy, rx, ry, stroke, fill, markclass, extraAttributes) {
 	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'ellipse');
 
 	newElement.setAttribute("class", markclass);
@@ -280,7 +280,7 @@ function svg_line(x1, y1, x2, y2, stroke, fill,markclass,extra_attributes) {
 	return newElement;
 }
 
-function svgArrowHead(stroke, fill, extraAttributes = null) {
+function svg_arrow_head(stroke, fill, extraAttributes = null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
@@ -293,11 +293,11 @@ function svgArrowHead(stroke, fill, extraAttributes = null) {
 		}
 	}
 
-	newElement.setTemplatePoints = function(newPoints) {
+	newElement.set_template_points = function(newPoints) {
 		this.templateArrowPoints = newPoints;
 	}
 
-	newElement.setPos = function(pos, directionVector=[1,0]) {
+	newElement.set_pos = function(pos, directionVector=[1,0]) {
 		let sine = sin([0,0], directionVector);
 		let cosine = cos([0,0], directionVector);
 		this.arrowPoints = rotatePoints(this.templateArrowPoints, sine, cosine);
@@ -317,7 +317,7 @@ function svgArrowHead(stroke, fill, extraAttributes = null) {
 	return newElement;
 }
 
-function svgWidePath(width, color, extraAttributes) {
+function svg_wide_path(width, color, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.points = [];
 	newElement.setAttribute("stroke", color);
@@ -353,7 +353,7 @@ function svgWidePath(width, color, extraAttributes) {
 	return newElement;
 }
 
-function svgCloud(stroke, fill, extraAttributes) {
+function svg_cloud(stroke, fill, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("stroke-width", "1");
@@ -371,7 +371,7 @@ function svgCloud(stroke, fill, extraAttributes) {
 		}
 	}
 
-	newElement.setPos = function (pos, adjecentPos) {
+	newElement.set_pos = function (pos, adjecentPos) {
 		let offset = [0,0];
 		switch (neswDirection(adjecentPos, pos)) {
 			case "north":
@@ -394,7 +394,7 @@ function svgCloud(stroke, fill, extraAttributes) {
 		this.setAttribute("transform","translate("+this.pos[0]+","+this.pos[1]+")");
 	}
 
-	newElement.setVisibility = function (isVisible) {
+	newElement.set_visibility = function (isVisible) {
 		this.visible = isVisible;
 		if (this.visible) {
 			this.setAttribute("visibility", "visible");
@@ -407,7 +407,7 @@ function svgCloud(stroke, fill, extraAttributes) {
 	return newElement;
 }
 
-function svgGhost(stroke, fill, markclass) {
+function svg_ghost(stroke, fill, markclass) {
 	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
@@ -419,7 +419,7 @@ function svgGhost(stroke, fill, markclass) {
 	return newElement;
 }
 
-function svgDice(stroke, fill, markclass) {
+function svg_dice(stroke, fill, markclass) {
 	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
 	newElement.setAttribute("stroke", stroke);
 	newElement.setAttribute("fill", fill);
@@ -430,18 +430,18 @@ function svgDice(stroke, fill, markclass) {
 	return newElement;
 }
 
-function svgQuestionmark(color) {
+function svg_questionmark(color) {
 	// svg_text(x, y, text, markclass, extra_attributes) 
 	let newElement = svg_text(0, 6, "?", "questionmark", {"font-size": "18px", "font-weight": "bold"});
 	// newElement.setAttribute("font-weight", "bold");
 	return newElement;
 }
 
-function svgIcons(stroke, fill, markclass) {
+function svg_icons(stroke, fill, markclass) {
 	let newElement = svg_group([
-		svgGhost(stroke, fill, "ghost"), 
-		svgQuestionmark(stroke),
-		svgDice(fill, stroke)
+		svg_ghost(stroke, fill, "ghost"), 
+		svg_questionmark(stroke),
+		svg_dice(fill, stroke)
 	]);
 	newElement.setAttribute("class", markclass);
 	newElement.elements = {
@@ -454,7 +454,7 @@ function svgIcons(stroke, fill, markclass) {
 		child.setAttribute("visibility", "hidden");
 	}
 	
-	newElement.setColor = function (color) {
+	newElement.set_color = function (color) {
 		this.elements["ghost"].setAttribute("stroke", color);
 		this.elements["questionmark"].setAttribute("style", `fill: ${color}`);
 		this.elements["dice"].setAttribute("style", `fill: ${color}` );

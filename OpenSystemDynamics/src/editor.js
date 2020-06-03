@@ -1016,7 +1016,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
-			this.icons.setColor("white");
+			this.icons.set_color("white");
 		}
 	}
 	unselect() {
@@ -1025,7 +1025,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
-			this.icons.setColor(this.color);
+			this.icons.set_color(this.color);
 		}
 	}
 	update() {
@@ -1305,7 +1305,7 @@ class StockVisual extends BasePrimitive {
 			svg_rect(-w/2,-h/2, w, h,  this.color,  defaultFill, "element"),
 			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "selector"),
 			textElem,
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 }
@@ -1439,7 +1439,7 @@ class VariableVisual extends BasePrimitive {
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1470,7 +1470,7 @@ class ConstantVisual extends VariableVisual {
 			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "selector"),
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1508,7 +1508,7 @@ class ConverterVisual extends BasePrimitive {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
-			svgIcons(defaultStroke, defaultFill, "icons"),
+			svg_icons(defaultStroke, defaultFill, "icons"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 		];
 	}
@@ -2061,22 +2061,22 @@ class FlowVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
-		this.startCloud = svgCloud(this.color, defaultFill, {"class": "element"});
-		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
-		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
-		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, {"class": "element"});
+		this.startCloud = svg_cloud(this.color, defaultFill, {"class": "element"});
+		this.endCloud = svg_cloud(this.color, defaultFill, {"class": "element"});
+		this.outerPath = svg_wide_path(5, this.color, {"class": "element"});
+		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
+		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
-		this.icons = svgIcons(defaultStroke, defaultFill, "icons");
+		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = svg_group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"), 
 			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "selector"),
 			this.icons,	
 			this.name_element]
 		);
-		this.icons.setColor("white");
+		this.icons.set_color("white");
 		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2156,20 +2156,20 @@ class FlowVisual extends BaseConnection {
 	updateGraphics() {
 		let points = this.getAnchors().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
-			this.startCloud.setVisibility(true);
-			this.startCloud.setPos(points[0], points[1]);
+			this.startCloud.set_visibility(true);
+			this.startCloud.set_pos(points[0], points[1]);
 		} else {
-			this.startCloud.setVisibility(false);
+			this.startCloud.set_visibility(false);
 		}
 		if (this.getEndAttach() == null) {
-			this.endCloud.setVisibility(true);
-			this.endCloud.setPos(points[points.length-1], points[points.length-2]);
+			this.endCloud.set_visibility(true);
+			this.endCloud.set_pos(points[points.length-1], points[points.length-2]);
 		} else {
-			this.endCloud.setVisibility(false);
+			this.endCloud.set_visibility(false);
 		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
-		this.arrowHeadPath.setPos(points[points.length-1], this.getDirection());
+		this.arrowHeadPath.set_pos(points[points.length-1], this.getDirection());
 
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
@@ -2187,13 +2187,13 @@ class FlowVisual extends BaseConnection {
 	unselect() {
 		super.unselect();
 		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
-		this.icons.setColor(this.color);
+		this.icons.set_color(this.color);
 	}
 
 	select() {
 		super.select();
 		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
-		this.icons.setColor("white");
+		this.icons.set_color("white");
 	}
 	
 	doubleClick() {
@@ -2267,8 +2267,8 @@ class EllipseVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
+		this.element = svg_ellipse(0, 0, 0, 0, defaultStroke, "none", "element");
+		this.clickEllipse = svg_ellipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
 		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
@@ -3460,10 +3460,10 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHeadStart.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
-		this.arrowHeadEnd.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
+		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadEnd.set_template_points([[16, -8], [0,0], [16, 8]]);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
@@ -3496,12 +3496,12 @@ class LineVisual extends TwoPointer {
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
 			if (arrowHeadStart) {
 				lineStartPos = translate(neg(endOffset), [this.startX, this.startY]);
-				this.arrowHeadStart.setPos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
+				this.arrowHeadStart.set_pos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
 				this.arrowHeadStart.update();
 			}
 			if (arrowHeadEnd) {
 				lineEndPos = translate(endOffset, [this.endX, this.endY]);
-				this.arrowHeadEnd.setPos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
+				this.arrowHeadEnd.set_pos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
 				this.arrowHeadEnd.update();
 			}
 		}
