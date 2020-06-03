@@ -884,7 +884,7 @@ class BaseObject {
 		event.stopPropagation();
 	}
 	
-	set_name(new_name) {
+	setName(new_name) {
 			if (this.name_element == null) {
 				do_global_log("Element has no name");
 				return;
@@ -927,7 +927,7 @@ class OnePointer extends BaseObject {
 		// Handled for when attribute changes in corresponding SimpleNode
 		this.changeAttributeHandler = (attribute,value) => {
 			if (attribute == "name") {
-				this.set_name(value);
+				this.setName(value);
 			}
 		}
 	}
@@ -4341,7 +4341,7 @@ class TwoPointerTool extends BaseTool {
 		if (start_element != null && this.current_connection.getStartAttach) {
 			this.current_connection.setStartAttach(get_parent(start_element));
 		}
-		this.current_connection.set_name(primitive_name);
+		this.current_connection.setName(primitive_name);
 		
 		// make sure start anchor is synced with primitive 
 		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
@@ -5060,7 +5060,7 @@ function set_name(id,new_name) {
 	if (!tobject)  {
 		return;
 	}
-	tobject.set_name(new_name);
+	tobject.setName(new_name);
 	tobject.afterNameChange();
 }
 
