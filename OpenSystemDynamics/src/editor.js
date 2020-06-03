@@ -749,7 +749,7 @@ function hasSelectedChildren(parentId) {
 	// Find the children
 	let children = getChildren(parentId);
 	for(let id in children) {
-		if (children[id].is_selected()) {
+		if (children[id].isSelected()) {
 			return true;
 		}
 	}
@@ -820,7 +820,7 @@ class BaseObject {
 		return this.get_pos();
 	}
 	
-	is_selected() {
+	isSelected() {
 		return this.selected;
 	}
 
@@ -1232,7 +1232,7 @@ class StockVisual extends BasePrimitive {
 		super.set_pos(pos);
 		let startConn = find_start_connections(this);
 		for(let conn of startConn) {
-			if (conn.type === "flow" && conn.is_selected() === false) {
+			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldConnPos = conn.start_anchor.get_pos();
 				let newConnPos = translate(oldConnPos, diff);
 				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
@@ -1240,7 +1240,7 @@ class StockVisual extends BasePrimitive {
 		}
 		let endConn = find_end_connections(this);
 		for(let conn of endConn) {
-			if (conn.type === "flow" && conn.is_selected() === false) {
+			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldAnchorPos = conn.end_anchor.get_pos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
 				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
@@ -4749,7 +4749,7 @@ function attach_anchor(anchor) {
 	for(let i = 0; i < elements_under.length; i++) {
 		let element = elements_under[i];
 		
-		let elemIsNotSelected = ! element.is_selected();
+		let elemIsNotSelected = ! element.isSelected();
 		let elemIsNotParentOfAnchor = element[i] != parentConnection;
 		if (elemIsNotSelected && elemIsNotParentOfAnchor) {
 			attach_to = element;
@@ -4897,7 +4897,7 @@ function get_selected_root_objects() {
 		let parent = get_parent(all_objects[key]);
 		
 		// If any element is selected we add its parent
-		if (all_objects[key].is_selected()) {
+		if (all_objects[key].isSelected()) {
 			result[parent.id]=parent;
 		}
 	}
@@ -4930,12 +4930,12 @@ function delete_selected_objects() {
 function get_selected_objects() {
 	let return_array = {};
 	for(let key in object_array) {
-		if (object_array[key].is_selected()) {
+		if (object_array[key].isSelected()) {
 			return_array[key] = object_array[key];
 		}
 	}
 	for(let key in connection_array) {
-		if (connection_array[key].is_selected()) {
+		if (connection_array[key].isSelected()) {
 			return_array[key] = connection_array[key];
 		}
 	}
@@ -4987,7 +4987,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
 		}
-		if (last_clicked_element.is_selected()) {
+		if (last_clicked_element.isSelected()) {
 			if (event.shiftKey) {
 				last_clicked_element.unselect();
 			}
