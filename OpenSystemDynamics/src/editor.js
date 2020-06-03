@@ -4318,9 +4318,6 @@ class TwoPointerTool extends BaseTool {
 	static enterTool(mouseButton) {
 		this.rightClickMode = (mouseButton === mouse.right);
 	}
-	static set_type() {
-		
-	}
 	static getType() {
 		return "none";
 	}
