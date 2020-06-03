@@ -326,7 +326,7 @@ defaultPositionChangeHandler = function(primitive) {
 	let newPosition = getCenterPosition(primitive)
 	let visualObject = object_array[getID(primitive)];
 	if (visualObject) {
-		visualObject.set_pos(newPosition);
+		visualObject.setPos(newPosition);
 	}
 }
 
@@ -937,7 +937,7 @@ class OnePointer extends BaseObject {
 		return {"minX": x-10, "maxX": x+10, "minY": y-10, "maxY": y+10};
 	}
 
-	set_pos(pos) {
+	setPos(pos) {
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
@@ -1165,13 +1165,13 @@ class AnchorPoint extends OnePointer {
 				case anchorTypeEnum.start:
 				{
 					let oldPos = parent.b1_anchor.get_pos();
-					parent.b1_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
+					parent.b1_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;
 				case anchorTypeEnum.end:
 				{
 					let oldPos = parent.b2_anchor.get_pos();
-					parent.b2_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
+					parent.b2_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;			
 			}
@@ -1226,9 +1226,9 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
-	set_pos(pos) {
+	setPos(pos) {
 		let diff = translate(neg(this.pos), pos);
-		super.set_pos(pos);
+		super.setPos(pos);
 		let startConn = find_start_connections(this);
 		for(let conn of startConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
@@ -1656,8 +1656,8 @@ class BaseConnection extends TwoPointer {
 			let primitive = findID(this.id);
 			let sourcePoint = getSourcePosition(primitive);
 			let targetPoint = getTargetPosition(primitive);
-			this.start_anchor.set_pos(sourcePoint);
-			this.end_anchor.set_pos(targetPoint);
+			this.start_anchor.setPos(sourcePoint);
+			this.end_anchor.setPos(targetPoint);
 			alert("Position got updated");
 		}
 		last_connection = this;
@@ -1840,7 +1840,7 @@ class FlowVisual extends BaseConnection {
 		
 		let pos = anchor.get_pos();
 		pos[dimIndex] = newValue;
-		anchor.set_pos(pos);
+		anchor.setPos(pos);
 		return newValue;
 	}
 
@@ -1896,7 +1896,7 @@ class FlowVisual extends BaseConnection {
 				y = this.requestNewAnchorY(y, nextAnchor.id);
 			}
 		}
-		mainAnchor.set_pos([x,y]);
+		mainAnchor.setPos([x,y]);
 	}
 
 
@@ -3705,8 +3705,8 @@ class LinkVisual extends BaseConnection {
 		if ( ! obj1 || ! obj2 ) {
 			return;
 		}
-		this.start_anchor.set_pos(obj1.getLinkMountPos(obj2.get_pos()));
-		this.end_anchor.set_pos(obj2.getLinkMountPos(obj1.get_pos()));
+		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.get_pos()));
+		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.get_pos()));
 		this.resetBezier1();
 		this.resetBezier2();
 		this.update();
@@ -3799,7 +3799,7 @@ class LinkVisual extends BaseConnection {
 				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.get_pos());
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.set_pos(newPos);
+					this.start_anchor.setPos(newPos);
 				}
 			}
 		}
@@ -3809,7 +3809,7 @@ class LinkVisual extends BaseConnection {
 				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.get_pos());
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.set_pos(newPos);
+					this.end_anchor.setPos(newPos);
 				}
 			}
 		}
@@ -3819,8 +3819,8 @@ class LinkVisual extends BaseConnection {
 		this.updateGraphics();
 	}
 	keepRelativeHandlePositions() {
-		this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
-		this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
+		this.b1_anchor.setPos(this.localToWorld(this.b1Local));
+		this.b2_anchor.setPos(this.localToWorld(this.b2Local));
 	}
 	setHandle1Pos(newPos) {
 		this.b1Local = this.worldToLocal(newPos);
@@ -4369,9 +4369,9 @@ class TwoPointerTool extends BaseTool {
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
 			let signX = Math.sign(sideX);
 			let signY = Math.sign(sideY);
-			moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+			moveObject.setPos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
 		} else {
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 		}
 		parent.update();
 		object_array[node_id].updatePosition();
@@ -4552,19 +4552,19 @@ class LineTool extends TwoPointerTool {
 				// Place Horizontal or vertical
 				if (Math.abs(sideX) < Math.abs(sideY)) {
 					// place vertical |
-					moveObject.set_pos([oppositeX, y]);
+					moveObject.setPos([oppositeX, y]);
 				} else {
 					// place Horizontal -
-					moveObject.set_pos([x, oppositeY]);
+					moveObject.setPos([x, oppositeY]);
 				}
 			} else {
 				// place at 45 degree angle 
 				let signX = Math.sign(sideX);
 				let signY = Math.sign(sideY);
-				moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+				moveObject.setPos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
 			}
 		} else {
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 		}
 		parent.update();
 		object_array[node_id].updatePosition();
@@ -4686,7 +4686,7 @@ class LinkTool extends TwoPointerTool {
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
 			let moveObject = get_object(node_id);
 			let parent = get_parent(moveObject);
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 			parent.update();
 		} else if (anchor_type === "b1_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
