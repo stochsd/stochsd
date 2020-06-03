@@ -817,7 +817,7 @@ class BaseObject {
 	}
 
 	getLinkMountPos(closeToPoint) {
-		return this.get_pos();
+		return this.getPos();
 	}
 	
 	isSelected() {
@@ -933,7 +933,7 @@ class OnePointer extends BaseObject {
 	}
 
 	getBoundRect() {
-		let [x, y] = this.get_pos();
+		let [x, y] = this.getPos();
 		return {"minX": x-10, "maxX": x+10, "minY": y-10, "maxY": y+10};
 	}
 
@@ -948,9 +948,9 @@ class OnePointer extends BaseObject {
 		this.pos = [pos[0],pos[1]];
 	}
 		
-	get_pos() {
+	getPos() {
 		// This must be done by splitting up the array and joining it again to avoid sending a reference
-		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
+		// Earlier we had a bug that was caused by getPos was sent as reference and we got unwanted updates of the values
 		return [this.pos[0], this.pos[1]];
 	}
 
@@ -1164,13 +1164,13 @@ class AnchorPoint extends OnePointer {
 			switch(this.anchorType) {
 				case anchorTypeEnum.start:
 				{
-					let oldPos = parent.b1_anchor.get_pos();
+					let oldPos = parent.b1_anchor.getPos();
 					parent.b1_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;
 				case anchorTypeEnum.end:
 				{
-					let oldPos = parent.b2_anchor.get_pos();
+					let oldPos = parent.b2_anchor.getPos();
 					parent.b2_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;			
@@ -1216,7 +1216,7 @@ class StockVisual extends BasePrimitive {
 	}
 
 	getBoundRect() {
-		let pos = this.get_pos()
+		let pos = this.getPos()
 		let size = this.getSize();
 		return {
 			"minX": pos[0] - size[0]/2, 
@@ -1232,7 +1232,7 @@ class StockVisual extends BasePrimitive {
 		let startConn = find_start_connections(this);
 		for(let conn of startConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
-				let oldConnPos = conn.start_anchor.get_pos();
+				let oldConnPos = conn.start_anchor.getPos();
 				let newConnPos = translate(oldConnPos, diff);
 				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
 			}
@@ -1240,7 +1240,7 @@ class StockVisual extends BasePrimitive {
 		let endConn = find_end_connections(this);
 		for(let conn of endConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
-				let oldAnchorPos = conn.end_anchor.get_pos();
+				let oldAnchorPos = conn.end_anchor.getPos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
 				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
 			}
@@ -1249,7 +1249,7 @@ class StockVisual extends BasePrimitive {
 
 	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const [width, height] = this.getSize();
 		const boxSlope = safeDivision(height, width);
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
@@ -1276,7 +1276,7 @@ class StockVisual extends BasePrimitive {
 	// Used for LinkVisual
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const [width, height] = this.getSize();
 		const boxSlope = safeDivision(height, width);
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
@@ -1424,7 +1424,7 @@ class VariableVisual extends BasePrimitive {
 	}
 
 	getBoundRect() {
-	let pos = this.get_pos();
+	let pos = this.getPos();
 	let radius = this.getRadius();
 		return {
 			"minX": pos[0] - radius,
@@ -1445,7 +1445,7 @@ class VariableVisual extends BasePrimitive {
 
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
@@ -1479,7 +1479,7 @@ class ConstantVisual extends VariableVisual {
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const targetSlope = safeDivision(yCenter-yTarget, xCenter-xTarget);
 		
 		// "k" in the formula: y = kx + m
@@ -1515,7 +1515,7 @@ class ConverterVisual extends BasePrimitive {
 
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const hexSlope = safeDivision(15.0, 10);  // placement of corner is at (10,15)
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
 		let xEdgeRel; 	// Relative x Position to center of Visual object.
@@ -1599,12 +1599,12 @@ class TwoPointer extends BaseObject {
 		this.end_anchor.setColor(color);
 	}
 	
-	get startX() { return this.start_anchor.get_pos()[0]; }
-	get startY() { return this.start_anchor.get_pos()[1]; }
-	get endX() { return this.end_anchor.get_pos()[0]; }
-	get endY() { return this.end_anchor.get_pos()[1]; }
+	get startX() { return this.start_anchor.getPos()[0]; }
+	get startY() { return this.start_anchor.getPos()[1]; }
+	get endX() { return this.end_anchor.getPos()[0]; }
+	get endY() { return this.end_anchor.getPos()[1]; }
 
-	get_pos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
+	getPos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
 	getMinX() { return Math.min(this.startX, this.endX); }
 	getMinY() { return Math.min(this.startY, this.endY); }
 	getWidth() { return Math.abs(this.startX - this.endX); }
@@ -1638,10 +1638,10 @@ class TwoPointer extends BaseObject {
 		let Primitive = findID(this.id);
 		switch(anchorType) {
 			case anchorTypeEnum.start:
-				setSourcePosition(Primitive, this.start_anchor.get_pos());
+				setSourcePosition(Primitive, this.start_anchor.getPos());
 			break;
 			case anchorTypeEnum.end:
-				setTargetPosition(Primitive, this.end_anchor.get_pos());
+				setTargetPosition(Primitive, this.end_anchor.getPos());
 			break;
 		}
 	}
@@ -1816,7 +1816,7 @@ class FlowVisual extends BaseConnection {
 		// if anchor is attached limit movement 
 		if (anchorAttach) {
 			// stockX or stockY
-			let stockDim = anchorAttach.get_pos()[dimIndex];
+			let stockDim = anchorAttach.getPos()[dimIndex];
 			// stockWidth or stockHeight
 			let stockSpanSize = anchorAttach.getSize()[dimIndex];
 			newValue = clampValue(reqValue, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
@@ -1826,19 +1826,19 @@ class FlowVisual extends BaseConnection {
 			let prevAnchor = this.getPreviousAnchor(anchor_id);
 			let nextAnchor = this.getNextAnchor(anchor_id);
 
-			let requestPos = anchor.get_pos();
+			let requestPos = anchor.getPos();
 			requestPos[dimIndex] = reqValue;
-			if ((prevAnchor && distance(requestPos, prevAnchor.get_pos()) < minDistance) ||
-			  	(nextAnchor && distance(requestPos, nextAnchor.get_pos()) < minDistance) ) {
+			if ((prevAnchor && distance(requestPos, prevAnchor.getPos()) < minDistance) ||
+			  	(nextAnchor && distance(requestPos, nextAnchor.getPos()) < minDistance) ) {
 				// set old value of anchor 
-				newValue = anchor.get_pos()[dimIndex];
+				newValue = anchor.getPos()[dimIndex];
 			} else {
 				// set requested value 
 				newValue = reqValue;
 			}
 		}
 		
-		let pos = anchor.get_pos();
+		let pos = anchor.getPos();
 		pos[dimIndex] = newValue;
 		anchor.setPos(pos);
 		return newValue;
@@ -1863,18 +1863,18 @@ class FlowVisual extends BaseConnection {
 		let next_moveInX = true;
 
 		if (prevAnchor && this.middleAnchors.length === 0) {
-			let prevAnchorPos = prevAnchor.get_pos();
+			let prevAnchorPos = prevAnchor.getPos();
 			prev_moveInX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
 			next_moveInX = ! prev_moveInX;
 		} else if (nextAnchor && this.middleAnchors.length === 0) {
-			let nextAnchorPos = nextAnchor.get_pos();
+			let nextAnchorPos = nextAnchor.getPos();
 			next_moveInX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
 			prev_moveInX = ! next_moveInX;
 		} else {
 			// if more than two anchor 
 			let anchors = this.getAnchors();
-			let [x1, y1] = anchors[0].get_pos();
-			let [x2, y2] = anchors[1].get_pos();
+			let [x1, y1] = anchors[0].getPos();
+			let [x2, y2] = anchors[1].getPos();
 			let flow_start_direction_x = Math.abs(x1 - x2) < Math.abs(y1 - y2);
 			let index = anchors.map(anchor => anchor.id).indexOf(anchor_id);			
 			prev_moveInX = ((index%2) === 1) === flow_start_direction_x;
@@ -1905,7 +1905,7 @@ class FlowVisual extends BaseConnection {
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
 		for (i = 0; i < this.middleAnchors.length; i++) {
-			let pos = this.middleAnchors[i].get_pos();
+			let pos = this.middleAnchors[i].getPos();
 			let x = pos[0];
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
@@ -2009,14 +2009,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
 		let valveY = (points[this.valveIndex][1]+points[this.valveIndex+1][1])/2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -2026,7 +2026,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getVariablePos() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -2095,7 +2095,7 @@ class FlowVisual extends BaseConnection {
 	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let len = points.length;
 		let p1 = points[len-1];
 		let p2 = points[len-2];
@@ -2103,7 +2103,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let last = points[points.length-1];
 		let secondLast = points[points.length-2];
 		let sine = sin(last, secondLast);
@@ -2120,19 +2120,19 @@ class FlowVisual extends BaseConnection {
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 		
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length-2]; 
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			let oldPos = this.start_anchor.get_pos();
+			let oldPos = this.start_anchor.getPos();
 			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 				this.requestNewAnchorPos(newPos, this.start_anchor.id);
 			}
 		}
 		if (this.getEndAttach() != null && this.end_anchor != null) {	
-			let oldPos = this.end_anchor.get_pos();
+			let oldPos = this.end_anchor.getPos();
 			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 				this.requestNewAnchorPos(newPos, this.end_anchor.id);
@@ -2154,7 +2154,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPos(points[0], points[1]);
@@ -3540,8 +3540,8 @@ class LinkVisual extends BaseConnection {
 
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
-		let origoWorld = this.start_anchor.get_pos();
-		let oneZeroWorld = this.end_anchor.get_pos();
+		let origoWorld = this.start_anchor.getPos();
+		let oneZeroWorld = this.end_anchor.getPos();
 		let scaleFactor = distance(origoWorld, oneZeroWorld);
 		let sine 	= sin(origoWorld, oneZeroWorld);
 		let cosine 	= cos(origoWorld, oneZeroWorld);
@@ -3552,8 +3552,8 @@ class LinkVisual extends BaseConnection {
 	}
 	localToWorld(localPos) {
 		// worldPos(localPos) = T*R*S*localPos
-		let origoWorld = this.start_anchor.get_pos();
-		let oneZeroWorld = this.end_anchor.get_pos();
+		let origoWorld = this.start_anchor.getPos();
+		let oneZeroWorld = this.end_anchor.getPos();
 		let scaleFactor = distance(origoWorld, oneZeroWorld);
 		let sine 	= sin(origoWorld, oneZeroWorld);
 		let cosine 	= cos(origoWorld, oneZeroWorld);
@@ -3705,8 +3705,8 @@ class LinkVisual extends BaseConnection {
 		if ( ! obj1 || ! obj2 ) {
 			return;
 		}
-		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.get_pos()));
-		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.get_pos()));
+		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.getPos()));
+		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.getPos()));
 		this.resetBezier1();
 		this.resetBezier2();
 		this.update();
@@ -3720,10 +3720,10 @@ class LinkVisual extends BaseConnection {
 	syncAnchorToPrimitive(anchorType) {
 		super.syncAnchorToPrimitive(anchorType);
 		
-		let startpos = this.start_anchor.get_pos();
-		let endpos = this.end_anchor.get_pos();
-		let b1pos = this.b1_anchor.get_pos();
-		let b2pos = this.b2_anchor.get_pos();
+		let startpos = this.start_anchor.getPos();
+		let endpos = this.end_anchor.getPos();
+		let b1pos = this.b1_anchor.getPos();
+		let b2pos = this.b2_anchor.getPos();
 		
 		switch(anchorType) {
 		case anchorTypeEnum.start:
@@ -3774,7 +3774,7 @@ class LinkVisual extends BaseConnection {
 	}
 	updateGraphics() {
 		// The arrow is pointed from the second bezier point to the end
-		let b2pos = this.b2_anchor.get_pos();
+		let b2pos = this.b2_anchor.getPos();
 		
 		let xdiff = this.endX-b2pos[0];
 		let ydiff = this.endY-b2pos[1];
@@ -3794,9 +3794,9 @@ class LinkVisual extends BaseConnection {
 		// _start_attach is null if we are not attached to anything
 		
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			if (this.getStartAttach().get_pos) {
-				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.get_pos());
+			if (this.getStartAttach().getPos) {
+				let oldPos = this.start_anchor.getPos();
+				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.getPos());
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.start_anchor.setPos(newPos);
@@ -3804,9 +3804,9 @@ class LinkVisual extends BaseConnection {
 			}
 		}
 		if (this.getEndAttach() != null && this.end_anchor != null) {
-			if (this.getEndAttach().get_pos) {
-				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.get_pos());
+			if (this.getEndAttach().getPos) {
+				let oldPos = this.end_anchor.getPos();
+				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.getPos());
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 					this.end_anchor.setPos(newPos);
@@ -4441,7 +4441,7 @@ class FlowTool extends TwoPointerTool {
 				let parent = connection_array[only_selected_anchor["parent_id"]];
 				let child = object_array[only_selected_anchor["child_id"]];
 				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
-					let prevAnchorPos = parent.getPreviousAnchor(child.id).get_pos();
+					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x ,y]) < 10) {
 						if (parent.middleAnchors.length > 0) {
 							// remove last middle anchor
@@ -4699,7 +4699,7 @@ class LinkTool extends TwoPointerTool {
 		}
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
-		let start_pos = get_object(move_node_id).get_pos();
+		let start_pos = get_object(move_node_id).getPos();
 		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
 	}
 	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
@@ -4733,7 +4733,7 @@ class LinkTool extends TwoPointerTool {
 LinkTool.init();
 
 function attach_anchor(anchor) {
-	[x,y]=anchor.get_pos();
+	[x,y]=anchor.getPos();
 	let parentConnection = get_parent(anchor);
 	
 	let	elements_under = find_elements_under(x,y);
@@ -5375,7 +5375,7 @@ class Clipboard {
 			let clipboardItem = new ClipboardItem(parentIdArray[i]);
 			let tmp_object = get_object(parentIdArray[i]);
 			
-			let absolutePosition = tmp_object.get_pos();
+			let absolutePosition = tmp_object.getPos();
 			clipboardItem.absolutePosition = absolutePosition;
 			
 			this.copiedItems.push(clipboardItem);			
