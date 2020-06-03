@@ -649,7 +649,7 @@ function checkedHtmlAttribute(value) {
 class EditorControll {
 	static showEditor(primitive, annotations) {
 		let primitiveId = getID(primitive);
-		get_object(primitiveId).double_click();
+		get_object(primitiveId).doubleClick();
 	}
 }
 
@@ -844,7 +844,7 @@ class BaseObject {
 		}
 		this.group.remove();
 	}
-	double_click() {
+	doubleClick() {
 		// This function has to be overriden
 	}
 	afterNameChange() {
@@ -1006,7 +1006,7 @@ class OnePointer extends BaseObject {
 		}
 		$(this.group).dblclick((event) => {
 			if (!$(event.target).hasClass("name_element")) {
-				this.double_click(this.id);
+				this.doubleClick(this.id);
 			}
 		});
 	}
@@ -1063,7 +1063,7 @@ class BasePrimitive extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
-	double_click() {
+	doubleClick() {
 		default_double_click(get_parent_id(this.id));
 	}
 }
@@ -1408,7 +1408,7 @@ class NumberboxVisual extends BasePrimitive {
 		// Override this function
 		// Do nothing - otherwise double clicked is called twice 
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 }
@@ -1555,7 +1555,7 @@ class ConverterVisual extends BasePrimitive {
 		converterDialog.open(this.id, ".nameField");
 	}
 	
-	double_click() {
+	doubleClick() {
 		converterDialog.open(this.id, ".valueField");
 	}
 }
@@ -2090,7 +2090,7 @@ class FlowVisual extends BaseConnection {
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 	}
 	
@@ -2197,7 +2197,7 @@ class FlowVisual extends BaseConnection {
 		this.icons.setColor("white");
 	}
 	
-	double_click() {
+	doubleClick() {
 		default_double_click(this.id);
 	}
 }
@@ -2231,10 +2231,10 @@ class RectangleVisual extends TwoPointer {
 		}
 
 		$(this.group).dblclick((event) => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 	updateGraphics() {
@@ -2279,10 +2279,10 @@ class EllipseVisual extends TwoPointer {
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 			this.dialog.show();
 	}
 	updateGraphics() {
@@ -2459,12 +2459,12 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		});
 		
 		$(this.targetElement).dblclick(()=>{
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
 		$(this.targetElement).bind("contextmenu", (event)=> {
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 		
 		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
@@ -2503,7 +2503,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		super.clean();
 		this.targetElement.remove();
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 }
@@ -3473,10 +3473,10 @@ class LineVisual extends TwoPointer {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 		$(this.group).dblclick((event) => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 	updateGraphics() {
