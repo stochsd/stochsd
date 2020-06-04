@@ -57,7 +57,6 @@ var object_array = {};
 var last_click_object_clicked = false;
 var last_clicked_element = null; // Points to the object we last clicked
 var leftmouseisdown = false;
-var middlemouseisdown = false;
 var mousedown_x = 0;
 var mousedown_y = 0;
 var lastMouseX = 0;
@@ -261,6 +260,10 @@ function makeKeyboardCodes() {
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
 	keyboard["enter"] = 13;
+	keyboard["right"] = 37;
+	keyboard["up"] = 38;
+	keyboard["left"] = 39;
+	keyboard["down"] = 40;
 	return keyboard;
 }
 
@@ -323,7 +326,7 @@ defaultPositionChangeHandler = function(primitive) {
 	let newPosition = getCenterPosition(primitive)
 	let visualObject = object_array[getID(primitive)];
 	if (visualObject) {
-		visualObject.set_pos(newPosition);
+		visualObject.setPos(newPosition);
 	}
 }
 
@@ -646,7 +649,7 @@ function checkedHtmlAttribute(value) {
 class EditorControll {
 	static showEditor(primitive, annotations) {
 		let primitiveId = getID(primitive);
-		get_object(primitiveId).double_click();
+		get_object(primitiveId).doubleClick();
 	}
 }
 
@@ -746,7 +749,7 @@ function hasSelectedChildren(parentId) {
 	// Find the children
 	let children = getChildren(parentId);
 	for(let id in children) {
-		if (children[id].is_selected()) {
+		if (children[id].isSelected()) {
 			return true;
 		}
 	}
@@ -814,10 +817,10 @@ class BaseObject {
 	}
 
 	getLinkMountPos(closeToPoint) {
-		return this.get_pos();
+		return this.getPos();
 	}
 	
-	is_selected() {
+	isSelected() {
 		return this.selected;
 	}
 
@@ -841,7 +844,7 @@ class BaseObject {
 		}
 		this.group.remove();
 	}
-	double_click() {
+	doubleClick() {
 		// This function has to be overriden
 	}
 	afterNameChange() {
@@ -870,8 +873,7 @@ class BaseObject {
 	getType() {
 		return this.type;
 	}
-	name_double_click() {
-		//~ alert("hahaha");
+	nameDoubleClick() {
 					
 		if (this.is_ghost) {
 			errorPopUp("You must rename a ghost by renaming the original.");
@@ -882,7 +884,7 @@ class BaseObject {
 		event.stopPropagation();
 	}
 	
-	set_name(new_name) {
+	setName(new_name) {
 			if (this.name_element == null) {
 				do_global_log("Element has no name");
 				return;
@@ -925,17 +927,17 @@ class OnePointer extends BaseObject {
 		// Handled for when attribute changes in corresponding SimpleNode
 		this.changeAttributeHandler = (attribute,value) => {
 			if (attribute == "name") {
-				this.set_name(value);
+				this.setName(value);
 			}
 		}
 	}
 
 	getBoundRect() {
-		let [x, y] = this.get_pos();
+		let [x, y] = this.getPos();
 		return {"minX": x-10, "maxX": x+10, "minY": y-10, "maxY": y+10};
 	}
 
-	set_pos(pos) {
+	setPos(pos) {
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
 			// This turned out to be a huge optimisation
@@ -946,9 +948,9 @@ class OnePointer extends BaseObject {
 		this.pos = [pos[0],pos[1]];
 	}
 		
-	get_pos() {
+	getPos() {
 		// This must be done by splitting up the array and joining it again to avoid sending a reference
-		// Earlier we had a bug that was caused by get_pos was sent as reference and we got unwanted updates of the values
+		// Earlier we had a bug that was caused by getPos was sent as reference and we got unwanted updates of the values
 		return [this.pos[0], this.pos[1]];
 	}
 
@@ -985,7 +987,7 @@ class OnePointer extends BaseObject {
 			if (element_array[key].getAttribute("class") == "name_element") {
 				this.name_element = element_array[key];
 				$(this.name_element).dblclick((event) => {
-					this.name_double_click();
+					this.nameDoubleClick();
 				});
 			}
 		}
@@ -1003,7 +1005,7 @@ class OnePointer extends BaseObject {
 		}
 		$(this.group).dblclick((event) => {
 			if (!$(event.target).hasClass("name_element")) {
-				this.double_click(this.id);
+				this.doubleClick(this.id);
 			}
 		});
 	}
@@ -1014,7 +1016,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
-			this.icons.setColor("white");
+			this.icons.set_color("white");
 		}
 	}
 	unselect() {
@@ -1023,7 +1025,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
-			this.icons.setColor(this.color);
+			this.icons.set_color(this.color);
 		}
 	}
 	update() {
@@ -1060,7 +1062,7 @@ class BasePrimitive extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 	}
-	double_click() {
+	doubleClick() {
 		default_double_click(get_parent_id(this.id));
 	}
 }
@@ -1162,14 +1164,14 @@ class AnchorPoint extends OnePointer {
 			switch(this.anchorType) {
 				case anchorTypeEnum.start:
 				{
-					let oldPos = parent.b1_anchor.get_pos();
-					parent.b1_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
+					let oldPos = parent.b1_anchor.getPos();
+					parent.b1_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;
 				case anchorTypeEnum.end:
 				{
-					let oldPos = parent.b2_anchor.get_pos();
-					parent.b2_anchor.set_pos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
+					let oldPos = parent.b2_anchor.getPos();
+					parent.b2_anchor.setPos([oldPos[0]+diff_x, oldPos[1]+diff_y]);
 				}
 				break;			
 			}
@@ -1214,7 +1216,7 @@ class StockVisual extends BasePrimitive {
 	}
 
 	getBoundRect() {
-		let pos = this.get_pos()
+		let pos = this.getPos()
 		let size = this.getSize();
 		return {
 			"minX": pos[0] - size[0]/2, 
@@ -1224,21 +1226,21 @@ class StockVisual extends BasePrimitive {
 		};
 	}
 
-	set_pos(pos) {
+	setPos(pos) {
 		let diff = translate(neg(this.pos), pos);
-		super.set_pos(pos);
+		super.setPos(pos);
 		let startConn = find_start_connections(this);
 		for(let conn of startConn) {
-			if (conn.type === "flow" && conn.is_selected() === false) {
-				let oldConnPos = conn.start_anchor.get_pos();
+			if (conn.type === "flow" && conn.isSelected() === false) {
+				let oldConnPos = conn.start_anchor.getPos();
 				let newConnPos = translate(oldConnPos, diff);
 				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
 			}
 		}
 		let endConn = find_end_connections(this);
 		for(let conn of endConn) {
-			if (conn.type === "flow" && conn.is_selected() === false) {
-				let oldAnchorPos = conn.end_anchor.get_pos();
+			if (conn.type === "flow" && conn.isSelected() === false) {
+				let oldAnchorPos = conn.end_anchor.getPos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
 				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
 			}
@@ -1247,7 +1249,7 @@ class StockVisual extends BasePrimitive {
 
 	// Used for FlowVisual
 	getFlowMountPos([xTarget, yTarget]) {
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const [width, height] = this.getSize();
 		const boxSlope = safeDivision(height, width);
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
@@ -1274,7 +1276,7 @@ class StockVisual extends BasePrimitive {
 	// Used for LinkVisual
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const [width, height] = this.getSize();
 		const boxSlope = safeDivision(height, width);
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
@@ -1303,7 +1305,7 @@ class StockVisual extends BasePrimitive {
 			svg_rect(-w/2,-h/2, w, h,  this.color,  defaultFill, "element"),
 			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "selector"),
 			textElem,
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 }
@@ -1401,11 +1403,11 @@ class NumberboxVisual extends BasePrimitive {
 		super.unselect();
 		this.name_element.setAttribute("fill", this.color);
 	}
-	name_double_click() {
+	nameDoubleClick() {
 		// Override this function
 		// Do nothing - otherwise double clicked is called twice 
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 }
@@ -1422,7 +1424,7 @@ class VariableVisual extends BasePrimitive {
 	}
 
 	getBoundRect() {
-	let pos = this.get_pos();
+	let pos = this.getPos();
 	let radius = this.getRadius();
 		return {
 			"minX": pos[0] - radius,
@@ -1437,13 +1439,13 @@ class VariableVisual extends BasePrimitive {
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const rTarget = distance([xCenter, yCenter], [xTarget, yTarget]);
 		const dXTarget = xTarget - xCenter;
 		const dYTarget = yTarget - yCenter;
@@ -1468,7 +1470,7 @@ class ConstantVisual extends VariableVisual {
 			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "selector"),
-			svgIcons(defaultStroke, defaultFill, "icons")
+			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1477,7 +1479,7 @@ class ConstantVisual extends VariableVisual {
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const targetSlope = safeDivision(yCenter-yTarget, xCenter-xTarget);
 		
 		// "k" in the formula: y = kx + m
@@ -1506,14 +1508,14 @@ class ConverterVisual extends BasePrimitive {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
-			svgIcons(defaultStroke, defaultFill, "icons"),
+			svg_icons(defaultStroke, defaultFill, "icons"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 		];
 	}
 
 	getLinkMountPos([xTarget, yTarget]) {
 		// See "docs/code/mountPoints.svg" for math explanation 
-		const [xCenter, yCenter] = this.get_pos();
+		const [xCenter, yCenter] = this.getPos();
 		const hexSlope = safeDivision(15.0, 10);  // placement of corner is at (10,15)
 		const targetSlope = safeDivision(yTarget-yCenter, xTarget-xCenter);
 		let xEdgeRel; 	// Relative x Position to center of Visual object.
@@ -1548,11 +1550,11 @@ class ConverterVisual extends BasePrimitive {
 			this.primitive.setAttribute("Source", "Time");
 		}
 	}
-	name_double_click() {
+	nameDoubleClick() {
 		converterDialog.open(this.id, ".nameField");
 	}
 	
-	double_click() {
+	doubleClick() {
 		converterDialog.open(this.id, ".valueField");
 	}
 }
@@ -1597,12 +1599,12 @@ class TwoPointer extends BaseObject {
 		this.end_anchor.setColor(color);
 	}
 	
-	get startX() { return this.start_anchor.get_pos()[0]; }
-	get startY() { return this.start_anchor.get_pos()[1]; }
-	get endX() { return this.end_anchor.get_pos()[0]; }
-	get endY() { return this.end_anchor.get_pos()[1]; }
+	get startX() { return this.start_anchor.getPos()[0]; }
+	get startY() { return this.start_anchor.getPos()[1]; }
+	get endX() { return this.end_anchor.getPos()[0]; }
+	get endY() { return this.end_anchor.getPos()[1]; }
 
-	get_pos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
+	getPos() { return [(this.startX + this.endX)/2,(this.startY + this.endY)/2]; }
 	getMinX() { return Math.min(this.startX, this.endX); }
 	getMinY() { return Math.min(this.startY, this.endY); }
 	getWidth() { return Math.abs(this.startX - this.endX); }
@@ -1636,15 +1638,12 @@ class TwoPointer extends BaseObject {
 		let Primitive = findID(this.id);
 		switch(anchorType) {
 			case anchorTypeEnum.start:
-				setSourcePosition(Primitive, this.start_anchor.get_pos());
+				setSourcePosition(Primitive, this.start_anchor.getPos());
 			break;
 			case anchorTypeEnum.end:
-				setTargetPosition(Primitive, this.end_anchor.get_pos());
+				setTargetPosition(Primitive, this.end_anchor.getPos());
 			break;
 		}
-	}
-	finishCreate() {
-		
 	}
 }
 
@@ -1657,21 +1656,25 @@ class BaseConnection extends TwoPointer {
 			let primitive = findID(this.id);
 			let sourcePoint = getSourcePosition(primitive);
 			let targetPoint = getTargetPosition(primitive);
-			this.start_anchor.set_pos(sourcePoint);
-			this.end_anchor.set_pos(targetPoint);
+			this.start_anchor.setPos(sourcePoint);
+			this.end_anchor.setPos(targetPoint);
 			alert("Position got updated");
 		}
-		this.attachableTypes = ["stock", "variable", "constant", "converter", "flow"];
 		last_connection = this;
 	}
-	setAttachableTypes(types) {
-		this.attachableTypes = types;
+
+	isAcceptableStartAttach(attachVisual) {
+		// function to decide if attachVisual is ok allowed to attach start to 
+		return false;
+	}
+	isAcceptableEndAttach(attachVisual) {
+		return false;
 	}
 	setStartAttach(new_start_attach) {
 		if (new_start_attach != null && this.getEndAttach() == new_start_attach) {
 			return;		// Will not attach if other anchor is attached to same
 		}
-		if (new_start_attach != null && ! this.attachableTypes.includes(new_start_attach.getType())) {
+		if (new_start_attach != null && this.isAcceptableStartAttach(new_start_attach) === false) {
 			return; 	// Will not attach if not acceptable attachType
 		}
 		
@@ -1695,7 +1698,7 @@ class BaseConnection extends TwoPointer {
 		if (new_end_attach != null && this.getStartAttach() == new_end_attach) {
 			return; 	// Will not attach if other anchor is attached to same 
 		}
-		if (new_end_attach != null && ! this.attachableTypes.includes(new_end_attach.getType())) {
+		if (new_end_attach != null && this.isAcceptableEndAttach(new_end_attach) === false ) {
 			return;		// Will not attach if not acceptable attachType
 		}
 		
@@ -1744,7 +1747,6 @@ function getStackTrace() {
 class FlowVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
-		this.setAttachableTypes(["stock"]);
 		this.updateValueError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
@@ -1763,6 +1765,14 @@ class FlowVisual extends BaseConnection {
 		this.valve; 
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
+
+	isAcceptableStartAttach(attachVisual) {
+		return attachVisual.getType() === "stock";
+	}	
+
+	isAcceptableEndAttach(attachVisual) {
+		return attachVisual.getType() === "stock";
+	}	
 
 	getRadius() {
 		return 20;
@@ -1806,7 +1816,7 @@ class FlowVisual extends BaseConnection {
 		// if anchor is attached limit movement 
 		if (anchorAttach) {
 			// stockX or stockY
-			let stockDim = anchorAttach.get_pos()[dimIndex];
+			let stockDim = anchorAttach.getPos()[dimIndex];
 			// stockWidth or stockHeight
 			let stockSpanSize = anchorAttach.getSize()[dimIndex];
 			newValue = clampValue(reqValue, stockDim-stockSpanSize/2, stockDim+stockSpanSize/2);
@@ -1816,21 +1826,21 @@ class FlowVisual extends BaseConnection {
 			let prevAnchor = this.getPreviousAnchor(anchor_id);
 			let nextAnchor = this.getNextAnchor(anchor_id);
 
-			let requestPos = anchor.get_pos();
+			let requestPos = anchor.getPos();
 			requestPos[dimIndex] = reqValue;
-			if ((prevAnchor && distance(requestPos, prevAnchor.get_pos()) < minDistance) ||
-			  	(nextAnchor && distance(requestPos, nextAnchor.get_pos()) < minDistance) ) {
+			if ((prevAnchor && distance(requestPos, prevAnchor.getPos()) < minDistance) ||
+			  	(nextAnchor && distance(requestPos, nextAnchor.getPos()) < minDistance) ) {
 				// set old value of anchor 
-				newValue = anchor.get_pos()[dimIndex];
+				newValue = anchor.getPos()[dimIndex];
 			} else {
 				// set requested value 
 				newValue = reqValue;
 			}
 		}
 		
-		let pos = anchor.get_pos();
+		let pos = anchor.getPos();
 		pos[dimIndex] = newValue;
-		anchor.set_pos(pos);
+		anchor.setPos(pos);
 		return newValue;
 	}
 
@@ -1853,18 +1863,18 @@ class FlowVisual extends BaseConnection {
 		let next_moveInX = true;
 
 		if (prevAnchor && this.middleAnchors.length === 0) {
-			let prevAnchorPos = prevAnchor.get_pos();
+			let prevAnchorPos = prevAnchor.getPos();
 			prev_moveInX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
 			next_moveInX = ! prev_moveInX;
 		} else if (nextAnchor && this.middleAnchors.length === 0) {
-			let nextAnchorPos = nextAnchor.get_pos();
+			let nextAnchorPos = nextAnchor.getPos();
 			next_moveInX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
 			prev_moveInX = ! next_moveInX;
 		} else {
 			// if more than two anchor 
 			let anchors = this.getAnchors();
-			let [x1, y1] = anchors[0].get_pos();
-			let [x2, y2] = anchors[1].get_pos();
+			let [x1, y1] = anchors[0].getPos();
+			let [x2, y2] = anchors[1].getPos();
 			let flow_start_direction_x = Math.abs(x1 - x2) < Math.abs(y1 - y2);
 			let index = anchors.map(anchor => anchor.id).indexOf(anchor_id);			
 			prev_moveInX = ((index%2) === 1) === flow_start_direction_x;
@@ -1886,7 +1896,7 @@ class FlowVisual extends BaseConnection {
 				y = this.requestNewAnchorY(y, nextAnchor.id);
 			}
 		}
-		mainAnchor.set_pos([x,y]);
+		mainAnchor.setPos([x,y]);
 	}
 
 
@@ -1895,7 +1905,7 @@ class FlowVisual extends BaseConnection {
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
 		for (i = 0; i < this.middleAnchors.length; i++) {
-			let pos = this.middleAnchors[i].get_pos();
+			let pos = this.middleAnchors[i].getPos();
 			let x = pos[0];
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
@@ -1999,14 +2009,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let valveX = (points[this.valveIndex][0]+points[this.valveIndex+1][0])/2;
 		let valveY = (points[this.valveIndex][1]+points[this.valveIndex+1][1])/2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -2016,7 +2026,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getVariablePos() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex+1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -2051,41 +2061,41 @@ class FlowVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
-		this.startCloud = svgCloud(this.color, defaultFill, {"class": "element"});
-		this.endCloud = svgCloud(this.color, defaultFill, {"class": "element"});
-		this.outerPath = svgWidePath(5, this.color, {"class": "element"});
-		this.innerPath = svgWidePath(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svgArrowHead(this.color, defaultFill, {"class": "element"});
+		this.startCloud = svg_cloud(this.color, defaultFill, {"class": "element"});
+		this.endCloud = svg_cloud(this.color, defaultFill, {"class": "element"});
+		this.outerPath = svg_wide_path(5, this.color, {"class": "element"});
+		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
+		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, {"class": "element"});
 		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
-		this.icons = svgIcons(defaultStroke, defaultFill, "icons");
+		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = svg_group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"), 
 			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "selector"),
 			this.icons,	
 			this.name_element]
 		);
-		this.icons.setColor("white");
+		this.icons.set_color("white");
 		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
 		
 		$(this.name_element).dblclick((event) => {	
-			this.name_double_click();
+			this.nameDoubleClick();
 		});
 		
 		this.group = svg_group([this.flowPathGroup, this.valve, this.variable]);
 		this.group.setAttribute("node_id",this.id);
 
 		$(this.group).dblclick(() => {
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 	}
 	
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let len = points.length;
 		let p1 = points[len-1];
 		let p2 = points[len-2];
@@ -2093,7 +2103,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let last = points[points.length-1];
 		let secondLast = points[points.length-2];
 		let sine = sin(last, secondLast);
@@ -2110,19 +2120,19 @@ class FlowVisual extends BaseConnection {
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 		
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length-2]; 
 
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			let oldPos = this.start_anchor.get_pos();
+			let oldPos = this.start_anchor.getPos();
 			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 				this.requestNewAnchorPos(newPos, this.start_anchor.id);
 			}
 		}
 		if (this.getEndAttach() != null && this.end_anchor != null) {	
-			let oldPos = this.end_anchor.get_pos();
+			let oldPos = this.end_anchor.getPos();
 			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
 				this.requestNewAnchorPos(newPos, this.end_anchor.id);
@@ -2144,22 +2154,22 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	updateGraphics() {
-		let points = this.getAnchors().map(anchor => anchor.get_pos());
+		let points = this.getAnchors().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
-			this.startCloud.setVisibility(true);
-			this.startCloud.setPos(points[0], points[1]);
+			this.startCloud.set_visibility(true);
+			this.startCloud.set_pos(points[0], points[1]);
 		} else {
-			this.startCloud.setVisibility(false);
+			this.startCloud.set_visibility(false);
 		}
 		if (this.getEndAttach() == null) {
-			this.endCloud.setVisibility(true);
-			this.endCloud.setPos(points[points.length-1], points[points.length-2]);
+			this.endCloud.set_visibility(true);
+			this.endCloud.set_pos(points[points.length-1], points[points.length-2]);
 		} else {
-			this.endCloud.setVisibility(false);
+			this.endCloud.set_visibility(false);
 		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
-		this.arrowHeadPath.setPos(points[points.length-1], this.getDirection());
+		this.arrowHeadPath.set_pos(points[points.length-1], this.getDirection());
 
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
@@ -2177,16 +2187,16 @@ class FlowVisual extends BaseConnection {
 	unselect() {
 		super.unselect();
 		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
-		this.icons.setColor(this.color);
+		this.icons.set_color(this.color);
 	}
 
 	select() {
 		super.select();
 		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
-		this.icons.setColor("white");
+		this.icons.set_color("white");
 	}
 	
-	double_click() {
+	doubleClick() {
 		default_double_click(this.id);
 	}
 }
@@ -2220,10 +2230,10 @@ class RectangleVisual extends TwoPointer {
 		}
 
 		$(this.group).dblclick((event) => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 	updateGraphics() {
@@ -2257,8 +2267,8 @@ class EllipseVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svgEllipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickEllipse = svgEllipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
+		this.element = svg_ellipse(0, 0, 0, 0, defaultStroke, "none", "element");
+		this.clickEllipse = svg_ellipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
 		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
@@ -2268,10 +2278,10 @@ class EllipseVisual extends TwoPointer {
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 			this.dialog.show();
 	}
 	updateGraphics() {
@@ -2448,12 +2458,12 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		});
 		
 		$(this.targetElement).dblclick(()=>{
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
 		$(this.targetElement).bind("contextmenu", (event)=> {
-			this.double_click(this.id);
+			this.doubleClick(this.id);
 		});
 		
 		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
@@ -2492,7 +2502,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		super.clean();
 		this.targetElement.remove();
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 }
@@ -3290,12 +3300,10 @@ class XyPlotVisual extends PlotVisual {
 	}
 	render() {		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
-		this.showMarkers = this.dialog.isMarkersChecked();
-		this.showLine = this.dialog.isLineChecked();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		let results = RunResults.getSelectiveIdResults(IdsToDisplay);
+		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if (results.length == 0) {
 			// We can't render anything with no data
 			
@@ -3338,10 +3346,8 @@ class XyPlotVisual extends PlotVisual {
 				if (y > this.maxYValue) {
 					this.maxYValue = y;
 				}
-				serie.push([x,y,t,null]);
+				serie.push([x,y,t]);
 			}
-			serie[0][3] = "start";
-			serie[serie.length-1][3] = "end";
 			return serie;
 		}
 		
@@ -3350,26 +3356,31 @@ class XyPlotVisual extends PlotVisual {
 		this.serieArray = [];
 		
 		// Make time series
-		this.serieArray.push(makeXYSerie());
+		let dataSerie = makeXYSerie();
+		this.serieArray.push(dataSerie);
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		for(let i in this.namesToDisplay) {
+		this.serieSettingsArray.push(
+			{
+				lineWidth: this.primitive.getAttribute("LineWidth"), 
+				color: "black",
+				shadow: false,
+				showLine: this.primitive.getAttribute("ShowLine") === "true",
+				showMarker: this.primitive.getAttribute("ShowMarker") === "true",
+				markerOptions: { shadow: false }
+			}
+		);
+		if (this.primitive.getAttribute("MarkStart") === "true") {
+			this.serieArray.push([dataSerie[0]]);
 			this.serieSettingsArray.push(
-				{
-					label: this.namesToDisplay[i], 
-					lineWidth: this.primitive.getAttribute("LineWidth"), 
-					color: "black",
-					shadow: false,
-					showLine: this.showLine,
-					showMarker: this.showMarkers,
-					pointLabels: {
-						show: true,
-						edgeTolerance: 0,
-						ypadding: 0,
-						location: "n"
-					}
-				}
+				{color: "#ff4444", showLine: false, showMarker: true, markerOptions: {shadow: false}}
+			);
+		} 
+		if (this.primitive.getAttribute("MarkEnd") === "true") {
+			this.serieArray.push([dataSerie[dataSerie.length-1]]);
+			this.serieSettingsArray.push(
+				{color: "#00aa00", showLine: false, showMarker: true, markerOptions: { style: "filledSquare", shadow: false } }
 			);
 		}
 		
@@ -3449,10 +3460,10 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHeadStart = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHeadEnd = svgArrowHead("none", defaultStroke, {"class": "element"});
-		this.arrowHeadStart.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
-		this.arrowHeadEnd.setTemplatePoints([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
+		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
+		this.arrowHeadEnd.set_template_points([[16, -8], [0,0], [16, 8]]);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
@@ -3461,10 +3472,10 @@ class LineVisual extends TwoPointer {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
 		$(this.group).dblclick((event) => {
-			this.double_click();
+			this.doubleClick();
 		});
 	}
-	double_click() {
+	doubleClick() {
 		this.dialog.show();
 	}
 	updateGraphics() {
@@ -3485,12 +3496,12 @@ class LineVisual extends TwoPointer {
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
 			if (arrowHeadStart) {
 				lineStartPos = translate(neg(endOffset), [this.startX, this.startY]);
-				this.arrowHeadStart.setPos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
+				this.arrowHeadStart.set_pos([this.startX, this.startY], [this.endX-this.startX, this.endY-this.startY]);
 				this.arrowHeadStart.update();
 			}
 			if (arrowHeadEnd) {
 				lineEndPos = translate(endOffset, [this.endX, this.endY]);
-				this.arrowHeadEnd.setPos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
+				this.arrowHeadEnd.set_pos([this.endX, this.endY], [this.startX-this.endX, this.startY-this.endY]);
 				this.arrowHeadEnd.update();
 			}
 		}
@@ -3529,8 +3540,8 @@ class LinkVisual extends BaseConnection {
 
 	worldToLocal(worldPos) {
 		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
-		let origoWorld = this.start_anchor.get_pos();
-		let oneZeroWorld = this.end_anchor.get_pos();
+		let origoWorld = this.start_anchor.getPos();
+		let oneZeroWorld = this.end_anchor.getPos();
 		let scaleFactor = distance(origoWorld, oneZeroWorld);
 		let sine 	= sin(origoWorld, oneZeroWorld);
 		let cosine 	= cos(origoWorld, oneZeroWorld);
@@ -3541,8 +3552,8 @@ class LinkVisual extends BaseConnection {
 	}
 	localToWorld(localPos) {
 		// worldPos(localPos) = T*R*S*localPos
-		let origoWorld = this.start_anchor.get_pos();
-		let oneZeroWorld = this.end_anchor.get_pos();
+		let origoWorld = this.start_anchor.getPos();
+		let oneZeroWorld = this.end_anchor.getPos();
 		let scaleFactor = distance(origoWorld, oneZeroWorld);
 		let sine 	= sin(origoWorld, oneZeroWorld);
 		let cosine 	= cos(origoWorld, oneZeroWorld);
@@ -3608,6 +3619,17 @@ class LinkVisual extends BaseConnection {
 		this.click_area.y4 = this.curve.y4;
 		this.click_area.update();
 	}
+
+	isAcceptableStartAttach(attachVisual) {
+		let okAttachTypes = ["stock", "variable", "constant", "converter", "flow"];
+		return okAttachTypes.includes(attachVisual.getType());
+	}	
+
+	isAcceptableEndAttach(attachVisual) {
+		let okAttachTypes = ["stock", "variable", "converter", "flow"];
+		return okAttachTypes.includes(attachVisual.getType()) && attachVisual.is_ghost !== true;
+	}	
+
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
@@ -3683,8 +3705,8 @@ class LinkVisual extends BaseConnection {
 		if ( ! obj1 || ! obj2 ) {
 			return;
 		}
-		this.start_anchor.set_pos(obj1.getLinkMountPos(obj2.get_pos()));
-		this.end_anchor.set_pos(obj2.getLinkMountPos(obj1.get_pos()));
+		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.getPos()));
+		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.getPos()));
 		this.resetBezier1();
 		this.resetBezier2();
 		this.update();
@@ -3698,10 +3720,10 @@ class LinkVisual extends BaseConnection {
 	syncAnchorToPrimitive(anchorType) {
 		super.syncAnchorToPrimitive(anchorType);
 		
-		let startpos = this.start_anchor.get_pos();
-		let endpos = this.end_anchor.get_pos();
-		let b1pos = this.b1_anchor.get_pos();
-		let b2pos = this.b2_anchor.get_pos();
+		let startpos = this.start_anchor.getPos();
+		let endpos = this.end_anchor.getPos();
+		let b1pos = this.b1_anchor.getPos();
+		let b2pos = this.b2_anchor.getPos();
 		
 		switch(anchorType) {
 		case anchorTypeEnum.start:
@@ -3752,7 +3774,7 @@ class LinkVisual extends BaseConnection {
 	}
 	updateGraphics() {
 		// The arrow is pointed from the second bezier point to the end
-		let b2pos = this.b2_anchor.get_pos();
+		let b2pos = this.b2_anchor.getPos();
 		
 		let xdiff = this.endX-b2pos[0];
 		let ydiff = this.endY-b2pos[1];
@@ -3764,12 +3786,6 @@ class LinkVisual extends BaseConnection {
 		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
-	finishCreate() {
-		this.resetBezierPoints();
-		// Update the lines to fit the bezier anchors
-		this.syncAnchorToPrimitive(anchorTypeEnum.bezier1);
-		this.syncAnchorToPrimitive(anchorTypeEnum.bezier2);	
-	}
 	update() {
 		// This function is similar to TwoPointer::update but it takes attachments into account
 		
@@ -3778,22 +3794,22 @@ class LinkVisual extends BaseConnection {
 		// _start_attach is null if we are not attached to anything
 		
 		if (this.getStartAttach() != null && this.start_anchor != null) {
-			if (this.getStartAttach().get_pos) {
-				let oldPos = this.start_anchor.get_pos();
-				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.get_pos());
+			if (this.getStartAttach().getPos) {
+				let oldPos = this.start_anchor.getPos();
+				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.getPos());
 				// If start point have moved reset b1
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.set_pos(newPos);
+					this.start_anchor.setPos(newPos);
 				}
 			}
 		}
 		if (this.getEndAttach() != null && this.end_anchor != null) {
-			if (this.getEndAttach().get_pos) {
-				let oldPos = this.end_anchor.get_pos();
-				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.get_pos());
+			if (this.getEndAttach().getPos) {
+				let oldPos = this.end_anchor.getPos();
+				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.getPos());
 				// If end point have moved reset b2
 				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.set_pos(newPos);
+					this.end_anchor.setPos(newPos);
 				}
 			}
 		}
@@ -3803,8 +3819,8 @@ class LinkVisual extends BaseConnection {
 		this.updateGraphics();
 	}
 	keepRelativeHandlePositions() {
-		this.b1_anchor.set_pos(this.localToWorld(this.b1Local));
-		this.b2_anchor.set_pos(this.localToWorld(this.b2Local));
+		this.b1_anchor.setPos(this.localToWorld(this.b1Local));
+		this.b2_anchor.setPos(this.localToWorld(this.b2Local));
 	}
 	setHandle1Pos(newPos) {
 		this.b1Local = this.worldToLocal(newPos);
@@ -3820,18 +3836,6 @@ class BaseTool {
 		this.middleDownY = 0;
 		this.downScrollPosX = 0;
 		this.downScrollPosY = 0;
-	}
-	static middleMouseDown(x,y) {
-		this.middleDownX = x;
-		this.middleDownY = y;
-		this.downScrollPosX = $("#svgplanebackground").scrollLeft();
-		this.downScrollPosY = $("#svgplanebackground").scrollTop();
-	}
-	static middleMouseMove(x,y) {
-		let diffX = this.middleDownX - x;
-		let diffY = this.middleDownY - y;
-		$("#svgplanebackground").scrollLeft(this.downScrollPosX + diffX);
-		$("#svgplanebackground").scrollTop( this.downScrollPosY + diffY);
 	}
 	static leftMouseDown(x,y) {
 		// Is triggered when mouse goes down for this tool
@@ -4282,9 +4286,11 @@ class MouseTool extends BaseTool {
 	static leftMouseUp(x,y) {
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selected_anchor = get_only_selected_anchor_id();
-		if(selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
-			attach_selected_anchor(object_array[selected_anchor.child_id]);
-			object_array[selected_anchor.child_id].updatePosition();
+
+		if (selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {			
+			let parent = connection_array[selected_anchor.parent_id];
+			let tool = ToolBox.tools[parent.getType()];
+			tool.mouseUpSingleAnchor(x, y, false, selected_anchor.child_id);
 		}
 
 		if (empty_click_down) {
@@ -4307,9 +4313,10 @@ class TwoPointerTool extends BaseTool {
 		this.primitive = null; // The primitive in Insight Maker engine we are creating
 		this.current_connection = null; // The visual we are working on right now
 		this.type = "flow";
+		this.rightClickMode = false;
 	}
-	static set_type() {
-		
+	static enterTool(mouseButton) {
+		this.rightClickMode = (mouseButton === mouse.right);
 	}
 	static getType() {
 		return "none";
@@ -4334,7 +4341,7 @@ class TwoPointerTool extends BaseTool {
 		if (start_element != null && this.current_connection.getStartAttach) {
 			this.current_connection.setStartAttach(get_parent(start_element));
 		}
-		this.current_connection.set_name(primitive_name);
+		this.current_connection.setName(primitive_name);
 		
 		// make sure start anchor is synced with primitive 
 		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
@@ -4362,24 +4369,22 @@ class TwoPointerTool extends BaseTool {
 			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
 			let signX = Math.sign(sideX);
 			let signY = Math.sign(sideY);
-			moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+			moveObject.setPos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
 		} else {
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 		}
 		parent.update();
 		object_array[node_id].updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
-		this.mouseMove(x, y, shiftKey);
-		if (this.current_connection.getStartAttach) {
-			attach_selected_anchor(this.current_connection.end_anchor);
-		}
-		
 		this.current_connection.update();
-		this.current_connection.finishCreate();
-		
 		this.current_connection = null;
 		last_clicked_element = null;
+		if (this.rightClickMode === false) {
+			ToolBox.setTool("mouse");
+		}
+	}
+	static rightMouseDown(x,y) {
 		ToolBox.setTool("mouse");
 	}
 	static leaveTool() {
@@ -4419,11 +4424,6 @@ class FlowTool extends TwoPointerTool {
 		// update connecting links 
 		find_connections(parent).map(conn => conn.update());
 	}
-	static leftMouseUp(x, y) {
-		if (this.current_connection) {
-			super.leftMouseUp(x, y);
-		}
-	}
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
@@ -4441,7 +4441,7 @@ class FlowTool extends TwoPointerTool {
 				let parent = connection_array[only_selected_anchor["parent_id"]];
 				let child = object_array[only_selected_anchor["child_id"]];
 				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
-					let prevAnchorPos = parent.getPreviousAnchor(child.id).get_pos();
+					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x ,y]) < 10) {
 						if (parent.middleAnchors.length > 0) {
 							// remove last middle anchor
@@ -4454,9 +4454,24 @@ class FlowTool extends TwoPointerTool {
 					}
 				}
 			}
+		} else {
+			ToolBox.setTool("mouse");
 		}
 	}
-
+	static leftMouseUp(x, y, shiftKey) {
+		if (this.current_connection) {
+			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+			this.current_connection = null;
+			last_clicked_element = null;
+	
+			if (this.rightClickMode === false) {
+				ToolBox.setTool("mouse");
+			}
+		}
+	}
+	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
+		attach_anchor(object_array[node_id]);
+	}
 	static getType() {
 		return "flow";
 	}
@@ -4537,19 +4552,19 @@ class LineTool extends TwoPointerTool {
 				// Place Horizontal or vertical
 				if (Math.abs(sideX) < Math.abs(sideY)) {
 					// place vertical |
-					moveObject.set_pos([oppositeX, y]);
+					moveObject.setPos([oppositeX, y]);
 				} else {
 					// place Horizontal -
-					moveObject.set_pos([x, oppositeY]);
+					moveObject.setPos([x, oppositeY]);
 				}
 			} else {
 				// place at 45 degree angle 
 				let signX = Math.sign(sideX);
 				let signY = Math.sign(sideY);
-				moveObject.set_pos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
+				moveObject.setPos([oppositeX+signX*shortSideLength, oppositeY+signY*shortSideLength]);
 			}
 		} else {
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 		}
 		parent.update();
 		object_array[node_id].updatePosition();
@@ -4671,7 +4686,7 @@ class LinkTool extends TwoPointerTool {
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
 			let moveObject = get_object(node_id);
 			let parent = get_parent(moveObject);
-			moveObject.set_pos([x,y]);
+			moveObject.setPos([x,y]);
 			parent.update();
 		} else if (anchor_type === "b1_anchor") {
 			let parent = connection_array[get_parent_id(node_id)];
@@ -4684,8 +4699,32 @@ class LinkTool extends TwoPointerTool {
 		}
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
-		let start_pos = get_object(move_node_id).get_pos();
+		let start_pos = get_object(move_node_id).getPos();
 		this.mouseMoveSingleAnchor(start_pos[0]+diff_x, start_pos[1]+diff_y, shiftKey, move_node_id);
+	}
+	static mouseUpSingleAnchor(x ,y, shiftKey, node_id) {
+		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
+		let anchor = object_array[node_id];
+		let parent = get_parent(anchor);
+		if (anchor.getAnchorType() === anchorTypeEnum.start || anchor.getAnchorType() === anchorTypeEnum.end) {
+			attach_anchor(anchor);
+			parent.update();
+			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
+				// delete link is not attached at both ends 
+				delete_selected_objects();		
+			}
+		} else if (anchor.getAnchorType() === anchorTypeEnum.bezier1 || anchor.getAnchorType() === anchorTypeEnum.bezier2) {
+			parent.update();
+		}
+	}
+	static leftMouseUp(x, y, shiftKey) {
+		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+		
+		this.current_connection = null;
+		last_clicked_element = null;
+		if (this.rightClickMode === false) {
+			ToolBox.setTool("mouse");
+		}
 	}
 	static getType() {
 		return "link";
@@ -4693,9 +4732,9 @@ class LinkTool extends TwoPointerTool {
 }
 LinkTool.init();
 
-function attach_selected_anchor(selectedAnchor) {
-	[x,y]=selectedAnchor.get_pos();
-	let parentConnection = get_parent(selectedAnchor);
+function attach_anchor(anchor) {
+	[x,y]=anchor.getPos();
+	let parentConnection = get_parent(anchor);
 	
 	let	elements_under = find_elements_under(x,y);
 	let anchor_element = null;
@@ -4706,10 +4745,9 @@ function attach_selected_anchor(selectedAnchor) {
 	for(let i = 0; i < elements_under.length; i++) {
 		let element = elements_under[i];
 		
-		let elemIsNotSelected = ! element.is_selected();
-		let elemIsOkType = parentConnection.attachableTypes.includes(element.getType());
+		let elemIsNotSelected = ! element.isSelected();
 		let elemIsNotParentOfAnchor = element[i] != parentConnection;
-		if (elemIsNotSelected && elemIsOkType && elemIsNotParentOfAnchor) {
+		if (elemIsNotSelected && elemIsNotParentOfAnchor) {
 			attach_to = element;
 			break;
 		}
@@ -4718,7 +4756,7 @@ function attach_selected_anchor(selectedAnchor) {
 		return false;
 	}
 	
-	switch(selectedAnchor.getAnchorType()) {
+	switch(anchor.getAnchorType()) {
 	case anchorTypeEnum.start:
 		parentConnection.setStartAttach(attach_to);
 		break;
@@ -4855,7 +4893,7 @@ function get_selected_root_objects() {
 		let parent = get_parent(all_objects[key]);
 		
 		// If any element is selected we add its parent
-		if (all_objects[key].is_selected()) {
+		if (all_objects[key].isSelected()) {
 			result[parent.id]=parent;
 		}
 	}
@@ -4888,12 +4926,12 @@ function delete_selected_objects() {
 function get_selected_objects() {
 	let return_array = {};
 	for(let key in object_array) {
-		if (object_array[key].is_selected()) {
+		if (object_array[key].isSelected()) {
 			return_array[key] = object_array[key];
 		}
 	}
 	for(let key in connection_array) {
-		if (connection_array[key].is_selected()) {
+		if (connection_array[key].isSelected()) {
 			return_array[key] = connection_array[key];
 		}
 	}
@@ -4945,7 +4983,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
 		}
-		if (last_clicked_element.is_selected()) {
+		if (last_clicked_element.isSelected()) {
 			if (event.shiftKey) {
 				last_clicked_element.unselect();
 			}
@@ -5022,7 +5060,7 @@ function set_name(id,new_name) {
 	if (!tobject)  {
 		return;
 	}
-	tobject.set_name(new_name);
+	tobject.setName(new_name);
 	tobject.afterNameChange();
 }
 
@@ -5169,11 +5207,6 @@ function mouseDownHandler(event) {
 			leftmouseisdown = true;
 			currentTool.leftMouseDown(x,y);	
 			break;
-		case mouse.middle: 
-			event.preventDefault();
-			middlemouseisdown = true;
-			currentTool.middleMouseDown(x,y);
-			break;
 		case mouse.right: 
 			// if right mouse button down
 			currentTool.rightMouseDown(x,y);
@@ -5187,38 +5220,27 @@ function mouseMoveHandler(event) {
 
 	lastMouseX = x;
 	lastMouseY = y;
-
-	if (middlemouseisdown) {
-		event.preventDefault();
-		currentTool.middleMouseMove(x,y);
-	}
 	
 	if (leftmouseisdown) {
 		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 }
 function mouseUpHandler(event) {
-	switch(event.which) {
-		case(mouse.left):
-			if (!leftmouseisdown) {
-				return;
-			}
-			// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
-			do_global_log("mouseUpHandler");
-			let offset = $(svgplane).offset();
-			let x = event.pageX-offset.left;
-			let y = event.pageY-offset.top;
-			
-			currentTool.leftMouseUp(x, y, event.shiftKey);
-			leftmouseisdown = false;
-			updateInfoBar();
-			History.storeUndoState();
-		break;
-		case(mouse.middle): 
-			middlemouseisdown = false;
-		break;
-	}
-	
+	if (event.which === mouse.left) {
+		if (!leftmouseisdown) {
+			return;
+		}
+		// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
+		do_global_log("mouseUpHandler");
+		let offset = $(svgplane).offset();
+		let x = event.pageX-offset.left;
+		let y = event.pageY-offset.top;
+		
+		currentTool.leftMouseUp(x, y, event.shiftKey);
+		leftmouseisdown = false;
+		updateInfoBar();
+		History.storeUndoState();
+	}	
 }
 
 function find_elements_under(x, y) {	
@@ -5353,7 +5375,7 @@ class Clipboard {
 			let clipboardItem = new ClipboardItem(parentIdArray[i]);
 			let tmp_object = get_object(parentIdArray[i]);
 			
-			let absolutePosition = tmp_object.get_pos();
+			let absolutePosition = tmp_object.getPos();
 			clipboardItem.absolutePosition = absolutePosition;
 			
 			this.copiedItems.push(clipboardItem);			
@@ -5431,7 +5453,22 @@ $(window).load(function() {
 		if (event.keyCode == keyboard["delete"]) {
 			DeleteTool.enterTool();
 		}
-		
+		let moveSize = 2;
+		if (event.shiftKey) {
+			moveSize = 16;
+		}
+		if (event.keyCode == keyboard["right"]) {
+			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
+		}
+		if (event.keyCode == keyboard["up"]) {
+			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
+		}
+		if (event.keyCode == keyboard["left"]) {
+			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
+		}
+		if (event.keyCode == keyboard["down"]) {
+			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
+		}
 		if (event.ctrlKey) {
 			if (event.keyCode == keyboard["1"]) {
 				event.preventDefault();
@@ -5809,8 +5846,10 @@ function syncVisual(tprimitive) {
 			
 			// Insert correct primtives
 			let primitivesString = tprimitive.getAttribute("Primitives");
-			let idsToDisplay = primitivesString.split(",");
-			connection.dialog.setIdsToDisplay(idsToDisplay);
+			if (primitivesString !== "") {
+				let idsToDisplay = primitivesString.split(",");
+				connection.dialog.setIdsToDisplay(idsToDisplay);
+			}
 
 			connection.update();
 			connection.render();
@@ -6013,16 +6052,10 @@ function syncVisual(tprimitive) {
 			if (tprimitive.source != null) {
 				// Attach to object
 				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
-			} else {
-				// Set UI-coordinates to coordinates in primitive
-				connection.start_anchor.set_pos(source_position);
 			}
 			if (tprimitive.target != null) {
 				// Attach to object
 				connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
-			} else {
-				// Set UI-coordinates to coordinates in primitive
-				connection.end_anchor.set_pos(target_position);
 			}
 			let bezierPoints = [
 				tprimitive.getAttribute("b1x"),
@@ -6224,6 +6257,11 @@ function updateInfoBar() {
 				case("histoplot"):
 					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
+				break;
+				case("link"):
+					let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
+					let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
+					infoDef.html(`Link: ${source} -> ${target}`);
 				break;
 				default: 
 					infoDef.html(`${Type} selected`);
@@ -6433,14 +6471,19 @@ class RunResults {
 		});
 	}
 	static updateProgressBar() {
-		// It just happens to 98 wide so its hardcoded, the alternative of getting the width from the $().css seems to cause a bug of always expanding
-		const progressBarWidth = 98;
-		$("#runStatusBarOuter").width(progressBarWidth);
-		$("#runStatusBar").width(progressBarWidth*this.getRunProgressFraction());
+		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
+		$("#runStatusBar").width(`${100*progress}%`);
+		if (progress === 1) {
+			// set color to green 
+			$("#runStatusBar").css("background", "#aaeeaa");
+		} else {
+			// set color to orange
+			$("#runStatusBar").css("background", "#eed0aa");
+		}
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
-		let timeStep = Math.round(this.getTimeStep() * 1000) /1000;
+		let timeStep = this.getTimeStep();
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
@@ -7136,7 +7179,6 @@ class DisplayDialog extends jqDialog {
 		
 		return (`
 			<table class="modernTable" >
-			<tr>
 				${primitives.map((p, idx, prims) => `
 					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
 						<td class="text">
@@ -7153,7 +7195,6 @@ class DisplayDialog extends jqDialog {
 						</td>
 					</tr>
 				`).join('')}
-			</tr>
 			</table>
 		`);
 	}
@@ -7165,6 +7206,12 @@ class DisplayDialog extends jqDialog {
 	bindAxisLimitsEvents() {
 		$(this.dialogContent).find(".intervalsettings").change((event) => {
 			this.updateInterval();
+		});
+	}
+
+	bindPlotPerEvents() {
+		$(this.dialogContent).find(".intervalsettings").change((event) => {
+			
 		});
 	}
 
@@ -7893,9 +7940,6 @@ class XyPlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("XY Plot Properties");
 
-		this.markersChecked = false;
-		this.lineChecked = true;
-
 		this.xMin = 0;
 		this.xMax = 0;
 		this.xAuto  = true;
@@ -7937,25 +7981,24 @@ class XyPlotDialog extends DisplayDialog {
 		</table>
 		`);
 	}
-	renderMarkerRadioHTML() {
+	renderMarkerHTML() {
 		return (`
 			<table class="modernTable" style="text-align: left;">
 				<tr>
-				<td style="text-align: left">
-						Line
-					</td>	
-					<td>
-						<input class="line enterApply" type="checkbox" name="displayType">
-					</td>
-					
+					<td style="text-align: left">Show Line</td>	
+					<td><input class="line enterApply" type="checkbox" name="displayType"></td>
 				</tr>
 				<tr>
-					<td style="text-align: left">
-						Markers
-					</td>
-					<td>
-						<input class="markers enterApply" type="checkbox" name="displayType">
-					</td>
+					<td style="text-align: left">Show Markers</td>
+					<td><input class="markers enterApply" type="checkbox" name="displayType"></td>
+				</tr>
+				<tr>
+					<td style="text-align: left">Mark Start (🔴)</td>
+					<td><input class="markStart enterApply" type="checkbox"></td>
+				</tr>
+				<tr>
+					<td style="text-align: left" >Mark End (🟩)</td>
+					<td><input class="markEnd enterApply" type="checkbox"></td>
 				</tr>
 			</table>
 		`);
@@ -7986,7 +8029,9 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</div>
 					<div class="table-cell">
-						${this.renderMarkerRadioHTML()} 
+						${this.renderMarkerHTML()} 
+						<div class="verticalSpace"></div>
+						${this.renderPlotPerHtml()}
 						<div class="verticalSpace"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="verticalSpace"></div>
@@ -8007,33 +8052,46 @@ class XyPlotDialog extends DisplayDialog {
 
 	bindMarkersHTML() {
 		$(this.dialogContent).find(".line").change((event) => {
-			this.lineChecked = event.target.checked;
-			this.updateInterval();
+			this.primitive.setAttribute("ShowLine", event.target.checked);
 		});
 		$(this.dialogContent).find(".markers").change((event) => {
-			this.markersChecked = event.target.checked;
-			this.updateInterval();
+			this.primitive.setAttribute("ShowMarker", event.target.checked);
 		});
-	}
-
-	isMarkersChecked() {
-		return this.markersChecked;
-	}
-
-	isLineChecked() {
-		return this.lineChecked;
+		$(this.dialogContent).find(".markStart").change((event) => {
+			this.primitive.setAttribute("MarkStart", event.target.checked);
+		});
+		$(this.dialogContent).find(".markEnd").change((event) => {
+			this.primitive.setAttribute("MarkEnd", event.target.checked);
+		});
 	}
 
 	updateInterval() {
 		super.updateInterval();
-		$(this.dialogContent).find(".line")[0].checked = this.lineChecked;
-		$(this.dialogContent).find(".markers")[0].checked = this.markersChecked;
+		$(this.dialogContent).find(".line").prop("checked", this.primitive.getAttribute("ShowLine") === "true");
+		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
+		$(this.dialogContent).find(".markStart").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
+		$(this.dialogContent).find(".markEnd").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
+		// update plotPer
+		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+
+		if (this.autoPlotPer) { 
+			this.setDefaultPlotPeriod();
+		} else {
+			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+		}
+
+		$(this.dialogContent).find(".plotPer").val(this.plotPer);
+		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
+	}
+
+	setDefaultPlotPeriod() {
+		this.plotPer = getTimeStep();
 	}
 
 	getXMin() {
@@ -8771,27 +8829,25 @@ class EquationEditor extends jqDialog {
 				.clickFunction { cursor: pointer; }
 			</style>
 			<div class="table">
-  			<div class="table-row">
-					<div class="table-row">
-						<div class="table-cell" style="width: 300px">
-							<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
-								<b>Name:</b><br/>
-								<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
-								<div class="nameWarningDiv" style="color: red;"></div><br/>
-								<b>Definition:</b><br/>
-								<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
-								<br/>
-								<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
-							</div>
-						<div class="restrictNonNegativeDiv">
+  				<div class="table-row">
+					<div class="table-cell" style="width: 300px">
+						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+							<b>Name:</b><br/>
+							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
+							<div class="nameWarningDiv" style="color: red;"></div><br/>
+							<b>Definition:</b><br/>
+							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
-							<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
+							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 						</div>
+					<div class="restrictNonNegativeDiv">
+						<br/>
+						<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
 					</div>
 				</div>
 			</div>
     	<div class="table-cell">
-    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding:  10px 20px 20px 0px;">
+    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding: 10px 20px 20px 0px;">
 				<div class="accordionCluster">
 					</div> <!--End of accordionCluster. Programming help is inserted here-->
 				</div>

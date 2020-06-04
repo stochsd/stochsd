@@ -44,6 +44,7 @@ primitiveBank.folder.setAttribute('LabelPosition', "Middle");
 primitiveBank.folder.setAttribute('AgentBase', "");
 
 primitiveBank.ghost = doc.createElement('Ghost');
+primitiveBank.ghost.setAttribute('Color', 'black');
 primitiveBank.ghost.setAttribute('Source', '');
 
 primitiveBank.picture = doc.createElement('Picture');
@@ -95,6 +96,10 @@ setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute('ShowLine', true);
+primitiveBank.xyplot.setAttribute('ShowMarker', false);
+primitiveBank.xyplot.setAttribute('MarkStart', false);
+primitiveBank.xyplot.setAttribute('MarkEnd', false);
 primitiveBank.xyplot.setAttribute('LineWidth', 2);
 primitiveBank.xyplot.setAttribute('TitleLabel', '');
 primitiveBank.xyplot.setAttribute('XLogScale', false);
