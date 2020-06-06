@@ -4,9 +4,9 @@ var Settings = {
 	MaxRecentFiles: 10,
 	// Controls the zoom in NW mode
 	nwInitZoom: 0.5,
-	// Whatever to use New Model Window
-	newModelWindow: false, 
-	// force time unit window if no time unit is set 
+	// Promt TimeUnitDialog On Start 
+	promptTimeUnitDialogOnStart: true, 
+	// Force timeUnitDialog if no time unit is set (shows timeUnitDialog everytime svgplane is clicked)
 	forceTimeUnit: false,
 	// The font size under the primitives
 	primitiveFontSize: 13,

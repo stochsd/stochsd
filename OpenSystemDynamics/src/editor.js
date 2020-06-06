@@ -16,7 +16,6 @@ var debugDialog;
 var aboutDialog;
 var thirdPartyLicensesDialog;
 var licenseDialog;
-var newModelDialog;
 
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
@@ -85,13 +84,17 @@ function preserveRestart() {
 }
 
 function restoreAfterRestart() {
-	makeNewModel();
 	do_global_log("restoring");
 	let reloadPending = localStorage.getItem("reloadPending");
 	
 	if (reloadPending == null) {
 		// No reload is pending
 		do_global_log("nothing pending to restore");
+		if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false) {
+			// if creating new file without OK timeUnit => promt TimeUnitDialog
+			// prompt TimeUnitDialog is unit not set 
+			timeUnitDialog.show();
+		}
 		return;
 	}
 	do_global_log("removing pending flag");
@@ -106,6 +109,12 @@ function restoreAfterRestart() {
 	
 	// Read the history from localStorage
 	History.fromLocalStorage();
+	
+	if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false ) {
+		// if opening new file without OK timeUnit => promt TimeUnitDialog
+		// prompt TimeUnitDialog is unit not set 
+		timeUnitDialog.show();
+	}
 }
 
 class History {
@@ -5648,7 +5657,6 @@ $(window).load(function() {
 	aboutDialog = new AboutDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	licenseDialog = new LicenseDialog();
-	newModelDialog = new NewModelDialog();
 	
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
@@ -8309,14 +8317,10 @@ class TableDialog extends DisplayDialog {
 	}
 }
 
-function makeNewModel() {
-
-	if(Settings.newModelWindow) {
-		newModelDialog.show();
-	}
-}
 
 class NewModelDialog extends jqDialog {
+	// This dialog is not used.
+	// At start TimeUnitDialog is used instead 
 	constructor() {
 		super();
 		this.setTitle("New model");
