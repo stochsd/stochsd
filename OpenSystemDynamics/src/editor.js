@@ -1160,6 +1160,9 @@ class AnchorPoint extends OnePointer {
 	}
 	makeSquare() {
 		this.isSquare = true;
+		this.reloadImage();
+	}
+	reloadImage() {
 		this.clearImage();
 		this.loadImage();
 	}
@@ -1577,15 +1580,20 @@ class TwoPointer extends BaseObject {
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
 		
+		// anchors must exist before make graphics 
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
+
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event) {
 			let node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
-
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
 		
+		// this is done so anchor is ontop 
+		this.start_anchor.reloadImage();
+		this.end_anchor.reloadImage();
+
 		last_connection = this;
 	}
 
@@ -2219,10 +2227,12 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_rect(0,0,0,0, defaultStroke, "none", "element");
+		let [x0, y0] = this.start_anchor.getPos();
+		let [x1, y1] = this.end_anchor.getPos();
+		this.element = svg_rect(x0, y0, x1-x0, y1-y0, defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(0, 0, 0, 0, "transparent", "none");
+		this.clickRect = svg_rect(x0, y0, x1-x0, y1-y0, "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2276,9 +2286,13 @@ class EllipseVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_ellipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickEllipse = svg_ellipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
-		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+		let cx = (this.startX + this.endX)/2;
+		let cy = (this.startY + this.endY)/2;
+		let rx = Math.max(Math.abs(this.startX - this.endX)/2, 1);
+		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
+		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
+		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none","element", {"stroke-width": "10"});
+		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
@@ -2398,8 +2412,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(0, 0, 0, 0,	defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreignobject(0, 0, 200, 200, "table not renderd yet", "white");
+		this.element = svg_rect(this.startX, this.startY, this.endX-this.startX, this.endY-this.startY,	defaultStroke, "none", "element", "");
+		this.htmlElement = svg_foreignobject(this.startX, this.endY, this.endX-this.startX, this.endY-this.startY, "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2456,7 +2470,10 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
 		this.targetElement.style.overflow = "hidden";
-		this.targetElement.innerHTML = "hej";
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		this.targetElement.style.width = "2px";
+		this.targetElement.style.height = "2px";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
 		$(this.targetElement).mousedown((event) => {
@@ -2475,7 +2492,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.doubleClick(this.id);
 		});
 		
-		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
+		this.element = svg_rect(this.startX, this.startY, this.endX-this.startX, this.endY-this.startY, defaultStroke, "white", "element",	"");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -3467,8 +3484,8 @@ class LineVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
-		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
+		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
+		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
