@@ -1579,10 +1579,9 @@ class TwoPointer extends BaseObject {
 		this.selected = false;
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
-		
+
 		// anchors must exist before make graphics 
-		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
-		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
+		this.createInitialAnchors(pos0, pos1);
 
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event) {
@@ -1595,6 +1594,11 @@ class TwoPointer extends BaseObject {
 		this.end_anchor.reloadImage();
 
 		last_connection = this;
+	}
+
+	createInitialAnchors(pos0, pos1) {
+		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
+		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
 	}
 
 	getAnchors() {
@@ -3551,15 +3555,25 @@ class LineVisual extends TwoPointer {
 class LinkVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
+		
+		// reload image of anchor to make sure anchor is ontop
+		this.b1_anchor.reloadImage();
+		this.b2_anchor.reloadImage();
+	}
+	
+	createInitialAnchors(pos0, pos1) {
 		// Used to keep a local coordinate system between start- and endAnchor
 		// startLocal = [0,0], endLocal = [1,0]
 		this.b1Local = [0.3, 0.0];
 		this.b2Local = [0.7, 0.0];
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
+		super.createInitialAnchors(pos0, pos1);
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor", [0,0], anchorTypeEnum.bezier1);
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor", [0,0], anchorTypeEnum.bezier2);
+		this.keepRelativeHandlePositions();
 		this.b1_anchor.makeSquare();
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
 		this.b2_anchor.makeSquare();
 	}
+
 	getAnchors() {
 		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
 	}
@@ -3699,12 +3713,18 @@ class LinkVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
+		let [x1, y1] = this.start_anchor.getPos();
+		let [x2, y2] = this.b1_anchor.getPos();
+		let [x3, y3] = this.b2_anchor.getPos();
+		let [x4, y4] = this.end_anchor.getPos();
+		
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowHead, 0, 0);
-		this.click_area = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"stroke":"black", "stroke-width":"1"});
+		svg_translate(this.arrowHead, x4, y4);
+
+		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
@@ -3712,8 +3732,8 @@ class LinkVisual extends BaseConnection {
 		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 
-		this.b1_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
-		this.b2_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b2_line = svg_line(x4, y4, x3, y3, "black", "black", "", {"stroke-dasharray": "5 5"});
 
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
