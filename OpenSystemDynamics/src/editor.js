@@ -2112,6 +2112,7 @@ class FlowVisual extends BaseConnection {
 		$(this.group).dblclick(() => {
 			this.doubleClick(this.id);
 		});
+		this.updateGraphics();
 	}
 	
 	getDirection() {
