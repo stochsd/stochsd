@@ -2232,12 +2232,10 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		let [x0, y0] = this.start_anchor.getPos();
-		let [x1, y1] = this.end_anchor.getPos();
-		this.element = svg_rect(x0, y0, x1-x0, y1-y0, defaultStroke, "none", "element");
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(x0, y0, x1-x0, y1-y0, "transparent", "none");
+		this.clickRect = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2417,8 +2415,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(this.startX, this.startY, this.endX-this.startX, this.endY-this.startY,	defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreignobject(this.startX, this.endY, this.endX-this.startX, this.endY-this.startY, "table not renderd yet", "white");
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.htmlElement = svg_foreignobject(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2496,8 +2494,8 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		$(this.targetElement).bind("contextmenu", (event)=> {
 			this.doubleClick(this.id);
 		});
-		
-		this.element = svg_rect(this.startX, this.startY, this.endX-this.startX, this.endY-this.startY, defaultStroke, "white", "element",	"");
+
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
