@@ -3064,7 +3064,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 	makeGraphics() {
 		super.makeGraphics();
-		this.targetElement.style.wordBreak = "break-word";
+		this.targetElement.style.overflowWrap = "break-word";
 		this.render();
 	}
 	render() {
