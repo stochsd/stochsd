@@ -3064,6 +3064,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 	makeGraphics() {
 		super.makeGraphics();
+		this.targetElement.style.overflowWrap = "break-word";
 		this.render();
 	}
 	render() {
@@ -3074,8 +3075,9 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		} else {
 			this.element.setAttribute("visibility", "visible");
 		}
+		// space is replaced with two spaces: "&nbsp;" and " " otherwise overflow-wrap: break-word does not work 
 		// Replace 							new line 		and 	space
-		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp; ");
 		this.updateHTML(formatedText);
 	}
 }
