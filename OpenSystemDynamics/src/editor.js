@@ -3075,9 +3075,9 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		} else {
 			this.element.setAttribute("visibility", "visible");
 		}
-		// space is replaced with two spaces: "&nbsp;" and " " otherwise overflow-wrap: break-word does not work 
+		// space is replaced with span "&nbsp;" does not work since it does not work with overflow-wrap: break-word
 		// Replace 							new line 		and 	space
-		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp; ");
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
 	}
 }
