@@ -7086,7 +7086,7 @@ class DisplayDialog extends jqDialog {
 		// set default button listener
 		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
 			this.setRoundToZero(true);
-			roundToZeroField.val(Settings["defaultRoundToZeroAtValue"]);
+			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
 		});
 
