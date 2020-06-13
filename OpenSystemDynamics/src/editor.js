@@ -6430,12 +6430,11 @@ class RunResults {
 		this.stopSimulation();
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
-		// We can only take 100 iterations between every update to avoid the feeling of program freezing
-		if (getTimeLength()*getTimeStep() >= 100) {
-			// For long runs. Longer then 100
-			setPauseInterval(getTimeStep()*100);
+		if (getTimeLength()/getTimeStep() < 1000) {
+			setPauseInterval(getTimeLength()/10);
 		} else {
-			setPauseInterval(getTimeStep()*getTimeLength());
+			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
+			setPauseInterval(getTimeStep()*1000);
 		}
 		this.runState = runStateEnum.running;
 		runOverlay.block();
