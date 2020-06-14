@@ -672,19 +672,12 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		return "";
 	}
 
-	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if(number == 0) {
+	// Zero is a special case also or Round to zero when close 
+    if(number == 0 || (roundToZeroAt && Math.abs(number) < roundToZeroAt)) {
 		return "0";
 	}
-	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
-		// Round to zero when close 
-		if (number > 0) {
-			return "0+";
-		} else {
-			return "0-";
-		}
-	}
+
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
 
@@ -7063,7 +7056,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0+</b> or <b>0-</b> if <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 					</td>
 					<td>
 						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
