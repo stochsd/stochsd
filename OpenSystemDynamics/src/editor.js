@@ -5500,15 +5500,19 @@ $(window).load(function() {
 		}
 		if (event.keyCode == keyboard["right"]) {
 			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["up"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["left"]) {
 			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["down"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
+			event.preventDefault();
 		}
 		if (event.ctrlKey) {
 			if (event.keyCode == keyboard["1"]) {
