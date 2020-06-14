@@ -1,5 +1,38 @@
 # Todo list for uploading new version
 
+
+
+###Create new StochSD version (2020 june):
+
+####Build general versions with gulp
+
+1. goto: `stochsd/distribute/`
+
+2. run command: `npm run build`
+
+   This runs `gulp` and creates the folder `stochsd/distribute/output/` containing `package.nw/`  for the desktop version and `stochsd-web/` for the web version.
+
+**Note:** If problems arise with gulp, set latest versions of [gulp](https://www.npmjs.com/package/gulp) and [gulp-useref](https://www.npmjs.com/package/gulp-useref) or 
+learn more at https://www.udemy.com/starting-with-gulp/learn/v4/content.
+
+####Make Windows version of StochSD
+
+goto: `stochsd/distribute/package-for-windows/`
+
+And run command:
+
+`./build-for-win32.sh` or `./build-for-win64.sh` depending on what version is wanted.
+
+This will create the folder ``stochsd/distribute/package-for-windows/tmp/` containing `stochsd-yyyy.mm.dd-winXX`.
+
+The version is dependent on the file: `stochsd/OpenSystemDynamics/src/version.js`
+
+**Note:** If `zip` command is not installed in `Git BASH` [here is a guide](https://ranxing.wordpress.com/2016/12/13/add-zip-into-git-bash-on-windows/)
+
+--------------
+
+
+
 - Download nw.js (normal not sdk) versions for windows 64bit, windows 32bit (0.15.4 is last one to work with WinXP)
 - Change folder name of nwjs folder to: `StochSD-WindowsXXbit-yyyy-mm-dd` 
 - Build Desktop and Web version in repo directory with:
@@ -45,7 +78,7 @@ for windows or unix. This creates folder `./build` that contains `./build/packag
 
   This creates a `./build` folder
 
-- upload `./build` to Filezilla replace `homepage`
+- upload `./build` to Filezilla replace `homepage/`
 
 - 
 
@@ -53,7 +86,7 @@ for windows or unix. This creates folder `./build` that contains `./build/packag
 
 Settings for applications in folder:
 
-C:\Users\magnu\AppData\Local
+`C:\Users\magnu\AppData\Local`
 
 
 

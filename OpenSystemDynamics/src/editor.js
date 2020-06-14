@@ -1160,6 +1160,9 @@ class AnchorPoint extends OnePointer {
 	}
 	makeSquare() {
 		this.isSquare = true;
+		this.reloadImage();
+	}
+	reloadImage() {
 		this.clearImage();
 		this.loadImage();
 	}
@@ -1576,17 +1579,26 @@ class TwoPointer extends BaseObject {
 		this.selected = false;
 		this.superClass = "TwoPointer";
 		connection_array[this.id] = this;
-		
+
+		// anchors must exist before make graphics 
+		this.createInitialAnchors(pos0, pos1);
+
 		this.makeGraphics();
 		$(this.group).on("mousedown",function(event) {
 			let node_id = this.getAttribute("node_id");
 			primitive_mousedown(node_id, event);
 		});
+		
+		// this is done so anchor is ontop 
+		this.start_anchor.reloadImage();
+		this.end_anchor.reloadImage();
 
+		last_connection = this;
+	}
+
+	createInitialAnchors(pos0, pos1) {
 		this.start_anchor = new AnchorPoint(this.id+".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
 		this.end_anchor = new AnchorPoint(this.id+".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
-		
-		last_connection = this;
 	}
 
 	getAnchors() {
@@ -2100,6 +2112,7 @@ class FlowVisual extends BaseConnection {
 		$(this.group).dblclick(() => {
 			this.doubleClick(this.id);
 		});
+		this.updateGraphics();
 	}
 	
 	getDirection() {
@@ -2219,10 +2232,10 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_rect(0,0,0,0, defaultStroke, "none", "element");
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(0, 0, 0, 0, "transparent", "none");
+		this.clickRect = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2276,9 +2289,13 @@ class EllipseVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_ellipse(0, 0, 0, 0, defaultStroke, "none", "element");
-		this.clickEllipse = svg_ellipse(0, 0, 0, 0, "transparent", "none","element", {"stroke-width": "10"});
-		this.selector = svg_rect(0,0,0,0, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+		let cx = (this.startX + this.endX)/2;
+		let cy = (this.startY + this.endY)/2;
+		let rx = Math.max(Math.abs(this.startX - this.endX)/2, 1);
+		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
+		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
+		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none","element", {"stroke-width": "10"});
+		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
@@ -2398,8 +2415,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
 		});
-		this.element = svg_rect(0, 0, 0, 0,	defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreignobject(0, 0, 200, 200, "table not renderd yet", "white");
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.htmlElement = svg_foreignobject(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2456,7 +2473,10 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.targetElement.style.backgroundColor = "white";
 		this.targetElement.style.zIndex = 100;
 		this.targetElement.style.overflow = "hidden";
-		this.targetElement.innerHTML = "hej";
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		this.targetElement.style.width = "2px";
+		this.targetElement.style.height = "2px";
 		document.getElementById("svgplanebackground").appendChild(this.targetElement);
 		
 		$(this.targetElement).mousedown((event) => {
@@ -2474,8 +2494,8 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		$(this.targetElement).bind("contextmenu", (event)=> {
 			this.doubleClick(this.id);
 		});
-		
-		this.element = svg_rect(0,0,0,0, defaultStroke, "white", "element",	"");
+
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -3044,6 +3064,7 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 	}
 	makeGraphics() {
 		super.makeGraphics();
+		this.targetElement.style.overflowWrap = "break-word";
 		this.render();
 	}
 	render() {
@@ -3054,8 +3075,9 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		} else {
 			this.element.setAttribute("visibility", "visible");
 		}
+		// space is replaced with span "&nbsp;" does not work since it does not work with overflow-wrap: break-word
 		// Replace 							new line 		and 	space
-		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "&nbsp;");
+		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
 	}
 }
@@ -3467,8 +3489,8 @@ class LineVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.line = svg_line(0,0,0,0, defaultStroke, defaultFill, "element");
-		this.clickLine = svg_line(0,0,0,0, "transparent", "none", "element", {"stroke-width": "10"});
+		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
+		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
@@ -3534,15 +3556,25 @@ class LineVisual extends TwoPointer {
 class LinkVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
+		
+		// reload image of anchor to make sure anchor is ontop
+		this.b1_anchor.reloadImage();
+		this.b2_anchor.reloadImage();
+	}
+	
+	createInitialAnchors(pos0, pos1) {
 		// Used to keep a local coordinate system between start- and endAnchor
 		// startLocal = [0,0], endLocal = [1,0]
 		this.b1Local = [0.3, 0.0];
 		this.b2Local = [0.7, 0.0];
-		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier1);
+		super.createInitialAnchors(pos0, pos1);
+		this.b1_anchor = new AnchorPoint(this.id+".b1_anchor", "dummy_anchor", [0,0], anchorTypeEnum.bezier1);
+		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor", [0,0], anchorTypeEnum.bezier2);
+		this.keepRelativeHandlePositions();
 		this.b1_anchor.makeSquare();
-		this.b2_anchor = new AnchorPoint(this.id+".b2_anchor", "dummy_anchor",[0, 0],anchorTypeEnum.bezier2);
 		this.b2_anchor.makeSquare();
 	}
+
 	getAnchors() {
 		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
 	}
@@ -3682,12 +3714,18 @@ class LinkVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
+		let [x1, y1] = this.start_anchor.getPos();
+		let [x2, y2] = this.b1_anchor.getPos();
+		let [x3, y3] = this.b2_anchor.getPos();
+		let [x4, y4] = this.end_anchor.getPos();
+		
 		const headHalfWidth = 2;
 		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowHead, 0, 0);
-		this.click_area = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(0, 0, 0, 0, 0, 0, 0, 0,{"stroke":"black", "stroke-width":"1"});
+		svg_translate(this.arrowHead, x4, y4);
+
+		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
+		this.curve = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
@@ -3695,8 +3733,8 @@ class LinkVisual extends BaseConnection {
 		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 
-		this.b1_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
-		this.b2_line = svg_line(0, 0, 0, 0, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", {"stroke-dasharray": "5 5"});
+		this.b2_line = svg_line(x4, y4, x3, y3, "black", "black", "", {"stroke-dasharray": "5 5"});
 
 		this.showOnlyOnSelect = [this.b1_line,this.b2_line];
 		
@@ -6392,12 +6430,11 @@ class RunResults {
 		this.stopSimulation();
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
-		// We can only take 100 iterations between every update to avoid the feeling of program freezing
-		if (getTimeLength()*getTimeStep() >= 100) {
-			// For long runs. Longer then 100
-			setPauseInterval(getTimeStep()*100);
+		if (getTimeLength()/getTimeStep() < 1000) {
+			setPauseInterval(getTimeLength()/10);
 		} else {
-			setPauseInterval(getTimeStep()*getTimeLength());
+			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
+			setPauseInterval(getTimeStep()*1000);
 		}
 		this.runState = runStateEnum.running;
 		runOverlay.block();
@@ -7048,7 +7085,7 @@ class DisplayDialog extends jqDialog {
 		// set default button listener
 		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
 			this.setRoundToZero(true);
-			roundToZeroField.val(Settings["defaultRoundToZeroAtValue"]);
+			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
 		});
 

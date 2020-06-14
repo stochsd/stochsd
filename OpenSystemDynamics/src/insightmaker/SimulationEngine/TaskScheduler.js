@@ -290,28 +290,21 @@ TaskQueue.prototype.step = function(){
 	}
 	
 	var t = this.tasks.current().time;
-	//debugger;
 	
-//	console.log("--")
-	if(this.tasks.current() !== null /*&& eq(t, this.tasks.current().time)*/){
+	if(this.tasks.current() !== null){
 		var dead = this.tasks.current().deadAction;
 		this.tasks.current().execute();
 		if((! dead) && this.tasks.current().timeShift){
 			this.tasks.current().timeShift()
 			return;
 		}
-		//console.log(this.tasks.current());
 		this.tasks.next();
 	}
-	
-//	console.log(this.tasks.current());
 	
 	if(this.tasks.current() !== null){
 		this.setTime(this.tasks.current().time);
 	}else{
-//		console.log("null");
 		this.tasks.next();
-//		console.log(this.tasks.current())
 		this.setTime(mult(this.tasks.max().time, new Material(10)));
 	}
 }
