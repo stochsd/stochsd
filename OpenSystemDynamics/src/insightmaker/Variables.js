@@ -122,7 +122,7 @@ setValuedProperties(primitiveBank.histoplot);
 primitiveBank.line = doc.createElement('Line');
 primitiveBank.line.setAttribute("ArrowHeadStart", false);
 primitiveBank.line.setAttribute("ArrowHeadEnd", true);
-primitiveBank.line.setAttribute("StrokeWidth", "3");
+primitiveBank.line.setAttribute("StrokeWidth", "1");
 primitiveBank.line.setAttribute("StrokeDashArray", "");
 primitiveBank.line.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.line);

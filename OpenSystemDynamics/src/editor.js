@@ -3486,8 +3486,9 @@ class LineVisual extends TwoPointer {
 		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
-		this.arrowHeadEnd.set_template_points([[16, -8], [0,0], [16, 8]]);
+		let arrowPathPoints = [[13, -4], [0,0], [13, 4]];
+		this.arrowHeadStart.set_template_points(arrowPathPoints);
+		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
@@ -8596,11 +8597,11 @@ class LineDialog extends GeometryDialog {
 		return (`
 			<table class="modernTable">
 				<tr>
-					<td>Show Start Arrow at Start:</td>
+					<td>Arrow head at start point:</td>
 					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
 				</tr>
 				<tr>
-					<td>Show Arrow at End:</td>
+					<td>Arrow head at end point:</td>
 					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
 				</tr>
 			</table>
