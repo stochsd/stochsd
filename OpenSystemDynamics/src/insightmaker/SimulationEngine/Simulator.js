@@ -196,6 +196,7 @@ Simulator.prototype.run = function(config){
 		this.config = config;
 
 		var solvers = Object.keys(this.model.solvers);
+		console.log(solvers);
 		for(var i = 0; i < solvers.length; i++){
 			this.createSolver(this.model.solvers[solvers[i]]);
 		}
@@ -467,6 +468,7 @@ Simulator.prototype.createSolver = function(solver){
 					// Store values in result  
 					me.frame(valued, displayed);
 
+					// calculate actions 
 					var l = actions.length;
 					for(var i = 0; i < l; i++){
 						if(actions[i].dna.recalculate && ! actions[i].block){
@@ -474,14 +476,17 @@ Simulator.prototype.createSolver = function(solver){
 						}
 					}
 
+					// call trasitions 
 					l = transitions.length;
 					for(var i = 0; i < l; i++){
 						if( transitions[i].dna.recalculate ){
 							updateTrigger.call(transitions[i]);
 						}
 					}
+					// step
 					me.step(solver);
 
+					//
 					if(repeat &&  index <= maxIndex){
 						index++;
 						addRK1Solver(times[index], true, true)
