@@ -7222,25 +7222,34 @@ class DisplayDialog extends jqDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
+
 		return (`
 			<table class="modernTable" >
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-							>
-						</td>
-					</tr>
-				`).join('')}
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p)))}
+									data-name="${getName(p)}"
+									data-id="${getID(p)}"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
@@ -7488,7 +7497,15 @@ class TimePlotDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
 		return (`
 			<table class="modernTable">
 			<tr>
@@ -7496,34 +7513,33 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Left</th>
 				<th>Right</th>
 			</tr>
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="L"
-							>
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply"
-								type="checkbox"
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="R"
-							>
-						</td>
-					</tr>
-				`).join('')}
-			</tr>
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply" 
+									type="checkbox" 
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="L"
+								>
+							</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="R"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
