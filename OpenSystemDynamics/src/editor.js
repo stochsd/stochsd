@@ -8888,7 +8888,7 @@ class EquationEditor extends jqDialog {
 			</style>
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 300px">
+					<div class="table-cell" style="width: 300px; height: 300px;">
 						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
@@ -8897,20 +8897,21 @@ class EquationEditor extends jqDialog {
 							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
 							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							</div>
+							<div class="restrictNonNegativeDiv">
+								<br/>
+								<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
+							</div>
 						</div>
-					<div class="restrictNonNegativeDiv">
-						<br/>
-						<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
 					</div>
-				</div>
+					<div class="table-cell">
+					<div style="width:240px;"></div> <!-- div here to show entire window on open since next div has position:absolute -->
+    				<div style="position: absolute; top: 20px; bottom: 0px; overflow-y: scroll; width: 230px; padding: 10px 20px 20px 0px;">
+						<div class="accordionCluster">
+						</div> <!--End of accordionCluster. Programming help is inserted here-->
+					</div>
+  				</div>
 			</div>
-    	<div class="table-cell">
-    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding: 10px 20px 20px 0px;">
-				<div class="accordionCluster">
-					</div> <!--End of accordionCluster. Programming help is inserted here-->
-				</div>
-  			</div>
-		</div>
 		`);
 
 		$(this.dialogContent).find(".nameField").keyup((event) => {
