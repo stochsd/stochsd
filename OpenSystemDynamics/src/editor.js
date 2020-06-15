@@ -3669,6 +3669,7 @@ class LinkVisual extends BaseConnection {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
 			this._end_attach.updateValueError();
+			this._end_attach.update();
 		}
 	}
 	setEndAttach(new_end_attach) {
@@ -3681,9 +3682,11 @@ class LinkVisual extends BaseConnection {
 		}
 		if (old_end_attach) {
 			old_end_attach.updateValueError();
+			old_end_attach.update();
 		}
 		if (new_end_attach) {
 			new_end_attach.updateValueError();
+			new_end_attach.update();
 		}
 	}
 
