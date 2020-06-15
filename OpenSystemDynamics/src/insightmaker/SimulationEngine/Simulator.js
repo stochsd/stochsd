@@ -196,6 +196,7 @@ Simulator.prototype.run = function(config){
 		this.config = config;
 
 		var solvers = Object.keys(this.model.solvers);
+		console.log(solvers);
 		for(var i = 0; i < solvers.length; i++){
 			this.createSolver(this.model.solvers[solvers[i]]);
 		}
@@ -305,21 +306,24 @@ Simulator.prototype.printStates = function(displayed){
 	var t = parseFloat(this.time().value.toPrecision(20));
 
 	if(this.results.Time.indexOf(t) == -1){
-		for(var i = this.results.Time.length; i > 0; i--){
-			if(this.results.Time[i-1]<t){
+		// if t is not included in results.Time append latest time 
+		for(var i = this.results.Time.length; i > 0; i--) {
+			// add time and data to results in correct order 
+			// results.Time is sorted according to time 
+			if(this.results.Time[i-1]<t) {
 				this.results.Time.splice(i,0, t)
 				this.results.data.splice(i,0, {})
 				break;
 			}
 		}
 		if(i == 0){
+			// if first data point add it 
 			this.results.Time.splice(0,0, t)
 			this.results.data.splice(0,0, {})
 		}
 	}
 
 	var data = this.results.data[this.results.Time.indexOf(t)];
-
 	for(var i = 0; i < displayed.length; i++){
 		var v = displayed[i];
 		//console.log(v.dna.name);
@@ -347,7 +351,6 @@ Simulator.prototype.printStates = function(displayed){
 					data[v.id] = this.adjustNum(v, x);
 					//console.log(this.adjustNum(v, x));
 				}
-
 			}
 		}
 	}
@@ -448,23 +451,24 @@ Simulator.prototype.createSolver = function(solver){
 				time: time,
 				expires: 1,
 				name: "RK1 Solver - " +solver.id,
-				action: function(){
-        	simulate.valuedPrimitives = [];
-          if (clear) {
-  					var l = flows.length;
-  					for(var i = 0; i < l; i++){
-  						flows[i].clean();
-  					}
+				action: function() {
+        			simulate.valuedPrimitives = [];
+          			if (clear) {
+  						var l = flows.length;
+  						for(var i = 0; i < l; i++){
+  							flows[i].clean();
+  						}
 
+	  					l = valued.length;
+  						for(var i = 0; i < l; i++){
+  							valued[i].clearCached();
+  						}
+          			}
 
-  					l = valued.length;
-  					for(var i = 0; i < l; i++){
-  						valued[i].clearCached();
-  					}
-          }
-
+					// Store values in result  
 					me.frame(valued, displayed);
 
+					// calculate actions 
 					var l = actions.length;
 					for(var i = 0; i < l; i++){
 						if(actions[i].dna.recalculate && ! actions[i].block){
@@ -472,16 +476,17 @@ Simulator.prototype.createSolver = function(solver){
 						}
 					}
 
+					// call trasitions 
 					l = transitions.length;
 					for(var i = 0; i < l; i++){
 						if( transitions[i].dna.recalculate ){
 							updateTrigger.call(transitions[i]);
 						}
 					}
-					//console.log("B")
+					// step
 					me.step(solver);
 
-
+					//
 					if(repeat &&  index <= maxIndex){
 						index++;
 						addRK1Solver(times[index], true, true)

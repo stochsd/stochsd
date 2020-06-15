@@ -672,19 +672,12 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		return "";
 	}
 
-	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if(number == 0) {
+	// Zero is a special case also or Round to zero when close 
+    if(number == 0 || (roundToZeroAt && Math.abs(number) < roundToZeroAt)) {
 		return "0";
 	}
-	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
-		// Round to zero when close 
-		if (number > 0) {
-			return "0+";
-		} else {
-			return "0-";
-		}
-	}
+
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
 
@@ -3493,8 +3486,9 @@ class LineVisual extends TwoPointer {
 		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
-		this.arrowHeadEnd.set_template_points([[16, -8], [0,0], [16, 8]]);
+		let arrowPathPoints = [[13, -4], [0,0], [13, 4]];
+		this.arrowHeadStart.set_template_points(arrowPathPoints);
+		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
@@ -3675,6 +3669,7 @@ class LinkVisual extends BaseConnection {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
 			this._end_attach.updateValueError();
+			this._end_attach.update();
 		}
 	}
 	setEndAttach(new_end_attach) {
@@ -3687,9 +3682,11 @@ class LinkVisual extends BaseConnection {
 		}
 		if (old_end_attach) {
 			old_end_attach.updateValueError();
+			old_end_attach.update();
 		}
 		if (new_end_attach) {
 			new_end_attach.updateValueError();
+			new_end_attach.update();
 		}
 	}
 
@@ -5506,15 +5503,19 @@ $(window).load(function() {
 		}
 		if (event.keyCode == keyboard["right"]) {
 			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["up"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["left"]) {
 			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["down"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
+			event.preventDefault();
 		}
 		if (event.ctrlKey) {
 			if (event.keyCode == keyboard["1"]) {
@@ -6430,12 +6431,11 @@ class RunResults {
 		this.stopSimulation();
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
-		// We can only take 100 iterations between every update to avoid the feeling of program freezing
-		if (getTimeLength()*getTimeStep() >= 100) {
-			// For long runs. Longer then 100
-			setPauseInterval(getTimeStep()*100);
+		if (getTimeLength()/getTimeStep() < 1000) {
+			setPauseInterval(getTimeLength()/10);
 		} else {
-			setPauseInterval(getTimeStep()*getTimeLength());
+			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
+			setPauseInterval(getTimeStep()*1000);
 		}
 		this.runState = runStateEnum.running;
 		runOverlay.block();
@@ -7064,7 +7064,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0+</b> or <b>0-</b> if <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 					</td>
 					<td>
 						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
@@ -7222,25 +7222,34 @@ class DisplayDialog extends jqDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
+
 		return (`
 			<table class="modernTable" >
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-							>
-						</td>
-					</tr>
-				`).join('')}
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p)))}
+									data-name="${getName(p)}"
+									data-id="${getID(p)}"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
@@ -7488,7 +7497,15 @@ class TimePlotDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
 		return (`
 			<table class="modernTable">
 			<tr>
@@ -7496,34 +7513,33 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Left</th>
 				<th>Right</th>
 			</tr>
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="L"
-							>
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply"
-								type="checkbox"
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="R"
-							>
-						</td>
-					</tr>
-				`).join('')}
-			</tr>
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply" 
+									type="checkbox" 
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="L"
+								>
+							</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="R"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
@@ -8604,11 +8620,11 @@ class LineDialog extends GeometryDialog {
 		return (`
 			<table class="modernTable">
 				<tr>
-					<td>Show Start Arrow at Start:</td>
+					<td>Arrow head at start point:</td>
 					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
 				</tr>
 				<tr>
-					<td>Show Arrow at End:</td>
+					<td>Arrow head at end point:</td>
 					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
 				</tr>
 			</table>
