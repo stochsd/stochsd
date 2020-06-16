@@ -2621,7 +2621,7 @@ class TimePlotVisual extends PlotVisual {
 		);
 
 		if (this.data.results.length == 0) {
-			// We can't render anything with no data
+			this.setEmptyPlot();
 			return;
 		}
 
@@ -2696,8 +2696,6 @@ class TimePlotVisual extends PlotVisual {
 	}
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
-			// The series are not initialized yet
-			// this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
 			this.setEmptyPlot();
 			return;
 		}
@@ -2751,42 +2749,18 @@ class TimePlotVisual extends PlotVisual {
 		this.dialog.maxRValue = this.plot.axes.y2axis.max;
 	}
 	setEmptyPlot() {
-		let emptyArray = [[
-			[0.0, .62, 'Open to specify the plot'], 
-			[0.0, .32, 'Run to create data']
-		]];
-		$(this.chartDiv).empty();	
-		this.plot = $.jqplot(this.chartId, emptyArray, {
-			title: "Time Plot",
-			grid: {
-				background: "white"
-			},
-			series: [{
-				showLine: false,
-				showMarker: false,
-				pointLabels: {
-					show: true,
-					edgeTolerance: 0,
-					xpadding: 10,
-					location: "e" 
-				}
-			}],
-			axes: {
-				xaxis: {
-					min: 0,
-					max: 1,
-					tickOptions: {
-						showGridline: false
-					},
-					tickInterval: 1.0
-				},
-				yaxis: {
-					min: 0,
-					max: 1,
-					tickInterval: 1.0
-				}
-			}
-		});
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+		}
+		this.chartDiv.innerHTML = (`
+			<b>Time Plot</b><br/>
+			Double click to specify properties.<br/>
+			${selected_str}<br/>
+			Run to create data.
+		`);
 	}
 }
 
@@ -2960,7 +2934,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
-			// We can't render anything with no data
+			this.setEmptyPlot();
 			return;
 		}
 		
@@ -2999,12 +2973,13 @@ class ComparePlotVisual extends PlotVisual {
 		 },200);
 	}
 	updateChart() {
-		if (this.serieArray == null || this.serieArray.length == 0) {
+		if (this.serieArray == null || this.serieArray.length == 0 || this.serieArray[0].length === 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>Compare Simulations Plot</b><br/> No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
+		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -3040,6 +3015,20 @@ class ComparePlotVisual extends PlotVisual {
 		});
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
+	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+		}
+		this.chartDiv.innerHTML = (`
+			<b>Compare Simulations Plot</b><br/>
+			Double click to specify properties.<br/>
+			${selected_str}<br/>
+			Run to create data.
+		`);
 	}
 }
 
@@ -3142,20 +3131,14 @@ class HistoPlotVisual extends PlotVisual {
 
 	render() {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		if (idsToDisplay.length === 0) {
-			this.chartDiv.innerHTML = "<p>No primitives selected.</p>";
-			return;
-		} else if (idsToDisplay.length > 1) {
-			this.chartDiv.innerHTML = (`
-				<p><b>${idsToDisplay.map(findID).map(getName)}</b> selected. <br/>
-				Exactly one primitive must be selected</p>
-			`);
+		if (idsToDisplay.length !== 1) {
+			this.setEmptyPlot();
 			return;
 		}
 		let results = RunResults.getSelectiveIdResults(idsToDisplay);
 
 		if (results.length === 0) {
-			// We can't render anything with no data	
+			this.setEmptyPlot();
 			return;
 		}
 
@@ -3219,11 +3202,11 @@ class HistoPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length !== 1) {
-			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>Exactly one primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -3286,7 +3269,23 @@ class HistoPlotVisual extends PlotVisual {
 			// $(`#${outsideLimitInfoID[i]}`).css("border", "1px solid gray");
 			$(`#${outsideLimitInfoID[i]}`).css("font-size", "0.8em");
 		}
-		
+	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length > 0) {
+			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+		} 
+		if (idsToDisplay.length > 1) {
+			selected_str += `<br/><span style="color:red;">Exactly one primitive must be selected</span>`;
+		} 
+		this.chartDiv.innerHTML = (`
+			<b>Histogram Plot</b><br/>
+			Double click to specify properties.<br/>
+			${selected_str}<br/>
+			Run to create data.
+		`);
 	}
 }
 
@@ -3329,8 +3328,7 @@ class XyPlotVisual extends PlotVisual {
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if (results.length == 0) {
-			// We can't render anything with no data
-			
+			this.setEmptyPlot();
 			return;
 		}
 		
@@ -3419,7 +3417,7 @@ class XyPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
@@ -3470,6 +3468,23 @@ class XyPlotVisual extends PlotVisual {
 		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
+	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length > 0) {
+			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+		} 
+		if (idsToDisplay.length !== 2)  {
+			selected_str += `<br/><span style="color:red;">Exactly two primitives must be selected!</span>`;
+		}
+		this.chartDiv.innerHTML = (`
+			<b>XY Plot</b><br/>
+			Double click to specify properties.<br/>
+			${selected_str}<br/>
+			Run to create data.
+		`);
 	}
 }
 
