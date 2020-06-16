@@ -196,7 +196,6 @@ Simulator.prototype.run = function(config){
 		this.config = config;
 
 		var solvers = Object.keys(this.model.solvers);
-		console.log(solvers);
 		for(var i = 0; i < solvers.length; i++){
 			this.createSolver(this.model.solvers[solvers[i]]);
 		}
