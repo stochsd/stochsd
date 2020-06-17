@@ -3348,7 +3348,7 @@ class XyPlotVisual extends PlotVisual {
 		
 		if (IdsToDisplay.length != 2) {
 			// We have no series to display
-			this.chartDiv.innerHTML = "Exactly two primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		
