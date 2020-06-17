@@ -1,3 +1,8 @@
+:root {
+    --table-border-color: #ccc;
+}
+
+
 body {
     font-family: Arial,Helvetica,sans-serif;
     /* Force print to show all color, this shows gray color in table at Print Equations */
@@ -98,8 +103,20 @@ table {
 td.text {
     text-align: left;		
 }
+/* for empty plot */
+.empty-plot-header {
+    font-size: 25px; 
+    font-weight: bold;
+    width: 100%; 
+    text-align: center;
+}
+
+/* Sticky table start here (used in TableVisual) */
 table.stickyTable {
     width: 100%;
+}
+table.stickyTable th {
+    padding: 8px 8px;
 }
 table.stickyTable th {
     position: sticky;
@@ -117,19 +134,44 @@ table.stickyTable th::after {
     height: 1px;
 }
 table.stickyTable th, table.stickyTable td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--table-border-color);
 } 
 table.stickyTable tr:nth-child(even) {
     background-color: #f4f4f4;
 }
+.time-header-cell::before {
+    /* made up right border */
+    content: "";
+    position: absolute;
+    background: black;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    width: 1px;
+}
+.time-header-cell, .time-value-cell {
+    /* make black line between time column and primitive column */
+	border-right-width: 1px !important;
+    border-right-color: black !important;
+}
+.time-value-cell {
+	text-align: center;
+}
+.prim-value-cell {
+    text-align: right;
+    padding: 2px 8px !important;
+}
+/* Vertical space start here */
 div.verticalSpace {
     height: 12px;
 }
+
+/* ModernTable start here */
 .modernTable tr:nth-child(even){
     background-color: #f4f4f4;
 }
 .modernTable td, .modernTable th {
-    border: 1px solid #ddd;
+    border: 1px solid var(--table-border-color);
     padding: 1px 8px;
     vertical-align: text-top;
 }

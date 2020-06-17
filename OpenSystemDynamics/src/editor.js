@@ -442,7 +442,7 @@ function getFunctionHelpData() {
 			["Time End", "TE()", "The time at which the simulation ends excluding units."]
 			
 			/*
-			["Current Time with Units", "Time()", "The current time including units.", "IfThenElse(Time() > {10 Years}, 15, 0)"],
+			["Current Time with Units", "Time()", "The current time including units.", "IfThenElse(Time() > 10, 15, 0)"],
 			["Time Start with Units", "TimeStart()", "The simulation start time including units."],
 			["Time Step with Units", "TimeStep()", "The simulation time step including units."],
 			["Time Length with Units", "TimeLength()", "The total length of the simulation including units."],
@@ -450,18 +450,18 @@ function getFunctionHelpData() {
 			*/
 		]],
 		["Historical Functions", [
-			["Delay", "Delay(##[Primitive]$$, ##Delay Length$$, ##Default Value$$)", "Returns the value of a primitive for a specified length of time ago. Default Value stands in for the primitive value in the case of negative times.", "Delay([Income], {5 Years})"],
+			["Delay", "Delay(##[Primitive]$$, ##Delay Length$$, ##Default Value$$)", "Returns the value of a primitive for a specified length of time ago. Default Value stands in for the primitive value in the case of negative times.", "Delay([Income], 5)"],
 			["Delay1", "Delay1(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, first-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay1([Income], 5, 10000)"],
 			["Delay3", "Delay3(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, third-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay3([Income], {20 Months}, 10000)"],
 			["Smooth", "Smooth(##[Primitive]$$, ##Length$$, ##Initial Value$$)", "Returns a smoothing of a primitive's past values. Results in an averaged curve fit. Length affects the weight of past values. The Initial Value is optional."],
 			["PastValues", "PastValues(##[Primitive]$$, ##Period = All Time$$)", "Returns the values a primitive has taken on over the course of the simulation as a vector. The second optional argument is a time window to limit the depth of the history.", ["Sum(PastValues([Income]))", "Total past income"]],
-			["Maximum", "PastMax(##[Primitive]$$, ##Period = All Time$$)", "Returns the maximum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMax([Income], {10 Years})", "The maximum income in the past 10 years"]],
+			["Maximum", "PastMax(##[Primitive]$$, ##Period = All Time$$)", "Returns the maximum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMax([Income], 10)", "The maximum income in the past 10 time units"]],
 			["Minimum", "PastMin(##[Primitive]$$, ##Period = All Time$$)", "Returns the minimum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMin([Income], 10)", "The minimum income in the past 10 units of time"]],
 			["Median", "PastMedian(##[Primitive]$$, ##Period = All Time$$)", "Returns the median of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
 			["Mean", "PastMean(##[Primitive]$$, ##Period = All Time$$)", "Returns the mean of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
 			["Standard Deviation", "PastStdDev(##[Primitive]$$, ##Period = All Time$$)", "Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["Correlation", "PastCorrelation(##[Primitive]$$, ##[Primitive]$$, ##Period = All Time$$)", "Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation.", ["PastCorrelation([Income], [Expenditures], {10 Years})", "The correlation between income and expenditures over the past 10 years."]],
-			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), {5 Years})", "Chooses a new random value every five years"]]
+			["Correlation", "PastCorrelation(##[Primitive]$$, ##[Primitive]$$, ##Period = All Time$$)", "Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation.", ["PastCorrelation([Income], [Expenditures], 10)", "The correlation between income and expenditures over the past 10."]],
+			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), 5)", "Chooses a new random value every five time units"]]
 		]],
 		["Random Number Functions", [
 			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/>This should only be used in flows."],
@@ -483,9 +483,9 @@ function getFunctionHelpData() {
 			["If Then Else", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
 			["Lookup", "Lookup(##Value$$, ##Values Vector$$, ##Results Vector$$)", "Finds the Value in the Values Vector and returns the corresponding item in the Results Vector. If the exact Value is not found in the Values Vector, linear interpolation of the nearby values will be used.", ["Lookup(6, {5, 7}, {10, 15})", "12.5"]],
 			["PulseFcn", "PulseFcn(##Time$$, ##Volume$$, ##Repeat)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
-			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step({10 Years}, 5)"],
-			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp({10 Year}, {20 Years}, 5)"],
-			["Pause", "Pause()", "Pauses the simulation and allows sliders to be adjusted. Often used in combination with an IfThenElse function.", "IfThenElse(Years() = 20, Pause(), 0)"],
+			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
+			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
+			["Pause", "Pause()", "Pauses the simulation and allows sliders to be adjusted. Often used in combination with an IfThenElse function.", "IfThenElse(T() = 20, Pause(), 0)"],
 			["Stop", "Stop()", "Immediately terminates the simulation. Often used in combination with an IfThenElse function.", "IfThenElse(Rand() < 0.01, Stop(), 0)"]
 		]],
 		["Programming Functions", [
@@ -672,19 +672,12 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		return "";
 	}
 
-	// Zero is a special case,
 	// since its not written as E-format by default even as its <1E-7
-    if(number == 0) {
+	// Zero is a special case also or Round to zero when close 
+    if(number == 0 || (roundToZeroAt && Math.abs(number) < roundToZeroAt)) {
 		return "0";
 	}
-	if (roundToZeroAt && Math.abs(number) < roundToZeroAt) {
-		// Round to zero when close 
-		if (number > 0) {
-			return "0+";
-		} else {
-			return "0-";
-		}
-	}
+
 	// Check if number is to small to be viewed in field
 	// If so, force e-format
 
@@ -2380,9 +2373,9 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
-		html += "<th>Time</th>";
+		html += "<th class='time-header-cell'>Time</th>";
 		for(let i in this.data.namesToDisplay) {
-			html += `<th>${this.data.namesToDisplay[i]}</th>`;
+			html += `<th class="prim-header-cell">${this.data.namesToDisplay[i]}</th>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
@@ -2401,11 +2394,20 @@ class TableVisual extends HtmlTwoPointer {
 					}
 				}
 				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
-				html += `<td>${valueString}</td>`;
+				if (column_index == 0) {
+					html += `<td class="time-value-cell">${valueString}</td>`;
+				} else {
+					html += `<td class="prim-value-cell">${valueString}</td>`;
+				}
 			}
 			html += "</tr>";
 		}
 		html += "</tbody></table>";
+		
+		if (this.data.results.length === 0) {
+			// show this when empty table 
+			html += (`<div class="empty-plot-header">Table</div>`);
+		}
 		this.updateHTML(html);
 		this.dialog.data = this.data;
 	}
@@ -2628,7 +2630,7 @@ class TimePlotVisual extends PlotVisual {
 		);
 
 		if (this.data.results.length == 0) {
-			// We can't render anything with no data
+			this.setEmptyPlot();
 			return;
 		}
 
@@ -2703,8 +2705,6 @@ class TimePlotVisual extends PlotVisual {
 	}
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
-			// The series are not initialized yet
-			// this.chartDiv.innerHTML = "<b>Time Plot</b><br/> No data. Run to create data!";
 			this.setEmptyPlot();
 			return;
 		}
@@ -2758,42 +2758,18 @@ class TimePlotVisual extends PlotVisual {
 		this.dialog.maxRValue = this.plot.axes.y2axis.max;
 	}
 	setEmptyPlot() {
-		let emptyArray = [[
-			[0.0, .62, 'Open to specify the plot'], 
-			[0.0, .32, 'Run to create data']
-		]];
-		$(this.chartDiv).empty();	
-		this.plot = $.jqplot(this.chartId, emptyArray, {
-			title: "Time Plot",
-			grid: {
-				background: "white"
-			},
-			series: [{
-				showLine: false,
-				showMarker: false,
-				pointLabels: {
-					show: true,
-					edgeTolerance: 0,
-					xpadding: 10,
-					location: "e" 
-				}
-			}],
-			axes: {
-				xaxis: {
-					min: 0,
-					max: 1,
-					tickOptions: {
-						showGridline: false
-					},
-					tickInterval: 1.0
-				},
-				yaxis: {
-					min: 0,
-					max: 1,
-					tickInterval: 1.0
-				}
-			}
-		});
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
+		this.chartDiv.innerHTML = (`
+			<div class="empty-plot-header">Time Plot</div>
+			${selected_str}
+		`);
 	}
 }
 
@@ -2967,7 +2943,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
-			// We can't render anything with no data
+			this.setEmptyPlot();
 			return;
 		}
 		
@@ -3006,12 +2982,13 @@ class ComparePlotVisual extends PlotVisual {
 		 },200);
 	}
 	updateChart() {
-		if (this.serieArray == null || this.serieArray.length == 0) {
+		if (this.serieArray == null || this.serieArray.length == 0 || this.serieArray[0].length === 0) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>Compare Simulations Plot</b><br/> No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
+		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -3047,6 +3024,20 @@ class ComparePlotVisual extends PlotVisual {
 		});
 		this.dialog.minValue = this.plot.axes.yaxis.min; 
 		this.dialog.maxValue = this.plot.axes.yaxis.max; 
+	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
+		this.chartDiv.innerHTML = (`
+			<div class="empty-plot-header">Compare Simulations Plot</div>
+			${selected_str}
+		`);
 	}
 }
 
@@ -3149,20 +3140,14 @@ class HistoPlotVisual extends PlotVisual {
 
 	render() {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		if (idsToDisplay.length === 0) {
-			this.chartDiv.innerHTML = "<p>No primitives selected.</p>";
-			return;
-		} else if (idsToDisplay.length > 1) {
-			this.chartDiv.innerHTML = (`
-				<p><b>${idsToDisplay.map(findID).map(getName)}</b> selected. <br/>
-				Exactly one primitive must be selected</p>
-			`);
+		if (idsToDisplay.length !== 1) {
+			this.setEmptyPlot();
 			return;
 		}
 		let results = RunResults.getSelectiveIdResults(idsToDisplay);
 
 		if (results.length === 0) {
-			// We can't render anything with no data	
+			this.setEmptyPlot();
 			return;
 		}
 
@@ -3226,11 +3211,11 @@ class HistoPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length !== 1) {
-			this.chartDiv.innerHTML = "<h1>Histogram Plot</h1><br/>Exactly one primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -3293,7 +3278,23 @@ class HistoPlotVisual extends PlotVisual {
 			// $(`#${outsideLimitInfoID[i]}`).css("border", "1px solid gray");
 			$(`#${outsideLimitInfoID[i]}`).css("font-size", "0.8em");
 		}
-		
+	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
+		if (idsToDisplay.length > 1) {
+			selected_str += `<span style="color:red;">Exactly one primitive must be selected</span>`;
+		} 
+		this.chartDiv.innerHTML = (`
+			<div class="empty-plot-header">Histogram Plot</div>
+			${selected_str}
+		`);
 	}
 }
 
@@ -3336,8 +3337,7 @@ class XyPlotVisual extends PlotVisual {
 		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
 		if (results.length == 0) {
-			// We can't render anything with no data
-			
+			this.setEmptyPlot();
 			return;
 		}
 		
@@ -3352,7 +3352,7 @@ class XyPlotVisual extends PlotVisual {
 		
 		if (IdsToDisplay.length != 2) {
 			// We have no series to display
-			this.chartDiv.innerHTML = "Exactly two primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		
@@ -3392,27 +3392,37 @@ class XyPlotVisual extends PlotVisual {
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		this.serieSettingsArray.push(
-			{
-				lineWidth: this.primitive.getAttribute("LineWidth"), 
-				color: "black",
-				shadow: false,
-				showLine: this.primitive.getAttribute("ShowLine") === "true",
-				showMarker: this.primitive.getAttribute("ShowMarker") === "true",
-				markerOptions: { shadow: false }
-			}
-		);
+		this.serieSettingsArray.push({
+			lineWidth: this.primitive.getAttribute("LineWidth"), 
+			color: "black",
+			shadow: false,
+			showLine: this.primitive.getAttribute("ShowLine") === "true",
+			showMarker: this.primitive.getAttribute("ShowMarker") === "true",
+			markerOptions: { shadow: false },
+			pointLabels: { show: false }
+		});
 		if (this.primitive.getAttribute("MarkStart") === "true") {
 			this.serieArray.push([dataSerie[0]]);
-			this.serieSettingsArray.push(
-				{color: "#ff4444", showLine: false, showMarker: true, markerOptions: {shadow: false}}
-			);
+			this.serieSettingsArray.push({
+				color: "#ff4444", 
+				showLine: false, 
+				showMarker: true, 
+				markerOptions: {shadow: false}, 
+				pointLabels: { show: false }
+			});
 		} 
 		if (this.primitive.getAttribute("MarkEnd") === "true") {
 			this.serieArray.push([dataSerie[dataSerie.length-1]]);
-			this.serieSettingsArray.push(
-				{color: "#00aa00", showLine: false, showMarker: true, markerOptions: { style: "filledSquare", shadow: false } }
-			);
+			this.serieSettingsArray.push({
+				color: "#00aa00", 
+				showLine: false, 
+				showMarker: true, 
+				markerOptions: { 
+					style: "filledSquare",
+					shadow: false,
+					pointLabels: { show: false } 
+				} 
+			});
 		}
 		
 		do_global_log(JSON.stringify(this.serieSettingsArray));
@@ -3426,7 +3436,7 @@ class XyPlotVisual extends PlotVisual {
 	updateChart() {
 		if (this.serieArray == null) {
 			// The series are not initialized yet
-			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>No data. Run to create data!";
+			this.setEmptyPlot();
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
@@ -3478,6 +3488,23 @@ class XyPlotVisual extends PlotVisual {
 		  this.dialog.minYValue = this.plot.axes.yaxis.min;
 		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
 	}
+	setEmptyPlot() {
+		$(this.chartDiv).empty();
+		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let selected_str = "None selected";
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
+		if (idsToDisplay.length !== 2)  {
+			selected_str += `<span style="color:red;">Exactly two primitives must be selected!</span>`;
+		}
+		this.chartDiv.innerHTML = (`
+			<div class="empty-plot-header">XY Plot</div>
+			${selected_str}
+		`);
+	}
 }
 
 class LineVisual extends TwoPointer {
@@ -3493,8 +3520,9 @@ class LineVisual extends TwoPointer {
 		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
 		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
 		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		this.arrowHeadStart.set_template_points([[16, -8], [0,0], [16, 8]]);
-		this.arrowHeadEnd.set_template_points([[16, -8], [0,0], [16, 8]]);
+		let arrowPathPoints = [[13, -4], [0,0], [13, 4]];
+		this.arrowHeadStart.set_template_points(arrowPathPoints);
+		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
@@ -3675,6 +3703,7 @@ class LinkVisual extends BaseConnection {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
 			this._end_attach.updateValueError();
+			this._end_attach.update();
 		}
 	}
 	setEndAttach(new_end_attach) {
@@ -3687,9 +3716,11 @@ class LinkVisual extends BaseConnection {
 		}
 		if (old_end_attach) {
 			old_end_attach.updateValueError();
+			old_end_attach.update();
 		}
 		if (new_end_attach) {
 			new_end_attach.updateValueError();
+			new_end_attach.update();
 		}
 	}
 
@@ -5506,18 +5537,22 @@ $(window).load(function() {
 		}
 		if (event.keyCode == keyboard["right"]) {
 			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["up"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["left"]) {
 			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
+			event.preventDefault();
 		}
 		if (event.keyCode == keyboard["down"]) {
 			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
+			event.preventDefault();
 		}
 		if (event.ctrlKey) {
-			if (event.keyCode == keyboard["1"]) {
+			if (event.keyCode == keyboard["1"] || event.keyCode === keyboard["R"]) {
 				event.preventDefault();
 				RunTool.enterTool();
 			}
@@ -6220,7 +6255,7 @@ function printDiagram() {
 	let fileName = fileManager.fileName;
 	
 	let d = new Date();
-	let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+	let month = d.getMonth()+1 < 10 ? `0${d.getMonth()+1}` : d.getMonth()+1;
 	let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
 	let hours = d.getHours() < 10 ? `0${d.getHours()}` : d.getHours();
 	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
@@ -6529,7 +6564,8 @@ class RunResults {
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
 		let timeStep = this.getTimeStep();
-		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
+		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
@@ -7063,7 +7099,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modernTable">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0+</b> or <b>0-</b> if <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
 					</td>
 					<td>
 						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
@@ -7221,25 +7257,34 @@ class DisplayDialog extends jqDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
+
 		return (`
 			<table class="modernTable" >
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p)))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-							>
-						</td>
-					</tr>
-				`).join('')}
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p)))}
+									data-name="${getName(p)}"
+									data-id="${getID(p)}"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
@@ -7487,7 +7532,15 @@ class TimePlotDialog extends DisplayDialog {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
-		
+		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
+		for (let p of primitives) {
+			let nodeType = p.value.nodeName;
+			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
+				prims_object["const"].push(p);
+			} else {
+				prims_object[nodeType].push(p);
+			}
+		}
 		return (`
 			<table class="modernTable">
 			<tr>
@@ -7495,34 +7548,33 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Left</th>
 				<th>Right</th>
 			</tr>
-				${primitives.map((p, idx, prims) => `
-					<tr style="${(prims[idx+1] && p.value.nodeName !== prims[idx+1].value.nodeName) ? "border-bottom: 4px solid #ddd;" : ""}">
-						<td class="text">
-							${getName(p)}
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply" 
-								type="checkbox" 
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="L"
-							>
-						</td>
-						<td style="text-align: center;">
-							<input 
-								class="primitive_checkbox enterApply"
-								type="checkbox"
-								${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
-								data-name="${getName(p)}" 
-								data-id="${getID(p)}"
-								data-side="R"
-							>
-						</td>
-					</tr>
-				`).join('')}
-			</tr>
+				${Object.keys(prims_object).map((type, type_idx) => 
+					prims_object[type].map((p, idx) => `
+						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
+							<td>${getName(p)}</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply" 
+									type="checkbox" 
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="L"
+								>
+							</td>
+							<td style="text-align: center;">
+								<input 
+									class="primitive_checkbox enterApply"
+									type="checkbox"
+									${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+									data-name="${getName(p)}" 
+									data-id="${getID(p)}"
+									data-side="R"
+								>
+							</td>
+						</tr>
+					`).join('')
+				).join('')}
 			</table>
 		`);
 	}
@@ -8603,11 +8655,11 @@ class LineDialog extends GeometryDialog {
 		return (`
 			<table class="modernTable">
 				<tr>
-					<td>Show Start Arrow at Start:</td>
+					<td>Arrow head at start point:</td>
 					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
 				</tr>
 				<tr>
-					<td>Show Arrow at End:</td>
+					<td>Arrow head at end point:</td>
 					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
 				</tr>
 			</table>
@@ -8631,7 +8683,7 @@ class LineDialog extends GeometryDialog {
 class NumberboxDialog extends DisplayDialog {
 
 	beforeShow() {
-		this.setTitle("Numberbox Info");
+		this.setTitle("Number Box Properties");
 		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
 		if (this.targetPrimitive) {
 			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
@@ -8871,7 +8923,7 @@ class EquationEditor extends jqDialog {
 			</style>
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 300px">
+					<div class="table-cell" style="width: 300px; height: 300px;">
 						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
@@ -8880,20 +8932,21 @@ class EquationEditor extends jqDialog {
 							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
 							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							</div>
+							<div class="restrictNonNegativeDiv">
+								<br/>
+								<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
+							</div>
 						</div>
-					<div class="restrictNonNegativeDiv">
-						<br/>
-						<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
 					</div>
-				</div>
+					<div class="table-cell">
+					<div style="width:240px;"></div> <!-- div here to show entire window on open since next div has position:absolute -->
+    				<div style="position: absolute; top: 20px; bottom: 0px; overflow-y: scroll; width: 230px; padding: 10px 20px 20px 0px;">
+						<div class="accordionCluster">
+						</div> <!--End of accordionCluster. Programming help is inserted here-->
+					</div>
+  				</div>
 			</div>
-    	<div class="table-cell">
-    	<div style="overflow-y: scroll; width: 230px; height: 250px; padding: 10px 20px 20px 0px;">
-				<div class="accordionCluster">
-					</div> <!--End of accordionCluster. Programming help is inserted here-->
-				</div>
-  			</div>
-		</div>
 		`);
 
 		$(this.dialogContent).find(".nameField").keyup((event) => {
@@ -9329,7 +9382,7 @@ class EquationListDialog extends jqDialog {
 		
 		/** Get Date */
 		let d = new Date();
-		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+		let month = d.getMonth()+1 < 10 ? `0${d.getMonth()+1}` : d.getMonth()+1;
 		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
 		let fullDate = `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`;
 
