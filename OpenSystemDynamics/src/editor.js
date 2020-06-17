@@ -8669,7 +8669,7 @@ class LineDialog extends GeometryDialog {
 class NumberboxDialog extends DisplayDialog {
 
 	beforeShow() {
-		this.setTitle("Numberbox Info");
+		this.setTitle("Number Box Properties");
 		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
 		if (this.targetPrimitive) {
 			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
