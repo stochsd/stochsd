@@ -6550,7 +6550,8 @@ class RunResults {
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
 		let timeStep = this.getTimeStep();
-		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> (DT = ${timeStep})`);
+		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
