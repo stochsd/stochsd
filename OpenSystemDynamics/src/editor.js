@@ -2373,9 +2373,9 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
 		
 		// Make header
-		html += "<th>Time</th>";
+		html += "<th class='time-header-cell'>Time</th>";
 		for(let i in this.data.namesToDisplay) {
-			html += `<th>${this.data.namesToDisplay[i]}</th>`;
+			html += `<th class="prim-header-cell">${this.data.namesToDisplay[i]}</th>`;
 		}
 		// Make content
 		html += "</thead><tbody>";
@@ -2394,7 +2394,12 @@ class TableVisual extends HtmlTwoPointer {
 					}
 				}
 				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
-				html += `<td>${valueString}</td>`;
+				if (column_index == 0) {
+					html += `<td class="time-value-cell">${valueString}</td>`;
+				} else {
+					html += `<td class="prim-value-cell">${valueString}</td>`;
+				}
+				
 			}
 			html += "</tr>";
 		}
