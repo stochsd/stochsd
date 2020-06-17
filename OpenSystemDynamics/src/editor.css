@@ -103,6 +103,14 @@ table {
 td.text {
     text-align: left;		
 }
+/* for empty plot */
+.empty-plot-header {
+    font-size: 25px; 
+    font-weight: bold;
+    width: 100%; 
+    text-align: center;
+}
+
 /* Sticky table start here (used in TableVisual) */
 table.stickyTable {
     width: 100%;

@@ -2399,11 +2399,15 @@ class TableVisual extends HtmlTwoPointer {
 				} else {
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
-				
 			}
 			html += "</tr>";
 		}
 		html += "</tbody></table>";
+		
+		if (this.data.results.length === 0) {
+			// show this when empty table 
+			html += (`<div class="empty-plot-header">Table</div>`);
+		}
 		this.updateHTML(html);
 		this.dialog.data = this.data;
 	}
@@ -2758,13 +2762,13 @@ class TimePlotVisual extends PlotVisual {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
-			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
 		}
 		this.chartDiv.innerHTML = (`
-			<b>Time Plot</b><br/>
-			Double click to specify properties.<br/>
-			${selected_str}<br/>
-			Run to create data.
+			<div class="empty-plot-header">Time Plot</div>
+			${selected_str}
 		`);
 	}
 }
@@ -3026,13 +3030,13 @@ class ComparePlotVisual extends PlotVisual {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
-			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
 		}
 		this.chartDiv.innerHTML = (`
-			<b>Compare Simulations Plot</b><br/>
-			Double click to specify properties.<br/>
-			${selected_str}<br/>
-			Run to create data.
+			<div class="empty-plot-header">Compare Simulations Plot</div>
+			${selected_str}
 		`);
 	}
 }
@@ -3279,17 +3283,17 @@ class HistoPlotVisual extends PlotVisual {
 		$(this.chartDiv).empty();
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let selected_str = "None selected";
-		if (idsToDisplay.length > 0) {
-			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
-		} 
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
 		if (idsToDisplay.length > 1) {
-			selected_str += `<br/><span style="color:red;">Exactly one primitive must be selected</span>`;
+			selected_str += `<span style="color:red;">Exactly one primitive must be selected</span>`;
 		} 
 		this.chartDiv.innerHTML = (`
-			<b>Histogram Plot</b><br/>
-			Double click to specify properties.<br/>
-			${selected_str}<br/>
-			Run to create data.
+			<div class="empty-plot-header">Histogram Plot</div>
+			${selected_str}
 		`);
 	}
 }
@@ -3478,17 +3482,17 @@ class XyPlotVisual extends PlotVisual {
 		$(this.chartDiv).empty();
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let selected_str = "None selected";
-		if (idsToDisplay.length > 0) {
-			selected_str = `Selected: <b>${idsToDisplay.map(findID).map(getName).join(", ")}</b>`;
-		} 
+		if (idsToDisplay.length !== 0) {
+			selected_str = (`<ul style="margin: 4px;">
+				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+			</ul>`);
+		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += `<br/><span style="color:red;">Exactly two primitives must be selected!</span>`;
+			selected_str += `<span style="color:red;">Exactly two primitives must be selected!</span>`;
 		}
 		this.chartDiv.innerHTML = (`
-			<b>XY Plot</b><br/>
-			Double click to specify properties.<br/>
-			${selected_str}<br/>
-			Run to create data.
+			<div class="empty-plot-header">XY Plot</div>
+			${selected_str}
 		`);
 	}
 }
