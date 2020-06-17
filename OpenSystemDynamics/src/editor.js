@@ -5538,7 +5538,7 @@ $(window).load(function() {
 			event.preventDefault();
 		}
 		if (event.ctrlKey) {
-			if (event.keyCode == keyboard["1"]) {
+			if (event.keyCode == keyboard["1"] || event.keyCode === keyboard["R"]) {
 				event.preventDefault();
 				RunTool.enterTool();
 			}
