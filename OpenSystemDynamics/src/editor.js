@@ -3392,27 +3392,37 @@ class XyPlotVisual extends PlotVisual {
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
 		// Make serie settings
-		this.serieSettingsArray.push(
-			{
-				lineWidth: this.primitive.getAttribute("LineWidth"), 
-				color: "black",
-				shadow: false,
-				showLine: this.primitive.getAttribute("ShowLine") === "true",
-				showMarker: this.primitive.getAttribute("ShowMarker") === "true",
-				markerOptions: { shadow: false }
-			}
-		);
+		this.serieSettingsArray.push({
+			lineWidth: this.primitive.getAttribute("LineWidth"), 
+			color: "black",
+			shadow: false,
+			showLine: this.primitive.getAttribute("ShowLine") === "true",
+			showMarker: this.primitive.getAttribute("ShowMarker") === "true",
+			markerOptions: { shadow: false },
+			pointLabels: { show: false }
+		});
 		if (this.primitive.getAttribute("MarkStart") === "true") {
 			this.serieArray.push([dataSerie[0]]);
-			this.serieSettingsArray.push(
-				{color: "#ff4444", showLine: false, showMarker: true, markerOptions: {shadow: false}}
-			);
+			this.serieSettingsArray.push({
+				color: "#ff4444", 
+				showLine: false, 
+				showMarker: true, 
+				markerOptions: {shadow: false}, 
+				pointLabels: { show: false }
+			});
 		} 
 		if (this.primitive.getAttribute("MarkEnd") === "true") {
 			this.serieArray.push([dataSerie[dataSerie.length-1]]);
-			this.serieSettingsArray.push(
-				{color: "#00aa00", showLine: false, showMarker: true, markerOptions: { style: "filledSquare", shadow: false } }
-			);
+			this.serieSettingsArray.push({
+				color: "#00aa00", 
+				showLine: false, 
+				showMarker: true, 
+				markerOptions: { 
+					style: "filledSquare",
+					shadow: false,
+					pointLabels: { show: false } 
+				} 
+			});
 		}
 		
 		do_global_log(JSON.stringify(this.serieSettingsArray));
