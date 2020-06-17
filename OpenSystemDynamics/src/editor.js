@@ -9367,7 +9367,7 @@ class EquationListDialog extends jqDialog {
 		
 		/** Get Date */
 		let d = new Date();
-		let month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+		let month = d.getMonth()+1 < 10 ? `0${d.getMonth()+1}` : d.getMonth()+1;
 		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
 		let fullDate = `${d.getFullYear().toString().substring(2,4)}-${month}-${day} (yy-mm-dd)`;
 
