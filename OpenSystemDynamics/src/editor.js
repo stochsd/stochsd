@@ -8962,11 +8962,11 @@ class EquationEditor extends jqDialog {
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
-							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
-							<div class="restrictNonNegativeDiv">
+							<div class="restrict-to-non-negative-div">
 								<br/>
-								<label><input class="restrictNonNegative enter-apply" type="checkbox"/> Restrict to non-negative values</label>
+								<label><input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/> Restrict to non-negative values</label>
 							</div>
 						</div>
 					</div>
@@ -9010,9 +9010,9 @@ class EquationEditor extends jqDialog {
 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
-		this.referenceDiv = $(this.dialogContent).find(".referenceDiv").get(0);
-		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrictNonNegative").get(0);
-		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrictNonNegativeDiv").get(0);
+		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
+		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
+		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrict-to-non-negative-div").get(0);
 		
 		let helpData = getFunctionHelpData();
 	
@@ -9066,7 +9066,7 @@ class EquationEditor extends jqDialog {
 		$(".accordion-cluster").click((event) => {
 			this.restoreValueSelectionRange();
 		});
-		$(this.dialogContent).find(".referenceDiv").click((event) => {
+		$(this.dialogContent).find(".primitive-references-div").click((event) => {
 			this.restoreValueSelectionRange();
 		});
 		
