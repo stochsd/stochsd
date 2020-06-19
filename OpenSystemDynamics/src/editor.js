@@ -7470,14 +7470,14 @@ class TimePlotDialog extends DisplayDialog {
 				<td style="padding:1px;"><input class="yLMin intervalsettings enter-apply" type="text" value="${this.getYLMin()}"></td>
 				<td style="padding:1px;"><input class="yLMax intervalsettings enter-apply" type="text" value="${this.getYLMax()}"></td>
 				<td><input class="yLAuto intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
-				<td><input class="leftLog intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
+				<td><input class="left-log intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
 				<td style="padding:1px;"><input class="yRMin intervalsettings enter-apply" type="text" value="${this.getYRMin()}"></td>
 				<td style="padding:1px;"><input class="yRMax intervalsettings enter-apply" type="text" value="${this.getYRMax()}"></td>
 				<td><input class="yRAuto intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
-				<td><input class="rightLog intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
+				<td><input class="right-log intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
 			</tr>
 		</table>
 		`);
@@ -7608,8 +7608,8 @@ class TimePlotDialog extends DisplayDialog {
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
-		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
-		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
+		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log").prop("checked"));
+		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log").prop("checked"));
 
 		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
 		this.sides = [];
