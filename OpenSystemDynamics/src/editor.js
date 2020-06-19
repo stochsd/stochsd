@@ -7096,7 +7096,7 @@ class DisplayDialog extends jqDialog {
 	/* RoundToZero html and logic starts here */
 	renderRoundToZeroHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
@@ -7195,7 +7195,7 @@ class DisplayDialog extends jqDialog {
 	/* RoundToZero html and logic ends here */
 	renderPlotPerHtml() {
 		return (`
-			<table class="modernTable" 
+			<table class="modern-table" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
 			>
 				<tr>
@@ -7216,7 +7216,7 @@ class DisplayDialog extends jqDialog {
 	renderNumberedLinesCheckboxHtml() {
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 						<b>Numbered Lines:</b>
@@ -7228,7 +7228,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderLineWidthOptionHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Line Width:</b>
@@ -7243,7 +7243,7 @@ class DisplayDialog extends jqDialog {
 	}
 	renderColorCheckboxHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
@@ -7268,7 +7268,7 @@ class DisplayDialog extends jqDialog {
 		}
 
 		return (`
-			<table class="modernTable" >
+			<table class="modern-table" >
 				${Object.keys(prims_object).map((type, type_idx) => 
 					prims_object[type].map((p, idx) => `
 						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
@@ -7426,7 +7426,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -7450,7 +7450,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7542,7 +7542,7 @@ class TimePlotDialog extends DisplayDialog {
 			}
 		}
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 			<tr>
 				<th style="text-align: center;" >Primitives</th>
 				<th>Left</th>
@@ -7735,7 +7735,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderKeepHtml() {
 		return (`
-			<table class="modernTable" style="width:100%; text-align:center;">
+			<table class="modern-table" style="width:100%; text-align:center;">
 				<tr>
 					<td style="width:50%">
 						Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
@@ -7749,7 +7749,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisNamesHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -7767,7 +7767,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7926,7 +7926,7 @@ class HistoPlotDialog extends DisplayDialog {
 	}
 	renderHistogramOptionsHtml() {
 		return(`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th></th>
 					<th>Value</th>
@@ -7971,7 +7971,7 @@ class HistoPlotDialog extends DisplayDialog {
 	}
 	renderHistOrPDFHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Type:</b>
@@ -8053,7 +8053,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -8080,7 +8080,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	renderMarkerHTML() {
 		return (`
-			<table class="modernTable" style="text-align: left;">
+			<table class="modern-table" style="text-align: left;">
 				<tr>
 					<td style="text-align: left">Show Line</td>	
 					<td><input class="line enterApply" type="checkbox" name="displayType"></td>
@@ -8105,7 +8105,7 @@ class XyPlotDialog extends DisplayDialog {
 		let title = this.primitive.getAttribute("TitleLabel");
 		title = (title !== null ? title : "");
 		return (
-			`<table class="modernTable">
+			`<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
@@ -8275,7 +8275,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
 				<td style="padding:1px;"><input class="intervalsettings start enterApply" name="start" value="${this.start}" type="text"></td>
@@ -8294,7 +8294,7 @@ class TableDialog extends DisplayDialog {
 	}
 	renderExportHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 						<button class="exportCSV">
@@ -8416,7 +8416,7 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeShow() {
 		this.setHtml(`
-		<table class="modernTable">
+		<table class="modern-table">
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
@@ -8481,7 +8481,7 @@ class SimulationSettings extends jqDialog {
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
 		this.setHtml(`
-		<table class="modernTable">
+		<table class="modern-table">
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
@@ -8630,7 +8630,7 @@ class GeometryDialog extends DisplayDialog {
 		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
 		let primWidth = this.primitive.getAttribute("StrokeWidth");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>Line Width: </td>
 					<td>
@@ -8684,7 +8684,7 @@ class LineDialog extends GeometryDialog {
 		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
 		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
 					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
@@ -9283,7 +9283,7 @@ class MacroDialog extends jqDialog {
 					<textarea class="macroText"></textarea>
 				</td>
 				<td style="padding:0;">
-					<table class="modernTable" title="SetRandSeed makes stochstics simulations reproducable.">
+					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
 								Seed = <input class="seedBox enterApply" type="text" />
@@ -9344,7 +9344,7 @@ class TextAreaDialog extends DisplayDialog {
 		<div style="height: 100%;">
 			<textarea class="text" style="resize: none;"></textarea>
 			<div class="verticalSpace"></div>
-			<table class="modernTable"><tr title="Only hides when there is any text.">
+			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
 				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
 			</tr></table>
@@ -9444,7 +9444,7 @@ class EquationListDialog extends jqDialog {
 		return(`
 			<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br>
 			<h3 class="equationListHeader">Specifications</h3>
-			<table class="modernTable">
+			<table class="modern-table">
 				${specs.map(spec => 
 					`<tr>
 						<td>${spec[0]}</td>
@@ -9457,7 +9457,7 @@ class EquationListDialog extends jqDialog {
 	renderPrimitiveListHtml(info) {
 		return (`
 		<h3 class="equationListHeader">${info.title}</h3>
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
 				${info.primitives.map(p => `<tr>
 					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">

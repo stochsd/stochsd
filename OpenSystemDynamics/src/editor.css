@@ -166,11 +166,11 @@ div.verticalSpace {
     height: 12px;
 }
 
-/* ModernTable start here */
-.modernTable tr:nth-child(even){
+/* Modern Table start here */
+.modern-table tr:nth-child(even){
     background-color: #f4f4f4;
 }
-.modernTable td, .modernTable th {
+.modern-table td, .modern-table th {
     border: 1px solid var(--table-border-color);
     padding: 1px 8px;
     vertical-align: text-top;
