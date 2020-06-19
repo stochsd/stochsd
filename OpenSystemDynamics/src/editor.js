@@ -8571,12 +8571,12 @@ class TimeUnitDialog extends jqDialog {
 			<div style="min-height: 70px; margin: 8px 0px;">
 				Specify the Time Unit to enable model building.</br></br>
 				Time Unit: 
-				<input class="timeUnitInput enter-apply" style="text-align: left; width:200px;" type="text"/>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:200px;" type="text"/>
 				<div style="margin-top: 4px;" class="complainDiv"></div>
 			</div>
 		`);	
 
-		$(this.dialogContent).find(".timeUnitInput").keyup((event) => {
+		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
 		});
 		$(this.dialogContent).find(".enter-apply").keydown((event) => {
@@ -8589,13 +8589,13 @@ class TimeUnitDialog extends jqDialog {
 		});
 	}
 	beforeShow() {
-		$(this.dialogContent).find(".timeUnitInput").val(getTimeUnits());
+		$(this.dialogContent).find(".timeunit-field").val(getTimeUnits());
 	}
 	afterShow() {
-		$(this.dialog).find(".timeUnitInput").get(0).focus();
+		$(this.dialog).find(".timeunit-field").get(0).focus();
 	}
 	checkValid() {
-		let value = $(this.dialogContent).find(".timeUnitInput").val();
+		let value = $(this.dialogContent).find(".timeunit-field").val();
 		return isTimeUnitOk(value);
 	}
 	showComplain(ok) {
@@ -8611,7 +8611,7 @@ class TimeUnitDialog extends jqDialog {
 			"Apply":(event) =>
 			{	
 				if (this.checkValid()) {
-					let timeUnit = $(this.dialogContent).find(".timeUnitInput").val(); 
+					let timeUnit = $(this.dialogContent).find(".timeunit-field").val(); 
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
 					$("#timeUnitParagraph").html(`Time Unit: ${timeUnit}`);
