@@ -7232,7 +7232,7 @@ class DisplayDialog extends jqDialog {
 				<tr>
 					<td>
 					<b>Line Width:</b>
-						<select class="lineWidth enter-apply">
+						<select class="line-width enter-apply">
 						<option value=1 ${(this.primitive.getAttribute("LineWidth") == 1) ? "selected" : ""}>Thin</option>
 						<option value=2 ${(this.primitive.getAttribute("LineWidth") == 2) ? "selected" : ""}>Thick</option>
 						</select>
@@ -7289,8 +7289,8 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	makeApply() {
-		if ($(this.dialogContent).find(".lineWidth :selected")) {
-			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
+		if ($(this.dialogContent).find(".line-width :selected")) {
+			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
 	bindAxisLimitsEvents() {
@@ -8181,7 +8181,7 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
 	}
 	makeApply() {
-		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
+		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
