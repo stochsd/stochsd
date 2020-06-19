@@ -303,8 +303,8 @@ function updateWindowSize() {
 }
 
 function updateLinkBar() {
-	let linkBarLeft = $(window).width()-30-$(".linkBar").width();
-	$(".linkBar").css("left", linkBarLeft)
+	let linkBarLeft = $(window).width()-30-$(".info-bar__im-link").width();
+	$(".info-bar__im-link").css("left", linkBarLeft)
 }
 
 defaultAttributeChangeHandler = function(primitive, attributeName, value) {
@@ -6295,8 +6295,8 @@ function updateRecentsMenu() {
 }
 
 function updateInfoBar() {
-	let infoDef = $("#infoDefinition");
-	let infoVE = $("#infoValueError");
+	let infoDef = $(".info-bar__definition");
+	let infoVE = $(".info-bar__value-error");
 	let selected_hash = get_selected_root_objects();
 	let selected_array = [];
 	for (let key in selected_hash) {
