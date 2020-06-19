@@ -7203,11 +7203,11 @@ class DisplayDialog extends jqDialog {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plotPer intervalsettings enter-apply" type="text" value="${this.plotPer}"/>
+						<input style="" class="plot-per-field intervalsettings enter-apply" type="text" value="${this.plotPer}"/>
 					</td>
 					<td>
 						Auto
-						<input style="" class="autoPlotPer intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+						<input style="" class="plot-per-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
 					</td>
 				</tr>
 			</table>
@@ -7516,16 +7516,16 @@ class TimePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".right-yaxis-max-field").val(this.getYRMax());
 
 		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+		this.autoPlotPer = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
 
 		if (this.autoPlotPer) { 
 			this.setDefaultPlotPeriod();
 		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+			this.plotPer = $(this.dialogContent).find(".plot-per-field").val();
 		}
 
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+		$(this.dialogContent).find(".plot-per-field").val(this.plotPer);
+		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.autoPlotPer);
 
 	}
 	renderPrimitiveListHtml() {
@@ -7815,16 +7815,16 @@ class ComparePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
 
 		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+		this.autoPlotPer = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
 
 		if (this.autoPlotPer) { 
 			this.setDefaultPlotPeriod();
 		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+			this.plotPer = $(this.dialogContent).find(".plot-per-field").val();
 		}
 
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+		$(this.dialogContent).find(".plot-per-field").val(this.plotPer);
+		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.autoPlotPer);
 	}
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
@@ -8169,16 +8169,16 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".mark-start").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
 		$(this.dialogContent).find(".mark-end").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
 		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
+		this.autoPlotPer = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
 
 		if (this.autoPlotPer) { 
 			this.setDefaultPlotPeriod();
 		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+			this.plotPer = $(this.dialogContent).find(".plot-per-field").val();
 		}
 
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+		$(this.dialogContent).find(".plot-per-field").val(this.plotPer);
+		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.autoPlotPer);
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
@@ -8278,16 +8278,16 @@ class TableDialog extends DisplayDialog {
 		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
-				<td style="padding:1px;"><input class="intervalsettings start enter-apply" name="start" value="${this.start}" type="text"></td>
-				<td>Auto <input class="intervalsettings start_auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
+				<td style="padding:1px;"><input class="intervalsettings start-field enter-apply" name="start" value="${this.start}" type="text"></td>
+				<td>Auto <input class="intervalsettings start-auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
-				<td style="padding:1px;"><input class="intervalsettings end enter-apply" name="end" value="${this.end}" type="text"></td>
-				<td>Auto <input class="intervalsettings end_auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
+				<td style="padding:1px;"><input class="intervalsettings end-field enter-apply" name="end" value="${this.end}" type="text"></td>
+				<td>Auto <input class="intervalsettings end-auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
-				<td style="padding:1px;"><input class="intervalsettings plotPer enter-apply" name="plotPer" value="${this.plotPer}" type="text"></td>
-				<td>Auto <input class="intervalsettings plotPer_auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.plotPerAuto)}/></td>
+				<td style="padding:1px;"><input class="intervalsettings plot-per-field enter-apply" name="plotPer" value="${this.plotPer}" type="text"></td>
+				<td>Auto <input class="intervalsettings plot-per-auto-checkbox enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.plotPerAuto)}/></td>
 			</tr>
 		</table>
 		`);
@@ -8356,22 +8356,22 @@ class TableDialog extends DisplayDialog {
 		this.updateInterval();
 	}
 	updateInterval()  {
-		this.start = Number($(this.dialogContent).find(".start").val());
-		this.end = Number($(this.dialogContent).find(".end").val());
-		let plotPer = Number($(this.dialogContent).find(".plotPer").val());
+		this.start = Number($(this.dialogContent).find(".start-field").val());
+		this.end = Number($(this.dialogContent).find(".end-field").val());
+		let plotPer = Number($(this.dialogContent).find(".plot-per-field").val());
 		this.plotPer = (plotPer < getTimeStep()) ? getTimeStep() : plotPer;
 		
-		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
-		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
-		$(this.dialogContent).find(".start").val(this.getStart());
+		this.startAuto = $(this.dialogContent).find(".start-auto").prop("checked");
+		$(this.dialogContent).find(".start-field").prop("disabled",this.startAuto);
+		$(this.dialogContent).find(".start-field").val(this.getStart());
 		
-		this.endAuto = $(this.dialogContent).find(".end_auto").prop("checked");
-		$(this.dialogContent).find(".end").prop("disabled", this.endAuto);
-		$(this.dialogContent).find(".end").val(this.getLength()+this.getStart());
+		this.endAuto = $(this.dialogContent).find(".end-auto").prop("checked");
+		$(this.dialogContent).find(".end-field").prop("disabled", this.endAuto);
+		$(this.dialogContent).find(".end-field").val(this.getLength()+this.getStart());
 		
-		this.plotPerAuto = $(this.dialogContent).find(".plotPer_auto").prop("checked");
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.plotPerAuto);
-		$(this.dialogContent).find(".plotPer").val(this.getStep());
+		this.plotPerAuto = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.plotPerAuto);
+		$(this.dialogContent).find(".plot-per-field").val(this.getStep());
 	}
 	getStart() {
 		if (this.startAuto) {
