@@ -7430,7 +7430,7 @@ class TimePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
@@ -7602,7 +7602,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
 
@@ -7753,7 +7753,7 @@ class ComparePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="TitleLabel enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 160px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
 					</td>
 				</tr>
 				<tr>
@@ -7842,7 +7842,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
+		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
@@ -8109,7 +8109,7 @@ class XyPlotDialog extends DisplayDialog {
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enter-apply" spellcheck="false" type="text" value="${title}">
+						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${title}">
 					</td>
 				</tr>
 			</table>`
@@ -8182,7 +8182,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
-		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
+		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 	}
