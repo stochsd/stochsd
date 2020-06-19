@@ -9274,7 +9274,7 @@ class MacroDialog extends jqDialog {
 		this.setTitle("Macro");
 		this.seed = "";
 		this.setHtml(`
-		<table class="invisibleTable" style="vertical-align: top;">
+		<table class="invisible-table" style="vertical-align: top;">
 			<tr>
 				<td>
 					<textarea class="macro-text"></textarea>
