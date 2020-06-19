@@ -7102,7 +7102,7 @@ class DisplayDialog extends jqDialog {
 						<input class="round-to-zero-checkbox enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enterApply" type="text" value="no value"/>
 					</td>
 					<td>
-						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
+						<button class="default-round-to-zero-button enterApply">Reset to Default</button>
 					</td>
 				</tr>
 			</table>
@@ -7119,7 +7119,7 @@ class DisplayDialog extends jqDialog {
 		this.setRoundToZero(roundToZero);
 
 		// set default button listener
-		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
+		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
 			this.setRoundToZero(true);
 			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
