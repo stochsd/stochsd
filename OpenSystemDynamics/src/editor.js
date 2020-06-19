@@ -7306,26 +7306,26 @@ class DisplayDialog extends jqDialog {
 	}
 
 	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
+		this.xMax = Number($(this.dialogContent).find(".xaxis-max-field").val());
 		this.xAuto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-min-field").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-max-field").prop("disabled",this.xAuto);
 		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		$(this.dialogContent).find(".xaxis-min-field").val(this.getXMin());
+		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
 		
 		
 		this.yMin = Number($(this.dialogContent).find(".yMin").val());
 		this.yMax = Number($(this.dialogContent).find(".yMax").val());
 		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yaxis-max-field").prop("disabled",this.yAuto);
 		
-		$(this.dialogContent).find(".yMin").val(this.getYMin());
-		$(this.dialogContent).find(".yMax").val(this.getYMax());
+		$(this.dialogContent).find(".yaxis-min-field").val(this.getYMin());
+		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
 	}
 
 	bindPrimitiveListEvents() {
@@ -7460,22 +7460,22 @@ class TimePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xaxis-min-field intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xaxis-max-field intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td style="padding:1px;"><input class="yLMin intervalsettings enter-apply" type="text" value="${this.getYLMin()}"></td>
-				<td style="padding:1px;"><input class="yLMax intervalsettings enter-apply" type="text" value="${this.getYLMax()}"></td>
+				<td style="padding:1px;"><input class="left-yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYLMin()}"></td>
+				<td style="padding:1px;"><input class="left-yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYLMax()}"></td>
 				<td><input class="left-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
 				<td><input class="left-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td style="padding:1px;"><input class="yRMin intervalsettings enter-apply" type="text" value="${this.getYRMin()}"></td>
-				<td style="padding:1px;"><input class="yRMax intervalsettings enter-apply" type="text" value="${this.getYRMax()}"></td>
+				<td style="padding:1px;"><input class="right-yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYRMin()}"></td>
+				<td style="padding:1px;"><input class="right-yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYRMax()}"></td>
 				<td><input class="right-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
 				<td><input class="right-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
 			</tr>
@@ -7483,37 +7483,37 @@ class TimePlotDialog extends DisplayDialog {
 		`);
 	}
 	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
+		this.xMax = Number($(this.dialogContent).find(".xaxis-max-field").val());
 		this.xAuto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-min-field").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-max-field").prop("disabled",this.xAuto);
 		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		$(this.dialogContent).find(".xaxis-min-field").val(this.getXMin());
+		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
 		
 		// Update Left Min Max values
-		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
-		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
+		this.yLMin = Number($(this.dialogContent).find(".left-yaxis-min-field").val());
+		this.yLMax = Number($(this.dialogContent).find(".left-yaxis-max-field").val());
 		this.yLAuto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
-		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".left-yaxis-min-field").prop("disabled",this.yLAuto);
+		$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled",this.yLAuto);
 		
-		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
-		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
+		$(this.dialogContent).find(".left-yaxis-min-field").val(this.getYLMin());
+		$(this.dialogContent).find(".left-yaxis-max-field").val(this.getYLMax());
 
 		// Update Right Min Max values
-		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
-		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
+		this.yRMin = Number($(this.dialogContent).find(".right-yaxis-min-field").val());
+		this.yRMax = Number($(this.dialogContent).find(".right-yaxis-max-field").val());
 		this.yRAuto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
-		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
+		$(this.dialogContent).find(".right-yaxis-min-field").prop("disabled",this.yRAuto);
+		$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled",this.yRAuto);
 		
-		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
-		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+		$(this.dialogContent).find(".right-yaxis-min-field").val(this.getYRMin());
+		$(this.dialogContent).find(".right-yaxis-max-field").val(this.getYRMax());
 
 		// update plotPer
 		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
@@ -7777,15 +7777,15 @@ class ComparePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xaxis-min-field intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xaxis-max-field intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
-				<td style="padding:1px;"><input class="yMin intervalsettings enter-apply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yMax intervalsettings enter-apply" type="text" value="${this.getYMax()}"></td>
+				<td style="padding:1px;"><input class="yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYMin()}"></td>
+				<td style="padding:1px;"><input class="yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYMax()}"></td>
 				<td><input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 				<td><input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
 			</tr>
@@ -7793,26 +7793,26 @@ class ComparePlotDialog extends DisplayDialog {
 		`);
 	}
 	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
+		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
+		this.xMax = Number($(this.dialogContent).find(".xaxis-max-field").val());
 		this.xAuto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-min-field").prop("disabled",this.xAuto);
+		$(this.dialogContent).find(".xaxis-max-field").prop("disabled",this.xAuto);
 		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
+		$(this.dialogContent).find(".xaxis-min-field").val(this.getXMin());
+		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
 		
 		// Update Left Min Max values
 		this.yMin = Number($(this.dialogContent).find(".yMin").val());
 		this.yMax = Number($(this.dialogContent).find(".yMax").val());
 		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
 		
-		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
+		$(this.dialogContent).find(".yaxis-max-field").prop("disabled",this.yAuto);
 		
-		$(this.dialogContent).find(".yMin").val(this.getYMin());
-		$(this.dialogContent).find(".yMax").val(this.getYMax());
+		$(this.dialogContent).find(".yaxis-min-field").val(this.getYMin());
+		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
 
 		// update plotPer
 		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
@@ -7847,7 +7847,7 @@ class ComparePlotDialog extends DisplayDialog {
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
-		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
+		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
