@@ -7275,7 +7275,7 @@ class DisplayDialog extends jqDialog {
 							<td>${getName(p)}</td>
 							<td style="text-align: center;">
 								<input
-									class="primitive_checkbox enter-apply"
+									class="primitive-checkbox enter-apply"
 									type="checkbox"
 									${checkedHtmlAttribute(this.getDisplayId(getID(p)))}
 									data-name="${getName(p)}"
@@ -7329,7 +7329,7 @@ class DisplayDialog extends jqDialog {
 	}
 
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			let clickedElement = event.target;
 			let idClicked = $(clickedElement).attr("data-id");
 			let checked = $(clickedElement).prop("checked");
@@ -7554,7 +7554,7 @@ class TimePlotDialog extends DisplayDialog {
 							<td>${getName(p)}</td>
 							<td style="text-align: center;">
 								<input 
-									class="primitive_checkbox enter-apply" 
+									class="primitive-checkbox enter-apply" 
 									type="checkbox" 
 									${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
 									data-name="${getName(p)}" 
@@ -7564,7 +7564,7 @@ class TimePlotDialog extends DisplayDialog {
 							</td>
 							<td style="text-align: center;">
 								<input 
-									class="primitive_checkbox enter-apply"
+									class="primitive-checkbox enter-apply"
 									type="checkbox"
 									${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
 									data-name="${getName(p)}" 
@@ -7579,7 +7579,7 @@ class TimePlotDialog extends DisplayDialog {
 		`);
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			let clickedElement = event.target;
 			let side = $(clickedElement).attr("data-side");
 			
@@ -7611,7 +7611,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));
 
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
 		this.sides = [];
 		this.displayIdList = [];
 		for(let i = 0; i < primitiveCheckboxes.length; i++) {
@@ -7827,7 +7827,7 @@ class ComparePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.autoPlotPer);
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			this.subscribePool.publish("primitive check changed");
 		});
 		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
@@ -7851,7 +7851,7 @@ class ComparePlotDialog extends DisplayDialog {
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
 		this.displayIdList = [];
 		for(let i = 0; i < primitiveCheckboxes.length; i++) {
 			let box = primitiveCheckboxes[i];
