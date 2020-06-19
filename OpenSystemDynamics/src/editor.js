@@ -5398,7 +5398,7 @@ class ToolBox {
 	}
 	static setTool(toolName, whichMouseButton) {
 		if (toolName in this.tools) {
-			$(".toolButton").removeClass("pressed");
+			$(".tool-button").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
 			currentTool.leaveTool();
@@ -5511,7 +5511,7 @@ $(window).load(function() {
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
 	
-	$(".toolButton").mousedown(function(event) {
+	$(".tool-button").mousedown(function(event) {
 		let toolName = $(this).attr("data-tool");
 		ToolBox.setTool(toolName, event.which);
 	});
