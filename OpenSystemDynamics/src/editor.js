@@ -7934,18 +7934,18 @@ class HistoPlotDialog extends DisplayDialog {
 				</tr>
 				<tr>
 					<td>Upper bound</td>
-					<td><input class="upperBoundField enter-apply" type="text"/></td>
-					<td><input class="upperBoundCheckbox enter-apply" type="checkbox" ></td>
+					<td><input class="upper-bound-field enter-apply" type="text"/></td>
+					<td><input class="upper-bound-auto-checkbox enter-apply" type="checkbox" ></td>
 				</tr>
 				<tr>
 					<td>Lower bound</td>
-					<td><input class="lowerBoundField enter-apply" type="text"/></td>
-					<td><input class="lowerBoundCheckbox enter-apply" type="checkbox"></td>
+					<td><input class="lower-bound-field enter-apply" type="text"/></td>
+					<td><input class="lower-bound-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
 				<tr>
 					<td>No. Bars</td>
-					<td><input class="numBarsField enter-apply" type="text"/></td>
-					<td><input class="numBarsCheckbox enter-apply" type="checkbox"></td>
+					<td><input class="num-bars-field enter-apply" type="text"/></td>
+					<td><input class="num-bars-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
 			</table>
 		`);
@@ -7965,9 +7965,9 @@ class HistoPlotDialog extends DisplayDialog {
 			});
 		}
 
-		bindAndSetValue(".upperBoundCheckbox", ".upperBoundField", "UpperBound");
-		bindAndSetValue(".lowerBoundCheckbox", ".lowerBoundField", "LowerBound");
-		bindAndSetValue(".numBarsCheckbox", ".numBarsField", "NumberOfBars");
+		bindAndSetValue(".upper-bound-auto-checkbox", ".upper-bound-field", "UpperBound");
+		bindAndSetValue(".lower-bound-auto-checkbox", ".lower-bound-field", "LowerBound");
+		bindAndSetValue(".num-bars-auto-checkbox", ".num-bars-field", "NumberOfBars");
 	}
 	renderHistOrPDFHtml() {
 		return (`
@@ -7975,7 +7975,7 @@ class HistoPlotDialog extends DisplayDialog {
 				<tr>
 					<td>
 					<b>Type:</b>
-						<select class="scaleType enter-apply">
+						<select class="scale-type enter-apply">
 							<option ${this.primitive.getAttribute("ScaleType") === "Histogram" ? "selected": ""} value="Histogram" >Histogram</option>
 							<option ${this.primitive.getAttribute("ScaleType") === "PDF" ? "selected": ""} value="PDF" >P.D.F</option>
 						</select>
@@ -8006,13 +8006,13 @@ class HistoPlotDialog extends DisplayDialog {
 	makeApply() {
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
-		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scaleType :selected").val());
-		let upperBoundAuto = $(this.dialogContent).find(".upperBoundCheckbox").prop("checked");
-		let lowerBoundAuto = $(this.dialogContent).find(".lowerBoundCheckbox").prop("checked");
-		let numBarsAuto = $(this.dialogContent).find(".numBarsCheckbox").prop("checked");
-		let upperBound = $(this.dialogContent).find(".upperBoundField").val();
-		let lowerBound = $(this.dialogContent).find(".lowerBoundField").val();
-		let numBars = $(this.dialogContent).find(".numBarsField").val();
+		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scale-type :selected").val());
+		let upperBoundAuto = $(this.dialogContent).find(".upper-bound-auto-checkbox").prop("checked");
+		let lowerBoundAuto = $(this.dialogContent).find(".lower-bound-auto-checkbox").prop("checked");
+		let numBarsAuto = $(this.dialogContent).find(".num-bars-auto-checkbox").prop("checked");
+		let upperBound = $(this.dialogContent).find(".upper-bound-field").val();
+		let lowerBound = $(this.dialogContent).find(".lower-bound-field").val();
+		let numBars = $(this.dialogContent).find(".num-bars-field").val();
 		
 		this.primitive.setAttribute("UpperBoundAuto", upperBoundAuto);
 		this.primitive.setAttribute("LowerBoundAuto", lowerBoundAuto);
