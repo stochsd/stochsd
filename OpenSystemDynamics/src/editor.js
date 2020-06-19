@@ -7247,7 +7247,7 @@ class DisplayDialog extends jqDialog {
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
-					<input class="ColorFromPrimitive enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
+					<input class="color-from-primitive-checkbox enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
 					</td>
 				</tr>
 			</table>
@@ -7606,7 +7606,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
 
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
@@ -7845,7 +7845,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 
