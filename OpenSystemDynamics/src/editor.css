@@ -176,7 +176,7 @@ div.vertical-space {
     padding: 1px 8px;
     vertical-align: text-top;
 }
-.invisibleTable table,tr,th, .invisibleTable td {
+.invisible-table table,tr,th, .invisible-table td {
     border: 0px;
     vertical-align: top;
     padding: 0px 10px;
