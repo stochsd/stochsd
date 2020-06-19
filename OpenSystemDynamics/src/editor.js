@@ -8687,11 +8687,11 @@ class LineDialog extends GeometryDialog {
 			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
-					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
+					<td><input class="arrow-start-checkbox" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
 				</tr>
 				<tr>
 					<td>Arrow head at end point:</td>
-					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
+					<td><input class="arrow-end-checkbox" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
 				</tr>
 			</table>
 		`);
@@ -8705,8 +8705,8 @@ class LineDialog extends GeometryDialog {
 		</div>`);
 	}
 	makeApply() {
-		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrowStartCheck").prop("checked"));
-		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrowEndCheck").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrow-start-checkbox").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrow-end-checkbox").prop("checked"));
 		super.makeApply();
 	}
 }
@@ -8746,7 +8746,7 @@ class ConverterDialog extends jqDialog {
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="value-field" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
-				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
+				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
 					<b>Definition:</b></br>
@@ -9046,7 +9046,7 @@ class EquationEditor extends jqDialog {
 	
 		for (let i = 0; i < helpData.length; i++) {
 			$(".accordion-cluster").append(`<div>
-			<h3 class="functionCategory">${helpData[i][0]}</h3>
+			<h3 class="function-category">${helpData[i][0]}</h3>
 			  <div>
 				${
 					functionListToHtml(helpData[i][1])
