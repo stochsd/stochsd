@@ -216,7 +216,7 @@ button.toolButton img {
   padding: 6px;
   /*border: black 1px solid;*/ /*Turn on for debuggning */
 }
-h3.equationListHeader {
+h3.equation-list-header {
     margin: 5px 0px 0px 0px;
 }
 

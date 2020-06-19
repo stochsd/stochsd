@@ -9442,8 +9442,8 @@ class EquationListDialog extends jqDialog {
 		}
 
 		return(`
-			<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br>
-			<h3 class="equationListHeader">Specifications</h3>
+			<h3 class="equation-list-header">${fileName}</h3>${fullDate}</br>
+			<h3 class="equation-list-header	">Specifications</h3>
 			<table class="modern-table">
 				${specs.map(spec => 
 					`<tr>
@@ -9456,7 +9456,7 @@ class EquationListDialog extends jqDialog {
 	}
 	renderPrimitiveListHtml(info) {
 		return (`
-		<h3 class="equationListHeader">${info.title}</h3>
+		<h3 class="equation-list-header">${info.title}</h3>
 		<table class="modern-table">
 			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
 				${info.primitives.map(p => `<tr>
