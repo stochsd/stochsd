@@ -9280,7 +9280,7 @@ class MacroDialog extends jqDialog {
 		<table class="invisibleTable" style="vertical-align: top;">
 			<tr>
 				<td>
-					<textarea class="macroText"></textarea>
+					<textarea class="macro-text"></textarea>
 				</td>
 				<td style="padding:0;">
 					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
@@ -9299,7 +9299,7 @@ class MacroDialog extends jqDialog {
 			</tr>
 		</table>
 		`);		
-		this.macroTextArea = $(this.dialogContent).find(".macroText");
+		this.macroTextArea = $(this.dialogContent).find(".macro-text");
 		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
 		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
@@ -9331,7 +9331,7 @@ class MacroDialog extends jqDialog {
 		// this.dialogParameters.height = "400";
 	}
 	makeApply() {
-		let newMacro = $(this.dialogContent).find(".macroText").val();
+		let newMacro = $(this.dialogContent).find(".macro-text").val();
 		setMacros(newMacro);
 	}
 }
