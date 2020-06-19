@@ -112,18 +112,19 @@ td.text {
 }
 
 /* Sticky table start here (used in TableVisual) */
-table.stickyTable {
+table.sticky-table {
     width: 100%;
 }
-table.stickyTable th {
+table.sticky-table th {
     padding: 8px 8px;
 }
-table.stickyTable th {
+table.sticky-table th {
+    /* Make header stay at top */
     position: sticky;
     top: 0;
     background-color: #f4f4f4;
 }
-table.stickyTable th::after {
+table.sticky-table th::after {
     /* Make border-bottom since border does follow element with sticky */
     content: "";
     position: absolute;
@@ -133,10 +134,10 @@ table.stickyTable th::after {
     right: 0;
     height: 1px;
 }
-table.stickyTable th, table.stickyTable td {
+table.sticky-table th, table.sticky-table td {
     border: 1px solid var(--table-border-color);
 } 
-table.stickyTable tr:nth-child(even) {
+table.sticky-table tr:nth-child(even) {
     background-color: #f4f4f4;
 }
 .time-header-cell::before {
