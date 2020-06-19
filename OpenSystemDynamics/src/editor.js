@@ -7106,7 +7106,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="numberboxWarning" style="color: red; margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div" style="color: red; margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	roundToZeroBeforeShow() {
@@ -7173,11 +7173,11 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".numberboxWarning").html(htmlMessage);
-			$(this.dialogContent).find(".numberboxWarning").css("visibility", "visible");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage);
+			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
-			$(this.dialogContent).find(".numberboxWarning").html("");
-			$(this.dialogContent).find(".numberboxWarning").css("visibility", "hidden");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
+			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "hidden");
 		}
 	}
 
