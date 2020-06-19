@@ -8420,10 +8420,10 @@ class NewModelDialog extends jqDialog {
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
-				<input class="input_timeunits enter-apply text-input" name="length" style="width:100px;" value="" type="text">
+				<input class="input-timeunits enter-apply text-input" name="length" style="width:100px;" value="" type="text">
 				<!--
-				<button class="input_timeunits_default_value" data-default-value="Years">Years</button>
-				<button class="input_timeunits_default_value" data-default-value="Minutes">Minutes</button>
+				<button class="input-timeunits-default-value" data-default-value="Years">Years</button>
+				<button class="input-timeunits-default-value" data-default-value="Minutes">Minutes</button>
 				-->
 			</td>
 		</tr>
@@ -8435,9 +8435,9 @@ class NewModelDialog extends jqDialog {
 				this.applyChanges();
 			}
 		});
-		$(this.dialogContent).find(".input_timeunits_default_value").click((event) => {
+		$(this.dialogContent).find(".input-timeunits-default-value").click((event) => {
 			let selectedUnit = $(event.target).data("default-value");
-			$(this.dialogContent).find(".input_timeunits").val(selectedUnit);
+			$(this.dialogContent).find(".input-timeunits").val(selectedUnit);
 			this.makeApply();
 		});
 	}
@@ -8452,13 +8452,13 @@ class NewModelDialog extends jqDialog {
 	beforeClose() {
 		// If the users closes the window without choosing anything
 		// We currently does not use default values for this
-		// if($(this.dialogContent).find(".input_timeunits").val().trim()=="") {
+		// if($(this.dialogContent).find(".input-timeunits").val().trim()=="") {
 		// 	setTimeUnits("tu");
 		//	updateTimeUnitButton();
 		//}
 	}
 	makeApply() {
-		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
+		let timeUnits =$(this.dialogContent).find(".input-timeunits").val();
 		if(!isTimeUnitOk(timeUnits.trim())) {
 			xAlert("You have to enter a time unit for the model, e.g. Years or Minutes");
 			return;
@@ -8485,24 +8485,24 @@ class SimulationSettings extends jqDialog {
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
-				<input class="input_start enter-apply" name="start" style="width:100px;" value="${start}" type="text">
+				<input class="input-start enter-apply" name="start" style="width:100px;" value="${start}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Length</td>
 			<td style="padding:1px;">
-				<input class="input_length enter-apply" name="length" style="width:100px;" value="${length}" type="text">
+				<input class="input-length enter-apply" name="length" style="width:100px;" value="${length}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Time Step</td>
 			<td style="padding:1px;">
-				<input class="input_step enter-apply" name="step" style="width:100px;" value="${step}" type="text">
+				<input class="input-step enter-apply" name="step" style="width:100px;" value="${step}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Method</td>
-			<td style="padding:1px;"><select class="input_method enter-apply" style="width:104px">
+			<td style="padding:1px;"><select class="input-method enter-apply" style="width:104px">
 			<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
 			<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
 			</select></td>
@@ -8517,9 +8517,9 @@ class SimulationSettings extends jqDialog {
 			}
 		});
 
-		this.start_field = $(this.dialogContent).find(".input_start");
-		this.length_field = $(this.dialogContent).find(".input_length");
-		this.step_field = $(this.dialogContent).find(".input_step");
+		this.start_field = $(this.dialogContent).find(".input-start");
+		this.length_field = $(this.dialogContent).find(".input-length");
+		this.step_field = $(this.dialogContent).find(".input-step");
 		this.warning_div = $(this.dialogContent).find(".simulation-settings-warning");
 
 		this.start_field.keyup((event) => this.checkValidTimeSettings());
@@ -8556,7 +8556,7 @@ class SimulationSettings extends jqDialog {
 			setTimeStart(this.start_field.val());
 			setTimeLength(this.length_field.val());
 			setTimeStep(this.step_field.val());
-			let method = $(".input_method :selected").val();
+			let method = $(".input-method :selected").val();
 			setAlgorithm(method);
 		}
 	}
@@ -8973,8 +8973,8 @@ class EquationEditor extends jqDialog {
 					<div class="table-cell">
 					<div style="width:240px;"></div> <!-- div here to show entire window on open since next div has position:absolute -->
     				<div style="position: absolute; top: 20px; bottom: 0px; overflow-y: scroll; width: 230px; padding: 10px 20px 20px 0px;">
-						<div class="accordionCluster">
-						</div> <!--End of accordionCluster. Programming help is inserted here-->
+						<div class="accordion-cluster">
+						</div> <!--End of accordion-cluster. Programming help is inserted here-->
 					</div>
   				</div>
 			</div>
@@ -9048,7 +9048,7 @@ class EquationEditor extends jqDialog {
 		};
 	
 		for (let i = 0; i < helpData.length; i++) {
-			$(".accordionCluster").append(`<div>
+			$(".accordion-cluster").append(`<div>
 			<h3 class="functionCategory">${helpData[i][0]}</h3>
 			  <div>
 				${
@@ -9063,7 +9063,7 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).focusout((event)=>{
 			this.storeValueSelectionRange();
 		});
-		$(".accordionCluster").click((event) => {
+		$(".accordion-cluster").click((event) => {
 			this.restoreValueSelectionRange();
 		});
 		$(this.dialogContent).find(".referenceDiv").click((event) => {
@@ -9076,7 +9076,7 @@ class EquationEditor extends jqDialog {
 			This is done to avoid blocking the button with the tooltip
 			https://api.jqueryui.com/position/
 		*/
-		$(".accordionCluster").tooltip({
+		$(".accordion-cluster").tooltip({
 		  position: { my: "left+5 center", at: "right center" },
 		  classes: {"ui-tooltip": "tooltip"},
 		  content: function () {
@@ -9193,10 +9193,10 @@ class EquationEditor extends jqDialog {
 		// Uses the trick of creating multiple accordions
 		// So that they can be independetly opened and closed
 		// http://stackoverflow.com/questions/3479447/jquery-ui-accordion-that-keeps-multiple-sections-open
-		$(".accordionCluster > div").accordion({active: false, header: "h3", collapsible: true });
+		$(".accordion-cluster > div").accordion({active: false, header: "h3", collapsible: true });
 	}
 	closeAccordion() {
-		$(".accordionCluster > div").accordion({
+		$(".accordion-cluster > div").accordion({
 			active: false
 		});
 	}
