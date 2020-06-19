@@ -162,7 +162,7 @@ table.stickyTable tr:nth-child(even) {
     padding: 2px 8px !important;
 }
 /* Vertical space start here */
-div.verticalSpace {
+div.vertical-space {
     height: 12px;
 }
 

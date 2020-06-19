@@ -7638,15 +7638,15 @@ class TimePlotDialog extends DisplayDialog {
 					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisNamesHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7873,17 +7873,17 @@ class ComparePlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderKeepHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisNamesHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -7993,7 +7993,7 @@ class HistoPlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderHistogramOptionsHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderHistOrPDFHtml()}
 					</div>
 				</div>
@@ -8127,13 +8127,13 @@ class XyPlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderMarkerHTML()} 
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderTitleHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -8325,9 +8325,9 @@ class TableDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderRoundToZeroHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderExportHtml()}
 					</div>
 				</div>
@@ -8700,7 +8700,7 @@ class LineDialog extends GeometryDialog {
 		this.setTitle("Arrow/Line Properties");
 		this.setHtml(`<div>
 			${this.renderArrowCheckboxHtml()}
-			<div class="verticalSpace"></div>
+			<div class="vertical-space"></div>
 			${this.renderStrokeHtml()}
 		</div>`);
 	}
@@ -9343,7 +9343,7 @@ class TextAreaDialog extends DisplayDialog {
 		this.setHtml(`
 		<div style="height: 100%;">
 			<textarea class="text" style="resize: none;"></textarea>
-			<div class="verticalSpace"></div>
+			<div class="vertical-space"></div>
 			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
 				<td><input type="checkbox" class="hide-frame-checkbox" /></td>
