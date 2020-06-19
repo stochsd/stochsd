@@ -764,7 +764,7 @@ function default_double_click(id) {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
 	}
-	equationEditor.open(id, ".valueField");
+	equationEditor.open(id, ".value-field");
 }
 
 class BaseObject {
@@ -882,7 +882,7 @@ class BaseObject {
 			return;
 		}
 		let id = get_parent_id(this.id)
-		equationEditor.open(id, ".nameField");
+		equationEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
 	
@@ -1556,11 +1556,11 @@ class ConverterVisual extends BasePrimitive {
 		}
 	}
 	nameDoubleClick() {
-		converterDialog.open(this.id, ".nameField");
+		converterDialog.open(this.id, ".name-field");
 	}
 	
 	doubleClick() {
-		converterDialog.open(this.id, ".valueField");
+		converterDialog.open(this.id, ".value-field");
 	}
 }
 
@@ -8420,7 +8420,7 @@ class NewModelDialog extends jqDialog {
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
-				<input class="input_timeunits enterApply textInput" name="length" style="width:100px;" value="" type="text">
+				<input class="input_timeunits enterApply text-input" name="length" style="width:100px;" value="" type="text">
 				<!--
 				<button class="input_timeunits_default_value" data-default-value="Years">Years</button>
 				<button class="input_timeunits_default_value" data-default-value="Minutes">Minutes</button>
@@ -8743,9 +8743,9 @@ class ConverterDialog extends jqDialog {
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
 				Name:<br/>
-				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
+				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
-				<textarea class="valueField" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
+				<textarea class="value-field" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
 				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
@@ -8758,7 +8758,7 @@ class ConverterDialog extends jqDialog {
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".inLink").get(0);
-		this.valueField = $(this.dialogContent).find(".valueField").get(0);
+		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
@@ -8766,7 +8766,7 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		});
-		this.nameField = $(this.dialogContent).find(".nameField").get(0);
+		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.keyCode == keyboard["enter"]) {
 				this.applyChanges();
@@ -8812,7 +8812,7 @@ class ConverterDialog extends jqDialog {
 		}
 	}
 	afterShow() {
-		let field = $(this.dialogContent).find(".textInput").get(0);
+		let field = $(this.dialogContent).find(".text-input").get(0);
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
@@ -8824,7 +8824,7 @@ class ConverterDialog extends jqDialog {
 			
 			// handle name
 			let oldName = getName(this.primitive);
-			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
 				if (isNameFree(newName)) {
 					setName(this.primitive, newName);
@@ -8957,10 +8957,10 @@ class EquationEditor extends jqDialog {
 					<div class="table-cell" style="width: 300px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
-							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
+							<input class="name-field text-input enterApply" style="width: 100%;" type="text" value=""><br/>
 							<div class="nameWarningDiv" style="color: red;"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
 							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -8980,7 +8980,7 @@ class EquationEditor extends jqDialog {
 			</div>
 		`);
 
-		$(this.dialogContent).find(".nameField").keyup((event) => {
+		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
 			let validName = validPrimitiveName(newName, this.primitive);
@@ -9008,8 +9008,8 @@ class EquationEditor extends jqDialog {
 			}
 		});
 
-		this.valueField = $(this.dialogContent).find(".valueField").get(0);
-		this.nameField = $(this.dialogContent).find(".nameField").get(0);
+		this.valueField = $(this.dialogContent).find(".value-field").get(0);
+		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		this.referenceDiv = $(this.dialogContent).find(".referenceDiv").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrictNonNegative").get(0);
 		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrictNonNegativeDiv").get(0);
@@ -9095,7 +9095,7 @@ class EquationEditor extends jqDialog {
 	
 	}
 	open(id,defaultFocusSelector = null) {
-		$(this.dialogContent).find(".nameField").css("background-color", "white");
+		$(this.dialogContent).find(".name-field").css("background-color", "white");
 		$(this.dialogContent).find(".nameWarningDiv").html("");
 		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
@@ -9219,11 +9219,11 @@ class EquationEditor extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.dialogContent).find(".valueField").val();
+			let value = $(this.dialogContent).find(".value-field").val();
 			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
-			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
 				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
 					setName(this.primitive, newName);

@@ -184,7 +184,7 @@ input[type="text"] {
     width: 50px;
     text-align: right;
 }
-input[type="text"].textInput {
+input[type="text"].text-input {
     text-align: left !important;
 }
 /* Overlays */
@@ -197,8 +197,8 @@ button.toolButton img {
     height: 100%; 
     display: inline;
 }
-.primitive-settings .nameField, 
-.primitive-settings .valueField {
+.primitive-settings .name-field, 
+.primitive-settings .value-field {
     width: 200px;
 }
 .accordion div {
