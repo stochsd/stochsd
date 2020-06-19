@@ -7220,7 +7220,7 @@ class DisplayDialog extends jqDialog {
 				<tr>
 					<td>
 						<b>Numbered Lines:</b>
-						<input class="NumberedLines enter-apply" type="checkbox" ${checkedHtmlAttribute(hasNumberedLines)}>
+						<input class="numbered-lines-checkbox enter-apply" type="checkbox" ${checkedHtmlAttribute(hasNumberedLines)}>
 					</td>
 				</tr>
 			</table>
@@ -7607,7 +7607,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
 
@@ -7846,7 +7846,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
