@@ -9286,12 +9286,12 @@ class MacroDialog extends jqDialog {
 					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
-								Seed = <input class="seedBox enter-apply" type="text" />
+								Seed = <input class="seed-field enter-apply" type="text" />
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<button class="setSeedButton" disabled>SetRandSeed</button>
+								<button class="set-seed-button" disabled>SetRandSeed</button>
 							</td>
 						</tr>
 					</table>
@@ -9300,8 +9300,8 @@ class MacroDialog extends jqDialog {
 		</table>
 		`);		
 		this.macroTextArea = $(this.dialogContent).find(".macroText");
-		this.setSeedButton = $(this.dialogContent).find(".setSeedButton");
-		$(this.dialogContent).find(".seedBox").keyup((event) => { 
+		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
+		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
 			this.setSeedButton.attr("disabled", this.seed.length === 0 );
 		});
