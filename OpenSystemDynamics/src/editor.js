@@ -7436,13 +7436,13 @@ class TimePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Left Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Right Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enter-apply" spellcheck="false" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="right-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7603,8 +7603,8 @@ class TimePlotDialog extends DisplayDialog {
 	makeApply() {
 		super.makeApply();
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
-		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
+		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
@@ -7759,7 +7759,7 @@ class ComparePlotDialog extends DisplayDialog {
 				<tr>
 					<th>Y-axis Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 160px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7843,7 +7843,7 @@ class ComparePlotDialog extends DisplayDialog {
 	makeApply() {
 		super.makeApply();
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
