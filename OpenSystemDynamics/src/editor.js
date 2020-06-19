@@ -7317,8 +7317,8 @@ class DisplayDialog extends jqDialog {
 		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
 		
 		
-		this.yMin = Number($(this.dialogContent).find(".yMin").val());
-		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yMin = Number($(this.dialogContent).find(".yaxis-min-field").val());
+		this.yMax = Number($(this.dialogContent).find(".yaxis-max-field").val());
 		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
 		
 		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
@@ -7804,8 +7804,8 @@ class ComparePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
 		
 		// Update Left Min Max values
-		this.yMin = Number($(this.dialogContent).find(".yMin").val());
-		this.yMax = Number($(this.dialogContent).find(".yMax").val());
+		this.yMin = Number($(this.dialogContent).find(".yaxis-min-field").val());
+		this.yMax = Number($(this.dialogContent).find(".yaxis-max-field").val());
 		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
 		
 		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
@@ -8063,15 +8063,15 @@ class XyPlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td>X-axis</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
+				<td style="padding:1px;"><input class="xaxis-min-field intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
+				<td style="padding:1px;"><input class="xaxis-max-field intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
 				<td><input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
 				<td><input class="xaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("XLogScale") === "true")}></td>
 			</tr>
 			<tr>
 				<td>Y-axis</td>
-				<td style="padding:1px;"><input class="yMin intervalsettings enter-apply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yMax intervalsettings enter-apply" type="text" value="${this.getYMax()}"></td>
+				<td style="padding:1px;"><input class="yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYMin()}"></td>
+				<td style="padding:1px;"><input class="yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYMax()}"></td>
 				<td><input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
 				<td><input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
 			</tr>
