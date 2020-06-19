@@ -7741,7 +7741,7 @@ class ComparePlotDialog extends DisplayDialog {
 						Keep Results <input type="checkbox" class="keep_checkbox enter-apply" ${checkedHtmlAttribute(this.keep)}>
 					</td>
 					<td>
-						<button class="keepButton enter-apply">Clear Results</button>
+						<button class="clear-button enter-apply">Clear Results</button>
 					</td>
 				</tr>
 			</table>
@@ -7836,7 +7836,7 @@ class ComparePlotDialog extends DisplayDialog {
 				this.applyChanges();
 			}
 		});
-		$(this.dialogContent).find(".keepButton").click((event) => {
+		$(this.dialogContent).find(".clear-button").click((event) => {
 			this.clear = true;
 		});
 	}
@@ -8572,7 +8572,7 @@ class TimeUnitDialog extends jqDialog {
 				Specify the Time Unit to enable model building.</br></br>
 				Time Unit: 
 				<input class="timeunit-field enter-apply" style="text-align: left; width:200px;" type="text"/>
-				<div style="margin-top: 4px;" class="complainDiv"></div>
+				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
 
@@ -8599,7 +8599,7 @@ class TimeUnitDialog extends jqDialog {
 		return isTimeUnitOk(value);
 	}
 	showComplain(ok) {
-		let complainDiv = $(this.dialogContent).find(".complainDiv");
+		let complainDiv = $(this.dialogContent).find(".complain-div");
 		if (ok) {
 			complainDiv.html("");
 		} else {
@@ -8634,7 +8634,7 @@ class GeometryDialog extends DisplayDialog {
 				<tr>
 					<td>Line Width: </td>
 					<td>
-						<select class="widthSelect enter-apply">
+						<select class="width-select enter-apply">
 						${strokeWidths.map(w => (`
 							<option value="${w}" ${primWidth === w ? "selected" : ""}>${w}</option>
 						`))}
@@ -8644,7 +8644,7 @@ class GeometryDialog extends DisplayDialog {
 				<tr>
 					<td>Dashes: </td>
 					<td>
-						<select class="dashSelect enter-apply">
+						<select class="dash-select enter-apply">
 						<option value="" 	${this.primitive.getAttribute("StrokeDashArray") === "" ? "selected" : ""}	 >––––––</option>
 						<option value="8 4" ${this.primitive.getAttribute("StrokeDashArray") === "8 4" ? "selected" : ""}>– – – –</option>
 						</select>
@@ -8658,8 +8658,8 @@ class GeometryDialog extends DisplayDialog {
 		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
 	}
 	makeApply() {
-		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
-		let strokeWidth = $(this.dialogContent).find(".widthSelect :selected").val();
+		let dashArray = $(this.dialogContent).find(".dash-select :selected").val();
+		let strokeWidth = $(this.dialogContent).find(".width-select :selected").val();
 		this.primitive.setAttribute("StrokeDashArray", dashArray);
 		this.primitive.setAttribute("StrokeWidth", strokeWidth);
 	}
