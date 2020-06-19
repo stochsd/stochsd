@@ -9346,12 +9346,12 @@ class TextAreaDialog extends DisplayDialog {
 			<div class="verticalSpace"></div>
 			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
+				<td><input type="checkbox" class="hide-frame-checkbox" /></td>
 			</tr></table>
 		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
-		this.hideFrameCheckbox = $(this.dialogContent).find(".hideFrameCheckbox");
+		this.hideFrameCheckbox = $(this.dialogContent).find(".hide-frame-checkbox");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
