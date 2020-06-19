@@ -7099,7 +7099,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modern-table">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="round-to-zero-checkbox enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enterApply" type="text" value="no value"/>
 					</td>
 					<td>
 						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
@@ -7110,8 +7110,8 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	roundToZeroBeforeShow() {
-		let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
-		let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
+		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
+		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
 
 		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
 		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
@@ -7141,14 +7141,14 @@ class DisplayDialog extends jqDialog {
 		});
 	}
 	setRoundToZero(roundToZero) {
-		$(this.dialogContent).find(".roundToZero").prop("checked", roundToZero);
-		$(this.dialogContent).find(".roundToZeroAt").prop("disabled", ! roundToZero);
+		$(this.dialogContent).find(".round-to-zero-checkbox").prop("checked", roundToZero);
+		$(this.dialogContent).find(".round-to-zero-field").prop("disabled", ! roundToZero);
 		this.checkValidRoundAtZeroAtField();
 	}
 
 	checkValidRoundAtZeroAtField() {
-		let roundToZeroFieldValue = $(this.dialogContent).find(".roundToZeroAt").val();
-		if ($(this.dialogContent).find(".roundToZero").prop("checked")) {
+		let roundToZeroFieldValue = $(this.dialogContent).find(".round-to-zero-field").val();
+		if ($(this.dialogContent).find(".round-to-zero-checkbox").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
 				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a number.`);
 				return false;
@@ -7183,11 +7183,11 @@ class DisplayDialog extends jqDialog {
 
 	roundToZeroMakeApply() {
 		if (this.primitive) {
-			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
 			
 			if ( this.checkValidRoundAtZeroAtField() ) {
-				let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
+				let roundToZeroAtValue = $(this.dialogContent).find(".round-to-zero-field").val();
 				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
 			}
 		}
