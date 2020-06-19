@@ -8958,7 +8958,7 @@ class EquationEditor extends jqDialog {
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
-							<div class="nameWarningDiv" style="color: red;"></div><br/>
+							<div class="name-warning-div" style="color: red;"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
@@ -8986,15 +8986,15 @@ class EquationEditor extends jqDialog {
 			let validName = validPrimitiveName(newName, this.primitive);
 			if (nameFree && validName) {
 				$(event.target).css("background-color", "white");
-				$(this.dialogContent).find(".nameWarningDiv").html("");
+				$(this.dialogContent).find(".name-warning-div").html("");
 			} else {
 				$(event.target).css("background-color", "pink");
 				if (! nameFree) {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name <b>${newName}</b> is taken.`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
 				} else if (newName === "") {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot be empty.`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
 				} else if (! validName) {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot contain brackets, parentheses, or quotes`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain brackets, parentheses, or quotes`);
 				}
 			} 
 		});
@@ -9096,7 +9096,7 @@ class EquationEditor extends jqDialog {
 	}
 	open(id,defaultFocusSelector = null) {
 		$(this.dialogContent).find(".name-field").css("background-color", "white");
-		$(this.dialogContent).find(".nameWarningDiv").html("");
+		$(this.dialogContent).find(".name-warning-div").html("");
 		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
 			return;
