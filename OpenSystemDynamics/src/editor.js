@@ -8508,26 +8508,57 @@ class SimulationSettings extends jqDialog {
 			</select></td>
 		</tr>
 		</table>
-	`);
+		<div class="simulation-settings-warning"></div>
+		`);
 		$(this.dialogContent).find(".enterApply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
 			}
 		});
-	}
-	makeApply() {
-		let timeStart =$(this.dialogContent).find(".input_start").val();
-		setTimeStart(timeStart);
-		
-		let timeLength = $(this.dialogContent).find(".input_length").val();
-		setTimeLength(timeLength);
-		
-		let timeStep = $(this.dialogContent).find(".input_step").val();
-		setTimeStep(timeStep);
 
-		let method = $(".input_method :selected").val();
-		setAlgorithm(method);
+		this.start_field = $(this.dialogContent).find(".input_start");
+		this.length_field = $(this.dialogContent).find(".input_length");
+		this.step_field = $(this.dialogContent).find(".input_step");
+		this.warning_div = $(this.dialogContent).find(".simulation-settings-warning");
+
+		this.start_field.keyup((event) => this.checkValidTimeSettings());
+		this.length_field.keyup((event) => this.checkValidTimeSettings());
+		this.step_field.keyup((event) => this.checkValidTimeSettings());
+	}
+
+	checkValidTimeSettings() {
+		if (isNaN(this.start_field.val()) || this.start_field.val() === "") {
+			console.log(this.start_field.val());
+			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a number.`);
+			return false;
+		} else if (isNaN(this.length_field.val()) || this.length_field.val() === "") {
+			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a number.`);
+			return false;
+		} else if (isNaN(this.step_field.val()) || this.step_field.val() === "") {
+			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a number.`);
+			return false;
+		} else if (Number(this.length_field.val()) <= 0) {
+			this.warning_div.html(`Length must be &gt;0`);
+			return false;
+		} else if (Number(this.step_field.val()) <= 0) {
+			this.warning_div.html(`Step must be &gt;0`);
+			return false;
+		}
+
+		this.warning_div.html("");
+		return true;
+	}
+
+	makeApply() {
+		let validSettings = this.checkValidTimeSettings();
+		if (validSettings) {
+			setTimeStart(this.start_field.val());
+			setTimeLength(this.length_field.val());
+			setTimeStep(this.step_field.val());
+			let method = $(".input_method :selected").val();
+			setAlgorithm(method);
+		}
 	}
 }
 

@@ -220,6 +220,10 @@ h3.equationListHeader {
     margin: 5px 0px 0px 0px;
 }
 
+.simulation-settings-warning {
+    color: red;
+}
+
 .accordionCluster ul {
     padding: 0px;
     margin: 0px;
