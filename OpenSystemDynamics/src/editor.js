@@ -8949,9 +8949,6 @@ class EquationEditor extends jqDialog {
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
-			<style>
-				.clickFunction { cursor: pointer; }
-			</style>
 			<div class="table">
   				<div class="table-row">
 					<div class="table-cell" style="width: 300px; height: 300px;">
@@ -9041,7 +9038,7 @@ class EquationEditor extends jqDialog {
 				codeHelp = `${functionList[j][2]} ${example}`;
 				codeHelp = codeHelp.replace(/\'/g, "&#39;");
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
-				result += `<li class = "functionHelp clickFunction" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
+				result += `<li class = "function-help click-function" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
 			}
 			result += "</ul>";
 			return result;
@@ -9058,7 +9055,7 @@ class EquationEditor extends jqDialog {
 			</div>`);
 		}
 		
-		$(this.dialogContent).find(".clickFunction").click((event) => this.templateClick(event));
+		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
 		
 		$(this.valueField).focusout((event)=>{
 			this.storeValueSelectionRange();
@@ -9149,7 +9146,7 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;</br>`;
+				result += `<span class = "linked-reference click-function" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
@@ -9164,7 +9161,7 @@ class EquationEditor extends jqDialog {
 		}
 		$(this.referenceDiv).html(referenceHTML);
 		
-		$(this.referenceDiv).find(".clickFunction").click((event) => this.templateClick(event));
+		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
