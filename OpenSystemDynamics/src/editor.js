@@ -8741,7 +8741,7 @@ class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setHtml(`
-			<div class="primitiveSettings" style="padding: 10px 0px">
+			<div class="primitive-settings" style="padding: 10px 0px">
 				Name:<br/>
 				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
@@ -8955,7 +8955,7 @@ class EquationEditor extends jqDialog {
 			<div class="table">
   				<div class="table-row">
 					<div class="table-cell" style="width: 300px; height: 300px;">
-						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
 							<div class="nameWarningDiv" style="color: red;"></div><br/>

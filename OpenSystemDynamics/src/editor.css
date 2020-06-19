@@ -197,7 +197,8 @@ button.toolButton img {
     height: 100%; 
     display: inline;
 }
-.primitiveSettings .nameField, .primitiveSettings .valueField {
+.primitive-settings .nameField, 
+.primitive-settings .valueField {
     width: 200px;
 }
 .accordion div {
