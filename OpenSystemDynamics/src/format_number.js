@@ -1,18 +1,18 @@
 /**
  * make number into string with and show exponent divisible by 3
  * e.g.
- *      0.000012345 -> 1234.5E-6
- *      0.00012345  -> 123.45E-6
- *      0.0012345   -> 1.2345E-3
+ *      0.000012345 -> 1234.5e-6
+ *      0.00012345  -> 123.45e-6
+ *      0.0012345   -> 1.2345e-3
  *      0.012345789 -> 0.012345789
  *      123.456789  -> 123.456789
- *      1234.56789  -> 1.23456789E+3
- *      123456.789  -> 123.456789E+3
- *      1234567.89  -> 1.23456789E+6
- *      12345678.9  -> 12.3456789E+6
- *      123456789   -> 123.456789E+6
- *      1234567890  -> 1.23456789E+9
- *      12345678900 -> 12.3456789E+9
+ *      1234.56789  -> 1.23456789e+3
+ *      123456.789  -> 123.456789e+3
+ *      1234567.89  -> 1.23456789e+6
+ *      12345678.9  -> 12.3456789e+6
+ *      123456789   -> 123.456789e+6
+ *      1234567890  -> 1.23456789e+9
+ *      12345678900 -> 12.3456789e+9
  */
 
 function round_exponent(exponent) {
@@ -76,12 +76,12 @@ function format_number(value, options = {}) {
         }
     }
 
-    if(value === 0) {
+    // set as zero if 0 or below rounding limit 
+    if(value === 0 || (! isNaN(options.round_to_zero_limit) && Math.abs(value) <= options.round_to_zero_limit)) {
         return "0";
     }
     let log = Math.log10(Math.abs(value));
     let exponent = Math.floor(log);
-    let isPositive = value >= 0;
 
     // exponent rounded of to nerest 3 divisible number: ...-6, -3, 0, 3, 6,...
     let exp3 = round_exponent(exponent);
@@ -91,7 +91,7 @@ function format_number(value, options = {}) {
         (Math.abs(value) <= options.use_e_format_lower_limit)) {
         selected_exp = exp3;
     }
-    
+
     let digits_above = "";
     let digits_below = "";
     let rest = Math.abs(value);
@@ -106,10 +106,9 @@ function format_number(value, options = {}) {
         rest -= tmpNum*10**i;
     }
     
+    // set sign character 
     let sign_str = options.show_plus_sign ? "+" : "";
-    if (! isPositive) {
-        sign_str = "-";
-    }
+    sign_str = value < 0 ? "-": sign_str;
 
     // determine decimals/precision
     if (! isNaN(options.decimals)) {
