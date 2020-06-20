@@ -19,6 +19,46 @@ function round_exponent(exponent) {
     return Math.floor(exponent/3)*3;
 }
 
+String.prototype.replaceAt = function(index, replacement) {
+    return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+}
+
+
+/*
+    positions:  4 3 2 1 0  -1-2-3-4-5-6
+    digits:     8 3 4 2 5 . 4 1 0 9 8 4
+                above       below
+ */
+function round_digits(digits_above, digits_below, position) {
+    let digits = digits_above+digits_below;
+    let index = digits_above.length-1-position;
+
+    if (Number(digits[index+1]) >= 5) {
+        // round up
+        for (let i = index; i >= 0; i--) {
+            if (digits[i] === "9") {
+                digits = digits.replaceAt(i, "0");
+                if (i === 0) {
+                    // last digit is 9
+                    // e.g. 999 -> 1000
+                    digits = "1"+digits;
+                    // change length of digits above be be equal
+                    digits_above = "1"+digits_above;
+                }
+            } else {
+                digits = digits.replaceAt(i, `${Number(digits[i])+1}`);
+                break;
+            }
+        }
+        digits_above = digits.substr(0, digits_above.length);
+        digits_below = digits.substr(digits_above.length);
+    }
+    return {
+        "digits_above": digits_above, 
+        "digits_below": digits_below.substr(0, -position)
+    };
+}
+
 
 let default_options = {
     decimals: undefined,
@@ -52,7 +92,6 @@ function format_number(value, options = {}) {
         selected_exp = exp3;
     }
     
-
     let digits_above = "";
     let digits_below = "";
     let rest = Math.abs(value);
@@ -74,13 +113,23 @@ function format_number(value, options = {}) {
 
     // determine decimals/precision
     if (! isNaN(options.decimals)) {
-        digits_below = digits_below.substr(0, options.decimals);
-        // -- round last digit here ---
+        let ans = round_digits(digits_above, digits_below, -options.decimals);
+        digits_above = ans.digits_above;
+        digits_below = ans.digits_below;
     } else if (! isNaN(options.precision)) {
-        digits_below = digits_below.substr(0, options.precision-digits_above.length);
-        // -- round last digit here ---
+        let leading_zeros = 0;
+        for (let d of digits_above.concat(digits_below)) { 
+            if (d === "0") { 
+                leading_zeros++; 
+            } else {
+                break;
+            }
+        }
+        let ans = round_digits(digits_above, digits_below, digits_above.length-options.precision-leading_zeros);
+        digits_above = ans.digits_above;
+        digits_below = ans.digits_below;
     } else {
-        // default: clean up zeros
+        // default: clean up zeros at end
         while(digits_below[digits_below.length-1] === "0") {
             digits_below = digits_below.substr(0, digits_below.length-1);
         }
@@ -91,6 +140,7 @@ function format_number(value, options = {}) {
     }
     
     if (selected_exp !== 0) {
+        // show as e-format 
         result = `${result}e${Math.sign(selected_exp) === 1 ? "+": "-" }${Math.abs(selected_exp)}`;
     }
     return result;
