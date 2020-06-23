@@ -2393,7 +2393,10 @@ class TableVisual extends HtmlTwoPointer {
 						roundToZeroAtValue = Number(roundToZeroAtValue);
 					}
 				}
-				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
+				let valueString = format_number(
+					this.data.results[row_index][column_index], 
+					{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
+				);
 				if (column_index == 0) {
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
