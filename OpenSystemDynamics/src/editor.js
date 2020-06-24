@@ -2989,7 +2989,6 @@ class ComparePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		console.log(this.serieArray);
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.dialog.titleLabel,
 			series: this.serieSettingsArray,
@@ -8575,7 +8574,6 @@ class SimulationSettings extends jqDialog {
 
 	checkValidTimeSettings() {
 		if (isNaN(this.start_field.val()) || this.start_field.val() === "") {
-			console.log(this.start_field.val());
 			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a number.`);
 			return false;
 		} else if (isNaN(this.length_field.val()) || this.length_field.val() === "") {
