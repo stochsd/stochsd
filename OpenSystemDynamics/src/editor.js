@@ -3233,11 +3233,12 @@ class HistoPlotVisual extends PlotVisual {
 
 		
 		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+		let targetPrimName = `${getName(findID(this.dialog.getIdsToDisplay()[0]))}`;
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
+			title: `${scaleType} of ${targetPrimName}`,
 			sortData: false,
 			grid: {
 				background: "white"
@@ -3254,7 +3255,7 @@ class HistoPlotVisual extends PlotVisual {
 						// axes.xaxis.ticks attribute must be removed for this
 						// formatString: '<%5p≤'
 					}, 
-					label: `${scaleType} of ${targetPrimName}`,
+					label: "&nbsp;", // make sure there is space for below/above labels 
 					pad: 0,
 					ticks: this.ticks
 				},
