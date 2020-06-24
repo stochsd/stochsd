@@ -2624,21 +2624,11 @@ class TimePlotVisual extends PlotVisual {
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
 		);
-		this.pattersToDisplay = idsToDisplay.map(findID).map(
-			( node ) => {
-				let type = get_object(node.id).type;
-				switch(type) {
-					case("variable"):
-					case("constant"):
-					case("converter"):
-						return ".";
-					case("flow"):
-						return "-";
-					default:
-						return "_";
-				}
-			}
-		);
+
+		let types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
+		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
+		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);
 
 		if (this.data.results.length == 0) {
 			this.setEmptyPlot();
@@ -2687,10 +2677,10 @@ class TimePlotVisual extends PlotVisual {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : Number(this.primitive.getAttribute("LineWidth"))),
+					lineWidth: this.widthsToDisplay[i],
 					label: label, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
-					linePattern: this.pattersToDisplay[i], 
+					linePattern: this.patternsToDisplay[i], 
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
 					showMarker: false,
