@@ -79,7 +79,13 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
-primitiveBank.timeplot.setAttribute('LineWidth', 2);
+primitiveBank.timeplot.setAttribute('LineOptions', JSON.stringify({
+	"stock": 		{"pattern": [1], 	"width": 2},
+	"flow": 		{"pattern": [10,5], "width": 2},
+	"variable": 	{"pattern": [1], 	"width": 1},
+	"constant": 	{"pattern": [1], 	"width": 1},
+	"converter": 	{"pattern": [1], 	"width": 1}
+}));
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
 primitiveBank.timeplot.setAttribute("Color", "black");
