@@ -144,3 +144,43 @@ function format_number(value, options = {}) {
     }
     return result;
 }
+
+
+
+function decimals_in_value_string(value_str) {
+    if (isNaN(value_str)) {
+        return null;
+    }
+
+    // e-format numbers 
+    // NOTE: not accurate number of decimals for e-format numbers 
+    let decimals = 0;
+    if (value_str.includes("e")) {
+        for (let i = 0; value_str[i] !== "e"; i++) {
+            if (! isNaN(value_str[i])) {
+                decimals++;
+            }
+        }
+        return decimals;
+    }
+
+    // normal numbers
+    let splt = value_str.split('.');
+
+    if (splt.length < 2) {
+        return 0;
+    } 
+    let decimals_str = splt[1];
+    decimals = decimals_str.length;
+
+    let trailing_zeros = 0;
+    for(let i = decimals-1; i >= 0; i--) {
+        if (decimals_str[i] === "0") {
+            trailing_zeros++;
+        } else {
+            break;
+        }
+    }
+
+    return decimals-trailing_zeros;
+}
