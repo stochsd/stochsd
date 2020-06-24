@@ -8556,6 +8556,13 @@ class SimulationSettings extends jqDialog {
 		} else if (Number(this.step_field.val()) <= 0) {
 			this.warning_div.html(`Step must be &gt;0`);
 			return false;
+		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
+			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
+			this.warning_div.html(`
+				This requires ${iters_str} time steps. <br/>
+				Limit of 10<sup>7</sup> time steps per simulation.`);
+			return false;
 		}
 
 		this.warning_div.html("");
