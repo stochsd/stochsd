@@ -7254,13 +7254,7 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	renderLineOptionsHtml() {
-		let options = [
-			{name: "Stock", type: "stock"},
-			{name: "Flow", type: "flow"},
-			{name: "Auxiliary", type: "variable"},
-			{name: "Parameter", type: "constant"},
-			{name: "Converter", type: "converter"}
-		];
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		return (`
 			<table class="modern-table">
 				<tr>
@@ -7268,24 +7262,38 @@ class DisplayDialog extends jqDialog {
 					<th>Pattern</th>
 					<th>Width</th>
 				</tr>
-				${options.map(opt => (`<tr>
-					<td>${opt.name}</td>
+				${Object.keys(options).map(key => (`<tr>
+					<td>${type_basename[key]}</td>
 					<td>
-						<select class="line-pattern-select enter-apply" style="font-family: monospace;">
-						<option value="[1]"	>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
-						<option value="[10, 5]" >------</option>
+						<select data-key="${key}" class="line-pattern-select enter-apply" style="font-family: monospace;">
+						<option value="[1]"		${options[key].pattern[0] === 1  ? "selected" : ""}>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
+						<option value="[10, 5]" ${options[key].pattern[0] === 10 ? "selected" : ""}>------</option>
 						</select>
 					</td>
 					<td>
-						<select class="line-width-select enter-apply">
-						<option value=1>1</option>
-						<option value=2>2</option>
-						<option value=3>3</option>
+						<select data-key="${key}" class="line-width-select enter-apply">
+						<option value=1 ${options[key].width === 1 ? "selected": ""}>1</option>
+						<option value=2 ${options[key].width === 2 ? "selected": ""}>2</option>
+						<option value=3 ${options[key].width === 3 ? "selected": ""}>3</option>
 						</select>
 					</td>
 				</tr>`)).join('')}
 			</table>
 		`);
+	}
+	applyLineOptions() {
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+
+		let pattern_options = $(this.dialogContent).find(".line-pattern-select");
+		let width_options = $(this.dialogContent).find(".line-width-select");
+		for (let i = 0; i < width_options.length; i++) {
+			let selected_width = JSON.parse($(width_options[i]).find(" :selected").val());
+			let selected_pattern = JSON.parse($(pattern_options[i]).find(" :selected").val());
+
+			options[$(width_options[i]).attr("data-key")]["width"] = selected_width;
+			options[$(pattern_options[i]).attr("data-key")]["pattern"] = selected_pattern;
+		}
+		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
 	}
 	renderColorCheckboxHtml() {
 		return (`
@@ -7652,6 +7660,8 @@ class TimePlotDialog extends DisplayDialog {
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
 
+		this.applyLineOptions();
+
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
@@ -7689,13 +7699,11 @@ class TimePlotDialog extends DisplayDialog {
 						<div class="vertical-space"></div>
 						${this.renderAxisNamesHtml()}
 						<div class="vertical-space"></div>
+						${this.renderLineOptionsHtml()}
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
 						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="vertical-space"></div>
-						${this.renderLineWidthOptionHtml()}
-						<div class="vertical-space"></div>
-						${this.renderLineOptionsHtml()}
 					</div>
 				</div>
 			</div>
