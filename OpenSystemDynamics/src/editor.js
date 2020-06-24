@@ -7253,6 +7253,40 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
+	renderLineOptionsHtml() {
+		let options = [
+			{name: "Stock", type: "stock"},
+			{name: "Flow", type: "flow"},
+			{name: "Auxiliary", type: "variable"},
+			{name: "Parameter", type: "constant"},
+			{name: "Converter", type: "converter"}
+		];
+		return (`
+			<table class="modern-table">
+				<tr>
+					<th>Type</th>
+					<th>Pattern</th>
+					<th>Width</th>
+				</tr>
+				${options.map(opt => (`<tr>
+					<td>${opt.name}</td>
+					<td>
+						<select class="line-pattern-select enter-apply" style="font-family: monospace;">
+						<option value="[1]"	>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
+						<option value="[10, 5]" >------</option>
+						</select>
+					</td>
+					<td>
+						<select class="line-width-select enter-apply">
+						<option value=1>1</option>
+						<option value=2>2</option>
+						<option value=3>3</option>
+						</select>
+					</td>
+				</tr>`)).join('')}
+			</table>
+		`);
+	}
 	renderColorCheckboxHtml() {
 		return (`
 			<table class="modern-table">
@@ -7660,6 +7694,8 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderColorCheckboxHtml()}
 						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
+						<div class="vertical-space"></div>
+						${this.renderLineOptionsHtml()}
 					</div>
 				</div>
 			</div>
