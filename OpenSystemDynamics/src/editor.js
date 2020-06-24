@@ -2379,6 +2379,10 @@ class TableVisual extends HtmlTwoPointer {
 		}
 		// Make content
 		html += "</thead><tbody>";
+
+		let time_step_str = `${getTimeStep()}`;
+		let decimals = decimals_in_value_string(time_step_str);
+
 		for(let row_index in this.data.results) {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
@@ -2393,10 +2397,17 @@ class TableVisual extends HtmlTwoPointer {
 						roundToZeroAtValue = Number(roundToZeroAtValue);
 					}
 				}
-				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
 				if (column_index == 0) {
+					let valueString = format_number(
+						this.data.results[row_index][column_index], 
+						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": decimals }
+					);
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
+					let valueString = format_number(
+						this.data.results[row_index][column_index], 
+						{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
+					);
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
 			}
