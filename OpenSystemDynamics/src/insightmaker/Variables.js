@@ -94,7 +94,13 @@ setValuedProperties(primitiveBank.timeplot);
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
-primitiveBank.compareplot.setAttribute('LineWidth', 2);
+primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
+	"stock": 		{"pattern": [1], 	"width": 2},
+	"flow": 		{"pattern": [10,5], "width": 2},
+	"variable": 	{"pattern": [1], 	"width": 1},
+	"constant": 	{"pattern": [1], 	"width": 1},
+	"converter": 	{"pattern": [1], 	"width": 1}
+}));
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
 primitiveBank.compareplot.setAttribute("Color", "black");

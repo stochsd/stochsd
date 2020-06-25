@@ -2787,10 +2787,11 @@ class DataGenerations {
 		this.nameGen = [];
 		this.colorGen = [];
 		this.patternGen = [];
+		this.lineWidthGen = [];
 		this.resultGen = []; 
 		this.plotPers = [];
 	}
-	append(ids, results) {
+	append(ids, results, lineOptions) {
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
@@ -2799,20 +2800,15 @@ class DataGenerations {
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
 		));
-		this.patternGen.push(ids.map(findID).map( (node) => {
-				switch(get_object(node.id).type) {
-					case ("variable"):
-					case("constant"):
-					case ("converter"):
-						return ".";
-					case ("flow"):
-						return "-";
-					default:
-						return "_";
-				}
-		}));
+		let types = ids.map(findID).map(node => get_object(node.id).type);
+		this.patternGen.push(
+			types.map(type => lineOptions[type]["pattern"])
+		);
+		this.lineWidthGen.push(
+			types.map(type => lineOptions[type]["width"])
+		);
 	}
-	setCurrent(ids, results) {
+	setCurrent(ids, results, lineOptions) {
 		// Remove last
 		if (this.idGen.length !== 0) {
 			let removedIds = this.idGen.pop();
@@ -2822,11 +2818,12 @@ class DataGenerations {
 			this.nameGen.pop();
 			this.colorGen.pop();
 			this.patternGen.pop();
+			this.lineWidthGen.pop();
 			this.resultGen.pop();
 		}
 		
 		// Add new 
-		this.append(ids, results);
+		this.append(ids, results, lineOptions);
 	}
 	getSeriesArray(wantedIds, hasNumberedLines) {
 		let seriesArray = [];
@@ -2860,7 +2857,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive, lineWidth) {
+	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive, lineOptions) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2875,7 +2872,7 @@ class DataGenerations {
 					label += this.nameGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
-						lineWidth: (this.patternGen[i][j] === ".") ? 3 : lineWidth,
+						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
 						label: label,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
@@ -2927,11 +2924,12 @@ class ComparePlotVisual extends PlotVisual {
 		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.dialog.keep) {
 			// add generation 
-			this.gens.append(this.dialog.getIdsToDisplay(), results);
+			this.gens.append(this.dialog.getIdsToDisplay(), results, line_options);
 		} else {
-			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results);
+			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results, line_options);
 		}
 	}
 	render() {
@@ -2967,12 +2965,14 @@ class ComparePlotVisual extends PlotVisual {
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
 		
+		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+
 		// Make serie settings
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
 			idsToDisplay, 
 			hasNumberedLines, 
 			this.primitive.getAttribute("ColorFromPrimitive") === "true", 
-			this.primitive.getAttribute("LineWidth")
+			line_options
 		);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
@@ -7890,6 +7890,8 @@ class ComparePlotDialog extends DisplayDialog {
 		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
 		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 
+		this.applyLineOptions();
+
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
@@ -7925,11 +7927,11 @@ class ComparePlotDialog extends DisplayDialog {
 						<div class="vertical-space"></div>
 						${this.renderAxisNamesHtml()}
 						<div class="vertical-space"></div>
+						${this.renderLineOptionsHtml()}
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
 						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="vertical-space"></div>
-						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
 			</div>
