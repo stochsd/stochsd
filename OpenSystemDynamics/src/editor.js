@@ -2609,7 +2609,8 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
-		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
 		// Remove deleted primitves 
@@ -7556,17 +7557,51 @@ class TimePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".right-yaxis-max-field").val(this.getYRMax());
 
 		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
 
-		if (this.autoPlotPer) { 
+		if (auto_plot_per) { 
 			this.setDefaultPlotPeriod();
 		} else {
-			this.plotPer = $(this.dialogContent).find(".plot-per-field").val();
+			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+			this.primitive.setAttribute("PlotPer", plot_per);
 		}
+		let plot_per = this.primitive.getAttribute("PlotPer");
 
-		$(this.dialogContent).find(".plot-per-field").val(this.plotPer);
-		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.autoPlotPer);
+		$(this.dialogContent).find(".plot-per-field").val(plot_per);
+		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
 
+	}
+	setDefaultPlotPeriod() {
+		// function temporarily moved from DisplayDialog 
+		let plot_per = getTimeLength()/100;
+		if (plot_per < getTimeStep()) {
+			plot_per = getTimeStep();
+		}
+		this.primitive.setAttribute("PlotPer", plot_per);
+	}
+	renderPlotPerHtml() {
+		// function temporarily moved from DisplayDialog
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		return (`
+			<table class="modern-table" 
+				title="Distance between points in time units. \n (Should not be less then Time Step)"
+			>
+				<tr>
+					<th>
+						Plot Period: 
+					</th>
+					<td style="padding:1px;">
+						<input style="" class="plot-per-field intervalsettings enter-apply" type="text" value="${plot_per}"/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="plot-per-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(auto_plot_per)}/>
+					</td>
+				</tr>
+			</table>
+		`);
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
