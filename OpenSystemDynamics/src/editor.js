@@ -3310,7 +3310,6 @@ class XyPlotVisual extends PlotVisual {
 		this.serieArray = null;
 		this.namesToDisplay = [];
 		
-		this.markers = false;
 		this.xAxisColor = defaultStroke;
 		this.yAxisColor = defaultStroke;
 
@@ -7399,8 +7398,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		this.rightAxisLabel = "";
-		
-		this.markers = false;
 
 		this.autoPlotPer = true;
 		this.setDefaultPlotPeriod();
@@ -7739,8 +7736,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.titleLabel = "";
 		this.leftAxisLabel = "";
 		
-		this.markers = false;
-
 		this.keep = false;
 		this.clear = false;
 
