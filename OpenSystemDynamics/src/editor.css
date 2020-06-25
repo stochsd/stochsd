@@ -289,10 +289,15 @@ h3.equation-list-header {
     left: 500px;
 }
 
+/* Add style to jqplot elements */
 .jqplot-highlighter-tooltip {
     /* Overwrite CSS highlighter tool tip*/
     z-index: 2;
     background: white!IMPORTANT;
+}
+td.jqplot-table-legend {
+    /* Avoid line break in plot legend */
+    white-space: nowrap;
 }
 
 .editor-footer div {
