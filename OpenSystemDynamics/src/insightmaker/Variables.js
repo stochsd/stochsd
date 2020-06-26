@@ -100,6 +100,8 @@ setValuedProperties(primitiveBank.timeplot);
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute('PlotPer', 1);
+primitiveBank.compareplot.setAttribute('AutoPlotPer', true);
 primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
 	"stock": 		{"pattern": [1], 	"width": 2},
 	"flow": 		{"pattern": [10,5], "width": 2},
@@ -114,6 +116,8 @@ setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute('PlotPer', 1);
+primitiveBank.xyplot.setAttribute('AutoPlotPer', true);
 primitiveBank.xyplot.setAttribute('ShowLine', true);
 primitiveBank.xyplot.setAttribute('ShowMarker', false);
 primitiveBank.xyplot.setAttribute('MarkStart', false);
