@@ -2370,7 +2370,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(), plot_per);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -8308,14 +8309,14 @@ class TableDialog extends DisplayDialog {
 		super(id);
 		this.start = getTimeStart();
 		this.end = getTimeLength() + getTimeStart();
-		this.plotPer = getTimeStep();
 		this.setTitle("Table Properties");
 		this.startAuto  = true;
 		this.endAuto = true;
-		this.plotPerAuto = true;
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -8328,10 +8329,11 @@ class TableDialog extends DisplayDialog {
 				<td>Auto <input class="intervalsettings end-auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
-				<td style="padding:1px;"><input class="intervalsettings plot-per-field enter-apply" name="plotPer" value="${this.plotPer}" type="text"></td>
-				<td>Auto <input class="intervalsettings plot-per-auto-checkbox enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.plotPerAuto)}/></td>
+				<td style="padding:1px;"><input class="intervalsettings plot-per-field enter-apply" name="plotPer" value="${plot_per}" type="text"></td>
+				<td>Auto <input class="intervalsettings plot-per-auto-checkbox enter-apply" type="checkbox"  ${checkedHtmlAttribute(auto_plot_per)}/></td>
 			</tr>
 		</table>
+		<div class="limits-warning-div" style="color:red;"></div>
 		`);
 	}
 	renderExportHtml() {
@@ -8378,6 +8380,7 @@ class TableDialog extends DisplayDialog {
 
 		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
+		this.bindPlotPerEvents();
 		
 		$(this.dialogContent).find(".exportCSV").click(event => {
 			if (this.data) {
@@ -8411,9 +8414,25 @@ class TableDialog extends DisplayDialog {
 		$(this.dialogContent).find(".end-field").prop("disabled", this.endAuto);
 		$(this.dialogContent).find(".end-field").val(this.getLength()+this.getStart());
 		
-		this.plotPerAuto = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-		$(this.dialogContent).find(".plot-per-field").prop("disabled",this.plotPerAuto);
-		$(this.dialogContent).find(".plot-per-field").val(this.getStep());
+		this.applyPlotPer();
+	}
+	setDefaultPlotPeriod() {
+		let plot_per = getTimeStep();
+		this.primitive.setAttribute("PlotPer", plot_per);
+	}
+	validPlotPer() {
+		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
+		let warning_div = $(this.dialogContent).find(".limits-warning-div");	
+		if (isNaN(plot_per_str) || plot_per_str === "") {
+			warning_div.html("Plot Period must be a number");
+			return false;
+		} else if (Number(plot_per_str) <= 0) {
+			warning_div.html("Plot Period must be &gt;0");
+			return false;
+		} else {
+			warning_div.html("");
+			return true;
+		}
 	}
 	getStart() {
 		if (this.startAuto) {
@@ -8431,15 +8450,6 @@ class TableDialog extends DisplayDialog {
 		} else {
 			// Fetch from user input
 			return this.end-this.start;
-		}
-	}
-	getStep() {
-		if (this.plotPerAuto) {
-			// Fetch from IM engine
-			return getTimeStep();
-		} else {
-			// Fetch from user input
-			return this.plotPer;
 		}
 	}
 	makeApply() {
