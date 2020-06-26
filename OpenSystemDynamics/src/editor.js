@@ -7217,6 +7217,23 @@ class DisplayDialog extends jqDialog {
 			<div class="plot-per-warning" style="color: red;"></div>
 		`);
 	}
+	applyPlotPer() {
+		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
+
+		if (auto_plot_per) { 
+			this.setDefaultPlotPeriod();
+		} else {
+			if(this.validPlotPer()) {
+				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+				this.primitive.setAttribute("PlotPer", plot_per);
+			}
+		}
+		let plot_per = this.primitive.getAttribute("PlotPer");
+
+		$(this.dialogContent).find(".plot-per-field").val(plot_per);
+		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
+	}
 	bindPlotPerEvents() {
 		$(this.dialogContent).find(".plot-per-field").keyup(event => {
 			this.validPlotPer();
@@ -7568,22 +7585,7 @@ class TimePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".right-yaxis-min-field").val(this.getYRMin());
 		$(this.dialogContent).find(".right-yaxis-max-field").val(this.getYRMax());
 
-		// update plotPer
-		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
-
-		if (auto_plot_per) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			if(this.validPlotPer()) {
-				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-				this.primitive.setAttribute("PlotPer", plot_per);
-			}
-		}
-		let plot_per = this.primitive.getAttribute("PlotPer");
-
-		$(this.dialogContent).find(".plot-per-field").val(plot_per);
-		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
+		this.applyPlotPer();
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
@@ -7869,22 +7871,7 @@ class ComparePlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".yaxis-min-field").val(this.getYMin());
 		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
 
-		// update plotPer
-		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
-
-		if (auto_plot_per) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			if(this.validPlotPer()) {
-				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-				this.primitive.setAttribute("PlotPer", plot_per);
-			}
-		}
-		let plot_per = this.primitive.getAttribute("PlotPer");
-
-		$(this.dialogContent).find(".plot-per-field").val(plot_per);
-		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
+		this.applyPlotPer();
 	}
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
@@ -8231,23 +8218,8 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
 		$(this.dialogContent).find(".mark-start").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
 		$(this.dialogContent).find(".mark-end").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
-		// update plotPer
-		// this uses idetical code in Time-, Compare- and XyPlot should be joined into one 
-		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
-
-		if (auto_plot_per) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			if(this.validPlotPer()) {
-				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-				this.primitive.setAttribute("PlotPer", plot_per);
-			}
-		}
-		let plot_per = this.primitive.getAttribute("PlotPer");
-
-		$(this.dialogContent).find(".plot-per-field").val(plot_per);
-		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
+		
+		this.applyPlotPer();
 	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
