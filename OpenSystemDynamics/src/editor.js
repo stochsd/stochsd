@@ -7563,8 +7563,10 @@ class TimePlotDialog extends DisplayDialog {
 		if (auto_plot_per) { 
 			this.setDefaultPlotPeriod();
 		} else {
-			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-			this.primitive.setAttribute("PlotPer", plot_per);
+			if(this.validPlotPer()) {
+				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+				this.primitive.setAttribute("PlotPer", plot_per);
+			}
 		}
 		let plot_per = this.primitive.getAttribute("PlotPer");
 
@@ -7579,6 +7581,25 @@ class TimePlotDialog extends DisplayDialog {
 			plot_per = getTimeStep();
 		}
 		this.primitive.setAttribute("PlotPer", plot_per);
+	}
+	bindPlotPerEvents() {
+		$(this.dialogContent).find(".plot-per-field").keyup(event => {
+			this.validPlotPer();
+		});
+	}
+	validPlotPer() {
+		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
+		let warning_div = $(this.dialogContent).find(".plot-per-warning");
+		if (isNaN(plot_per_str) || plot_per_str === "") {
+			warning_div.html("Plot Period must be a number");
+			return false;
+		} else if (Number(plot_per_str) <= 0) {
+			warning_div.html("Plot Period must be &gt;0");
+			return false;
+		} else {
+			warning_div.html("");
+			return true;
+		}
 	}
 	renderPlotPerHtml() {
 		// function temporarily moved from DisplayDialog
@@ -7601,6 +7622,7 @@ class TimePlotDialog extends DisplayDialog {
 					</td>
 				</tr>
 			</table>
+			<div class="plot-per-warning" style="color: red;"></div>
 		`);
 	}
 	renderPrimitiveListHtml() {
@@ -7732,6 +7754,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
+		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
 		
 		this.updateInterval();
