@@ -8188,11 +8188,11 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</div>
 					<div class="table-cell">
-						${this.renderMarkerHTML()} 
-						<div class="vertical-space"></div>
 						${this.renderPlotPerHtml()}
 						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
+						<div class="vertical-space"></div>
+						${this.renderMarkerHTML()} 
 						<div class="vertical-space"></div>
 						${this.renderTitleHtml()}
 						<div class="vertical-space"></div>
