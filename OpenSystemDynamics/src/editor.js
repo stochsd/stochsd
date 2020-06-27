@@ -2619,9 +2619,6 @@ class TimePlotVisual extends PlotVisual {
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		this.primitive.setAttribute("Sides", sides.join(","));
-		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
@@ -2713,7 +2710,7 @@ class TimePlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.dialog.titleLabel,
+			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
 				background: "white"
@@ -2728,14 +2725,14 @@ class TimePlotVisual extends PlotVisual {
 				yaxis: {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.leftAxisLabel,
+					label: this.primitive.getAttribute("LeftAxisLabel"),
 					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
 					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
 				},
 				y2axis: {
 					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.rightAxisLabel,
+					label: this.primitive.getAttribute("RightAxisLabel"),
 					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
 					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax(),
 					tickOptions: {
@@ -7429,9 +7426,6 @@ class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Time Plot Properties");
-		this.titleLabel = "";
-		this.leftAxisLabel = "";
-		this.rightAxisLabel = "";
 
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
@@ -7496,24 +7490,27 @@ class TimePlotDialog extends DisplayDialog {
 		return this.sides;
 	}
 	renderAxisNamesHtml() {
+		let titleLabel = this.primitive.getAttribute("TitleLabel");
+		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
+		let rightAxisLabel = this.primitive.getAttribute("RightAxisLabel");
 		return (`
 			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Left Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Right Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="right-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="right-yaxis-label enter-apply" spellcheck="false" type="text" value="${rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7662,9 +7659,13 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
-		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
+		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
+		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
+		let rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
+		
+		this.primitive.setAttribute("TitleLabel", titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", rightAxisLabel);
 
 		this.applyLineOptions();
 

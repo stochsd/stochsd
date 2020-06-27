@@ -94,6 +94,9 @@ primitiveBank.timeplot.setAttribute('LineOptions', JSON.stringify({
 	"constant": 	{"pattern": [1], 	"width": 1},
 	"converter": 	{"pattern": [1], 	"width": 1}
 }));
+primitiveBank.timeplot.setAttribute("TitleLabel", "");
+primitiveBank.timeplot.setAttribute("LeftAxisLabel", "");
+primitiveBank.timeplot.setAttribute("RightAxisLabel", "");
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
 primitiveBank.timeplot.setAttribute("Color", "black");
