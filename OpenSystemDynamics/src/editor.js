@@ -5965,16 +5965,6 @@ function syncVisual(tprimitive) {
 				}
 			}
 			
-			// This is only for Diagram 
-			let titleLabel = tprimitive.getAttribute("TitleLabel");
-			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
-			
-			let leftAxisLabel = tprimitive.getAttribute("LeftAxisLabel");
-			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
-			
-			let rightAxisLabel = tprimitive.getAttribute("RightAxisLabel");
-			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
-
 			connection.update();
 			connection.render();
 		}
