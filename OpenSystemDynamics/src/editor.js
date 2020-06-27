@@ -2936,10 +2936,6 @@ class ComparePlotVisual extends PlotVisual {
 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
-
-		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
 			this.setEmptyPlot();
@@ -2990,7 +2986,7 @@ class ComparePlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.dialog.titleLabel,
+			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
 				background: "white"
@@ -3005,7 +3001,7 @@ class ComparePlotVisual extends PlotVisual {
 				yaxis: {
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.leftAxisLabel,
+					label: this.primitive.getAttribute("LeftAxisLabel"),
 					min: (this.dialog.yAuto) ? undefined: this.dialog.getYMin(),
 					max: (this.dialog.yAuto) ? undefined: this.dialog.getYMax()
 				}
@@ -7755,8 +7751,6 @@ class ComparePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
-		this.titleLabel = "";
-		this.leftAxisLabel = "";
 		
 		this.keep = false;
 		this.clear = false;
@@ -7807,18 +7801,20 @@ class ComparePlotDialog extends DisplayDialog {
 		`);
 	}
 	renderAxisNamesHtml() {
+		let titleLabel = this.primitive.getAttribute("TitleLabel");
+		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
 		return (`
 			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 160px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Y-axis Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 160px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
 					</td>
 				</tr>
 			</table>
@@ -7891,8 +7887,11 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
+		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
+		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
+
+		this.primitive.setAttribute("TitleLabel", titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
 
 		this.applyLineOptions();
 

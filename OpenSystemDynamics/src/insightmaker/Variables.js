@@ -114,6 +114,8 @@ primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
 	"constant": 	{"pattern": [1], 	"width": 1},
 	"converter": 	{"pattern": [1], 	"width": 1}
 }));
+primitiveBank.compareplot.setAttribute("TitleLabel", "");
+primitiveBank.compareplot.setAttribute("LeftAxisLabel", "");
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
 primitiveBank.compareplot.setAttribute("Color", "black");
