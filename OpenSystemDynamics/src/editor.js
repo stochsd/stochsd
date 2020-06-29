@@ -8536,12 +8536,32 @@ class TableDialog extends DisplayDialog {
 			let step_auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
 			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
 			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
+			
+			this.checkValidTableLimits();
 		});
 		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
 			this.checkValidTableLimits();
 		});
 	}
 	checkValidTableLimits() {
+		let warning_div = $(this.dialogContent).find(".limits-warning-div");
+		let start_str = $(this.dialogContent).find(".start-field").val();
+		let end_str = $(this.dialogContent).find(".end-field").val();
+		let step_str = $(this.dialogContent).find(".step-field").val();
+		if (isNaN(start_str) || start_str === "") {
+			warning_div.html('"From" must be a number');
+			return false;
+		} else if (isNaN(end_str) || start_str === "") {
+			warning_div.html('"To" must be a number');
+			return false;
+		} else if (isNaN(step_str) || step_str === "") {
+			warning_div.html("Step must be a number");
+			return false;
+		} else if (Number(step_str) <= 0) {
+			warning_div.html("Step must be &gt;0");
+			return false;
+		} 
+		warning_div.html("");
 		return true;
 	}
 	applyAxisLimits() {
@@ -8621,20 +8641,6 @@ class TableDialog extends DisplayDialog {
 	setDefaultPlotPeriod() {
 		let plot_per = getTimeStep();
 		this.primitive.setAttribute("PlotPer", plot_per);
-	}
-	validPlotPer() {
-		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
-		let warning_div = $(this.dialogContent).find(".limits-warning-div");	
-		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html("Plot Period must be a number");
-			return false;
-		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html("Plot Period must be &gt;0");
-			return false;
-		} else {
-			warning_div.html("");
-			return true;
-		}
 	}
 	getStart() {
 		if (this.startAuto) {
