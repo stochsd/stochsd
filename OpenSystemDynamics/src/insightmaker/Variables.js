@@ -128,6 +128,10 @@ setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute("AxisLimits", JSON.stringify({
+	"xaxis": {"min": 0, "max": 1, "auto": true},
+	"yaxis": {"min": 0, "max": 1, "auto": true}
+}));
 primitiveBank.xyplot.setAttribute('PlotPer', 1);
 primitiveBank.xyplot.setAttribute('AutoPlotPer', true);
 primitiveBank.xyplot.setAttribute('ShowLine', true);

@@ -3453,29 +3453,29 @@ class XyPlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		
-		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			  series: this.serieSettingsArray,
-			  title: this.primitive.getAttribute("TitleLabel"),
-			  grid: {
-				  background: "white"
-			  },
-			  sortData: false,
-			  axesDefaults: {
-		            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-				},
-			  axes: {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			series: this.serieSettingsArray,
+			title: this.primitive.getAttribute("TitleLabel"),
+			grid: {
+				background: "white"
+			},
+			sortData: false,
+			axesDefaults: {
+				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+			},
+			axes: {
 				xaxis: {
 					label: this.serieXName,
 					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
-					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax()
+					min: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.min,
+					max: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.max
 				},
 				yaxis: {
 					label: this.serieYName,
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
-					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax()
+					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
+					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
 				}
 			},
 			highlighter: {
@@ -3491,11 +3491,16 @@ class XyPlotVisual extends PlotVisual {
 				`),
 				useAxesFormatters: false
 			}
-		  });
-		  this.dialog.minXValue = this.plot.axes.xaxis.min;
-		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
-		  this.dialog.minYValue = this.plot.axes.yaxis.min;
-		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
+		});
+		if (axis_limits.xaxis.auto) {
+			axis_limits.xaxis.min = this.plot.axes.xaxis.min;
+			axis_limits.xaxis.max = this.plot.axes.xaxis.max;
+		}
+		if (axis_limits.yaxis.auto) {
+			axis_limits.yaxis.min = this.plot.axes.yaxis.min;
+			axis_limits.yaxis.max = this.plot.axes.yaxis.max;
+		}
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
@@ -8213,6 +8218,7 @@ class XyPlotDialog extends DisplayDialog {
 		this.maxYValue = 0;
 	}
 	renderAxisLimitsHTML() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -8224,21 +8230,72 @@ class XyPlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td>X-axis</td>
-				<td style="padding:1px;"><input class="xaxis-min-field intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xaxis-max-field intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
-				<td><input class="xaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("XLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="xaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="xaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.max}">
+				</td>
+				<td>
+					<input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(axis_limits.xaxis.auto)}>
+				</td>
+				<td>
+					<input class="xaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("XLogScale") === "true")}>
+				</td>
 			</tr>
 			<tr>
 				<td>Y-axis</td>
-				<td style="padding:1px;"><input class="yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
-				<td><input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
+				</td>
+				<td>
+					<input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(axis_limits.yaxis.auto)}>
+				</td>
+				<td>
+					<input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}>
+				</td>
 			</tr>
 		</table>
 		`);
 	}
+	bindAxisLimitsEvents() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
+			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
+
+			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
+			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+		});
+		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+			this.checkValidAxisLimits();
+		});
+	}
+	checkValidAxisLimits() { 
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidAxisLimits()) {
+			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+			axis_limits.xaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			axis_limits.xaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
+			axis_limits.xaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
+			axis_limits.yaxis.auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			axis_limits.yaxis.min = Number($(this.dialogContent).find(".yaxis-min-field").val());
+			axis_limits.yaxis.max = Number($(this.dialogContent).find(".yaxis-max-field").val());
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
+	}
+
 	renderMarkerHTML() {
 		return (`
 			<table class="modern-table" style="text-align: left;">
@@ -8306,7 +8363,6 @@ class XyPlotDialog extends DisplayDialog {
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
 		this.bindMarkersHTML();
-		this.updateInterval();
 	}
 
 	bindMarkersHTML() {
@@ -8338,6 +8394,7 @@ class XyPlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
+		this.applyAxisLimits();
 	}
 
 	setDefaultPlotPeriod() {
