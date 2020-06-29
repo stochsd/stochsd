@@ -8622,7 +8622,7 @@ class TableDialog extends DisplayDialog {
 
 		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
-		this.bindPlotPerEvents();
+		this.bindTableLimitsEvents();
 		
 		$(this.dialogContent).find(".exportCSV").click(event => {
 			if (this.data) {
@@ -8635,30 +8635,6 @@ class TableDialog extends DisplayDialog {
 				this.data.exportTSV();
 			}
 		});
-
-		this.bindTableLimitsEvents();
-	}
-	setDefaultPlotPeriod() {
-		let plot_per = getTimeStep();
-		this.primitive.setAttribute("PlotPer", plot_per);
-	}
-	getStart() {
-		if (this.startAuto) {
-			// Fetch from IM engine
-			return getTimeStart();
-		} else {
-			// Fetch from user input
-			return this.start;
-		}
-	}
-	getLength() {
-		if (this.endAuto) {
-			// Fetch from IM engine
-			return getTimeLength();
-		} else {
-			// Fetch from user input
-			return this.end-this.start;
-		}
 	}
 	makeApply() {
 		this.applyAxisLimits();
