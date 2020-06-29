@@ -7912,6 +7912,7 @@ class ComparePlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
+		<div class="axis-limits-warning-div" style="color:red;"></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7934,6 +7935,16 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
+		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
+		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
+		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
+		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
+			warning_div.html("Axis limits must be numbers");
+			return false;
+		}
+		warning_div.html("");
 		return true;
 	}
 	applyAxisLimits() {
