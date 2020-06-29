@@ -106,6 +106,10 @@ setValuedProperties(primitiveBank.timeplot);
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute("AxisLimits", JSON.stringify({
+	"timeaxis": {"min": 0, "max": 100, 	"auto": true}, 
+	"yaxis": 	{"min": 0, "max": 1, 	"auto": true}
+}));
 primitiveBank.compareplot.setAttribute('PlotPer', 1);
 primitiveBank.compareplot.setAttribute('AutoPlotPer', true);
 primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
