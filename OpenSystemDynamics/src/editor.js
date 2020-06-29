@@ -2709,6 +2709,8 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
+
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
@@ -2719,22 +2721,22 @@ class TimePlotVisual extends PlotVisual {
 				xaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: "Time",
-					min: this.dialog.getXMin(),
-					max: this.dialog.getXMax()
+					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
+					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
 				},
 				yaxis: {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("LeftAxisLabel"),
-					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
-					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
+					min: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.min,
+					max: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.max
 				},
 				y2axis: {
 					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("RightAxisLabel"),
-					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
-					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax(),
+					min: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.min,
+					max: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.max,
 					tickOptions: {
 						showGridline: false
 					}
@@ -2752,10 +2754,20 @@ class TimePlotVisual extends PlotVisual {
 				placement: 'outsideGrid'
 			 }
 		});
-		this.dialog.minLValue = this.plot.axes.yaxis.min; 
-		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
-		this.dialog.minRValue = this.plot.axes.y2axis.min;
-		this.dialog.maxRValue = this.plot.axes.y2axis.max;
+		if (axis_limits.leftaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("yaxis")) {
+			if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
+				axis_limits.leftaxis.min = this.plot.axes.yaxis.min; 
+				axis_limits.leftaxis.max = this.plot.axes.yaxis.max; 
+			}
+		}
+		if (axis_limits.rightaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("y2axis") ) {
+			if ( ! isNaN(this.plot.axes.y2axis.min) && ! isNaN(this.plot.axes.y2axis.max) ) {
+				axis_limits.rightaxis.min = this.plot.axes.y2axis.min;
+				axis_limits.rightaxis.max = this.plot.axes.y2axis.max;
+			}
+		}
+
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
@@ -7503,6 +7515,9 @@ class TimePlotDialog extends DisplayDialog {
 		`);
 	}
 	renderAxisLimitsHTML() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7514,27 +7529,89 @@ class TimePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;"><input class="xaxis-min-field intervalsettings enter-apply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xaxis-max-field intervalsettings enter-apply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td style="padding:1px;">
+					<input class="xaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+				</td>
+				<td style="padding:1px;">
+					<input class="xaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+				</td>
+				<td>
+					<input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(axis_limits.timeaxis.auto)}>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td style="padding:1px;"><input class="left-yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYLMin()}"></td>
-				<td style="padding:1px;"><input class="left-yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYLMax()}"></td>
-				<td><input class="left-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
-				<td><input class="left-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="left-yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="left-yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.max}">
+				</td>
+				<td>
+					<input class="left-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(axis_limits.leftaxis.auto)}>
+				</td>
+				<td>
+					<input class="left-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}>
+				</td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td style="padding:1px;"><input class="right-yaxis-min-field intervalsettings enter-apply" type="text" value="${this.getYRMin()}"></td>
-				<td style="padding:1px;"><input class="right-yaxis-max-field intervalsettings enter-apply" type="text" value="${this.getYRMax()}"></td>
-				<td><input class="right-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
-				<td><input class="right-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="right-yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="right-yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.max}">
+				</td>
+				<td>
+					<input class="right-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(axis_limits.rightaxis.auto)}>
+				</td>
+				<td>
+					<input class="right-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}>
+				</td>
 			</tr>
 		</table>
 		`);
+	}
+	bindAxisLimitsEvents() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
+			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
+
+			let laxis_auto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".left-yaxis-min-field").prop("disabled", laxis_auto);
+			$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
+			$(this.dialogContent).find(".left-yaxis-min-field").val(axis_limits.leftaxis.min);
+			$(this.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
+
+			let raxis_auto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".right-yaxis-min-field").prop("disabled", raxis_auto);
+			$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
+			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
+			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
+		});
+		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+			// check if valid key and give warning 
+		})
+	}
+	applyAxisLimits() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		axis_limits.timeaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+		axis_limits.leftaxis.auto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
+		axis_limits.rightaxis.auto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
+
+		axis_limits.timeaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
+		axis_limits.timeaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
+		axis_limits.leftaxis.min = Number($(this.dialogContent).find(".left-yaxis-min-field").val());
+		axis_limits.leftaxis.max = Number($(this.dialogContent).find(".left-yaxis-max-field").val());
+		axis_limits.rightaxis.min = Number($(this.dialogContent).find(".right-yaxis-min-field").val());
+		axis_limits.rightaxis.max = Number($(this.dialogContent).find(".right-yaxis-max-field").val());
+
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 	}
 	updateInterval() {
 		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
@@ -7654,6 +7731,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("RightAxisLabel", rightAxisLabel);
 
 		this.applyLineOptions();
+		this.applyAxisLimits();
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
@@ -7706,8 +7784,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
-		
-		this.updateInterval();
 	}
 	getXMin() {
 		if (this.xAuto) {

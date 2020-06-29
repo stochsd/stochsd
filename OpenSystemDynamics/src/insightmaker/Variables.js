@@ -81,7 +81,11 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
-// AxisLimits : {timeaxis: {min, max, auto}, leftaxis: {min, max, auto}, rightaxis: {min, max, auto}}
+primitiveBank.timeplot.setAttribute("AxisLimits", JSON.stringify({
+	"timeaxis": 	{"min": 0, "max": 100, 	"auto": true}, 
+	"leftaxis": 	{"min": 0, "max": 1, 	"auto": true}, 
+	"rightaxis": 	{"min": 0, "max": 1, 	"auto": true}
+}));
 primitiveBank.timeplot.setAttribute('PlotPer', 1);
 primitiveBank.timeplot.setAttribute('AutoPlotPer', true);
 primitiveBank.timeplot.setAttribute('LineOptions', JSON.stringify({
