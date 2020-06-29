@@ -8574,7 +8574,7 @@ class TableDialog extends DisplayDialog {
 
 			limits.start.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
 			limits.end.auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
-			limits.step.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			limits.step.auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
 			this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
 		}
 	}
