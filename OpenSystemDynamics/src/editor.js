@@ -2370,8 +2370,9 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(), plot_per);
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		let length = limits.end.value - limits.start.value;
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -8494,26 +8495,68 @@ class TableDialog extends DisplayDialog {
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
 		return (`
 		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
-				<td style="padding:1px;"><input class="intervalsettings start-field enter-apply" name="start" value="${this.start}" type="text"></td>
-				<td>Auto <input class="intervalsettings start-auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
+				<td style="padding:1px;">
+					<input class="intervalsettings start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
+				</td>
+				<td>Auto <input class="intervalsettings start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtmlAttribute(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
-				<td style="padding:1px;"><input class="intervalsettings end-field enter-apply" name="end" value="${this.end}" type="text"></td>
-				<td>Auto <input class="intervalsettings end-auto enter-apply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
+				<td style="padding:1px;">
+					<input class="intervalsettings end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
+				</td>
+				<td>Auto <input class="intervalsettings end-auto-checkbox enter-apply" type="checkbox" ${checkedHtmlAttribute(limits.end.auto)}/>
+				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
-				<td style="padding:1px;"><input class="intervalsettings plot-per-field enter-apply" name="plotPer" value="${plot_per}" type="text"></td>
-				<td>Auto <input class="intervalsettings plot-per-auto-checkbox enter-apply" type="checkbox"  ${checkedHtmlAttribute(auto_plot_per)}/></td>
+				<td style="padding:1px;">
+					<input class="intervalsettings step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
+				</td>
+				<td>Auto <input class="intervalsettings step-auto-checkbox enter-apply" type="checkbox" ${checkedHtmlAttribute(limits.step.auto)}/></td>
 			</tr>
 		</table>
 		<div class="limits-warning-div" style="color:red;"></div>
 		`);
+	}
+	bindTableLimitsEvents() {
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+			let start_auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
+			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
+
+			let end_auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".end-field").prop("disabled", end_auto);
+			$(this.dialogContent).find(".end-field").val(end_auto ? getTimeStart()+getTimeLength() : limits.end.value);
+
+			let step_auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
+			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
+		});
+		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+			this.checkValidTableLimits();
+		});
+	}
+	checkValidTableLimits() {
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidTableLimits()) {
+			let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+
+			limits.start.value = Number($(this.dialogContent).find(".start-field").val());
+			limits.end.value = Number($(this.dialogContent).find(".end-field").val());
+			limits.step.value = Number($(this.dialogContent).find(".step-field").val());
+
+			limits.start.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			limits.end.auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+			limits.step.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
+		}
 	}
 	renderExportHtml() {
 		return (`
@@ -8573,27 +8616,7 @@ class TableDialog extends DisplayDialog {
 			}
 		});
 
-
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			this.updateInterval();
-		});
-		this.updateInterval();
-	}
-	updateInterval()  {
-		this.start = Number($(this.dialogContent).find(".start-field").val());
-		this.end = Number($(this.dialogContent).find(".end-field").val());
-		let plotPer = Number($(this.dialogContent).find(".plot-per-field").val());
-		this.plotPer = (plotPer < getTimeStep()) ? getTimeStep() : plotPer;
-		
-		this.startAuto = $(this.dialogContent).find(".start-auto").prop("checked");
-		$(this.dialogContent).find(".start-field").prop("disabled",this.startAuto);
-		$(this.dialogContent).find(".start-field").val(this.getStart());
-		
-		this.endAuto = $(this.dialogContent).find(".end-auto").prop("checked");
-		$(this.dialogContent).find(".end-field").prop("disabled", this.endAuto);
-		$(this.dialogContent).find(".end-field").val(this.getLength()+this.getStart());
-		
-		this.applyPlotPer();
+		this.bindTableLimitsEvents();
 	}
 	setDefaultPlotPeriod() {
 		let plot_per = getTimeStep();
@@ -8632,7 +8655,7 @@ class TableDialog extends DisplayDialog {
 		}
 	}
 	makeApply() {
-		super.makeApply();
+		this.applyAxisLimits();
 		this.roundToZeroMakeApply();
 	}
 }

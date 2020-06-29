@@ -68,8 +68,11 @@ setValuedProperties(primitiveBank.numberbox);
 
 primitiveBank.table = doc.createElement('Table');
 primitiveBank.table.setAttribute('Primitives', '');
-primitiveBank.table.setAttribute('PlotPer', 1);
-primitiveBank.table.setAttribute('AutoPlotPer', true);
+primitiveBank.table.setAttribute('TableLimits', JSON.stringify({
+	"start":	{ "value": 0, 	"auto": true },
+	"end": 		{ "value": 100, "auto": true },
+	"step": 	{ "value": 1, 	"auto": true }
+}));
 primitiveBank.table.setAttribute("RoundToZero", true);
 primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
 primitiveBank.table.setAttribute("Color", "black");
