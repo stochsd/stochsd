@@ -2868,7 +2868,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive, lineOptions) {
+	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2972,15 +2972,12 @@ class ComparePlotVisual extends PlotVisual {
 		this.serieArray = this.gens.getSeriesArray(idsToDisplay, hasNumberedLines);
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-		
-		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 
 		// Make serie settings
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
 			idsToDisplay, 
 			hasNumberedLines, 
-			this.primitive.getAttribute("ColorFromPrimitive") === "true", 
-			line_options
+			this.primitive.getAttribute("ColorFromPrimitive") === "true"
 		);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
