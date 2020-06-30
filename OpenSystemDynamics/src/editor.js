@@ -7204,11 +7204,11 @@ class DisplayDialog extends jqDialog {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plot-per-field intervalsettings enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
+						<input style="" class="plot-per-field limit-input enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
 					</td>
 					<td>
 						Auto
-						<input style="" class="plot-per-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(auto_plot_per)}/>
+						<input style="" class="plot-per-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(auto_plot_per)}/>
 					</td>
 				</tr>
 			</table>
@@ -7486,44 +7486,44 @@ class TimePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
 				</td>
 				<td>
-					<input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
 				<td style="padding:1px;">
-					<input class="left-yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.min}">
+					<input class="left-yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="left-yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.max}">
+					<input class="left-yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.max}">
 				</td>
 				<td>
-					<input class="left-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
+					<input class="left-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
 				</td>
 				<td>
-					<input class="left-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
+					<input class="left-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
 				</td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
 				<td style="padding:1px;">
-					<input class="right-yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.min}">
+					<input class="right-yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="right-yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.max}">
+					<input class="right-yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.max}">
 				</td>
 				<td>
-					<input class="right-yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
+					<input class="right-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
 				</td>
 				<td>
-					<input class="right-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
+					<input class="right-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
 				</td>
 			</tr>
 		</table>
@@ -7532,7 +7532,7 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
 			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
@@ -7551,7 +7551,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
 			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
 		});
-		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			// check if valid key and give warning 
 			this.checkValidAxisLimits();
 		});
@@ -7802,29 +7802,29 @@ class ComparePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
 				</td>
 				<td>
-					<input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
 				<td style="padding:1px;">
-					<input class="yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
+					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
+					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
 				</td>
 				<td>
-					<input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
+					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
 				<td>
-					<input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
+					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
 				</td>
 			</tr>
 		</table>
@@ -7833,7 +7833,7 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
 			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
@@ -7846,7 +7846,7 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
 		});
-		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -8085,31 +8085,31 @@ class XyPlotDialog extends DisplayDialog {
 			<tr>
 				<td>X-axis</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.min}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.max}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.max}">
 				</td>
 				<td>
-					<input class="xaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
 				</td>
 				<td>
-					<input class="xaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
+					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
 				</td>
 			</tr>
 			<tr>
 				<td>Y-axis</td>
 				<td style="padding:1px;">
-					<input class="yaxis-min-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
+					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="yaxis-max-field intervalsettings enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
+					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
 				</td>
 				<td>
-					<input class="yaxis-auto-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
+					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
 				<td>
-					<input class="yaxis-log-checkbox intervalsettings enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
+					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
 				</td>
 			</tr>
 		</table>
@@ -8118,7 +8118,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
 			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
@@ -8131,7 +8131,7 @@ class XyPlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
 		});
-		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -8312,22 +8312,22 @@ class TableDialog extends DisplayDialog {
 			<tr>
 				<th class="text">From</th>
 				<td style="padding:1px;">
-					<input class="intervalsettings start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
 				</td>
-				<td>Auto <input class="intervalsettings start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
+				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
 				<td style="padding:1px;">
-					<input class="intervalsettings end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
 				</td>
-				<td>Auto <input class="intervalsettings end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
+				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
 				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
 				<td style="padding:1px;">
-					<input class="intervalsettings step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
 				</td>
-				<td>Auto <input class="intervalsettings step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
+				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
 		</table>
 		<div class="limits-warning-div" style="color:red;"></div>
@@ -8335,7 +8335,7 @@ class TableDialog extends DisplayDialog {
 	}
 	bindTableLimitsEvents() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].intervalsettings").change(event => {
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
 			let start_auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
 			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
 			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
@@ -8350,7 +8350,7 @@ class TableDialog extends DisplayDialog {
 			
 			this.checkValidTableLimits();
 		});
-		$(this.dialogContent).find("input[type='text'].intervalsettings").keyup(event => {
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidTableLimits();
 		});
 	}
