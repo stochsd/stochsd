@@ -2635,8 +2635,6 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 
-		this.minLValue = 0;
-		this.maxLValue = 0;
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 
 		let makeSerie = (resultColumn, lineCount) => {
@@ -2959,9 +2957,6 @@ class ComparePlotVisual extends PlotVisual {
 			this.gens.reset();
 			this.dialog.clear = false;
 		}
-
-		this.minLValue = 0;
-		this.maxLValue = 0;
 		
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
@@ -7378,34 +7373,6 @@ class DisplayDialog extends jqDialog {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
-	bindAxisLimitsEvents() {
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			this.updateInterval();
-		});
-	}
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
-		this.xMax = Number($(this.dialogContent).find(".xaxis-max-field").val());
-		this.xAuto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
-		
-		$(this.dialogContent).find(".xaxis-min-field").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xaxis-max-field").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xaxis-min-field").val(this.getXMin());
-		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
-		
-		
-		this.yMin = Number($(this.dialogContent).find(".yaxis-min-field").val());
-		this.yMax = Number($(this.dialogContent).find(".yaxis-max-field").val());
-		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
-		
-		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yaxis-max-field").prop("disabled",this.yAuto);
-		
-		$(this.dialogContent).find(".yaxis-min-field").val(this.getYMin());
-		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
-	}
-
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			let clickedElement = event.target;
@@ -7434,25 +7401,6 @@ class TimePlotDialog extends DisplayDialog {
 
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
-
-		// Values choosen by user
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yLMin = 0;
-		this.yLMax = 0;
-		this.yLAuto  = true;
-		
-		this.yRMin = 0;
-		this.yRMax = 0;
-		this.yRAuto = true;
-
-		// Automatic value (is set in the ComparePlotVisual)
-		this.minLValue = 0;
-		this.maxLValue = 0;
-		this.minRValue = 0;
-		this.maxRValue = 0;
 	}
 	
 	getDisplayId(id, side) {
@@ -7775,32 +7723,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
 	}
-	getXMin() {
-		if (this.xAuto) {
-			return getTimeStart();
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return getTimeStart() + getTimeLength();
-		} else {
-			return this.xMax;
-		}
-	}
-	getYLMin() {
-		return (this.yLAuto) ? this.minLValue : this.yLMin;
-	}
-	getYLMax() {
-		return (this.yLAuto) ? this.maxLValue : this.yLMax;
-	}
-	getYRMin() {
-		return (this.yRAuto) ? this.minRValue : this.yRMin;
-	}
-	getYRMax() {
-		return (this.yRAuto) ? this.maxRValue : this.yRMax;
-	}
 }
 
 class ComparePlotDialog extends DisplayDialog {
@@ -7810,19 +7732,6 @@ class ComparePlotDialog extends DisplayDialog {
 		
 		this.keep = false;
 		this.clear = false;
-
-		// Values choosen by user
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
-
-		// Automatic value (is set in the ComparePlotVisual)
-		this.minValue = 0;
-		this.maxValue = 0;
 	}
 
 	getDisplayId(id) {
@@ -7965,30 +7874,6 @@ class ComparePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
 	}
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xaxis-min-field").val());
-		this.xMax = Number($(this.dialogContent).find(".xaxis-max-field").val());
-		this.xAuto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
-		
-		$(this.dialogContent).find(".xaxis-min-field").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xaxis-max-field").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xaxis-min-field").val(this.getXMin());
-		$(this.dialogContent).find(".xaxis-max-field").val(this.getXMax());
-		
-		// Update Left Min Max values
-		this.yMin = Number($(this.dialogContent).find(".yaxis-min-field").val());
-		this.yMax = Number($(this.dialogContent).find(".yaxis-max-field").val());
-		this.yAuto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
-		
-		$(this.dialogContent).find(".yaxis-min-field").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yaxis-max-field").prop("disabled",this.yAuto);
-		
-		$(this.dialogContent).find(".yaxis-min-field").val(this.getYMin());
-		$(this.dialogContent).find(".yaxis-max-field").val(this.getYMax());
-
-		this.applyPlotPer();
-	}
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			this.subscribePool.publish("primitive check changed");
@@ -8062,26 +7947,6 @@ class ComparePlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
-	}
-	getXMin() {
-		if (this.xAuto) {
-			return getTimeStart();
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return getTimeStart() + getTimeLength();
-		} else {
-			return this.xMax;
-		}
-	}
-	getYMin() {
-		return (this.yAuto) ? this.minValue : this.yMin;
-	}
-	getYMax() {
-		return (this.yAuto) ? this.maxValue : this.yMax;
 	}
 }
 
@@ -8203,20 +8068,6 @@ class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
-
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
-		
-		this.minXValue = 0;
-		this.maxXValue = 0;
-		
-		this.minYValue = 0;
-		this.maxYValue = 0;
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8405,35 +8256,6 @@ class XyPlotDialog extends DisplayDialog {
 		let plot_per = getTimeStep();
 		this.primitive.setAttribute("PlotPer", plot_per);
 	}
-
-	getXMin() {
-		if (this.xAuto) {
-			return this.minXValue;
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return this.maxXValue;
-		} else {
-			return this.xMax;
-		}
-	}
-	getYMin() {
-		if (this.yAuto) {
-			return this.minYValue;
-		} else {
-			return this.yMin;
-		}
-	}
-	getYMax() {
-		if (this.yAuto) {
-			return this.maxYValue;
-		} else {
-			return this.yMax;
-		}
-	}
 }
 
 class TableData {
@@ -8479,11 +8301,7 @@ class TableData {
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
-		this.start = getTimeStart();
-		this.end = getTimeLength() + getTimeStart();
 		this.setTitle("Table Properties");
-		this.startAuto  = true;
-		this.endAuto = true;
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
