@@ -7005,12 +7005,12 @@ class DisplayDialog extends jqDialog {
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 	}
 
-	setDefaultPlotPeriod() {
+	getDefaultPlotPeriod() {
 		let plot_per = getTimeLength()/100;
 		if (plot_per < getTimeStep()) {
 			plot_per = getTimeStep();
 		}
-		this.primitive.setAttribute("PlotPer", plot_per);
+		return plot_per;
 	}
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
@@ -7193,8 +7193,8 @@ class DisplayDialog extends jqDialog {
 	}
 	/* RoundToZero html and logic ends here */
 	renderPlotPerHtml() {
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
 		return (`
 			<table class="modern-table" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
@@ -7204,7 +7204,7 @@ class DisplayDialog extends jqDialog {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plot-per-field intervalsettings enter-apply" type="text" value="${plot_per}"/>
+						<input style="" class="plot-per-field intervalsettings enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
 					</td>
 					<td>
 						Auto
@@ -7216,23 +7216,24 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	applyPlotPer() {
-		let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-		this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
-
-		if (auto_plot_per) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			if(this.validPlotPer()) {
-				let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-				this.primitive.setAttribute("PlotPer", plot_per);
-			}
+		if(this.validPlotPer()) {
+			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
+			this.primitive.setAttribute("PlotPer", plot_per);
 		}
-		let plot_per = this.primitive.getAttribute("PlotPer");
-
-		$(this.dialogContent).find(".plot-per-field").val(plot_per);
-		$(this.dialogContent).find(".plot-per-field").prop("disabled", auto_plot_per);
 	}
 	bindPlotPerEvents() {
+		$(this.dialogContent).find(".plot-per-auto-checkbox").change(event => {
+			let plot_per_field = $(this.dialogContent).find(".plot-per-field");
+			plot_per_field.prop("disabled", event.target.checked);
+			
+			let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+			if (event.target.checked) {
+				plot_per = this.getDefaultPlotPeriod();
+			}
+			plot_per_field.val(plot_per);
+		});
 		$(this.dialogContent).find(".plot-per-field").keyup(event => {
 			this.validPlotPer();
 		});
@@ -7897,6 +7898,7 @@ class ComparePlotDialog extends DisplayDialog {
 
 		this.applyLineOptions();
 		this.applyAxisLimits();
+		this.applyPlotPer();
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
@@ -8252,9 +8254,8 @@ class XyPlotDialog extends DisplayDialog {
 		this.applyPlotPer();
 	}
 
-	setDefaultPlotPeriod() {
-		let plot_per = getTimeStep();
-		this.primitive.setAttribute("PlotPer", plot_per);
+	getDefaultPlotPeriod() {
+		return getTimeStep();
 	}
 }
 
