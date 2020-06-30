@@ -7443,7 +7443,7 @@ class TimePlotDialog extends DisplayDialog {
 	getSidesToDisplay() {
 		return this.sides;
 	}
-	renderAxisNamesHtml() {
+	renderAxisLabelsHtml() {
 		let titleLabel = this.primitive.getAttribute("TitleLabel");
 		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
 		let rightAxisLabel = this.primitive.getAttribute("RightAxisLabel");
@@ -7707,7 +7707,7 @@ class TimePlotDialog extends DisplayDialog {
 						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="vertical-space"></div>
-						${this.renderAxisNamesHtml()}
+						${this.renderAxisLabelsHtml()}
 						<div class="vertical-space"></div>
 						${this.renderLineOptionsHtml()}
 						<div class="vertical-space"></div>
@@ -7766,7 +7766,7 @@ class ComparePlotDialog extends DisplayDialog {
 			</table>
 		`);
 	}
-	renderAxisNamesHtml() {
+	renderAxisLabelsHtml() {
 		let titleLabel = this.primitive.getAttribute("TitleLabel");
 		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
 		return (`
@@ -7933,7 +7933,7 @@ class ComparePlotDialog extends DisplayDialog {
 						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="vertical-space"></div>
-						${this.renderAxisNamesHtml()}
+						${this.renderAxisLabelsHtml()}
 						<div class="vertical-space"></div>
 						${this.renderLineOptionsHtml()}
 						<div class="vertical-space"></div>
