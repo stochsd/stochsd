@@ -8313,19 +8313,19 @@ class XyPlotDialog extends DisplayDialog {
 			<table class="modern-table" style="text-align: left;">
 				<tr>
 					<td style="text-align: left">Show Line</td>	
-					<td><input class="line enter-apply" type="checkbox" name="displayType"></td>
+					<td><input class="line enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowLine")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left">Show Markers</td>
-					<td><input class="markers enter-apply" type="checkbox" name="displayType"></td>
+					<td><input class="markers enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowMarker")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left">Mark Start (🔴)</td>
-					<td><input class="mark-start enter-apply" type="checkbox"></td>
+					<td><input class="mark-start enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkStart")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left" >Mark End (🟩)</td>
-					<td><input class="mark-end enter-apply" type="checkbox"></td>
+					<td><input class="mark-end enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkEnd")))}></td>
 				</tr>
 			</table>
 		`);
@@ -8392,21 +8392,13 @@ class XyPlotDialog extends DisplayDialog {
 		});
 	}
 
-	updateInterval() {
-		super.updateInterval();
-		$(this.dialogContent).find(".line").prop("checked", this.primitive.getAttribute("ShowLine") === "true");
-		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
-		$(this.dialogContent).find(".mark-start").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
-		$(this.dialogContent).find(".mark-end").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
-		
-		this.applyPlotPer();
-	}
 	makeApply() {
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 		this.applyAxisLimits();
+		this.applyPlotPer();
 	}
 
 	setDefaultPlotPeriod() {
