@@ -303,8 +303,8 @@ function updateWindowSize() {
 }
 
 function updateLinkBar() {
-	let linkBarLeft = $(window).width()-30-$(".linkBar").width();
-	$(".linkBar").css("left", linkBarLeft)
+	let linkBarLeft = $(window).width()-30-$(".info-bar__im-link").width();
+	$(".info-bar__im-link").css("left", linkBarLeft)
 }
 
 defaultAttributeChangeHandler = function(primitive, attributeName, value) {
@@ -647,9 +647,9 @@ function formatFunction(functionName) {
 	return functionName+"()";
 }
 
-function checkedHtmlAttribute(value) {
+function checkedHtml(value) {
 	if (value) {
-		return ' checked="checked" ';
+		return ' checked ';
 	} else {
 		return ' ';
 	}
@@ -764,7 +764,7 @@ function default_double_click(id) {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
 	}
-	equationEditor.open(id, ".valueField");
+	equationEditor.open(id, ".value-field");
 }
 
 class BaseObject {
@@ -882,7 +882,7 @@ class BaseObject {
 			return;
 		}
 		let id = get_parent_id(this.id)
-		equationEditor.open(id, ".nameField");
+		equationEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
 	
@@ -1556,11 +1556,11 @@ class ConverterVisual extends BasePrimitive {
 		}
 	}
 	nameDoubleClick() {
-		converterDialog.open(this.id, ".nameField");
+		converterDialog.open(this.id, ".name-field");
 	}
 	
 	doubleClick() {
-		converterDialog.open(this.id, ".valueField");
+		converterDialog.open(this.id, ".value-field");
 	}
 }
 
@@ -2362,7 +2362,7 @@ class TableVisual extends HtmlTwoPointer {
 	}
 	render() {
 		html = "";
-		html += "<table class='stickyTable'><thead><tr>";
+		html += "<table class='sticky-table'><thead><tr>";
 		
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
@@ -2370,7 +2370,9 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay,this.dialog.getStart(),this.dialog.getLength(),this.dialog.getStep());
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		let length = limits.end.value - limits.start.value;
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -2379,6 +2381,10 @@ class TableVisual extends HtmlTwoPointer {
 		}
 		// Make content
 		html += "</thead><tbody>";
+
+		let time_step_str = `${getTimeStep()}`;
+		let decimals = decimals_in_value_string(time_step_str);
+
 		for(let row_index in this.data.results) {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
@@ -2393,10 +2399,17 @@ class TableVisual extends HtmlTwoPointer {
 						roundToZeroAtValue = Number(roundToZeroAtValue);
 					}
 				}
-				let valueString = stocsd_format(this.data.results[row_index][column_index], 6, roundToZeroAtValue);
 				if (column_index == 0) {
+					let valueString = format_number(
+						this.data.results[row_index][column_index], 
+						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": decimals }
+					);
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
+					let valueString = format_number(
+						this.data.results[row_index][column_index], 
+						{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
+					);
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
 			}
@@ -2598,7 +2611,8 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
-		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
 		// Remove deleted primitves 
@@ -2606,36 +2620,21 @@ class TimePlotVisual extends PlotVisual {
 		let sides = this.dialog.getSidesToDisplay();
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		this.primitive.setAttribute("Sides", sides.join(","));
-		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
 		);
-		this.pattersToDisplay = idsToDisplay.map(findID).map(
-			( node ) => {
-				let type = get_object(node.id).type;
-				switch(type) {
-					case("variable"):
-					case("constant"):
-					case("converter"):
-						return ".";
-					case("flow"):
-						return "-";
-					default:
-						return "_";
-				}
-			}
-		);
+
+		let types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
+		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
+		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);
 
 		if (this.data.results.length == 0) {
 			this.setEmptyPlot();
 			return;
 		}
 
-		this.minLValue = 0;
-		this.maxLValue = 0;
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 
 		let makeSerie = (resultColumn, lineCount) => {
@@ -2676,10 +2675,10 @@ class TimePlotVisual extends PlotVisual {
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
-					lineWidth: (this.pattersToDisplay[i] === "." ? 3 : Number(this.primitive.getAttribute("LineWidth"))),
+					lineWidth: this.widthsToDisplay[i],
 					label: label, 
 					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
-					linePattern: this.pattersToDisplay[i], 
+					linePattern: this.patternsToDisplay[i], 
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
 					showMarker: false,
@@ -2709,8 +2708,10 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
+
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.dialog.titleLabel,
+			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
 				background: "white"
@@ -2719,22 +2720,22 @@ class TimePlotVisual extends PlotVisual {
 				xaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: "Time",
-					min: this.dialog.getXMin(),
-					max: this.dialog.getXMax()
+					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
+					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
 				},
 				yaxis: {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.leftAxisLabel,
-					min: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMin(),
-					max: (this.dialog.yLAuto) ? undefined: this.dialog.getYLMax()
+					label: this.primitive.getAttribute("LeftAxisLabel"),
+					min: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.min,
+					max: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.max
 				},
 				y2axis: {
 					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.rightAxisLabel,
-					min: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMin(),
-					max: (this.dialog.yRAuto) ? undefined: this.dialog.getYRMax(),
+					label: this.primitive.getAttribute("RightAxisLabel"),
+					min: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.min,
+					max: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.max,
 					tickOptions: {
 						showGridline: false
 					}
@@ -2752,10 +2753,20 @@ class TimePlotVisual extends PlotVisual {
 				placement: 'outsideGrid'
 			 }
 		});
-		this.dialog.minLValue = this.plot.axes.yaxis.min; 
-		this.dialog.maxLValue = this.plot.axes.yaxis.max; 
-		this.dialog.minRValue = this.plot.axes.y2axis.min;
-		this.dialog.maxRValue = this.plot.axes.y2axis.max;
+		if (axis_limits.leftaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("yaxis")) {
+			if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
+				axis_limits.leftaxis.min = this.plot.axes.yaxis.min; 
+				axis_limits.leftaxis.max = this.plot.axes.yaxis.max; 
+			}
+		}
+		if (axis_limits.rightaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("y2axis") ) {
+			if ( ! isNaN(this.plot.axes.y2axis.min) && ! isNaN(this.plot.axes.y2axis.max) ) {
+				axis_limits.rightaxis.min = this.plot.axes.y2axis.min;
+				axis_limits.rightaxis.max = this.plot.axes.y2axis.max;
+			}
+		}
+
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
@@ -2786,10 +2797,11 @@ class DataGenerations {
 		this.nameGen = [];
 		this.colorGen = [];
 		this.patternGen = [];
+		this.lineWidthGen = [];
 		this.resultGen = []; 
 		this.plotPers = [];
 	}
-	append(ids, results) {
+	append(ids, results, lineOptions) {
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
@@ -2798,20 +2810,15 @@ class DataGenerations {
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
 		));
-		this.patternGen.push(ids.map(findID).map( (node) => {
-				switch(get_object(node.id).type) {
-					case ("variable"):
-					case("constant"):
-					case ("converter"):
-						return ".";
-					case ("flow"):
-						return "-";
-					default:
-						return "_";
-				}
-		}));
+		let types = ids.map(findID).map(node => get_object(node.id).type);
+		this.patternGen.push(
+			types.map(type => lineOptions[type]["pattern"])
+		);
+		this.lineWidthGen.push(
+			types.map(type => lineOptions[type]["width"])
+		);
 	}
-	setCurrent(ids, results) {
+	setCurrent(ids, results, lineOptions) {
 		// Remove last
 		if (this.idGen.length !== 0) {
 			let removedIds = this.idGen.pop();
@@ -2821,11 +2828,12 @@ class DataGenerations {
 			this.nameGen.pop();
 			this.colorGen.pop();
 			this.patternGen.pop();
+			this.lineWidthGen.pop();
 			this.resultGen.pop();
 		}
 		
 		// Add new 
-		this.append(ids, results);
+		this.append(ids, results, lineOptions);
 	}
 	getSeriesArray(wantedIds, hasNumberedLines) {
 		let seriesArray = [];
@@ -2859,7 +2867,7 @@ class DataGenerations {
 		}
 		return seriesArray;
 	}
-	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive, lineWidth) {
+	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive) {
 		let seriesSettingsArray = [];
 		let countLine = 0;
 		// Loop generations 
@@ -2874,7 +2882,7 @@ class DataGenerations {
 					label += this.nameGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
-						lineWidth: (this.patternGen[i][j] === ".") ? 3 : lineWidth,
+						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
 						label: label,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
@@ -2925,22 +2933,20 @@ class ComparePlotVisual extends PlotVisual {
 			}
 		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
-		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
+		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.dialog.keep) {
 			// add generation 
-			this.gens.append(this.dialog.getIdsToDisplay(), results);
+			this.gens.append(this.dialog.getIdsToDisplay(), results, line_options);
 		} else {
-			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results);
+			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results, line_options);
 		}
 	}
 	render() {
 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
-
-		this.primitive.setAttribute("TitleLabel", this.dialog.titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", this.dialog.leftAxisLabel);
-		this.primitive.setAttribute("RightAxisLabel", this.dialog.rightAxisLabel);
 		
 		if (this.gens.numGenerations == 0) {
 			this.setEmptyPlot();
@@ -2951,9 +2957,6 @@ class ComparePlotVisual extends PlotVisual {
 			this.gens.reset();
 			this.dialog.clear = false;
 		}
-
-		this.minLValue = 0;
-		this.maxLValue = 0;
 		
 		// Declare series and settings for series
 		this.serieSettingsArray = [];
@@ -2965,13 +2968,12 @@ class ComparePlotVisual extends PlotVisual {
 		this.serieArray = this.gens.getSeriesArray(idsToDisplay, hasNumberedLines);
 
 		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-		
+
 		// Make serie settings
 		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
 			idsToDisplay, 
 			hasNumberedLines, 
-			this.primitive.getAttribute("ColorFromPrimitive") === "true", 
-			this.primitive.getAttribute("LineWidth")
+			this.primitive.getAttribute("ColorFromPrimitive") === "true"
 		);
 
 		do_global_log(JSON.stringify(this.serieSettingsArray));
@@ -2988,9 +2990,9 @@ class ComparePlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		console.log(this.serieArray);
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.dialog.titleLabel,
+			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
 				background: "white"
@@ -2999,15 +3001,15 @@ class ComparePlotVisual extends PlotVisual {
 				xaxis: {
 					label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					min: this.dialog.getXMin(),
-					max: this.dialog.getXMax()
+					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
+					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
 				},
 				yaxis: {
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.dialog.leftAxisLabel,
-					min: (this.dialog.yAuto) ? undefined: this.dialog.getYMin(),
-					max: (this.dialog.yAuto) ? undefined: this.dialog.getYMax()
+					label: this.primitive.getAttribute("LeftAxisLabel"),
+					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
+					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
 				}
 			},
 			highlighter: {
@@ -3022,8 +3024,11 @@ class ComparePlotVisual extends PlotVisual {
 				placement: 'outsideGrid'
 			 }
 		});
-		this.dialog.minValue = this.plot.axes.yaxis.min; 
-		this.dialog.maxValue = this.plot.axes.yaxis.max; 
+		if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
+			axis_limits.yaxis.min = this.plot.axes.yaxis.min; 
+			axis_limits.yaxis.max = this.plot.axes.yaxis.max; 
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
@@ -3222,11 +3227,12 @@ class HistoPlotVisual extends PlotVisual {
 
 		
 		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `[${getName(findID(this.dialog.getIdsToDisplay()[0]))}]`;
+		let targetPrimName = `${getName(findID(this.dialog.getIdsToDisplay()[0]))}`;
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
+			title: `${scaleType} of ${targetPrimName}`,
 			sortData: false,
 			grid: {
 				background: "white"
@@ -3243,7 +3249,7 @@ class HistoPlotVisual extends PlotVisual {
 						// axes.xaxis.ticks attribute must be removed for this
 						// formatString: '<%5p≤'
 					}, 
-					label: `${scaleType} of ${targetPrimName}`,
+					label: "&nbsp;", // make sure there is space for below/above labels 
 					pad: 0,
 					ticks: this.ticks
 				},
@@ -3309,7 +3315,6 @@ class XyPlotVisual extends PlotVisual {
 		this.serieArray = null;
 		this.namesToDisplay = [];
 		
-		this.markers = false;
 		this.xAxisColor = defaultStroke;
 		this.yAxisColor = defaultStroke;
 
@@ -3334,8 +3339,8 @@ class XyPlotVisual extends PlotVisual {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
-		//~ alert("names to display "+this.namesToDisplay+" IdsToDisplay "+IdsToDisplay);
-		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), this.dialog.plotPer);
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
 		if (results.length == 0) {
 			this.setEmptyPlot();
 			return;
@@ -3444,29 +3449,29 @@ class XyPlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		
-		  this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			  series: this.serieSettingsArray,
-			  title: this.primitive.getAttribute("TitleLabel"),
-			  grid: {
-				  background: "white"
-			  },
-			  sortData: false,
-			  axesDefaults: {
-		            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-				},
-			  axes: {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		this.plot = $.jqplot(this.chartId, this.serieArray, {  
+			series: this.serieSettingsArray,
+			title: this.primitive.getAttribute("TitleLabel"),
+			grid: {
+				background: "white"
+			},
+			sortData: false,
+			axesDefaults: {
+				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+			},
+			axes: {
 				xaxis: {
 					label: this.serieXName,
 					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: (this.dialog.xAuto) ? undefined : this.dialog.getXMin(),
-					max: (this.dialog.xAuto) ? undefined : this.dialog.getXMax()
+					min: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.min,
+					max: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.max
 				},
 				yaxis: {
 					label: this.serieYName,
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: (this.dialog.yAuto) ? undefined : this.dialog.getYMin(),
-					max: (this.dialog.yAuto) ? undefined : this.dialog.getYMax()
+					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
+					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
 				}
 			},
 			highlighter: {
@@ -3482,11 +3487,16 @@ class XyPlotVisual extends PlotVisual {
 				`),
 				useAxesFormatters: false
 			}
-		  });
-		  this.dialog.minXValue = this.plot.axes.xaxis.min;
-		  this.dialog.maxXValue = this.plot.axes.xaxis.max;
-		  this.dialog.minYValue = this.plot.axes.yaxis.min;
-		  this.dialog.maxYValue = this.plot.axes.yaxis.max;
+		});
+		if (axis_limits.xaxis.auto) {
+			axis_limits.xaxis.min = this.plot.axes.xaxis.min;
+			axis_limits.xaxis.max = this.plot.axes.xaxis.max;
+		}
+		if (axis_limits.yaxis.auto) {
+			axis_limits.yaxis.min = this.plot.axes.yaxis.min;
+			axis_limits.yaxis.max = this.plot.axes.yaxis.max;
+		}
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
@@ -5398,7 +5408,7 @@ class ToolBox {
 	}
 	static setTool(toolName, whichMouseButton) {
 		if (toolName in this.tools) {
-			$(".toolButton").removeClass("pressed");
+			$(".tool-button").removeClass("pressed");
 			$("#btn_"+toolName).addClass("pressed");
 			
 			currentTool.leaveTool();
@@ -5511,7 +5521,7 @@ $(window).load(function() {
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
 	
-	$(".toolButton").mousedown(function(event) {
+	$(".tool-button").mousedown(function(event) {
 		let toolName = $(this).attr("data-tool");
 		ToolBox.setTool(toolName, event.which);
 	});
@@ -5969,16 +5979,6 @@ function syncVisual(tprimitive) {
 				}
 			}
 			
-			// This is only for Diagram 
-			let titleLabel = tprimitive.getAttribute("TitleLabel");
-			if (titleLabel) { connection.dialog.titleLabel = titleLabel;}
-			
-			let leftAxisLabel = tprimitive.getAttribute("LeftAxisLabel");
-			if (leftAxisLabel) { connection.dialog.leftAxisLabel = leftAxisLabel; }
-			
-			let rightAxisLabel = tprimitive.getAttribute("RightAxisLabel");
-			if (rightAxisLabel) { connection.dialog.rightAxisLabel = rightAxisLabel; }
-
 			connection.update();
 			connection.render();
 		}
@@ -6295,8 +6295,8 @@ function updateRecentsMenu() {
 }
 
 function updateInfoBar() {
-	let infoDef = $("#infoDefinition");
-	let infoVE = $("#infoValueError");
+	let infoDef = $(".info-bar__definition");
+	let infoVE = $(".info-bar__value-error");
 	let selected_hash = get_selected_root_objects();
 	let selected_array = [];
 	for (let key in selected_hash) {
@@ -7003,16 +7003,15 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
-		this.setDefaultPlotPeriod();
-	}
-	
-	setDefaultPlotPeriod() {
-		this.plotPer = getTimeLength()/100;
-		if (this.plotPer < getTimeStep()) {
-			this.plotPer = getTimeStep();
-		}
 	}
 
+	getDefaultPlotPeriod() {
+		let plot_per = getTimeLength()/100;
+		if (plot_per < getTimeStep()) {
+			plot_per = getTimeStep();
+		}
+		return plot_per;
+	}
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
 			if (findID(id) == null) {
@@ -7096,22 +7095,22 @@ class DisplayDialog extends jqDialog {
 	/* RoundToZero html and logic starts here */
 	renderRoundToZeroHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
-						<input class="roundToZero enterApply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="roundToZeroAt enterApply" type="text" value="no value"/>
+						<input class="round-to-zero-checkbox enter-apply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enter-apply" type="text" value="no value"/>
 					</td>
 					<td>
-						<button class="defaultNumberboxBtn enterApply">Reset to Default</button>
+						<button class="default-round-to-zero-button enter-apply">Reset to Default</button>
 					</td>
 				</tr>
 			</table>
-			<p class="numberboxWarning" style="color: red; margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div" style="color: red; margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	roundToZeroBeforeShow() {
-		let roundToZeroCheckbox = $(this.dialogContent).find(".roundToZero");
-		let roundToZeroField = $(this.dialogContent).find(".roundToZeroAt");
+		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
+		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
 
 		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
 		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
@@ -7119,7 +7118,7 @@ class DisplayDialog extends jqDialog {
 		this.setRoundToZero(roundToZero);
 
 		// set default button listener
-		$(this.dialogContent).find(".defaultNumberboxBtn").click(() => {
+		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
 			this.setRoundToZero(true);
 			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
@@ -7133,7 +7132,7 @@ class DisplayDialog extends jqDialog {
 			this.checkValidRoundAtZeroAtField();
 		});
 		
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
@@ -7141,14 +7140,14 @@ class DisplayDialog extends jqDialog {
 		});
 	}
 	setRoundToZero(roundToZero) {
-		$(this.dialogContent).find(".roundToZero").prop("checked", roundToZero);
-		$(this.dialogContent).find(".roundToZeroAt").prop("disabled", ! roundToZero);
+		$(this.dialogContent).find(".round-to-zero-checkbox").prop("checked", roundToZero);
+		$(this.dialogContent).find(".round-to-zero-field").prop("disabled", ! roundToZero);
 		this.checkValidRoundAtZeroAtField();
 	}
 
 	checkValidRoundAtZeroAtField() {
-		let roundToZeroFieldValue = $(this.dialogContent).find(".roundToZeroAt").val();
-		if ($(this.dialogContent).find(".roundToZero").prop("checked")) {
+		let roundToZeroFieldValue = $(this.dialogContent).find(".round-to-zero-field").val();
+		if ($(this.dialogContent).find(".round-to-zero-checkbox").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
 				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a number.`);
 				return false;
@@ -7173,29 +7172,31 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".numberboxWarning").html(htmlMessage);
-			$(this.dialogContent).find(".numberboxWarning").css("visibility", "visible");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage);
+			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
-			$(this.dialogContent).find(".numberboxWarning").html("");
-			$(this.dialogContent).find(".numberboxWarning").css("visibility", "hidden");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
+			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "hidden");
 		}
 	}
 
 	roundToZeroMakeApply() {
 		if (this.primitive) {
-			let roundToZero = $(this.dialogContent).find(".roundToZero").prop("checked");
+			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
 			
 			if ( this.checkValidRoundAtZeroAtField() ) {
-				let roundToZeroAtValue = $(this.dialogContent).find(".roundToZeroAt").val();
+				let roundToZeroAtValue = $(this.dialogContent).find(".round-to-zero-field").val();
 				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
 			}
 		}
 	}
 	/* RoundToZero html and logic ends here */
 	renderPlotPerHtml() {
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
 		return (`
-			<table class="modernTable" 
+			<table class="modern-table" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
 			>
 				<tr>
@@ -7203,24 +7204,62 @@ class DisplayDialog extends jqDialog {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plotPer intervalsettings enterApply" type="text" value="${this.plotPer}"/>
+						<input style="" class="plot-per-field limit-input enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
 					</td>
 					<td>
 						Auto
-						<input style="" class="autoPlotPer intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.autoPlotPer)}/>
+						<input style="" class="plot-per-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(auto_plot_per)}/>
 					</td>
 				</tr>
 			</table>
+			<div class="plot-per-warning" style="color: red;"></div>
 		`);
+	}
+	applyPlotPer() {
+		if(this.validPlotPer()) {
+			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
+	}
+	bindPlotPerEvents() {
+		$(this.dialogContent).find(".plot-per-auto-checkbox").change(event => {
+			let plot_per_field = $(this.dialogContent).find(".plot-per-field");
+			plot_per_field.prop("disabled", event.target.checked);
+			
+			let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+			if (event.target.checked) {
+				plot_per = this.getDefaultPlotPeriod();
+			}
+			plot_per_field.val(plot_per);
+		});
+		$(this.dialogContent).find(".plot-per-field").keyup(event => {
+			this.validPlotPer();
+		});
+	}
+	validPlotPer() {
+		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
+		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
+		if (isNaN(plot_per_str) || plot_per_str === "") {
+			warning_div.html("Plot Period must be a number");
+			return false;
+		} else if (Number(plot_per_str) <= 0) {
+			warning_div.html("Plot Period must be &gt;0");
+			return false;
+		} else {
+			warning_div.html("");
+			return true;
+		}
 	}
 	renderNumberedLinesCheckboxHtml() {
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 						<b>Numbered Lines:</b>
-						<input class="NumberedLines enterApply" type="checkbox" ${checkedHtmlAttribute(hasNumberedLines)}>
+						<input class="numbered-lines-checkbox enter-apply" type="checkbox" ${checkedHtml(hasNumberedLines)}>
 					</td>
 				</tr>
 			</table>
@@ -7228,11 +7267,11 @@ class DisplayDialog extends jqDialog {
 	}
 	renderLineWidthOptionHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Line Width:</b>
-						<select class="lineWidth enterApply">
+						<select class="line-width enter-apply">
 						<option value=1 ${(this.primitive.getAttribute("LineWidth") == 1) ? "selected" : ""}>Thin</option>
 						<option value=2 ${(this.primitive.getAttribute("LineWidth") == 2) ? "selected" : ""}>Thick</option>
 						</select>
@@ -7241,13 +7280,55 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
+	renderLineOptionsHtml() {
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		return (`
+			<table class="modern-table">
+				<tr>
+					<th>Type</th>
+					<th>Pattern</th>
+					<th>Width</th>
+				</tr>
+				${Object.keys(options).map(key => (`<tr>
+					<td>${type_basename[key]}</td>
+					<td>
+						<select data-key="${key}" class="line-pattern-select enter-apply" style="font-family: monospace;">
+						<option value="[1]"		${options[key].pattern[0] === 1  ? "selected" : ""}>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
+						<option value="[10, 5]" ${options[key].pattern[0] === 10 ? "selected" : ""}>------</option>
+						</select>
+					</td>
+					<td>
+						<select data-key="${key}" class="line-width-select enter-apply">
+						<option value=1 ${options[key].width === 1 ? "selected": ""}>1</option>
+						<option value=2 ${options[key].width === 2 ? "selected": ""}>2</option>
+						<option value=3 ${options[key].width === 3 ? "selected": ""}>3</option>
+						</select>
+					</td>
+				</tr>`)).join('')}
+			</table>
+		`);
+	}
+	applyLineOptions() {
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+
+		let pattern_options = $(this.dialogContent).find(".line-pattern-select");
+		let width_options = $(this.dialogContent).find(".line-width-select");
+		for (let i = 0; i < width_options.length; i++) {
+			let selected_width = JSON.parse($(width_options[i]).find(" :selected").val());
+			let selected_pattern = JSON.parse($(pattern_options[i]).find(" :selected").val());
+
+			options[$(width_options[i]).attr("data-key")]["width"] = selected_width;
+			options[$(pattern_options[i]).attr("data-key")]["pattern"] = selected_pattern;
+		}
+		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
+	}
 	renderColorCheckboxHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Colour From Primitive:</b>
-					<input class="ColorFromPrimitive enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
+					<input class="color-from-primitive-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
 					</td>
 				</tr>
 			</table>
@@ -7268,16 +7349,16 @@ class DisplayDialog extends jqDialog {
 		}
 
 		return (`
-			<table class="modernTable" >
+			<table class="modern-table" >
 				${Object.keys(prims_object).map((type, type_idx) => 
 					prims_object[type].map((p, idx) => `
 						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
 							<td>${getName(p)}</td>
 							<td style="text-align: center;">
 								<input
-									class="primitive_checkbox enterApply"
+									class="primitive-checkbox enter-apply"
 									type="checkbox"
-									${checkedHtmlAttribute(this.getDisplayId(getID(p)))}
+									${checkedHtml(this.getDisplayId(getID(p)))}
 									data-name="${getName(p)}"
 									data-id="${getID(p)}"
 								>
@@ -7289,54 +7370,19 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	makeApply() {
-		if ($(this.dialogContent).find(".lineWidth :selected")) {
-			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
+		if ($(this.dialogContent).find(".line-width :selected")) {
+			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
-	bindAxisLimitsEvents() {
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			this.updateInterval();
-		});
-	}
-
-	bindPlotPerEvents() {
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			
-		});
-	}
-
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
-		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
-		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
-		
-		
-		this.yMin = Number($(this.dialogContent).find(".yMin").val());
-		this.yMax = Number($(this.dialogContent).find(".yMax").val());
-		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
-		
-		$(this.dialogContent).find(".yMin").val(this.getYMin());
-		$(this.dialogContent).find(".yMax").val(this.getYMax());
-	}
-
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			let clickedElement = event.target;
 			let idClicked = $(clickedElement).attr("data-id");
 			let checked = $(clickedElement).prop("checked");
 			this.setDisplayId(idClicked,checked);
 			this.subscribePool.publish("primitive check changed");
 		});
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
@@ -7353,36 +7399,9 @@ class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Time Plot Properties");
-		this.titleLabel = "";
-		this.leftAxisLabel = "";
-		this.rightAxisLabel = "";
-		
-		this.markers = false;
-
-		this.autoPlotPer = true;
-		this.setDefaultPlotPeriod();
 
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
-
-		// Values choosen by user
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yLMin = 0;
-		this.yLMax = 0;
-		this.yLAuto  = true;
-		
-		this.yRMin = 0;
-		this.yRMax = 0;
-		this.yRAuto = true;
-
-		// Automatic value (is set in the ComparePlotVisual)
-		this.minLValue = 0;
-		this.maxLValue = 0;
-		this.minRValue = 0;
-		this.maxRValue = 0;
 	}
 	
 	getDisplayId(id, side) {
@@ -7424,33 +7443,39 @@ class TimePlotDialog extends DisplayDialog {
 	getSidesToDisplay() {
 		return this.sides;
 	}
-	renderAxisNamesHtml() {
+	renderAxisLabelsHtml() {
+		let titleLabel = this.primitive.getAttribute("TitleLabel");
+		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
+		let rightAxisLabel = this.primitive.getAttribute("RightAxisLabel");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Left Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="LeftYAxisLabel enterApply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Right Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="RightYAxisLabel enterApply" spellcheck="false" type="text" value="${this.rightAxisLabel}">
+						<input style="width: 150px; text-align: left;" class="right-yaxis-label enter-apply" spellcheck="false" type="text" value="${rightAxisLabel}">
 					</td>
 				</tr>
 			</table>
 		`);
 	}
 	renderAxisLimitsHTML() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7460,73 +7485,106 @@ class TimePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td style="padding:1px;">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+				</td>
+				<td style="padding:1px;">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+				</td>
+				<td>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
-				<td style="padding:1px;"><input class="yLMin intervalsettings enterApply" type="text" value="${this.getYLMin()}"></td>
-				<td style="padding:1px;"><input class="yLMax intervalsettings enterApply" type="text" value="${this.getYLMax()}"></td>
-				<td><input class="yLAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yLAuto)}></td>
-				<td><input class="leftLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("LeftLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="left-yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="left-yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.leftaxis.auto ? "disabled" : ""} value="${axis_limits.leftaxis.max}">
+				</td>
+				<td>
+					<input class="left-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
+				</td>
+				<td>
+					<input class="left-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
+				</td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
-				<td style="padding:1px;"><input class="yRMin intervalsettings enterApply" type="text" value="${this.getYRMin()}"></td>
-				<td style="padding:1px;"><input class="yRMax intervalsettings enterApply" type="text" value="${this.getYRMax()}"></td>
-				<td><input class="yRAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yRAuto)}></td>
-				<td><input class="rightLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("RightLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="right-yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="right-yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.rightaxis.auto ? "disabled" : ""} value="${axis_limits.rightaxis.max}">
+				</td>
+				<td>
+					<input class="right-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
+				</td>
+				<td>
+					<input class="right-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
+				</td>
 			</tr>
 		</table>
+		<div class="axis-limits-warning-div" style="color: red;"></div>
 		`);
 	}
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
-		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
-		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
-		
-		// Update Left Min Max values
-		this.yLMin = Number($(this.dialogContent).find(".yLMin").val());
-		this.yLMax = Number($(this.dialogContent).find(".yLMax").val());
-		this.yLAuto = $(this.dialogContent).find(".yLAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yLMin").prop("disabled",this.yLAuto);
-		$(this.dialogContent).find(".yLMax").prop("disabled",this.yLAuto);
-		
-		$(this.dialogContent).find(".yLMin").val(this.getYLMin());
-		$(this.dialogContent).find(".yLMax").val(this.getYLMax());
+	bindAxisLimitsEvents() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
+			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
+			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
 
-		// Update Right Min Max values
-		this.yRMin = Number($(this.dialogContent).find(".yRMin").val());
-		this.yRMax = Number($(this.dialogContent).find(".yRMax").val());
-		this.yRAuto = $(this.dialogContent).find(".yRAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yRMin").prop("disabled",this.yRAuto);
-		$(this.dialogContent).find(".yRMax").prop("disabled",this.yRAuto);
-		
-		$(this.dialogContent).find(".yRMin").val(this.getYRMin());
-		$(this.dialogContent).find(".yRMax").val(this.getYRMax());
+			let laxis_auto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".left-yaxis-min-field").prop("disabled", laxis_auto);
+			$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
+			$(this.dialogContent).find(".left-yaxis-min-field").val(axis_limits.leftaxis.min);
+			$(this.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
 
-		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
-
-		if (this.autoPlotPer) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+			let raxis_auto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".right-yaxis-min-field").prop("disabled", raxis_auto);
+			$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
+			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
+			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+			// check if valid key and give warning 
+			this.checkValidAxisLimits();
+		});
+	}
+	checkValidAxisLimits() {
+		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
+		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
+		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let left_min = $(this.dialogContent).find(".left-yaxis-min-field").val();
+		let left_max = $(this.dialogContent).find(".left-yaxis-max-field").val();
+		let right_min = $(this.dialogContent).find(".right-yaxis-min-field").val();
+		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
+		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
+			warning_div.html("Axis limits must be numbers");
+			return false;
 		}
-
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
-
+		warning_div.html("")
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidAxisLimits()) {
+			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+			axis_limits.timeaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			axis_limits.leftaxis.auto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
+			axis_limits.rightaxis.auto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
+			axis_limits.timeaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
+			axis_limits.timeaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
+			axis_limits.leftaxis.min = Number($(this.dialogContent).find(".left-yaxis-min-field").val());
+			axis_limits.leftaxis.max = Number($(this.dialogContent).find(".left-yaxis-max-field").val());
+			axis_limits.rightaxis.min = Number($(this.dialogContent).find(".right-yaxis-min-field").val());
+			axis_limits.rightaxis.max = Number($(this.dialogContent).find(".right-yaxis-max-field").val());
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
@@ -7542,7 +7600,7 @@ class TimePlotDialog extends DisplayDialog {
 			}
 		}
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 			<tr>
 				<th style="text-align: center;" >Primitives</th>
 				<th>Left</th>
@@ -7554,9 +7612,9 @@ class TimePlotDialog extends DisplayDialog {
 							<td>${getName(p)}</td>
 							<td style="text-align: center;">
 								<input 
-									class="primitive_checkbox enterApply" 
+									class="primitive-checkbox enter-apply" 
 									type="checkbox" 
-									${checkedHtmlAttribute(this.getDisplayId(getID(p), "L"))} 
+									${checkedHtml(this.getDisplayId(getID(p), "L"))} 
 									data-name="${getName(p)}" 
 									data-id="${getID(p)}"
 									data-side="L"
@@ -7564,9 +7622,9 @@ class TimePlotDialog extends DisplayDialog {
 							</td>
 							<td style="text-align: center;">
 								<input 
-									class="primitive_checkbox enterApply"
+									class="primitive-checkbox enter-apply"
 									type="checkbox"
-									${checkedHtmlAttribute(this.getDisplayId(getID(p), "R"))} 
+									${checkedHtml(this.getDisplayId(getID(p), "R"))} 
 									data-name="${getName(p)}" 
 									data-id="${getID(p)}"
 									data-side="R"
@@ -7579,7 +7637,7 @@ class TimePlotDialog extends DisplayDialog {
 		`);
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			let clickedElement = event.target;
 			let side = $(clickedElement).attr("data-side");
 			
@@ -7593,7 +7651,7 @@ class TimePlotDialog extends DisplayDialog {
 			
 			this.subscribePool.publish("primitive check changed");
 		});
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
@@ -7602,16 +7660,24 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	makeApply() {
 		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
-		this.rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".RightYAxisLabel").val());
+		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
+		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
+		let rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
+		
+		this.primitive.setAttribute("TitleLabel", titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
+		this.primitive.setAttribute("RightAxisLabel", rightAxisLabel);
 
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
-		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".leftLog").prop("checked"));
-		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".rightLog").prop("checked"));
+		this.applyLineOptions();
+		this.applyPlotPer();
+		this.applyAxisLimits();
 
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
+		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
+		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));
+
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
 		this.sides = [];
 		this.displayIdList = [];
 		for(let i = 0; i < primitiveCheckboxes.length; i++) {
@@ -7638,16 +7704,16 @@ class TimePlotDialog extends DisplayDialog {
 					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
-						${this.renderAxisNamesHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
+						${this.renderAxisLabelsHtml()}
+						<div class="vertical-space"></div>
+						${this.renderLineOptionsHtml()}
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="verticalSpace"></div>
-						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
 			</div>
@@ -7655,35 +7721,8 @@ class TimePlotDialog extends DisplayDialog {
 		this.setHtml(contentHTML);
 		
 		this.bindPrimitiveListEvents();
+		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
-		
-		this.updateInterval();
-	}
-	getXMin() {
-		if (this.xAuto) {
-			return getTimeStart();
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return getTimeStart() + getTimeLength();
-		} else {
-			return this.xMax;
-		}
-	}
-	getYLMin() {
-		return (this.yLAuto) ? this.minLValue : this.yLMin;
-	}
-	getYLMax() {
-		return (this.yLAuto) ? this.maxLValue : this.yLMax;
-	}
-	getYRMin() {
-		return (this.yRAuto) ? this.minRValue : this.yRMin;
-	}
-	getYRMax() {
-		return (this.yRAuto) ? this.maxRValue : this.yRMax;
 	}
 }
 
@@ -7691,29 +7730,9 @@ class ComparePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
-		this.titleLabel = "";
-		this.leftAxisLabel = "";
 		
-		this.markers = false;
-
 		this.keep = false;
 		this.clear = false;
-
-		this.autoPlotPer = true;
-		this.setDefaultPlotPeriod();
-
-		// Values choosen by user
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
-
-		// Automatic value (is set in the ComparePlotVisual)
-		this.minValue = 0;
-		this.maxValue = 0;
 	}
 
 	getDisplayId(id) {
@@ -7735,39 +7754,44 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderKeepHtml() {
 		return (`
-			<table class="modernTable" style="width:100%; text-align:center;">
+			<table class="modern-table" style="width:100%; text-align:center;">
 				<tr>
 					<td style="width:50%">
-						Keep Results <input type="checkbox" class="keep_checkbox enterApply" ${checkedHtmlAttribute(this.keep)}>
+						Keep Results <input type="checkbox" class="keep_checkbox enter-apply" ${checkedHtml(this.keep)}>
 					</td>
 					<td>
-						<button class="keepButton enterApply">Clear Results</button>
+						<button class="clear-button enter-apply">Clear Results</button>
 					</td>
 				</tr>
 			</table>
 		`);
 	}
-	renderAxisNamesHtml() {
+	renderAxisLabelsHtml() {
+		let titleLabel = this.primitive.getAttribute("TitleLabel");
+		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${this.titleLabel}">
+						<input style="width: 160px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
 					</td>
 				</tr>
 				<tr>
 					<th>Y-axis Label:</th>
 					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="LeftYAxisLabel enterApply" spellcheck="false" type="text" value="${this.leftAxisLabel}">
+						<input style="width: 160px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
 					</td>
 				</tr>
 			</table>
 		`);
 	}
 	renderAxisLimitsHTML() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th>Axis</th>
 				<th>Min</th>
@@ -7777,81 +7801,112 @@ class ComparePlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
+				<td style="padding:1px;">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+				</td>
+				<td style="padding:1px;">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+				</td>
+				<td>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
+				</td>
 				<td></td>
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
-				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
-				<td><input class="yLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
+				</td>
+				<td>
+					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
+				</td>
+				<td>
+					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
+				</td>
 			</tr>
 		</table>
+		<div class="axis-limits-warning-div" style="color:red;"></div>
 		`);
 	}
-	updateInterval() {
-		this.xMin = Number($(this.dialogContent).find(".xMin").val());
-		this.xMax = Number($(this.dialogContent).find(".xMax").val());
-		this.xAuto = $(this.dialogContent).find(".xAuto").prop("checked");
-		
-		$(this.dialogContent).find(".xMin").prop("disabled",this.xAuto);
-		$(this.dialogContent).find(".xMax").prop("disabled",this.xAuto);
-		
-		$(this.dialogContent).find(".xMin").val(this.getXMin());
-		$(this.dialogContent).find(".xMax").val(this.getXMax());
-		
-		// Update Left Min Max values
-		this.yMin = Number($(this.dialogContent).find(".yMin").val());
-		this.yMax = Number($(this.dialogContent).find(".yMax").val());
-		this.yAuto = $(this.dialogContent).find(".yAuto").prop("checked");
-		
-		$(this.dialogContent).find(".yMin").prop("disabled",this.yAuto);
-		$(this.dialogContent).find(".yMax").prop("disabled",this.yAuto);
-		
-		$(this.dialogContent).find(".yMin").val(this.getYMin());
-		$(this.dialogContent).find(".yMax").val(this.getYMax());
+	bindAxisLimitsEvents() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
+			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
+			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
 
-		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
-
-		if (this.autoPlotPer) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
+			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
+			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+			this.checkValidAxisLimits();
+		});
+	}
+	checkValidAxisLimits() {
+		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
+		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
+		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
+		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
+			warning_div.html("Axis limits must be numbers");
+			return false;
 		}
-
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
+		warning_div.html("");
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidAxisLimits()) {
+			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+			axis_limits.timeaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			axis_limits.timeaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
+			axis_limits.timeaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
+			axis_limits.yaxis.auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			axis_limits.yaxis.min = Number($(this.dialogContent).find(".yaxis-min-field").val());
+			axis_limits.yaxis.max = Number($(this.dialogContent).find(".yaxis-max-field").val());
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive_checkbox").click((event) => {
+		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
 			this.subscribePool.publish("primitive check changed");
 		});
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
 			}
 		});
-		$(this.dialogContent).find(".keepButton").click((event) => {
+		$(this.dialogContent).find(".clear-button").click((event) => {
 			this.clear = true;
 		});
 	}
 	makeApply() {
-		super.makeApply();
-		this.titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".TitleLabel").val());
-		this.leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".LeftYAxisLabel").val());
+		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
+		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
 
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".ColorFromPrimitive").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".NumberedLines").prop("checked"));
-		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
+		this.primitive.setAttribute("TitleLabel", titleLabel);
+		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
+
+		this.applyLineOptions();
+		this.applyAxisLimits();
+		this.applyPlotPer();
+
+		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
+		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
+		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
 
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive_checkbox");
+		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
 		this.displayIdList = [];
 		for(let i = 0; i < primitiveCheckboxes.length; i++) {
 			let box = primitiveCheckboxes[i];
@@ -7873,18 +7928,18 @@ class ComparePlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderKeepHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
-						${this.renderAxisNamesHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
+						${this.renderAxisLabelsHtml()}
+						<div class="vertical-space"></div>
+						${this.renderLineOptionsHtml()}
+						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
-						<div class="verticalSpace"></div>
-						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
 			</div>
@@ -7893,28 +7948,7 @@ class ComparePlotDialog extends DisplayDialog {
 		
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
-		
-		this.updateInterval();
-	}
-	getXMin() {
-		if (this.xAuto) {
-			return getTimeStart();
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return getTimeStart() + getTimeLength();
-		} else {
-			return this.xMax;
-		}
-	}
-	getYMin() {
-		return (this.yAuto) ? this.minValue : this.yMin;
-	}
-	getYMax() {
-		return (this.yAuto) ? this.maxValue : this.yMax;
+		this.bindPlotPerEvents();
 	}
 }
 
@@ -7926,7 +7960,7 @@ class HistoPlotDialog extends DisplayDialog {
 	}
 	renderHistogramOptionsHtml() {
 		return(`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<th></th>
 					<th>Value</th>
@@ -7934,18 +7968,18 @@ class HistoPlotDialog extends DisplayDialog {
 				</tr>
 				<tr>
 					<td>Upper bound</td>
-					<td><input class="upperBoundField enterApply" type="text"/></td>
-					<td><input class="upperBoundCheckbox enterApply" type="checkbox" ></td>
+					<td><input class="upper-bound-field enter-apply" type="text"/></td>
+					<td><input class="upper-bound-auto-checkbox enter-apply" type="checkbox" ></td>
 				</tr>
 				<tr>
 					<td>Lower bound</td>
-					<td><input class="lowerBoundField enterApply" type="text"/></td>
-					<td><input class="lowerBoundCheckbox enterApply" type="checkbox"></td>
+					<td><input class="lower-bound-field enter-apply" type="text"/></td>
+					<td><input class="lower-bound-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
 				<tr>
 					<td>No. Bars</td>
-					<td><input class="numBarsField enterApply" type="text"/></td>
-					<td><input class="numBarsCheckbox enterApply" type="checkbox"></td>
+					<td><input class="num-bars-field enter-apply" type="text"/></td>
+					<td><input class="num-bars-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
 			</table>
 		`);
@@ -7965,17 +7999,17 @@ class HistoPlotDialog extends DisplayDialog {
 			});
 		}
 
-		bindAndSetValue(".upperBoundCheckbox", ".upperBoundField", "UpperBound");
-		bindAndSetValue(".lowerBoundCheckbox", ".lowerBoundField", "LowerBound");
-		bindAndSetValue(".numBarsCheckbox", ".numBarsField", "NumberOfBars");
+		bindAndSetValue(".upper-bound-auto-checkbox", ".upper-bound-field", "UpperBound");
+		bindAndSetValue(".lower-bound-auto-checkbox", ".lower-bound-field", "LowerBound");
+		bindAndSetValue(".num-bars-auto-checkbox", ".num-bars-field", "NumberOfBars");
 	}
 	renderHistOrPDFHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 					<b>Type:</b>
-						<select class="scaleType enterApply">
+						<select class="scale-type enter-apply">
 							<option ${this.primitive.getAttribute("ScaleType") === "Histogram" ? "selected": ""} value="Histogram" >Histogram</option>
 							<option ${this.primitive.getAttribute("ScaleType") === "PDF" ? "selected": ""} value="PDF" >P.D.F</option>
 						</select>
@@ -7993,7 +8027,7 @@ class HistoPlotDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderHistogramOptionsHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderHistOrPDFHtml()}
 					</div>
 				</div>
@@ -8006,13 +8040,13 @@ class HistoPlotDialog extends DisplayDialog {
 	makeApply() {
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
-		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scaleType :selected").val());
-		let upperBoundAuto = $(this.dialogContent).find(".upperBoundCheckbox").prop("checked");
-		let lowerBoundAuto = $(this.dialogContent).find(".lowerBoundCheckbox").prop("checked");
-		let numBarsAuto = $(this.dialogContent).find(".numBarsCheckbox").prop("checked");
-		let upperBound = $(this.dialogContent).find(".upperBoundField").val();
-		let lowerBound = $(this.dialogContent).find(".lowerBoundField").val();
-		let numBars = $(this.dialogContent).find(".numBarsField").val();
+		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scale-type :selected").val());
+		let upperBoundAuto = $(this.dialogContent).find(".upper-bound-auto-checkbox").prop("checked");
+		let lowerBoundAuto = $(this.dialogContent).find(".lower-bound-auto-checkbox").prop("checked");
+		let numBarsAuto = $(this.dialogContent).find(".num-bars-auto-checkbox").prop("checked");
+		let upperBound = $(this.dialogContent).find(".upper-bound-field").val();
+		let lowerBound = $(this.dialogContent).find(".lower-bound-field").val();
+		let numBars = $(this.dialogContent).find(".num-bars-field").val();
 		
 		this.primitive.setAttribute("UpperBoundAuto", upperBoundAuto);
 		this.primitive.setAttribute("LowerBoundAuto", lowerBoundAuto);
@@ -8036,24 +8070,11 @@ class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
-
-		this.xMin = 0;
-		this.xMax = 0;
-		this.xAuto  = true;
-		
-		this.yMin = 0;
-		this.yMax = 0;
-		this.yAuto  = true;
-		
-		this.minXValue = 0;
-		this.maxXValue = 0;
-		
-		this.minYValue = 0;
-		this.maxYValue = 0;
 	}
 	renderAxisLimitsHTML() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th></th>
 				<th>Min</th>
@@ -8063,39 +8084,101 @@ class XyPlotDialog extends DisplayDialog {
 			</tr>
 			<tr>
 				<td>X-axis</td>
-				<td style="padding:1px;"><input class="xMin intervalsettings enterApply" type="text" value="${this.getXMin()}"></td>
-				<td style="padding:1px;"><input class="xMax intervalsettings enterApply" type="text" value="${this.getXMax()}"></td>
-				<td><input class="xAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.xAuto)}></td>
-				<td><input class="xLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("XLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.max}">
+				</td>
+				<td>
+					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
+				</td>
+				<td>
+					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
+				</td>
 			</tr>
 			<tr>
 				<td>Y-axis</td>
-				<td style="padding:1px;"><input class="yMin intervalsettings enterApply" type="text" value="${this.getYMin()}"></td>
-				<td style="padding:1px;"><input class="yMax intervalsettings enterApply" type="text" value="${this.getYMax()}"></td>
-				<td><input class="yAuto intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.yAuto)}></td>
-				<td><input class="yLog intervalsettings enterApply" type="checkbox" ${checkedHtmlAttribute(this.primitive.getAttribute("YLogScale") === "true")}></td>
+				<td style="padding:1px;">
+					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
+				</td>
+				<td style="padding:1px;">
+					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
+				</td>
+				<td>
+					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
+				</td>
+				<td>
+					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
+				</td>
 			</tr>
 		</table>
+		<div class="axis-limits-warning-div" style="color:red;"></div>
 		`);
 	}
+	bindAxisLimitsEvents() {
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
+			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
+			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
+			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
+
+			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
+			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
+			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+			this.checkValidAxisLimits();
+		});
+	}
+	checkValidAxisLimits() { 
+		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
+		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
+		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
+		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
+			warning_div.html("Axis limits must be numbers");
+			return false;
+		}
+		warning_div.html("");
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidAxisLimits()) {
+			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+			axis_limits.xaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+			axis_limits.xaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
+			axis_limits.xaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
+			axis_limits.yaxis.auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+			axis_limits.yaxis.min = Number($(this.dialogContent).find(".yaxis-min-field").val());
+			axis_limits.yaxis.max = Number($(this.dialogContent).find(".yaxis-max-field").val());
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
+	}
+
 	renderMarkerHTML() {
 		return (`
-			<table class="modernTable" style="text-align: left;">
+			<table class="modern-table" style="text-align: left;">
 				<tr>
 					<td style="text-align: left">Show Line</td>	
-					<td><input class="line enterApply" type="checkbox" name="displayType"></td>
+					<td><input class="line enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowLine")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left">Show Markers</td>
-					<td><input class="markers enterApply" type="checkbox" name="displayType"></td>
+					<td><input class="markers enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowMarker")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left">Mark Start (🔴)</td>
-					<td><input class="markStart enterApply" type="checkbox"></td>
+					<td><input class="mark-start enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkStart")))}></td>
 				</tr>
 				<tr>
 					<td style="text-align: left" >Mark End (🟩)</td>
-					<td><input class="markEnd enterApply" type="checkbox"></td>
+					<td><input class="mark-end enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkEnd")))}></td>
 				</tr>
 			</table>
 		`);
@@ -8105,11 +8188,11 @@ class XyPlotDialog extends DisplayDialog {
 		let title = this.primitive.getAttribute("TitleLabel");
 		title = (title !== null ? title : "");
 		return (
-			`<table class="modernTable">
+			`<table class="modern-table">
 				<tr>
 					<th>Title:</th>
 					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="TitleLabel enterApply" spellcheck="false" type="text" value="${title}">
+						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${title}">
 					</td>
 				</tr>
 			</table>`
@@ -8126,14 +8209,14 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</div>
 					<div class="table-cell">
-						${this.renderMarkerHTML()} 
-						<div class="verticalSpace"></div>
 						${this.renderPlotPerHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
+						${this.renderMarkerHTML()} 
+						<div class="vertical-space"></div>
 						${this.renderTitleHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
 					</div>
 				</div>
@@ -8143,8 +8226,8 @@ class XyPlotDialog extends DisplayDialog {
 		
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
+		this.bindPlotPerEvents();
 		this.bindMarkersHTML();
-		this.updateInterval();
 	}
 
 	bindMarkersHTML() {
@@ -8154,70 +8237,25 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".markers").change((event) => {
 			this.primitive.setAttribute("ShowMarker", event.target.checked);
 		});
-		$(this.dialogContent).find(".markStart").change((event) => {
+		$(this.dialogContent).find(".mark-start").change((event) => {
 			this.primitive.setAttribute("MarkStart", event.target.checked);
 		});
-		$(this.dialogContent).find(".markEnd").change((event) => {
+		$(this.dialogContent).find(".mark-end").change((event) => {
 			this.primitive.setAttribute("MarkEnd", event.target.checked);
 		});
 	}
 
-	updateInterval() {
-		super.updateInterval();
-		$(this.dialogContent).find(".line").prop("checked", this.primitive.getAttribute("ShowLine") === "true");
-		$(this.dialogContent).find(".markers").prop("checked", this.primitive.getAttribute("ShowMarker") === "true");
-		$(this.dialogContent).find(".markStart").prop("checked", this.primitive.getAttribute("MarkStart") === "true");
-		$(this.dialogContent).find(".markEnd").prop("checked", this.primitive.getAttribute("MarkEnd") === "true");
-		// update plotPer
-		this.autoPlotPer = $(this.dialogContent).find(".autoPlotPer").prop("checked");
-
-		if (this.autoPlotPer) { 
-			this.setDefaultPlotPeriod();
-		} else {
-			this.plotPer = $(this.dialogContent).find(".plotPer").val();
-		}
-
-		$(this.dialogContent).find(".plotPer").val(this.plotPer);
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.autoPlotPer);
-	}
 	makeApply() {
-		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".lineWidth :selected").val());
-		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".TitleLabel").val());
-		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xLog").prop("checked"));
-		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yLog").prop("checked"));
+		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
+		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
+		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
+		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
+		this.applyAxisLimits();
+		this.applyPlotPer();
 	}
 
-	setDefaultPlotPeriod() {
-		this.plotPer = getTimeStep();
-	}
-
-	getXMin() {
-		if (this.xAuto) {
-			return this.minXValue;
-		} else {
-			return this.xMin;
-		}
-	}
-	getXMax() {
-		if (this.xAuto) {
-			return this.maxXValue;
-		} else {
-			return this.xMax;
-		}
-	}
-	getYMin() {
-		if (this.yAuto) {
-			return this.minYValue;
-		} else {
-			return this.yMin;
-		}
-	}
-	getYMax() {
-		if (this.yAuto) {
-			return this.maxYValue;
-		} else {
-			return this.yMax;
-		}
+	getDefaultPlotPeriod() {
+		return getTimeStep();
 	}
 }
 
@@ -8264,37 +8302,96 @@ class TableData {
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
-		this.start = getTimeStart();
-		this.end = getTimeLength() + getTimeStart();
-		this.plotPer = getTimeStep();
 		this.setTitle("Table Properties");
-		this.startAuto  = true;
-		this.endAuto = true;
-		this.plotPerAuto = true;
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
 		return (`
-		<table class="modernTable">
+		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
-				<td style="padding:1px;"><input class="intervalsettings start enterApply" name="start" value="${this.start}" type="text"></td>
-				<td>Auto <input class="intervalsettings start_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.startAuto)}/></td>
+				<td style="padding:1px;">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
+				</td>
+				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
-				<td style="padding:1px;"><input class="intervalsettings end enterApply" name="end" value="${this.end}" type="text"></td>
-				<td>Auto <input class="intervalsettings end_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.endAuto)}/></td>
+				<td style="padding:1px;">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
+				</td>
+				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
+				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
-				<td style="padding:1px;"><input class="intervalsettings plotPer enterApply" name="plotPer" value="${this.plotPer}" type="text"></td>
-				<td>Auto <input class="intervalsettings plotPer_auto enterApply" type="checkbox"  ${checkedHtmlAttribute(this.plotPerAuto)}/></td>
+				<td style="padding:1px;">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
+				</td>
+				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
 		</table>
+		<div class="limits-warning-div" style="color:red;"></div>
 		`);
+	}
+	bindTableLimitsEvents() {
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
+			let start_auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
+			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
+
+			let end_auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".end-field").prop("disabled", end_auto);
+			$(this.dialogContent).find(".end-field").val(end_auto ? getTimeStart()+getTimeLength() : limits.end.value);
+
+			let step_auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
+			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
+			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
+			
+			this.checkValidTableLimits();
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+			this.checkValidTableLimits();
+		});
+	}
+	checkValidTableLimits() {
+		let warning_div = $(this.dialogContent).find(".limits-warning-div");
+		let start_str = $(this.dialogContent).find(".start-field").val();
+		let end_str = $(this.dialogContent).find(".end-field").val();
+		let step_str = $(this.dialogContent).find(".step-field").val();
+		if (isNaN(start_str) || start_str === "") {
+			warning_div.html('"From" must be a number');
+			return false;
+		} else if (isNaN(end_str) || start_str === "") {
+			warning_div.html('"To" must be a number');
+			return false;
+		} else if (isNaN(step_str) || step_str === "") {
+			warning_div.html("Step must be a number");
+			return false;
+		} else if (Number(step_str) <= 0) {
+			warning_div.html("Step must be &gt;0");
+			return false;
+		} 
+		warning_div.html("");
+		return true;
+	}
+	applyAxisLimits() {
+		if (this.checkValidTableLimits()) {
+			let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+
+			limits.start.value = Number($(this.dialogContent).find(".start-field").val());
+			limits.end.value = Number($(this.dialogContent).find(".end-field").val());
+			limits.step.value = Number($(this.dialogContent).find(".step-field").val());
+
+			limits.start.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+			limits.end.auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+			limits.step.auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
+			this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
+		}
 	}
 	renderExportHtml() {
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>
 						<button class="exportCSV">
@@ -8325,9 +8422,9 @@ class TableDialog extends DisplayDialog {
 					</div>
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderRoundToZeroHtml()}
-						<div class="verticalSpace"></div>
+						<div class="vertical-space"></div>
 						${this.renderExportHtml()}
 					</div>
 				</div>
@@ -8336,6 +8433,7 @@ class TableDialog extends DisplayDialog {
 
 		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
+		this.bindTableLimitsEvents();
 		
 		$(this.dialogContent).find(".exportCSV").click(event => {
 			if (this.data) {
@@ -8348,60 +8446,9 @@ class TableDialog extends DisplayDialog {
 				this.data.exportTSV();
 			}
 		});
-
-
-		$(this.dialogContent).find(".intervalsettings").change((event) => {
-			this.updateInterval();
-		});
-		this.updateInterval();
-	}
-	updateInterval()  {
-		this.start = Number($(this.dialogContent).find(".start").val());
-		this.end = Number($(this.dialogContent).find(".end").val());
-		let plotPer = Number($(this.dialogContent).find(".plotPer").val());
-		this.plotPer = (plotPer < getTimeStep()) ? getTimeStep() : plotPer;
-		
-		this.startAuto = $(this.dialogContent).find(".start_auto").prop("checked");
-		$(this.dialogContent).find(".start").prop("disabled",this.startAuto);
-		$(this.dialogContent).find(".start").val(this.getStart());
-		
-		this.endAuto = $(this.dialogContent).find(".end_auto").prop("checked");
-		$(this.dialogContent).find(".end").prop("disabled", this.endAuto);
-		$(this.dialogContent).find(".end").val(this.getLength()+this.getStart());
-		
-		this.plotPerAuto = $(this.dialogContent).find(".plotPer_auto").prop("checked");
-		$(this.dialogContent).find(".plotPer").prop("disabled",this.plotPerAuto);
-		$(this.dialogContent).find(".plotPer").val(this.getStep());
-	}
-	getStart() {
-		if (this.startAuto) {
-			// Fetch from IM engine
-			return getTimeStart();
-		} else {
-			// Fetch from user input
-			return this.start;
-		}
-	}
-	getLength() {
-		if (this.endAuto) {
-			// Fetch from IM engine
-			return getTimeLength();
-		} else {
-			// Fetch from user input
-			return this.end-this.start;
-		}
-	}
-	getStep() {
-		if (this.plotPerAuto) {
-			// Fetch from IM engine
-			return getTimeStep();
-		} else {
-			// Fetch from user input
-			return this.plotPer;
-		}
 	}
 	makeApply() {
-		super.makeApply();
+		this.applyAxisLimits();
 		this.roundToZeroMakeApply();
 	}
 }
@@ -8416,28 +8463,28 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeShow() {
 		this.setHtml(`
-		<table class="modernTable">
+		<table class="modern-table">
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
-				<input class="input_timeunits enterApply textInput" name="length" style="width:100px;" value="" type="text">
+				<input class="input-timeunits enter-apply text-input" name="length" style="width:100px;" value="" type="text">
 				<!--
-				<button class="input_timeunits_default_value" data-default-value="Years">Years</button>
-				<button class="input_timeunits_default_value" data-default-value="Minutes">Minutes</button>
+				<button class="input-timeunits-default-value" data-default-value="Years">Years</button>
+				<button class="input-timeunits-default-value" data-default-value="Minutes">Minutes</button>
 				-->
 			</td>
 		</tr>
 		</table>
 	`);
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
 			}
 		});
-		$(this.dialogContent).find(".input_timeunits_default_value").click((event) => {
+		$(this.dialogContent).find(".input-timeunits-default-value").click((event) => {
 			let selectedUnit = $(event.target).data("default-value");
-			$(this.dialogContent).find(".input_timeunits").val(selectedUnit);
+			$(this.dialogContent).find(".input-timeunits").val(selectedUnit);
 			this.makeApply();
 		});
 	}
@@ -8452,13 +8499,13 @@ class NewModelDialog extends jqDialog {
 	beforeClose() {
 		// If the users closes the window without choosing anything
 		// We currently does not use default values for this
-		// if($(this.dialogContent).find(".input_timeunits").val().trim()=="") {
+		// if($(this.dialogContent).find(".input-timeunits").val().trim()=="") {
 		// 	setTimeUnits("tu");
 		//	updateTimeUnitButton();
 		//}
 	}
 	makeApply() {
-		let timeUnits =$(this.dialogContent).find(".input_timeunits").val();
+		let timeUnits =$(this.dialogContent).find(".input-timeunits").val();
 		if(!isTimeUnitOk(timeUnits.trim())) {
 			xAlert("You have to enter a time unit for the model, e.g. Years or Minutes");
 			return;
@@ -8481,53 +8528,90 @@ class SimulationSettings extends jqDialog {
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
 		this.setHtml(`
-		<table class="modernTable">
+		<table class="modern-table">
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
-				<input class="input_start enterApply" name="start" style="width:100px;" value="${start}" type="text">
+				<input class="input-start enter-apply" name="start" style="width:100px;" value="${start}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Length</td>
 			<td style="padding:1px;">
-				<input class="input_length enterApply" name="length" style="width:100px;" value="${length}" type="text">
+				<input class="input-length enter-apply" name="length" style="width:100px;" value="${length}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Time Step</td>
 			<td style="padding:1px;">
-				<input class="input_step enterApply" name="step" style="width:100px;" value="${step}" type="text">
+				<input class="input-step enter-apply" name="step" style="width:100px;" value="${step}" type="text">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Method</td>
-			<td style="padding:1px;"><select class="input_method enterApply" style="width:104px">
+			<td style="padding:1px;"><select class="input-method enter-apply" style="width:104px">
 			<option value="RK1" ${(getAlgorithm() == "RK1") ? "selected": ""}>Euler</option>
 			<option value="RK4" ${(getAlgorithm() == "RK4") ? "selected": ""}>RK4</option>
 			</select></td>
 		</tr>
 		</table>
-	`);
-		$(this.dialogContent).find(".enterApply").keydown((event) =>{
+		<div class="simulation-settings-warning"></div>
+		`);
+		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
 			if(event.keyCode == keyboard["enter"]) {
 				event.preventDefault();
 				this.applyChanges();
 			}
 		});
-	}
-	makeApply() {
-		let timeStart =$(this.dialogContent).find(".input_start").val();
-		setTimeStart(timeStart);
-		
-		let timeLength = $(this.dialogContent).find(".input_length").val();
-		setTimeLength(timeLength);
-		
-		let timeStep = $(this.dialogContent).find(".input_step").val();
-		setTimeStep(timeStep);
 
-		let method = $(".input_method :selected").val();
-		setAlgorithm(method);
+		this.start_field = $(this.dialogContent).find(".input-start");
+		this.length_field = $(this.dialogContent).find(".input-length");
+		this.step_field = $(this.dialogContent).find(".input-step");
+		this.warning_div = $(this.dialogContent).find(".simulation-settings-warning");
+
+		this.start_field.keyup((event) => this.checkValidTimeSettings());
+		this.length_field.keyup((event) => this.checkValidTimeSettings());
+		this.step_field.keyup((event) => this.checkValidTimeSettings());
+	}
+
+	checkValidTimeSettings() {
+		if (isNaN(this.start_field.val()) || this.start_field.val() === "") {
+			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a number.`);
+			return false;
+		} else if (isNaN(this.length_field.val()) || this.length_field.val() === "") {
+			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a number.`);
+			return false;
+		} else if (isNaN(this.step_field.val()) || this.step_field.val() === "") {
+			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a number.`);
+			return false;
+		} else if (Number(this.length_field.val()) <= 0) {
+			this.warning_div.html(`Length must be &gt;0`);
+			return false;
+		} else if (Number(this.step_field.val()) <= 0) {
+			this.warning_div.html(`Step must be &gt;0`);
+			return false;
+		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
+			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
+			this.warning_div.html(`
+				This requires ${iters_str} time steps. <br/>
+				Limit of 10<sup>7</sup> time steps per simulation.`);
+			return false;
+		}
+
+		this.warning_div.html("");
+		return true;
+	}
+
+	makeApply() {
+		let validSettings = this.checkValidTimeSettings();
+		if (validSettings) {
+			setTimeStart(this.start_field.val());
+			setTimeLength(this.length_field.val());
+			setTimeStep(this.step_field.val());
+			let method = $(".input-method :selected").val();
+			setAlgorithm(method);
+		}
 	}
 }
 
@@ -8540,15 +8624,15 @@ class TimeUnitDialog extends jqDialog {
 			<div style="min-height: 70px; margin: 8px 0px;">
 				Specify the Time Unit to enable model building.</br></br>
 				Time Unit: 
-				<input class="timeUnitInput enterApply" style="text-align: left; width:200px;" type="text"/>
-				<div style="margin-top: 4px;" class="complainDiv"></div>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:200px;" type="text"/>
+				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
 
-		$(this.dialogContent).find(".timeUnitInput").keyup((event) => {
+		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
 		});
-		$(this.dialogContent).find(".enterApply").keydown((event) => {
+		$(this.dialogContent).find(".enter-apply").keydown((event) => {
 			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
 					event.preventDefault();
@@ -8558,17 +8642,17 @@ class TimeUnitDialog extends jqDialog {
 		});
 	}
 	beforeShow() {
-		$(this.dialogContent).find(".timeUnitInput").val(getTimeUnits());
+		$(this.dialogContent).find(".timeunit-field").val(getTimeUnits());
 	}
 	afterShow() {
-		$(this.dialog).find(".timeUnitInput").get(0).focus();
+		$(this.dialog).find(".timeunit-field").get(0).focus();
 	}
 	checkValid() {
-		let value = $(this.dialogContent).find(".timeUnitInput").val();
+		let value = $(this.dialogContent).find(".timeunit-field").val();
 		return isTimeUnitOk(value);
 	}
 	showComplain(ok) {
-		let complainDiv = $(this.dialogContent).find(".complainDiv");
+		let complainDiv = $(this.dialogContent).find(".complain-div");
 		if (ok) {
 			complainDiv.html("");
 		} else {
@@ -8580,7 +8664,7 @@ class TimeUnitDialog extends jqDialog {
 			"Apply":(event) =>
 			{	
 				if (this.checkValid()) {
-					let timeUnit = $(this.dialogContent).find(".timeUnitInput").val(); 
+					let timeUnit = $(this.dialogContent).find(".timeunit-field").val(); 
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
 					$("#timeUnitParagraph").html(`Time Unit: ${timeUnit}`);
@@ -8599,11 +8683,11 @@ class GeometryDialog extends DisplayDialog {
 		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
 		let primWidth = this.primitive.getAttribute("StrokeWidth");
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>Line Width: </td>
 					<td>
-						<select class="widthSelect enterApply">
+						<select class="width-select enter-apply">
 						${strokeWidths.map(w => (`
 							<option value="${w}" ${primWidth === w ? "selected" : ""}>${w}</option>
 						`))}
@@ -8613,7 +8697,7 @@ class GeometryDialog extends DisplayDialog {
 				<tr>
 					<td>Dashes: </td>
 					<td>
-						<select class="dashSelect enterApply">
+						<select class="dash-select enter-apply">
 						<option value="" 	${this.primitive.getAttribute("StrokeDashArray") === "" ? "selected" : ""}	 >––––––</option>
 						<option value="8 4" ${this.primitive.getAttribute("StrokeDashArray") === "8 4" ? "selected" : ""}>– – – –</option>
 						</select>
@@ -8627,8 +8711,8 @@ class GeometryDialog extends DisplayDialog {
 		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
 	}
 	makeApply() {
-		let dashArray = $(this.dialogContent).find(".dashSelect :selected").val();
-		let strokeWidth = $(this.dialogContent).find(".widthSelect :selected").val();
+		let dashArray = $(this.dialogContent).find(".dash-select :selected").val();
+		let strokeWidth = $(this.dialogContent).find(".width-select :selected").val();
 		this.primitive.setAttribute("StrokeDashArray", dashArray);
 		this.primitive.setAttribute("StrokeWidth", strokeWidth);
 	}
@@ -8653,14 +8737,14 @@ class LineDialog extends GeometryDialog {
 		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
 		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
 		return (`
-			<table class="modernTable">
+			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
-					<td><input class="arrowStartCheck" type="checkbox" ${checkedHtmlAttribute(arrowStart)} /></td>
+					<td><input class="arrow-start-checkbox" type="checkbox" ${checkedHtml(arrowStart)} /></td>
 				</tr>
 				<tr>
 					<td>Arrow head at end point:</td>
-					<td><input class="arrowEndCheck" type="checkbox" ${checkedHtmlAttribute(arrowEnd)} /></td>
+					<td><input class="arrow-end-checkbox" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
 				</tr>
 			</table>
 		`);
@@ -8669,13 +8753,13 @@ class LineDialog extends GeometryDialog {
 		this.setTitle("Arrow/Line Properties");
 		this.setHtml(`<div>
 			${this.renderArrowCheckboxHtml()}
-			<div class="verticalSpace"></div>
+			<div class="vertical-space"></div>
 			${this.renderStrokeHtml()}
 		</div>`);
 	}
 	makeApply() {
-		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrowStartCheck").prop("checked"));
-		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrowEndCheck").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrow-start-checkbox").prop("checked"));
+		this.primitive.setAttribute("ArrowHeadEnd", $(this.dialogContent).find(".arrow-end-checkbox").prop("checked"));
 		super.makeApply();
 	}
 }
@@ -8710,12 +8794,12 @@ class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setHtml(`
-			<div class="primitiveSettings" style="padding: 10px 0px">
+			<div class="primitive-settings" style="padding: 10px 0px">
 				Name:<br/>
-				<input class="nameField textInput" style="width: 100%;" type="text" value=""><br/><br/>
+				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
-				<textarea class="valueField" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
-				<p class="inLink" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
+				<textarea class="value-field" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
+				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
 					<b>Definition:</b></br>
@@ -8727,7 +8811,7 @@ class ConverterDialog extends jqDialog {
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".inLink").get(0);
-		this.valueField = $(this.dialogContent).find(".valueField").get(0);
+		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
@@ -8735,7 +8819,7 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		});
-		this.nameField = $(this.dialogContent).find(".nameField").get(0);
+		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.keyCode == keyboard["enter"]) {
 				this.applyChanges();
@@ -8781,7 +8865,7 @@ class ConverterDialog extends jqDialog {
 		}
 	}
 	afterShow() {
-		let field = $(this.dialogContent).find(".textInput").get(0);
+		let field = $(this.dialogContent).find(".text-input").get(0);
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
@@ -8793,7 +8877,7 @@ class ConverterDialog extends jqDialog {
 			
 			// handle name
 			let oldName = getName(this.primitive);
-			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
 				if (isNameFree(newName)) {
 					setName(this.primitive, newName);
@@ -8918,57 +9002,54 @@ class EquationEditor extends jqDialog {
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
-			<style>
-				.clickFunction { cursor: pointer; }
-			</style>
 			<div class="table">
   				<div class="table-row">
 					<div class="table-cell" style="width: 300px; height: 300px;">
-						<div class="primitiveSettings" style="padding: 10px 20px 20px 0px">
+						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
-							<input class="nameField textInput enterApply" style="width: 100%;" type="text" value=""><br/>
-							<div class="nameWarningDiv" style="color: red;"></div><br/>
+							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
+							<div class="name-warning-div" style="color: red;"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="valueField enterApply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
-							<div class="referenceDiv" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
+							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
-							<div class="restrictNonNegativeDiv">
+							<div class="restrict-to-non-negative-div">
 								<br/>
-								<label><input class="restrictNonNegative enterApply" type="checkbox"/> Restrict to non-negative values</label>
+								<label><input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/> Restrict to non-negative values</label>
 							</div>
 						</div>
 					</div>
 					<div class="table-cell">
 					<div style="width:240px;"></div> <!-- div here to show entire window on open since next div has position:absolute -->
     				<div style="position: absolute; top: 20px; bottom: 0px; overflow-y: scroll; width: 230px; padding: 10px 20px 20px 0px;">
-						<div class="accordionCluster">
-						</div> <!--End of accordionCluster. Programming help is inserted here-->
+						<div class="accordion-cluster">
+						</div> <!--End of accordion-cluster. Programming help is inserted here-->
 					</div>
   				</div>
 			</div>
 		`);
 
-		$(this.dialogContent).find(".nameField").keyup((event) => {
+		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
 			let validName = validPrimitiveName(newName, this.primitive);
 			if (nameFree && validName) {
 				$(event.target).css("background-color", "white");
-				$(this.dialogContent).find(".nameWarningDiv").html("");
+				$(this.dialogContent).find(".name-warning-div").html("");
 			} else {
 				$(event.target).css("background-color", "pink");
 				if (! nameFree) {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name <b>${newName}</b> is taken.`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
 				} else if (newName === "") {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot be empty.`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
 				} else if (! validName) {
-					$(this.dialogContent).find(".nameWarningDiv").html(`Name cannot contain brackets, parentheses, or quotes`);
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain brackets, parentheses, or quotes`);
 				}
 			} 
 		});
 
-		$(this.dialogContent).find(".enterApply").keydown((event) => {
+		$(this.dialogContent).find(".enter-apply").keydown((event) => {
 			if (! event.shiftKey) {
 				if (event.keyCode == keyboard["enter"]) {
 					event.preventDefault();
@@ -8977,11 +9058,11 @@ class EquationEditor extends jqDialog {
 			}
 		});
 
-		this.valueField = $(this.dialogContent).find(".valueField").get(0);
-		this.nameField = $(this.dialogContent).find(".nameField").get(0);
-		this.referenceDiv = $(this.dialogContent).find(".referenceDiv").get(0);
-		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrictNonNegative").get(0);
-		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrictNonNegativeDiv").get(0);
+		this.valueField = $(this.dialogContent).find(".value-field").get(0);
+		this.nameField = $(this.dialogContent).find(".name-field").get(0);
+		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
+		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
+		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrict-to-non-negative-div").get(0);
 		
 		let helpData = getFunctionHelpData();
 	
@@ -9010,15 +9091,15 @@ class EquationEditor extends jqDialog {
 				codeHelp = `${functionList[j][2]} ${example}`;
 				codeHelp = codeHelp.replace(/\'/g, "&#39;");
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
-				result += `<li class = "functionHelp clickFunction" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
+				result += `<li class = "function-help click-function" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
 			}
 			result += "</ul>";
 			return result;
 		};
 	
 		for (let i = 0; i < helpData.length; i++) {
-			$(".accordionCluster").append(`<div>
-			<h3 class="functionCategory">${helpData[i][0]}</h3>
+			$(".accordion-cluster").append(`<div>
+			<h3 class="function-category">${helpData[i][0]}</h3>
 			  <div>
 				${
 					functionListToHtml(helpData[i][1])
@@ -9027,15 +9108,15 @@ class EquationEditor extends jqDialog {
 			</div>`);
 		}
 		
-		$(this.dialogContent).find(".clickFunction").click((event) => this.templateClick(event));
+		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
 		
 		$(this.valueField).focusout((event)=>{
 			this.storeValueSelectionRange();
 		});
-		$(".accordionCluster").click((event) => {
+		$(".accordion-cluster").click((event) => {
 			this.restoreValueSelectionRange();
 		});
-		$(this.dialogContent).find(".referenceDiv").click((event) => {
+		$(this.dialogContent).find(".primitive-references-div").click((event) => {
 			this.restoreValueSelectionRange();
 		});
 		
@@ -9045,7 +9126,7 @@ class EquationEditor extends jqDialog {
 			This is done to avoid blocking the button with the tooltip
 			https://api.jqueryui.com/position/
 		*/
-		$(".accordionCluster").tooltip({
+		$(".accordion-cluster").tooltip({
 		  position: { my: "left+5 center", at: "right center" },
 		  classes: {"ui-tooltip": "tooltip"},
 		  content: function () {
@@ -9064,8 +9145,8 @@ class EquationEditor extends jqDialog {
 	
 	}
 	open(id,defaultFocusSelector = null) {
-		$(this.dialogContent).find(".nameField").css("background-color", "white");
-		$(this.dialogContent).find(".nameWarningDiv").html("");
+		$(this.dialogContent).find(".name-field").css("background-color", "white");
+		$(this.dialogContent).find(".name-warning-div").html("");
 		if (jqDialog.blockingDialogOpen) {
 			// We can't open a new dialog while one is already open
 			return;
@@ -9118,7 +9199,7 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linkedReference clickFunction" data-template="${name}">${name}</span>&nbsp;</br>`;
+				result += `<span class = "linked-reference click-function" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
@@ -9133,7 +9214,7 @@ class EquationEditor extends jqDialog {
 		}
 		$(this.referenceDiv).html(referenceHTML);
 		
-		$(this.referenceDiv).find(".clickFunction").click((event) => this.templateClick(event));
+		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
@@ -9162,10 +9243,10 @@ class EquationEditor extends jqDialog {
 		// Uses the trick of creating multiple accordions
 		// So that they can be independetly opened and closed
 		// http://stackoverflow.com/questions/3479447/jquery-ui-accordion-that-keeps-multiple-sections-open
-		$(".accordionCluster > div").accordion({active: false, header: "h3", collapsible: true });
+		$(".accordion-cluster > div").accordion({active: false, header: "h3", collapsible: true });
 	}
 	closeAccordion() {
-		$(".accordionCluster > div").accordion({
+		$(".accordion-cluster > div").accordion({
 			active: false
 		});
 	}
@@ -9188,11 +9269,11 @@ class EquationEditor extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.dialogContent).find(".valueField").val();
+			let value = $(this.dialogContent).find(".value-field").val();
 			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
-			let newName = stripBrackets($(this.dialogContent).find(".nameField").val());
+			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
 				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
 					setName(this.primitive, newName);
@@ -9246,21 +9327,21 @@ class MacroDialog extends jqDialog {
 		this.setTitle("Macro");
 		this.seed = "";
 		this.setHtml(`
-		<table class="invisibleTable" style="vertical-align: top;">
+		<table class="invisible-table" style="vertical-align: top;">
 			<tr>
 				<td>
-					<textarea class="macroText"></textarea>
+					<textarea class="macro-text"></textarea>
 				</td>
 				<td style="padding:0;">
-					<table class="modernTable" title="SetRandSeed makes stochstics simulations reproducable.">
+					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
-								Seed = <input class="seedBox enterApply" type="text" />
+								Seed = <input class="seed-field enter-apply" type="text" />
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<button class="setSeedButton" disabled>SetRandSeed</button>
+								<button class="set-seed-button" disabled>SetRandSeed</button>
 							</td>
 						</tr>
 					</table>
@@ -9268,9 +9349,9 @@ class MacroDialog extends jqDialog {
 			</tr>
 		</table>
 		`);		
-		this.macroTextArea = $(this.dialogContent).find(".macroText");
-		this.setSeedButton = $(this.dialogContent).find(".setSeedButton");
-		$(this.dialogContent).find(".seedBox").keyup((event) => { 
+		this.macroTextArea = $(this.dialogContent).find(".macro-text");
+		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
+		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
 			this.setSeedButton.attr("disabled", this.seed.length === 0 );
 		});
@@ -9300,7 +9381,7 @@ class MacroDialog extends jqDialog {
 		// this.dialogParameters.height = "400";
 	}
 	makeApply() {
-		let newMacro = $(this.dialogContent).find(".macroText").val();
+		let newMacro = $(this.dialogContent).find(".macro-text").val();
 		setMacros(newMacro);
 	}
 }
@@ -9312,15 +9393,15 @@ class TextAreaDialog extends DisplayDialog {
 		this.setHtml(`
 		<div style="height: 100%;">
 			<textarea class="text" style="resize: none;"></textarea>
-			<div class="verticalSpace"></div>
-			<table class="modernTable"><tr title="Only hides when there is any text.">
+			<div class="vertical-space"></div>
+			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td><input type="checkbox" class="hideFrameCheckbox" /></td>
+				<td><input type="checkbox" class="hide-frame-checkbox" /></td>
 			</tr></table>
 		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
-		this.hideFrameCheckbox = $(this.dialogContent).find(".hideFrameCheckbox");
+		this.hideFrameCheckbox = $(this.dialogContent).find(".hide-frame-checkbox");
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
@@ -9411,9 +9492,9 @@ class EquationListDialog extends jqDialog {
 		}
 
 		return(`
-			<h3 class="equationListHeader">${fileName}</h3>${fullDate}</br>
-			<h3 class="equationListHeader">Specifications</h3>
-			<table class="modernTable">
+			<h3 class="equation-list-header">${fileName}</h3>${fullDate}</br>
+			<h3 class="equation-list-header	">Specifications</h3>
+			<table class="modern-table">
 				${specs.map(spec => 
 					`<tr>
 						<td>${spec[0]}</td>
@@ -9425,8 +9506,8 @@ class EquationListDialog extends jqDialog {
 	}
 	renderPrimitiveListHtml(info) {
 		return (`
-		<h3 class="equationListHeader">${info.title}</h3>
-		<table class="modernTable">
+		<h3 class="equation-list-header">${info.title}</h3>
+		<table class="modern-table">
 			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
 				${info.primitives.map(p => `<tr>
 					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">

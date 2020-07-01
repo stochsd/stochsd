@@ -55,7 +55,7 @@ svg * {
     -ms-user-select: none;
     user-select: none;
 }
-.toolBoxSeparator {
+.tool-box-separator {
     display: inline-block;
     width: 12px;
     /*width: 20px;*/
@@ -63,7 +63,7 @@ svg * {
 button.pressed {
     background-color: #777;
 }
-.toolButton {
+.tool-button {
     padding: 0px;
     margin: 0px;
     
@@ -112,18 +112,19 @@ td.text {
 }
 
 /* Sticky table start here (used in TableVisual) */
-table.stickyTable {
+table.sticky-table {
     width: 100%;
 }
-table.stickyTable th {
+table.sticky-table th {
     padding: 8px 8px;
 }
-table.stickyTable th {
+table.sticky-table th {
+    /* Make header stay at top */
     position: sticky;
     top: 0;
     background-color: #f4f4f4;
 }
-table.stickyTable th::after {
+table.sticky-table th::after {
     /* Make border-bottom since border does follow element with sticky */
     content: "";
     position: absolute;
@@ -133,10 +134,10 @@ table.stickyTable th::after {
     right: 0;
     height: 1px;
 }
-table.stickyTable th, table.stickyTable td {
+table.sticky-table th, table.sticky-table td {
     border: 1px solid var(--table-border-color);
 } 
-table.stickyTable tr:nth-child(even) {
+table.sticky-table tr:nth-child(even) {
     background-color: #f4f4f4;
 }
 .time-header-cell::before {
@@ -162,20 +163,20 @@ table.stickyTable tr:nth-child(even) {
     padding: 2px 8px !important;
 }
 /* Vertical space start here */
-div.verticalSpace {
+div.vertical-space {
     height: 12px;
 }
 
-/* ModernTable start here */
-.modernTable tr:nth-child(even){
+/* Modern Table start here */
+.modern-table tr:nth-child(even){
     background-color: #f4f4f4;
 }
-.modernTable td, .modernTable th {
+.modern-table td, .modern-table th {
     border: 1px solid var(--table-border-color);
     padding: 1px 8px;
     vertical-align: text-top;
 }
-.invisibleTable table,tr,th, .invisibleTable td {
+.invisible-table table,tr,th, .invisible-table td {
     border: 0px;
     vertical-align: top;
     padding: 0px 10px;
@@ -184,7 +185,7 @@ input[type="text"] {
     width: 50px;
     text-align: right;
 }
-input[type="text"].textInput {
+input[type="text"].text-input {
     text-align: left !important;
 }
 /* Overlays */
@@ -192,12 +193,13 @@ input[type="text"].textInput {
     background: #000000;
     opacity: 0.3 !important;
 }
-button.toolButton img {
+button.tool-button img {
     width: 100%; 
     height: 100%; 
     display: inline;
 }
-.primitiveSettings .nameField, .primitiveSettings .valueField {
+.primitive-settings .name-field, 
+.primitive-settings .value-field {
     width: 200px;
 }
 .accordion div {
@@ -216,11 +218,15 @@ button.toolButton img {
   padding: 6px;
   /*border: black 1px solid;*/ /*Turn on for debuggning */
 }
-h3.equationListHeader {
+h3.equation-list-header {
     margin: 5px 0px 0px 0px;
 }
 
-.accordionCluster ul {
+.simulation-settings-warning {
+    color: red;
+}
+
+.accordion-cluster ul {
     padding: 0px;
     margin: 0px;
 }
@@ -229,37 +235,69 @@ h3.equationListHeader {
     padding-top: 20px !important;
     padding-bottom: 20px !important;
 }
-.functionHelp {
+/* Equation editor start here */
+.function-help {
     color: black;
 }
-.functionHelp:hover {
-    color: black;
-    text-shadow:0px 0px 1px black;
-}
-.linkedReference {
-    color: black;
-}
-.linkedReference:hover {
+.function-help:hover {
     color: black;
     text-shadow:0px 0px 1px black;
 }
-.macroText {
+.click-function { 
+    cursor: pointer; 
+}
+.linked-reference {
+    color: black;
+}
+.linked-reference:hover {
+    color: black;
+    text-shadow:0px 0px 1px black;
+}
+.macro-text {
     width: 600px;
     height: 400px;
 }
-.infoBox {
+/*  Info bar start here */
+.info-bar {
+    display:flex; 
+    margin: 0px; 
+    font-size: 16px; 
+    height: 32px; 
+    font-family: Arial, Helvetica, sans-serif;
+}
+.info-box__element {
     /* background: #f0f0f0; */ 
     margin: 6px 12px;
     /* padding: 6px 18px; */
     min-width: 140px;
 }
-#infoDefinition {
+.info-bar__definition {
     font-family: monospace;
+    float:left; 
+    white-space:nowrap; 
+    overflow:hidden; 
+    text-overflow:ellipsis; 
+    max-width:50%;
 }
+.info-bar__value-error {
+    color: red;
+    float: right;
+}
+.info-bar__im-link {
+    position: absolute; 
+    white-space: nowrap;
+    left: 500px;
+}
+
+/* Add style to jqplot elements */
 .jqplot-highlighter-tooltip {
     /* Overwrite CSS highlighter tool tip*/
     z-index: 2;
     background: white!IMPORTANT;
+}
+td.jqplot-table-legend {
+    /* Avoid line break in plot legend */
+    white-space: nowrap;
 }
 
 .editor-footer div {

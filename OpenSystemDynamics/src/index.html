@@ -79,7 +79,8 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
 	<script src="jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="emenu.js"></script>
-	<script src="editor.js"></script>
+	<script type="text/javascript" src="format_number.js"></script>
+	<script type="text/javascript" src="editor.js"></script>
 	<!-- endbuild -->
 
 	<!-- Style Cheat -->
@@ -287,97 +288,97 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		</div> <!-- End of topPanel -->
 		
 		<div class="toolPanel" style="margin-top: 12px"> <!--toolPanel-->
-			<button id="btn_mouse" title="Mouse" class="toolButton" data-tool="mouse">
+			<button id="btn_mouse" title="Mouse" class="tool-button" data-tool="mouse">
 				<img src="graphics/mouse.svg"/>
 			</button>
-			<button id="btn_delete" title="Delete" class="toolButton" data-tool="delete">
+			<button id="btn_delete" title="Delete" class="tool-button" data-tool="delete">
 				<img src="graphics/delete.svg"/>
 			</button>
-			<button id="btn_undo" title="Undo" class="toolButton" data-tool="undo">
+			<button id="btn_undo" title="Undo" class="tool-button" data-tool="undo">
 				<img src="graphics/undo.svg"/>
 			</button>
-			<button id="btn_redo" title="Redo" class="toolButton" data-tool="redo">
+			<button id="btn_redo" title="Redo" class="tool-button" data-tool="redo">
 				<img src="graphics/redo.svg"/>
 			</button>
-			<div class="toolBoxSeparator">
+			<div class="tool-box-separator">
 			</div>
-			<button id="btn_stock" title="Stock" class="toolButton" data-tool="stock">
+			<button id="btn_stock" title="Stock" class="tool-button" data-tool="stock">
 				<img src="graphics/stock.svg"/>
 			</button>
-			<button id="btn_variable" title="Auxiliary" class="toolButton" data-tool="variable">
+			<button id="btn_variable" title="Auxiliary" class="tool-button" data-tool="variable">
 				<img src="graphics/variable.svg"/>
 			</button>
-			<button id="btn_constant" title="Parameter" class="toolButton" data-tool="constant">
+			<button id="btn_constant" title="Parameter" class="tool-button" data-tool="constant">
 				<img src="graphics/constant.svg"/>
 			</button>
-			<button id="btn_converter" title="Converter" class="toolButton" data-tool="converter">
+			<button id="btn_converter" title="Converter" class="tool-button" data-tool="converter">
 				<img src="graphics/converter.svg"/>
 			</button>
-			<button id="btn_flow" title="Flow" class="toolButton" data-tool="flow">
+			<button id="btn_flow" title="Flow" class="tool-button" data-tool="flow">
 				<img src="graphics/flow.svg"/>
 			</button>
-			<button id="btn_link" title="Link" class="toolButton" data-tool="link">
+			<button id="btn_link" title="Link" class="tool-button" data-tool="link">
 				<img src="graphics/link.svg"/>
 			</button>
-			<button id="btn_ghost" title="Ghost" class="toolButton" data-tool="ghost">
+			<button id="btn_ghost" title="Ghost" class="tool-button" data-tool="ghost">
 				<img src="graphics/ghost.svg"/>
 			</button>
-			<div class="toolBoxSeparator">
+			<div class="tool-box-separator">
 			</div>
-			<button id="btn_rotatename" title="Rotate Name" class="toolButton" data-tool="rotatename">
+			<button id="btn_rotatename" title="Rotate Name" class="tool-button" data-tool="rotatename">
 				<img src="graphics/rotate_name.svg"/>
 			</button>
-			<button id="btn_movevalve" title="Move Valve" class="toolButton" data-tool="movevalve">
+			<button id="btn_movevalve" title="Move Valve" class="tool-button" data-tool="movevalve">
 				<img src="graphics/move_valve.svg">
 			</button>
-			<button id="btn_straighten_link" title="Straighten Link" class="toolButton" data-tool="straightenlink">
+			<button id="btn_straighten_link" title="Straighten Link" class="tool-button" data-tool="straightenlink">
 					<img src="graphics/straighten_link.svg">
 				</button>
-			<button id="btn_text" title="Text" class="toolButton" data-tool="text">
+			<button id="btn_text" title="Text" class="tool-button" data-tool="text">
 				<img src="graphics/text.svg"/>
 			</button>
-			<button id="btn_rectangle" title="Rectangle (shift gives square)" class="toolButton" data-tool="rectangle">
+			<button id="btn_rectangle" title="Rectangle (shift gives square)" class="tool-button" data-tool="rectangle">
 				<img src="graphics/rectangle.svg"/>
 			</button>
-			<button id="btn_ellipse" title="Ellipse (shift gives circle)" class="toolButton" data-tool="ellipse">
+			<button id="btn_ellipse" title="Ellipse (shift gives circle)" class="tool-button" data-tool="ellipse">
 				<img src="graphics/ellipse.svg"/>
 			</button>
-			<button id="btn_line" title="Arrow/Line" class="toolButton" data-tool="line">
+			<button id="btn_line" title="Arrow/Line" class="tool-button" data-tool="line">
 				<img src="graphics/arrow.svg"/>
 			</button>
-			<div class="toolBoxSeparator">
+			<div class="tool-box-separator">
 			</div>
-			<button id="btn_numberbox" title="Number Box" class="toolButton" data-tool="numberbox">
+			<button id="btn_numberbox" title="Number Box" class="tool-button" data-tool="numberbox">
 				<img src="graphics/numberbox.svg"/>
 			</button>
-			<button id="btn_table" title="Table" class="toolButton" data-tool="table">
+			<button id="btn_table" title="Table" class="tool-button" data-tool="table">
 				<img src="graphics/table.svg"/>
 			</button>
-			<button id="btn_timeplot" title="Time Plot" class="toolButton" data-tool="timeplot">
+			<button id="btn_timeplot" title="Time Plot" class="tool-button" data-tool="timeplot">
 				<img src="graphics/timeplot.svg"/>
 			</button>
-			<button id="btn_compareplot" title="Compare Simulations Plot" class="toolButton" data-tool="compareplot">
+			<button id="btn_compareplot" title="Compare Simulations Plot" class="tool-button" data-tool="compareplot">
 				<img src="graphics/compareplot.svg"/>
 			</button>
-			<button id="btn_xyplot" title="XY Plot" class="toolButton" data-tool="xyplot">
+			<button id="btn_xyplot" title="XY Plot" class="tool-button" data-tool="xyplot">
 				<img src="graphics/xyplot.svg"/>
 			</button>
-			<button id="btn_histoplot" title="Histogram Plot" class="toolButton" data-tool="histoplot">
+			<button id="btn_histoplot" title="Histogram Plot" class="tool-button" data-tool="histoplot">
 				<img src="graphics/histoplot.svg"/>
 			</button>
-			<div class="toolBoxSeparator">
+			<div class="tool-box-separator">
 			</div>
 			<div id="runControllerArea" style="display: inline-block;">
-				<button id="btn_run" title="Run/Halt (Ctrl 1)" class="toolButton" data-tool="run">
+				<button id="btn_run" title="Run/Halt (Ctrl 1)" class="tool-button" data-tool="run">
 					<img id="imgRunPauseTool" src="graphics/run.svg"/>
 				</button>
-				<button id="btn_step" title="Step (Ctrl 2)" class="toolButton" data-tool="step">
+				<button id="btn_step" title="Step (Ctrl 2)" class="tool-button" data-tool="step">
 					<img src="graphics/step.svg"/>
 				</button>
-				<button style="display: none" id="btn_clearrun" title="Clear run" class="toolButton" data-tool="clearrun">
+				<button style="display: none" id="btn_clearrun" title="Clear run" class="tool-button" data-tool="clearrun">
 					<img src="graphics/clearrun.svg"/>
 				</button>
-				<button id="btn_reset" title="Reset (Ctrl 3)" class="toolButton" data-tool="reset">
+				<button id="btn_reset" title="Reset (Ctrl 3)" class="tool-button" data-tool="reset">
 					<img src="graphics/reset.svg"/>
 				</button>
 				<div id="runStatusBarOuter" class="toolSupplement" style="display: inline-block; background: #F0F0F0; width: 110px" >
@@ -393,15 +394,15 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			</div> <!-- End of runControllArea -->
 		</div> <!-- End of toolPanel-->
 
-		<div id="infoBar" style="display:flex; margin: 0px; font-size: 16px; height: 32px; font-family: Arial, Helvetica, sans-serif;">
-			<div id="infoDefinition" class="infoBox" style="float:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:50%;" title="Selection" >
+		<div class="info-bar">
+			<div class="info-bar__definition info-box__element" title="Selection" >
 				&nbsp 
 			</div>
 			<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
-			<div id="infoValueError" class="infoBox" style=" color: red; float:right;" title="Definition Error">
+			<div class="info-bar__value-error info-box__element" title="Definition Error">
 				&nbsp 
 			</div>
-			<span class="linkBar" style="position: absolute; white-space:nowrap; left: 500px;">
+			<span class="info-bar__im-link">
 				<!--
 					Don't remove
 					This link to insight maker is a requirments of using the Insight Maker Public License, used by the Insight Maker engine
@@ -415,7 +416,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		<div id="svgplanebackground" style="overflow: scroll; border-width: 1px; border-color: black; border-style: solid; position: absolute; z-index: 3; width: 1024px; height: 768px; display: inline-block; font-family: Arial, Helvetica, sans-serif">
 			<div id="svgBlockOverlay" style="position: absolute; left: 0px; top: 0px; display: none; z-index: 110; width: 100%; height: 100%; background-color: red; opacity: 0;">
 			</div>
-			<svg draggable="false" id="svgplane" width="2000" height="1379" style="position: absolute; left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
+			<svg draggable="false" id="svgplane" width="6000" height="2000" style="position: absolute; left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
 			</svg>
 		</div>
 		<div class="editor-footer" style="position: absolute; bottom: 0;">
