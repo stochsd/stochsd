@@ -954,49 +954,7 @@ function getDNA(cell, solvers) {
 		}
 	}
 
-
-	if (dna.type == "Action") {
-		dna.trigger = cell.getAttribute("Trigger");
-		dna.repeat = isTrue(cell.getAttribute("Repeat"));
-		dna.recalculate = isTrue(cell.getAttribute("Recalculate")) || dna.trigger == "Condition";
-		try {
-			dna.triggerValue = createTree(""+cell.getAttribute("Value"));
-		} catch (err) {
-			var msg = getText("The trigger for %s has an equation error that must be corrected before the model can be run.", "<i>[" + clean(dna.name) + "]</i>");
-			if (err.substr && err.substr(0, 4) == "MSG:") {
-				msg += "<br/><br/>" + err.toString().substr(4);
-			}
-			error(msg, dna.cell, false, l);
-		}
-	} else if (dna.type == "Transition") {
-		dna.trigger = cell.getAttribute("Trigger");
-		dna.repeat = isTrue(cell.getAttribute("Repeat"));
-		dna.recalculate = isTrue(cell.getAttribute("Recalculate")) || dna.trigger == "Condition";
-	} else if (dna.type == "State") {
-		if (isUndefined(cell.getAttribute("Residency")) || cell.getAttribute("Residency").trim() == "") {
-			dna.residency = null;
-		} else {
-			try {
-				dna.residency = evaluateTree(trimTree(createTree(cell.getAttribute("Residency")), {}));
-				if (!dna.residency.units) {
-					dna.residency.units = simulate.timeUnits;
-				}
-				if (eq(dna.residency, new Material(0, simulate.timeUnits))) {
-					dna.residency = null;
-				}
-			} catch (err) {
-				if (isLocal()) {
-					console.log(err);
-				}
-
-				throw ({
-					msg: getText("Invalid state residency."),
-					primitive: cell,
-					showEditor: false
-				});
-			}
-		}
-	} else if (dna.type == "Stock") {
+	if (dna.type == "Stock") {
 		dna.nonNegative = isTrue(cell.getAttribute("NonNegative"));
 		if (cell.getAttribute("StockMode") == "Conveyor") {
 			dna.stockType = "Conveyor";
@@ -1034,7 +992,6 @@ function getDNA(cell, solvers) {
 		}
 
 		var data = cell.getAttribute("Data").split(";");
-
 
 		var inp = [];
 		var out = [];
