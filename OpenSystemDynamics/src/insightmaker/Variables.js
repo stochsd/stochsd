@@ -68,8 +68,11 @@ setValuedProperties(primitiveBank.numberbox);
 
 primitiveBank.table = doc.createElement('Table');
 primitiveBank.table.setAttribute('Primitives', '');
-primitiveBank.table.setAttribute('PlotPer', 1);
-primitiveBank.table.setAttribute('AutoPlotPer', true);
+primitiveBank.table.setAttribute('TableLimits', JSON.stringify({
+	"start":	{ "value": 0, 	"auto": true },
+	"end": 		{ "value": 100, "auto": true },
+	"step": 	{ "value": 1, 	"auto": true }
+}));
 primitiveBank.table.setAttribute("RoundToZero", true);
 primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
 primitiveBank.table.setAttribute("Color", "black");
@@ -81,7 +84,11 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
-// AxisLimits : {timeaxis: {min, max, auto}, leftaxis: {min, max, auto}, rightaxis: {min, max, auto}}
+primitiveBank.timeplot.setAttribute("AxisLimits", JSON.stringify({
+	"timeaxis": 	{"min": 0, "max": 100, 	"auto": true}, 
+	"leftaxis": 	{"min": 0, "max": 1, 	"auto": true}, 
+	"rightaxis": 	{"min": 0, "max": 1, 	"auto": true}
+}));
 primitiveBank.timeplot.setAttribute('PlotPer', 1);
 primitiveBank.timeplot.setAttribute('AutoPlotPer', true);
 primitiveBank.timeplot.setAttribute('LineOptions', JSON.stringify({
@@ -102,6 +109,10 @@ setValuedProperties(primitiveBank.timeplot);
 
 primitiveBank.compareplot = doc.createElement('ComparePlot');
 primitiveBank.compareplot.setAttribute('Primitives', '');
+primitiveBank.compareplot.setAttribute("AxisLimits", JSON.stringify({
+	"timeaxis": {"min": 0, "max": 100, 	"auto": true}, 
+	"yaxis": 	{"min": 0, "max": 1, 	"auto": true}
+}));
 primitiveBank.compareplot.setAttribute('PlotPer', 1);
 primitiveBank.compareplot.setAttribute('AutoPlotPer', true);
 primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
@@ -120,6 +131,10 @@ setValuedProperties(primitiveBank.compareplot);
 
 primitiveBank.xyplot = doc.createElement('XyPlot');
 primitiveBank.xyplot.setAttribute('Primitives', '');
+primitiveBank.xyplot.setAttribute("AxisLimits", JSON.stringify({
+	"xaxis": {"min": 0, "max": 1, "auto": true},
+	"yaxis": {"min": 0, "max": 1, "auto": true}
+}));
 primitiveBank.xyplot.setAttribute('PlotPer', 1);
 primitiveBank.xyplot.setAttribute('AutoPlotPer', true);
 primitiveBank.xyplot.setAttribute('ShowLine', true);
