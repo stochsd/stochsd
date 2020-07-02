@@ -77,7 +77,6 @@ function checkErr(err, config, results) {
 var timeUnits = null;
 
 function innerRunSimulation(config) {
-
 	evaluatingLine = null;
 
 	simulate = new Simulator();
@@ -241,71 +240,7 @@ function innerRunSimulation(config) {
 	var modelItems = primitives();
 
 	for (var i = 0; i < modelItems.length; i++) {
-
-		if (modelItems[i].value.nodeName == "Agents") {
-			var item = modelItems[i];
-
-			var id = item.getAttribute("Agent");
-			var z = parseInt(id, 10);
-			if (z == id) {
-				id = z;
-			}
-			if (isUndefined(id)) {
-				throw {
-					msg: getText("You must select a base agent for the primitive %s. You can create agent definitions using Folder primitives.", "<i>" + clean(item.getAttribute("name")) + "</i>"),
-					primitive: item,
-					showEditor: false
-				};
-			}
-
-			var x = new Agents();
-
-			x.dna = new DNA(item, id);
-			x.id = item.id;
-
-			x.agentId = id;
-			x.createIds();
-
-			x.dna.solver = folderSolvers(item, solvers);
-			x.dna.solver.displayed.push(x);
-
-			x.geoDimUnits = item.getAttribute("GeoDimUnits");
-			x.geoDimUnitsObject = createUnitStore(item.getAttribute("GeoDimUnits"));
-			x.geoWidth = simpleUnitsTest(simpleEquation(item.getAttribute("GeoWidth")), x.geoDimUnitsObject, item);
-			x.geoHeight = simpleUnitsTest(simpleEquation(item.getAttribute("GeoHeight")), x.geoDimUnitsObject, item);
-			x.halfWidth = div(x.geoWidth, new Material(2));
-			x.halfHeight = div(x.geoHeight, new Material(2));
-			x.geoWrap = isTrue(item.getAttribute("GeoWrap"));
-			x.placement = item.getAttribute("Placement");
-			x.placementFunction = item.getAttribute("PlacementFunction");
-			x.network = item.getAttribute("Network");
-			x.networkFunction = item.getAttribute("NetworkFunction");
-			x.agentBase = findID(id).getAttribute("AgentBase") || "";
-			if (x.agentBase.trim() != "") {
-				x.agentBase = simpleEquation(x.agentBase, varBank);
-			}
-
-			var agentCells = getChildren(findID(id));
-
-			x.DNAs = [];
-			for (var j = 0; j < agentCells.length; j++) {
-				if (modelType(agentCells[j].value.nodeName)) {
-					x.DNAs.push(getDNA(agentCells[j], solvers));
-				}
-				if (agentCells[j].value.nodeName == "State") {
-					x.stateIds.push(agentCells[j].id);
-				}
-			}
-
-			x.size = item.getAttribute("Size");
-
-			x.agents = [];
-
-			x.dna.agents = x;
-
-			model.submodels[item.id] = x;
-			model.submodels.base.DNAs.push(x.dna);
-		} else if (!inAgent(modelItems[i])) {
+		if (!inAgent(modelItems[i])) {
 			if (modelType(modelItems[i].value.nodeName)) {
 				model.submodels.base.DNAs.push(getDNA(modelItems[i], solvers));
 			}
