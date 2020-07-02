@@ -254,19 +254,6 @@ function innerRunSimulation(config) {
 			var agent;
 			if (submodel.id == "base") {
 				agent = submodel.agents[0];
-			} else {
-				agent = new Agent();
-				agent.container = submodel;
-				agent.index = j;
-				agent.children = [];
-				agent.childrenId = {};
-				agent.agentId = submodel.id;
-				agent.createIds();
-				if (submodel.agentBase) {
-					agent.vector.parent = submodel.agentBase;
-				}
-
-				submodel.agents.push(agent);
 			}
 			for (var i = 0; i < submodel.DNAs.length; i++) {
 				decodeDNA(submodel.DNAs[i], agent);
