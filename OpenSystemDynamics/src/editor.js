@@ -585,6 +585,10 @@ function sdsLoadFunctions() {
 		let height = null; // Is calculated later
 		
 		let DT = simulate.timeStep.toNum().value;
+		if (simulate.model.solvers.base.algorithm === "RK4") {
+			// DT is is half the size when using RK4 
+			DT = DT*2;
+		}
 
 		if (x.length > 1) {
 			volume = x[1].toNum();
