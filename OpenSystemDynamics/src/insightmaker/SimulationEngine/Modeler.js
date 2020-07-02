@@ -305,11 +305,8 @@ function innerRunSimulation(config) {
 				};
 			}
 
-
 			try {
-
 				buildPlacements(model.submodels[submodel]);
-
 			} catch (err) {
 				if (isLocal()) {
 					console.log(err);
@@ -327,10 +324,8 @@ function innerRunSimulation(config) {
 					showEditor: false
 				};
 			}
-
 		}
 	}
-
 
 
 	simulate.results = {
@@ -456,129 +451,8 @@ function innerRunSimulation(config) {
 
 					}
 				}
-
-			}else{
-				/*
-				simulate.displayInformation.colors = [];
-				simulate.displayInformation.headers = [];
-				simulate.displayInformation.agents = [];
-				simulate.displayInformation.displayedHeaders = [];
-				simulate.displayInformation.displayedIds = [];
-				simulate.displayInformation.renderers = [];
-				simulate.displayInformation.elementIds = [];
-				simulate.displayInformation.res = simulate.results;
-
-				var ids = [];
-
-				simulate.displayInformation.origIds = simulate.displayInformation.ids.slice();
-				for (var i = 0; i < simulate.displayInformation.origIds.length; i++) {
-					var id = simulate.displayInformation.origIds[i];
-					var object = simulate.displayInformation.objects[i];
-					var dna = object.dna;
-
-					simulate.displayInformation.displayedIds.push(id);
-					simulate.displayInformation.displayedHeaders.push(dna.name);
-
-					//console.log(simulate.results);
-
-					if (dna.type == "Agents") {
-						var states = object.stateIds;
-
-						simulate.results[id].states = states;
-
-						for (var j = 0; j < states.length; j++) {
-							var innerItem = findID(states[j]);
-							ids.push(id);
-							simulate.displayInformation.elementIds.push("e" + id + "-" + states[j]);
-							simulate.displayInformation.headers.push(getName(innerItem));
-							simulate.displayInformation.colors.push(getLineColor(innerItem));
-							if (simulate.results[id].dataMode == "float") {
-								simulate.displayInformation.renderers.push(commaStr);
-							} else if (simulate.results[id].dataMode == "agents") {
-								simulate.displayInformation.renderers.push(function(x) {
-									return x;
-								});
-							} else {
-								simulate.displayInformation.renderers.push(undefined);
-							}
-						}
-
-						//console.log("--")
-						//console.log(simulate.results[id].results);
-
-						simulate.displayInformation.agents[id.toString()] = {
-							id: id,
-							item: dna.cell,
-							data: simulate.results[id].data,
-							results: simulate.results[id].results
-						};
-
-
-					} else if ((simulate.results.data[0][id] instanceof Vector) && simulate.results.data[0][id].names) {
-
-						var col = getLineColor(dna.cell);
-
-						var names = simulate.results.data[0][id].fullNames();
-
-						simulate.results[id].indexedFullNames = names.slice();
-						for (var j = 0; j < names.length; j++) {
-							names[j] = names[j].join(", ");
-						}
-						simulate.results[id].indexedNames = names;
-
-						for (var j = 0; j < names.length; j++) {
-							ids.push(id);
-							simulate.displayInformation.elementIds.push("e" + id + "-" + j);
-							simulate.displayInformation.headers.push(dna.name + " (" + names[j] + ")");
-							simulate.displayInformation.colors.push(col);
-							simulate.displayInformation.renderers.push(commaStr);
-						}
-
-					} else {
-						ids.push(id)
-						simulate.displayInformation.elementIds.push("e" + id);
-						simulate.displayInformation.headers.push(dna.name);
-						simulate.displayInformation.colors.push(getLineColor(dna.cell));
-						if (simulate.results[id].dataMode == "float") {
-							simulate.displayInformation.renderers.push(commaStr);
-						} else {
-							simulate.displayInformation.renderers.push(undefined);
-						}
-					}
-
-				}
-
-				var storeFields = [{
-					type: "float",
-					name: "Time"
-				}, {
-					type: "int",
-					name: "id"
-				}];
-
-				for (var i = 0; i < simulate.displayInformation.elementIds.length; i++) {
-					storeFields.push({
-						type: 'auto',
-						name: simulate.displayInformation.elementIds[i],
-						defaultValue: undefined
-					});
-				}
-
-
-				simulate.displayInformation.store = new Ext.data.Store({
-					fields: storeFields,
-					data: undefined
-				});
-				simulate.displayInformation.store.maxLoaded = -1;
-				simulate.displayInformation.ids = ids;
-				*/
 			}
-
-
-
 		}
-
-
 
 		var oldStep = config.onStep;
 		config.onStep = function(solver) {
