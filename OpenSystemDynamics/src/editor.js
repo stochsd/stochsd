@@ -3448,7 +3448,7 @@ class XyPlotVisual extends PlotVisual {
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
-			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>Exactly two primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
