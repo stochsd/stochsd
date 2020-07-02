@@ -2808,7 +2808,7 @@ class DataGenerations {
 		this.idGen.push(ids);
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.colorGen.push(ids.map(findID).map(
-			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke 
 		));
 		let types = ids.map(findID).map(node => get_object(node.id).type);
 		this.patternGen.push(
