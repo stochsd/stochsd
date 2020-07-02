@@ -358,18 +358,13 @@ function innerRunSimulation(config) {
 		}
 	});
 
-
-
 	if (config.silent) {
 		if(config.onPause){
 			simulate.run(config);
 		}else{
 			return formatSimResults(simulate.run(config));
 		}
-
 	} else {
-
-
 		var count = div(model.timeLength, model.timeStep);
 		for (var i = 0; i <= count; i++) {
 			simulate.displayInformation.times.push(plus(model.timeStart, mult(model.timeStep, new Material(i))).value);
@@ -412,10 +407,7 @@ function innerRunSimulation(config) {
 				scripter.updatingSlider = true;
 				scripter.slider.setValue(scripter.minTime);
 				scripter.updatingSlider = false;
-
-				//console.log("Changed")
 				scripter.advanceTimer();
-				//console.log("Changed 2")
 
 				config.resultsWindow.displayInformation.store.resumeEvents();
 				//window.x = config.resultsWindow.displayInformation.store;
@@ -507,11 +499,8 @@ function innerRunSimulation(config) {
 
 			oldError ? oldError(res) : null;
 		}
-
 		simulate.run(config);
 	}
-
-
 }
 
 function formatSimResults(res) {
