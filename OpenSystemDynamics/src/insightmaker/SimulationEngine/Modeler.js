@@ -869,12 +869,6 @@ function decodeDNA(dna, agent) {
 	var x;
 	if (type == "Variable") {
 		x = new Variable();
-	} else if (type == "State") {
-		x = new State();
-	} else if (type == "Transition") {
-		x = new Transition();
-	} else if (type == "Action") {
-		x = new Action();
 	} else if (type == "Stock") {
 		x = new Stock();
 	} else if (type == "Flow") {
@@ -904,26 +898,15 @@ function decodeDNA(dna, agent) {
 			}
 		}
 
-
-		if (x instanceof Action) {
-			dna.solver.actions.push(x);
-		} else if (x instanceof Transition) {
-			dna.solver.transitions.push(x);
-		} else if (!(x instanceof Agents)) {
+		if (!(x instanceof Agents)) {
 			dna.solver.valued.push(x)
 			if (x instanceof Flow) {
 				dna.solver.flows.push(x);
 			} else if (x instanceof Stock) {
 				dna.solver.stocks.push(x);
-			} else if (x instanceof State) {
-				dna.solver.states.push(x);
 			}
 		}
-	} else if (type == "Agents") {
-		agent.children.push(dna.agents);
-		agent.childrenId[dna.id] = dna;
 	}
-
 }
 
 function linkPrimitive(primitive, dna) {
