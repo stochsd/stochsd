@@ -342,14 +342,7 @@ function innerRunSimulation(config) {
 			simulate.displayInformation.objects.push(x);
 			simulate.displayInformation.ids.push(x.id);
 			var data = {};
-			if (x instanceof Agents) {
-				data.width = x.geoWidth;
-				data.height = x.geoHeight
-				data.units = x.geoDimUnitsObject;
-				data.states = x.states();
-			} else {
-				x.dna.solver.displayed.push(x);
-			}
+			x.dna.solver.displayed.push(x);
 			simulate.results[x.id] = {
 				data: data,
 				results: [],
