@@ -140,15 +140,20 @@ table.sticky-table th, table.sticky-table td {
 table.sticky-table tr:nth-child(even) {
     background-color: #f4f4f4;
 }
-.time-header-cell::before {
+.time-header-cell::before, .prim-header-cell::before {
     /* made up right border */
     content: "";
     position: absolute;
-    background: black;
     bottom: 0;
     top: 0;
-    right: 0;
+    right: -1px;
     width: 1px;
+}
+.time-header-cell::before {
+    background: black;
+}
+.prim-header-cell::before {
+    background: #aaa;
 }
 .time-header-cell, .time-value-cell {
     /* make black line between time column and primitive column */
