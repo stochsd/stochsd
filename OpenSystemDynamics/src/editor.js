@@ -6490,7 +6490,8 @@ class RunResults {
 				
 				// If still running continue with next cycle
 				if (this.runState == runStateEnum.running) {
-					this.updateProgressBar()
+					this.updateProgressBar();
+					this.setProgressBarGreen(false);
 					do_global_log("length "+this.results.length)
 					if (this.simulationController == null) {
 						do_global_log("simulation controller is null")
@@ -6503,6 +6504,7 @@ class RunResults {
 				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(true);
 				this.triggerRunFinished();
 				this.stopSimulation();
 			},
@@ -6544,6 +6546,7 @@ class RunResults {
 			onPause: (res) => {
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 				this.simulationController = res;
 			},
@@ -6551,6 +6554,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
@@ -6558,16 +6562,18 @@ class RunResults {
 			}
 		});
 	}
-	static updateProgressBar() {
-		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#runStatusBar").width(`${100*progress}%`);
-		if (progress === 1) {
+	static setProgressBarGreen(isGreen) {
+		if (isGreen) {
 			// set color to green 
 			$("#runStatusBar").css("background", "#aaeeaa");
 		} else {
-			// set color to orange
+			// set color to orange 
 			$("#runStatusBar").css("background", "#eed0aa");
 		}
+	}
+	static updateProgressBar() {
+		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
+		$("#runStatusBar").width(`${100*progress}%`);
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
