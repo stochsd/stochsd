@@ -164,6 +164,7 @@ Simulator.prototype.run = function(config){
 			action: function(){
 				me.sleep(true);
 				if(repeat && lessThan(plus(time, me.timePause), me.timeEnd)){
+					// Add pause task again
 					addPause(plus(time, me.timePause), repeat);
 				}
 			}
@@ -223,9 +224,6 @@ Simulator.prototype.run = function(config){
 				}
 				if(this.config.onPause){
 					setTimeout((function(){
-						/*console.log(this);
-						console.log(this.results);
-						return;*/
 						var res = formatSimResults(this.results);
 						var l = res.data.length;
 						var data = res.data[l-1];
@@ -237,15 +235,8 @@ Simulator.prototype.run = function(config){
 
 						res.resume = me.resume.bind(this);
 						res.setValue = function(cell, value){
+							console.log("Value changed!");
 							var val = simpleEquation(""+value, {"-parent": varBank});
-							/*if(! this.sliders[cell.id]){
-								throw "Primitive '" + getName(cell) + "' must have a slider defined for it to change its value.";
-							}
-
-							for (var i = 0; i < this.sliders[cell.id].length; i++) {
-								this.sliders[cell.id][i].equation = val;
-							}
-							this.sliders[cell.id][0].dna.equation = val;*/
 							this.valuedPrimitives.forEach(function(x){
 								if(x.id == cell.id){
 									if(val.fullClone){
