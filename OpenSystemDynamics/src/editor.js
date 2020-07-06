@@ -8361,7 +8361,7 @@ class TableDialog extends DisplayDialog {
 			limits.end.value = getTimeStart() + getTimeLength();
 		}
 		if (limits.step.auto) {
-			limits.end.value = this.getDefaultPlotPeriod();
+			limits.step.value = this.getDefaultPlotPeriod();
 		}
 		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
 		this.data = null;
