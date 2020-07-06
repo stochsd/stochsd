@@ -540,11 +540,11 @@ function hasRandomFunction(value) {
 		let randomFunctions = [];
 		for (let help of helpData) {
 			if (help[0] === "Random Number Functions") {
-				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#"))); 
+				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#")).toLowerCase());
 				break;
 			}
 		}
-		return randomFunctions.some(elem => value.includes(elem));
+		return randomFunctions.some(elem => value.toLowerCase().includes(elem));
 	}
 	return false;
 }
