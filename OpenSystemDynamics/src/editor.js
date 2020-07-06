@@ -3509,7 +3509,7 @@ class XyPlotVisual extends PlotVisual {
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		let selected_str = "None selected";
+		let selected_str = "None selected<br/>";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
 				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
