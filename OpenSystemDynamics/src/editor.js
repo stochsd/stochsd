@@ -7423,7 +7423,6 @@ class TimePlotDialog extends DisplayDialog {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		if (axis_limits.timeaxis.auto) {
 			axis_limits.timeaxis.min = getTimeStart();
-			console.log(getTimeLength());
 			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
@@ -7768,7 +7767,6 @@ class ComparePlotDialog extends DisplayDialog {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		if (axis_limits.timeaxis.auto) {
 			axis_limits.timeaxis.min = getTimeStart();
-			console.log(getTimeLength());
 			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
