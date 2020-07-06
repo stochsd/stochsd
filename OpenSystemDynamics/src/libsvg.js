@@ -211,6 +211,21 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 	return newElement;
 }
 
+
+function svg_foreign(x, y, width, height, innerHtml, fill="white") {
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+	let contentDiv = document.createElement("div");
+
+	contentDiv.innerHTML = innerHtml;
+	newElement.appendChild(contentDiv);
+
+	newElement.setAttribute("x", x); //Set path's data
+	newElement.setAttribute("y", y); //Set path's data	
+	newElement.setAttribute("width", width); //Set path's data
+	newElement.setAttribute("height", height); //Set path's data
+	return newElement;
+}
+
 // Drawing primitive for drawing svg circles
 function svg_circle(cx, cy, r, stroke, fill, markclass, extraAttributes) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); // Create a path in SVG's namespace
