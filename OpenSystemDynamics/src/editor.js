@@ -7861,14 +7861,15 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
+			let xaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
-
-			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
+			let yaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
