@@ -166,7 +166,7 @@ function svg_rect(x, y, width, height, stroke, fill, markclass, extraAttributes)
 }
 
 // Drawing primitive for drawing svg rects
-function svg_foreignobject(x, y, width, height, innerHTML, fill="white") {
+function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	// foreignObject tag must be cammel case to work which is wierd
 	
