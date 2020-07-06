@@ -3509,7 +3509,7 @@ class XyPlotVisual extends PlotVisual {
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		let selected_str = "None selected";
+		let selected_str = "None selected<br/>";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
 				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
@@ -6490,7 +6490,8 @@ class RunResults {
 				
 				// If still running continue with next cycle
 				if (this.runState == runStateEnum.running) {
-					this.updateProgressBar()
+					this.updateProgressBar();
+					this.setProgressBarGreen(false);
 					do_global_log("length "+this.results.length)
 					if (this.simulationController == null) {
 						do_global_log("simulation controller is null")
@@ -6503,6 +6504,7 @@ class RunResults {
 				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(true);
 				this.triggerRunFinished();
 				this.stopSimulation();
 			},
@@ -6544,6 +6546,7 @@ class RunResults {
 			onPause: (res) => {
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 				this.simulationController = res;
 			},
@@ -6551,6 +6554,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
@@ -6558,16 +6562,18 @@ class RunResults {
 			}
 		});
 	}
-	static updateProgressBar() {
-		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#runStatusBar").width(`${100*progress}%`);
-		if (progress === 1) {
+	static setProgressBarGreen(isGreen) {
+		if (isGreen) {
 			// set color to green 
 			$("#runStatusBar").css("background", "#aaeeaa");
 		} else {
-			// set color to orange
+			// set color to orange 
 			$("#runStatusBar").css("background", "#eed0aa");
 		}
+	}
+	static updateProgressBar() {
+		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
+		$("#runStatusBar").width(`${100*progress}%`);
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
@@ -7408,6 +7414,12 @@ class TimePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
 	}
@@ -7739,6 +7751,12 @@ class ComparePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 		this.keep = false;
 		this.clear = false;
 	}
@@ -8078,6 +8096,13 @@ class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
+
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
