@@ -2481,29 +2481,24 @@ class TableVisual extends HtmlTwoPointer {
 
 class PlotVisual extends HtmlTwoPointer {
 	updateGraphics() {
-		
+		let newSize = [this.endX - this.startX, this.endY-this.startY];
+		let oldSize = [this.coordRect.x2 - this.coordRect.x1, this.coordRect.y2 - this.coordRect.y1];
+
 		// code for svg foreign
 		this.htmlElement.setAttribute("x", this.getMinX());
 		this.htmlElement.setAttribute("y", this.getMinY());
 		this.htmlElement.setAttribute("width", this.getWidth());
 		this.htmlElement.setAttribute("height", this.getHeight());
 		
-		$(this.htmlElement.contentDiv).css("width", this.getWidth());
-		$(this.htmlElement.contentDiv).css("height", this.getHeight());
-		
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
 		this.coordRect.x2 = this.endX;
 		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
-		
-		let newWidth = this.htmlElement.contentDiv.style.width;
-		let newHeight = this.htmlElement.contentDiv.style.height;
-		let oldWidth = this.chartDiv.style.width;
-		let oldHeight = this.chartDiv.style.height;
-		if (oldWidth !== newWidth || oldHeight !== newHeight) {
-			this.chartDiv.style.width = newWidth;
-			this.chartDiv.style.height = newHeight;
+
+		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
+			// only update chart if necessary
+			// if plot is moved without resizing the chart does not need to be updated 
 			this.updateChart();
 		}
 	}
@@ -2516,11 +2511,11 @@ class PlotVisual extends HtmlTwoPointer {
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Plot not renderd yet", "white");
 		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		let html = `<div id="${this.chartId}" style="width:100%; height:100%; z-index: 100;"></div>`;
 		this.updateHTML(html);
 		this.chartDiv = document.getElementById(this.chartId);
 
-		$(this.htmlElement.contentDiv).mousedown((event) => {
+		$(this.htmlElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
@@ -2528,11 +2523,11 @@ class PlotVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement.contentDiv).bind("contextmenu", (event)=> {
+		$(this.htmlElement).bind("contextmenu", (event)=> {
 			this.doubleClick();
 		});
 
-		$(this.htmlElement.contentDiv).dblclick(()=>{
+		$(this.htmlElement).dblclick(()=>{
 			this.doubleClick();
 		});
 

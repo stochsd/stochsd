@@ -217,7 +217,14 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	let contentDiv = document.createElement("div");
 
 	contentDiv.innerHTML = innerHtml;
-	contentDiv.setAttribute("style", "width: 100%; height: 100%;");
+	let padding = 8;
+	contentDiv.setAttribute("style", `
+		position: relative; 
+		left: ${padding}px; 
+		top: ${padding}px; 
+		width: calc( 100% - ${2*padding}px );
+		height: calc( 100% - ${2*padding}px );
+	`);
 	contentDiv.setAttribute("class","contentDiv");
 
 	newElement.appendChild(contentDiv);
