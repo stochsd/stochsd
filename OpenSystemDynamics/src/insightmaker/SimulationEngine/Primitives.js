@@ -1491,7 +1491,19 @@ Flow.method("predict", function(override) {
 			} else if (this.dna.solver.RKPosition == 3) {
 				this.rate = this.RKPrimary[2];
 			} else if (this.dna.solver.RKPosition == 4) {
-				this.rate = div((plus(plus(plus(this.RKPrimary[0], mult(new Material(2), this.RKPrimary[1])), mult(new Material(2), this.RKPrimary[2])), this.RKPrimary[3])), new Material(6));
+				this.rate = div(
+					plus(
+						plus(
+							plus(
+								this.RKPrimary[0], 
+								mult(new Material(2), this.RKPrimary[1])
+							), 
+							mult(new Material(2), this.RKPrimary[2])
+						), 
+						this.RKPrimary[3]
+					), 
+					new Material(6)
+				);
 			}
 		}
 
