@@ -140,7 +140,7 @@ table.sticky-table th, table.sticky-table td {
 table.sticky-table tr:nth-child(even) {
     background-color: #f4f4f4;
 }
-.time-header-cell::before, .prim-header-cell::before {
+.time-header-cell::before, .prim-header-cell:not(:last-child)::before {
     /* made up right border */
     content: "";
     position: absolute;
