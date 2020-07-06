@@ -2503,8 +2503,6 @@ class PlotVisual extends HtmlTwoPointer {
 		}
 	}
 	makeGraphics() {
-		super.makeGraphics();
-		
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -3031,10 +3029,53 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		this.render();
 	}
+	updateGraphics() {
+		// code for svg foreign
+		this.htmlElement.setAttribute("x", this.getMinX());
+		this.htmlElement.setAttribute("y", this.getMinY());
+		this.htmlElement.setAttribute("width", this.getWidth());
+		this.htmlElement.setAttribute("height", this.getHeight());
+		
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+	}
 	makeGraphics() {
-		super.makeGraphics();
-		this.targetElement.style.overflowWrap = "break-word";
-		this.render();
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+
+		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
+
+		$(this.htmlElement).mousedown((event) => {
+			// This is an alternative to having the htmlElement in the group
+				primitive_mousedown(this.id,event)
+				mouseDownHandler(event);
+				event.stopPropagation();
+		});
+		
+		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
+		$(this.htmlElement).bind("contextmenu", (event)=> {
+			this.doubleClick();
+		});
+
+		$(this.htmlElement).dblclick(()=>{
+			this.doubleClick();
+		});
+
+		this.group = svg_group([this.element]);
+		this.group.setAttribute("node_id",this.id);	
+		
+		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.contentDiv, this.element];
+		for(let key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+	}
+	doubleClick() {
+		this.dialog.show();
 	}
 	render() {
 		let newText = getName(this.primitive);
