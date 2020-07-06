@@ -2690,7 +2690,7 @@ class TimePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			axes: {
@@ -2972,7 +2972,7 @@ class ComparePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			axes: {
@@ -3213,7 +3213,7 @@ class HistoPlotVisual extends PlotVisual {
 			title: `${scaleType} of ${targetPrimName}`,
 			sortData: false,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			seriesDefaults: {
@@ -3433,7 +3433,7 @@ class XyPlotVisual extends PlotVisual {
 			series: this.serieSettingsArray,
 			title: this.primitive.getAttribute("TitleLabel"),
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			sortData: false,
