@@ -7422,7 +7422,6 @@ class TimePlotDialog extends DisplayDialog {
 
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		if (axis_limits.timeaxis.auto) {
-			
 			axis_limits.timeaxis.min = getTimeStart();
 			console.log(getTimeLength());
 			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
@@ -7766,6 +7765,14 @@ class ComparePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
 		}
 
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		if (axis_limits.timeaxis.auto) {
+			axis_limits.timeaxis.min = getTimeStart();
+			console.log(getTimeLength());
+			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
+
 		this.keep = false;
 		this.clear = false;
 	}
@@ -7823,8 +7830,6 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
-		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7837,10 +7842,10 @@ class ComparePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.max}">
 				</td>
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
