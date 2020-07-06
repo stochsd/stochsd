@@ -8371,20 +8371,20 @@ class TableDialog extends DisplayDialog {
 	}
 	bindTableLimitsEvents() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let start_auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".start-auto-checkbox").change(event => {
+			let start_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
 			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
-
-			let end_auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".end-auto-checkbox").change(event => {
+			let end_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".end-field").prop("disabled", end_auto);
 			$(this.dialogContent).find(".end-field").val(end_auto ? getTimeStart()+getTimeLength() : limits.end.value);
-
-			let step_auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".step-auto-checkbox").change(event => {
+			let step_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
 			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
-			
-			this.checkValidTableLimits();
 		});
 		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidTableLimits();
