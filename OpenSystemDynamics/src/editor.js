@@ -8336,32 +8336,41 @@ class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Table Properties");
+		
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		if (limits.start.auto) {
+			limits.start.value = getTimeStart();
+		}
+		if (limits.end.auto) {
+			limits.end.value = getTimeStart() + getTimeLength();
+		}
+		if (limits.step.auto) {
+			limits.end.value = this.getDefaultPlotPeriod();
+		}
+		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		let start_time = limits.start.auto ? getTimeStart() : limits.start.value;
-		let end_time = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
-		let time_step = limits.step.auto ? this.getDefaultPlotPeriod() : limits.step.value;
 		return (`
 		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
 				<td style="padding:1px;">
-					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${start_time}" type="text">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
 				</td>
 				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
 				<td style="padding:1px;">
-					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${end_time}" type="text">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
 				</td>
 				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
 				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
 				<td style="padding:1px;">
-					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${time_step}" type="text">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
 				</td>
 				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
