@@ -217,12 +217,17 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	let contentDiv = document.createElement("div");
 
 	contentDiv.innerHTML = innerHtml;
+	contentDiv.setAttribute("style", "width: 100%; height: 100%;");
+	contentDiv.setAttribute("class","contentDiv");
+
 	newElement.appendChild(contentDiv);
+	newElement.contentDiv = contentDiv;
 
 	newElement.setAttribute("x", x); //Set path's data
 	newElement.setAttribute("y", y); //Set path's data	
 	newElement.setAttribute("width", width); //Set path's data
 	newElement.setAttribute("height", height); //Set path's data
+	svgplane.appendChild(newElement);
 	return newElement;
 }
 
