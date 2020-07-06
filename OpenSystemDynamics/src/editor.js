@@ -7414,6 +7414,12 @@ class TimePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
 	}
@@ -7745,6 +7751,12 @@ class ComparePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 		this.keep = false;
 		this.clear = false;
 	}
@@ -8084,6 +8096,13 @@ class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
+
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
