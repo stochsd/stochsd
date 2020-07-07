@@ -431,6 +431,7 @@ function getFunctionHelpData() {
 			["Sign", "Sign(##Value$$)", "1 if the value is greater than 0, -1 if it is less than 0, and 0 if it is 0.", ["Sign(-12)", "-1"]],
 			["Pi", "pi", "The value 3.14159265."],
 			["e", "e", "The value 2.71828183."],
+			["Epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
 			["Logit", "Logit(##Value$$)", "Returns the logit transformation of the value. Converts values on a 0 to 1 scale to a -Infinity to Infinity scale.", ["Logit(0.5)", "0"]],
 			["Expit", "Expit(##Value$$)", "Returns the expit transformation of the value. Converts values on a -Infinity to Infinity scale to a 0 to 1 scale.", ["Expit(0)", "0.5"]]
 		]],
