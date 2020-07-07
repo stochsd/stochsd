@@ -2615,7 +2615,12 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
@@ -2938,7 +2943,12 @@ class ComparePlotVisual extends PlotVisual {
 			}
 		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.dialog.keep) {
@@ -3346,7 +3356,12 @@ class XyPlotVisual extends PlotVisual {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
 		if (results.length == 0) {
 			this.setEmptyPlot();
