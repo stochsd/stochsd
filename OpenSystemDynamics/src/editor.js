@@ -794,7 +794,7 @@ class BaseObject {
 				element.setAttribute("stroke", this.color);
 			} else if(element.getAttribute("class") == "name_element") {
 				element.setAttribute("fill", this.color);
-			} else if(element.getAttribute("class") == "selector") {
+			} else if(element.getAttribute("class") == "highlight") {
 				element.setAttribute("fill", this.color);
 			}
 		}
@@ -966,7 +966,7 @@ class OnePointer extends BaseObject {
 		this.element_array = element_array;
 		
 		for(let key in element_array) {
-			if (element_array[key].getAttribute("class") == "selector") {
+			if (element_array[key].getAttribute("class") == "highlight") {
 				this.selector_array.push(element_array[key]);
 			}
 		}
@@ -1118,7 +1118,7 @@ class AnchorPoint extends OnePointer {
 		if (newVisible) {
 			for(let element of this.element_array) {
 				// Show all elements except for selectors
-				if (element.getAttribute("class") != "selector") {
+				if (element.getAttribute("class") != "highlight") {
 					element.setAttribute("visibility", "visible");
 				}
 			}
@@ -1141,12 +1141,12 @@ class AnchorPoint extends OnePointer {
 		if (this.isSquare) {
 			return [
 				svg_rect(-4, -4, 8, 8, this.color, "white", "element"),
-				svg_rect(-4, -4, 8, 8, "none", this.color, "selector")
+				svg_rect(-4, -4, 8, 8, "none", this.color, "highlight")
 			];
 		} else {
 			return [
 				svg_circle(0, 0, 4, this.color, "white", "element"),
-				svg_circle(0, 0, 4, "none", this.color, "selector")
+				svg_circle(0, 0, 4, "none", this.color, "highlight")
 			];
 		}
 		
@@ -1308,7 +1308,7 @@ class StockVisual extends BasePrimitive {
 		let h = size[1];
 		return [
 			svg_rect(-w/2,-h/2, w, h,  this.color,  defaultFill, "element"),
-			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "selector"),
+			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "highlight"),
 			textElem,
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
@@ -1392,7 +1392,7 @@ class NumberboxVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
-			svg_rect(-20,-15,40,30, "none", this.color, "selector"),
+			svg_rect(-20,-15,40,30, "none", this.color, "highlight"),
 			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
 		];	
 	}
@@ -1443,7 +1443,7 @@ class VariableVisual extends BasePrimitive {
 		return [
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
-			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
+			svg_circle(0,0,this.getRadius()-2, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -1474,7 +1474,7 @@ class ConstantVisual extends VariableVisual {
 		return [
 			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
-			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "selector"),
+			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -1512,7 +1512,7 @@ class ConverterVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", {"transform": "scale(0.87)"}),
 			svg_icons(defaultStroke, defaultFill, "icons"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 		];
@@ -2069,7 +2069,7 @@ class FlowVisual extends BaseConnection {
 		this.arrowHeadPath.setAttribute("stroke", color);
 		this.valve.setAttribute("stroke", color);
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
-		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
 		this.getAnchors().map(anchor => anchor.setColor(color));
 	}
@@ -2086,7 +2086,7 @@ class FlowVisual extends BaseConnection {
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = svg_group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"), 
-			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "selector"),
+			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "highlight"),
 			this.icons,	
 			this.name_element]
 		);
@@ -2201,13 +2201,13 @@ class FlowVisual extends BaseConnection {
 	
 	unselect() {
 		super.unselect();
-		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "hidden");
 		this.icons.set_color(this.color);
 	}
 
 	select() {
 		super.select();
-		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "visible");
 		this.icons.set_color("white");
 	}
 	
@@ -2288,7 +2288,7 @@ class EllipseVisual extends TwoPointer {
 		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
 		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
 		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none","element", {"stroke-width": "10"});
-		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
