@@ -2435,7 +2435,7 @@ class TableVisual extends HtmlTwoPointer {
 			this.render();
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreignobject(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
+		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2469,7 +2469,6 @@ class TableVisual extends HtmlTwoPointer {
 		
 		this.htmlElement.setAttribute("x",this.getMinX());
 		this.htmlElement.setAttribute("y",this.getMinY());
-		
 		this.htmlElement.setAttribute("width",this.getWidth());
 		this.htmlElement.setAttribute("height",this.getHeight());
 		
@@ -2480,101 +2479,67 @@ class TableVisual extends HtmlTwoPointer {
 	}
 }
 
-class HtmlOverlayTwoPointer extends TwoPointer {
-	updateHTML(html) {
-		this.targetElement.innerHTML = html;
-	}
-	
-	makeGraphics() {
-		this.targetBorder = 4;
-		this.targetElement = document.createElement("div");
-		this.targetElement.style.position = "absolute";
-		this.targetElement.style.backgroundColor = "white";
-		this.targetElement.style.zIndex = 100;
-		this.targetElement.style.overflow = "hidden";
-		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
-		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
-		this.targetElement.style.width = "2px";
-		this.targetElement.style.height = "2px";
-		document.getElementById("svgplanebackground").appendChild(this.targetElement);
+class PlotVisual extends HtmlTwoPointer {
+	updateGraphics() {
+		let newSize = [this.endX - this.startX, this.endY-this.startY];
+		let oldSize = [this.coordRect.x2 - this.coordRect.x1, this.coordRect.y2 - this.coordRect.y1];
+
+		// code for svg foreign
+		this.htmlElement.setAttribute("x", this.getMinX());
+		this.htmlElement.setAttribute("y", this.getMinY());
+		this.htmlElement.setAttribute("width", this.getWidth());
+		this.htmlElement.setAttribute("height", this.getHeight());
 		
-		$(this.targetElement).mousedown((event) => {
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+
+		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
+			// only update chart if necessary
+			// if plot is moved without resizing the chart does not need to be updated 
+			this.updateChart();
+		}
+	}
+	makeGraphics() {
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+
+		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Plot not renderd yet", "white");
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:100%; height:100%; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+
+		$(this.htmlElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.targetElement).dblclick(()=>{
-			this.doubleClick(this.id);
-		});
-
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.targetElement).bind("contextmenu", (event)=> {
-			this.doubleClick(this.id);
+		$(this.htmlElement).bind("contextmenu", (event)=> {
+			this.doubleClick();
 		});
 
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
+		$(this.htmlElement).dblclick(()=>{
+			this.doubleClick();
+		});
 
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
-		
 		this.group = svg_group([this.element]);
-		this.group.setAttribute("node_id", this.id);	
+		this.group.setAttribute("node_id",this.id);	
 		
 		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.contentDiv, this.element];
 		for(let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id", this.id);
+			this.element_array[key].setAttribute("node_id",this.id);
 		}
-	}
-	
-	updateGraphics() {
-		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startX;
-		this.coordRect.y1 = this.startY;
-		this.coordRect.x2 = this.endX;
-		this.coordRect.y2 = this.endY;
-		this.coordRect.update();
-		
-		let svgoffset = $("#svgplane").offset();
-		
-		
-		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
-		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
-		
-		this.targetElement.style.width = (this.getWidth()-(2*this.targetBorder))+"px";
-		this.targetElement.style.height = (this.getHeight()-(2*this.targetBorder))+"px";
-	}
-	
-	clean() {
-		super.clean();
-		this.targetElement.remove();
 	}
 	doubleClick() {
 		this.dialog.show();
-	}
-}
-
-class PlotVisual extends HtmlOverlayTwoPointer {
-	updateGraphics() {
-		super.updateGraphics();
-		let newWidth = `${$(this.targetElement).width()-10}px`;
-		let newHeight = `${$(this.targetElement).height()-10}px`;
-		let oldWidth = this.chartDiv.style.width;
-		let oldHeight = this.chartDiv.style.height;
-		if (oldWidth !== newWidth || oldHeight !== newHeight) {
-			this.chartDiv.style.width = newWidth;
-			this.chartDiv.style.height = newHeight;
-			this.updateChart();
-		}
-	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
 	}
 }
 
@@ -2723,7 +2688,7 @@ class TimePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			axes: {
@@ -3010,7 +2975,7 @@ class ComparePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			axes: {
@@ -3062,7 +3027,7 @@ class ComparePlotVisual extends PlotVisual {
 	}
 }
 
-class TextAreaVisual extends HtmlOverlayTwoPointer {
+class TextAreaVisual extends HtmlTwoPointer {
 	constructor(id, type, pos0, pos1) {		
 		super(id, type, pos0, pos1);
 		
@@ -3074,10 +3039,53 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		});
 		this.render();
 	}
+	updateGraphics() {
+		// code for svg foreign
+		this.htmlElement.setAttribute("x", this.getMinX());
+		this.htmlElement.setAttribute("y", this.getMinY());
+		this.htmlElement.setAttribute("width", this.getWidth());
+		this.htmlElement.setAttribute("height", this.getHeight());
+		
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+	}
 	makeGraphics() {
-		super.makeGraphics();
-		this.targetElement.style.overflowWrap = "break-word";
-		this.render();
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+
+		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
+
+		$(this.htmlElement).mousedown((event) => {
+			// This is an alternative to having the htmlElement in the group
+				primitive_mousedown(this.id,event)
+				mouseDownHandler(event);
+				event.stopPropagation();
+		});
+		
+		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
+		$(this.htmlElement).bind("contextmenu", (event)=> {
+			this.doubleClick();
+		});
+
+		$(this.htmlElement).dblclick(()=>{
+			this.doubleClick();
+		});
+
+		this.group = svg_group([this.element]);
+		this.group.setAttribute("node_id",this.id);	
+		
+		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.contentDiv, this.element];
+		for(let key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+	}
+	doubleClick() {
+		this.dialog.show();
 	}
 	render() {
 		let newText = getName(this.primitive);
@@ -3251,7 +3259,7 @@ class HistoPlotVisual extends PlotVisual {
 			title: `${scaleType} of ${targetPrimName}`,
 			sortData: false,
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			seriesDefaults: {
@@ -3476,7 +3484,7 @@ class XyPlotVisual extends PlotVisual {
 			series: this.serieSettingsArray,
 			title: this.primitive.getAttribute("TitleLabel"),
 			grid: {
-				background: "white",
+				background: "transparent",
 				shadow: false
 			},
 			sortData: false,
