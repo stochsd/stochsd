@@ -5547,7 +5547,7 @@ $(window).load(function() {
 			e.preventDefault();
 		}
 	});
-	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
+	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
