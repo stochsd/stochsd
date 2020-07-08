@@ -2657,6 +2657,7 @@ class TimePlotVisual extends PlotVisual {
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
 					showMarker: false,
+					markerOptions: { size: 5 },
 					pointLabels: {
 						show: true,
 						edgeTolerance: 0,
@@ -2864,6 +2865,7 @@ class DataGenerations {
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						shadow: false,
 						showMarker: false,
+						markerOptions: { size: 5 },
 						pointLabels: {
 							show: true,
 							edgeTolerance: 0,
