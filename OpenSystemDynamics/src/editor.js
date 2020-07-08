@@ -3434,7 +3434,7 @@ class XyPlotVisual extends PlotVisual {
 			shadow: false,
 			showLine: this.primitive.getAttribute("ShowLine") === "true",
 			showMarker: this.primitive.getAttribute("ShowMarker") === "true",
-			markerOptions: { shadow: false },
+			markerOptions: { shadow: false, size: 5 },
 			pointLabels: { show: false }
 		});
 		if (this.primitive.getAttribute("MarkStart") === "true") {
