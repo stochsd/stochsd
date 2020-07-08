@@ -7044,11 +7044,7 @@ class DisplayDialog extends jqDialog {
 	}
 
 	getDefaultPlotPeriod() {
-		let plot_per = getTimeLength()/100;
-		if (plot_per < getTimeStep()) {
-			plot_per = getTimeStep();
-		}
-		return plot_per;
+		return getTimeStep();
 	}
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
@@ -8323,10 +8319,6 @@ class XyPlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 		this.applyAxisLimits();
 		this.applyPlotPer();
-	}
-
-	getDefaultPlotPeriod() {
-		return getTimeStep();
 	}
 }
 
