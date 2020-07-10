@@ -2372,12 +2372,12 @@ class TableVisual extends HtmlTwoPointer {
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-
-		let start_time = limits.start.auto ? getTimeStart() : limits.start.value;
-		let end_time = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
-		let time_step = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
-		let length = end_time - start_time;
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, start_time, length, time_step);
+		limits.start.value = limits.start.auto ? getTimeStart() : limits.start.value;
+		limits.end.value = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		limits.step.value = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
+		let length = limits.end.value - limits.start.value;
+		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -8390,25 +8390,28 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		let start_val = limits.start.auto ? getTimeStart() : limits.start.value;
+		let end_val = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		let step_val = limits.step.auto ? this.getDefaultPlotPeriod() : limits.step.value;
 		return (`
 		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
 				<td style="padding:1px;">
-					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${start_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
 				<td style="padding:1px;">
-					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${end_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
 				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
 				<td style="padding:1px;">
-					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${step_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
