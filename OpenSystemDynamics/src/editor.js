@@ -8034,12 +8034,12 @@ class HistoPlotDialog extends DisplayDialog {
 					<th>Auto</th>
 				</tr>
 				<tr>
-					<td>Upper bound</td>
+					<td>Upper Bound</td>
 					<td><input class="upper-bound-field enter-apply" type="text"/></td>
 					<td><input class="upper-bound-auto-checkbox enter-apply" type="checkbox" ></td>
 				</tr>
 				<tr>
-					<td>Lower bound</td>
+					<td>Lower Bound</td>
 					<td><input class="lower-bound-field enter-apply" type="text"/></td>
 					<td><input class="lower-bound-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
