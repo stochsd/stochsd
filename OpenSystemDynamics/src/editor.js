@@ -1372,7 +1372,7 @@ class NumberboxVisual extends BasePrimitive {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
 			}
-			valueString += stocsd_format(lastValue, 6, roundToZeroAtValue);
+			valueString = format_number(lastValue, { "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 });
 		} else {
 			valueString += "_";
 		}
