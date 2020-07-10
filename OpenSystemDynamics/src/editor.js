@@ -431,6 +431,7 @@ function getFunctionHelpData() {
 			["Sign", "Sign(##Value$$)", "1 if the value is greater than 0, -1 if it is less than 0, and 0 if it is 0.", ["Sign(-12)", "-1"]],
 			["Pi", "pi", "The value 3.14159265."],
 			["e", "e", "The value 2.71828183."],
+			["Epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
 			["Logit", "Logit(##Value$$)", "Returns the logit transformation of the value. Converts values on a 0 to 1 scale to a -Infinity to Infinity scale.", ["Logit(0.5)", "0"]],
 			["Expit", "Expit(##Value$$)", "Returns the expit transformation of the value. Converts values on a -Infinity to Infinity scale to a 0 to 1 scale.", ["Expit(0)", "0.5"]]
 		]],
@@ -540,11 +541,11 @@ function hasRandomFunction(value) {
 		let randomFunctions = [];
 		for (let help of helpData) {
 			if (help[0] === "Random Number Functions") {
-				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#"))); 
+				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#")).toLowerCase());
 				break;
 			}
 		}
-		return randomFunctions.some(elem => value.includes(elem));
+		return randomFunctions.some(elem => value.toLowerCase().includes(elem));
 	}
 	return false;
 }
@@ -794,7 +795,7 @@ class BaseObject {
 				element.setAttribute("stroke", this.color);
 			} else if(element.getAttribute("class") == "name_element") {
 				element.setAttribute("fill", this.color);
-			} else if(element.getAttribute("class") == "selector") {
+			} else if(element.getAttribute("class") == "highlight") {
 				element.setAttribute("fill", this.color);
 			}
 		}
@@ -966,7 +967,7 @@ class OnePointer extends BaseObject {
 		this.element_array = element_array;
 		
 		for(let key in element_array) {
-			if (element_array[key].getAttribute("class") == "selector") {
+			if (element_array[key].getAttribute("class") == "highlight") {
 				this.selector_array.push(element_array[key]);
 			}
 		}
@@ -1118,7 +1119,7 @@ class AnchorPoint extends OnePointer {
 		if (newVisible) {
 			for(let element of this.element_array) {
 				// Show all elements except for selectors
-				if (element.getAttribute("class") != "selector") {
+				if (element.getAttribute("class") != "highlight") {
 					element.setAttribute("visibility", "visible");
 				}
 			}
@@ -1141,12 +1142,12 @@ class AnchorPoint extends OnePointer {
 		if (this.isSquare) {
 			return [
 				svg_rect(-4, -4, 8, 8, this.color, "white", "element"),
-				svg_rect(-4, -4, 8, 8, "none", this.color, "selector")
+				svg_rect(-4, -4, 8, 8, "none", this.color, "highlight")
 			];
 		} else {
 			return [
 				svg_circle(0, 0, 4, this.color, "white", "element"),
-				svg_circle(0, 0, 4, "none", this.color, "selector")
+				svg_circle(0, 0, 4, "none", this.color, "highlight")
 			];
 		}
 		
@@ -1308,7 +1309,7 @@ class StockVisual extends BasePrimitive {
 		let h = size[1];
 		return [
 			svg_rect(-w/2,-h/2, w, h,  this.color,  defaultFill, "element"),
-			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "selector"),
+			svg_rect(-w/2+2, -h/2+2, w-4, h-4, "none", this.color, "highlight"),
 			textElem,
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
@@ -1392,7 +1393,7 @@ class NumberboxVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
-			svg_rect(-20,-15,40,30, "none", this.color, "selector"),
+			svg_rect(-20,-15,40,30, "none", this.color, "highlight"),
 			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
 		];	
 	}
@@ -1443,7 +1444,7 @@ class VariableVisual extends BasePrimitive {
 		return [
 			svg_circle(0,0,this.getRadius(), this.color, defaultFill, "element"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
-			svg_circle(0,0,this.getRadius()-2, "none", this.color, "selector"),
+			svg_circle(0,0,this.getRadius()-2, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -1474,7 +1475,7 @@ class ConstantVisual extends VariableVisual {
 		return [
 			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
-			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "selector"),
+			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -1512,7 +1513,7 @@ class ConverterVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "selector", {"transform": "scale(0.87)"}),
+			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", {"transform": "scale(0.87)"}),
 			svg_icons(defaultStroke, defaultFill, "icons"),
 			svg_text(0,0, this.primitive.getAttribute("name"), "name_element", {"fill": this.color}),
 		];
@@ -2069,7 +2070,7 @@ class FlowVisual extends BaseConnection {
 		this.arrowHeadPath.setAttribute("stroke", color);
 		this.valve.setAttribute("stroke", color);
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
-		this.variable.getElementsByClassName("selector")[0].setAttribute("fill", color);
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
 		this.getAnchors().map(anchor => anchor.setColor(color));
 	}
@@ -2086,7 +2087,7 @@ class FlowVisual extends BaseConnection {
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = svg_group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"), 
-			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "selector"),
+			svg_circle(0, 0, this.getRadius()-2, "none", this.color, "highlight"),
 			this.icons,	
 			this.name_element]
 		);
@@ -2201,13 +2202,13 @@ class FlowVisual extends BaseConnection {
 	
 	unselect() {
 		super.unselect();
-		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "hidden");
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "hidden");
 		this.icons.set_color(this.color);
 	}
 
 	select() {
 		super.select();
-		this.variable.getElementsByClassName("selector")[0].setAttribute("visibility", "visible");
+		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "visible");
 		this.icons.set_color("white");
 	}
 	
@@ -2288,7 +2289,7 @@ class EllipseVisual extends TwoPointer {
 		let ry = Math.max(Math.abs(this.startY - this.endY)/2, 1);
 		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
 		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none","element", {"stroke-width": "10"});
-		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "selector", {"stroke-dasharray": "2 2"});
+		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", {"stroke-dasharray": "2 2"});
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
@@ -2371,8 +2372,12 @@ class TableVisual extends HtmlTwoPointer {
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		let length = limits.end.value - limits.start.value;
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
+
+		let start_time = limits.start.auto ? getTimeStart() : limits.start.value;
+		let end_time = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		let time_step = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
+		let length = end_time - start_time;
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, start_time, length, time_step);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -2431,7 +2436,7 @@ class TableVisual extends HtmlTwoPointer {
 			this.render();
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreignobject(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
+		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
 		$(this.htmlElement.innerDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
@@ -2465,7 +2470,6 @@ class TableVisual extends HtmlTwoPointer {
 		
 		this.htmlElement.setAttribute("x",this.getMinX());
 		this.htmlElement.setAttribute("y",this.getMinY());
-		
 		this.htmlElement.setAttribute("width",this.getWidth());
 		this.htmlElement.setAttribute("height",this.getHeight());
 		
@@ -2476,101 +2480,73 @@ class TableVisual extends HtmlTwoPointer {
 	}
 }
 
-class HtmlOverlayTwoPointer extends TwoPointer {
-	updateHTML(html) {
-		this.targetElement.innerHTML = html;
-	}
-	
-	makeGraphics() {
-		this.targetBorder = 4;
-		this.targetElement = document.createElement("div");
-		this.targetElement.style.position = "absolute";
-		this.targetElement.style.backgroundColor = "white";
-		this.targetElement.style.zIndex = 100;
-		this.targetElement.style.overflow = "hidden";
-		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
-		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
-		this.targetElement.style.width = "2px";
-		this.targetElement.style.height = "2px";
-		document.getElementById("svgplanebackground").appendChild(this.targetElement);
+class PlotVisual extends HtmlTwoPointer {
+	updateGraphics() {
+		let newSize = [this.endX - this.startX, this.endY-this.startY];
+		let oldSize = [this.coordRect.x2 - this.coordRect.x1, this.coordRect.y2 - this.coordRect.y1];
+
+		// code for svg foreign
+		this.htmlElement.setAttribute("x", this.getMinX());
+		this.htmlElement.setAttribute("y", this.getMinY());
+		this.htmlElement.setAttribute("width", this.getWidth());
+		this.htmlElement.setAttribute("height", this.getHeight());
 		
-		$(this.targetElement).mousedown((event) => {
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+
+		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
+			// only update chart if necessary
+			// if plot is moved without resizing the chart does not need to be updated 
+			if (this.chartDiv) {
+				// force chart to be 100% in width and height 
+				// bug in jqplot sometimes forces plots to be width:400px; height:300px;
+				$(this.chartDiv).css("width", "100%");
+				$(this.chartDiv).css("height", "100%");
+			}
+			this.updateChart();
+		}
+	}
+	makeGraphics() {
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+
+		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Plot not renderd yet", "white");
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:100%; height:100%; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
+
+		$(this.htmlElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.targetElement).dblclick(()=>{
-			this.doubleClick(this.id);
-		});
-
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.targetElement).bind("contextmenu", (event)=> {
-			this.doubleClick(this.id);
+		$(this.htmlElement).bind("contextmenu", (event)=> {
+			this.doubleClick();
 		});
 
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
+		$(this.htmlElement).dblclick(()=>{
+			this.doubleClick();
+		});
 
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
-		
 		this.group = svg_group([this.element]);
-		this.group.setAttribute("node_id", this.id);	
+		this.group.setAttribute("node_id",this.id);	
 		
 		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.contentDiv, this.element];
 		for(let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id", this.id);
+			this.element_array[key].setAttribute("node_id",this.id);
 		}
-	}
-	
-	updateGraphics() {
-		// Update rect to fit start and end position
-		this.coordRect.x1 = this.startX;
-		this.coordRect.y1 = this.startY;
-		this.coordRect.x2 = this.endX;
-		this.coordRect.y2 = this.endY;
-		this.coordRect.update();
-		
-		let svgoffset = $("#svgplane").offset();
-		
-		
-		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
-		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
-		
-		this.targetElement.style.width = (this.getWidth()-(2*this.targetBorder))+"px";
-		this.targetElement.style.height = (this.getHeight()-(2*this.targetBorder))+"px";
-	}
-	
-	clean() {
-		super.clean();
-		this.targetElement.remove();
 	}
 	doubleClick() {
 		this.dialog.show();
-	}
-}
-
-class PlotVisual extends HtmlOverlayTwoPointer {
-	updateGraphics() {
-		super.updateGraphics();
-		let newWidth = `${$(this.targetElement).width()-10}px`;
-		let newHeight = `${$(this.targetElement).height()-10}px`;
-		let oldWidth = this.chartDiv.style.width;
-		let oldHeight = this.chartDiv.style.height;
-		if (oldWidth !== newWidth || oldHeight !== newHeight) {
-			this.chartDiv.style.width = newWidth;
-			this.chartDiv.style.height = newHeight;
-			this.updateChart();
-		}
-	}
-	makeGraphics() {
-		super.makeGraphics();
-		
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
 	}
 }
 
@@ -2611,7 +2587,12 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
@@ -2682,6 +2663,7 @@ class TimePlotVisual extends PlotVisual {
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
 					showMarker: false,
+					markerOptions: { size: 5 },
 					pointLabels: {
 						show: true,
 						edgeTolerance: 0,
@@ -2714,7 +2696,8 @@ class TimePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white"
+				background: "transparent",
+				shadow: false
 			},
 			axes: {
 				xaxis: {
@@ -2808,7 +2791,7 @@ class DataGenerations {
 		this.idGen.push(ids);
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.colorGen.push(ids.map(findID).map(
-			node => node.getAttribute('color') ? node.getAttribute('color') : defaultStroke 
+			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke 
 		));
 		let types = ids.map(findID).map(node => get_object(node.id).type);
 		this.patternGen.push(
@@ -2888,6 +2871,7 @@ class DataGenerations {
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						shadow: false,
 						showMarker: false,
+						markerOptions: { size: 5 },
 						pointLabels: {
 							show: true,
 							edgeTolerance: 0,
@@ -2933,7 +2917,12 @@ class ComparePlotVisual extends PlotVisual {
 			}
 		});
 		this.fetchedIds = this.dialog.getIdsToDisplay();
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.dialog.keep) {
@@ -2995,7 +2984,8 @@ class ComparePlotVisual extends PlotVisual {
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
 			grid: {
-				background: "white"
+				background: "transparent",
+				shadow: false
 			},
 			axes: {
 				xaxis: {
@@ -3046,7 +3036,7 @@ class ComparePlotVisual extends PlotVisual {
 	}
 }
 
-class TextAreaVisual extends HtmlOverlayTwoPointer {
+class TextAreaVisual extends HtmlTwoPointer {
 	constructor(id, type, pos0, pos1) {		
 		super(id, type, pos0, pos1);
 		
@@ -3058,10 +3048,53 @@ class TextAreaVisual extends HtmlOverlayTwoPointer {
 		});
 		this.render();
 	}
+	updateGraphics() {
+		// code for svg foreign
+		this.htmlElement.setAttribute("x", this.getMinX());
+		this.htmlElement.setAttribute("y", this.getMinY());
+		this.htmlElement.setAttribute("width", this.getWidth());
+		this.htmlElement.setAttribute("height", this.getHeight());
+		
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+	}
 	makeGraphics() {
-		super.makeGraphics();
-		this.targetElement.style.overflowWrap = "break-word";
-		this.render();
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+
+		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
+
+		$(this.htmlElement).mousedown((event) => {
+			// This is an alternative to having the htmlElement in the group
+				primitive_mousedown(this.id,event)
+				mouseDownHandler(event);
+				event.stopPropagation();
+		});
+		
+		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
+		$(this.htmlElement).bind("contextmenu", (event)=> {
+			this.doubleClick();
+		});
+
+		$(this.htmlElement).dblclick(()=>{
+			this.doubleClick();
+		});
+
+		this.group = svg_group([this.element]);
+		this.group.setAttribute("node_id",this.id);	
+		
+		this.element_array = [this.element];
+		this.element_array = [this.htmlElement.contentDiv, this.element];
+		for(let key in this.element_array) {
+			this.element_array[key].setAttribute("node_id",this.id);
+		}
+	}
+	doubleClick() {
+		this.dialog.show();
 	}
 	render() {
 		let newText = getName(this.primitive);
@@ -3235,7 +3268,8 @@ class HistoPlotVisual extends PlotVisual {
 			title: `${scaleType} of ${targetPrimName}`,
 			sortData: false,
 			grid: {
-				background: "white"
+				background: "transparent",
+				shadow: false
 			},
 			seriesDefaults: {
 				step: true,
@@ -3339,7 +3373,12 @@ class XyPlotVisual extends PlotVisual {
 		let IdsToDisplay = this.dialog.getIdsToDisplay();
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
+			plot_per = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
 		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
 		if (results.length == 0) {
 			this.setEmptyPlot();
@@ -3403,7 +3442,7 @@ class XyPlotVisual extends PlotVisual {
 			shadow: false,
 			showLine: this.primitive.getAttribute("ShowLine") === "true",
 			showMarker: this.primitive.getAttribute("ShowMarker") === "true",
-			markerOptions: { shadow: false },
+			markerOptions: { shadow: false, size: 5 },
 			pointLabels: { show: false }
 		});
 		if (this.primitive.getAttribute("MarkStart") === "true") {
@@ -3445,7 +3484,7 @@ class XyPlotVisual extends PlotVisual {
 			return;
 		}
 		if (this.dialog.getIdsToDisplay().length != 2) {
-			this.chartDiv.innerHTML = "<b>XY Plot</b><br/>Exactly two primitives must be selected!";
+			this.setEmptyPlot();
 			return;
 		}
 		$(this.chartDiv).empty();
@@ -3454,7 +3493,8 @@ class XyPlotVisual extends PlotVisual {
 			series: this.serieSettingsArray,
 			title: this.primitive.getAttribute("TitleLabel"),
 			grid: {
-				background: "white"
+				background: "transparent",
+				shadow: false
 			},
 			sortData: false,
 			axesDefaults: {
@@ -3501,7 +3541,7 @@ class XyPlotVisual extends PlotVisual {
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
 		let idsToDisplay = this.dialog.getIdsToDisplay();
-		let selected_str = "None selected";
+		let selected_str = "None selected<br/>";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
 				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
@@ -5516,7 +5556,7 @@ $(window).load(function() {
 			e.preventDefault();
 		}
 	});
-	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "element");
+	rectselector.element = svg_rect(-30,-30,60,60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
@@ -6482,7 +6522,8 @@ class RunResults {
 				
 				// If still running continue with next cycle
 				if (this.runState == runStateEnum.running) {
-					this.updateProgressBar()
+					this.updateProgressBar();
+					this.setProgressBarGreen(false);
 					do_global_log("length "+this.results.length)
 					if (this.simulationController == null) {
 						do_global_log("simulation controller is null")
@@ -6495,6 +6536,7 @@ class RunResults {
 				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(true);
 				this.triggerRunFinished();
 				this.stopSimulation();
 			},
@@ -6536,6 +6578,7 @@ class RunResults {
 			onPause: (res) => {
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 				this.simulationController = res;
 			},
@@ -6543,6 +6586,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
+				this.setProgressBarGreen(false);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
@@ -6550,16 +6594,18 @@ class RunResults {
 			}
 		});
 	}
-	static updateProgressBar() {
-		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#runStatusBar").width(`${100*progress}%`);
-		if (progress === 1) {
+	static setProgressBarGreen(isGreen) {
+		if (isGreen) {
 			// set color to green 
 			$("#runStatusBar").css("background", "#aaeeaa");
 		} else {
-			// set color to orange
+			// set color to orange 
 			$("#runStatusBar").css("background", "#eed0aa");
 		}
+	}
+	static updateProgressBar() {
+		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
+		$("#runStatusBar").width(`${100*progress}%`);
 		let currentTime = this.getRunProgress();
 		let startTime = this.getRunProgressMin();
 		// let endTime = this.getRunProgressMax();
@@ -7006,11 +7052,7 @@ class DisplayDialog extends jqDialog {
 	}
 
 	getDefaultPlotPeriod() {
-		let plot_per = getTimeLength()/100;
-		if (plot_per < getTimeStep()) {
-			plot_per = getTimeStep();
-		}
-		return plot_per;
+		return getTimeStep();
 	}
 	clearRemovedIds() {
 		for(let id of this.displayIdList) {
@@ -7400,6 +7442,19 @@ class TimePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		if (axis_limits.timeaxis.auto) {
+			axis_limits.timeaxis.min = getTimeStart();
+			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
+
 		// For keeping track of what y-axis graph should be ploted ("L" or "R")
 		this.sides = [];
 	}
@@ -7472,8 +7527,6 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
-		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7486,10 +7539,10 @@ class TimePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.max}">
 				</td>
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
@@ -7532,20 +7585,22 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
+			let xaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
-
-			let laxis_auto = $(this.dialogContent).find(".left-yaxis-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".left-yaxis-auto-checkbox").change(event => {
+			let laxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".left-yaxis-min-field").prop("disabled", laxis_auto);
 			$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
 			$(this.dialogContent).find(".left-yaxis-min-field").val(axis_limits.leftaxis.min);
 			$(this.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
-
-			let raxis_auto = $(this.dialogContent).find(".right-yaxis-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".right-yaxis-auto-checkbox").change(event => {
+			let raxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".right-yaxis-min-field").prop("disabled", raxis_auto);
 			$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
 			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
@@ -7731,6 +7786,19 @@ class ComparePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
+		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		if (axis_limits.timeaxis.auto) {
+			axis_limits.timeaxis.min = getTimeStart();
+			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
+			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		}
+
 		this.keep = false;
 		this.clear = false;
 	}
@@ -7788,8 +7856,6 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		let start_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
-		let end_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7802,10 +7868,10 @@ class ComparePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${start_time}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.min}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${end_time}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.max}">
 				</td>
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
@@ -7833,14 +7899,15 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
+			let xaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
-
-			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
+			let yaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
@@ -8070,6 +8137,13 @@ class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
+
+		// set default plotPer
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		if (autoPlotPer) {
+			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
+		}
+
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8118,14 +8192,15 @@ class XyPlotDialog extends DisplayDialog {
 	}
 	bindAxisLimitsEvents() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let xaxis_auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
+			let xaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
-
-			let yaxis_auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
+			let yaxis_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
@@ -8253,10 +8328,6 @@ class XyPlotDialog extends DisplayDialog {
 		this.applyAxisLimits();
 		this.applyPlotPer();
 	}
-
-	getDefaultPlotPeriod() {
-		return getTimeStep();
-	}
 }
 
 class TableData {
@@ -8303,6 +8374,18 @@ class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Table Properties");
+		
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		if (limits.start.auto) {
+			limits.start.value = getTimeStart();
+		}
+		if (limits.end.auto) {
+			limits.end.value = getTimeStart() + getTimeLength();
+		}
+		if (limits.step.auto) {
+			limits.step.value = this.getDefaultPlotPeriod();
+		}
+		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
 		this.data = null;
 	}
 	renderTableLimitsHTML() {
@@ -8335,20 +8418,20 @@ class TableDialog extends DisplayDialog {
 	}
 	bindTableLimitsEvents() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		$(this.dialogContent).find("input[type='checkbox'].limit-input").change(event => {
-			let start_auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
+		$(this.dialogContent).find(".start-auto-checkbox").change(event => {
+			let start_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
 			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
-
-			let end_auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".end-auto-checkbox").change(event => {
+			let end_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".end-field").prop("disabled", end_auto);
 			$(this.dialogContent).find(".end-field").val(end_auto ? getTimeStart()+getTimeLength() : limits.end.value);
-
-			let step_auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
+		});
+		$(this.dialogContent).find(".step-auto-checkbox").change(event => {
+			let step_auto = $(event.target).prop("checked");
 			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
 			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
-			
-			this.checkValidTableLimits();
 		});
 		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidTableLimits();

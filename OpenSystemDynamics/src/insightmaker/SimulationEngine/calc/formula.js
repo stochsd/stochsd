@@ -35,6 +35,10 @@ function bootCalc(){
 	varBank["e"] = new Material(2.71828182845904523536);
 	varBank["pi"] = new Material(3.14159265358979323846264338);
 	varBank["phi"] = new Material(1.61803399);
+	
+	// added by Magnus Gustafsson 2020-07-07
+	varBank["eps"] = new Material(Number.EPSILON);
+
 	for(var i=0; i< functionLoaders.length; i++){
 		functionLoaders[i]();
 	}

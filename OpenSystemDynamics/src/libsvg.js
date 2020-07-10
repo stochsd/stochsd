@@ -166,7 +166,7 @@ function svg_rect(x, y, width, height, stroke, fill, markclass, extraAttributes)
 }
 
 // Drawing primitive for drawing svg rects
-function svg_foreignobject(x, y, width, height, innerHTML, fill="white") {
+function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	// foreignObject tag must be cammel case to work which is wierd
 	
@@ -207,6 +207,33 @@ function svg_foreignobject(x, y, width, height, innerHTML, fill="white") {
 	newElement.setAttribute("y",y); //Set path's data	
 	newElement.setAttribute("width",width); //Set path's data
 	newElement.setAttribute("height",height); //Set path's data
+	svgplane.appendChild(newElement);
+	return newElement;
+}
+
+
+function svg_foreign(x, y, width, height, innerHtml, fill="white") {
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+	let contentDiv = document.createElement("div");
+
+	contentDiv.innerHTML = innerHtml;
+	let padding = 8;
+	contentDiv.setAttribute("style", `
+		position: relative; 
+		left: ${padding}px; 
+		top: ${padding}px; 
+		width: calc( 100% - ${2*padding}px );
+		height: calc( 100% - ${2*padding}px );
+	`);
+	contentDiv.setAttribute("class","contentDiv");
+
+	newElement.appendChild(contentDiv);
+	newElement.contentDiv = contentDiv;
+
+	newElement.setAttribute("x", x); //Set path's data
+	newElement.setAttribute("y", y); //Set path's data	
+	newElement.setAttribute("width", width); //Set path's data
+	newElement.setAttribute("height", height); //Set path's data
 	svgplane.appendChild(newElement);
 	return newElement;
 }
