@@ -2500,6 +2500,12 @@ class PlotVisual extends HtmlTwoPointer {
 		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
 			// only update chart if necessary
 			// if plot is moved without resizing the chart does not need to be updated 
+			if (this.chartDiv) {
+				// force chart to be 100% in width and height 
+				// bug in jqplot sometimes forces plots to be width:400px; height:300px;
+				$(this.chartDiv).css("width", "100%");
+				$(this.chartDiv).css("height", "100%");
+			}
 			this.updateChart();
 		}
 	}
