@@ -3568,15 +3568,15 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		let arrowPathPoints = [[13, -4], [0,0], [13, 4]];
+		this.arrowHeadStart = svg_arrow_head(defaultStroke, defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svg_arrow_head(defaultStroke, defaultStroke, {"class": "element"});
+		let arrowPathPoints = [[8, 0],[13, -5], [0,0], [13, 5]];
 		this.arrowHeadStart.set_template_points(arrowPathPoints);
 		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.line, this.arrowHeadEnd];
+		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
 		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
@@ -3599,7 +3599,7 @@ class LineVisual extends TwoPointer {
 		this.arrowHeadEnd.setAttribute("visibility", arrowHeadEnd ? "visible" : "hidden");
 		if (arrowHeadStart || arrowHeadEnd) {
 			/* Shorten line as not to go past arrowHeadEnd */
-			let shortenAmount = 12;
+			let shortenAmount = 8;
 			let sine = 		sin([this.endX, this.endY], [this.startX, this.startY]);
 			let cosine = 	cos([this.endX, this.endY], [this.startX, this.startY]);
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
