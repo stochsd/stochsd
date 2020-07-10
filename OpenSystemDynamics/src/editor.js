@@ -7237,6 +7237,9 @@ class DisplayDialog extends jqDialog {
 	renderPlotPerHtml() {
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per) {
+			plot_per = this.getDefaultPlotPeriod();
+		}
 		return (`
 			<table class="modern-table" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
