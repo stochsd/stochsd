@@ -7,7 +7,7 @@ var Settings = {
 	// Promt TimeUnitDialog On Start 
 	promptTimeUnitDialogOnStart: true, 
 	// Force timeUnitDialog if no time unit is set (shows timeUnitDialog everytime svgplane is clicked)
-	forceTimeUnit: false,
+	forceTimeUnit: true,
 	// The font size under the primitives
 	primitiveFontSize: 13,
 	// Whatever to show debug
