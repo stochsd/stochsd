@@ -7191,7 +7191,7 @@ class DisplayDialog extends jqDialog {
 		let roundToZeroFieldValue = $(this.dialogContent).find(".round-to-zero-field").val();
 		if ($(this.dialogContent).find(".round-to-zero-checkbox").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
-				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a number.`);
+				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
 				return false;
 			} else if (roundToZeroFieldValue == "") {
 				this.setNumberboxWarning(true, "No value choosen.");
@@ -7214,7 +7214,7 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage);
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage+"<br/><b>Your specification is not accepted!</b>");
 			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
 			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
@@ -7261,7 +7261,7 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	applyPlotPer() {
-		if(this.validPlotPer()) {
+		if(this.checkValidPlotPer()) {
 			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
 			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
 			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
@@ -7280,22 +7280,23 @@ class DisplayDialog extends jqDialog {
 			plot_per_field.val(plot_per);
 		});
 		$(this.dialogContent).find(".plot-per-field").keyup(event => {
-			this.validPlotPer();
+			this.checkValidPlotPer();
 		});
 	}
-	validPlotPer() {
+	checkValidPlotPer() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
 		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
 		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html("Plot Period must be a number");
+			warning_div.html(`Plot Period must be a decimal number${nochange_str}`);
 			return false;
 		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html("Plot Period must be &gt;0");
+			warning_div.html(`Plot Period must be &gt;0${nochange_str}`);
 			return false;
-		} else {
-			warning_div.html("");
-			return true;
 		}
+		
+		warning_div.html("");
+		return true;
 	}
 	renderNumberedLinesCheckboxHtml() {
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
@@ -7617,6 +7618,7 @@ class TimePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -7625,7 +7627,7 @@ class TimePlotDialog extends DisplayDialog {
 		let right_min = $(this.dialogContent).find(".right-yaxis-min-field").val();
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("")
@@ -7925,13 +7927,14 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("");
@@ -8218,13 +8221,14 @@ class XyPlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() { 
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("");
@@ -8448,21 +8452,22 @@ class TableDialog extends DisplayDialog {
 		});
 	}
 	checkValidTableLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".limits-warning-div");
 		let start_str = $(this.dialogContent).find(".start-field").val();
 		let end_str = $(this.dialogContent).find(".end-field").val();
 		let step_str = $(this.dialogContent).find(".step-field").val();
 		if (isNaN(start_str) || start_str === "") {
-			warning_div.html('"From" must be a number');
+			warning_div.html(`"From" must be a decimal number${nochange_str}`);
 			return false;
 		} else if (isNaN(end_str) || start_str === "") {
-			warning_div.html('"To" must be a number');
+			warning_div.html(`"To" must be a decimal number${nochange_str}`);
 			return false;
 		} else if (isNaN(step_str) || step_str === "") {
-			warning_div.html("Step must be a number");
+			warning_div.html(`Step must be a decimal number${nochange_str}`);
 			return false;
 		} else if (Number(step_str) <= 0) {
-			warning_div.html("Step must be &gt;0");
+			warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
 		} 
 		warning_div.html("");
