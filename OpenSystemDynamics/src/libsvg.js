@@ -214,8 +214,12 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 
 function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
-	let contentDiv = document.createElement("div");
+	
+	let cutDiv = document.createElement("div");
+	cutDiv.setAttribute("style", `background: ${fill}; height: 100%; width: 100%;`);
 
+	
+	let contentDiv = document.createElement("div");
 	contentDiv.innerHTML = innerHtml;
 	let padding = 8;
 	contentDiv.setAttribute("style", `
@@ -227,7 +231,10 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	`);
 	contentDiv.setAttribute("class","contentDiv");
 
-	newElement.appendChild(contentDiv);
+	newElement.appendChild(cutDiv);
+	cutDiv.appendChild(contentDiv);
+
+	newElement.cutDiv = cutDiv;
 	newElement.contentDiv = contentDiv;
 
 	newElement.setAttribute("x", x); //Set path's data
