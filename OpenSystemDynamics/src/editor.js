@@ -8668,27 +8668,28 @@ class SimulationSettings extends jqDialog {
 	}
 
 	checkValidTimeSettings() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		if (isNaN(this.start_field.val()) || this.start_field.val() === "") {
-			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (isNaN(this.length_field.val()) || this.length_field.val() === "") {
-			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (isNaN(this.step_field.val()) || this.step_field.val() === "") {
-			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (Number(this.length_field.val()) <= 0) {
-			this.warning_div.html(`Length must be &gt;0`);
+			this.warning_div.html(`Length must be &gt;0${nochange_str}`);
 			return false;
 		} else if (Number(this.step_field.val()) <= 0) {
-			this.warning_div.html(`Step must be &gt;0`);
+			this.warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
 		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
 			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
 			this.warning_div.html(`
-				This requires ${iters_str} time steps. <br/>
-				Limit of 10<sup>7</sup> time steps per simulation.`);
+				This Length requires ${iters_str} time steps. <br/>
+				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
 			return false;
 		}
 
