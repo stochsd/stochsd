@@ -1372,7 +1372,7 @@ class NumberboxVisual extends BasePrimitive {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
 			}
-			valueString += stocsd_format(lastValue, 6, roundToZeroAtValue);
+			valueString = format_number(lastValue, { "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 });
 		} else {
 			valueString += "_";
 		}
@@ -2372,12 +2372,12 @@ class TableVisual extends HtmlTwoPointer {
 		do_global_log("names to display");
 		do_global_log(JSON.stringify(this.data.namesToDisplay));
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-
-		let start_time = limits.start.auto ? getTimeStart() : limits.start.value;
-		let end_time = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
-		let time_step = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
-		let length = end_time - start_time;
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, start_time, length, time_step);
+		limits.start.value = limits.start.auto ? getTimeStart() : limits.start.value;
+		limits.end.value = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		limits.step.value = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
+		let length = limits.end.value - limits.start.value;
+		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
+		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 		
 		// Make header
 		html += "<th class='time-header-cell'>Time</th>";
@@ -2480,70 +2480,101 @@ class TableVisual extends HtmlTwoPointer {
 	}
 }
 
-class PlotVisual extends HtmlTwoPointer {
-	updateGraphics() {
-		let newSize = [this.endX - this.startX, this.endY-this.startY];
-		let oldSize = [this.coordRect.x2 - this.coordRect.x1, this.coordRect.y2 - this.coordRect.y1];
-
-		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
-		
-		this.coordRect.x1 = this.startX;
-		this.coordRect.y1 = this.startY;
-		this.coordRect.x2 = this.endX;
-		this.coordRect.y2 = this.endY;
-		this.coordRect.update();
-
-		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
-			// only update chart if necessary
-			// if plot is moved without resizing the chart does not need to be updated 
-			if (this.chartDiv) {
-				// force chart to be 100% in width and height 
-				// bug in jqplot sometimes forces plots to be width:400px; height:300px;
-				$(this.chartDiv).css("width", "100%");
-				$(this.chartDiv).css("height", "100%");
-			}
-			this.updateChart();
-		}
+class HtmlOverlayTwoPointer extends TwoPointer {
+	updateHTML(html) {
+		this.targetElement.innerHTML = html;
 	}
+	
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
-
-		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Plot not renderd yet", "white");
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:100%; height:100%; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-
-		$(this.htmlElement).mousedown((event) => {
+		this.targetBorder = 4;
+		this.targetElement = document.createElement("div");
+		this.targetElement.style.position = "absolute";
+		this.targetElement.style.backgroundColor = "white";
+		this.targetElement.style.zIndex = 100;
+		this.targetElement.style.overflow = "hidden";
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		this.targetElement.style.width = "2px";
+		this.targetElement.style.height = "2px";
+		document.getElementById("svgplanebackground").appendChild(this.targetElement);
+		
+		$(this.targetElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
+		$(this.targetElement).dblclick(()=>{
+			this.doubleClick(this.id);
+		});
+
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
-			this.doubleClick();
+		$(this.targetElement).bind("contextmenu", (event)=> {
+			this.doubleClick(this.id);
 		});
 
-		$(this.htmlElement).dblclick(()=>{
-			this.doubleClick();
-		});
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
 
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+		
 		this.group = svg_group([this.element]);
-		this.group.setAttribute("node_id",this.id);	
+		this.group.setAttribute("node_id", this.id);	
 		
 		this.element_array = [this.element];
-		this.element_array = [this.htmlElement.contentDiv, this.element];
 		for(let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
+			this.element_array[key].setAttribute("node_id", this.id);
 		}
+	}
+	
+	updateGraphics() {
+		// Update rect to fit start and end position
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+		
+		let svgoffset = $("#svgplane").offset();
+		
+		
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		
+		this.targetElement.style.width = (this.getWidth()-(2*this.targetBorder))+"px";
+		this.targetElement.style.height = (this.getHeight()-(2*this.targetBorder))+"px";
+	}
+	
+	clean() {
+		super.clean();
+		this.targetElement.remove();
+	}
+	doubleClick() {
+		this.dialog.show();
+	}
+}
+
+class PlotVisual extends HtmlOverlayTwoPointer {
+	updateGraphics() {
+		super.updateGraphics();
+		let newWidth = `${$(this.targetElement).width()-10}px`;
+		let newHeight = `${$(this.targetElement).height()-10}px`;
+		let oldWidth = this.chartDiv.style.width;
+		let oldHeight = this.chartDiv.style.height;
+		if (oldWidth !== newWidth || oldHeight !== newHeight) {
+			this.chartDiv.style.width = newWidth;
+			this.chartDiv.style.height = newHeight;
+			this.updateChart();
+		}
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
 	}
 	doubleClick() {
 		this.dialog.show();
@@ -3568,15 +3599,15 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
 		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", {"stroke-width": "10"});
-		this.arrowHeadStart = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		this.arrowHeadEnd = svg_arrow_head("none", defaultStroke, {"class": "element"});
-		let arrowPathPoints = [[13, -4], [0,0], [13, 4]];
+		this.arrowHeadStart = svg_arrow_head(defaultStroke, defaultStroke, {"class": "element"});
+		this.arrowHeadEnd = svg_arrow_head(defaultStroke, defaultStroke, {"class": "element"});
+		let arrowPathPoints = [[8, 0],[13, -5], [0,0], [13, 5]];
 		this.arrowHeadStart.set_template_points(arrowPathPoints);
 		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 		
 		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id",this.id);
-		this.element_array = [this.line, this.arrowHeadEnd];
+		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
 		for(let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id",this.id);
 		}
@@ -3599,7 +3630,7 @@ class LineVisual extends TwoPointer {
 		this.arrowHeadEnd.setAttribute("visibility", arrowHeadEnd ? "visible" : "hidden");
 		if (arrowHeadStart || arrowHeadEnd) {
 			/* Shorten line as not to go past arrowHeadEnd */
-			let shortenAmount = 12;
+			let shortenAmount = 8;
 			let sine = 		sin([this.endX, this.endY], [this.startX, this.startY]);
 			let cosine = 	cos([this.endX, this.endY], [this.startX, this.startY]);
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
@@ -7191,7 +7222,7 @@ class DisplayDialog extends jqDialog {
 		let roundToZeroFieldValue = $(this.dialogContent).find(".round-to-zero-field").val();
 		if ($(this.dialogContent).find(".round-to-zero-checkbox").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
-				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a number.`);
+				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
 				return false;
 			} else if (roundToZeroFieldValue == "") {
 				this.setNumberboxWarning(true, "No value choosen.");
@@ -7214,7 +7245,7 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage);
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage+"<br/><b>Your specification is not accepted!</b>");
 			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
 			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
@@ -7237,6 +7268,9 @@ class DisplayDialog extends jqDialog {
 	renderPlotPerHtml() {
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per) {
+			plot_per = this.getDefaultPlotPeriod();
+		}
 		return (`
 			<table class="modern-table" 
 				title="Distance between points in time units. \n (Should not be less then Time Step)"
@@ -7258,7 +7292,7 @@ class DisplayDialog extends jqDialog {
 		`);
 	}
 	applyPlotPer() {
-		if(this.validPlotPer()) {
+		if(this.checkValidPlotPer()) {
 			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
 			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
 			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
@@ -7277,22 +7311,23 @@ class DisplayDialog extends jqDialog {
 			plot_per_field.val(plot_per);
 		});
 		$(this.dialogContent).find(".plot-per-field").keyup(event => {
-			this.validPlotPer();
+			this.checkValidPlotPer();
 		});
 	}
-	validPlotPer() {
+	checkValidPlotPer() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
 		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
 		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html("Plot Period must be a number");
+			warning_div.html(`Plot Period must be a decimal number${nochange_str}`);
 			return false;
 		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html("Plot Period must be &gt;0");
+			warning_div.html(`Plot Period must be &gt;0${nochange_str}`);
 			return false;
-		} else {
-			warning_div.html("");
-			return true;
 		}
+		
+		warning_div.html("");
+		return true;
 	}
 	renderNumberedLinesCheckboxHtml() {
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
@@ -7527,6 +7562,8 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let max_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7539,10 +7576,10 @@ class TimePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.min}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${min_time}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.max}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${max_time}">
 				</td>
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
@@ -7612,6 +7649,7 @@ class TimePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -7620,7 +7658,7 @@ class TimePlotDialog extends DisplayDialog {
 		let right_min = $(this.dialogContent).find(".right-yaxis-min-field").val();
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("")
@@ -7856,6 +7894,8 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let max_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		return (`
 		<table class="modern-table">
 			<tr>
@@ -7868,10 +7908,10 @@ class ComparePlotDialog extends DisplayDialog {
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
 				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.min}">
+					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${min_time}">
 				</td>
 				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${axis_limits.timeaxis.max}">
+					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${max_time}">
 				</td>
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
@@ -7918,13 +7958,14 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("");
@@ -8034,12 +8075,12 @@ class HistoPlotDialog extends DisplayDialog {
 					<th>Auto</th>
 				</tr>
 				<tr>
-					<td>Upper bound</td>
+					<td>Upper Bound</td>
 					<td><input class="upper-bound-field enter-apply" type="text"/></td>
 					<td><input class="upper-bound-auto-checkbox enter-apply" type="checkbox" ></td>
 				</tr>
 				<tr>
-					<td>Lower bound</td>
+					<td>Lower Bound</td>
 					<td><input class="lower-bound-field enter-apply" type="text"/></td>
 					<td><input class="lower-bound-auto-checkbox enter-apply" type="checkbox"></td>
 				</tr>
@@ -8211,13 +8252,14 @@ class XyPlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() { 
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html("Axis limits must be numbers");
+			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		}
 		warning_div.html("");
@@ -8390,25 +8432,28 @@ class TableDialog extends DisplayDialog {
 	}
 	renderTableLimitsHTML() {
 		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		let start_val = limits.start.auto ? getTimeStart() : limits.start.value;
+		let end_val = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		let step_val = limits.step.auto ? this.getDefaultPlotPeriod() : limits.step.value;
 		return (`
 		<table class="modern-table">
 			<tr>
 				<th class="text">From</th>
 				<td style="padding:1px;">
-					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${limits.start.value}" type="text">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${start_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
 				<th class="text">To</th>
 				<td style="padding:1px;">
-					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${limits.end.value}" type="text">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${end_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
 				</td>
 			</tr><tr title="Step &#8805; DT should hold">
 				<th class="text">Step</th>
 				<td style="padding:1px;">
-					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${limits.step.value}" type="text">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${step_val}" type="text">
 				</td>
 				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
@@ -8438,21 +8483,22 @@ class TableDialog extends DisplayDialog {
 		});
 	}
 	checkValidTableLimits() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".limits-warning-div");
 		let start_str = $(this.dialogContent).find(".start-field").val();
 		let end_str = $(this.dialogContent).find(".end-field").val();
 		let step_str = $(this.dialogContent).find(".step-field").val();
 		if (isNaN(start_str) || start_str === "") {
-			warning_div.html('"From" must be a number');
+			warning_div.html(`"From" must be a decimal number${nochange_str}`);
 			return false;
 		} else if (isNaN(end_str) || start_str === "") {
-			warning_div.html('"To" must be a number');
+			warning_div.html(`"To" must be a decimal number${nochange_str}`);
 			return false;
 		} else if (isNaN(step_str) || step_str === "") {
-			warning_div.html("Step must be a number");
+			warning_div.html(`Step must be a decimal number${nochange_str}`);
 			return false;
 		} else if (Number(step_str) <= 0) {
-			warning_div.html("Step must be &gt;0");
+			warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
 		} 
 		warning_div.html("");
@@ -8658,27 +8704,28 @@ class SimulationSettings extends jqDialog {
 	}
 
 	checkValidTimeSettings() {
+		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		if (isNaN(this.start_field.val()) || this.start_field.val() === "") {
-			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Start <b>${this.start_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (isNaN(this.length_field.val()) || this.length_field.val() === "") {
-			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Length <b>${this.length_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (isNaN(this.step_field.val()) || this.step_field.val() === "") {
-			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a number.`);
+			this.warning_div.html(`Step <b>${this.step_field.val()}</b> is not a decimal number.${nochange_str}`);
 			return false;
 		} else if (Number(this.length_field.val()) <= 0) {
-			this.warning_div.html(`Length must be &gt;0`);
+			this.warning_div.html(`Length must be &gt;0${nochange_str}`);
 			return false;
 		} else if (Number(this.step_field.val()) <= 0) {
-			this.warning_div.html(`Step must be &gt;0`);
+			this.warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
 		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
 			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
 			this.warning_div.html(`
-				This requires ${iters_str} time steps. <br/>
-				Limit of 10<sup>7</sup> time steps per simulation.`);
+				This Length requires ${iters_str} time steps. <br/>
+				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
 			return false;
 		}
 
