@@ -2480,70 +2480,101 @@ class TableVisual extends HtmlTwoPointer {
 	}
 }
 
-class PlotVisual extends HtmlTwoPointer {
-	updateGraphics() {
-		let newSize = [this.endX - this.startX, this.endY-this.startY];
-		let oldSize = [this.coordRect.x2 - this.coordRect.x1, this.coordRect.y2 - this.coordRect.y1];
-
-		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
-		
-		this.coordRect.x1 = this.startX;
-		this.coordRect.y1 = this.startY;
-		this.coordRect.x2 = this.endX;
-		this.coordRect.y2 = this.endY;
-		this.coordRect.update();
-
-		if (oldSize[0] !== newSize[0] || oldSize[1] !== newSize[1]) {
-			// only update chart if necessary
-			// if plot is moved without resizing the chart does not need to be updated 
-			if (this.chartDiv) {
-				// force chart to be 100% in width and height 
-				// bug in jqplot sometimes forces plots to be width:400px; height:300px;
-				$(this.chartDiv).css("width", "100%");
-				$(this.chartDiv).css("height", "100%");
-			}
-			this.updateChart();
-		}
+class HtmlOverlayTwoPointer extends TwoPointer {
+	updateHTML(html) {
+		this.targetElement.innerHTML = html;
 	}
+	
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.coordRect = new CoordRect();
-		this.coordRect.element = this.element;
-
-		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Plot not renderd yet", "white");
-		this.chartId = this.id+"_chart";
-		let html = `<div id="${this.chartId}" style="width:100%; height:100%; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-
-		$(this.htmlElement).mousedown((event) => {
+		this.targetBorder = 4;
+		this.targetElement = document.createElement("div");
+		this.targetElement.style.position = "absolute";
+		this.targetElement.style.backgroundColor = "white";
+		this.targetElement.style.zIndex = 100;
+		this.targetElement.style.overflow = "hidden";
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		this.targetElement.style.width = "2px";
+		this.targetElement.style.height = "2px";
+		document.getElementById("svgplanebackground").appendChild(this.targetElement);
+		
+		$(this.targetElement).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
+		$(this.targetElement).dblclick(()=>{
+			this.doubleClick(this.id);
+		});
+
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
-			this.doubleClick();
+		$(this.targetElement).bind("contextmenu", (event)=> {
+			this.doubleClick(this.id);
 		});
 
-		$(this.htmlElement).dblclick(()=>{
-			this.doubleClick();
-		});
+		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element",	"");
 
+		this.coordRect = new CoordRect();
+		this.coordRect.element = this.element;
+		
 		this.group = svg_group([this.element]);
-		this.group.setAttribute("node_id",this.id);	
+		this.group.setAttribute("node_id", this.id);	
 		
 		this.element_array = [this.element];
-		this.element_array = [this.htmlElement.contentDiv, this.element];
 		for(let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id",this.id);
+			this.element_array[key].setAttribute("node_id", this.id);
 		}
+	}
+	
+	updateGraphics() {
+		// Update rect to fit start and end position
+		this.coordRect.x1 = this.startX;
+		this.coordRect.y1 = this.startY;
+		this.coordRect.x2 = this.endX;
+		this.coordRect.y2 = this.endY;
+		this.coordRect.update();
+		
+		let svgoffset = $("#svgplane").offset();
+		
+		
+		this.targetElement.style.left = (this.getMinX()+this.targetBorder+1)+"px";
+		this.targetElement.style.top = (this.getMinY()+this.targetBorder+1)+"px";
+		
+		this.targetElement.style.width = (this.getWidth()-(2*this.targetBorder))+"px";
+		this.targetElement.style.height = (this.getHeight()-(2*this.targetBorder))+"px";
+	}
+	
+	clean() {
+		super.clean();
+		this.targetElement.remove();
+	}
+	doubleClick() {
+		this.dialog.show();
+	}
+}
+
+class PlotVisual extends HtmlOverlayTwoPointer {
+	updateGraphics() {
+		super.updateGraphics();
+		let newWidth = `${$(this.targetElement).width()-10}px`;
+		let newHeight = `${$(this.targetElement).height()-10}px`;
+		let oldWidth = this.chartDiv.style.width;
+		let oldHeight = this.chartDiv.style.height;
+		if (oldWidth !== newWidth || oldHeight !== newHeight) {
+			this.chartDiv.style.width = newWidth;
+			this.chartDiv.style.height = newHeight;
+			this.updateChart();
+		}
+	}
+	makeGraphics() {
+		super.makeGraphics();
+		
+		this.chartId = this.id+"_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
 	}
 	doubleClick() {
 		this.dialog.show();
