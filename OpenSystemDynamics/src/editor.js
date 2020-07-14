@@ -482,7 +482,7 @@ function getFunctionHelpData() {
 		["General Functions", [
 			["If Then Else", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
 			["Lookup", "Lookup(##Value$$, ##Values Vector$$, ##Results Vector$$)", "Finds the Value in the Values Vector and returns the corresponding item in the Results Vector. If the exact Value is not found in the Values Vector, linear interpolation of the nearby values will be used.", ["Lookup(6, {5, 7}, {10, 15})", "12.5"]],
-			["PulseFcn", "PulseFcn(##Time$$, ##Volume$$, ##Repeat)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
+			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
 			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
 			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
 			["Pause", "Pause()", "Pauses the simulation and allows sliders to be adjusted. Often used in combination with an IfThenElse function.", "IfThenElse(T() = 20, Pause(), 0)"],
@@ -572,52 +572,6 @@ function sdsLoadFunctions() {
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
 
-	// The code should do the same as the macro:
-	// PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat) 
-	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
-		// Width can not be set in this version of pulse
-		// Width was parameter x[2] in the old pulse function but here repeat is x[2] instead
-
-		let start = x[0].toNum();
-		let volume = new Material(1);
-		let width = new Material(0);
-		let repeat = new Material(0);
-		let height = null; // Is calculated later
-		
-		let DT = simulate.timeStep.toNum();
-
-		if (x.length > 1) {
-			volume = x[1].toNum();
-			if (x.length > 2) {
-				repeat = x[2].toNum();
-			}
-		}
-		if (! start.units) {
-			start.units = simulate.timeUnits;
-		}
-		if (! width.units) {
-			width.units = simulate.timeUnits;
-		}
-		if (! repeat.units) {
-			repeat.units = simulate.timeUnits;
-		}
-		
-		height = div(volume, DT);
-
-		let half_dt = div(DT, new Material(2));
-		if (lessThanEq(minus(start, half_dt), simulate.time()) && greaterThan(plus(start, half_dt), simulate.time())) {
-			return height;
-		} else if (greaterThanEq(simulate.time(), start)) {
-			let time_since_start = minus(simulate.time(), start);
-			let closest_pulse = mult(repeat, functionBank["round"]([div(time_since_start, repeat)]));
-			if (lessThanEq(minus(closest_pulse, half_dt), time_since_start) && greaterThan(plus(closest_pulse, half_dt), time_since_start)) {
-				return height;
-			}
-		}
-		return new Material(0, height.units);
-	});
-	
-	
 }
 
 function getVisibleNeighborhoodIds(id) {

@@ -213,44 +213,44 @@ functionLoaders.push(function(){
 		}
 	});
 
-	defineFunction("Pulse", { params:[{name: "Start Time",  vectorize: true}, {name: "Height",  vectorize: true, defaultVal: 1}, {name: "Width",  vectorize: true, defaultVal: 0}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
-
-		var start = x[0].toNum();
-		var height = new Material(1);
-		var width = new Material(0);
-		var repeat = new Material(0);
+	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
+		let start = x[0].toNum();
+		let volume = new Material(1);
+		let repeat = new Material(0);
+		let height = null; // Is calculated later
+		
+		let DT = simulate.timeStep.toNum();
 
 		if (x.length > 1) {
-			height = x[1].toNum();
+			volume = x[1].toNum();
 			if (x.length > 2) {
-				width = x[2].toNum();
-				if (x.length > 3) {
-					repeat = x[3].toNum();
-				}
+				repeat = x[2].toNum();
 			}
 		}
 		if (! start.units) {
 			start.units = simulate.timeUnits;
 		}
-		if (! width.units) {
-			width.units = simulate.timeUnits;
-		}
 		if (! repeat.units) {
 			repeat.units = simulate.timeUnits;
 		}
+		
+		height = div(volume, DT);
 
-		if (repeat.value <= 0) {
-			if (eq(simulate.time(), start) || greaterThanEq(simulate.time(), start) && lessThanEq(simulate.time(), plus(start, width))) {
-				return height;
-			}
+		let half_dt = div(DT, new Material(2));
+		if (lessThanEq(minus(start, half_dt), simulate.time()) && greaterThan(plus(start, half_dt), simulate.time())) {
+			return height;
 		} else if (greaterThanEq(simulate.time(), start)) {
-			var x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
-			var dv = minus(simulate.time(), start);
-			if (minus(functionBank["round"]([div(dv, repeat)]), div(dv, repeat)).value == 0 || (greaterThanEq(x, start) && lessThanEq(x, plus(start, width)))) {
+			let time_since_start = minus(simulate.time(), start);
+			let closest_pulse = mult(repeat, functionBank["round"]([div(time_since_start, repeat)]));
+			if (lessThanEq(minus(closest_pulse, half_dt), time_since_start) && greaterThan(plus(closest_pulse, half_dt), time_since_start)) {
 				return height;
 			}
 		}
 		return new Material(0, height.units);
+	});
+
+	defineFunction("Pulse", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
+		return functionBank["pulsefcn"](x);
 	});
 
 	defineFunction("Ramp", { params: [{name: "Start Time",  vectorize: true}, {name: "Finish Time",  vectorize: true}, {name: "Height",  vectorize: true, defaultVal: 1}]}, function(x) {
