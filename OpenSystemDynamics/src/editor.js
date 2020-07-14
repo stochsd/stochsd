@@ -574,7 +574,7 @@ function sdsLoadFunctions() {
 
 	// The code should do the same as the macro:
 	// PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat) 
-	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Width",  vectorize: true, defaultVal: 0}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
+	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
 		// Width can not be set in this version of pulse
 		// Width was parameter x[2] in the old pulse function but here repeat is x[2] instead
 
@@ -584,7 +584,7 @@ function sdsLoadFunctions() {
 		let repeat = new Material(0);
 		let height = null; // Is calculated later
 		
-		let DT = simulate.timeStep.toNum().value;
+		let DT = simulate.timeStep.toNum();
 
 		if (x.length > 1) {
 			volume = x[1].toNum();
@@ -602,16 +602,15 @@ function sdsLoadFunctions() {
 			repeat.units = simulate.timeUnits;
 		}
 		
-		height = new Material(volume/DT);
+		height = div(volume, DT);
 
-		if (repeat.value <= 0) {
-			if (eq(simulate.time(), start) || greaterThanEq(simulate.time(), start) && lessThanEq(simulate.time(), plus(start, width))) {
-				return height;
-			}
+		let half_dt = div(DT, new Material(2));
+		if (lessThanEq(minus(start, half_dt), simulate.time()) && greaterThan(plus(start, half_dt), simulate.time())) {
+			return height;
 		} else if (greaterThanEq(simulate.time(), start)) {
-			let x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
-			let dv = minus(simulate.time(), start);
-			if (minus(functionBank["round"]([div(dv, repeat)]), div(dv, repeat)).value == 0 || (greaterThanEq(x, start) && lessThanEq(x, plus(start, width)))) {
+			let time_since_start = minus(simulate.time(), start);
+			let closest_pulse = mult(repeat, functionBank["round"]([div(time_since_start, repeat)]));
+			if (lessThanEq(minus(closest_pulse, half_dt), time_since_start) && greaterThan(plus(closest_pulse, half_dt), time_since_start)) {
 				return height;
 			}
 		}
