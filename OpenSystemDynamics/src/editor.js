@@ -480,10 +480,9 @@ function getFunctionHelpData() {
 			["Custom Distribution", "RandDist(##X$$, ##Y$$)", "Generates a random number according to a custom distribution. Takes two vectors with the x- and y-coordinates respectively of points defining the distribution. Points are interpolated linearly. The distribution does not have to be normalized such that its area is 1, but the points must be sorted from smallest to largest x locations. You may also pass a single vector containing pairs of {x, y} coordinates (e.g. { {1, 0}, {3, 4}, {4, 0} } ).", ["RandDist({0, 1, 2, 3}, {0, 5, 1, 0})", "1.2"]]
 		]],
 		["General Functions", [
-			["Unitless", "Unitless(##Value$$)", "Returns a unitless version of its input.", "Unitless(TimeStep())"],
 			["If Then Else", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
 			["Lookup", "Lookup(##Value$$, ##Values Vector$$, ##Results Vector$$)", "Finds the Value in the Values Vector and returns the corresponding item in the Results Vector. If the exact Value is not found in the Values Vector, linear interpolation of the nearby values will be used.", ["Lookup(6, {5, 7}, {10, 15})", "12.5"]],
-			["PulseFcn", "PulseFcn(##Time$$, ##Volume$$, ##Repeat)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
+			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
 			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
 			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
 			["Pause", "Pause()", "Pauses the simulation and allows sliders to be adjusted. Often used in combination with an IfThenElse function.", "IfThenElse(T() = 20, Pause(), 0)"],
@@ -573,53 +572,6 @@ function sdsLoadFunctions() {
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
 
-	// The code should do the same as the macro:
-	// PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat) 
-	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Width",  vectorize: true, defaultVal: 0}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
-		// Width can not be set in this version of pulse
-		// Width was parameter x[2] in the old pulse function but here repeat is x[2] instead
-
-		let start = x[0].toNum();
-		let volume = new Material(1);
-		let width = new Material(0);
-		let repeat = new Material(0);
-		let height = null; // Is calculated later
-		
-		let DT = simulate.timeStep.toNum().value;
-
-		if (x.length > 1) {
-			volume = x[1].toNum();
-			if (x.length > 2) {
-				repeat = x[2].toNum();
-			}
-		}
-		if (! start.units) {
-			start.units = simulate.timeUnits;
-		}
-		if (! width.units) {
-			width.units = simulate.timeUnits;
-		}
-		if (! repeat.units) {
-			repeat.units = simulate.timeUnits;
-		}
-		
-		height = new Material(volume/DT);
-
-		if (repeat.value <= 0) {
-			if (eq(simulate.time(), start) || greaterThanEq(simulate.time(), start) && lessThanEq(simulate.time(), plus(start, width))) {
-				return height;
-			}
-		} else if (greaterThanEq(simulate.time(), start)) {
-			let x = minus(simulate.time(), mult(functionBank["floor"]([div(minus(simulate.time(), start), repeat)]), repeat));
-			let dv = minus(simulate.time(), start);
-			if (minus(functionBank["round"]([div(dv, repeat)]), div(dv, repeat)).value == 0 || (greaterThanEq(x, start) && lessThanEq(x, plus(start, width)))) {
-				return height;
-			}
-		}
-		return new Material(0, height.units);
-	});
-	
-	
 }
 
 function getVisibleNeighborhoodIds(id) {
