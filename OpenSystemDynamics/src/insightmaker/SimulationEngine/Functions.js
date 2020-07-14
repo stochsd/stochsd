@@ -134,10 +134,6 @@ functionLoaders.push(function(){
 		return new Material(Math.cos(dist));
 	});
 
-	defineFunction("Unitless", { params:[{name: "Value",  noVector: true}]}, function(x) {
-		return new Material(x[0].toNum().value);
-	});
-
 	defineFunction("PastMean", {object: [functionBank, PrimitiveObject], params:[{name: "[Primitive]",  noVector: true, needPrimitive:true}, {name: "Past Range", defaultVal: "All Time", vectorize: true}]}, function(x) {
 		if (x.length == 1) {
 			return functionBank["mean"](x[0].getPastValues());
