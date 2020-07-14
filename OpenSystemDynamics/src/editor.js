@@ -8649,10 +8649,14 @@ class SimulationSettings extends jqDialog {
 		this.length_field = $(this.dialogContent).find(".input-length");
 		this.step_field = $(this.dialogContent).find(".input-step");
 		this.warning_div = $(this.dialogContent).find(".simulation-settings-warning");
+		this.method_select = $(this.dialogContent).find(".input-method");
 
-		this.start_field.keyup((event) => this.checkValidTimeSettings());
-		this.length_field.keyup((event) => this.checkValidTimeSettings());
-		this.step_field.keyup((event) => this.checkValidTimeSettings());
+		this.start_field.keyup(() => this.checkValidTimeSettings());
+		this.length_field.keyup(() => this.checkValidTimeSettings());
+		this.step_field.keyup(() => this.checkValidTimeSettings());
+		this.method_select.change(() => this.checkValidTimeSettings());
+
+		this.checkValidTimeSettings();
 	}
 
 	checkValidTimeSettings() {
@@ -8679,6 +8683,12 @@ class SimulationSettings extends jqDialog {
 				This Length requires ${iters_str} time steps. <br/>
 				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
 			return false;
+		} else if ($(this.method_select).find(":selected").val() === "RK4") {
+			this.warning_div.html(`<span style="color:#ff8c00;">
+				Do not use RK4 without a good reason, <br/>
+				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
+			</span>`);
+			return true;
 		}
 
 		this.warning_div.html("");
