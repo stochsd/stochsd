@@ -214,6 +214,7 @@ functionLoaders.push(function(){
 	});
 
 	defineFunction("PulseFcn", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
+		// function written by Magnus Gustafsson, 2020-07-14
 		let start = x[0].toNum();
 		let volume = new Material(1);
 		let repeat = new Material(0);
