@@ -485,8 +485,8 @@ function getFunctionHelpData() {
 			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
 			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
 			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
-			["Stop", "Stop()", "Terminates the simulation. Often used in combination with an IfThenElse function.", "IfThenElse(Rand() < 0.01, Stop(), 0)"],
-			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation if condition is true.", "StopIf(Rand() < 0.01)"]
+			["Stop", "Stop()", "Terminates the simulation after the current time step. Often used in combination with an IfThenElse function.", "IfThenElse(Rand() < 0.01, Stop(), 0)"],
+			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"]
 		]],
 		["Programming Functions", [
 			["Variables", "##Variable$$ <- ##Value$$", "Assigns a value to a reusable variable.", ['x <- 10\nx^2', "100"]],
