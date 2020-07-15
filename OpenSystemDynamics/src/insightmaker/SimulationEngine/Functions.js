@@ -22,6 +22,13 @@ functionLoaders.push(function(){
 		simulate.stopFlag = true;
 		return new Material(0);
 	});
+
+	defineFunction("StopIf", {params:[{name: "Condition", noVector: true, allowBoolean: true, defaultVal: false}]}, function(x) {
+		if (x[0]) {
+			functionBank["stop"]([]);
+		}
+		return new Material(0);
+	});
 	
 	defineFunction("Pause", {params:[]}, function(x) {
 		simulate.sleep(true);
