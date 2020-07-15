@@ -19,9 +19,8 @@ functionLoaders.push(function(){
 	sdsLoadFunctions();	
 
 	defineFunction("Stop", {params:[]}, function(x) {
-		throw {
-			msg: "STOP"
-		};
+		simulate.stopFlag = true;
+		return new Material(0);
 	});
 	
 	defineFunction("Pause", {params:[]}, function(x) {
