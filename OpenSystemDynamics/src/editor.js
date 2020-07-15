@@ -8685,6 +8685,7 @@ class SimulationSettings extends jqDialog {
 			return false;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
 			this.warning_div.html(`<span style="color:#ff8c00;">
+				Note: <br/>
 				Do not use RK4 without a good reason, <br/>
 				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
 			</span>`);
