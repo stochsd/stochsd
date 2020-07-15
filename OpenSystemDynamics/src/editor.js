@@ -6589,10 +6589,10 @@ class RunResults {
 	static updateProgressBar() {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
 		$("#runStatusBar").width(`${100*progress}%`);
-		let currentTime = this.getRunProgress();
-		let startTime = this.getRunProgressMin();
-		// let endTime = this.getRunProgressMax();
-		let timeStep = this.getTimeStep();
+		let number_options = { precision: 3 };
+		let currentTime = format_number(this.getRunProgress(), number_options);
+		let startTime = format_number(this.getRunProgressMin(), number_options);
+		let timeStep = format_number(this.getTimeStep(), number_options);
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
