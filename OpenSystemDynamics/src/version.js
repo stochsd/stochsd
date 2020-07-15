@@ -1,3 +1,3 @@
-var stochsd={
-    version: "2019.12.06"
+var stochsd = {
+	version: "2020.07.15"
 };
