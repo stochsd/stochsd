@@ -7921,7 +7921,10 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
 		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(() => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -7932,9 +7935,16 @@ class ComparePlotDialog extends DisplayDialog {
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (y_log) {
+			warning_div.html(`<span class="note">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("");
 		return true;
@@ -8022,6 +8032,7 @@ class ComparePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
