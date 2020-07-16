@@ -258,6 +258,15 @@ h3.equation-list-header {
     color: black;
     text-shadow:0px 0px 1px black;
 }
+/* for warning or note texts when changing settings and properties */
+.warning {
+    /* Used when there is a warning and changes wont be applied */
+    color: red;
+}
+.note {
+    /* Used when there is somthing to note but still allowed */
+    color: #ff8c00;
+}
 .macro-text {
     width: 600px;
     height: 400px;

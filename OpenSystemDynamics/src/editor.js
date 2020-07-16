@@ -18,12 +18,6 @@ var thirdPartyLicensesDialog;
 var licenseDialog;
 
 
-palette = {
-	note: "#ff8c00", 	/* Used when there is somthing to note but still allowed */
-	warning: "red"		/* Used when there is a warning and changes wont be applied */
-};
-
-
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
 const type_size = {
@@ -3318,7 +3312,7 @@ class HistoPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
-			selected_str += `<span style="color: ${palette.warning};">Exactly one primitive must be selected</span>`;
+			selected_str += `<span class="warning" >Exactly one primitive must be selected</span>`;
 		} 
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">Histogram Plot</div>
@@ -3537,7 +3531,7 @@ class XyPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += `<span style="color: ${palette.warning};">Exactly two primitives must be selected!</span>`;
+			selected_str += `<span class="warning">Exactly two primitives must be selected!</span>`;
 		}
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">XY Plot</div>
@@ -5789,7 +5783,7 @@ function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
-		$("#timeUnitParagraph").html(`<span style='color: ${palette.warning};'>No Time Unit</span>`);
+		$("#timeUnitParagraph").html(`<span class="warning">No Time Unit</span>`);
 	}
 }
 
@@ -7136,7 +7130,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="round-to-zero-warning-div" style="color: ${palette.warning}; margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	roundToZeroBeforeShow() {
@@ -7246,7 +7240,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<div class="plot-per-warning" style="color: ${palette.warning};"></div>
+			<div class="plot-per-warning warning" ></div>
 		`);
 	}
 	applyPlotPer() {
@@ -7575,7 +7569,7 @@ class TimePlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color: ${palette.warning};"></div>
+		<div class="axis-limits-warning-div warning" ></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7628,7 +7622,7 @@ class TimePlotDialog extends DisplayDialog {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		} else if (left_log || right_log) {
-			warning_div.html(`<span style="color: ${palette.note};">
+			warning_div.html(`<span class="note">
 				Note: <br/>
 				log(x) requires that all x-values &gt; 0
 			</span>`);
@@ -7908,7 +7902,7 @@ class ComparePlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color:${palette.warning};"></div>
+		<div class="axis-limits-warning-div warning"></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -8202,7 +8196,7 @@ class XyPlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color:${palette.warning};"></div>
+		<div class="axis-limits-warning-div warning"></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -8432,7 +8426,7 @@ class TableDialog extends DisplayDialog {
 				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
 		</table>
-		<div class="limits-warning-div" style="color:${palette.warning};"></div>
+		<div class="limits-warning-div warning"></div>
 		`);
 	}
 	bindTableLimitsEvents() {
@@ -8706,7 +8700,7 @@ class SimulationSettings extends jqDialog {
 				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
 			return false;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
-			this.warning_div.html(`<span style="color:${palette.note};">
+			this.warning_div.html(`<span class="note">
 				Note: <br/>
 				Do not use RK4 without a good reason, <br/>
 				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
@@ -8771,7 +8765,7 @@ class TimeUnitDialog extends jqDialog {
 		if (ok) {
 			complainDiv.html("");
 		} else {
-			complainDiv.html(`<span style="color:${palette.warning};">Time Unit must contain character A-Z or a-z.</span>`);
+			complainDiv.html(`<span class="warning">Time Unit must contain character A-Z or a-z.</span>`);
 		}
 	}
 	beforeCreateDialog() {
@@ -8956,9 +8950,9 @@ class ConverterDialog extends jqDialog {
 		if (linkedIn.length === 1) {
 			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
 		} else if(linkedIn.length === 0) {
-			this.inLinkParagraph.innerHTML = `<span style="color: ${palette.warning};">No Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = `<span class="warning" >No Ingoing Link<span>`;
 		} else {
-			this.inLinkParagraph.innerHTML = `<span style="color: ${palette.warning};">More Then One Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = `<span class="warning" >More Then One Ingoing Link<span>`;
 		}
 		
 		this.defaultFocusSelector = defaultFocusSelector;
@@ -9123,7 +9117,7 @@ class EquationEditor extends jqDialog {
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
-							<div class="name-warning-div" style="color: ${palette.warning};"></div><br/>
+							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
