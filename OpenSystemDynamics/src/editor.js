@@ -17,6 +17,7 @@ var aboutDialog;
 var thirdPartyLicensesDialog;
 var licenseDialog;
 
+
 // This values are not used by StochSD, as primitives cannot be resized in StochSD
 // They are only used for exporting the model to Insight Maker
 const type_size = {
@@ -485,8 +486,7 @@ function getFunctionHelpData() {
 			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
 			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
 			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
-			["Stop", "Stop()", "Terminates the simulation. Often used in combination with an IfThenElse function.", "IfThenElse(Rand() < 0.01, Stop(), 0)"],
-			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation if condition is true.", "StopIf(Rand() < 0.01)"]
+			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"]
 		]],
 		["Programming Functions", [
 			["Variables", "##Variable$$ <- ##Value$$", "Assigns a value to a reusable variable.", ['x <- 10\nx^2', "100"]],
@@ -3312,7 +3312,7 @@ class HistoPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
-			selected_str += `<span style="color:red;">Exactly one primitive must be selected</span>`;
+			selected_str += `<span class="warning" >Exactly one primitive must be selected</span>`;
 		} 
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">Histogram Plot</div>
@@ -3531,7 +3531,7 @@ class XyPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += `<span style="color:red;">Exactly two primitives must be selected!</span>`;
+			selected_str += `<span class="warning">Exactly two primitives must be selected!</span>`;
 		}
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">XY Plot</div>
@@ -5783,7 +5783,7 @@ function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
-		$("#timeUnitParagraph").html("<span style='color: red;'>No Time Unit</span>");
+		$("#timeUnitParagraph").html(`<span class="warning">No Time Unit</span>`);
 	}
 }
 
@@ -6589,10 +6589,10 @@ class RunResults {
 	static updateProgressBar() {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
 		$("#runStatusBar").width(`${100*progress}%`);
-		let currentTime = this.getRunProgress();
-		let startTime = this.getRunProgressMin();
-		// let endTime = this.getRunProgressMax();
-		let timeStep = this.getTimeStep();
+		let number_options = { precision: 3 };
+		let currentTime = format_number(this.getRunProgress(), number_options);
+		let startTime = format_number(this.getRunProgressMin(), number_options);
+		let timeStep = format_number(this.getTimeStep(), number_options);
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
@@ -7130,7 +7130,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="round-to-zero-warning-div" style="color: red; margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	roundToZeroBeforeShow() {
@@ -7240,7 +7240,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<div class="plot-per-warning" style="color: red;"></div>
+			<div class="plot-per-warning warning" ></div>
 		`);
 	}
 	applyPlotPer() {
@@ -7569,7 +7569,7 @@ class TimePlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color: red;"></div>
+		<div class="axis-limits-warning-div warning" ></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7580,6 +7580,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".left-yaxis-auto-checkbox").change(event => {
 			let laxis_auto = $(event.target).prop("checked");
@@ -7587,6 +7588,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
 			$(this.dialogContent).find(".left-yaxis-min-field").val(axis_limits.leftaxis.min);
 			$(this.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".right-yaxis-auto-checkbox").change(event => {
 			let raxis_auto = $(event.target).prop("checked");
@@ -7594,9 +7596,17 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
 			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
 			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
+			this.checkValidAxisLimits();
 		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
-			// check if valid key and give warning 
+
+		// check if valid key and give warning 
+		$(this.dialogContent).find(".left-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".right-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(() => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -7607,11 +7617,19 @@ class TimePlotDialog extends DisplayDialog {
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let left_min = $(this.dialogContent).find(".left-yaxis-min-field").val();
 		let left_max = $(this.dialogContent).find(".left-yaxis-max-field").val();
+		let left_log = $(this.dialogContent).find(".left-log-checkbox").prop("checked");
 		let right_min = $(this.dialogContent).find(".right-yaxis-min-field").val();
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
+		let right_log = $(this.dialogContent).find(".right-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (left_log || right_log) {
+			warning_div.html(`<span class="note">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("")
 		return true;
@@ -7768,6 +7786,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
+		this.checkValidAxisLimits();
 	}
 }
 
@@ -7886,7 +7905,7 @@ class ComparePlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color:red;"></div>
+		<div class="axis-limits-warning-div warning"></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7897,6 +7916,7 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
 			let yaxis_auto = $(event.target).prop("checked");
@@ -7904,8 +7924,12 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+			this.checkValidAxisLimits();
 		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
+		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(() => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -7916,9 +7940,16 @@ class ComparePlotDialog extends DisplayDialog {
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (y_log) {
+			warning_div.html(`<span class="note">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("");
 		return true;
@@ -8006,6 +8037,7 @@ class ComparePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
@@ -8180,7 +8212,7 @@ class XyPlotDialog extends DisplayDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div" style="color:red;"></div>
+		<div class="axis-limits-warning-div warning"></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -8191,6 +8223,7 @@ class XyPlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
 			let yaxis_auto = $(event.target).prop("checked");
@@ -8198,6 +8231,13 @@ class XyPlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".xaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidAxisLimits();
@@ -8208,11 +8248,19 @@ class XyPlotDialog extends DisplayDialog {
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let x_log = $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked");
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (x_log || y_log) {
+			warning_div.html(`<span class="note">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("");
 		return true;
@@ -8293,6 +8341,7 @@ class XyPlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
@@ -8410,7 +8459,7 @@ class TableDialog extends DisplayDialog {
 				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
 		</table>
-		<div class="limits-warning-div" style="color:red;"></div>
+		<div class="limits-warning-div warning"></div>
 		`);
 	}
 	bindTableLimitsEvents() {
@@ -8684,7 +8733,7 @@ class SimulationSettings extends jqDialog {
 				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
 			return false;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
-			this.warning_div.html(`<span style="color:#ff8c00;">
+			this.warning_div.html(`<span class="note">
 				Note: <br/>
 				Do not use RK4 without a good reason, <br/>
 				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
@@ -8749,7 +8798,7 @@ class TimeUnitDialog extends jqDialog {
 		if (ok) {
 			complainDiv.html("");
 		} else {
-			complainDiv.html(`<span style="color:red;">Time Unit must contain character A-Z or a-z.</span>`);
+			complainDiv.html(`<span class="warning">Time Unit must contain character A-Z or a-z.</span>`);
 		}
 	}
 	beforeCreateDialog() {
@@ -8934,9 +8983,9 @@ class ConverterDialog extends jqDialog {
 		if (linkedIn.length === 1) {
 			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
 		} else if(linkedIn.length === 0) {
-			this.inLinkParagraph.innerHTML = `<span style="color:red;">No Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = `<span class="warning" >No Ingoing Link<span>`;
 		} else {
-			this.inLinkParagraph.innerHTML = `<span style="color:red;">More Then One Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = `<span class="warning" >More Then One Ingoing Link<span>`;
 		}
 		
 		this.defaultFocusSelector = defaultFocusSelector;
@@ -9101,7 +9150,7 @@ class EquationEditor extends jqDialog {
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
-							<div class="name-warning-div" style="color: red;"></div><br/>
+							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
 							<br/>
