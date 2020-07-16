@@ -7580,6 +7580,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".left-yaxis-auto-checkbox").change(event => {
 			let laxis_auto = $(event.target).prop("checked");
@@ -7587,6 +7588,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
 			$(this.dialogContent).find(".left-yaxis-min-field").val(axis_limits.leftaxis.min);
 			$(this.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".right-yaxis-auto-checkbox").change(event => {
 			let raxis_auto = $(event.target).prop("checked");
@@ -7594,6 +7596,7 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
 			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
 			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
+			this.checkValidAxisLimits();
 		});
 
 		// check if valid key and give warning 
@@ -7913,6 +7916,7 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
 			let yaxis_auto = $(event.target).prop("checked");
@@ -7920,6 +7924,7 @@ class ComparePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
 			this.checkValidAxisLimits();
@@ -8218,6 +8223,7 @@ class XyPlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
 			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
 			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
 			let yaxis_auto = $(event.target).prop("checked");
@@ -8225,6 +8231,13 @@ class XyPlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
 			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
 			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".xaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
 		});
 		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
 			this.checkValidAxisLimits();
@@ -8235,11 +8248,19 @@ class XyPlotDialog extends DisplayDialog {
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
+		let x_log = $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked");
 		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
+		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (x_log || y_log) {
+			warning_div.html(`<span class="note">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("");
 		return true;
@@ -8320,6 +8341,7 @@ class XyPlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
