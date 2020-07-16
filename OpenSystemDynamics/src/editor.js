@@ -7601,8 +7601,15 @@ class TimePlotDialog extends DisplayDialog {
 			$(this.dialogContent).find(".right-yaxis-min-field").val(axis_limits.rightaxis.min);
 			$(this.dialogContent).find(".right-yaxis-max-field").val(axis_limits.rightaxis.max);
 		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
-			// check if valid key and give warning 
+
+		// check if valid key and give warning 
+		$(this.dialogContent).find(".left-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find(".right-log-checkbox").change(() => {
+			this.checkValidAxisLimits();
+		});
+		$(this.dialogContent).find("input[type='text'].limit-input").keyup(() => {
 			this.checkValidAxisLimits();
 		});
 	}
@@ -7613,11 +7620,19 @@ class TimePlotDialog extends DisplayDialog {
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
 		let left_min = $(this.dialogContent).find(".left-yaxis-min-field").val();
 		let left_max = $(this.dialogContent).find(".left-yaxis-max-field").val();
+		let left_log = $(this.dialogContent).find(".left-log-checkbox").prop("checked");
 		let right_min = $(this.dialogContent).find(".right-yaxis-min-field").val();
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
+		let right_log = $(this.dialogContent).find(".right-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
+		} else if (left_log || right_log) {
+			warning_div.html(`<span style="color: ${palette.note};">
+				Note: <br/>
+				log(x) requires that all x-values &gt; 0
+			</span>`);
+			return true;
 		}
 		warning_div.html("")
 		return true;
@@ -7774,6 +7789,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
+		this.checkValidAxisLimits();
 	}
 }
 
