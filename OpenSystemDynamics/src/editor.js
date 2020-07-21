@@ -9141,6 +9141,7 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
+		this.cm = null; // codemirror object
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -9152,7 +9153,7 @@ class EquationEditor extends jqDialog {
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9171,6 +9172,17 @@ class EquationEditor extends jqDialog {
   				</div>
 			</div>
 		`);
+
+		let value_field = document.getElementsByClassName("value-field")[0];
+		this.cm = new CodeMirror.fromTextArea(
+			value_field,
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme",
+				lineWrapping: false
+			}
+		);
+
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9199,8 +9211,9 @@ class EquationEditor extends jqDialog {
 				}
 			}
 		});
-
+		/* codemirror work 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
+		*/
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
@@ -9252,9 +9265,11 @@ class EquationEditor extends jqDialog {
 		
 		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
 		
+		/* codemirror work 
 		$(this.valueField).focusout((event)=>{
 			this.storeValueSelectionRange();
 		});
+		*/
 		$(".accordion-cluster").click((event) => {
 			this.restoreValueSelectionRange();
 		});
@@ -9311,8 +9326,9 @@ class EquationEditor extends jqDialog {
 		this.setTitle(oldNameBrackets+" properties");
 
 		$(this.nameField).val(oldNameBrackets);
+		/* codemirror work 
 		$(this.valueField).val(oldValue);
-		
+		*/
 		
 		// Handle restrict to non-negative
 		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
@@ -9367,8 +9383,10 @@ class EquationEditor extends jqDialog {
 		}
 	}
 	templateClick(event) {
+		/* codemirror work
 		let templateData = $(event.target).data("template");
 		let start = this.valueField.selectionStart;
+		
 		if (typeof templateData == "object") {
 			templateData = "["+templateData.toString()+"]";
 		}
@@ -9377,6 +9395,7 @@ class EquationEditor extends jqDialog {
 		$(this.valueField).val(newValue);
 		let newPosition = this.valueSelectionStart+templateData.length;
 		this.valueField.setSelectionRange(newPosition,newPosition);
+		*/ 
 	}
 	beforeClose() {
 		this.closeAccordion();
@@ -9401,12 +9420,16 @@ class EquationEditor extends jqDialog {
 		}
 	}
 	storeValueSelectionRange() {
+		/* codemirror work 
 		this.valueSelectionStart = this.valueField.selectionStart;
 		this.valueSelectionEnd = this.valueField.selectionEnd;
+		*/
 	}
 	restoreValueSelectionRange() {
+		/* codemirror work 
 		$(this.valueField).focus();
 		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
+		*/ 
 	}
 	makeApply() {
 		if (this.primitive) {
