@@ -8,18 +8,19 @@
 */
 
 /* Set height, width, borders, and global font properties here */  
-.cm-s-stochsdtheme.CodeMirror, .cm-s-stochsdtheme .CodeMirror-gutters {
-    border: 5px solid red;
+.cm-s-stochsdtheme.CodeMirror {
+    border: 1px solid black;
     width: 100%; 
     height: 70px;
+    font-size: 14px;
   }
 
 /* .cm-s-stochsdtheme .CodeMirror-gutters { color: #282a36; } */
-.cm-s-stochsdtheme span.cm-primitive { color: #060 }
-.cm-s-stochsdtheme span.cm-functioncall { color: #006 }
+.cm-s-stochsdtheme span.cm-primitive { color: #080; font-weight: bold; }
+.cm-s-stochsdtheme span.cm-functioncall { color: #00d; font-weight: bold; }
 .cm-s-stochsdtheme span.cm-comment { color: #0080FF; font-style: italic; }
 .cm-s-stochsdtheme span.cm-string { color: #d71; }
-.cm-s-stochsdtheme span.cm-number { color: #bd93f9; }
+.cm-s-stochsdtheme span.cm-number { color: #706; }
 
   
 
