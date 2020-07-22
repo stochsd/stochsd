@@ -9381,19 +9381,15 @@ class EquationEditor extends jqDialog {
 		}
 	}
 	templateClick(event) {
-		/* codemirror work
 		let templateData = $(event.target).data("template");
-		let start = this.valueField.selectionStart;
-		
+		let start = this.cmValueField.getCursor("start");
+		let end = this.cmValueField.getCursor("end");
+
 		if (typeof templateData == "object") {
 			templateData = "["+templateData.toString()+"]";
 		}
-		let oldValue = $(this.valueField).val();
-		let newValue = oldValue.slice(0, this.valueSelectionStart) + templateData + oldValue.slice(this.valueSelectionEnd);
-		$(this.valueField).val(newValue);
-		let newPosition = this.valueSelectionStart+templateData.length;
-		this.valueField.setSelectionRange(newPosition,newPosition);
-		*/ 
+		this.cmValueField.replaceRange(templateData, start, end);
+		this.cmValueField.focus();
 	}
 	beforeClose() {
 		this.closeAccordion();
