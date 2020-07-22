@@ -9174,7 +9174,7 @@ class EquationEditor extends jqDialog {
 		`);
 
 		let value_field = document.getElementsByClassName("value-field")[0];
-		this.cm = new CodeMirror.fromTextArea(
+		this.cmValueField = new CodeMirror.fromTextArea(
 			value_field,
 			{
 				mode: "stochsdmode", 
@@ -9326,9 +9326,7 @@ class EquationEditor extends jqDialog {
 		this.setTitle(oldNameBrackets+" properties");
 
 		$(this.nameField).val(oldNameBrackets);
-		/* codemirror work 
-		$(this.valueField).val(oldValue);
-		*/
+		this.cmValueField.setValue(oldValue);
 		
 		// Handle restrict to non-negative
 		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
@@ -9434,7 +9432,7 @@ class EquationEditor extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.dialogContent).find(".value-field").val();
+			let value = this.cmValueField.getValue();
 			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
