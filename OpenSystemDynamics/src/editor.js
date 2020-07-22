@@ -9355,10 +9355,15 @@ class EquationEditor extends jqDialog {
 		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
-			valueFieldDom.focus();
-			let inputLength = valueFieldDom.value.length;
-			valueFieldDom.setSelectionRange(0, inputLength);
+			if (this.defaultFocusSelector === ".value-field") {
+				this.cmValueField.focus();
+				this.cmValueField.execCommand("selectAll");
+			} else {
+				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+				valueFieldDom.focus();
+				let inputLength = valueFieldDom.value.length;
+				valueFieldDom.setSelectionRange(0, inputLength);
+			}
 		}
 	}
 	templateClick(event) {
