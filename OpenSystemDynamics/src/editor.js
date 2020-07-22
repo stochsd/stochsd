@@ -8952,7 +8952,7 @@ class ConverterDialog extends jqDialog {
 				</p>
 			</div>
 		`);
-		this.inLinkParagraph = $(this.dialogContent).find(".inLink").get(0);
+		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
