@@ -9052,7 +9052,6 @@ function do_global_log(line) {
 class DebugDialog extends jqDialog {
 	constructor() {
 		super();
-		this.valueField = null;
 		this.nameField = null;
 		this.setTitle("Debug");
 		this.setHtml(`
@@ -9211,9 +9210,7 @@ class EquationEditor extends jqDialog {
 				}
 			}
 		});
-		/* codemirror work 
-		this.valueField = $(this.dialogContent).find(".value-field").get(0);
-		*/
+		
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
@@ -9265,20 +9262,6 @@ class EquationEditor extends jqDialog {
 		
 		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
 		
-		/* codemirror work 
-		$(this.valueField).focusout((event)=>{
-			this.storeValueSelectionRange();
-		});
-		*/
-		$(".accordion-cluster").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		$(this.dialogContent).find(".primitive-references-div").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		
-		
-		
 		/* Positioning 
 			This is done to avoid blocking the button with the tooltip
 			https://api.jqueryui.com/position/
@@ -9297,7 +9280,6 @@ class EquationEditor extends jqDialog {
 			valueFieldDom.focus();
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
 		}
 	
 	}
@@ -9377,7 +9359,6 @@ class EquationEditor extends jqDialog {
 			valueFieldDom.focus();
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
 		}
 	}
 	templateClick(event) {
@@ -9412,18 +9393,6 @@ class EquationEditor extends jqDialog {
 			this.buildAccordion();
 			this.accordionBuilt = true;
 		}
-	}
-	storeValueSelectionRange() {
-		/* codemirror work 
-		this.valueSelectionStart = this.valueField.selectionStart;
-		this.valueSelectionEnd = this.valueField.selectionEnd;
-		*/
-	}
-	restoreValueSelectionRange() {
-		/* codemirror work 
-		$(this.valueField).focus();
-		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
-		*/ 
 	}
 	makeApply() {
 		if (this.primitive) {
