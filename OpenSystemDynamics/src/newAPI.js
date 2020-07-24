@@ -333,6 +333,13 @@ function changeReferencesToName(id, oldName, newName) {
 				break;
 		}
 	});
+	if (findID(id).value.nodeName !== "Ghost") {
+		let ghosts = findGhostsOfID(id).map(findID);
+		ghosts.map(g => {
+			ghost_id = g.getAttribute("id");
+			changeReferencesToName(ghost_id, oldName, newName);
+		});
+	}
 }
 
 function removeSpacesAtEnd(str) {
