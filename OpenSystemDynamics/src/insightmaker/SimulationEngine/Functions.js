@@ -245,15 +245,15 @@ functionLoaders.push(function(){
 
 		let half_dt = div(DT, new Material(2));
 		if (lessThanEq(minus(start, half_dt), simulate.time()) && greaterThan(plus(start, half_dt), simulate.time())) {
-			return height;
+			return new Material(height.value);
 		} else if (greaterThanEq(simulate.time(), start)) {
 			let time_since_start = minus(simulate.time(), start);
 			let closest_pulse = mult(repeat, functionBank["round"]([div(time_since_start, repeat)]));
 			if (lessThanEq(minus(closest_pulse, half_dt), time_since_start) && greaterThan(plus(closest_pulse, half_dt), time_since_start)) {
-				return height;
+				return new Material(height.value);
 			}
 		}
-		return new Material(0, height.units);
+		return new Material(0);
 	});
 
 	defineFunction("Pulse", { params:[{name: "Start Time",  vectorize: true}, {name: "Volume",  vectorize: true, defaultVal: 1}, {name: "Repeat Period",  vectorize: true, defaultVal: 0}]}, function(x) {
