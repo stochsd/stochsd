@@ -6476,6 +6476,7 @@ class RunResults {
 		}
 	}
 	static runSimulation() {
+		this.simulationDone = false;
 		this.stopSimulation();
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
@@ -6507,12 +6508,20 @@ class RunResults {
 			},
 			onSuccess: (res) => {
 				// Run finished
-				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
-				this.storeResults(res);
-				this.updateProgressBar();
-				this.setProgressBarGreen(true);
-				this.triggerRunFinished();
-				this.stopSimulation();
+				
+				// On especially longer simulation onSuccess is called multible times
+				// This is a hack to get around that 
+				if (this.simulationDone === false) {
+					this.simulationDone = true;
+					// In some cases onPause was never executed and in such cases we need to do store Result directly on res
+					this.storeResults(res);
+					this.updateProgressBar();
+					this.setProgressBarGreen(true);
+					this.triggerRunFinished();
+					this.stopSimulation();
+				} else {
+					console.log("Extra onSuccess call from IM-engine");
+				}
 			},
 			onError: (res) => {
 				do_global_log("onError stop simulation");
@@ -9036,8 +9045,10 @@ function global_log_update() {
 }
 
 function do_global_log(line) {
-	global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
-	global_log_update();
+	if (Settings.showDebug) {
+		global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
+		global_log_update();
+	}
 }
 
 class DebugDialog extends jqDialog {
