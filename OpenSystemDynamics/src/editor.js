@@ -5274,29 +5274,20 @@ function update_name_pos(node_id) {
 
 	switch(get_object(node_id).name_pos) {
 		case 0:
-		// Below
-				//~ name_element.setAttribute("x",0); //Set path's data
-				//~ name_element.setAttribute("y",dist_down); //Set path's data
-				name_element.setAttribute("text-anchor", "middle");
+			// Below
+			name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 1:
-		// To the right
-				//~ name_element.setAttribute("x",dist_right); //Set path's data
-				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor", "start");
+			// To the right
+			name_element.setAttribute("text-anchor", "start");
 		break;
 		case 2:
-		// Above
-				//~ name_element.setAttribute("x",0); //Set path's data
-				//~ name_element.setAttribute("y",-dist_up); //Set path's data
-				name_element.setAttribute("text-anchor", "middle");
+			// Above
+			name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 3:
-		// To the left
-				//~ name_element.setAttribute("x",-dist_left); //Set path's data
-				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor", "end");
-				//~ name_element.setAttribute("alignment-baseline", "hanging");
+			// To the left
+			name_element.setAttribute("text-anchor", "end");
 		break;
 	}
 }
