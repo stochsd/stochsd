@@ -9,6 +9,9 @@ body {
     /* -webkit-print-color-adjust: exact; */
 }
 
+text.name_element {
+    font-family: monospace;
+}
 
 .hideUnlessNwjs {
     display: none !important;
