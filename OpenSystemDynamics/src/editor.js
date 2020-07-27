@@ -9036,8 +9036,10 @@ function global_log_update() {
 }
 
 function do_global_log(line) {
-	global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
-	global_log_update();
+	if (Settings.showDebug) {
+		global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
+		global_log_update();
+	}
 }
 
 class DebugDialog extends jqDialog {
