@@ -679,37 +679,37 @@ function updateProperties() {
 			        },
 					margin: 9,
 			        items: [
-			{
-				xtype: "segmentedbutton",
-				items: [
-				{
-					glyph: 0xf0ac,
-					text: 'Public Insight',
-					pressed: published,
-					id: 'insightPublic',
-					tooltip: "This Insight is public. Anyone can view it, but only you can edit it."
-				},
-				{
-					glyph: 0xf084,
-					//iconCls: 'green-icon',
-					text: 'Private Insight',
-					pressed: ! published,
-					tooltip: "This Insight is private. Only people you have given access to can view it."
-				}
-				]
-			}
-		]}, Ext.create('Ext.form.field.Tag', {
-			hidden: user_groups.length == 0,
-				fieldLabel: 'Share with Groups',
-				name: 'sinsightGroups',
-				id: 'sinsightGroups',
-				value: node_groups,
-				allowBlank: true,
-				filterPickList: true,
-				store: group_titles,
-				margin: 9
-			})
-		],
+						{
+							xtype: "segmentedbutton",
+							items: [
+							{
+								glyph: 0xf0ac,
+								text: 'Public Insight',
+								pressed: published,
+								id: 'insightPublic',
+								tooltip: "This Insight is public. Anyone can view it, but only you can edit it."
+							},
+							{
+								glyph: 0xf084,
+								//iconCls: 'green-icon',
+								text: 'Private Insight',
+								pressed: ! published,
+								tooltip: "This Insight is private. Only people you have given access to can view it."
+							}
+							]
+						}
+					]}, Ext.create('Ext.form.field.Tag', {
+						hidden: user_groups.length == 0,
+						fieldLabel: 'Share with Groups',
+						name: 'sinsightGroups',
+						id: 'sinsightGroups',
+						value: node_groups,
+						allowBlank: true,
+						filterPickList: true,
+						store: group_titles,
+						margin: 9
+					})
+			],
 
 			buttons: [{
 				text: 'Cancel',
@@ -743,8 +743,6 @@ function updateProperties() {
 					}
 				}
 			}]
-
-
 		});
 	} else {
 		if (graph_title != "") {
@@ -920,8 +918,6 @@ function propogateName(cell, oldName) {
 				setValue(neighbor, getValue(neighbor).replace(patt, "[" + newValue + "]"))
 			}
 		}
-
-
 	}
 }
 
@@ -1225,133 +1221,130 @@ function flatten(arr) {
 
 var downloadButton = function(name){
 	return {
-					xtype: 'button',
-					text: 'Download',
-					glyph: 0xf0ed,
-					handler: function(){
-						var grid = this.up("gridpanel");
-						var store = grid.getStore();
-						var columns = grid.columns;//store.fields ? store.fields.items : store.model.prototype.fields.items;
+		xtype: 'button',
+		text: 'Download',
+		glyph: 0xf0ed,
+		handler: function(){
+			var grid = this.up("gridpanel");
+			var store = grid.getStore();
+			var columns = grid.columns;//store.fields ? store.fields.items : store.model.prototype.fields.items;
 
-						var res = "";
+			var res = "";
 
-						res += columns.filter(function(x){
-							return !x.hidden;
-						}).map(function(x){
-								return '"' + (x.text || x.name).replace(/"/g, '""') + '"';
-							}).join(",");
+			res += columns.filter(function(x){
+				return !x.hidden;
+			}).map(function(x){
+				return '"' + (x.text || x.name).replace(/"/g, '""') + '"';
+			}).join(",");
 
-				        store.each(function(record, index) {
-					        var cells = [];
-					        columns.forEach(function(col) {
-					            var name = col.name || col.dataIndex;
-					            if(name) {
-					                //if (Ext.isFunction(col.renderer)) {
-					                 // var value = col.renderer(record.get(name), null, record);
-					                //} else {
-					                  var value = ""+record.get(name);
-					                //}
-					                cells.push('"'+value.replace(/"/g, '""')+'"');
-					            }
-					        });
+			store.each(function(record, index) {
+				var cells = [];
+				columns.forEach(function(col) {
+				    var name = col.name || col.dataIndex;
+				    if(name) {
+				        //if (Ext.isFunction(col.renderer)) {
+				         // var value = col.renderer(record.get(name), null, record);
+				        //} else {
+				          var value = ""+record.get(name);
+				        //}
+				        cells.push('"'+value.replace(/"/g, '""')+'"');
+				    }
+				});
 
 
-				          res += "\r\n" + cells.join(",");
-				        });
+				res += "\r\n" + cells.join(",");
+			});
 
-						downloadFile(name+".csv", res);
-					}
-				};
+			downloadFile(name+".csv", res);
+		}
+	};
+}
+
+
+function deepClone(target, obj, depth, fn){
+	var options, name, src, copy, copyIsArray, clone;
+
+	// Only deal with non-null/undefined values
+	if ( (options = arguments[ 1 ]) != null ) {
+		// Extend the base object
+		for ( name in options ) {
+			src = target[ name ];
+			copy = options[ name ];
+
+			// Prevent never-ending loop
+			if ( target === copy ) {
+				continue;
 			}
-
-
-			function deepClone(target, obj, depth, fn){
-				var options, name, src, copy, copyIsArray, clone;
-
-						// Only deal with non-null/undefined values
-						if ( (options = arguments[ 1 ]) != null ) {
-							// Extend the base object
-							for ( name in options ) {
-								src = target[ name ];
-								copy = options[ name ];
-
-								// Prevent never-ending loop
-								if ( target === copy ) {
-									continue;
-								}
-								if(fn){
-									var x = fn(copy);
-									if(x){
-										target[name] = x;
-										continue;
-									}
-								}
-								// Recurse if we're merging plain objects or arrays
-								if ( depth > 0 && copy && ( (copyIsArray = Array.isArray(copy)) || typeof(copy)=="object" ) ) {
-									if ( copyIsArray ) {
-										copyIsArray = false;
-										clone = src && Array.isArray(src) ? src : [];
-
-									} else {
-										clone = src && typeof(srv)=="object" ? src : {};
-									}
-
-									// Never move original objects, clone them
-									target[ name ] = deepClone( clone, copy, depth-1, fn );
-
-								// Don't bring in undefined values
-								} else if ( copy !== undefined ) {
-									target[ name ] = copy;
-								}
-							}
-						}
-
-					// Return the modified object
-					return target;
-
+			if(fn){
+				var x = fn(copy);
+				if(x){
+					target[name] = x;
+					continue;
+				}
 			}
-
-			function exportSvg() {
-				var scale = graph.view.scale;
-				var bounds = graph.getGraphBounds();
-
-				// Prepares SVG document that holds the output
-				var svgDoc = mxUtils.createXmlDocument();
-				var root = (svgDoc.createElementNS != null) ?
-					svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
-
-				if (root.style != null) {
-					root.style.backgroundColor = '#FFFFFF';
+			// Recurse if we're merging plain objects or arrays
+			if ( depth > 0 && copy && ( (copyIsArray = Array.isArray(copy)) || typeof(copy)=="object" ) ) {
+				if ( copyIsArray ) {
+					copyIsArray = false;
+					clone = src && Array.isArray(src) ? src : [];
 				} else {
-					root.setAttribute('style', 'background-color:#FFFFFF');
+					clone = src && typeof(srv)=="object" ? src : {};
 				}
 
-				if (svgDoc.createElementNS == null) {
-					root.setAttribute('xmlns', mxConstants.NS_SVG);
-				}
+				// Never move original objects, clone them
+				target[ name ] = deepClone( clone, copy, depth-1, fn );
 
-				root.setAttribute('width', Math.ceil(bounds.width * scale + 2) + 'px');
-				root.setAttribute('height', Math.ceil(bounds.height * scale + 2) + 'px');
-				root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
-				root.setAttribute('version', '1.1');
+			// Don't bring in undefined values
+			} else if ( copy !== undefined ) {
+				target[ name ] = copy;
+			}
+		}
+	}
+	// Return the modified object
+	return target;
+}
 
-				// Adds group for anti-aliasing via transform
-				var group = (svgDoc.createElementNS != null) ?
-					svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
-				group.setAttribute('transform', 'translate(0.5,0.5)');
-				root.appendChild(group);
-				svgDoc.appendChild(root);
+function exportSvg() {
+	var scale = graph.view.scale;
+	var bounds = graph.getGraphBounds();
 
-				// Renders graph. Offset will be multiplied with state's scale when painting state.
-				var svgCanvas = new mxSvgCanvas2D(group);
-				svgCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
-				svgCanvas.scale(scale);
+	// Prepares SVG document that holds the output
+	var svgDoc = mxUtils.createXmlDocument();
+	var root = (svgDoc.createElementNS != null) ?
+	svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
 
-				var imgExport = new mxImageExport();
-				imgExport.drawState(graph.getView().getState(graph.model.root), svgCanvas);
+	if (root.style != null) {
+		root.style.backgroundColor = '#FFFFFF';
+	} else {
+		root.setAttribute('style', 'background-color:#FFFFFF');
+	}
+
+	if (svgDoc.createElementNS == null) {
+		root.setAttribute('xmlns', mxConstants.NS_SVG);
+	}
+
+	root.setAttribute('width', Math.ceil(bounds.width * scale + 2) + 'px');
+	root.setAttribute('height', Math.ceil(bounds.height * scale + 2) + 'px');
+	root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
+	root.setAttribute('version', '1.1');
+
+	// Adds group for anti-aliasing via transform
+	var group = (svgDoc.createElementNS != null) ?
+		svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
+	group.setAttribute('transform', 'translate(0.5,0.5)');
+	root.appendChild(group);
+	svgDoc.appendChild(root);
+
+	// Renders graph. Offset will be multiplied with state's scale when painting state.
+	var svgCanvas = new mxSvgCanvas2D(group);
+	svgCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
+	svgCanvas.scale(scale);
+
+	var imgExport = new mxImageExport();
+	imgExport.drawState(graph.getView().getState(graph.model.root), svgCanvas);
 
 
-				var xml = (mxUtils.getXml(root));
+	var xml = (mxUtils.getXml(root));
 
-				downloadFile("Insight Maker Diagram.svg", xml);
-			};
+	downloadFile("Insight Maker Diagram.svg", xml);
+};
