@@ -359,6 +359,21 @@ var stocres=new function() {
 		export_txt("export.txt",dataset_tostring(dataset));
 	}
 	
+	self.export_data_csv_click=function() {
+		var do_sort=$("#do_sort").prop("checked");
+		var dataset=vars_to_dataset(stocres_varstats);
+		if(do_sort) {
+			var sortvar = stocres_varstats.single_selectedvar();
+			if(sortvar != null) {
+				sortdataset(dataset,sortvar);
+			} else {
+				xalert("Exactly one quantity must be selected.");
+				return;
+			}
+		}
+		export_txt("export.csv", dataset_tostring(dataset, ", "));
+	}
+
 	self.del_click=function() {
 		selectedvars=stocres_varstats.multi_selectedvar();
 		if(selectedvars.length==0) {
@@ -395,8 +410,7 @@ var stocres=new function() {
 		stocres_cmd_reset.click(self.reset_click);
 		stocres_cmd_histogram.click(self.histogram_click);
 		stocres_cmd_scatterplot.click(self.scatterplot_click);
-		stocres_cmd_export_txt.click(self.export_txt_click);
-		
+		stocres_cmd_export_data_csv.click(self.export_data_csv_click); 
 		
 		
 		
