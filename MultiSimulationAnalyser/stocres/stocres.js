@@ -371,7 +371,7 @@ var stocres=new function() {
 				return;
 			}
 		}
-		export_txt("export.csv", dataset_tostring(dataset, ", "));
+		export_txt("export.csv", dataset_tostring(dataset, ","));
 	}
 
 	self.del_click=function() {
