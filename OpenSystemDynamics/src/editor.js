@@ -7662,10 +7662,7 @@ class TimePlotDialog extends DisplayDialog {
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
 		return (`
-			<div style="border: 1px solid black;">
-				<span style="font-size: 16px; text-align: center;">Added primitives</span>
-				<div class="selected-div"></div>
-			</div>
+			<div class="selected-div" style="border: 1px solid black;"></div>
 			<div class="vertical-space"></div>
 			<div>
 				<input type="text" class="primitive-filter-input" placeholder="Filter Primitives..." style="text-align: left; width: 220px;"> 
@@ -7718,6 +7715,12 @@ class TimePlotDialog extends DisplayDialog {
 			selectedDiv.html("No primitives selected");
 		} else {
 			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Left</td>
+					<th>Right</td>
+				</tr>
 				${this.displayIdList.map(id => `
 					<tr>
 						<td style="padding: 0;">
@@ -7729,9 +7732,16 @@ class TimePlotDialog extends DisplayDialog {
 							</button>
 							</td>
 							<td style="width: 100%;">${getName(findID(id))}</td>
-							<td>left</td>
-							<td>right</td>
-							
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="L" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "L"))}
+								/>
+							</td>
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="R" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "R"))}
+								/>
+							</td>
 					</tr>
 				`).join("")}
 			</table>`);
@@ -7740,6 +7750,16 @@ class TimePlotDialog extends DisplayDialog {
 				this.removeIdToDisplay(remove_id);
 				this.updateSelectedPrimitiveList();
 			});
+			$(this.dialogContent).find(".side-checkbox").click(event => {
+				let id = $(event.target).attr("data-id");
+				let side = $(event.target).attr("data-side");
+				let checked = $(event.target).prop("checked");
+				if (! checked) {
+					side = (side === "L") ? "R" : "L"; 	
+				}
+				this.addIdToDisplay(id, side);
+				this.updateSelectedPrimitiveList();
+			})
 		}
 	}
 	makeApply() {
