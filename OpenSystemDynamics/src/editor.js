@@ -7663,63 +7663,40 @@ class TimePlotDialog extends DisplayDialog {
 			}
 		}
 		return (`
-			<table class="modern-table">
-			<tr>
-				<th style="text-align: center;" >Primitives</th>
-				<th>Left</th>
-				<th>Right</th>
-			</tr>
-				${Object.keys(prims_object).map((type, type_idx) => 
-					prims_object[type].map((p, idx) => `
-						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
-							<td>${getName(p)}</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply" 
-									type="checkbox" 
-									${checkedHtml(this.getDisplayId(getID(p), "L"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="L"
-								>
-							</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply"
-									type="checkbox"
-									${checkedHtml(this.getDisplayId(getID(p), "R"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="R"
-								>
-							</td>
-						</tr>
-					`).join('')
-				).join('')}
-			</table>
+			<div class="selected-div"></div>
+			<div>
+				<input type="text" class="primitive-filter-input" placeholder="Filter Primitives..." style="text-align: left; width: 180px;"> 
+			</div>
+			<div class="not-selected-div" style="max-height: 300px; overflow: auto;"></div>
 		`);
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			let clickedElement = event.target;
-			let side = $(clickedElement).attr("data-side");
-			
-			// Remove opposite checkmark
-			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
-			if (side === "R") {
-				$(commonParent[0].children[1].children[0]).removeAttr("checked");
-			} else {
-				$(commonParent[0].children[2].children[0]).removeAttr("checked");
-			}
-			
-			this.subscribePool.publish("primitive check changed");
+		$(this.dialogContent).find(".primitive-filter-input").keyup((event) => {
+			this.updatePrimitiveList($(event.target).val());
 		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+	}
+	updatePrimitiveList(searchString) {
+		let search_lc = searchString.toLowerCase();
+		let primitives = this.getAcceptedPrimitiveList();
+		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
+		console.log(results.map(getName));
+		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		notSelectedDiv.html(`
+			<table class="modern-table" style="width: 100%"> 
+				${results.map(p => `
+					<tr>
+						<td>${getName(p)}</td>
+						<td>
+							<button
+								data-id="${getID(p)}"  
+								style="color: #00aa00; font-size: 20px; font-weight: bold; font-family: monospace;">
+								+
+							</button>
+						</td>
+					</tr>
+				`).join("")}
+			</table>
+		`);
 	}
 	makeApply() {
 		super.makeApply();
