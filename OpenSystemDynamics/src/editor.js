@@ -7683,7 +7683,9 @@ class TimePlotDialog extends DisplayDialog {
 	updateNotSelectedPrimitiveList(searchString="") {
 		let search_lc = searchString.toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
-		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
+		let results = primitives.filter(p => {
+			return getName(p).toLowerCase().includes(search_lc) && ! this.displayIdList.includes(getID(p))
+		}); 
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		notSelectedDiv.html(`
 			<table class="modern-table"> 
