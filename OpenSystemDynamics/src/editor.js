@@ -7691,7 +7691,6 @@ class TimePlotDialog extends DisplayDialog {
 		let search_lc = searchString.toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
 		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
-		console.log(results.map(getName));
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		notSelectedDiv.html(`
 			<table class="modern-table"> 
@@ -7711,7 +7710,6 @@ class TimePlotDialog extends DisplayDialog {
 			</table>
 		`);
 		$(this.dialogContent).find(".primitive-add-button").click((event) => {
-			console.log($(event.target).attr("data-id"));
 			let id = $(event.target).attr("data-id")
 			this.addIdToDisplay(id, "L");
 			this.updateSelectedPrimitiveList();
@@ -7728,6 +7726,7 @@ class TimePlotDialog extends DisplayDialog {
 						<td style="padding: 0;">
 							<button 
 								class="primitive-remove-button" 
+								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
 							</button>
@@ -7739,6 +7738,11 @@ class TimePlotDialog extends DisplayDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+			});
 		}
 	}
 	makeApply() {
@@ -7759,20 +7763,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));
-
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
-		this.sides = [];
-		this.displayIdList = [];
-		for(let i = 0; i < primitiveCheckboxes.length; i++) {
-			let box = primitiveCheckboxes[i];
-			let id = box.getAttribute("data-id");
-			let side = box.getAttribute("data-side");
-			let name = box.getAttribute("data-name");
-			if (box.checked) {
-				this.displayIdList.push(id.toString());
-				this.sides.push(side);
-			}
-		}
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
