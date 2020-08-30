@@ -5,14 +5,14 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 */
 
-        function dataset_tostring(ds) {
+        function dataset_tostring(ds, seperation="\t") {
             console.log("in dstostring");
             console.log(ds);
             var output="";
             
             // Header
             for(i in ds.header) {
-                output+=ds.header[i]+"\t";
+                output+=ds.header[i]+seperation;
             }
             output+="\r\n";
             
@@ -22,9 +22,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                 for(i in row) {
                     // First row has special treatment, becasoue this is the run number
                     if(i==0) {
-                        output+=row[i]+"\t";
+                        output+=row[i]+seperation;
                     } else {
-                        output+=row[i].toFixed(2)+"\t";
+                        output+=row[i].toFixed(2)+seperation;
                     }
                 }
                 output+="\r\n";

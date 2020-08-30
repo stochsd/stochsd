@@ -9,6 +9,9 @@ body {
     /* -webkit-print-color-adjust: exact; */
 }
 
+text.name_element {
+    font-family: monospace;
+}
 
 .hideUnlessNwjs {
     display: none !important;
@@ -203,6 +206,11 @@ button.tool-button img {
     height: 100%; 
     display: inline;
 }
+
+.name-field, .value-field {
+    font-family: monospace !important;
+}
+
 .primitive-settings .name-field, 
 .primitive-settings .value-field {
     width: 200px;

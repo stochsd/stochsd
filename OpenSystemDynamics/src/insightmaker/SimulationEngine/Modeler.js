@@ -755,7 +755,15 @@ function formatSimResults(res) {
 		res.names[items[i].name] = items[i].id;
 	}
 	res.value = function(item) {
-		return this[item.id].results;
+		if (Array.isArray(item)) {
+			for (let itm of item) {
+				if (itm.value.nodeName !== "Ghost") {
+					return this[itm.id].results;
+				}
+			}
+		} else {
+			return this[item.id].results;
+		}
 	};
 	res.lastValue = function(item) {
 		return this[item.id].results[this[item.id].results.length - 1];

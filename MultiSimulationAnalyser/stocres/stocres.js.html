@@ -133,10 +133,23 @@ var stocres_view=`
 			</td><td>
 				<fieldset>
 					<legend>Export to</legend>
-					<p class="nowrap">
-					<input type="checkbox" name="sorted" id="do_sort">Sort by (<img src="img/cross.png"/>)
-					<button id="stocres_cmd_export_txt">Text file (.txt)</button>
-					</p>
+					<style type="text/css">
+						table.invisible td {
+							padding: 0px 4px; 
+						}
+					</style>
+					<table class="invisible">
+						<tr>
+							<td><input type="checkbox" name="sorted" id="do_sort">Sort by (<img src="img/cross.png"/>)</td>
+							<td><button id="stocres_cmd_export_data_csv">Data (.CSV)</button></td>
+						</tr>
+						<!-- There is no functions to do this yet. 
+							However the idea is to export the table with name, avg, Std.dev, ... etc.
+							<tr>
+							<td></td>
+							<td><button id="stocres_cmd_export_stats_csv">Statistics (.csv)</button></td>
+						</tr>-->
+					</table>
 				</fieldset>
 			</td>
 			</tr>

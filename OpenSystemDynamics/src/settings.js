@@ -11,5 +11,5 @@ var Settings = {
 	// The font size under the primitives
 	primitiveFontSize: 13,
 	// Whatever to show debug
-	showDebug: true
+	showDebug: false 
 };

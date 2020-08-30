@@ -5274,29 +5274,20 @@ function update_name_pos(node_id) {
 
 	switch(get_object(node_id).name_pos) {
 		case 0:
-		// Below
-				//~ name_element.setAttribute("x",0); //Set path's data
-				//~ name_element.setAttribute("y",dist_down); //Set path's data
-				name_element.setAttribute("text-anchor", "middle");
+			// Below
+			name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 1:
-		// To the right
-				//~ name_element.setAttribute("x",dist_right); //Set path's data
-				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor", "start");
+			// To the right
+			name_element.setAttribute("text-anchor", "start");
 		break;
 		case 2:
-		// Above
-				//~ name_element.setAttribute("x",0); //Set path's data
-				//~ name_element.setAttribute("y",-dist_up); //Set path's data
-				name_element.setAttribute("text-anchor", "middle");
+			// Above
+			name_element.setAttribute("text-anchor", "middle");
 		break;
 		case 3:
-		// To the left
-				//~ name_element.setAttribute("x",-dist_left); //Set path's data
-				//~ name_element.setAttribute("y",0); //Set path's data
-				name_element.setAttribute("text-anchor", "end");
-				//~ name_element.setAttribute("alignment-baseline", "hanging");
+			// To the left
+			name_element.setAttribute("text-anchor", "end");
 		break;
 	}
 }
@@ -6485,6 +6476,7 @@ class RunResults {
 		}
 	}
 	static runSimulation() {
+		this.simulationDone = false;
 		this.stopSimulation();
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.createHeader();
@@ -6516,12 +6508,20 @@ class RunResults {
 			},
 			onSuccess: (res) => {
 				// Run finished
-				// In some cases onPause was never executed and in such cases we need to do store Result directly on res
-				this.storeResults(res);
-				this.updateProgressBar();
-				this.setProgressBarGreen(true);
-				this.triggerRunFinished();
-				this.stopSimulation();
+				
+				// On especially longer simulation onSuccess is called multible times
+				// This is a hack to get around that 
+				if (this.simulationDone === false) {
+					this.simulationDone = true;
+					// In some cases onPause was never executed and in such cases we need to do store Result directly on res
+					this.storeResults(res);
+					this.updateProgressBar();
+					this.setProgressBarGreen(true);
+					this.triggerRunFinished();
+					this.stopSimulation();
+				} else {
+					console.log("Extra onSuccess call from IM-engine");
+				}
 			},
 			onError: (res) => {
 				do_global_log("onError stop simulation");
@@ -8940,7 +8940,7 @@ class ConverterDialog extends jqDialog {
 				Name:<br/>
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
-				<textarea class="value-field" style="font-family:monospace; width: 300px; height: 80px;"></textarea>
+				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				<p style="color:grey; margin:5px 0px">
@@ -9045,8 +9045,10 @@ function global_log_update() {
 }
 
 function do_global_log(line) {
-	global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
-	global_log_update();
+	if (Settings.showDebug) {
+		global_log = line+"; "+(new Date()).getMilliseconds()+"<br/>"+global_log;
+		global_log_update();
+	}
 }
 
 class DebugDialog extends jqDialog {
@@ -9152,7 +9154,7 @@ class EquationEditor extends jqDialog {
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="value-field enter-apply" style="font-family: monospace; width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enter-apply" style="width: 100%; height: 70px;"></textarea>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
