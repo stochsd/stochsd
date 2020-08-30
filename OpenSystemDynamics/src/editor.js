@@ -7713,6 +7713,8 @@ class TimePlotDialog extends DisplayDialog {
 			let id = $(event.target).attr("data-id")
 			this.addIdToDisplay(id, "L");
 			this.updateSelectedPrimitiveList();
+			$(this.dialogContent).find(".primitive-filter-input").val("");
+			this.updateNotSelectedPrimitiveList();
 		})
 	}
 	updateSelectedPrimitiveList() {
