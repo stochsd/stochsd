@@ -7673,7 +7673,11 @@ class TimePlotDialog extends DisplayDialog {
 			}
 		}
 		return (`
-			<div class="selected-div"></div>
+			<div style="border: 1px solid black;">
+				<span style="font-size: 16px; text-align: center;">Added primitives</span>
+				<div class="selected-div"></div>
+			</div>
+			<div class="vertical-space"></div>
 			<div>
 				<input type="text" class="primitive-filter-input" placeholder="Filter Primitives..." style="text-align: left; width: 220px;"> 
 			</div>
