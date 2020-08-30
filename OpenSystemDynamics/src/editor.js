@@ -7460,6 +7460,16 @@ class TimePlotDialog extends DisplayDialog {
 		}
 	}
 
+	addIdToDisplay(id, side) {
+		let index = this.displayIdList.indexOf(id)
+		if (index === -1) {
+			this.displayIdList.push(id)
+			this.sides.push(side) 
+		} else {
+			this.sides[index] = side 
+		}
+	}
+
 	setIdsToDisplay(idList, sides) {
 		this.displayIdList = [];
 		this.sides = [];
@@ -7665,38 +7675,71 @@ class TimePlotDialog extends DisplayDialog {
 		return (`
 			<div class="selected-div"></div>
 			<div>
-				<input type="text" class="primitive-filter-input" placeholder="Filter Primitives..." style="text-align: left; width: 180px;"> 
+				<input type="text" class="primitive-filter-input" placeholder="Filter Primitives..." style="text-align: left; width: 220px;"> 
 			</div>
-			<div class="not-selected-div" style="max-height: 300px; overflow: auto;"></div>
+			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
 	}
 	bindPrimitiveListEvents() {
 		$(this.dialogContent).find(".primitive-filter-input").keyup((event) => {
-			this.updatePrimitiveList($(event.target).val());
+			this.updateNotSelectedPrimitiveList($(event.target).val());
 		});
+		this.updateNotSelectedPrimitiveList();
+		this.updateSelectedPrimitiveList();
 	}
-	updatePrimitiveList(searchString) {
+	updateNotSelectedPrimitiveList(searchString="") {
 		let search_lc = searchString.toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
 		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
 		console.log(results.map(getName));
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		notSelectedDiv.html(`
-			<table class="modern-table" style="width: 100%"> 
+			<table class="modern-table"> 
 				${results.map(p => `
 					<tr>
-						<td>${getName(p)}</td>
-						<td>
+						<td style="padding: 0;">
 							<button
+								class="primitive-add-button"
 								data-id="${getID(p)}"  
 								style="color: #00aa00; font-size: 20px; font-weight: bold; font-family: monospace;">
 								+
 							</button>
 						</td>
+						<td style="width: 100%;">${getName(p)}</td>
 					</tr>
 				`).join("")}
 			</table>
 		`);
+		$(this.dialogContent).find(".primitive-add-button").click((event) => {
+			console.log($(event.target).attr("data-id"));
+			let id = $(event.target).attr("data-id")
+			this.addIdToDisplay(id, "L");
+			this.updateSelectedPrimitiveList();
+		})
+	}
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">${getName(findID(id))}</td>
+							<td>left</td>
+							<td>right</td>
+							
+					</tr>
+				`).join("")}
+			</table>`);
+		}
 	}
 	makeApply() {
 		super.makeApply();
