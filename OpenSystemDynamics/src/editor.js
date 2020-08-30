@@ -9670,8 +9670,22 @@ class EquationListDialog extends jqDialog {
 				primitives: Stocks,
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
-					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+					{ header: "Init. Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Dif. Equation", 		
+						cellFunc: (prim) => {  
+							let flows = primitives("Flow");
+							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
+							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
+							let input_str = input.map(f => ` +Δt*${getName(f)}`).join(""); 
+							let output_str = output.map(f => ` -Δt*${getName(f)}`).join("");
+							return input_str+output_str;
+						}
+					},
+					{ 
+						header: "Restricted", 
+						cellFunc: (prim) => prim.getAttribute("NonNegative") === "true" ?  `${getName(prim)} ≥ 0` : "",
+						style: "text-align: center;"
+					},
 				]
 			});
 		}
@@ -9685,7 +9699,11 @@ class EquationListDialog extends jqDialog {
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
 					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+					{ 
+						header: "Restricted", 	
+						cellFunc: (prim) => prim.getAttribute("OnlyPositive") === "true" ?  `${getName(prim)} ≥ 0` : "", 
+						style: "text-align: center;"
+					},
 				]
 			});
 		}
