@@ -7661,17 +7661,6 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
-		for (let p of primitives) {
-			let nodeType = p.value.nodeName;
-			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
-				prims_object["const"].push(p);
-			} else {
-				prims_object[nodeType].push(p);
-			}
-		}
 		return (`
 			<div style="border: 1px solid black;">
 				<span style="font-size: 16px; text-align: center;">Added primitives</span>
