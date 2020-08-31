@@ -7032,6 +7032,7 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
+		this.displayLimit = undefined;
 	}
 
 	getDefaultPlotPeriod() {
@@ -7413,13 +7414,16 @@ class DisplayDialog extends jqDialog {
 			getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
 		); 
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
 		notSelectedDiv.html(`
 			<table class="modern-table"> 
 				${results.map(p => `
 					<tr>
 						<td style="padding: 0;">
 							<button class="primitive-add-button" data-id="${getID(p)}" 
-								style="color: #00aa00; font-size: 20px; font-weight: bold; font-family: monospace;">
+								${limitReached ? "disabled" : ""} 
+								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
 								+
 							</button>
 						</td>
@@ -8199,7 +8203,7 @@ class XyPlotDialog extends DisplayDialog {
 		if (autoPlotPer) {
 			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
 		}
-
+		this.displayLimit = 2;
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8345,6 +8349,47 @@ class XyPlotDialog extends DisplayDialog {
 				</tr>
 			</table>`
 		);
+	}
+
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			let axies = ["X", "Y"];
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Axis</th>
+				</tr>
+				${this.displayIdList.map((id, index) => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+						</td>
+						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
 	}
 
 	beforeShow() {

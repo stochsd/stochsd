@@ -22,7 +22,7 @@ button {
     border-width: 1.5px;
 }
 
-button:hover {
+button:hover:enabled {
     background-color: #ccc;
 }
 #recent_title {
