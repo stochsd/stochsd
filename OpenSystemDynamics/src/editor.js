@@ -7664,8 +7664,9 @@ class TimePlotDialog extends DisplayDialog {
 		return (`
 			<div class="selected-div" style="border: 1px solid black;"></div>
 			<div class="vertical-space"></div>
-			<div>
-				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; width: 220px;"> 
+			<div style="display: flex; flex-direction: row; align-items: center;">
+				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
+				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
 			</div>
 			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
