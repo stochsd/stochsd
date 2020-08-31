@@ -7664,7 +7664,7 @@ class TimePlotDialog extends DisplayDialog {
 		return (`
 			<div class="selected-div" style="border: 1px solid black;"></div>
 			<div class="vertical-space"></div>
-			<div style="display: flex; flex-direction: row; align-items: center;">
+			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
 				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
 			</div>
@@ -7703,7 +7703,7 @@ class TimePlotDialog extends DisplayDialog {
 							</button>
 						</td>
 						<td style="width: 100%;">
-						<div style="display: flex; flex-direction: row; align-items: center;">
+						<div class="center-vertically-container">
 							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
 							${getName(p)}
 						</div>
@@ -7743,7 +7743,7 @@ class TimePlotDialog extends DisplayDialog {
 							</button>
 							</td>
 							<td style="width: 100%;">
-							<div style="display: flex; flex-direction: row; align-items: center;">
+							<div class="center-vertically-container">
 								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
 								${getName(findID(id))}
 							</div>
