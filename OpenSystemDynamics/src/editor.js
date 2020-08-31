@@ -7680,9 +7680,12 @@ class TimePlotDialog extends DisplayDialog {
 	updateNotSelectedPrimitiveList(searchString="") {
 		let search_lc = searchString.toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
-		let results = primitives.filter(p => {
-			return getName(p).toLowerCase().includes(search_lc) && ! this.displayIdList.includes(getID(p))
-		}); 
+		// filter search
+		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
+		// filter already added pimitives 
+		results = results.filter(p => ! this.displayIdList.includes(getID(p)));
+		// sort by when search word appears first 
+		results = results.sort((a, b) => getName(a).toLowerCase().indexOf() - getName(b).toLowerCase().indexOf());
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		notSelectedDiv.html(`
 			<table class="modern-table"> 
