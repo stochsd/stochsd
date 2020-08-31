@@ -8014,16 +8014,6 @@ class ComparePlotDialog extends DisplayDialog {
 				this.updateSelectedPrimitiveList();
 				this.updateNotSelectedPrimitiveList();
 			});
-			$(this.dialogContent).find(".side-checkbox").click(event => {
-				let id = $(event.target).attr("data-id");
-				let side = $(event.target).attr("data-side");
-				let checked = $(event.target).prop("checked");
-				if (! checked) {
-					side = (side === "L") ? "R" : "L"; 	
-				}
-				this.addIdToDisplay(id, side);
-				this.updateSelectedPrimitiveList();
-			})
 		}
 	}
 	bindPrimitiveListEvents() {
