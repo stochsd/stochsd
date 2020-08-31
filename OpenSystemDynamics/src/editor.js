@@ -7032,6 +7032,7 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
+		this.displayLimit = undefined;
 	}
 
 	getDefaultPlotPeriod() {
@@ -7059,6 +7060,20 @@ class DisplayDialog extends jqDialog {
 	acceptsId(id) {
 		let type = getType(findID(id));
 		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
+	}
+
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
+	}
+
+	addIdToDisplay(id) {
+		let index = this.displayIdList.indexOf(id)
+		if (index === -1) {
+			this.displayIdList.push(id)
+		}
 	}
 
 	removeIdToDisplay(id) {
@@ -7363,60 +7378,111 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
-		for (let p of primitives) {
-			let nodeType = p.value.nodeName;
-			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
-				prims_object["const"].push(p);
-			} else {
-				prims_object[nodeType].push(p);
-			}
-		}
-
-		return (`
-			<table class="modern-table" >
-				${Object.keys(prims_object).map((type, type_idx) => 
-					prims_object[type].map((p, idx) => `
-						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
-							<td>${getName(p)}</td>
-							<td style="text-align: center;">
-								<input
-									class="primitive-checkbox enter-apply"
-									type="checkbox"
-									${checkedHtml(this.getDisplayId(getID(p)))}
-									data-name="${getName(p)}"
-									data-id="${getID(p)}"
-								>
-							</td>
-						</tr>
-					`).join('')
-				).join('')}
-			</table>
-		`);
-	}
 	makeApply() {
 		if ($(this.dialogContent).find(".line-width :selected")) {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
+	renderPrimitiveListHtml() {
+		// We store the selected variables inside the dialog
+		return (`
+			<div class="selected-div" style="border: 1px solid black;"></div>
+			<div class="vertical-space"></div>
+			<div class="center-vertically-container">
+				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
+				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+			</div>
+			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
+		`);
+	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
-			this.setDisplayId(idClicked,checked);
-			this.subscribePool.publish("primitive check changed");
+		$(this.dialogContent).find(".primitive-filter-input").keyup(() => {
+			this.updateNotSelectedPrimitiveList();
 		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
+		this.updateNotSelectedPrimitiveList();
+		this.updateSelectedPrimitiveList();
+	}
+	updateNotSelectedPrimitiveList() {
+		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
+		let primitives = this.getAcceptedPrimitiveList();
+
+		let results = primitives.filter(p => // filter search
+			getName(p).toLowerCase().includes(search_lc)
+		).filter(p => // filter already added primitives 
+			this.displayIdList.includes(getID(p)) === false 
+		).sort((a, b) => // sort by what search word appears first 
+			getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
+		); 
+		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
+		notSelectedDiv.html(`
+			<table class="modern-table"> 
+				${results.map(p => `
+					<tr>
+						<td style="padding: 0;">
+							<button class="primitive-add-button" data-id="${getID(p)}" 
+								${limitReached ? "disabled" : ""} 
+								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+								+
+							</button>
+						</td>
+						<td style="width: 100%;">
+						<div class="center-vertically-container">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+							${getName(p)}
+						</div>
+						</td>
+					</tr>
+				`).join("")}
+			</table>
+		`);
+		$(this.dialogContent).find(".primitive-add-button").click((event) => {
+			this.primitiveAddButton($(event.target).attr("data-id"));
 		});
+	}
+	primitiveAddButton(id) {
+		this.addIdToDisplay(id);
+		this.updateSelectedPrimitiveList();
+		$(this.dialogContent).find(".primitive-filter-input").val("");
+		this.updateNotSelectedPrimitiveList();
+	}
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+				</tr>
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
 	}
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
@@ -7457,6 +7523,16 @@ class TimePlotDialog extends DisplayDialog {
 		if (idxToRemove !== -1) {
 			this.displayIdList.splice(idxToRemove, 1);
 			this.sides.splice(idxToRemove, 1);
+		}
+	}
+
+	addIdToDisplay(id, side) {
+		let index = this.displayIdList.indexOf(id)
+		if (index === -1) {
+			this.displayIdList.push(id)
+			this.sides.push(side) 
+		} else {
+			this.sides[index] = side 
 		}
 	}
 
@@ -7649,77 +7725,70 @@ class TimePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
 	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
-		for (let p of primitives) {
-			let nodeType = p.value.nodeName;
-			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
-				prims_object["const"].push(p);
-			} else {
-				prims_object[nodeType].push(p);
-			}
-		}
-		return (`
-			<table class="modern-table">
-			<tr>
-				<th style="text-align: center;" >Primitives</th>
-				<th>Left</th>
-				<th>Right</th>
-			</tr>
-				${Object.keys(prims_object).map((type, type_idx) => 
-					prims_object[type].map((p, idx) => `
-						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
-							<td>${getName(p)}</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply" 
-									type="checkbox" 
-									${checkedHtml(this.getDisplayId(getID(p), "L"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="L"
-								>
-							</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply"
-									type="checkbox"
-									${checkedHtml(this.getDisplayId(getID(p), "R"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="R"
-								>
-							</td>
-						</tr>
-					`).join('')
-				).join('')}
-			</table>
-		`);
+	primitiveAddButton(id) {
+		this.addIdToDisplay(id, "L");
+		this.updateSelectedPrimitiveList();
+		$(this.dialogContent).find(".primitive-filter-input").val("");
+		this.updateNotSelectedPrimitiveList();
 	}
-	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			let clickedElement = event.target;
-			let side = $(clickedElement).attr("data-side");
-			
-			// Remove opposite checkmark
-			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
-			if (side === "R") {
-				$(commonParent[0].children[1].children[0]).removeAttr("checked");
-			} else {
-				$(commonParent[0].children[2].children[0]).removeAttr("checked");
-			}
-			
-			this.subscribePool.publish("primitive check changed");
-		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Left</td>
+					<th>Right</td>
+				</tr>
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="L" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "L"))}
+								/>
+							</td>
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="R" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "R"))}
+								/>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+			$(this.dialogContent).find(".side-checkbox").click(event => {
+				let id = $(event.target).attr("data-id");
+				let side = $(event.target).attr("data-side");
+				let checked = $(event.target).prop("checked");
+				if (! checked) {
+					side = (side === "L") ? "R" : "L"; 	
+				}
+				this.addIdToDisplay(id, side);
+				this.updateSelectedPrimitiveList();
+			})
+		}
 	}
 	makeApply() {
 		super.makeApply();
@@ -7739,20 +7808,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));
-
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
-		this.sides = [];
-		this.displayIdList = [];
-		for(let i = 0; i < primitiveCheckboxes.length; i++) {
-			let box = primitiveCheckboxes[i];
-			let id = box.getAttribute("data-id");
-			let side = box.getAttribute("data-side");
-			let name = box.getAttribute("data-name");
-			if (box.checked) {
-				this.displayIdList.push(id.toString());
-				this.sides.push(side);
-			}
-		}
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -7764,7 +7819,6 @@ class TimePlotDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderPrimitiveListHtml()}
 					</div>
-					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
 						<div class="vertical-space"></div>
@@ -7817,7 +7871,7 @@ class ComparePlotDialog extends DisplayDialog {
 		let index = this.displayIdList.indexOf(id)
 		return (index != -1);
 	}
-	
+
 	setIdsToDisplay(idList) {
 		this.displayIdList = [];
 		for(let i in idList) {
@@ -7967,15 +8021,7 @@ class ComparePlotDialog extends DisplayDialog {
 		}
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			this.subscribePool.publish("primitive check changed");
-		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		super.bindPrimitiveListEvents();
 		$(this.dialogContent).find(".clear-button").click((event) => {
 			this.clear = true;
 		});
@@ -7995,18 +8041,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 
-		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
-
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
-		this.displayIdList = [];
-		for(let i = 0; i < primitiveCheckboxes.length; i++) {
-			let box = primitiveCheckboxes[i];
-			let id = box.getAttribute("data-id");
-			let name = box.getAttribute("data-name");
-			if (box.checked) {
-				this.displayIdList.push(id.toString());
-			}
-		}
+		this.keep =  $(this.dialogContent).find(".keep_checkbox").prop("checked");
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -8049,6 +8084,7 @@ class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
+		this.displayLimit = 1;
 	}
 	renderHistogramOptionsHtml() {
 		return(`
@@ -8168,7 +8204,7 @@ class XyPlotDialog extends DisplayDialog {
 		if (autoPlotPer) {
 			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
 		}
-
+		this.displayLimit = 2;
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8314,6 +8350,47 @@ class XyPlotDialog extends DisplayDialog {
 				</tr>
 			</table>`
 		);
+	}
+
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			let axies = ["X", "Y"];
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Axis</th>
+				</tr>
+				${this.displayIdList.map((id, index) => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+						</td>
+						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
 	}
 
 	beforeShow() {
