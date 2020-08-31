@@ -7702,7 +7702,12 @@ class TimePlotDialog extends DisplayDialog {
 								+
 							</button>
 						</td>
-						<td style="width: 100%;">${getName(p)}</td>
+						<td style="width: 100%;">
+						<div style="display: flex; flex-direction: row; align-items: center;">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+							${getName(p)}
+						</div>
+						</td>
 					</tr>
 				`).join("")}
 			</table>
@@ -7737,7 +7742,12 @@ class TimePlotDialog extends DisplayDialog {
 								-
 							</button>
 							</td>
-							<td style="width: 100%;">${getName(findID(id))}</td>
+							<td style="width: 100%;">
+							<div style="display: flex; flex-direction: row; align-items: center;">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
 							<td style="padding: 0; text-align: center;">
 								<input type="checkbox" class="side-checkbox" data-side="L" data-id="${id}"
 									${checkedHtml(this.getDisplayId(id, "L"))}
