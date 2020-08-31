@@ -7447,6 +7447,43 @@ class DisplayDialog extends jqDialog {
 		$(this.dialogContent).find(".primitive-filter-input").val("");
 		this.updateNotSelectedPrimitiveList();
 	}
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+				</tr>
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
+	}
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
 		this.bindPrimitiveListEvents();
@@ -7983,43 +8020,6 @@ class ComparePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
 	}
-	updateSelectedPrimitiveList() {
-		let selectedDiv = $(this.dialogContent).find(".selected-div");
-		if (this.displayIdList.length === 0) {
-			selectedDiv.html("No primitives selected");
-		} else {
-			selectedDiv.html(`<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Added Primitives</td>
-				</tr>
-				${this.displayIdList.map(id => `
-					<tr>
-						<td style="padding: 0;">
-							<button 
-								class="primitive-remove-button" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
-								-
-							</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								${getName(findID(id))}
-							</div>
-							</td>
-					</tr>
-				`).join("")}
-			</table>`);
-			$(this.dialogContent).find(".primitive-remove-button").click(event => {
-				let remove_id = $(event.target).attr("data-id");
-				this.removeIdToDisplay(remove_id);
-				this.updateSelectedPrimitiveList();
-				this.updateNotSelectedPrimitiveList();
-			});
-		}
-	}
 	bindPrimitiveListEvents() {
 		super.bindPrimitiveListEvents();
 		$(this.dialogContent).find(".clear-button").click((event) => {
@@ -8084,6 +8084,7 @@ class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
+		this.displayLimit = 1;
 	}
 	renderHistogramOptionsHtml() {
 		return(`
