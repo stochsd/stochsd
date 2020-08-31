@@ -7671,14 +7671,14 @@ class TimePlotDialog extends DisplayDialog {
 		`);
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-filter-input").keyup((event) => {
-			this.updateNotSelectedPrimitiveList($(event.target).val());
+		$(this.dialogContent).find(".primitive-filter-input").keyup(() => {
+			this.updateNotSelectedPrimitiveList();
 		});
 		this.updateNotSelectedPrimitiveList();
 		this.updateSelectedPrimitiveList();
 	}
-	updateNotSelectedPrimitiveList(searchString="") {
-		let search_lc = searchString.toLowerCase();
+	updateNotSelectedPrimitiveList() {
+		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
 		// filter search
 		let results = primitives.filter(p => getName(p).toLowerCase().includes(search_lc)); 
@@ -7754,6 +7754,7 @@ class TimePlotDialog extends DisplayDialog {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
 				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
 			});
 			$(this.dialogContent).find(".side-checkbox").click(event => {
 				let id = $(event.target).attr("data-id");
