@@ -7685,7 +7685,9 @@ class TimePlotDialog extends DisplayDialog {
 		// filter already added pimitives 
 		results = results.filter(p => ! this.displayIdList.includes(getID(p)));
 		// sort by when search word appears first 
-		results = results.sort((a, b) => getName(a).toLowerCase().indexOf() - getName(b).toLowerCase().indexOf());
+		results = results.sort(
+			(a, b) => getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
+		);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		notSelectedDiv.html(`
 			<table class="modern-table"> 
