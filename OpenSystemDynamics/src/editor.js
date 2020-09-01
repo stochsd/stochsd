@@ -9237,7 +9237,10 @@ class EquationEditor extends jqDialog {
 							</div>
 							<div class="restrict-to-non-negative-div">
 								<br/>
-								<label><input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/> Restrict to non-negative values</label>
+								<label>
+								<input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/>
+								Restrict to non-negative values</label>
+								<div class="note restrict-note-div"></div>
 							</div>
 						</div>
 					</div>
@@ -9284,7 +9287,12 @@ class EquationEditor extends jqDialog {
 		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
 		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrict-to-non-negative-div").get(0);
+		this.restrictNote = $(this.dialogContent).find(".restrict-note-div").get(0);
 		
+		$(this.restrictNonNegativeCheckbox).click(() => {
+			this.updateRestrictNoteText();
+		});
+
 		let helpData = getFunctionHelpData();
 	
 		let functionListToHtml = function(functionList) {
@@ -9403,7 +9411,9 @@ class EquationEditor extends jqDialog {
 			// Otherwise hide that option
 			$(this.restrictNonNegativeDiv).hide();
 		}
-		
+		this.updateRestrictNoteText();
+
+
 		// Create reference list
 		let referenceList = getLinkedPrimitives(this.primitive);
 	
@@ -9443,6 +9453,17 @@ class EquationEditor extends jqDialog {
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
+		}
+	}
+	updateRestrictNoteText() {
+		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
+		if (checked) {
+			$(this.restrictNote).html(`
+				NOTE: Restricting to non-negative values may have unintended consequences.<br/>
+				Use only when you have a well motivated reason.
+			`);
+		} else {
+			$(this.restrictNote).html("");
 		}
 	}
 	templateClick(event) {
