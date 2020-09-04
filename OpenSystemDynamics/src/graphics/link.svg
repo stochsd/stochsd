@@ -36,12 +36,12 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
      id="namedview4508"
      showgrid="false"
      inkscape:zoom="9.44"
-     inkscape:cx="62.15569"
+     inkscape:cx="44.941707"
      inkscape:cy="48.32125"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -65,9 +65,10 @@
      inkscape:transform-center-y="0.70100286" />
   <g
      id="g4502"
-     transform="matrix(-3.0972017,-0.46134414,-0.4304547,2.8898274,80.081283,23.630208)">
+     transform="matrix(-3.0972017,-0.46134414,-0.4304547,2.8898274,80.081283,23.630208)"
+     style="fill:#ffffff">
     <path
-       style="fill:#000000;stroke:#000000"
+       style="fill:#ffffff;stroke:#000000"
        inkscape:connector-curvature="0"
        id="path4500"
        d="M -5.6951292,10.318185 -0.17137444,6.0116052 1.1314489,10.064879 Z" />
