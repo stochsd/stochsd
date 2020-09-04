@@ -3764,7 +3764,7 @@ class LinkVisual extends BaseConnection {
 	}
 	clearImage() {
 		super.clearImage();
-		// curve bust be removed seperatly since it is not part of any group 
+		// curve must be removed seperatly since it is not part of any group 
 		this.curve.remove();
 	}
 
