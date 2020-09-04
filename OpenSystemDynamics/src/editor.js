@@ -987,7 +987,7 @@ class OnePointer extends BaseObject {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
-		if (this.icons) {
+		if (this.icons && prim) {
 			let VE = prim.getAttribute("ValueError");
 			this.icons.set("questionmark", VE ? "visible" : "hidden");
 			this.icons.set("dice", ( ! VE && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
