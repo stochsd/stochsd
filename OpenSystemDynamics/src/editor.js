@@ -3768,7 +3768,6 @@ class LinkVisual extends BaseConnection {
 		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
-		this.arrowPath.setAttribute("fill", color);
 		this.start_anchor.setColor(color);
 		this.end_anchor.setColor(color);
 		this.b1_anchor.setColor(color);
@@ -3783,8 +3782,7 @@ class LinkVisual extends BaseConnection {
 		let [x3, y3] = this.b2_anchor.getPos();
 		let [x4, y4] = this.end_anchor.getPos();
 		
-		const headHalfWidth = 2;
-		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowHead, x4, y4);
 
