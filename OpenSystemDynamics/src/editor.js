@@ -3762,6 +3762,11 @@ class LinkVisual extends BaseConnection {
 		this.setEndAttach(null);
 		super.clean();
 	}
+	clearImage() {
+		super.clearImage();
+		// curve bust be removed seperatly since it is not part of any group 
+		this.curve.remove();
+	}
 
 	setColor(color) {
 		this.color = color;
