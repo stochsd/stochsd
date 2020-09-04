@@ -3787,12 +3787,14 @@ class LinkVisual extends BaseConnection {
 		svg_translate(this.arrowHead, x4, y4);
 
 		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
+		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
+		// curve is not included in group since it is one-way and will therefore span an area
+		// The area will be clickable if included in the group 
+		this.group = svg_group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 
 		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", {"stroke-dasharray": "5 5"});
@@ -3803,7 +3805,7 @@ class LinkVisual extends BaseConnection {
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	dashLine() {
-		this.curve.setAttribute("stroke-dasharray", "4 6");
+		this.curve.setAttribute("stroke-dasharray", "6 4");
 	}
 	undashLine() {
 		this.curve.setAttribute("stroke-dasharray", "");

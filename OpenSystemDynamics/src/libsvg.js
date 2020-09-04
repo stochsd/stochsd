@@ -60,6 +60,38 @@ function svg_transform_string(x,y,r,s) {
 	return "translate("+x+","+y+") rotate("+r+") scale("+s+")";
 }
 
+function svg_curve_oneway(x1,y1,x2,y2,x3,y3,x4,y4,extra_attributes=null) {
+	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
+	//var d="M"+x1+","+y1+" Q"+x2+","+x2+" "+x3+","+y3+" "+x4+","+y4;
+	//newElement.setAttribute("d",d);
+	newElement.setAttribute("stroke","black");
+	newElement.setAttribute("fill","transparent");
+	newElement.x1=x1;
+	newElement.y1=y1;
+	newElement.x2=x2;
+	newElement.y2=y2;
+	newElement.x3=x3;
+	newElement.y3=y3;
+	newElement.x4=x4;
+	newElement.y4=y4;
+	
+	// Is set last so it can override default attributes
+	if(extra_attributes) {
+		for(var key in extra_attributes) {
+			newElement.setAttribute(key,extra_attributes[key]); //Set path's data
+		}
+	}
+	
+	newElement.update=function() {
+		let d = `M${this.x1},${this.y1} C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x4},${this.y4}`;
+		// Curve does not go back on itself and should therefore not be used as click object
+		this.setAttribute("d",d);
+	};
+	newElement.update();
+	svgplane.appendChild(newElement);
+	return newElement;
+}
+
 function svg_curve(x1,y1,x2,y2,x3,y3,x4,y4,extra_attributes=null) {
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path'); //Create a path in SVG's namespace
 	//var d="M"+x1+","+y1+" Q"+x2+","+x2+" "+x3+","+y3+" "+x4+","+y4;
