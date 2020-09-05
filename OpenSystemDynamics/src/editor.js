@@ -987,7 +987,7 @@ class OnePointer extends BaseObject {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
-		if (this.icons) {
+		if (this.icons && prim) {
 			let VE = prim.getAttribute("ValueError");
 			this.icons.set("questionmark", VE ? "visible" : "hidden");
 			this.icons.set("dice", ( ! VE && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
@@ -3762,13 +3762,17 @@ class LinkVisual extends BaseConnection {
 		this.setEndAttach(null);
 		super.clean();
 	}
+	clearImage() {
+		super.clearImage();
+		// curve must be removed seperatly since it is not part of any group 
+		this.curve.remove();
+	}
 
 	setColor(color) {
 		this.color = color;
 		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
-		this.arrowPath.setAttribute("fill", color);
 		this.start_anchor.setColor(color);
 		this.end_anchor.setColor(color);
 		this.b1_anchor.setColor(color);
@@ -3783,18 +3787,19 @@ class LinkVisual extends BaseConnection {
 		let [x3, y3] = this.b2_anchor.getPos();
 		let [x4, y4] = this.end_anchor.getPos();
 		
-		const headHalfWidth = 2;
-		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowHead, x4, y4);
 
 		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
+		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
+		// curve is not included in group since it is one-way and will therefore span an area
+		// The area will be clickable if included in the group 
+		this.group = svg_group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 
 		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", {"stroke-dasharray": "5 5"});
@@ -3805,7 +3810,7 @@ class LinkVisual extends BaseConnection {
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	dashLine() {
-		this.curve.setAttribute("stroke-dasharray", "4 6");
+		this.curve.setAttribute("stroke-dasharray", "6 4");
 	}
 	undashLine() {
 		this.curve.setAttribute("stroke-dasharray", "");
@@ -9237,7 +9242,10 @@ class EquationEditor extends jqDialog {
 							</div>
 							<div class="restrict-to-non-negative-div">
 								<br/>
-								<label><input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/> Restrict to non-negative values</label>
+								<label>
+								<input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/>
+								Restrict to non-negative values</label>
+								<div class="note restrict-note-div"></div>
 							</div>
 						</div>
 					</div>
@@ -9284,7 +9292,12 @@ class EquationEditor extends jqDialog {
 		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
 		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrict-to-non-negative-div").get(0);
+		this.restrictNote = $(this.dialogContent).find(".restrict-note-div").get(0);
 		
+		$(this.restrictNonNegativeCheckbox).click(() => {
+			this.updateRestrictNoteText();
+		});
+
 		let helpData = getFunctionHelpData();
 	
 		let functionListToHtml = function(functionList) {
@@ -9403,7 +9416,9 @@ class EquationEditor extends jqDialog {
 			// Otherwise hide that option
 			$(this.restrictNonNegativeDiv).hide();
 		}
-		
+		this.updateRestrictNoteText();
+
+
 		// Create reference list
 		let referenceList = getLinkedPrimitives(this.primitive);
 	
@@ -9443,6 +9458,17 @@ class EquationEditor extends jqDialog {
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
+		}
+	}
+	updateRestrictNoteText() {
+		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
+		if (checked) {
+			$(this.restrictNote).html(`
+				NOTE: Restricting to non-negative values may have unintended consequences.<br/>
+				Use only when you have a well motivated reason.
+			`);
+		} else {
+			$(this.restrictNote).html("");
 		}
 	}
 	templateClick(event) {
