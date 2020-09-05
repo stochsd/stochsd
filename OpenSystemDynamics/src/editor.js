@@ -7410,14 +7410,19 @@ class DisplayDialog extends jqDialog {
 	updateNotSelectedPrimitiveList() {
 		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
 		let primitives = this.getAcceptedPrimitiveList();
-
-		let results = primitives.filter(p => // filter search
-			getName(p).toLowerCase().includes(search_lc)
-		).filter(p => // filter already added primitives 
-			this.displayIdList.includes(getID(p)) === false 
-		).sort((a, b) => // sort by what search word appears first 
-			getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
-		); 
+		let results = [];
+		if (search_lc == "") {
+			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
+			results = primitives.sort((a,b) => order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b)));
+		} else {
+			results = primitives.filter(p => // filter search
+				getName(p).toLowerCase().includes(search_lc)
+			).filter(p => // filter already added primitives 
+				this.displayIdList.includes(getID(p)) === false 
+			).sort((a, b) => // sort by what search word appears first 
+				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
+			);
+		}
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
 		notSelectedDiv.html(`
