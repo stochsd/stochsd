@@ -8859,7 +8859,12 @@ class TimeUnitDialog extends jqDialog {
 		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
 		});
-		this.bindEnterApplyEvents();
+		$(this.dialogContent).find(".enter-apply").keydown(event => {
+			if (event.keyCode === keyboard["enter"]) {
+				event.preventDefault();
+				this.dialogParameters.buttons["Apply"]();
+			}
+		});
 	}
 	beforeShow() {
 		$(this.dialogContent).find(".timeunit-field").val(getTimeUnits());
