@@ -6836,6 +6836,14 @@ class jqDialog {
 		this.beforeCreateDialog();
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
+	bindEnterApplyEvents() {
+		$(this.dialogContent).find(".enter-apply").keydown(event => {
+			if (event.keyCode === keyboard["enter"]) {
+				event.preventDefault();
+				this.applyChanges();
+			}
+		});
+	}
 	applyChanges() {
 		this.makeApply();
 		$(this.dialog).dialog('close');
@@ -7175,13 +7183,6 @@ class DisplayDialog extends jqDialog {
 
 		roundToZeroField.keyup((event) => {
 			this.checkValidRoundAtZeroAtField();
-		});
-		
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
 		});
 	}
 	setRoundToZero(roundToZero) {
@@ -7847,6 +7848,7 @@ class TimePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.bindPrimitiveListEvents();
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
@@ -8082,6 +8084,7 @@ class ComparePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
@@ -8171,8 +8174,9 @@ class HistoPlotDialog extends DisplayDialog {
 				</div>
 			</div>`
 		);
-		this.bindPrimitiveListEvents();
 
+		this.bindEnterApplyEvents();
+		this.bindPrimitiveListEvents();
 		this.histogramOptionsBeforeShow();
 	}
 	makeApply() {
@@ -8428,6 +8432,7 @@ class XyPlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
@@ -8648,6 +8653,7 @@ class TableDialog extends DisplayDialog {
 			</div>
 		`);
 
+		this.bindEnterApplyEvents();
 		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
@@ -8692,13 +8698,9 @@ class NewModelDialog extends jqDialog {
 			</td>
 		</tr>
 		</table>
-	`);
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		`);
+		this.bindEnterApplyEvents();
+
 		$(this.dialogContent).find(".input-timeunits-default-value").click((event) => {
 			let selectedUnit = $(event.target).data("default-value");
 			$(this.dialogContent).find(".input-timeunits").val(selectedUnit);
@@ -8774,12 +8776,8 @@ class SimulationSettings extends jqDialog {
 		</table>
 		<div class="simulation-settings-warning"></div>
 		`);
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		
+		this.bindEnterApplyEvents();
 
 		this.start_field = $(this.dialogContent).find(".input-start");
 		this.length_field = $(this.dialogContent).find(".input-length");
@@ -8861,14 +8859,7 @@ class TimeUnitDialog extends jqDialog {
 		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
 		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
-					event.preventDefault();
-					this.dialogParameters.buttons["Apply"]();
-				}
-			}
-		});
+		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
 		$(this.dialogContent).find(".timeunit-field").val(getTimeUnits());
@@ -8938,6 +8929,7 @@ class GeometryDialog extends DisplayDialog {
 
 	beforeShow() {
 		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
+		this.bindEnterApplyEvents();
 	}
 	makeApply() {
 		let dashArray = $(this.dialogContent).find(".dash-select :selected").val();
@@ -8985,6 +8977,7 @@ class LineDialog extends GeometryDialog {
 			<div class="vertical-space"></div>
 			${this.renderStrokeHtml()}
 		</div>`);
+		this.bindEnterApplyEvents();
 	}
 	makeApply() {
 		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrow-start-checkbox").prop("checked"));
@@ -9012,6 +9005,8 @@ class NumberboxDialog extends DisplayDialog {
 				Target primitive not found
 			`);	
 		}
+
+		this.bindEnterApplyEvents();
 	}
 
 	makeApply() {
@@ -9283,14 +9278,7 @@ class EquationEditor extends jqDialog {
 			} 
 		});
 
-		$(this.dialogContent).find(".enter-apply").keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
-					event.preventDefault();
-					this.applyChanges();
-				}
-			}
-		});
+		this.bindEnterApplyEvents();
 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
