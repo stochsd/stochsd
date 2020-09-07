@@ -7408,15 +7408,21 @@ class DisplayDialog extends jqDialog {
 		this.updateNotSelectedPrimitiveList();
 		this.updateSelectedPrimitiveList();
 	}
-	updateNotSelectedPrimitiveList() {
-		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
-		let primitives = this.getAcceptedPrimitiveList();
+	getSearchPrimitiveResults(search_lc) {
+		let prims = this.getAcceptedPrimitiveList();
 		let results = [];
 		if (search_lc == "") {
 			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
-			results = primitives.sort((a,b) => order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b)));
+			results = prims.sort((a,b) => {
+				let order_diff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
+				if (order_diff !== 0) {
+					return order_diff;
+				} else {
+					return getName(a) > getName(b);
+				}
+			});
 		} else {
-			results = primitives.filter(p => // filter search
+			results = prims.filter(p => // filter search
 				getName(p).toLowerCase().includes(search_lc)
 			).filter(p => // filter already added primitives 
 				this.displayIdList.includes(getID(p)) === false 
@@ -7424,6 +7430,11 @@ class DisplayDialog extends jqDialog {
 				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
 			);
 		}
+		return results;
+	}
+	updateNotSelectedPrimitiveList() {
+		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
+		let results = this.getSearchPrimitiveResults(search_lc);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
 		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
 		notSelectedDiv.html(`
