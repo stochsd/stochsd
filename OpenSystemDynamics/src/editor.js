@@ -7145,6 +7145,67 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool.publish("window closed");
 	}
 
+	renderNumberLengthHtml() {
+		this.numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		return (`<table class="modern-table">
+			<tr>
+				<td>
+					<input class="num-length-radio" type="radio" id="precision" name="numberlength" value="precision"
+					${this.numLength["usePrecision"] ? "checked" : ""}>
+					<label for="precision">Precision<label/>
+				</td>
+				<td>
+					<input class="precision-field" type="text" style="float: right;" data-name="precision"
+					${this.numLength["usePrecision"] ? '' : 'disabled'}
+					value="${this.numLength["precision"]}">
+				</td>
+			</tr>	
+			<tr>
+				<td>
+					<input class="num-length-radio" type="radio" id="decimal" name="numberlength" value="decimal" 
+					${this.numLength["usePrecision"] ? '' : 'checked'}>
+					<label for="decimal">Decimal<label/>
+				</td>
+				<td>
+					<input class="decimal-field" type="text" style="float: right;" data-name="decimal"
+					${this.numLength["usePrecision"] ? 'disabled' : ''}
+					value="${this.numLength["decimal"]}">
+				</td>
+			</tr>
+		</table>
+		<div class="number-length-warning-div warning"></div>`);
+	}
+
+	bindNumberLengthEvents() {
+		$(this.dialogContent).find(".num-length-radio[name='numberlength']").change(event => {
+			if (event.target.value === "precision") {
+				this.numLength["usePrecision"] = true;
+				$(this.dialogContent).find(".precision-field").prop("disabled", false);
+				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", true);
+				this.numLength["precision"] = $(this.dialogContent).find(".precision-field").val();
+			} else if (event.target.value === "decimal") {
+				this.numLength["usePrecision"] = false;
+				$(this.dialogContent).find(".precision-field").prop("disabled", true);
+				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", false);
+				this.numLength["decimal"] = $(this.dialogContent).find(".decimal-field").val();
+			}
+		});
+		$(this.dialogContent).find(".decimal-field").keyup(event => {
+			if (isNaN(event.target.value)) {
+				$(this.dialogContent).find(".number-length-warning-div").html(`${event.target.value} is not a number`);
+			}else if (parseInt(event.target.value) < 0) {
+				$(this.dialogContent).find(".number-length-warning-div").html(`${event.target.value} is negative`);
+			} else {
+				$(this.dialogContent).find(".number-length-warning-div").html("");
+				this.numLength["decimal"] = parseInt(event.target.value);
+			}
+		});
+	}
+
+	applyNumberLength() {
+		this.primitive.setAttribute("NumberLength", JSON.stringify(this.numLength));
+	}
+
 	/* RoundToZero html and logic starts here */
 	renderRoundToZeroHtml() {
 		return (`
@@ -8656,6 +8717,8 @@ class TableDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
 						<div class="vertical-space"></div>
+						${this.renderNumberLengthHtml()}
+						<div class="vertical-space"></div>
 						${this.renderRoundToZeroHtml()}
 						<div class="vertical-space"></div>
 						${this.renderExportHtml()}
@@ -8665,6 +8728,7 @@ class TableDialog extends DisplayDialog {
 		`);
 
 		this.bindEnterApplyEvents();
+		this.bindNumberLengthEvents();
 		this.roundToZeroBeforeShow();
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
@@ -8683,6 +8747,7 @@ class TableDialog extends DisplayDialog {
 	}
 	makeApply() {
 		this.applyAxisLimits();
+		this.applyNumberLength();
 		this.roundToZeroMakeApply();
 	}
 }
