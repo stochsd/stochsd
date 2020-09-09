@@ -2340,33 +2340,39 @@ class TableVisual extends HtmlTwoPointer {
 		html += "</thead><tbody>";
 
 		let time_step_str = `${getTimeStep()}`;
-		let decimals = decimals_in_value_string(time_step_str);
+		let time_decimals = decimals_in_value_string(time_step_str);
+
+		// We must get the data in column_index+1 since column 1 is reserved for time
+		let roundToZero = this.primitive.getAttribute("RoundToZero");
+		let roundToZeroAtValue = -1;
+		if (roundToZero === "true") {
+			roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+			if (isNaN(roundToZeroAtValue)) {
+				roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
+			} else {
+				roundToZeroAtValue = Number(roundToZeroAtValue);
+			}
+		}
+
+		let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let number_options = {
+			"round_to_zero_limit": roundToZeroAtValue, 
+			"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+		};
 
 		for(let row_index in this.data.results) {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
-				// We must get the data in column_index+1 since column 1 is reserved for time
-				let roundToZero = this.primitive.getAttribute("RoundToZero");
-				let roundToZeroAtValue = -1;
-				if (roundToZero === "true") {
-					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-					if (isNaN(roundToZeroAtValue)) {
-						roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
-					} else {
-						roundToZeroAtValue = Number(roundToZeroAtValue);
-					}
-				}
 				if (column_index == 0) {
+					// time column 
 					let valueString = format_number(
 						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": decimals }
+						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": time_decimals }
 					);
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
-					let valueString = format_number(
-						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
-					);
+					let valueString = format_number(this.data.results[row_index][column_index], number_options);
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
 			}
