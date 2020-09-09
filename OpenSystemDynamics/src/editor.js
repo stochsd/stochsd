@@ -1305,14 +1305,7 @@ class NumberboxVisual extends BasePrimitive {
 			return;		
 		}
 		let valueString = "";
-		let primitiveName = "";
 		let lastValue = RunResults.getLastValue(this.targetID);
-		let imPrimtiive = findID(this.targetID);
-		if (imPrimtiive) {
-			primitiveName += makePrimitiveName(getName(imPrimtiive));
-		} else {
-			primitiveName += "Unkown primitive";
-		}
 		if (lastValue || lastValue === 0) {
 			let roundToZero = this.primitive.getAttribute("RoundToZero");
 			let roundToZeroAtValue = -1;
@@ -1324,7 +1317,13 @@ class NumberboxVisual extends BasePrimitive {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
 			}
-			valueString = format_number(lastValue, { "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 });
+			let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+			let number_options = {
+				"round_to_zero_limit": roundToZeroAtValue, 
+				"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+				"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+			};
+			valueString = format_number(lastValue, number_options);
 		} else {
 			valueString += "_";
 		}
@@ -9115,20 +9114,23 @@ class NumberboxDialog extends DisplayDialog {
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
+					${this.renderNumberLengthHtml()}
+					<div class="vertical-space"></div>
 					${this.renderRoundToZeroHtml()}
 				</div>
 			`);
+			this.bindNumberLengthEvents();
 			this.roundToZeroBeforeShow();
 		} else {
 			this.setHtml(`
 				Target primitive not found
 			`);	
 		}
-
 		this.bindEnterApplyEvents();
 	}
 
 	makeApply() {
+		this.applyNumberLength();
 		this.roundToZeroMakeApply();
 	}
 }
