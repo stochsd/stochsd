@@ -7259,7 +7259,7 @@ class DisplayDialog extends jqDialog {
 			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
-	roundToZeroBeforeShow() {
+	bindRoundToZeroEvents() {
 		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
 		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
 
@@ -7324,7 +7324,7 @@ class DisplayDialog extends jqDialog {
 		}
 	}
 
-	roundToZeroMakeApply() {
+	applyRoundToZero() {
 		if (this.primitive) {
 			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
@@ -8766,7 +8766,7 @@ class TableDialog extends DisplayDialog {
 
 		this.bindEnterApplyEvents();
 		this.bindNumberLengthEvents();
-		this.roundToZeroBeforeShow();
+		this.bindRoundToZeroEvents();
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
 		
@@ -8785,7 +8785,7 @@ class TableDialog extends DisplayDialog {
 	makeApply() {
 		this.applyAxisLimits();
 		this.applyNumberLength();
-		this.roundToZeroMakeApply();
+		this.applyRoundToZero();
 	}
 }
 
@@ -9120,7 +9120,7 @@ class NumberboxDialog extends DisplayDialog {
 				</div>
 			`);
 			this.bindNumberLengthEvents();
-			this.roundToZeroBeforeShow();
+			this.bindRoundToZeroEvents();
 		} else {
 			this.setHtml(`
 				Target primitive not found
@@ -9131,7 +9131,7 @@ class NumberboxDialog extends DisplayDialog {
 
 	makeApply() {
 		this.applyNumberLength();
-		this.roundToZeroMakeApply();
+		this.applyRoundToZero();
 	}
 }
 
