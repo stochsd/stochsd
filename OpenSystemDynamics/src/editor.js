@@ -7146,64 +7146,96 @@ class DisplayDialog extends jqDialog {
 	}
 
 	renderNumberLengthHtml() {
-		this.numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
 		return (`<table class="modern-table">
 			<tr>
 				<td>
-					<input class="num-length-radio" type="radio" id="precision" name="numberlength" value="precision"
-					${this.numLength["usePrecision"] ? "checked" : ""}>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="precision" name="number-length" value="precision"
+					${numLength["usePrecision"] ? "checked" : ""}>
 					<label for="precision">Precision<label/>
 				</td>
 				<td>
-					<input class="precision-field" type="text" style="float: right;" data-name="precision"
-					${this.numLength["usePrecision"] ? '' : 'disabled'}
-					value="${this.numLength["precision"]}">
+					<input class="precision-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? '' : 'disabled'}
+					value="${numLength["precision"]}">
 				</td>
 			</tr>	
 			<tr>
 				<td>
-					<input class="num-length-radio" type="radio" id="decimal" name="numberlength" value="decimal" 
-					${this.numLength["usePrecision"] ? '' : 'checked'}>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="decimal" name="number-length" value="decimal" 
+					${numLength["usePrecision"] ? '' : 'checked'}>
 					<label for="decimal">Decimal<label/>
 				</td>
 				<td>
-					<input class="decimal-field" type="text" style="float: right;" data-name="decimal"
-					${this.numLength["usePrecision"] ? 'disabled' : ''}
-					value="${this.numLength["decimal"]}">
+					<input class="decimal-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? 'disabled' : ''}
+					value="${numLength["decimal"]}">
 				</td>
 			</tr>
 		</table>
-		<div class="number-length-warning-div warning"></div>`);
+		<div class="num-len-warn-div warning"></div>`);
 	}
 
 	bindNumberLengthEvents() {
-		$(this.dialogContent).find(".num-length-radio[name='numberlength']").change(event => {
+		$(this.dialogContent).find(".num-length-radio[name='number-length']").change(event => {
 			if (event.target.value === "precision") {
-				this.numLength["usePrecision"] = true;
-				$(this.dialogContent).find(".precision-field").prop("disabled", false);
+				let precision_field = $(this.dialogContent).find(".precision-field");
 				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", true);
-				this.numLength["precision"] = $(this.dialogContent).find(".precision-field").val();
+				precision_field.prop("disabled", false);
+				this.checkValidNumberLength(precision_field.val());
 			} else if (event.target.value === "decimal") {
-				this.numLength["usePrecision"] = false;
+				let decimal_field = $(this.dialogContent).find(".decimal-field");
 				$(this.dialogContent).find(".precision-field").prop("disabled", true);
-				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", false);
-				this.numLength["decimal"] = $(this.dialogContent).find(".decimal-field").val();
+				decimal_field.prop("disabled", false);
+				this.checkValidNumberLength(decimal_field.val());
 			}
 		});
+		$(this.dialogContent).find(".precision-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
 		$(this.dialogContent).find(".decimal-field").keyup(event => {
-			if (isNaN(event.target.value)) {
-				$(this.dialogContent).find(".number-length-warning-div").html(`${event.target.value} is not a number`);
-			}else if (parseInt(event.target.value) < 0) {
-				$(this.dialogContent).find(".number-length-warning-div").html(`${event.target.value} is negative`);
-			} else {
-				$(this.dialogContent).find(".number-length-warning-div").html("");
-				this.numLength["decimal"] = parseInt(event.target.value);
-			}
+			this.checkValidNumberLength(event.target.value);
 		});
 	}
 
+	checkValidNumberLength(value) {
+		if (isNaN(value)) {
+			$(".num-len-warn-div").html(`${value} is not a decimal number.`);
+			return false;
+		} else if (Number.isInteger(parseFloat(value)) === false) {
+			$(".num-len-warn-div").html(`${value} is not an integer.`);
+			return false;
+		} else if (parseInt(value) < 0) {
+			$(".num-len-warn-div").html(`${value} is negative.`);
+			return false;
+		} else if (parseInt(value) >= 12) {
+			$(".num-len-warn-div").html(`${value} is above the limit of 12.`);
+			return false;
+		} else {
+			$(".num-len-warn-div").html("");
+			return true;
+		}
+	}
+
 	applyNumberLength() {
-		this.primitive.setAttribute("NumberLength", JSON.stringify(this.numLength));
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let usePrecision = $(this.dialogContent).find("input[name='number-length']:checked").val() === "precision";
+		if (usePrecision) {
+			let value = $(this.dialogContent).find(".precision-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["precision"] = parseInt(value);
+				numLength["usePrecision"] = usePrecision;
+			}
+		} else {
+			let value = $(this.dialogContent).find(".decimal-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["decimal"] = parseInt(value);	
+				numLength["usePrecision"] = usePrecision;
+			}
+		}
+		this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
 	}
 
 	/* RoundToZero html and logic starts here */
