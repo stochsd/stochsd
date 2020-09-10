@@ -1305,14 +1305,7 @@ class NumberboxVisual extends BasePrimitive {
 			return;		
 		}
 		let valueString = "";
-		let primitiveName = "";
 		let lastValue = RunResults.getLastValue(this.targetID);
-		let imPrimtiive = findID(this.targetID);
-		if (imPrimtiive) {
-			primitiveName += makePrimitiveName(getName(imPrimtiive));
-		} else {
-			primitiveName += "Unkown primitive";
-		}
 		if (lastValue || lastValue === 0) {
 			let roundToZero = this.primitive.getAttribute("RoundToZero");
 			let roundToZeroAtValue = -1;
@@ -1324,7 +1317,13 @@ class NumberboxVisual extends BasePrimitive {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
 			}
-			valueString = format_number(lastValue, { "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 });
+			let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+			let number_options = {
+				"round_to_zero_limit": roundToZeroAtValue, 
+				"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+				"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+			};
+			valueString = format_number(lastValue, number_options);
 		} else {
 			valueString += "_";
 		}
@@ -2340,33 +2339,39 @@ class TableVisual extends HtmlTwoPointer {
 		html += "</thead><tbody>";
 
 		let time_step_str = `${getTimeStep()}`;
-		let decimals = decimals_in_value_string(time_step_str);
+		let time_decimals = decimals_in_value_string(time_step_str);
+
+		// We must get the data in column_index+1 since column 1 is reserved for time
+		let roundToZero = this.primitive.getAttribute("RoundToZero");
+		let roundToZeroAtValue = -1;
+		if (roundToZero === "true") {
+			roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+			if (isNaN(roundToZeroAtValue)) {
+				roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
+			} else {
+				roundToZeroAtValue = Number(roundToZeroAtValue);
+			}
+		}
+
+		let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let number_options = {
+			"round_to_zero_limit": roundToZeroAtValue, 
+			"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+		};
 
 		for(let row_index in this.data.results) {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
-				// We must get the data in column_index+1 since column 1 is reserved for time
-				let roundToZero = this.primitive.getAttribute("RoundToZero");
-				let roundToZeroAtValue = -1;
-				if (roundToZero === "true") {
-					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-					if (isNaN(roundToZeroAtValue)) {
-						roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
-					} else {
-						roundToZeroAtValue = Number(roundToZeroAtValue);
-					}
-				}
 				if (column_index == 0) {
+					// time column 
 					let valueString = format_number(
 						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": decimals }
+						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": time_decimals }
 					);
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
-					let valueString = format_number(
-						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
-					);
+					let valueString = format_number(this.data.results[row_index][column_index], number_options);
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
 			}
@@ -7145,6 +7150,99 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool.publish("window closed");
 	}
 
+	renderNumberLengthHtml() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		return (`<table class="modern-table">
+			<tr>
+				<td>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="precision" name="number-length" value="precision"
+					${numLength["usePrecision"] ? "checked" : ""}>
+					<label for="precision">Precision<label/>
+				</td>
+				<td>
+					<input class="precision-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? '' : 'disabled'}
+					value="${numLength["precision"]}">
+				</td>
+			</tr>	
+			<tr>
+				<td>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="decimal" name="number-length" value="decimal" 
+					${numLength["usePrecision"] ? '' : 'checked'}>
+					<label for="decimal">Decimal<label/>
+				</td>
+				<td>
+					<input class="decimal-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? 'disabled' : ''}
+					value="${numLength["decimal"]}">
+				</td>
+			</tr>
+		</table>
+		<div class="num-len-warn-div warning"></div>`);
+	}
+
+	bindNumberLengthEvents() {
+		$(this.dialogContent).find(".num-length-radio[name='number-length']").change(event => {
+			if (event.target.value === "precision") {
+				let precision_field = $(this.dialogContent).find(".precision-field");
+				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", true);
+				precision_field.prop("disabled", false);
+				this.checkValidNumberLength(precision_field.val());
+			} else if (event.target.value === "decimal") {
+				let decimal_field = $(this.dialogContent).find(".decimal-field");
+				$(this.dialogContent).find(".precision-field").prop("disabled", true);
+				decimal_field.prop("disabled", false);
+				this.checkValidNumberLength(decimal_field.val());
+			}
+		});
+		$(this.dialogContent).find(".precision-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
+		$(this.dialogContent).find(".decimal-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
+	}
+
+	checkValidNumberLength(value) {
+		if (isNaN(value)) {
+			$(".num-len-warn-div").html(`${value} is not a decimal number.`);
+			return false;
+		} else if (Number.isInteger(parseFloat(value)) === false) {
+			$(".num-len-warn-div").html(`${value} is not an integer.`);
+			return false;
+		} else if (parseInt(value) < 0) {
+			$(".num-len-warn-div").html(`${value} is negative.`);
+			return false;
+		} else if (parseInt(value) >= 12) {
+			$(".num-len-warn-div").html(`${value} is above the limit of 12.`);
+			return false;
+		} else {
+			$(".num-len-warn-div").html("");
+			return true;
+		}
+	}
+
+	applyNumberLength() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let usePrecision = $(this.dialogContent).find("input[name='number-length']:checked").val() === "precision";
+		if (usePrecision) {
+			let value = $(this.dialogContent).find(".precision-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["precision"] = parseInt(value);
+				numLength["usePrecision"] = usePrecision;
+			}
+		} else {
+			let value = $(this.dialogContent).find(".decimal-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["decimal"] = parseInt(value);	
+				numLength["usePrecision"] = usePrecision;
+			}
+		}
+		this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
+	}
+
 	/* RoundToZero html and logic starts here */
 	renderRoundToZeroHtml() {
 		return (`
@@ -7161,7 +7259,7 @@ class DisplayDialog extends jqDialog {
 			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
-	roundToZeroBeforeShow() {
+	bindRoundToZeroEvents() {
 		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
 		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
 
@@ -7226,7 +7324,7 @@ class DisplayDialog extends jqDialog {
 		}
 	}
 
-	roundToZeroMakeApply() {
+	applyRoundToZero() {
 		if (this.primitive) {
 			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
@@ -7413,7 +7511,9 @@ class DisplayDialog extends jqDialog {
 		let results = [];
 		if (search_lc == "") {
 			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
-			results = prims.sort((a,b) => {
+			results = prims.filter(p => // filter already added primitives 
+				this.displayIdList.includes(getID(p)) === false 
+			).sort((a,b) => { // sort by type and by alphabetical 
 				let order_diff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
 				if (order_diff !== 0) {
 					return order_diff;
@@ -8656,6 +8756,8 @@ class TableDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
 						<div class="vertical-space"></div>
+						${this.renderNumberLengthHtml()}
+						<div class="vertical-space"></div>
 						${this.renderRoundToZeroHtml()}
 						<div class="vertical-space"></div>
 						${this.renderExportHtml()}
@@ -8665,7 +8767,8 @@ class TableDialog extends DisplayDialog {
 		`);
 
 		this.bindEnterApplyEvents();
-		this.roundToZeroBeforeShow();
+		this.bindNumberLengthEvents();
+		this.bindRoundToZeroEvents();
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
 		
@@ -8683,7 +8786,8 @@ class TableDialog extends DisplayDialog {
 	}
 	makeApply() {
 		this.applyAxisLimits();
-		this.roundToZeroMakeApply();
+		this.applyNumberLength();
+		this.applyRoundToZero();
 	}
 }
 
@@ -9012,21 +9116,24 @@ class NumberboxDialog extends DisplayDialog {
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
+					${this.renderNumberLengthHtml()}
+					<div class="vertical-space"></div>
 					${this.renderRoundToZeroHtml()}
 				</div>
 			`);
-			this.roundToZeroBeforeShow();
+			this.bindNumberLengthEvents();
+			this.bindRoundToZeroEvents();
 		} else {
 			this.setHtml(`
 				Target primitive not found
 			`);	
 		}
-
 		this.bindEnterApplyEvents();
 	}
 
 	makeApply() {
-		this.roundToZeroMakeApply();
+		this.applyNumberLength();
+		this.applyRoundToZero();
 	}
 }
 

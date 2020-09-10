@@ -63,6 +63,11 @@ setValuedProperties(primitiveBank.generic);
 primitiveBank.numberbox = doc.createElement('Numberbox');
 primitiveBank.numberbox.setAttribute("RoundToZero", true);
 primitiveBank.numberbox.setAttribute("RoundToZeroAtValue", 1e-12);
+primitiveBank.numberbox.setAttribute("NumberLength", JSON.stringify({
+	"usePrecision": true, // otherwise uses decimal 
+	"precision": 4,
+	"decimal": 2,
+}));
 primitiveBank.numberbox.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.numberbox);
 
@@ -75,6 +80,11 @@ primitiveBank.table.setAttribute('TableLimits', JSON.stringify({
 }));
 primitiveBank.table.setAttribute("RoundToZero", true);
 primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
+primitiveBank.table.setAttribute("NumberLength", JSON.stringify({
+	"usePrecision": true, // otherwise uses decimal 
+	"precision": 4,
+	"decimal": 2,
+}));
 primitiveBank.table.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.table);
 
