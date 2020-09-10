@@ -7511,7 +7511,9 @@ class DisplayDialog extends jqDialog {
 		let results = [];
 		if (search_lc == "") {
 			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
-			results = prims.sort((a,b) => {
+			results = prims.filter(p => // filter already added primitives 
+				this.displayIdList.includes(getID(p)) === false 
+			).sort((a,b) => { // sort by type and by alphabetical 
 				let order_diff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
 				if (order_diff !== 0) {
 					return order_diff;
