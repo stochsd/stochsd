@@ -126,6 +126,9 @@ var scatterplot_class=function() {
 
         console.log(scatterplot_chart);
         
+        $("#cmd_scatterplot_flip").css("left", width/2-20);
+        $("#cmd_scatterplot_flip").css("top", height-80);
+
         $("#cmd_scatterplot_print").css("left",width-120);
         $("#cmd_scatterplot_print").css("top",height-80);
 
