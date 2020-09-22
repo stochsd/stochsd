@@ -7251,7 +7251,9 @@ class DisplayDialog extends jqDialog {
 					<td>
 						<input class="round-to-zero-checkbox enter-apply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enter-apply" type="text" value="no value"/>
 					</td>
-					<td>
+				</tr>
+				<tr>
+					<td style="text-align: center;">
 						<button class="default-round-to-zero-button enter-apply">Reset to Default</button>
 					</td>
 				</tr>
