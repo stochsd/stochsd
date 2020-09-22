@@ -9892,14 +9892,14 @@ class EquationListDialog extends jqDialog {
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
 					{ header: "Init. Value", 	cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Dif. Equation", 		
+					{ header: "Recalculated as", 		
 						cellFunc: (prim) => {  
 							let flows = primitives("Flow");
 							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
 							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
-							let input_str = input.map(f => ` +Δt*${getName(f)}`).join(""); 
-							let output_str = output.map(f => ` -Δt*${getName(f)}`).join("");
-							return input_str+output_str;
+							let input_str = input.map(f => ` +Δt*${makePrimitiveName(getName(f))}`).join(""); 
+							let output_str = output.map(f => ` -Δt*${makePrimitiveName(getName(f))}`).join("");
+							return makePrimitiveName(getName(prim))+input_str+output_str;
 						}
 					},
 					{ 
