@@ -12,7 +12,7 @@
    version="1.1"
    id="svg4506"
    sodipodi:docname="straighten_link.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <metadata
      id="metadata4512">
     <rdf:RDF>
@@ -36,63 +36,59 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1600"
-     inkscape:window-height="837"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
      id="namedview4508"
      showgrid="false"
      inkscape:zoom="4.72"
-     inkscape:cx="4.8838079"
+     inkscape:cx="-29.544158"
      inkscape:cy="40.335196"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg4506" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1.8555414,97.43245 C 39.692998,81.327483 -7.630913,19.011056 32.641628,11.821019"
+     id="path817"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
   <g
-     id="g854"
-     transform="translate(-6.3559322,-7.2033898)">
+     node_id="49"
+     id="g4504"
+     transform="matrix(2.8716209,-0.53869036,0.57734682,3.0776887,-347.24161,-235.84766)"
+     style="fill:#ffffff">
     <g
-       transform="matrix(2.8716209,-0.53869036,0.57734682,3.0776887,-340.88568,-228.64427)"
-       id="g4504"
-       node_id="49">
-      <g
-         id="g4502"
-         transform="rotate(90,8.6428593,108.78571)">
-        <path
-           style="fill:#000000;stroke:#000000"
-           inkscape:connector-curvature="0"
-           id="path4500"
-           d="M 0,0 -2,7 H 2 Z" />
-      </g>
+       transform="rotate(90,8.6428593,108.78571)"
+       id="g4502"
+       style="fill:#ffffff">
+      <path
+         d="M 0,0 -2,7 H 2 Z"
+         id="path4500"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000" />
     </g>
-    <path
-       sodipodi:nodetypes="cc"
-       inkscape:connector-curvature="0"
-       id="path817"
-       d="M 8.2114736,104.63584 C 46.04893,88.530873 -1.2749808,26.214446 38.99756,19.024409"
-       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
+  <path
+     inkscape:connector-curvature="0"
+     id="path819"
+     d="M 63.928834,97.745167 95.541766,17.5651"
+     style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:nodetypes="cc" />
   <g
-     id="g870"
-     transform="translate(3.6016949,0.63559322)">
-    <path
-       sodipodi:nodetypes="cc"
-       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 60.327139,97.109574 91.940071,16.929507"
-       id="path819"
-       inkscape:connector-curvature="0" />
+     transform="matrix(1.0423318,-2.7294575,2.9253237,1.1171296,-317.82766,220.98935)"
+     id="g830"
+     node_id="49"
+     style="fill:#ffffff">
     <g
-       node_id="49"
-       id="g830"
-       transform="matrix(1.0423318,-2.7294575,2.9253237,1.1171296,-321.42935,220.35376)">
-      <g
-         transform="rotate(90,8.6428593,108.78571)"
-         id="g828">
-        <path
-           d="M 0,0 -2,7 H 2 Z"
-           id="path826"
-           inkscape:connector-curvature="0"
-           style="fill:#000000;stroke:#000000" />
-      </g>
+       id="g828"
+       transform="rotate(90,8.6428593,108.78571)"
+       style="fill:#ffffff">
+      <path
+         style="fill:#ffffff;stroke:#000000"
+         inkscape:connector-curvature="0"
+         id="path826"
+         d="M 0,0 -2,7 H 2 Z" />
     </g>
   </g>
   <path

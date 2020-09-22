@@ -46,6 +46,8 @@ The version is dependent on the file: `stochsd/OpenSystemDynamics/src/version.js
 
   It might be because more then one version of nwjs was started and has created conflicting info in `c:/user/[username]/AppData/StochSD`. Delete this folder, and restart if necessary.
 
+  **NOTE: Use NW.JS v0.48.2**
+
   #To update website 
 
 - Open repo `website_stochsd` 

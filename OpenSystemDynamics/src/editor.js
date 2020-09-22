@@ -987,7 +987,7 @@ class OnePointer extends BaseObject {
 		this.group.setAttribute("transform", "translate("+this.pos[0]+","+this.pos[1]+")");
 		
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
-		if (this.icons) {
+		if (this.icons && prim) {
 			let VE = prim.getAttribute("ValueError");
 			this.icons.set("questionmark", VE ? "visible" : "hidden");
 			this.icons.set("dice", ( ! VE && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
@@ -1305,14 +1305,7 @@ class NumberboxVisual extends BasePrimitive {
 			return;		
 		}
 		let valueString = "";
-		let primitiveName = "";
 		let lastValue = RunResults.getLastValue(this.targetID);
-		let imPrimtiive = findID(this.targetID);
-		if (imPrimtiive) {
-			primitiveName += makePrimitiveName(getName(imPrimtiive));
-		} else {
-			primitiveName += "Unkown primitive";
-		}
 		if (lastValue || lastValue === 0) {
 			let roundToZero = this.primitive.getAttribute("RoundToZero");
 			let roundToZeroAtValue = -1;
@@ -1324,7 +1317,13 @@ class NumberboxVisual extends BasePrimitive {
 					roundToZeroAtValue = Number(roundToZeroAtValue);
 				}
 			}
-			valueString = format_number(lastValue, { "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 });
+			let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+			let number_options = {
+				"round_to_zero_limit": roundToZeroAtValue, 
+				"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+				"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+			};
+			valueString = format_number(lastValue, number_options);
 		} else {
 			valueString += "_";
 		}
@@ -2340,33 +2339,39 @@ class TableVisual extends HtmlTwoPointer {
 		html += "</thead><tbody>";
 
 		let time_step_str = `${getTimeStep()}`;
-		let decimals = decimals_in_value_string(time_step_str);
+		let time_decimals = decimals_in_value_string(time_step_str);
+
+		// We must get the data in column_index+1 since column 1 is reserved for time
+		let roundToZero = this.primitive.getAttribute("RoundToZero");
+		let roundToZeroAtValue = -1;
+		if (roundToZero === "true") {
+			roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+			if (isNaN(roundToZeroAtValue)) {
+				roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
+			} else {
+				roundToZeroAtValue = Number(roundToZeroAtValue);
+			}
+		}
+
+		let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let number_options = {
+			"round_to_zero_limit": roundToZeroAtValue, 
+			"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
+			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
+		};
 
 		for(let row_index in this.data.results) {
 			html += "<tr>";
 			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
-				// We must get the data in column_index+1 since column 1 is reserved for time
-				let roundToZero = this.primitive.getAttribute("RoundToZero");
-				let roundToZeroAtValue = -1;
-				if (roundToZero === "true") {
-					roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-					if (isNaN(roundToZeroAtValue)) {
-						roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
-					} else {
-						roundToZeroAtValue = Number(roundToZeroAtValue);
-					}
-				}
 				if (column_index == 0) {
+					// time column 
 					let valueString = format_number(
 						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": decimals }
+						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": time_decimals }
 					);
 					html += `<td class="time-value-cell">${valueString}</td>`;
 				} else {
-					let valueString = format_number(
-						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "precision": 3 }
-					);
+					let valueString = format_number(this.data.results[row_index][column_index], number_options);
 					html += `<td class="prim-value-cell">${valueString}</td>`;
 				}
 			}
@@ -3762,13 +3767,17 @@ class LinkVisual extends BaseConnection {
 		this.setEndAttach(null);
 		super.clean();
 	}
+	clearImage() {
+		super.clearImage();
+		// curve must be removed seperatly since it is not part of any group 
+		this.curve.remove();
+	}
 
 	setColor(color) {
 		this.color = color;
 		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
-		this.arrowPath.setAttribute("fill", color);
 		this.start_anchor.setColor(color);
 		this.end_anchor.setColor(color);
 		this.b1_anchor.setColor(color);
@@ -3783,18 +3792,19 @@ class LinkVisual extends BaseConnection {
 		let [x3, y3] = this.b2_anchor.getPos();
 		let [x4, y4] = this.end_anchor.getPos();
 		
-		const headHalfWidth = 2;
-		this.arrowPath = svg_from_string(`<path d="M0,0 -${headHalfWidth},7 ${headHalfWidth},7 Z" stroke="black" fill="black"/>`);
+		this.arrowPath = svg_from_string(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = svg_group([this.arrowPath]);
 		svg_translate(this.arrowHead, x4, y4);
 
 		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"pointer-events":"all", "stroke":"none", "stroke-width":"10"}); 
-		this.curve = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
+		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, {"stroke":"black", "stroke-width":"1"});
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 		
-		this.group = svg_group([this.click_area,this.curve,this.arrowHead]);
+		// curve is not included in group since it is one-way and will therefore span an area
+		// The area will be clickable if included in the group 
+		this.group = svg_group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id",this.id);
 
 		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", {"stroke-dasharray": "5 5"});
@@ -3805,7 +3815,7 @@ class LinkVisual extends BaseConnection {
 		this.element_array = this.element_array.concat([this.b1_line,this.b2_line]);
 	}
 	dashLine() {
-		this.curve.setAttribute("stroke-dasharray", "4 6");
+		this.curve.setAttribute("stroke-dasharray", "6 4");
 	}
 	undashLine() {
 		this.curve.setAttribute("stroke-dasharray", "");
@@ -6831,6 +6841,14 @@ class jqDialog {
 		this.beforeCreateDialog();
 		this.dialog = $(this.dialogDiv).dialog(this.dialogParameters);
 	}
+	bindEnterApplyEvents() {
+		$(this.dialogContent).find(".enter-apply").keydown(event => {
+			if (event.keyCode === keyboard["enter"]) {
+				event.preventDefault();
+				this.applyChanges();
+			}
+		});
+	}
 	applyChanges() {
 		this.makeApply();
 		$(this.dialog).dialog('close');
@@ -7032,6 +7050,7 @@ class DisplayDialog extends jqDialog {
 		this.displayIdList = [];
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
+		this.displayLimit = undefined;
 	}
 
 	getDefaultPlotPeriod() {
@@ -7059,6 +7078,20 @@ class DisplayDialog extends jqDialog {
 	acceptsId(id) {
 		let type = getType(findID(id));
 		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
+	}
+
+	removeIdToDisplay(id) {
+		let idxToRemove = this.displayIdList.indexOf(id);
+		if (idxToRemove !== -1) {
+			this.displayIdList.splice(idxToRemove, 1);
+		}
+	}
+
+	addIdToDisplay(id) {
+		let index = this.displayIdList.indexOf(id)
+		if (index === -1) {
+			this.displayIdList.push(id)
+		}
 	}
 
 	removeIdToDisplay(id) {
@@ -7117,6 +7150,99 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool.publish("window closed");
 	}
 
+	renderNumberLengthHtml() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		return (`<table class="modern-table">
+			<tr>
+				<td>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="precision" name="number-length" value="precision"
+					${numLength["usePrecision"] ? "checked" : ""}>
+					<label for="precision">Precision<label/>
+				</td>
+				<td>
+					<input class="precision-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? '' : 'disabled'}
+					value="${numLength["precision"]}">
+				</td>
+			</tr>	
+			<tr>
+				<td>
+					<input class="num-length-radio enter-apply" type="radio" 
+					id="decimal" name="number-length" value="decimal" 
+					${numLength["usePrecision"] ? '' : 'checked'}>
+					<label for="decimal">Decimal<label/>
+				</td>
+				<td>
+					<input class="decimal-field enter-apply" type="text" style="float: right;"
+					${numLength["usePrecision"] ? 'disabled' : ''}
+					value="${numLength["decimal"]}">
+				</td>
+			</tr>
+		</table>
+		<div class="num-len-warn-div warning"></div>`);
+	}
+
+	bindNumberLengthEvents() {
+		$(this.dialogContent).find(".num-length-radio[name='number-length']").change(event => {
+			if (event.target.value === "precision") {
+				let precision_field = $(this.dialogContent).find(".precision-field");
+				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", true);
+				precision_field.prop("disabled", false);
+				this.checkValidNumberLength(precision_field.val());
+			} else if (event.target.value === "decimal") {
+				let decimal_field = $(this.dialogContent).find(".decimal-field");
+				$(this.dialogContent).find(".precision-field").prop("disabled", true);
+				decimal_field.prop("disabled", false);
+				this.checkValidNumberLength(decimal_field.val());
+			}
+		});
+		$(this.dialogContent).find(".precision-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
+		$(this.dialogContent).find(".decimal-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
+	}
+
+	checkValidNumberLength(value) {
+		if (isNaN(value)) {
+			$(".num-len-warn-div").html(`${value} is not a decimal number.`);
+			return false;
+		} else if (Number.isInteger(parseFloat(value)) === false) {
+			$(".num-len-warn-div").html(`${value} is not an integer.`);
+			return false;
+		} else if (parseInt(value) < 0) {
+			$(".num-len-warn-div").html(`${value} is negative.`);
+			return false;
+		} else if (parseInt(value) >= 12) {
+			$(".num-len-warn-div").html(`${value} is above the limit of 12.`);
+			return false;
+		} else {
+			$(".num-len-warn-div").html("");
+			return true;
+		}
+	}
+
+	applyNumberLength() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let usePrecision = $(this.dialogContent).find("input[name='number-length']:checked").val() === "precision";
+		if (usePrecision) {
+			let value = $(this.dialogContent).find(".precision-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["precision"] = parseInt(value);
+				numLength["usePrecision"] = usePrecision;
+			}
+		} else {
+			let value = $(this.dialogContent).find(".decimal-field").val();
+			if (this.checkValidNumberLength(value)) {
+				numLength["decimal"] = parseInt(value);	
+				numLength["usePrecision"] = usePrecision;
+			}
+		}
+		this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
+	}
+
 	/* RoundToZero html and logic starts here */
 	renderRoundToZeroHtml() {
 		return (`
@@ -7133,7 +7259,7 @@ class DisplayDialog extends jqDialog {
 			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
-	roundToZeroBeforeShow() {
+	bindRoundToZeroEvents() {
 		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
 		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
 
@@ -7155,13 +7281,6 @@ class DisplayDialog extends jqDialog {
 
 		roundToZeroField.keyup((event) => {
 			this.checkValidRoundAtZeroAtField();
-		});
-		
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
 		});
 	}
 	setRoundToZero(roundToZero) {
@@ -7205,7 +7324,7 @@ class DisplayDialog extends jqDialog {
 		}
 	}
 
-	roundToZeroMakeApply() {
+	applyRoundToZero() {
 		if (this.primitive) {
 			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
@@ -7363,60 +7482,129 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
-		for (let p of primitives) {
-			let nodeType = p.value.nodeName;
-			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
-				prims_object["const"].push(p);
-			} else {
-				prims_object[nodeType].push(p);
-			}
-		}
-
-		return (`
-			<table class="modern-table" >
-				${Object.keys(prims_object).map((type, type_idx) => 
-					prims_object[type].map((p, idx) => `
-						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
-							<td>${getName(p)}</td>
-							<td style="text-align: center;">
-								<input
-									class="primitive-checkbox enter-apply"
-									type="checkbox"
-									${checkedHtml(this.getDisplayId(getID(p)))}
-									data-name="${getName(p)}"
-									data-id="${getID(p)}"
-								>
-							</td>
-						</tr>
-					`).join('')
-				).join('')}
-			</table>
-		`);
-	}
 	makeApply() {
 		if ($(this.dialogContent).find(".line-width :selected")) {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
+	renderPrimitiveListHtml() {
+		// We store the selected variables inside the dialog
+		return (`
+			<div class="selected-div" style="border: 1px solid black;"></div>
+			<div class="vertical-space"></div>
+			<div class="center-vertically-container">
+				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
+				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+			</div>
+			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
+		`);
+	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			let clickedElement = event.target;
-			let idClicked = $(clickedElement).attr("data-id");
-			let checked = $(clickedElement).prop("checked");
-			this.setDisplayId(idClicked,checked);
-			this.subscribePool.publish("primitive check changed");
+		$(this.dialogContent).find(".primitive-filter-input").keyup(() => {
+			this.updateNotSelectedPrimitiveList();
 		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
+		this.updateNotSelectedPrimitiveList();
+		this.updateSelectedPrimitiveList();
+	}
+	getSearchPrimitiveResults(search_lc) {
+		let prims = this.getAcceptedPrimitiveList();
+		let results = [];
+		if (search_lc == "") {
+			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
+			results = prims.filter(p => // filter already added primitives 
+				this.displayIdList.includes(getID(p)) === false 
+			).sort((a,b) => { // sort by type and by alphabetical 
+				let order_diff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
+				if (order_diff !== 0) {
+					return order_diff;
+				} else {
+					return getName(a) > getName(b);
+				}
+			});
+		} else {
+			results = prims.filter(p => // filter search
+				getName(p).toLowerCase().includes(search_lc)
+			).filter(p => // filter already added primitives 
+				this.displayIdList.includes(getID(p)) === false 
+			).sort((a, b) => // sort by what search word appears first 
+				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
+			);
+		}
+		return results;
+	}
+	updateNotSelectedPrimitiveList() {
+		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
+		let results = this.getSearchPrimitiveResults(search_lc);
+		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
+		notSelectedDiv.html(`
+			<table class="modern-table"> 
+				${results.map(p => `
+					<tr>
+						<td style="padding: 0;">
+							<button class="primitive-add-button" data-id="${getID(p)}" 
+								${limitReached ? "disabled" : ""} 
+								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+								+
+							</button>
+						</td>
+						<td style="width: 100%;">
+						<div class="center-vertically-container">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+							${getName(p)}
+						</div>
+						</td>
+					</tr>
+				`).join("")}
+			</table>
+		`);
+		$(this.dialogContent).find(".primitive-add-button").click((event) => {
+			this.primitiveAddButton($(event.target).attr("data-id"));
 		});
+	}
+	primitiveAddButton(id) {
+		this.addIdToDisplay(id);
+		this.updateSelectedPrimitiveList();
+		$(this.dialogContent).find(".primitive-filter-input").val("");
+		this.updateNotSelectedPrimitiveList();
+	}
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+				</tr>
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
 	}
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
@@ -7457,6 +7645,16 @@ class TimePlotDialog extends DisplayDialog {
 		if (idxToRemove !== -1) {
 			this.displayIdList.splice(idxToRemove, 1);
 			this.sides.splice(idxToRemove, 1);
+		}
+	}
+
+	addIdToDisplay(id, side) {
+		let index = this.displayIdList.indexOf(id)
+		if (index === -1) {
+			this.displayIdList.push(id)
+			this.sides.push(side) 
+		} else {
+			this.sides[index] = side 
 		}
 	}
 
@@ -7649,77 +7847,70 @@ class TimePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
 	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		let prims_object = { "Stock": [], "Flow": [], "Variable": [], "const": [], "Converter": [] };
-		for (let p of primitives) {
-			let nodeType = p.value.nodeName;
-			if ( nodeType === "Variable" && p.getAttribute("isConstant") === "true") {
-				prims_object["const"].push(p);
-			} else {
-				prims_object[nodeType].push(p);
-			}
-		}
-		return (`
-			<table class="modern-table">
-			<tr>
-				<th style="text-align: center;" >Primitives</th>
-				<th>Left</th>
-				<th>Right</th>
-			</tr>
-				${Object.keys(prims_object).map((type, type_idx) => 
-					prims_object[type].map((p, idx) => `
-						<tr style="${type_idx !== 0 && idx===0 ? "border-top: 5px solid #ddd": ""}">
-							<td>${getName(p)}</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply" 
-									type="checkbox" 
-									${checkedHtml(this.getDisplayId(getID(p), "L"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="L"
-								>
-							</td>
-							<td style="text-align: center;">
-								<input 
-									class="primitive-checkbox enter-apply"
-									type="checkbox"
-									${checkedHtml(this.getDisplayId(getID(p), "R"))} 
-									data-name="${getName(p)}" 
-									data-id="${getID(p)}"
-									data-side="R"
-								>
-							</td>
-						</tr>
-					`).join('')
-				).join('')}
-			</table>
-		`);
+	primitiveAddButton(id) {
+		this.addIdToDisplay(id, "L");
+		this.updateSelectedPrimitiveList();
+		$(this.dialogContent).find(".primitive-filter-input").val("");
+		this.updateNotSelectedPrimitiveList();
 	}
-	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			let clickedElement = event.target;
-			let side = $(clickedElement).attr("data-side");
-			
-			// Remove opposite checkmark
-			let commonParent = $($($(clickedElement)[0].parentNode)[0].parentNode);
-			if (side === "R") {
-				$(commonParent[0].children[1].children[0]).removeAttr("checked");
-			} else {
-				$(commonParent[0].children[2].children[0]).removeAttr("checked");
-			}
-			
-			this.subscribePool.publish("primitive check changed");
-		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Left</td>
+					<th>Right</td>
+				</tr>
+				${this.displayIdList.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="L" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "L"))}
+								/>
+							</td>
+							<td style="padding: 0; text-align: center;">
+								<input type="checkbox" class="side-checkbox" data-side="R" data-id="${id}"
+									${checkedHtml(this.getDisplayId(id, "R"))}
+								/>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+			$(this.dialogContent).find(".side-checkbox").click(event => {
+				let id = $(event.target).attr("data-id");
+				let side = $(event.target).attr("data-side");
+				let checked = $(event.target).prop("checked");
+				if (! checked) {
+					side = (side === "L") ? "R" : "L"; 	
+				}
+				this.addIdToDisplay(id, side);
+				this.updateSelectedPrimitiveList();
+			})
+		}
 	}
 	makeApply() {
 		super.makeApply();
@@ -7739,20 +7930,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));
-
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
-		this.sides = [];
-		this.displayIdList = [];
-		for(let i = 0; i < primitiveCheckboxes.length; i++) {
-			let box = primitiveCheckboxes[i];
-			let id = box.getAttribute("data-id");
-			let side = box.getAttribute("data-side");
-			let name = box.getAttribute("data-name");
-			if (box.checked) {
-				this.displayIdList.push(id.toString());
-				this.sides.push(side);
-			}
-		}
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -7764,7 +7941,6 @@ class TimePlotDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderPrimitiveListHtml()}
 					</div>
-					
 					<div class="table-cell">
 						${this.renderPlotPerHtml()}
 						<div class="vertical-space"></div>
@@ -7783,6 +7959,7 @@ class TimePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.bindPrimitiveListEvents();
 		this.bindPlotPerEvents();
 		this.bindAxisLimitsEvents();
@@ -7817,7 +7994,7 @@ class ComparePlotDialog extends DisplayDialog {
 		let index = this.displayIdList.indexOf(id)
 		return (index != -1);
 	}
-	
+
 	setIdsToDisplay(idList) {
 		this.displayIdList = [];
 		for(let i in idList) {
@@ -7967,15 +8144,7 @@ class ComparePlotDialog extends DisplayDialog {
 		}
 	}
 	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-checkbox").click((event) => {
-			this.subscribePool.publish("primitive check changed");
-		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		super.bindPrimitiveListEvents();
 		$(this.dialogContent).find(".clear-button").click((event) => {
 			this.clear = true;
 		});
@@ -7995,18 +8164,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 
-		this.keep =  $(this.dialogContent).find(".keep_checkbox")[0].checked;
-
-		let primitiveCheckboxes = $(this.dialogContent).find(".primitive-checkbox");
-		this.displayIdList = [];
-		for(let i = 0; i < primitiveCheckboxes.length; i++) {
-			let box = primitiveCheckboxes[i];
-			let id = box.getAttribute("data-id");
-			let name = box.getAttribute("data-name");
-			if (box.checked) {
-				this.displayIdList.push(id.toString());
-			}
-		}
+		this.keep =  $(this.dialogContent).find(".keep_checkbox").prop("checked");
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
@@ -8037,6 +8195,7 @@ class ComparePlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
@@ -8049,6 +8208,7 @@ class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
+		this.displayLimit = 1;
 	}
 	renderHistogramOptionsHtml() {
 		return(`
@@ -8125,8 +8285,9 @@ class HistoPlotDialog extends DisplayDialog {
 				</div>
 			</div>`
 		);
-		this.bindPrimitiveListEvents();
 
+		this.bindEnterApplyEvents();
+		this.bindPrimitiveListEvents();
 		this.histogramOptionsBeforeShow();
 	}
 	makeApply() {
@@ -8168,7 +8329,7 @@ class XyPlotDialog extends DisplayDialog {
 		if (autoPlotPer) {
 			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
 		}
-
+		this.displayLimit = 2;
 	}
 	renderAxisLimitsHTML() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8316,6 +8477,47 @@ class XyPlotDialog extends DisplayDialog {
 		);
 	}
 
+	updateSelectedPrimitiveList() {
+		let selectedDiv = $(this.dialogContent).find(".selected-div");
+		if (this.displayIdList.length === 0) {
+			selectedDiv.html("No primitives selected");
+		} else {
+			let axies = ["X", "Y"];
+			selectedDiv.html(`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Axis</th>
+				</tr>
+				${this.displayIdList.map((id, index) => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+						</td>
+						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
+					</tr>
+				`).join("")}
+			</table>`);
+			$(this.dialogContent).find(".primitive-remove-button").click(event => {
+				let remove_id = $(event.target).attr("data-id");
+				this.removeIdToDisplay(remove_id);
+				this.updateSelectedPrimitiveList();
+				this.updateNotSelectedPrimitiveList();
+			});
+		}
+	}
+
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
@@ -8341,6 +8543,7 @@ class XyPlotDialog extends DisplayDialog {
 		`;
 		this.setHtml(contentHTML);
 		
+		this.bindEnterApplyEvents();
 		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
@@ -8553,6 +8756,8 @@ class TableDialog extends DisplayDialog {
 					<div class="table-cell">
 						${this.renderTableLimitsHTML()}
 						<div class="vertical-space"></div>
+						${this.renderNumberLengthHtml()}
+						<div class="vertical-space"></div>
 						${this.renderRoundToZeroHtml()}
 						<div class="vertical-space"></div>
 						${this.renderExportHtml()}
@@ -8561,7 +8766,9 @@ class TableDialog extends DisplayDialog {
 			</div>
 		`);
 
-		this.roundToZeroBeforeShow();
+		this.bindEnterApplyEvents();
+		this.bindNumberLengthEvents();
+		this.bindRoundToZeroEvents();
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
 		
@@ -8579,7 +8786,8 @@ class TableDialog extends DisplayDialog {
 	}
 	makeApply() {
 		this.applyAxisLimits();
-		this.roundToZeroMakeApply();
+		this.applyNumberLength();
+		this.applyRoundToZero();
 	}
 }
 
@@ -8605,13 +8813,9 @@ class NewModelDialog extends jqDialog {
 			</td>
 		</tr>
 		</table>
-	`);
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		`);
+		this.bindEnterApplyEvents();
+
 		$(this.dialogContent).find(".input-timeunits-default-value").click((event) => {
 			let selectedUnit = $(event.target).data("default-value");
 			$(this.dialogContent).find(".input-timeunits").val(selectedUnit);
@@ -8687,12 +8891,8 @@ class SimulationSettings extends jqDialog {
 		</table>
 		<div class="simulation-settings-warning"></div>
 		`);
-		$(this.dialogContent).find(".enter-apply").keydown((event) =>{
-			if(event.keyCode == keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
-			}
-		});
+		
+		this.bindEnterApplyEvents();
 
 		this.start_field = $(this.dialogContent).find(".input-start");
 		this.length_field = $(this.dialogContent).find(".input-length");
@@ -8774,12 +8974,10 @@ class TimeUnitDialog extends jqDialog {
 		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
 		});
-		$(this.dialogContent).find(".enter-apply").keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
-					event.preventDefault();
-					this.dialogParameters.buttons["Apply"]();
-				}
+		$(this.dialogContent).find(".enter-apply").keydown(event => {
+			if (event.keyCode === keyboard["enter"]) {
+				event.preventDefault();
+				this.dialogParameters.buttons["Apply"]();
 			}
 		});
 	}
@@ -8851,6 +9049,7 @@ class GeometryDialog extends DisplayDialog {
 
 	beforeShow() {
 		this.setHtml(`<div>${this.renderStrokeHtml()}</div>`);
+		this.bindEnterApplyEvents();
 	}
 	makeApply() {
 		let dashArray = $(this.dialogContent).find(".dash-select :selected").val();
@@ -8898,6 +9097,7 @@ class LineDialog extends GeometryDialog {
 			<div class="vertical-space"></div>
 			${this.renderStrokeHtml()}
 		</div>`);
+		this.bindEnterApplyEvents();
 	}
 	makeApply() {
 		this.primitive.setAttribute("ArrowHeadStart", $(this.dialogContent).find(".arrow-start-checkbox").prop("checked"));
@@ -8916,19 +9116,24 @@ class NumberboxDialog extends DisplayDialog {
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
+					${this.renderNumberLengthHtml()}
+					<div class="vertical-space"></div>
 					${this.renderRoundToZeroHtml()}
 				</div>
 			`);
-			this.roundToZeroBeforeShow();
+			this.bindNumberLengthEvents();
+			this.bindRoundToZeroEvents();
 		} else {
 			this.setHtml(`
 				Target primitive not found
 			`);	
 		}
+		this.bindEnterApplyEvents();
 	}
 
 	makeApply() {
-		this.roundToZeroMakeApply();
+		this.applyNumberLength();
+		this.applyRoundToZero();
 	}
 }
 
@@ -9160,7 +9365,10 @@ class EquationEditor extends jqDialog {
 							</div>
 							<div class="restrict-to-non-negative-div">
 								<br/>
-								<label><input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/> Restrict to non-negative values</label>
+								<label>
+								<input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/>
+								Restrict to non-negative values</label>
+								<div class="note restrict-note-div"></div>
 							</div>
 						</div>
 					</div>
@@ -9193,21 +9401,19 @@ class EquationEditor extends jqDialog {
 			} 
 		});
 
-		$(this.dialogContent).find(".enter-apply").keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
-					event.preventDefault();
-					this.applyChanges();
-				}
-			}
-		});
+		this.bindEnterApplyEvents();
 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		this.referenceDiv = $(this.dialogContent).find(".primitive-references-div").get(0);
 		this.restrictNonNegativeCheckbox = $(this.dialogContent).find(".restrict-to-non-negative-checkbox").get(0);
 		this.restrictNonNegativeDiv = $(this.dialogContent).find(".restrict-to-non-negative-div").get(0);
+		this.restrictNote = $(this.dialogContent).find(".restrict-note-div").get(0);
 		
+		$(this.restrictNonNegativeCheckbox).click(() => {
+			this.updateRestrictNoteText();
+		});
+
 		let helpData = getFunctionHelpData();
 	
 		let functionListToHtml = function(functionList) {
@@ -9326,7 +9532,9 @@ class EquationEditor extends jqDialog {
 			// Otherwise hide that option
 			$(this.restrictNonNegativeDiv).hide();
 		}
-		
+		this.updateRestrictNoteText();
+
+
 		// Create reference list
 		let referenceList = getLinkedPrimitives(this.primitive);
 	
@@ -9366,6 +9574,17 @@ class EquationEditor extends jqDialog {
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 			this.storeValueSelectionRange();
+		}
+	}
+	updateRestrictNoteText() {
+		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
+		if (checked) {
+			$(this.restrictNote).html(`
+				NOTE: Restricting to non-negative values may have unintended consequences.<br/>
+				Use only when you have a well motivated reason.
+			`);
+		} else {
+			$(this.restrictNote).html("");
 		}
 	}
 	templateClick(event) {
@@ -9670,8 +9889,22 @@ class EquationListDialog extends jqDialog {
 				primitives: Stocks,
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
-					{ header: "Initial Value", 	cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("NonNegative") === "true" ?  "≥0" : "";} },
+					{ header: "Init. Value", 	cellFunc: getValue, style: "font-family: monospace;" },
+					{ header: "Dif. Equation", 		
+						cellFunc: (prim) => {  
+							let flows = primitives("Flow");
+							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
+							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
+							let input_str = input.map(f => ` +Δt*${getName(f)}`).join(""); 
+							let output_str = output.map(f => ` -Δt*${getName(f)}`).join("");
+							return input_str+output_str;
+						}
+					},
+					{ 
+						header: "Restricted", 
+						cellFunc: (prim) => prim.getAttribute("NonNegative") === "true" ?  `${getName(prim)} ≥ 0` : "",
+						style: "text-align: center;"
+					},
 				]
 			});
 		}
@@ -9685,7 +9918,11 @@ class EquationListDialog extends jqDialog {
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
 					{ header: "Rate", 			cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Restricted", 	cellFunc: (prim) => { return prim.getAttribute("OnlyPositive") === "true" ?  "≥0" : "";} },
+					{ 
+						header: "Restricted", 	
+						cellFunc: (prim) => prim.getAttribute("OnlyPositive") === "true" ?  `${getName(prim)} ≥ 0` : "", 
+						style: "text-align: center;"
+					},
 				]
 			});
 		}

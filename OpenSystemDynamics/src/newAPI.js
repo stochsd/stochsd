@@ -378,3 +378,17 @@ function isTimeUnitOk(timeUnit) {
 function getDefaultAttributeValue(lowercaseNodeName, attribute) {
 	return primitiveBank[lowercaseNodeName].getAttribute(attribute);
 }
+
+/**
+ * Get the type of the primitive
+ * This includes constant which is a type of variable
+ * 
+ */
+
+function getTypeNew(prim) {
+	let type = prim.value.nodeName;
+	if (type === "Variable" && prim.getAttribute("isConstant") === "true") {
+		type = "Constant";
+	}
+	return type;
+}

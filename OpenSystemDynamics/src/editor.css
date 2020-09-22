@@ -19,9 +19,10 @@ text.name_element {
 button {
     cursor: pointer;
     font-size: 14px;
+    border-width: 1.5px;
 }
 
-button:hover {
+button:hover:enabled {
     background-color: #ccc;
 }
 #recent_title {
@@ -173,6 +174,12 @@ table.sticky-table tr:nth-child(even) {
 /* Vertical space start here */
 div.vertical-space {
     height: 12px;
+}
+
+div.center-vertically-container {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
 }
 
 /* Modern Table start here */

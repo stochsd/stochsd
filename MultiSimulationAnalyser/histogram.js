@@ -347,12 +347,12 @@ function mystacktrace() {
         
         min = Number(min);
         max = Number(max);
-        console.log("min "+min);
-        console.log("max "+max);
+        // console.log("min "+min);
+        // console.log("max "+max);
         histogram.bar_width=(max-min)/numbars;
-        console.log("bar width: "+histogram.bar_width);
-        console.log(data);
-        console.log("bars "+numbars);
+        // console.log("bar width: "+histogram.bar_width);
+        // console.log(data);
+        // console.log("bars "+numbars);
         for(var i = 0;i <numbars;i++) {
             var tbar={};
             tbar.bar_min=min+i*histogram.bar_width;
@@ -362,24 +362,24 @@ function mystacktrace() {
             tbar.data=[];
             histogram.bars.push(tbar);
         }
-        console.log("1");
-        console.log(histogram);
+
+        //console.log(histogram);
         for(var i in data) {
             var pos=Math.floor((data[i]-min)/histogram.bar_width);
             if(pos > numbars-1) {
                 histogram.after_bar.push(data[i]);
-                console.log("outside interval data"+data[i]+" pos "+pos);
+                // console.log("outside interval data"+data[i]+" pos "+pos);
                 continue;
             }
             if(pos < 0) {
                 histogram.before_bar.push(data[i]);
-                console.log("outside interval data"+data[i]+" pos "+pos);
+                // console.log("outside interval data"+data[i]+" pos "+pos);
                 continue;
             }
-            console.log("data "+data[i]+" pos "+pos);
+            // console.log("data "+data[i]+" pos "+pos);
             histogram.bars[pos].data.push(data[i]);
         }
-        console.log(histogram);
+        // console.log(histogram);
         return histogram;
     }
     
