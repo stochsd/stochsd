@@ -534,11 +534,6 @@ class NwFileManager extends BaseFileManager {
 		this.exportFileExtension = fileExtension;
 		this.fileExportInput.accept = fileExtension;
 		this.dataToExport = dataToSave;
-		if (this.fileName === "") {
-			this.fileExportInput.nwsaveas = "untitled";
-		} else {
-			this.fileExportInput.nwsaveas = this.fileName;
-		}
 		this.fileExportInput.click();
 	}
 	hasSaveAs() {
