@@ -3038,10 +3038,10 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	updateGraphics() {
 		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
 		
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
@@ -3056,7 +3056,7 @@ class TextAreaVisual extends HtmlTwoPointer {
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
-		$(this.htmlElement).mousedown((event) => {
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
