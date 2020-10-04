@@ -3097,6 +3097,10 @@ class TextAreaVisual extends HtmlTwoPointer {
 		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
 	}
+	setColor(color) {
+		super.setColor(color);
+		this.htmlElement.style.color = color;
+	}
 }
 
 class HistoPlotVisual extends PlotVisual {
