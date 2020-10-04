@@ -3064,11 +3064,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
+		$(this.htmlElement.cutDiv).bind("contextmenu", ()=> {
 			this.doubleClick();
 		});
 
-		$(this.htmlElement).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.doubleClick();
 		});
 
