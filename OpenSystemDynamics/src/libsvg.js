@@ -251,7 +251,7 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	// covers entire screen - never moves
 	// if foreignObject moves in Chrome then automatic scroll
 	let foreign = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
-	foreign.setAttribute("style", `height: 100%; width: 100%;`);
+	foreign.setAttribute("style", `height: 100%; width: 100%; pointer-events: none;`);
 	
 	let cutDiv = document.createElement("div");
 	cutDiv.setAttribute("style", `background: ${fill}; overflow: hidden;`);
