@@ -2394,14 +2394,15 @@ class TableVisual extends HtmlTwoPointer {
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
-		$(this.htmlElement.innerDiv).mousedown((event) => {
+
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.htmlElement.scrollDiv).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.dialog.show();
 		});
 		
@@ -2424,14 +2425,12 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect.x2 = this.endX;
 		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
+
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
 		
-		this.htmlElement.setAttribute("x",this.getMinX());
-		this.htmlElement.setAttribute("y",this.getMinY());
-		this.htmlElement.setAttribute("width",this.getWidth());
-		this.htmlElement.setAttribute("height",this.getHeight());
-		
-		$(this.htmlElement.cutDiv).css("width",this.getWidth());
-		$(this.htmlElement.cutDiv).css("height",this.getHeight());
 		$(this.htmlElement.scrollDiv).css("width",this.getWidth());
 		$(this.htmlElement.scrollDiv).css("height",this.getHeight());
 	}
