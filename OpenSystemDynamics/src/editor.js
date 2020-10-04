@@ -9787,7 +9787,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-40);
+		this.textArea.height(height-50);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
