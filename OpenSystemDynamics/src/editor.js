@@ -3041,12 +3041,6 @@ class TextAreaVisual extends HtmlTwoPointer {
 		this.htmlElement.setY(this.getMinY());
 		this.htmlElement.setWidth(this.getWidth());
 		this.htmlElement.setHeight(this.getHeight());
-		
-		this.clickRect.x1 = this.startX;
-		this.clickRect.y1 = this.startY;
-		this.clickRect.x2 = this.endX;
-		this.clickRect.y2 = this.endY;
-		this.clickRect.update();
 
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
@@ -3056,15 +3050,13 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	makeGraphics() {
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.clickRect = new CoordRect();
-		this.clickRect.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "transparent");
 		
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
-		$(this.clickRect.element).mousedown((event) => {
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
@@ -3072,15 +3064,15 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.clickRect.element).bind("contextmenu", ()=> {
+		$(this.htmlElement.cutDiv).bind("contextmenu", ()=> {
 			this.doubleClick();
 		});
 
-		$(this.clickRect.element).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.doubleClick();
 		});
 
-		this.group = svg_group([this.element, this.clickRect.element]);
+		this.group = svg_group([this.element]);
 		this.group.setAttribute("node_id",this.id);	
 		
 		this.element_array = [this.element];

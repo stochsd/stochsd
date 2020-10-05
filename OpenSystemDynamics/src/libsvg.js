@@ -272,7 +272,7 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	foreign.setAttribute("style", `height: 100%; width: 100%; pointer-events: none;`);
 	
 	let cutDiv = document.createElement("div");
-	cutDiv.setAttribute("style", `background: ${fill}; overflow: hidden;`);
+	cutDiv.setAttribute("style", `background: ${fill}; overflow: hidden; pointer-events: all;`);
 	
 	let contentDiv = document.createElement("div");
 	contentDiv.innerHTML = innerHtml;
