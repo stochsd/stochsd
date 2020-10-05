@@ -2394,14 +2394,15 @@ class TableVisual extends HtmlTwoPointer {
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
-		$(this.htmlElement.innerDiv).mousedown((event) => {
+
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.htmlElement.scrollDiv).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.dialog.show();
 		});
 		
@@ -2424,14 +2425,12 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect.x2 = this.endX;
 		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
+
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
 		
-		this.htmlElement.setAttribute("x",this.getMinX());
-		this.htmlElement.setAttribute("y",this.getMinY());
-		this.htmlElement.setAttribute("width",this.getWidth());
-		this.htmlElement.setAttribute("height",this.getHeight());
-		
-		$(this.htmlElement.cutDiv).css("width",this.getWidth());
-		$(this.htmlElement.cutDiv).css("height",this.getHeight());
 		$(this.htmlElement.scrollDiv).css("width",this.getWidth());
 		$(this.htmlElement.scrollDiv).css("height",this.getHeight());
 	}
@@ -3038,11 +3037,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	updateGraphics() {
 		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
-		
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
+
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
 		this.coordRect.x2 = this.endX;
@@ -3051,12 +3050,13 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	makeGraphics() {
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
-		$(this.htmlElement).mousedown((event) => {
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
@@ -3064,11 +3064,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
+		$(this.htmlElement.cutDiv).bind("contextmenu", ()=> {
 			this.doubleClick();
 		});
 
-		$(this.htmlElement).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.doubleClick();
 		});
 
@@ -3096,6 +3096,10 @@ class TextAreaVisual extends HtmlTwoPointer {
 		// Replace 							new line 		and 	space
 		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.htmlElement.style.color = color;
 	}
 }
 
@@ -9783,7 +9787,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-40);
+		this.textArea.height(height-50);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";

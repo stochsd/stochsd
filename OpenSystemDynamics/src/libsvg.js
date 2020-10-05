@@ -202,12 +202,15 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 	//<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 	// foreignObject tag must be cammel case to work which is wierd
 	
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+
 	// Using a tag on top might be better http://stackoverflow.com/questions/6538918/can-i-embed-html-into-an-html5-svg-fragment
-	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject'); //Create a path in SVG's namespace
+	let foreign = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject'); //Create a path in SVG's namespace
+	foreign.setAttribute("style", "width: 100%; height: 100%; pointer-events: none;");
 
 	let cutDiv = document.createElement("div");
 	// This div is nessecary to avoid overflow in some browsers
-	cutDiv.setAttribute("style","overflow: hidden");
+	cutDiv.setAttribute("style","overflow: hidden; pointer-events: all;");
 	cutDiv.setAttribute("class","cutDiv");
 
 	// This div holds the scrolling and sets the background color
@@ -229,12 +232,27 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 	innerDiv.appendChild(contentDiv);
 	scrollDiv.appendChild(innerDiv);
 	cutDiv.appendChild(scrollDiv);
-	newElement.appendChild(cutDiv);
+	foreign.appendChild(cutDiv);
+	newElement.appendChild(foreign);
 	
+	newElement.cutDiv = cutDiv;
 	newElement.contentDiv = contentDiv;
 	newElement.scrollDiv = scrollDiv;
 	newElement.innerDiv = innerDiv;
-		
+
+	newElement.setX = function(x) { 
+		cutDiv.style.marginLeft = `${x}px`; 
+	}
+	newElement.setY = function(y) {
+		cutDiv.style.marginTop = `${y}px`; 
+	}
+	newElement.setWidth = function(w)  {
+		cutDiv.style.width = `${w}px`; 
+	}
+	newElement.setHeight = function(h) {
+		cutDiv.style.height = `${h}px`; 
+	}
+
 	newElement.setAttribute("x",x); //Set path's data
 	newElement.setAttribute("y",y); //Set path's data	
 	newElement.setAttribute("width",width); //Set path's data
@@ -245,11 +263,16 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 
 
 function svg_foreign(x, y, width, height, innerHtml, fill="white") {
-	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+
+	let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+
+	// covers entire screen - never moves
+	// if foreignObject moves in Chrome then automatic scroll
+	let foreign = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+	foreign.setAttribute("style", `height: 100%; width: 100%; pointer-events: none;`);
 	
 	let cutDiv = document.createElement("div");
-	cutDiv.setAttribute("style", `background: ${fill}; height: 100%; width: 100%;`);
-
+	cutDiv.setAttribute("style", `background: ${fill}; overflow: hidden; pointer-events: all;`);
 	
 	let contentDiv = document.createElement("div");
 	contentDiv.innerHTML = innerHtml;
@@ -263,7 +286,8 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	`);
 	contentDiv.setAttribute("class","contentDiv");
 
-	newElement.appendChild(cutDiv);
+	newElement.appendChild(foreign);
+	foreign.appendChild(cutDiv);
 	cutDiv.appendChild(contentDiv);
 
 	newElement.cutDiv = cutDiv;
@@ -274,6 +298,20 @@ function svg_foreign(x, y, width, height, innerHtml, fill="white") {
 	newElement.setAttribute("width", width); //Set path's data
 	newElement.setAttribute("height", height); //Set path's data
 	svgplane.appendChild(newElement);
+
+	newElement.setX = function(x) { 
+		cutDiv.style.marginLeft = `${x}px`; 
+	}
+	newElement.setY = function(y) {
+		cutDiv.style.marginTop = `${y}px`; 
+	}
+	newElement.setWidth = function(w)  {
+		cutDiv.style.width = `${w}px`; 
+	}
+	newElement.setHeight = function(h) {
+		cutDiv.style.height = `${h}px`; 
+	}
+
 	return newElement;
 }
 
