@@ -374,6 +374,18 @@ var stocres=new function() {
 		export_txt("export.csv", dataset_tostring(dataset, ","));
 	}
 
+	self.import_data_csv_click = function() {
+		console.log("importing csv");
+		let input_file = $("#stocres_cmd_input_csv");
+		let file;
+		input_file.on("change", (event) => {
+			file = event.target.files[0];
+			console.log(file);
+			console.log(file.path);
+		});
+		input_file.click();
+	}
+
 	self.del_click=function() {
 		selectedvars=stocres_varstats.multi_selectedvar();
 		if(selectedvars.length==0) {
@@ -411,7 +423,7 @@ var stocres=new function() {
 		stocres_cmd_histogram.click(self.histogram_click);
 		stocres_cmd_scatterplot.click(self.scatterplot_click);
 		stocres_cmd_export_data_csv.click(self.export_data_csv_click); 
-		
+		stocres_cmd_import_data_csv.click(self.import_data_csv_click);
 		
 		
 		txt_varname.keypress(function(e) {
