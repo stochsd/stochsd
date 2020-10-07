@@ -19,6 +19,10 @@ var stocres=new function() {
 	var run_start_timestamp = 0;
 	var self = this;
 	
+	var csv_import_file = {
+		path: "",
+		data: ""
+	};
 	
 	
 	
@@ -375,14 +379,19 @@ var stocres=new function() {
 	}
 
 	self.import_data_csv_click = function() {
+		stocres_cmd_input_csv.on("change", (event) => {
+			let file = event.target.files[0];
+			if (file) {
+				csv_import_file.name = file.name;
+				let reader = new FileReader();
+				reader.onload = (reader_event) => {
+					csv_import_file.data = reader_event.target.result;
+				};
+				reader.readAsText(file);
+			}
+		});
 		console.log("importing csv");
 		let input_file = $("#stocres_cmd_input_csv");
-		let file;
-		input_file.on("change", (event) => {
-			file = event.target.files[0];
-			console.log(file);
-			console.log(file.path);
-		});
 		input_file.click();
 	}
 
