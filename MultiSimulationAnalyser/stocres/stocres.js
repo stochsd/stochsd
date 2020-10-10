@@ -378,6 +378,33 @@ var stocres=new function() {
 		export_txt("export.csv", dataset_tostring(dataset, ","));
 	}
 
+
+	var csv_to_json = function(csv_string) {
+		let rows = csv_string.split("\n");
+		if (csv_string.includes("\r\n")) {
+			// for windows
+			rows = csv_string.split("\r\n");
+		}
+
+		let keys = rows[0].split(",");
+		let obj = {};
+		for (let i in keys) {
+			obj[keys[i]] = [];
+		}
+
+		for (let i = 1; i < rows.length; i++) {
+			let current_row = rows[i].split(",");
+			for (let j in current_row) {
+				if (isNaN(current_row[j])) {
+					obj[keys[j]].push(current_row[j]);
+				} else {
+					obj[keys[j]].push(Number(current_row[j]));
+				}
+			}
+		}
+		return obj;
+	}
+
 	self.import_data_csv_click = function() {
 		stocres_cmd_input_csv.on("change", (event) => {
 			let file = event.target.files[0];
