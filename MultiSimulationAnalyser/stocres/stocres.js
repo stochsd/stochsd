@@ -19,6 +19,10 @@ var stocres=new function() {
 	var run_start_timestamp = 0;
 	var self = this;
 	
+	var csv_import_file = {
+		path: "",
+		data: ""
+	};
 	
 	
 	
@@ -374,6 +378,62 @@ var stocres=new function() {
 		export_txt("export.csv", dataset_tostring(dataset, ","));
 	}
 
+
+	var csv_to_json = function(csv_string) {
+		let rows = csv_string.split("\n");
+		if (csv_string.includes("\r\n")) {
+			// for windows
+			rows = csv_string.split("\r\n");
+		}
+
+		let keys = rows[0].split(",");
+		let obj = {};
+		for (let i in keys) {
+			obj[keys[i]] = [];
+		}
+
+		for (let i = 1; i < rows.length; i++) {
+			let current_row = rows[i].split(",");
+			for (let j in current_row) {
+				if (isNaN(current_row[j])) {
+					obj[keys[j]].push(current_row[j]);
+				} else {
+					obj[keys[j]].push(Number(current_row[j]));
+				}
+			}
+		}
+		return obj;
+	}
+
+	self.import_data_csv_click = function() {
+		stocres_cmd_input_csv.on("change", (event) => {
+			let file = event.target.files[0];
+			if (file) {
+				csv_import_file.name = file.name;
+				let reader = new FileReader();
+				reader.onload = (reader_event) => {
+					csv_import_file.data = reader_event.target.result;
+					let data = csv_to_json(csv_import_file.data);
+					if (data.hasOwnProperty("r.num")) {
+						delete data["r.num"];
+					}
+					stocres_varstats.clear_all_vars();
+					let data_length = 0;
+					for (let varname in data) {
+						stocres_varstats.addvar(varname);
+						data_length = data[varname].length;
+					}
+					stocres_varstats.all_values(data);
+					stocres_txt_current_runs.val(data_length);
+					stocres_txt_csv_filename.html(csv_import_file.name);
+				};
+				reader.readAsText(file);
+			}
+		});
+		let input_file = $("#stocres_cmd_input_csv");
+		input_file.click();
+	}
+
 	self.del_click=function() {
 		selectedvars=stocres_varstats.multi_selectedvar();
 		if(selectedvars.length==0) {
@@ -411,7 +471,7 @@ var stocres=new function() {
 		stocres_cmd_histogram.click(self.histogram_click);
 		stocres_cmd_scatterplot.click(self.scatterplot_click);
 		stocres_cmd_export_data_csv.click(self.export_data_csv_click); 
-		
+		stocres_cmd_import_data_csv.click(self.import_data_csv_click);
 		
 		
 		txt_varname.keypress(function(e) {
