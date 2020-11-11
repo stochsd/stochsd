@@ -426,9 +426,9 @@ var stocres=new function() {
 					}
 					stocres_varstats.all_values(data);
 					stocres_txt_current_runs.val(data_length);
+					stocres_txt_csv_filename.html(csv_import_file.name);
 				};
 				reader.readAsText(file);
-				stocres_txt_csv_filename.html(csv_import_file.name);
 			}
 		});
 		let input_file = $("#stocres_cmd_input_csv");
