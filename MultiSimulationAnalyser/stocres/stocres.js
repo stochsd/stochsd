@@ -434,6 +434,7 @@ var stocres=new function() {
 						console.log(new_vals);
 						stocres_varstats.new_values(new_vals);
 					}
+					stocres_txt_current_runs.val(data_length);
 				};
 				reader.readAsText(file);
 			}
