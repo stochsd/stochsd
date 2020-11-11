@@ -413,22 +413,22 @@ var stocres=new function() {
 				let reader = new FileReader();
 				reader.onload = (reader_event) => {
 					csv_import_file.data = reader_event.target.result;
-					console.log(csv_to_json(csv_import_file.data));
-					let data = csv_to_json(csv_import_file.data)
+					console.log("starting csv_to_json");
+					let data = csv_to_json(csv_import_file.data);
+					if (data.hasOwnProperty("r.num")) {
+						delete data["r.num"];
+					}
 					stocres_varstats.clear_all_vars();
 					let data_length = 0;
 					for (let varname in data) {
-						if (varname !== "r.num") {
-							stocres_varstats.addvar(varname);
-						}
+						stocres_varstats.addvar(varname);
 						data_length = data[varname].length;
 					}
+					console.log("starting adding data points");
 					for (let index = 0; index < data_length; index++) {
 						let new_vals = {}
 						for (let varname in data) {
-							if (varname !== "r.num") {
-								new_vals[varname] = data[varname][index];
-							}
+							new_vals[varname] = data[varname][index];
 						}
 						stocres_varstats.new_values(new_vals);
 					}
@@ -438,7 +438,6 @@ var stocres=new function() {
 				stocres_txt_csv_filename.html(csv_import_file.name);
 			}
 		});
-		console.log("importing csv");
 		let input_file = $("#stocres_cmd_input_csv");
 		input_file.click();
 	}
