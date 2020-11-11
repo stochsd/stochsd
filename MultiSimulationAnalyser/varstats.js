@@ -193,9 +193,8 @@ var varstats_class=function(init_target_tbody) {
                 vartable[varname].min=newvalue;
             }
             vartable[varname].last=newvalue;
-            
-            public.update();
         }
+        public.update();
     }
     public.get_sides=function() {
         return sides;
