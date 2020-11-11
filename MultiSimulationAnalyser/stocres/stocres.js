@@ -413,7 +413,6 @@ var stocres=new function() {
 				let reader = new FileReader();
 				reader.onload = (reader_event) => {
 					csv_import_file.data = reader_event.target.result;
-					console.log("starting csv_to_json");
 					let data = csv_to_json(csv_import_file.data);
 					if (data.hasOwnProperty("r.num")) {
 						delete data["r.num"];

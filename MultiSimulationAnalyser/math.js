@@ -58,8 +58,7 @@ function initvar(varname) {
 
 // Adds all new value to a variable object
 function processvalues(variable) {
-    
-    console.log(variable.data);
+
     for (let i = 0; i < variable.data.length; i++) {
         let newvalue = variable.data[i];
         // Calculate sum
