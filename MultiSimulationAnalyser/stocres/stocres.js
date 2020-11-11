@@ -435,6 +435,7 @@ var stocres=new function() {
 					stocres_txt_current_runs.val(data_length);
 				};
 				reader.readAsText(file);
+				stocres_txt_csv_filename.html(csv_import_file.name);
 			}
 		});
 		console.log("importing csv");
