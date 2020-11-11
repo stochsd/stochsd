@@ -413,9 +413,9 @@ var stocres=new function() {
 				let reader = new FileReader();
 				reader.onload = (reader_event) => {
 					csv_import_file.data = reader_event.target.result;
-					console.log(csv_import_file);
 					console.log(csv_to_json(csv_import_file.data));
 					let data = csv_to_json(csv_import_file.data)
+					stocres_varstats.clear_all_vars();
 					let data_length = 0;
 					for (let varname in data) {
 						if (varname !== "r.num") {
@@ -430,8 +430,6 @@ var stocres=new function() {
 								new_vals[varname] = data[varname][index];
 							}
 						}
-						console.log(index);
-						console.log(new_vals);
 						stocres_varstats.new_values(new_vals);
 					}
 					stocres_txt_current_runs.val(data_length);
