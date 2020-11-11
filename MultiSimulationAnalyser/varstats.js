@@ -151,6 +151,22 @@ var varstats_class=function(init_target_tbody) {
     public.get_vartable=function() {
         return vartable;
     }
+    public.all_values=function(variable_arrays) {
+        // variable arrays = {varname1: [...], varname2: [...], etc. }
+        for (let varname in vartable) {
+            // vartable[varname]
+            for (let i = 0; i < variable_arrays[varname].length; i++) {
+                let newvalue = Number(variable_arrays[varname][i]);
+                vartable[varname].data.push(newvalue);
+            }
+            // vartable[varname].data = variable_arrays[varname];
+            vartable[varname] = processvalues(vartable[varname]);
+            vartable[varname].max = Math.max(...vartable[varname].data);
+            vartable[varname].min = Math.min(...vartable[varname].data);
+            vartable[varname].last = vartable[varname].data[vartable[varname].data.length-1];
+        }
+        public.update();
+    }
     public.new_values=function(variable_array) {
         for(var varname in vartable) {
             var newvalue = variable_array[varname];

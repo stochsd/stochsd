@@ -424,14 +424,7 @@ var stocres=new function() {
 						stocres_varstats.addvar(varname);
 						data_length = data[varname].length;
 					}
-					console.log("starting adding data points");
-					for (let index = 0; index < data_length; index++) {
-						let new_vals = {}
-						for (let varname in data) {
-							new_vals[varname] = data[varname][index];
-						}
-						stocres_varstats.new_values(new_vals);
-					}
+					stocres_varstats.all_values(data);
 					stocres_txt_current_runs.val(data_length);
 				};
 				reader.readAsText(file);

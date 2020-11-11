@@ -56,6 +56,46 @@ function initvar(varname) {
     return variable;
 }
 
+// Adds all new value to a variable object
+function processvalues(variable) {
+    
+    console.log(variable.data);
+    for (let i = 0; i < variable.data.length; i++) {
+        let newvalue = variable.data[i];
+        // Calculate sum
+        variable.sum+=newvalue;
+        // Calculate sum2
+        variable.sum2+=newvalue*newvalue;
+    }
+    
+    // Calculate avrage
+    variable.avrage=variable.sum/variable.data.length;
+    
+    // Avoid division by zero
+    if((variable.data.length-1)==0) {
+        // Break earlier only if number of data-1 is zero.
+        // This only happens the first time
+        variable.variance=0;
+        variable.stddev=0;
+        return variable;
+    }
+    
+    // Calculate variance
+    variable.variance = (variable.sum2 - variable.sum*variable.sum/variable.data.length)/(variable.data.length-1)
+    //alert(variable.variance);
+    
+    // We have in rare cases a precision bug due to javascript that can make the variable have value e.g -2.220446049250313e-16
+    // This causes problem when we take the root of this number so therefor we have to force variance to be >=0
+    if(variable.variance<0) {
+		variable.variance=0;
+	}
+    
+    // Calculate std.dev
+    variable.stddev = Math.sqrt(variable.variance)
+
+    return variable;
+}
+
 
 // Adds a value to a variable object
 function addnewvalue(variable,newvalue) {
