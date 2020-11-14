@@ -388,7 +388,12 @@ var stocres=new function() {
 
 		let keys = rows[0].split(",");
 		let obj = {};
+		let unamed_counter = 0;
 		for (let i in keys) {
+			if (keys[i] === "") {
+				unamed_counter += 1;
+				keys[i] = `noname${unamed_counter}`;
+			}
 			obj[keys[i]] = [];
 		}
 
