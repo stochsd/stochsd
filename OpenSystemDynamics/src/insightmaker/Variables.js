@@ -61,7 +61,7 @@ primitiveBank.generic = doc.createElement('Generic');
 setValuedProperties(primitiveBank.generic);
 
 primitiveBank.numberbox = doc.createElement('Numberbox');
-primitiveBank.numberbox.setAttribute("RoundToZero", true);
+primitiveBank.numberbox.setAttribute("RoundToZero", false);
 primitiveBank.numberbox.setAttribute("RoundToZeroAtValue", 1e-12);
 primitiveBank.numberbox.setAttribute("NumberLength", JSON.stringify({
 	"usePrecision": true, // otherwise uses decimal 
@@ -78,7 +78,7 @@ primitiveBank.table.setAttribute('TableLimits', JSON.stringify({
 	"end": 		{ "value": 100, "auto": true },
 	"step": 	{ "value": 1, 	"auto": true }
 }));
-primitiveBank.table.setAttribute("RoundToZero", true);
+primitiveBank.table.setAttribute("RoundToZero", false);
 primitiveBank.table.setAttribute("RoundToZeroAtValue", 1e-12);
 primitiveBank.table.setAttribute("NumberLength", JSON.stringify({
 	"usePrecision": true, // otherwise uses decimal 
