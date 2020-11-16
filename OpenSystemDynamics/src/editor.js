@@ -2679,6 +2679,8 @@ class TimePlotVisual extends PlotVisual {
 		$(this.chartDiv).empty();
 
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let axis_min = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
+		let axis_max = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
@@ -2691,11 +2693,11 @@ class TimePlotVisual extends PlotVisual {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: "Time",
 					tickOptions: {
-						formatString: "%.3g",
+						formatString: axis_max - axis_min > 40 ? "%i": "%.3g",
 						useAxesFormatters: false
 					},
-					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
-					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
+					min: axis_min,
+					max: axis_max
 				},
 				yaxis: {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
