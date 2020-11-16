@@ -2690,6 +2690,10 @@ class TimePlotVisual extends PlotVisual {
 				xaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: "Time",
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
 					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
 				},
@@ -2697,6 +2701,10 @@ class TimePlotVisual extends PlotVisual {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("LeftAxisLabel"),
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.min,
 					max: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.max
 				},
@@ -2715,7 +2723,7 @@ class TimePlotVisual extends PlotVisual {
 				show: true,
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
-				formatString: "Time = %.5p<br/>Value = %.5p",
+				formatString: "Time = %.4g<br/>Value = %.4g",
 				useAxesFormatters: false
 			},
 			legend: {
