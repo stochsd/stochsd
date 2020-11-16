@@ -7276,7 +7276,9 @@ class DisplayDialog extends jqDialog {
 
 		// set default button listener
 		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
-			this.setRoundToZero(true);
+			// fetches default for numberbox, but this is also used for table 
+			// Should be fixes so it fetches default for the type of object the dialog belongs to  
+			this.setRoundToZero(getDefaultAttributeValue("numberbox", "RoundToZero") === "true");
 			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
 		});
