@@ -388,7 +388,12 @@ var stocres=new function() {
 
 		let keys = rows[0].split(",");
 		let obj = {};
+		let unamed_counter = 0;
 		for (let i in keys) {
+			if (keys[i] === "") {
+				unamed_counter += 1;
+				keys[i] = `noname${unamed_counter}`;
+			}
 			obj[keys[i]] = [];
 		}
 
@@ -426,6 +431,7 @@ var stocres=new function() {
 					stocres_varstats.all_values(data);
 					stocres_txt_current_runs.val(data_length);
 					stocres_txt_csv_filename.html(csv_import_file.name);
+					stocres_cmd_clear_import.attr("hidden", false);
 				};
 				reader.readAsText(file);
 			}
@@ -433,6 +439,14 @@ var stocres=new function() {
 		let input_file = $("#stocres_cmd_input_csv");
 		input_file.click();
 	}
+
+	self.clear_imported_data_click = function() {
+		stocres_varstats.clear_all_vars();
+		stocres_txt_current_runs.val(0);
+		stocres_txt_csv_filename.html("");
+		stocres_cmd_clear_import.attr("hidden", true);
+	}
+
 
 	self.del_click=function() {
 		selectedvars=stocres_varstats.multi_selectedvar();
@@ -472,6 +486,7 @@ var stocres=new function() {
 		stocres_cmd_scatterplot.click(self.scatterplot_click);
 		stocres_cmd_export_data_csv.click(self.export_data_csv_click); 
 		stocres_cmd_import_data_csv.click(self.import_data_csv_click);
+		stocres_cmd_clear_import.click(self.clear_imported_data_click);
 		
 		
 		txt_varname.keypress(function(e) {
