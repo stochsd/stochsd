@@ -2986,6 +2986,10 @@ class ComparePlotVisual extends PlotVisual {
 				xaxis: {
 					label: "Time",
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
 					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
 				},
@@ -2993,6 +2997,10 @@ class ComparePlotVisual extends PlotVisual {
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("LeftAxisLabel"),
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
 					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
 				}
@@ -3001,7 +3009,7 @@ class ComparePlotVisual extends PlotVisual {
 				show: true,
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
-				formatString: "Time = %.5p<br/>Value = %.5p",
+				formatString: "Time = %.4p<br/>Value = %.4p",
 				useAxesFormatters: false
 			},
 			legend: {
