@@ -3512,12 +3512,20 @@ class XyPlotVisual extends PlotVisual {
 				xaxis: {
 					label: this.serieXName,
 					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.min,
 					max: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.max
 				},
 				yaxis: {
 					label: this.serieYName,
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
+					tickOptions: {
+						formatString: "%.3g",
+						useAxesFormatters: false
+					},
 					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
 					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
 				}
