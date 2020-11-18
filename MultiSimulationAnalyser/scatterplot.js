@@ -47,6 +47,10 @@ var scatterplot_class=function() {
 
 
     function frm_scatterplot_load() {
+        // events must be unbind, 
+        // else click events are added again every time scatterplot is loaded 
+        // and functions are called as many times are scatterplot has been loaded.
+        cmd_scatterplot_print.unbind();
         cmd_scatterplot_print.click(function() {
             cmd_scatterplot_print_click();
         });
