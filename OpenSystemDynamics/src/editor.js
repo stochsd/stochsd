@@ -6847,9 +6847,11 @@ class jqDialog {
 	}
 	bindEnterApplyEvents() {
 		$(this.dialogContent).find(".enter-apply").keydown(event => {
-			if (event.keyCode === keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
+			if (! event.shiftKey) {
+				if (event.keyCode === keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
 			}
 		});
 	}
