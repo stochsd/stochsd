@@ -716,10 +716,10 @@ class NwEnvironment extends BaseEnvironment {
 				$("#btn_new").click();
 			}
 
-			if (event.keyCode == keyboard["+"]) {
+			if (event.keyCode == keyboard["+"] || event.keyCode == keyboard["numpad+"]) {
 				NwZoomController.zoomIn();
 			}
-			if (event.keyCode == keyboard["-"]) {
+			if (event.keyCode == keyboard["-"] || event.keyCode == keyboard["numpad-"]) {
 				NwZoomController.zoomOut();
 			}
 			if (event.keyCode == keyboard["0"]) {
