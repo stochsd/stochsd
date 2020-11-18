@@ -97,6 +97,34 @@ var varstats_class=function(init_target_tbody) {
             return "> "+stocsd_format(interval.start,2)+" OR <"+stocsd_format(interval.end,2);
         }
     }
+
+    function get_valid_class_name (string) {
+        let replacements = [
+            {regex: /\+/, substitute: "plus"},
+            {regex: /\-/, substitute: "minus"},
+            {regex: /\*/, substitute: "multi"},
+            {regex: /\\/, substitute: "division"},
+            {regex: /\@/, substitute: "at"},
+            {regex: /\=/, substitute: "equal"},
+            {regex: /\^/, substitute: "caret"},
+            {regex: /\./, substitute: "dot"},
+            {regex: /\,/, substitute: "comma"},
+            {regex: /\|/, substitute: "vertbar"},
+            {regex: /\~/, substitute: "tilde"},
+            {regex: /\%/, substitute: "percent"},
+            {regex: /\!/, substitute: "exclamation"},
+            {regex: /\?/, substitute: "question"},
+            {regex: /\$/, substitute: "dollar"},
+            {regex: /\£/, substitute: "pound"},
+            {regex: /\€/, substitute: "euro"}
+        ];
+        let temp_string = string;
+        for (rep of replacements) {
+            temp_string = temp_string.replace(rep.regex, "_spec_char_"+rep.substitute);
+        }
+        return temp_string;
+    }
+
     
     function update_var_row(varname) {
         //alert("before");
@@ -281,8 +309,10 @@ var varstats_class=function(init_target_tbody) {
             return;
         }
         vartable[varname]=initvar(varname);
-        $(target_tbody).append("<tr class='varname_"+varname+"'>\
-        <td><input data-varname='"+varname+"' class='varcheckbox' type='checkbox'/></td>\
+        // add code to circomvent special characters here
+        let class_varname = get_valid_class_name(varname);
+        $(target_tbody).append("<tr class='varname_"+class_varname+"'>\
+        <td><input data-varname='"+class_varname+"' class='varcheckbox' type='checkbox'/></td>\
         <td class='varname_data'>"+varname+"</td> \
         <td class='avg'></td>\
         <td class='stddev'></td>\
@@ -292,7 +322,7 @@ var varstats_class=function(init_target_tbody) {
         <td class='last'></td>\
         <td class='percentile'></td>\
         </tr>");
-        var_row[varname] = $(target_tbody).find(".varname_"+varname);
+        var_row[varname] = $(target_tbody).find(".varname_"+class_varname);
         var_row[varname].find(".varcheckbox").click(function() {
             // Checkbox selections goes here
             // This is currently not in use
