@@ -269,6 +269,8 @@ function makeKeyboardCodes() {
 	keyboard["delete"] = 46;
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
+	keyboard["numpad+"] = 107;
+	keyboard["numpad-"] = 109;
 	keyboard["enter"] = 13;
 	keyboard["right"] = 37;
 	keyboard["up"] = 38;
