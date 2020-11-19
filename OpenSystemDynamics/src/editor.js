@@ -9408,7 +9408,7 @@ class EquationEditor extends jqDialog {
 					// not allowed by StatRes and Other tools 
 					$(this.dialogContent).find(".name-warning-div").html(`
 						Allowed characters are: <br/>
-						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (everwhere)
+						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
 						<br/><b>0-9</b> (if not first character)`);
 				} else if (! validName) {
 					// not allowed according to insightmaker
