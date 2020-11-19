@@ -9398,7 +9398,8 @@ class EquationEditor extends jqDialog {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
 			let validName = validPrimitiveName(newName, this.primitive);
-			if (nameFree && validName) {
+			let validToolVarName = /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
 			} else {
@@ -9407,8 +9408,15 @@ class EquationEditor extends jqDialog {
 					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
 				} else if (newName === "") {
 					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
+				} else if (! validToolVarName) {
+					// not allowed by StatRes and Other tools 
+					$(this.dialogContent).find(".name-warning-div").html(`
+						Allowed characters are: <br/>
+						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
+						<br/><b>0-9</b> (if not first character)`);
 				} else if (! validName) {
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain brackets, parentheses, or quotes`);
+					// not allowed according to insightmaker
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain bracket, parenthesis, or quote`);
 				}
 			} 
 		});
