@@ -65,7 +65,8 @@ function svg_curve_oneway(x1,y1,x2,y2,x3,y3,x4,y4,extra_attributes=null) {
 	//var d="M"+x1+","+y1+" Q"+x2+","+x2+" "+x3+","+y3+" "+x4+","+y4;
 	//newElement.setAttribute("d",d);
 	newElement.setAttribute("stroke","black");
-	newElement.setAttribute("fill","transparent");
+	// fill must be "none" otherwise it may cover up obejcts behind
+	newElement.setAttribute("fill","none");
 	newElement.x1=x1;
 	newElement.y1=y1;
 	newElement.x2=x2;
