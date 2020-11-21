@@ -5911,10 +5911,6 @@ loadXML(blankGraphTemplate);
 function addMissingPrimitiveAttributes(prim) {
 	// default primitive to get missing attributes 
 	let primitive_type = prim.value.nodeName.toLowerCase();
-	if (primitive_type === "diagram") {
-		// old files may be diagram instead of TimePlot
-		primitive_type = "timeplot";
-	}
 	let default_primitive = primitiveBank[primitive_type];
 	if (default_primitive) {
 		for (let attr of default_primitive.attributes) {
