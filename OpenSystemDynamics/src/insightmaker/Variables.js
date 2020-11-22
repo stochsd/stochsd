@@ -19,7 +19,7 @@ var doc = document.implementation.createDocument("","",null);
 // This is a list of all primitives that can be loaded and saved
 // Important: The order of the array is the order which primitives are saved.
 // Therefor Flows and Links must be at the end since they depend on Stocks and Variables for their connections
-const saveblePrimitiveTypes = ["TextArea","Rectangle","Ellipse","Line","Setting","Stock","Variable","Converter","Ghost","Flow","Link","Text","Numberbox","Table","Diagram","TimePlot","ComparePlot","XyPlot","HistoPlot"];
+const saveblePrimitiveTypes = ["TextArea","Rectangle","Ellipse","Line","Setting","Stock","Variable","Converter","Ghost","Flow","Link","Text","Numberbox","Table",/*"Diagram",*/"TimePlot","ComparePlot","XyPlot","HistoPlot"];
 
 // A list of all primitives, inclduing Generic which is used non-savable primitives
 const allPrimitiveTypes = ["Generic"].concat(saveblePrimitiveTypes);
@@ -88,6 +88,7 @@ primitiveBank.table.setAttribute("NumberLength", JSON.stringify({
 primitiveBank.table.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.table);
 
+// Depricated object - is replaced by timeplot in StochSD 
 primitiveBank.diagram = doc.createElement('Diagram');
 primitiveBank.diagram.setAttribute('Primitives', '');
 setValuedProperties(primitiveBank.diagram);
