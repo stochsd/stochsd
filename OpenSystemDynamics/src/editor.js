@@ -2544,7 +2544,6 @@ class TimePlotVisual extends PlotVisual {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.runHandler = () => {
-			this.fetchData();
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
@@ -2586,6 +2585,8 @@ class TimePlotVisual extends PlotVisual {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
+		this.fetchData();
+
 		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
