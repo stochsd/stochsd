@@ -607,9 +607,10 @@ class NwFileManager extends BaseFileManager {
 				return console.error(err);
 			}
 			this.fileName = absoluteFileName;
-			this.loadModelData(data);
+			History.forceCustomUndoState(data);
 			this.updateTitle();
 			this.addToRecent(this.fileName);
+			preserveRestart();
 		});
 	}
 }
