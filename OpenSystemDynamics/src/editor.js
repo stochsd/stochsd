@@ -7736,7 +7736,9 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -7749,7 +7751,7 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
@@ -7762,9 +7764,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="left-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="left-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
@@ -7777,9 +7779,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="right-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="right-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning" ></div>
@@ -8066,7 +8068,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -8079,7 +8083,7 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
@@ -8092,9 +8096,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
@@ -8355,7 +8359,9 @@ class XyPlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td>X-axis</td>
@@ -8368,9 +8374,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td>Y-axis</td>
@@ -8383,9 +8389,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
