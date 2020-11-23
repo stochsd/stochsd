@@ -606,7 +606,6 @@ class NwFileManager extends BaseFileManager {
 			if (err) {
 				return console.error(err);
 			}
-			console.error(fs);
 			this.fileName = absoluteFileName;
 			this.loadModelData(data);
 			this.updateTitle();
