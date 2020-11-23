@@ -7840,7 +7840,7 @@ class TimePlotDialog extends DisplayDialog {
 		} else if (left_log || right_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8139,7 +8139,7 @@ class ComparePlotDialog extends DisplayDialog {
 		} else if (y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8434,7 +8434,8 @@ class XyPlotDialog extends DisplayDialog {
 		} else if (x_log || y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(x) requires that all x-values &gt; 0 <br/>
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
