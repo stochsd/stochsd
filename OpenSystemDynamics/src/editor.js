@@ -6318,10 +6318,15 @@ function updateRecentsMenu() {
 			if (0 < recent.length) {
 				$('#recent_title').show();
 			}
-			for (let i = 0; i < recent.length; i++) {
-				$(`#btn_recent_${i}`).show();
-				$(`#btn_recent_${i}`).html(recent[i]);
-				$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
+				if (i < recent.length) {
+					$(`#btn_recent_${i}`).show();
+					$(`#btn_recent_${i}`).html(recent[i]);
+					$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+				} else {
+					$(`#btn_recent_${i}`).hide();
+				}
+				
 			}
 		}
 	}
