@@ -9331,6 +9331,7 @@ class AboutDialog extends CloseDialog {
 		super();
 		this.setTitle("About");
 		this.setHtml(`
+			<div style="min-width:300px; max-width: 800px;">
 			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
 			<b>StochSD version ${stochsd.version} (YYYY.MM.DD)</b><br/>
 			<br/>
@@ -9340,6 +9341,7 @@ class AboutDialog extends CloseDialog {
 			<br/>
 			StochSD was developed by Leif Gustafsson, Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
 			Mail: leif.gunnar.gustafsson@gmail.com 
+			</div>
 		`);
 	}
 }
