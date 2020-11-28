@@ -569,6 +569,9 @@ class NwFileManager extends BaseFileManager {
 			}
 		}
 	}
+	clearRecent() {
+		localStorage.setItem("recentFiles", JSON.stringify([]));
+	}
 	writeFile(fileName, FileData) {
 		do_global_log("NW: In write file");
 		//~ if(self.fileName == null) {
