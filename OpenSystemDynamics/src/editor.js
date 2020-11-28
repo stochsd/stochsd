@@ -5669,6 +5669,13 @@ $(window).load(function() {
 		History.storeUndoState();
 		fileManager.saveModelAs();
 	});
+	$("#btn_recent_clear").click(function() {
+		yesNoAlert("Are you sure you want to clear Recent List?", (answer) => {
+			if (answer === "yes") {
+				fileManager.clearRecent();
+			}
+		});
+	});
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
 	});
@@ -6311,17 +6318,33 @@ function removeNewLines(string) {
 	return newString;
 }
 
+function seperatePathAndName(file_path) {
+	let seperator = "\\";
+	if (file_path.includes("/")) {
+		seperator = "/";
+	}
+	let segments = file_path.split(seperator);
+	let path = "";
+	for (let i = 0; i < segments.length-1; i++) {
+		path += segments[i]+seperator;
+	}
+	return {"path": path, "name": segments[segments.length-1]};
+}
+
 function updateRecentsMenu() {
 	if (fileManager.hasRecentFiles()) {
 		if (localStorage.recentFiles) {
 			let recent = JSON.parse(localStorage.recentFiles);
 			if (0 < recent.length) {
 				$('#recent_title').show();
+				$('#btn_recent_clear').show();
 			}
 			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 				if (i < recent.length) {
 					$(`#btn_recent_${i}`).show();
-					$(`#btn_recent_${i}`).html(recent[i]);
+					let file = seperatePathAndName(recent[i]);
+					$(`#btn_recent_${i}`).html(`
+						<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
 					$(`#btn_recent_${i}`).attr("filePath", recent[i]);
 				} else {
 					$(`#btn_recent_${i}`).hide();
