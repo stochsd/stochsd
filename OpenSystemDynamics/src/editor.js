@@ -14,6 +14,7 @@ var macroDialog;
 var equationList;
 var debugDialog;
 var aboutDialog;
+var fullpotentialcssDialog;
 var thirdPartyLicensesDialog;
 var licenseDialog;
 
@@ -5726,6 +5727,9 @@ $(window).load(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_fullpotentialcss").click(function () {
+		fullpotentialcssDialog.show();
+	});
 	$("#btn_license").click(function() {
 		licenseDialog.show();
 	});
@@ -5770,6 +5774,7 @@ $(window).load(function() {
 	equationList = new EquationListDialog();
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
+	fullpotentialcssDialog = new FullPotentialCSSDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	licenseDialog = new LicenseDialog();
 	
@@ -9342,6 +9347,18 @@ class AboutDialog extends CloseDialog {
 			StochSD was developed by Leif Gustafsson, Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
 			Mail: leif.gunnar.gustafsson@gmail.com 
 			</div>
+		`);
+	}
+}
+
+class FullPotentialCSSDialog extends CloseDialog {
+	constructor() {
+		super();
+		this.setTitle("What is Full Potential CSS?");
+		this.setHtml(`
+		<div style="min-width:300px; max-width: 800px;">
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
 		`);
 	}
 }
