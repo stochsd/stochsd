@@ -5688,7 +5688,7 @@ $(window).load(function() {
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
 	});
-	$("#btn_lightgrey").click(function() {
+	$("#btn_grey").click(function() {
 		setColorToSelection("silver");
 	});
 	$("#btn_red").click(function() {
