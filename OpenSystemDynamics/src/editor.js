@@ -7553,35 +7553,40 @@ class DisplayDialog extends jqDialog {
 		return results;
 	}
 	updateNotSelectedPrimitiveList() {
-		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
+		let search_word = $(this.dialogContent).find(".primitive-filter-input").val();
+		let search_lc = search_word.toLowerCase();
 		let results = this.getSearchPrimitiveResults(search_lc);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
-		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
-		notSelectedDiv.html(`
-			<table class="modern-table"> 
-				${results.map(p => `
-					<tr>
-						<td style="padding: 0;">
-							<button class="primitive-add-button" data-id="${getID(p)}" 
-								${limitReached ? "disabled" : ""} 
-								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
-								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
-								+
-							</button>
-						</td>
-						<td style="width: 100%;">
-						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-							${getName(p)}
-						</div>
-						</td>
-					</tr>
-				`).join("")}
-			</table>
-		`);
-		$(this.dialogContent).find(".primitive-add-button").click((event) => {
-			this.primitiveAddButton($(event.target).attr("data-id"));
-		});
+		if (results.length > 0) {
+			let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
+			notSelectedDiv.html(`
+				<table class="modern-table"> 
+					${results.map(p => `
+						<tr>
+							<td style="padding: 0;">
+								<button class="primitive-add-button" data-id="${getID(p)}" 
+									${limitReached ? "disabled" : ""} 
+									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+									style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+									+
+								</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+								${getName(p)}
+							</div>
+							</td>
+						</tr>
+					`).join("")}
+				</table>
+			`);
+			$(this.dialogContent).find(".primitive-add-button").click((event) => {
+				this.primitiveAddButton($(event.target).attr("data-id"));
+			});
+		} else {
+			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
+		}
 	}
 	primitiveAddButton(id) {
 		this.addIdToDisplay(id);
