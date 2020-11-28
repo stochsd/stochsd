@@ -230,6 +230,7 @@ function loadModelFromXml(XmlString) {
 	clearModel();
 	stochsd_clear_sync();
 	loadXML(XmlString);
+	replaceDiagamsWithTimePlots();
 	syncAllVisuals();
 }
 
@@ -269,6 +270,8 @@ function makeKeyboardCodes() {
 	keyboard["delete"] = 46;
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
+	keyboard["numpad+"] = 107;
+	keyboard["numpad-"] = 109;
 	keyboard["enter"] = 13;
 	keyboard["right"] = 37;
 	keyboard["up"] = 38;
@@ -2394,14 +2397,15 @@ class TableVisual extends HtmlTwoPointer {
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
-		$(this.htmlElement.innerDiv).mousedown((event) => {
+
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.htmlElement.scrollDiv).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.dialog.show();
 		});
 		
@@ -2424,14 +2428,12 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect.x2 = this.endX;
 		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
+
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
 		
-		this.htmlElement.setAttribute("x",this.getMinX());
-		this.htmlElement.setAttribute("y",this.getMinY());
-		this.htmlElement.setAttribute("width",this.getWidth());
-		this.htmlElement.setAttribute("height",this.getHeight());
-		
-		$(this.htmlElement.cutDiv).css("width",this.getWidth());
-		$(this.htmlElement.cutDiv).css("height",this.getHeight());
 		$(this.htmlElement.scrollDiv).css("width",this.getWidth());
 		$(this.htmlElement.scrollDiv).css("height",this.getHeight());
 	}
@@ -2542,7 +2544,6 @@ class TimePlotVisual extends PlotVisual {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.runHandler = () => {
-			this.fetchData();
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
@@ -2584,6 +2585,8 @@ class TimePlotVisual extends PlotVisual {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
+		this.fetchData();
+
 		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
@@ -3038,11 +3041,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	updateGraphics() {
 		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
-		
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
+
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
 		this.coordRect.x2 = this.endX;
@@ -3051,12 +3054,13 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	makeGraphics() {
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
-		$(this.htmlElement).mousedown((event) => {
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
@@ -3064,11 +3068,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
+		$(this.htmlElement.cutDiv).bind("contextmenu", ()=> {
 			this.doubleClick();
 		});
 
-		$(this.htmlElement).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.doubleClick();
 		});
 
@@ -3096,6 +3100,10 @@ class TextAreaVisual extends HtmlTwoPointer {
 		// Replace 							new line 		and 	space
 		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.htmlElement.style.color = color;
 	}
 }
 
@@ -5674,7 +5682,7 @@ $(window).load(function() {
 		setColorToSelection("black");
 	});
 	$("#btn_lightgrey").click(function() {
-		setColorToSelection("lightgrey");
+		setColorToSelection("silver");
 	});
 	$("#btn_red").click(function() {
 		setColorToSelection("red");
@@ -5904,7 +5912,8 @@ loadXML(blankGraphTemplate);
 
 function addMissingPrimitiveAttributes(prim) {
 	// default primitive to get missing attributes 
-	let default_primitive = primitiveBank[prim.value.nodeName.toLowerCase()];
+	let primitive_type = prim.value.nodeName.toLowerCase();
+	let default_primitive = primitiveBank[primitive_type];
 	if (default_primitive) {
 		for (let attr of default_primitive.attributes) {
 			// check fow missing attributes 
@@ -6309,10 +6318,15 @@ function updateRecentsMenu() {
 			if (0 < recent.length) {
 				$('#recent_title').show();
 			}
-			for (let i = 0; i < recent.length; i++) {
-				$(`#btn_recent_${i}`).show();
-				$(`#btn_recent_${i}`).html(recent[i]);
-				$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
+				if (i < recent.length) {
+					$(`#btn_recent_${i}`).show();
+					$(`#btn_recent_${i}`).html(recent[i]);
+					$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+				} else {
+					$(`#btn_recent_${i}`).hide();
+				}
+				
 			}
 		}
 	}
@@ -6843,9 +6857,11 @@ class jqDialog {
 	}
 	bindEnterApplyEvents() {
 		$(this.dialogContent).find(".enter-apply").keydown(event => {
-			if (event.keyCode === keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
+			if (! event.shiftKey) {
+				if (event.keyCode === keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
 			}
 		});
 	}
@@ -7251,7 +7267,9 @@ class DisplayDialog extends jqDialog {
 					<td>
 						<input class="round-to-zero-checkbox enter-apply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enter-apply" type="text" value="no value"/>
 					</td>
-					<td>
+				</tr>
+				<tr>
+					<td style="text-align: center;">
 						<button class="default-round-to-zero-button enter-apply">Reset to Default</button>
 					</td>
 				</tr>
@@ -7270,7 +7288,9 @@ class DisplayDialog extends jqDialog {
 
 		// set default button listener
 		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
-			this.setRoundToZero(true);
+			// fetches default for numberbox, but this is also used for table 
+			// Should be fixes so it fetches default for the type of object the dialog belongs to  
+			this.setRoundToZero(getDefaultAttributeValue("numberbox", "RoundToZero") === "true");
 			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
 		});
@@ -7721,7 +7741,9 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -7734,7 +7756,7 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
@@ -7747,9 +7769,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="left-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="left-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
@@ -7762,9 +7784,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="right-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="right-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning" ></div>
@@ -7825,7 +7847,7 @@ class TimePlotDialog extends DisplayDialog {
 		} else if (left_log || right_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8051,7 +8073,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -8064,7 +8088,7 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
@@ -8077,9 +8101,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
@@ -8124,7 +8148,7 @@ class ComparePlotDialog extends DisplayDialog {
 		} else if (y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8340,7 +8364,9 @@ class XyPlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td>X-axis</td>
@@ -8353,9 +8379,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td>Y-axis</td>
@@ -8368,9 +8394,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
@@ -8419,7 +8445,8 @@ class XyPlotDialog extends DisplayDialog {
 		} else if (x_log || y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(x) requires that all x-values &gt; 0 <br/>
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -9386,7 +9413,8 @@ class EquationEditor extends jqDialog {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
 			let validName = validPrimitiveName(newName, this.primitive);
-			if (nameFree && validName) {
+			let validToolVarName = /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
 			} else {
@@ -9395,8 +9423,15 @@ class EquationEditor extends jqDialog {
 					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
 				} else if (newName === "") {
 					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
+				} else if (! validToolVarName) {
+					// not allowed by StatRes and Other tools 
+					$(this.dialogContent).find(".name-warning-div").html(`
+						Allowed characters are: <br/>
+						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
+						<br/><b>0-9</b> (if not first character)`);
 				} else if (! validName) {
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain brackets, parentheses, or quotes`);
+					// not allowed according to insightmaker
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain bracket, parenthesis, or quote`);
 				}
 			} 
 		});
@@ -9781,7 +9816,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-40);
+		this.textArea.height(height-50);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
@@ -9890,14 +9925,14 @@ class EquationListDialog extends jqDialog {
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
 					{ header: "Init. Value", 	cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Dif. Equation", 		
+					{ header: "Recalculated as", 		
 						cellFunc: (prim) => {  
 							let flows = primitives("Flow");
 							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
 							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
-							let input_str = input.map(f => ` +Δt*${getName(f)}`).join(""); 
-							let output_str = output.map(f => ` -Δt*${getName(f)}`).join("");
-							return input_str+output_str;
+							let input_str = input.map(f => ` +Δt*${makePrimitiveName(getName(f))}`).join(""); 
+							let output_str = output.map(f => ` -Δt*${makePrimitiveName(getName(f))}`).join("");
+							return makePrimitiveName(getName(prim))+input_str+output_str;
 						}
 					},
 					{ 

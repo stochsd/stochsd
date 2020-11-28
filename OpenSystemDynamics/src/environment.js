@@ -534,11 +534,6 @@ class NwFileManager extends BaseFileManager {
 		this.exportFileExtension = fileExtension;
 		this.fileExportInput.accept = fileExtension;
 		this.dataToExport = dataToSave;
-		if (this.fileName === "") {
-			this.fileExportInput.nwsaveas = "untitled";
-		} else {
-			this.fileExportInput.nwsaveas = this.fileName;
-		}
 		this.fileExportInput.click();
 	}
 	hasSaveAs() {
@@ -562,6 +557,17 @@ class NwFileManager extends BaseFileManager {
 		}
 		recentFiles.unshift(filePath);
 		localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+	}
+	removeFromRecent(filePath) {
+		let recentFiles = [];
+		if (localStorage.recentFiles) {
+			recentFiles = JSON.parse(localStorage.recentFiles);
+			let index = recentFiles.indexOf(filePath);
+			if (index !== -1) {
+				recentFiles.splice(index, 1);-
+				localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+			}
+		}
 	}
 	writeFile(fileName, FileData) {
 		do_global_log("NW: In write file");
@@ -609,13 +615,15 @@ class NwFileManager extends BaseFileManager {
 
 		fs.readFile(fileName, 'utf8', (err, data) => {
 			if (err) {
+				alert(`Error: File ${fileName} not found. \nThis file reference is now removed from Recent List.`);
+				this.removeFromRecent(fileName);
 				return console.error(err);
 			}
-			console.error(fs);
 			this.fileName = absoluteFileName;
-			this.loadModelData(data);
+			History.forceCustomUndoState(data);
 			this.updateTitle();
 			this.addToRecent(this.fileName);
+			preserveRestart();
 		});
 	}
 }
@@ -721,10 +729,10 @@ class NwEnvironment extends BaseEnvironment {
 				$("#btn_new").click();
 			}
 
-			if (event.keyCode == keyboard["+"]) {
+			if (event.keyCode == keyboard["+"] || event.keyCode == keyboard["numpad+"]) {
 				NwZoomController.zoomIn();
 			}
-			if (event.keyCode == keyboard["-"]) {
+			if (event.keyCode == keyboard["-"] || event.keyCode == keyboard["numpad-"]) {
 				NwZoomController.zoomOut();
 			}
 			if (event.keyCode == keyboard["0"]) {

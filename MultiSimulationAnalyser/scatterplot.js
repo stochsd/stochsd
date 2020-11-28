@@ -47,6 +47,10 @@ var scatterplot_class=function() {
 
 
     function frm_scatterplot_load() {
+        // events must be unbind, 
+        // else click events are added again every time scatterplot is loaded 
+        // and functions are called as many times are scatterplot has been loaded.
+        cmd_scatterplot_print.unbind();
         cmd_scatterplot_print.click(function() {
             cmd_scatterplot_print_click();
         });
@@ -146,9 +150,10 @@ var scatterplot_class=function() {
         
         scatterplot_chart.height(height-150);
         lbl_scatterplot_varname2.css("top",scatterplot_chart.height()/2);
+        lbl_scatterplot_varname2.css("transform", "rotateZ(-90deg)");
         
-        scatterplot_chart.css("left",lbl_scatterplot_varname2.width());
-        scatterplot_chart.width(width-(lbl_scatterplot_varname2.width()*2)-30);
+        scatterplot_chart.css("left",lbl_scatterplot_varname2.height());
+        scatterplot_chart.width(width-(lbl_scatterplot_varname2.height()*2)-30);
         
         scatterplot_update();
     }

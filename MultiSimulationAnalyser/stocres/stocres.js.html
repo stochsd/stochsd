@@ -154,6 +154,15 @@ var stocres_view=`
 			</td>
 			</tr>
 			</table>
+				<fieldset>
+					<legend>Import Data</legend>
+					<p class="nowrap">
+					<button id="stocres_cmd_import_data_csv">Import (.CSV)</button>
+					<input type="file" id="stocres_cmd_input_csv" hidden accept=".csv" />
+					<button id="stocres_cmd_clear_import" hidden>Clear Imported Data</button>
+					<span id="stocres_txt_csv_filename"></span>
+					</p>
+				</fieldset>
 			    <fieldset style="margin-top: 5px">
                     Exec. time: <var id="lbl_exec_time">0</var>.&nbsp;&nbsp;&nbsp;&nbsp;
 					Estimated time left: <var id="lbl_est_time_left">0</var>.
