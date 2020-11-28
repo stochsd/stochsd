@@ -6324,7 +6324,6 @@ function seperatePathAndName(file_path) {
 		seperator = "/";
 	}
 	let segments = file_path.split(seperator);
-	console.log(segments);
 	let path = "";
 	for (let i = 0; i < segments.length-1; i++) {
 		path += segments[i]+seperator;
