@@ -6311,6 +6311,20 @@ function removeNewLines(string) {
 	return newString;
 }
 
+function seperatePathAndName(file_path) {
+	let seperator = "\\";
+	if (file_path.includes("/")) {
+		seperator = "/";
+	}
+	let segments = file_path.split(seperator);
+	console.log(segments);
+	let path = "";
+	for (let i = 0; i < segments.length-1; i++) {
+		path += segments[i]+seperator;
+	}
+	return {"path": path, "name": segments[segments.length-1]};
+}
+
 function updateRecentsMenu() {
 	if (fileManager.hasRecentFiles()) {
 		if (localStorage.recentFiles) {
@@ -6321,7 +6335,9 @@ function updateRecentsMenu() {
 			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 				if (i < recent.length) {
 					$(`#btn_recent_${i}`).show();
-					$(`#btn_recent_${i}`).html(recent[i]);
+					let file = seperatePathAndName(recent[i]);
+					$(`#btn_recent_${i}`).html(`
+						<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
 					$(`#btn_recent_${i}`).attr("filePath", recent[i]);
 				} else {
 					$(`#btn_recent_${i}`).hide();
