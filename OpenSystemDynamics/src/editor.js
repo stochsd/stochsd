@@ -6194,7 +6194,13 @@ function syncVisual(tprimitive) {
 				// bezierPoints does not exist. Create them
 				connection.resetBezierPoints();
 			}
-			connection.curve.update();
+			for (let i = 0; i < 8; i++) {
+				// the anchor and the handle are co-dependent 
+				// This means that moving the handle moves the anchor which moves the handle ... etc.
+				// this continues until a stable position is reached.
+				// To get around this the Link gets calculated a few times to reach a stable position.
+				connection.update();
+			}
 		}
 		break;
 	}
