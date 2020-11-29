@@ -23,7 +23,7 @@ button {
 }
 
 button:hover:enabled {
-    background-color: #ccc;
+    background-color: white;
 }
 #recent_title {
     background-color: #ddd; 
