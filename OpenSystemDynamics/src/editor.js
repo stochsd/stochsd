@@ -5760,7 +5760,7 @@ $(window).load(function() {
 	if (fileManager.hasRecentFiles()) {
 		for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 			$(`#btn_recent_${i}`).click(function(event) {
-				let filePath = event.target.getAttribute("filePath");
+				let filePath = event.currentTarget.getAttribute("data-path");
 				fileManager.loadFromFile(filePath);
 				setTimeout(() => {
 					updateTimeUnitButton();
@@ -6343,9 +6343,8 @@ function updateRecentsMenu() {
 				if (i < recent.length) {
 					$(`#btn_recent_${i}`).show();
 					let file = seperatePathAndName(recent[i]);
-					$(`#btn_recent_${i}`).html(`
-						<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
-					$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+					$(`#btn_recent_${i}`).html(`<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
+					$(`#btn_recent_${i}`).attr("data-path", recent[i]);
 				} else {
 					$(`#btn_recent_${i}`).hide();
 				}
