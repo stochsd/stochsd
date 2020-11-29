@@ -5760,12 +5760,14 @@ $(window).load(function() {
 	if (fileManager.hasRecentFiles()) {
 		for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 			$(`#btn_recent_${i}`).click(function(event) {
-				let filePath = event.currentTarget.getAttribute("data-path");
-				fileManager.loadFromFile(filePath);
-				setTimeout(() => {
-					updateTimeUnitButton();
-					updateInfoBar();
-				 },200);
+				saveChangedAlert(function () {
+					let filePath = event.currentTarget.getAttribute("data-path");
+					fileManager.loadFromFile(filePath);
+					setTimeout(() => {
+						updateTimeUnitButton();
+						updateInfoBar();
+					 },200);
+				});
 			});
 		}
 	}
