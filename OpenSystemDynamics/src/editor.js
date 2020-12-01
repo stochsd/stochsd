@@ -9403,13 +9403,13 @@ class FullPotentialCSSDialog extends CloseDialog {
 		<ol>
 			<li>Discrete objects must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
 			<li>Attribute values are realised by multiple parallel sub-structures (Attribute expansion). </li>
-			<li>Distribution of the sojourn (stay) time in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
+			<li>Distribution of the sojourn (stay) times in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
 			<li>
 				Uncertainties of different types must realise the description in the well-defined conceptual model. This applies to:<br/>
 				&bull; Model structure &bull; Initial values &bull; Transitions &bull; Environmental influences &bull; Signals 
 			</li>
 		</ol>
-		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can!</p>
+		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can! If one of several of these issues is part of the conceptul model, Full Potential CSS provides a way to correctly implement them in a CSS model.</p>
 		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes and to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
 		<p style="display: flex; flex-direction: row;">
 			<img src="graphics/stochsd_high.png" style="width: 32px; height: 32px; position: inline; margin-right: 8px;"> 
