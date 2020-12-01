@@ -9384,7 +9384,7 @@ class AboutDialog extends CloseDialog {
 class FullPotentialCSSDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("What is Full Potential CSS ?");
+		this.setTitle("What is Full Potential CSS?");
 		this.setHtml(`
 		<div style="min-width: 300px; max-width: 1300px; overflow-y: auto;">
 		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each object is represented as an entity, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
