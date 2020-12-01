@@ -9409,7 +9409,7 @@ class FullPotentialCSSDialog extends CloseDialog {
 				&bull; Model structure &bull; Initial values &bull; Transitions &bull; Environmental influences &bull; Signals 
 			</li>
 		</ol>
-		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can! If one of several of these issues is part of the conceptul model, Full Potential CSS provides a way to correctly implement them in a CSS model.</p>
+		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can! If one of several of these issues is part of the conceptul model, Full Potential CSS provides the way to correctly implement them in a CSS model.</p>
 		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes and to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
 		<p style="display: flex; flex-direction: row;">
 			<img src="graphics/stochsd_high.png" style="width: 32px; height: 32px; position: inline; margin-right: 8px;"> 
