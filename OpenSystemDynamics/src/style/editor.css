@@ -182,6 +182,11 @@ div.center-vertically-container {
     align-items: center;
 }
 
+.center-horizontally {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Modern Table start here */
 .modern-table tr:nth-child(even){
     background-color: #f4f4f4;
