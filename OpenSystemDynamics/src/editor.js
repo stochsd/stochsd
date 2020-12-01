@@ -9384,7 +9384,7 @@ class AboutDialog extends CloseDialog {
 class FullPotentialCSSDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("What is Full Potential CSS ?");
+		this.setTitle("What is Full Potential CSS?");
 		this.setHtml(`
 		<div style="min-width: 300px; max-width: 1300px; overflow-y: auto;">
 		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each object is represented as an entity, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
@@ -9401,15 +9401,15 @@ class FullPotentialCSSDialog extends CloseDialog {
 		<h3>Full Potential CSS requirements</h3>
 		<p>To correctly <i>realise</i> a <b>Conceptual model</b> into an <b>CSS model</b> the following rules must be applied:</p>
 		<ol>
-			<li>Discrete entities must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
-			<li>Attribute values are realised by multiple parallel substructures (Attribute expansion). </li>
-			<li>Distribution of the sojourn (stay) time in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
+			<li>Discrete objects must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
+			<li>Attribute values are realised by multiple parallel sub-structures (Attribute expansion). </li>
+			<li>Distribution of the sojourn (stay) times in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
 			<li>
 				Uncertainties of different types must realise the description in the well-defined conceptual model. This applies to:<br/>
 				&bull; Model structure &bull; Initial values &bull; Transitions &bull; Environmental influences &bull; Signals 
 			</li>
 		</ol>
-		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can!</p>
+		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can! If one of several of these issues is part of the conceptul model, Full Potential CSS provides the way to correctly implement them in a CSS model.</p>
 		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes and to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
 		<p style="display: flex; flex-direction: row;">
 			<img src="graphics/stochsd_high.png" style="width: 32px; height: 32px; position: inline; margin-right: 8px;"> 
