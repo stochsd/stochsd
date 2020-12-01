@@ -9401,7 +9401,7 @@ class FullPotentialCSSDialog extends CloseDialog {
 		<h3>Full Potential CSS requirements</h3>
 		<p>To correctly <i>realise</i> a <b>Conceptual model</b> into an <b>CSS model</b> the following rules must be applied:</p>
 		<ol>
-			<li>Discrete entities must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
+			<li>Discrete objects must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
 			<li>Attribute values are realised by multiple parallel substructures (Attribute expansion). </li>
 			<li>Distribution of the sojourn (stay) time in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
 			<li>
