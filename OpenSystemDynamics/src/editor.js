@@ -9334,7 +9334,7 @@ class CloseDialog extends jqDialog {
 class AboutDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("About");
+		this.setTitle("About StochSD");
 		this.setHtml(`
 			<div style="min-width:300px; max-width: 800px;">
 			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
@@ -9403,7 +9403,7 @@ class FullPotentialCSSDialog extends CloseDialog {
 class LicenseDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("License");
+		this.setTitle("StochSD License");
 		
 		this.setHtml(`
 		<p style="display: inline-block">
@@ -9421,7 +9421,7 @@ class LicenseDialog extends CloseDialog {
 class ThirdPartyLicensesDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("Third-party licenses");
+		this.setTitle("Third-party Licenses");
 		
 		this.setHtml(`
 		<iframe style="width: 700px; height: 500px;" src="third-party-licenses.html"/>
