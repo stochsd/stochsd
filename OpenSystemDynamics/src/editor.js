@@ -9387,36 +9387,36 @@ class FullPotentialCSSDialog extends CloseDialog {
 		this.setTitle("What is Full Potential CSS ?");
 		this.setHtml(`
 		<div style="min-width: 300px; max-width: 1300px; overflow-y: auto;">
-		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each entity is represented, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
+		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each object is represented as an entity, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
 		<table class="modern-table center-horizontally">
 			<tr><th></th><th>Micro approach</th><th>Macro approach</th></tr>
-			<tr><td>Flowing water</td><td>H2o molecules</td><td>A river</td></tr>
+			<tr><td>Flowing water</td><td>H<sub>2</sub>O molecules</td><td>A river</td></tr>
 			<tr><td>A disease process</td><td>Individual level (Medicine)</td><td>Population level (Epidemiology)</td></tr>
 			<tr><td>Biology</td><td>Individual of a species</td><td>Ecological system</td></tr>
-			<tr><td>Traffic</td><td>Individual vehicles</td><td>Trafic flows</td></tr>
+			<tr><td>Traffic</td><td>Individual vehicles</td><td>Traffic flows</td></tr>
 		</table>
 		<p>Regardless of whether you choose a micro approach using <b>Discrete Event Simulation</b> (DES) or a macro approch using <b>Continuous System Simulation</b> (CSS), the results should be <b>consistent</b> (contradiction free), i.e. averages, variations, correlation, etc. should be the same. See the Figure.</p>
 		<img src="graphics/what_is_fp_css.png" style="display: block; max-width: 700px; margin: 0 auto;"/>
-		<p>This is usually not the case for <b>Classical CSS</b>. However, if the <b>Full Potential CSS</b> approach is followed, you can obtain results consistent with those from a micro model.</p>
+		<p>Consistency is usually not obtained for <b>Classical CSS</b>. However, if the <b>Full Potential CSS</b> approach is followed, you can obtain results consistent with those from a micro model.</p>
 		<h3>Full Potential CSS requirements</h3>
 		<p>To correctly <i>realise</i> a <b>Conceptual model</b> into an <b>CSS model</b> the following rules must be applied:</p>
 		<ol>
-			<li>Discrete objects must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
-			<li>Attribute values are realised by multiple parallel structures (Attribute expansion). </li>
-			<li>Distribution of sojourn (stay) times in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
+			<li>Discrete entities must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
+			<li>Attribute values are realised by multiple parallel substructures (Attribute expansion). </li>
+			<li>Distribution of the sojourn (stay) time in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
 			<li>
-				Uncertainties of different types must be correctly described. This applies to:<br/>
+				Uncertainties of different types must realise the description in the well-defined conceptual model. This applies to:<br/>
 				&bull; Model structure &bull; Initial values &bull; Transitions &bull; Environmental influences &bull; Signals 
 			</li>
 		</ol>
 		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can!</p>
-		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes, to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
+		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes and to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
 		<p style="display: flex; flex-direction: row;">
 			<img src="graphics/stochsd_high.png" style="width: 32px; height: 32px; position: inline; margin-right: 8px;"> 
 			<span><i style="display: flex; flex-direction: column; justify-content: center; height: 100%;">StochSD is a package that can accomplish this.</i></span>
 		</p>
 		<p>
-			At <a target="_blank" href="https://stochsd.sourceforge.io/homepage/" >StochSD’s homepage</a> you find the theoretical papers describing this in detail. You also find Example Models that demonstrates the necessity of following the Full Potential rules. Further there are five Laboratory Exercises that teaches model building and simulation in CSS. (To the right, above the model building canvas, you find the link to StochSD’s homepage.)
+			At <a target="_blank" href="https://stochsd.sourceforge.io/homepage/" >StochSD’s homepage</a> you find the theoretical papers describing this in detail. You also find Example Models that demonstrates the necessity of following the Full Potential rules. Further there are five Laboratory Exercises that teaches model building and simulation in CSS. &#x25A0;
 		</p>
 		</div>
 		`);
