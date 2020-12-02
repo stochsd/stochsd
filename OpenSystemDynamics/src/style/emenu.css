@@ -36,6 +36,16 @@ div.recent-name {
 	display: inline;
 }
 
+.color-sample {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 14px;
+	height: 14px;
+	border: 2px solid white;
+	border-radius: 100%;
+	margin-right: 4px;
+}
+
 .eMenu .menuContent button {
 	width: 100%;
 	text-align: left;
