@@ -7083,6 +7083,7 @@ function saveChangedAlert(continueHandler) {
 			case "yes":
 				fileManager.finishedSaveHandler = continueHandler;
 				fileManager.saveModel();
+				continueHandler();
 			break;
 			case "no":
 				continueHandler();
