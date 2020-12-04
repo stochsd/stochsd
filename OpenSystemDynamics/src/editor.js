@@ -5800,6 +5800,7 @@ $(window).load(function() {
 	updateTimeUnitButton();
 	
 	History.storeUndoState();
+	History.unsavedChanges = false;
 });
 	
 function updateTimeUnitButton() {
