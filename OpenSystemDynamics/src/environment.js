@@ -171,7 +171,9 @@ class BaseFileManager {
 			this.updateSaveTime();
 			this.updateTitle();
 			if (this.finishedSaveHandler) {
-				this.finishedSaveHandler();
+				// must have delay otherwise finishedSaveHandler can run before file is done saving
+				// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
+				setTimeout(this.finishedSaveHandler, 200);
 			}
 		});
 	}
@@ -601,6 +603,11 @@ class NwFileManager extends BaseFileManager {
 		this.updateSaveTime();
 		this.updateTitle();
 		this.addToRecent(this.fileName);
+		if (this.finishedSaveHandler) {
+			// must have delay otherwise finishedSaveHandler can run before file is done saving
+			// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
+			setTimeout(this.finishedSaveHandler, 200);
+		}
 	}
 	loadModel() {
 		do_global_log("NW: load model");
