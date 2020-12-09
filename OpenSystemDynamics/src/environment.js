@@ -598,16 +598,23 @@ class NwFileManager extends BaseFileManager {
 			return;
 		}
 		let fileData = createModelFileData();
-		this.writeFile(this.fileName, fileData);
-		History.unsavedChanges = false;
-		this.updateSaveTime();
-		this.updateTitle();
-		this.addToRecent(this.fileName);
-		if (this.finishedSaveHandler) {
-			// must have delay otherwise finishedSaveHandler can run before file is done saving
-			// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
-			setTimeout(this.finishedSaveHandler, 400);
-		}
+
+		let fs = require('fs');
+		fs.writeFile(this.fileName, fileData, (err) => {
+			if (err) {
+				console.log(err);
+				console.log(trace);
+				alert("Error in file saving "+ getStackTrace());
+			} else {
+				History.unsavedChanges = false;
+				this.updateSaveTime();
+				this.updateTitle();
+				this.addToRecent(this.fileName);
+				if (this.finishedSaveHandler) {
+					this.finishedSaveHandler();
+				}
+			}
+		});
 	}
 	loadModel() {
 		do_global_log("NW: load model");
