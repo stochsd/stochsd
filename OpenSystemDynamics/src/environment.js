@@ -173,7 +173,7 @@ class BaseFileManager {
 			if (this.finishedSaveHandler) {
 				// must have delay otherwise finishedSaveHandler can run before file is done saving
 				// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
-				setTimeout(this.finishedSaveHandler, 200);
+				setTimeout(this.finishedSaveHandler, 400);
 			}
 		});
 	}
@@ -606,7 +606,7 @@ class NwFileManager extends BaseFileManager {
 		if (this.finishedSaveHandler) {
 			// must have delay otherwise finishedSaveHandler can run before file is done saving
 			// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
-			setTimeout(this.finishedSaveHandler, 200);
+			setTimeout(this.finishedSaveHandler, 400);
 		}
 	}
 	loadModel() {
