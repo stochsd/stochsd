@@ -517,8 +517,15 @@ class NwFileManager extends BaseFileManager {
 			if (file) {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
-				this.writeFile(exportFilePath, this.dataToExport);
-				this.fileExportInput.onSuccess(exportFilePath);
+				let fs = require('fs');
+				fs.writeFile(exportFilePath, this.dataToExport, (err) => {
+					if (err) {
+						console.log(err);
+						this.fileExportInput.onFailure();
+					} else {
+						this.fileExportInput.onSuccess(exportFilePath);
+					}
+				});
 			}
 		}, false);
 		this.fileExportInput.type = "file";
