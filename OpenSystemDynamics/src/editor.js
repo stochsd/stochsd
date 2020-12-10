@@ -7574,7 +7574,7 @@ class DisplayDialog extends jqDialog {
 				if (order_diff !== 0) {
 					return order_diff;
 				} else {
-					return getName(a) > getName(b);
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
 				}
 			});
 		} else {
