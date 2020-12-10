@@ -171,9 +171,7 @@ class BaseFileManager {
 			this.updateSaveTime();
 			this.updateTitle();
 			if (this.finishedSaveHandler) {
-				// must have delay otherwise finishedSaveHandler can run before file is done saving
-				// e.g. if finishedSaveHandler is used for closing program, it may save empty file.
-				setTimeout(this.finishedSaveHandler, 400);
+				this.finishedSaveHandler();
 			}
 		});
 	}
@@ -517,15 +515,14 @@ class NwFileManager extends BaseFileManager {
 			if (file) {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
-				let fs = require('fs');
-				fs.writeFile(exportFilePath, this.dataToExport, (err) => {
-					if (err) {
+				this.writeFilePromise(exportFilePath, this.dataToExport)
+					.then((fileName) => {
+						this.fileExportInput.onSuccess(fileName)
+					})
+					.catch((err) => {
 						console.log(err);
 						this.fileExportInput.onFailure();
-					} else {
-						this.fileExportInput.onSuccess(exportFilePath);
-					}
-				});
+					});
 			}
 		}, false);
 		this.fileExportInput.type = "file";
