@@ -7582,9 +7582,14 @@ class DisplayDialog extends jqDialog {
 				getName(p).toLowerCase().includes(search_lc)
 			).filter(p => // filter already added primitives 
 				this.displayIdList.includes(getID(p)) === false 
-			).sort((a, b) => // sort by what search word appears first 
-				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
-			);
+			).sort((a, b) => { // sort by what search word appears first 
+				let char_match = getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc);
+				if (char_match !== 0) {
+					return char_match;
+				} else {
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
+				}
+			});
 		}
 		return results;
 	}
