@@ -7582,11 +7582,11 @@ class DisplayDialog extends jqDialog {
 				getName(p).toLowerCase().includes(search_lc)
 			).filter(p => // filter already added primitives 
 				this.displayIdList.includes(getID(p)) === false 
-			).sort((a, b) => { // sort by what search word appears first 
+			).sort((a, b) => { 
 				let char_match = getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc);
-				if (char_match !== 0) {
+				if (char_match !== 0) { // sort by what search word appears first 
 					return char_match;
-				} else {
+				} else { // else sort alphabetically 
 					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
 				}
 			});
@@ -7598,6 +7598,14 @@ class DisplayDialog extends jqDialog {
 		let search_lc = search_word.toLowerCase();
 		let results = this.getSearchPrimitiveResults(search_lc);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		let get_highlight_match = (name, match) => {
+			let index = name.toLowerCase().indexOf(match.toLowerCase());
+			if (index === -1) {
+				return name;
+			} else {
+				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
+			}
+		}
 		if (results.length > 0) {
 			let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
 			notSelectedDiv.html(`
@@ -7615,7 +7623,7 @@ class DisplayDialog extends jqDialog {
 							<td style="width: 100%;">
 							<div class="center-vertically-container">
 								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-								${getName(p)}
+								${get_highlight_match(getName(p), search_word)}
 							</div>
 							</td>
 						</tr>
