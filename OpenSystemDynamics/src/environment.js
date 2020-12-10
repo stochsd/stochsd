@@ -598,6 +598,18 @@ class NwFileManager extends BaseFileManager {
 			do_global_log("NW: Success in write file callback");
 		});
 	}
+	writeFilePromise(fileName, fileData) {
+		return new Promise((resolve, reject) => {
+			let fs = require('fs');
+			fs.writeFile(fileName, fileData, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(fileName);
+				}
+			});
+		});
+	}
 	saveModel() {
 		do_global_log("NW: save model triggered");
 		if (this.fileName == "") {
@@ -605,23 +617,20 @@ class NwFileManager extends BaseFileManager {
 			return;
 		}
 		let fileData = createModelFileData();
-
-		let fs = require('fs');
-		fs.writeFile(this.fileName, fileData, (err) => {
-			if (err) {
-				console.log(err);
-				console.log(trace);
-				alert("Error in file saving "+ getStackTrace());
-			} else {
+		this.writeFilePromise(this.fileName, fileData)
+			.then((fileName) => {
 				History.unsavedChanges = false;
 				this.updateSaveTime();
 				this.updateTitle();
-				this.addToRecent(this.fileName);
+				this.addToRecent(fileName);
 				if (this.finishedSaveHandler) {
 					this.finishedSaveHandler();
 				}
-			}
-		});
+			}).catch((err) => {
+				console.log(err);
+				console.log(trace);
+				alert("Error in file saving "+ getStackTrace());
+			});
 	}
 	loadModel() {
 		do_global_log("NW: load model");
