@@ -515,8 +515,14 @@ class NwFileManager extends BaseFileManager {
 			if (file) {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
-				this.writeFile(exportFilePath, this.dataToExport);
-				this.fileExportInput.onSuccess(exportFilePath);
+				this.writeFilePromise(exportFilePath, this.dataToExport)
+					.then((filePath) => {
+						this.fileExportInput.onSuccess(filePath)
+					})
+					.catch((err) => {
+						console.log(err);
+						this.fileExportInput.onFailure();
+					});
 			}
 		}, false);
 		this.fileExportInput.type = "file";
@@ -569,6 +575,9 @@ class NwFileManager extends BaseFileManager {
 			}
 		}
 	}
+	clearRecent() {
+		localStorage.setItem("recentFiles", JSON.stringify([]));
+	}
 	writeFile(fileName, FileData) {
 		do_global_log("NW: In write file");
 		//~ if(self.fileName == null) {
@@ -586,6 +595,18 @@ class NwFileManager extends BaseFileManager {
 			do_global_log("NW: Success in write file callback");
 		});
 	}
+	writeFilePromise(filePath, fileData) {
+		return new Promise((resolve, reject) => {
+			let fs = require('fs');
+			fs.writeFile(filePath, fileData, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(filePath);
+				}
+			});
+		});
+	}
 	saveModel() {
 		do_global_log("NW: save model triggered");
 		if (this.fileName == "") {
@@ -593,11 +614,20 @@ class NwFileManager extends BaseFileManager {
 			return;
 		}
 		let fileData = createModelFileData();
-		this.writeFile(this.fileName, fileData);
-		History.unsavedChanges = false;
-		this.updateSaveTime();
-		this.updateTitle();
-		this.addToRecent(this.fileName);
+		this.writeFilePromise(this.fileName, fileData)
+			.then((filePath) => {
+				History.unsavedChanges = false;
+				this.updateSaveTime();
+				this.updateTitle();
+				this.addToRecent(filePath);
+				if (this.finishedSaveHandler) {
+					this.finishedSaveHandler();
+				}
+			}).catch((err) => {
+				console.log(err);
+				console.log(trace);
+				alert("Error in file saving "+ getStackTrace());
+			});
 	}
 	loadModel() {
 		do_global_log("NW: load model");

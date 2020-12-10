@@ -18,12 +18,32 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	z-index: 1001;
 }
 
-.eMenu .menuContent span {
+.eMenu .menuContent > span {
 	display: block;
 }
 
-.eMenu .menuContent span {
-	background-color: #ffffff;
+div.recent-path {
+	display: inline; 
+	color: dimgray; 
+	font-size: 12px;
+}
+
+button:hover > .recent-path {
+	color: black;
+}
+
+div.recent-name {
+	display: inline;
+}
+
+.color-sample {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 14px;
+	height: 14px;
+	border: 2px solid white;
+	border-radius: 100%;
+	margin-right: 4px;
 }
 
 .eMenu .menuContent button {
