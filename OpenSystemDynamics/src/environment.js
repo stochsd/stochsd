@@ -516,8 +516,8 @@ class NwFileManager extends BaseFileManager {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
 				this.writeFilePromise(exportFilePath, this.dataToExport)
-					.then((fileName) => {
-						this.fileExportInput.onSuccess(fileName)
+					.then((filePath) => {
+						this.fileExportInput.onSuccess(filePath)
 					})
 					.catch((err) => {
 						console.log(err);
@@ -595,14 +595,14 @@ class NwFileManager extends BaseFileManager {
 			do_global_log("NW: Success in write file callback");
 		});
 	}
-	writeFilePromise(fileName, fileData) {
+	writeFilePromise(filePath, fileData) {
 		return new Promise((resolve, reject) => {
 			let fs = require('fs');
-			fs.writeFile(fileName, fileData, (err) => {
+			fs.writeFile(filePath, fileData, (err) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(fileName);
+					resolve(filePath);
 				}
 			});
 		});
@@ -615,11 +615,11 @@ class NwFileManager extends BaseFileManager {
 		}
 		let fileData = createModelFileData();
 		this.writeFilePromise(this.fileName, fileData)
-			.then((fileName) => {
+			.then((filePath) => {
 				History.unsavedChanges = false;
 				this.updateSaveTime();
 				this.updateTitle();
-				this.addToRecent(fileName);
+				this.addToRecent(filePath);
 				if (this.finishedSaveHandler) {
 					this.finishedSaveHandler();
 				}
