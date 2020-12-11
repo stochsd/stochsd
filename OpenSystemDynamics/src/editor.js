@@ -5112,7 +5112,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		if (last_clicked_element.type == "dummy_anchor") {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
-		} else {
+		} else if (get_only_selected_anchor_id()) {
 			unselect_all();
 		}
 		if (last_clicked_element.isSelected()) {
