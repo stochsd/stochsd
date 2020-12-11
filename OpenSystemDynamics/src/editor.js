@@ -7633,6 +7633,8 @@ class DisplayDialog extends jqDialog {
 			$(this.dialogContent).find(".primitive-add-button").click((event) => {
 				this.primitiveAddButton($(event.target).attr("data-id"));
 			});
+		} else if (search_lc === "") {
+			notSelectedDiv.html(`<div>No Primitives</div>`);
 		} else {
 			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
 		}
