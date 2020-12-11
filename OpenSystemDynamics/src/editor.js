@@ -4585,6 +4585,8 @@ class FlowTool extends TwoPointerTool {
 				}
 			}
 		} else {
+			// bugfix: unselect to not unattach on next empty click
+			unselect_all();
 			ToolBox.setTool("mouse");
 		}
 	}
@@ -4595,6 +4597,8 @@ class FlowTool extends TwoPointerTool {
 			last_clicked_element = null;
 	
 			if (this.rightClickMode === false) {
+				// bugfix: unselect to not unattach on next empty click
+				unselect_all();
 				ToolBox.setTool("mouse");
 			}
 		}
