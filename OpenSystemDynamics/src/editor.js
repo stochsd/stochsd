@@ -1921,6 +1921,17 @@ class FlowVisual extends BaseConnection {
 		this.middleAnchors.push(newAnchor);
 	}
 
+	setStartAttach(new_start_attach) {
+		super.setStartAttach(new_start_attach);
+		// needs to update Links a few times to follow along
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
+	setEndAttach(new_end_attach) {
+		super.setEndAttach(new_end_attach);
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
 	removeLastMiddleAnchorPoint() {
 		// set valveIndex to 0 to avoid valveplacement bug 
 		if (this.valveIndex === this.middleAnchors.length) {
