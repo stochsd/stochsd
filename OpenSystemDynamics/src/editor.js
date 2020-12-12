@@ -1921,6 +1921,17 @@ class FlowVisual extends BaseConnection {
 		this.middleAnchors.push(newAnchor);
 	}
 
+	setStartAttach(new_start_attach) {
+		super.setStartAttach(new_start_attach);
+		// needs to update Links a few times to follow along
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
+	setEndAttach(new_end_attach) {
+		super.setEndAttach(new_end_attach);
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
 	removeLastMiddleAnchorPoint() {
 		// set valveIndex to 0 to avoid valveplacement bug 
 		if (this.valveIndex === this.middleAnchors.length) {
@@ -4585,6 +4596,8 @@ class FlowTool extends TwoPointerTool {
 				}
 			}
 		} else {
+			// bugfix: unselect to not unattach on next empty click
+			unselect_all();
 			ToolBox.setTool("mouse");
 		}
 	}
@@ -4595,6 +4608,8 @@ class FlowTool extends TwoPointerTool {
 			last_clicked_element = null;
 	
 			if (this.rightClickMode === false) {
+				// bugfix: unselect to not unattach on next empty click
+				unselect_all();
 				ToolBox.setTool("mouse");
 			}
 		}
@@ -5112,6 +5127,8 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		if (last_clicked_element.type == "dummy_anchor") {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
+		} else if (get_only_selected_anchor_id()) {
+			unselect_all();
 		}
 		if (last_clicked_element.isSelected()) {
 			if (event.shiftKey) {
