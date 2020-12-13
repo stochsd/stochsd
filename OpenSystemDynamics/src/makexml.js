@@ -189,12 +189,12 @@ class InsightMakerDocument {
 		xmlDoc.documentElement.appendChild(root);
 	}
 	appendPrimitives() {
-		for(let type of saveblePrimitiveTypes) {
-			// primitive order is revesed otherwise the primitives will flip order each save.
-			// If order is different then seed will not work.
-			var primitiveArray = primitives(type).reverse();
-			for(var i in primitiveArray) {
-				root.appendChild(xmlPrimitive(primitiveArray[i]));
+		// primitive order is revesed otherwise the primitives will flip order each save.
+		// If order is different then seed will not work.
+		var primitiveArray = primitives().reverse();
+		for(var prim of primitiveArray) {
+			if (saveblePrimitiveTypes.includes(getType(prim))) {
+				root.appendChild(xmlPrimitive(prim));
 			}
 		}
 	}
