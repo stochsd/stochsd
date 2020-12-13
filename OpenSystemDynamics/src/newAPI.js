@@ -410,3 +410,12 @@ function replaceDiagamsWithTimePlots() {
 		removePrimitive(primitive_list[key]);
 	}
 } 
+
+
+/**
+ 	Method: isValidToolname
+	Checks if name is valid for tools StatRes, ParmVar etc.
+ */
+function isValidToolName(newName) {
+	return /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+}

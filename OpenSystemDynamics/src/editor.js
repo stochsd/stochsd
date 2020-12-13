@@ -9536,8 +9536,10 @@ class EquationEditor extends jqDialog {
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
+			// valid according to insight maker
 			let validName = validPrimitiveName(newName, this.primitive);
-			let validToolVarName = /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+			// valid for tools StatRes etc.
+			let validToolVarName = isValidToolName(newName);
 			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
@@ -9797,7 +9799,7 @@ class EquationEditor extends jqDialog {
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
-				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
+				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive) && isValidToolName(newName)) {
 					setName(this.primitive, newName);
 					changeReferencesToName(this.primitive.id, oldName, newName);
 				}
