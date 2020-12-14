@@ -65,7 +65,7 @@ svg * {
     /*width: 20px;*/
 }
 button.pressed {
-    background-color: #777;
+    background-color: #777 !important;
 }
 .tool-button {
     padding: 0px;
