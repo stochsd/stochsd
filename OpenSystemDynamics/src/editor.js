@@ -6646,7 +6646,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
-				this.setProgressBarGreen(false);
+				this.setProgressBarGreen(true);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
