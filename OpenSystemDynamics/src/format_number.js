@@ -66,7 +66,8 @@ let default_options = {
     round_to_zero_limit: undefined,
     use_e_format_upper_limit: 1e8, 
     use_e_format_lower_limit: 1e-6, 
-    show_plus_sign: false
+    show_plus_sign: false,
+    not_defined: ""
 }
 
 function format_number(value, options = {}) {
@@ -74,6 +75,10 @@ function format_number(value, options = {}) {
         if(options[key] === undefined) {
             options[key] = default_options[key];
         }
+    }
+
+    if (value === null || value === undefined) {
+        return options.not_defined;
     }
 
     // set as zero if 0 or below rounding limit 
