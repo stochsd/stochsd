@@ -6669,9 +6669,10 @@ class RunResults {
 		let number_options = { precision: 3 };
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);
+		let endTime = format_number(this.getRunProgressMax(), number_options);
 		let timeStep = format_number(this.getTimeStep(), number_options);
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
-		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
