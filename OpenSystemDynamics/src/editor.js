@@ -9962,14 +9962,14 @@ class EquationListDialog extends jqDialog {
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
+			"Cancel": () =>
+			{
+				$(this.dialog).dialog('close');
+			},
 			"Print Equations": () =>
 			{
 				let contentHTML = $(this.dialogContent).html();
 				printContentInNewWindow(contentHTML);
-			},
-			"Leave":() =>
-			{
-				$(this.dialog).dialog('close');
 			}
 		};
 	}
