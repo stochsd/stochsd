@@ -6728,7 +6728,7 @@ class RunResults {
 		return lastRow[0];
 	}
 	static getRunProgressFraction() {
-		return this.getRunProgress() / this.getRunProgressMax();
+		return (this.getRunProgress() - this.getRunProgressMin()) / (this.getRunProgressMax() - this.getRunProgressMin());
 	}
 	static getRunProgressMax() {
 		return getTimeStart()+getTimeLength()
