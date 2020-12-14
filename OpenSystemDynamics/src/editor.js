@@ -6722,7 +6722,7 @@ class RunResults {
 		let lastRow = this.getLastRow();
 		// If we have no last row return null
 		if (lastRow == null && primitives("Setting")[0]) {
-			return primitives("Setting")[0].getAttribute("TimeStart");
+			return parseFloat(primitives("Setting")[0].getAttribute("TimeStart"));
 		}
 		// else return time
 		return lastRow[0];
