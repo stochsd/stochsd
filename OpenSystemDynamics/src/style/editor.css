@@ -23,7 +23,7 @@ button {
 }
 
 button:hover:enabled {
-    background-color: #ccc;
+    background-color: white;
 }
 #recent_title {
     background-color: #ddd; 
@@ -180,6 +180,11 @@ div.center-vertically-container {
     display: flex; 
     flex-direction: row; 
     align-items: center;
+}
+
+.center-horizontally {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Modern Table start here */

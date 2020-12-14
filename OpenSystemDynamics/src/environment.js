@@ -515,8 +515,14 @@ class NwFileManager extends BaseFileManager {
 			if (file) {
 				const exportFilePath = this.appendFileExtension(file.path, this.exportFileExtension);
 				console.log("exportFilePath", exportFilePath);
-				this.writeFile(exportFilePath, this.dataToExport);
-				this.fileExportInput.onSuccess(exportFilePath);
+				this.writeFilePromise(exportFilePath, this.dataToExport)
+					.then((filePath) => {
+						this.fileExportInput.onSuccess(filePath)
+					})
+					.catch((err) => {
+						console.log(err);
+						this.fileExportInput.onFailure();
+					});
 			}
 		}, false);
 		this.fileExportInput.type = "file";
@@ -534,11 +540,6 @@ class NwFileManager extends BaseFileManager {
 		this.exportFileExtension = fileExtension;
 		this.fileExportInput.accept = fileExtension;
 		this.dataToExport = dataToSave;
-		if (this.fileName === "") {
-			this.fileExportInput.nwsaveas = "untitled";
-		} else {
-			this.fileExportInput.nwsaveas = this.fileName;
-		}
 		this.fileExportInput.click();
 	}
 	hasSaveAs() {
@@ -563,6 +564,20 @@ class NwFileManager extends BaseFileManager {
 		recentFiles.unshift(filePath);
 		localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
 	}
+	removeFromRecent(filePath) {
+		let recentFiles = [];
+		if (localStorage.recentFiles) {
+			recentFiles = JSON.parse(localStorage.recentFiles);
+			let index = recentFiles.indexOf(filePath);
+			if (index !== -1) {
+				recentFiles.splice(index, 1);-
+				localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+			}
+		}
+	}
+	clearRecent() {
+		localStorage.setItem("recentFiles", JSON.stringify([]));
+	}
 	writeFile(fileName, FileData) {
 		do_global_log("NW: In write file");
 		//~ if(self.fileName == null) {
@@ -580,6 +595,18 @@ class NwFileManager extends BaseFileManager {
 			do_global_log("NW: Success in write file callback");
 		});
 	}
+	writeFilePromise(filePath, fileData) {
+		return new Promise((resolve, reject) => {
+			let fs = require('fs');
+			fs.writeFile(filePath, fileData, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(filePath);
+				}
+			});
+		});
+	}
 	saveModel() {
 		do_global_log("NW: save model triggered");
 		if (this.fileName == "") {
@@ -587,11 +614,20 @@ class NwFileManager extends BaseFileManager {
 			return;
 		}
 		let fileData = createModelFileData();
-		this.writeFile(this.fileName, fileData);
-		History.unsavedChanges = false;
-		this.updateSaveTime();
-		this.updateTitle();
-		this.addToRecent(this.fileName);
+		this.writeFilePromise(this.fileName, fileData)
+			.then((filePath) => {
+				History.unsavedChanges = false;
+				this.updateSaveTime();
+				this.updateTitle();
+				this.addToRecent(filePath);
+				if (this.finishedSaveHandler) {
+					this.finishedSaveHandler();
+				}
+			}).catch((err) => {
+				console.log(err);
+				console.log(trace);
+				alert("Error in file saving "+ getStackTrace());
+			});
 	}
 	loadModel() {
 		do_global_log("NW: load model");
@@ -609,13 +645,15 @@ class NwFileManager extends BaseFileManager {
 
 		fs.readFile(fileName, 'utf8', (err, data) => {
 			if (err) {
+				alert(`Error: File ${fileName} not found. \nThis file reference is now removed from Recent List.`);
+				this.removeFromRecent(fileName);
 				return console.error(err);
 			}
-			console.error(fs);
 			this.fileName = absoluteFileName;
-			this.loadModelData(data);
+			History.forceCustomUndoState(data);
 			this.updateTitle();
 			this.addToRecent(this.fileName);
+			preserveRestart();
 		});
 	}
 }
@@ -721,10 +759,10 @@ class NwEnvironment extends BaseEnvironment {
 				$("#btn_new").click();
 			}
 
-			if (event.keyCode == keyboard["+"]) {
+			if (event.keyCode == keyboard["+"] || event.keyCode == keyboard["numpad+"]) {
 				NwZoomController.zoomIn();
 			}
-			if (event.keyCode == keyboard["-"]) {
+			if (event.keyCode == keyboard["-"] || event.keyCode == keyboard["numpad-"]) {
 				NwZoomController.zoomOut();
 			}
 			if (event.keyCode == keyboard["0"]) {

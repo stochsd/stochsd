@@ -22,13 +22,19 @@ var histogram_pdf_mode = false;
 
 
 function frm_histogram_load() {
-	histogram_numbars = $(".txt_histogram_numbars").val();
+    histogram_numbars = $(".txt_histogram_numbars").val();
+    // events must be unbind, 
+    // else click events are added again every time histogram is loaded 
+    // and functions are called as many times are histogram has been loaded.
+    cmd_histogram_print.unbind(); 
     cmd_histogram_print.click(function() {
         cmd_histogram_print_click();
     });
+    cmd_histogram_auto.unbind();
     cmd_histogram_auto.click(function() {
         cmd_histogram_auto_click()
     });
+    cmd_histogram_update.unbind();
     cmd_histogram_update.click(function() {
         histogram_update();
     });

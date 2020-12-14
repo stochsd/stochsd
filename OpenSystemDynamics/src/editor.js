@@ -14,6 +14,7 @@ var macroDialog;
 var equationList;
 var debugDialog;
 var aboutDialog;
+var fullpotentialcssDialog;
 var thirdPartyLicensesDialog;
 var licenseDialog;
 
@@ -230,6 +231,7 @@ function loadModelFromXml(XmlString) {
 	clearModel();
 	stochsd_clear_sync();
 	loadXML(XmlString);
+	replaceDiagamsWithTimePlots();
 	syncAllVisuals();
 }
 
@@ -269,6 +271,8 @@ function makeKeyboardCodes() {
 	keyboard["delete"] = 46;
 	keyboard["+"] = 187;
 	keyboard["-"] = 189;
+	keyboard["numpad+"] = 107;
+	keyboard["numpad-"] = 109;
 	keyboard["enter"] = 13;
 	keyboard["right"] = 37;
 	keyboard["up"] = 38;
@@ -1917,6 +1921,17 @@ class FlowVisual extends BaseConnection {
 		this.middleAnchors.push(newAnchor);
 	}
 
+	setStartAttach(new_start_attach) {
+		super.setStartAttach(new_start_attach);
+		// needs to update Links a few times to follow along
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
+	setEndAttach(new_end_attach) {
+		super.setEndAttach(new_end_attach);
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
 	removeLastMiddleAnchorPoint() {
 		// set valveIndex to 0 to avoid valveplacement bug 
 		if (this.valveIndex === this.middleAnchors.length) {
@@ -2394,14 +2409,15 @@ class TableVisual extends HtmlTwoPointer {
 		});
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
-		$(this.htmlElement.innerDiv).mousedown((event) => {
+
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
 				event.stopPropagation();
 		});
 		
-		$(this.htmlElement.scrollDiv).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.dialog.show();
 		});
 		
@@ -2424,14 +2440,12 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect.x2 = this.endX;
 		this.coordRect.y2 = this.endY;
 		this.coordRect.update();
+
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
 		
-		this.htmlElement.setAttribute("x",this.getMinX());
-		this.htmlElement.setAttribute("y",this.getMinY());
-		this.htmlElement.setAttribute("width",this.getWidth());
-		this.htmlElement.setAttribute("height",this.getHeight());
-		
-		$(this.htmlElement.cutDiv).css("width",this.getWidth());
-		$(this.htmlElement.cutDiv).css("height",this.getHeight());
 		$(this.htmlElement.scrollDiv).css("width",this.getWidth());
 		$(this.htmlElement.scrollDiv).css("height",this.getHeight());
 	}
@@ -2542,7 +2556,6 @@ class TimePlotVisual extends PlotVisual {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.runHandler = () => {
-			this.fetchData();
 			this.render();
 		}
 		RunResults.subscribeRun(id, this.runHandler);
@@ -2584,6 +2597,8 @@ class TimePlotVisual extends PlotVisual {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
+		this.fetchData();
+
 		// Remove deleted primitves 
 		let idsToDisplay = this.dialog.getIdsToDisplay();
 		let sides = this.dialog.getSidesToDisplay();
@@ -3038,11 +3053,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	updateGraphics() {
 		// code for svg foreign
-		this.htmlElement.setAttribute("x", this.getMinX());
-		this.htmlElement.setAttribute("y", this.getMinY());
-		this.htmlElement.setAttribute("width", this.getWidth());
-		this.htmlElement.setAttribute("height", this.getHeight());
-		
+		this.htmlElement.setX(this.getMinX());
+		this.htmlElement.setY(this.getMinY());
+		this.htmlElement.setWidth(this.getWidth());
+		this.htmlElement.setHeight(this.getHeight());
+
 		this.coordRect.x1 = this.startX;
 		this.coordRect.y1 = this.startY;
 		this.coordRect.x2 = this.endX;
@@ -3051,12 +3066,13 @@ class TextAreaVisual extends HtmlTwoPointer {
 	}
 	makeGraphics() {
 		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
 		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
-		$(this.htmlElement).mousedown((event) => {
+		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
 				primitive_mousedown(this.id,event)
 				mouseDownHandler(event);
@@ -3064,11 +3080,11 @@ class TextAreaVisual extends HtmlTwoPointer {
 		});
 		
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.htmlElement).bind("contextmenu", (event)=> {
+		$(this.htmlElement.cutDiv).bind("contextmenu", ()=> {
 			this.doubleClick();
 		});
 
-		$(this.htmlElement).dblclick(()=>{
+		$(this.htmlElement.cutDiv).dblclick(()=>{
 			this.doubleClick();
 		});
 
@@ -3096,6 +3112,10 @@ class TextAreaVisual extends HtmlTwoPointer {
 		// Replace 							new line 		and 	space
 		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
 		this.updateHTML(formatedText);
+	}
+	setColor(color) {
+		super.setColor(color);
+		this.htmlElement.style.color = color;
 	}
 }
 
@@ -4576,6 +4596,8 @@ class FlowTool extends TwoPointerTool {
 				}
 			}
 		} else {
+			// bugfix: unselect to not unattach on next empty click
+			unselect_all();
 			ToolBox.setTool("mouse");
 		}
 	}
@@ -4586,6 +4608,8 @@ class FlowTool extends TwoPointerTool {
 			last_clicked_element = null;
 	
 			if (this.rightClickMode === false) {
+				// bugfix: unselect to not unattach on next empty click
+				unselect_all();
 				ToolBox.setTool("mouse");
 			}
 		}
@@ -5103,6 +5127,8 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		if (last_clicked_element.type == "dummy_anchor") {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
+		} else if (get_only_selected_anchor_id()) {
+			unselect_all();
 		}
 		if (last_clicked_element.isSelected()) {
 			if (event.shiftKey) {
@@ -5661,6 +5687,13 @@ $(window).load(function() {
 		History.storeUndoState();
 		fileManager.saveModelAs();
 	});
+	$("#btn_recent_clear").click(function() {
+		yesNoAlert("Are you sure you want to clear Recent List?", (answer) => {
+			if (answer === "yes") {
+				fileManager.clearRecent();
+			}
+		});
+	});
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
 	});
@@ -5673,8 +5706,8 @@ $(window).load(function() {
 	$("#btn_black").click(function() {
 		setColorToSelection("black");
 	});
-	$("#btn_lightgrey").click(function() {
-		setColorToSelection("lightgrey");
+	$("#btn_grey").click(function() {
+		setColorToSelection("silver");
 	});
 	$("#btn_red").click(function() {
 		setColorToSelection("red");
@@ -5718,6 +5751,9 @@ $(window).load(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_fullpotentialcss").click(function () {
+		fullpotentialcssDialog.show();
+	});
 	$("#btn_license").click(function() {
 		licenseDialog.show();
 	});
@@ -5745,12 +5781,14 @@ $(window).load(function() {
 	if (fileManager.hasRecentFiles()) {
 		for (let i = 0; i < Settings.MaxRecentFiles; i++) {
 			$(`#btn_recent_${i}`).click(function(event) {
-				let filePath = event.target.getAttribute("filePath");
-				fileManager.loadFromFile(filePath);
-				setTimeout(() => {
-					updateTimeUnitButton();
-					updateInfoBar();
-				 },200);
+				saveChangedAlert(function () {
+					let filePath = event.currentTarget.getAttribute("data-path");
+					fileManager.loadFromFile(filePath);
+					setTimeout(() => {
+						updateTimeUnitButton();
+						updateInfoBar();
+					 },200);
+				});
 			});
 		}
 	}
@@ -5762,6 +5800,7 @@ $(window).load(function() {
 	equationList = new EquationListDialog();
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
+	fullpotentialcssDialog = new FullPotentialCSSDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	licenseDialog = new LicenseDialog();
 	
@@ -5778,6 +5817,7 @@ $(window).load(function() {
 	updateTimeUnitButton();
 	
 	History.storeUndoState();
+	History.unsavedChanges = false;
 });
 	
 function updateTimeUnitButton() {
@@ -5904,7 +5944,8 @@ loadXML(blankGraphTemplate);
 
 function addMissingPrimitiveAttributes(prim) {
 	// default primitive to get missing attributes 
-	let default_primitive = primitiveBank[prim.value.nodeName.toLowerCase()];
+	let primitive_type = prim.value.nodeName.toLowerCase();
+	let default_primitive = primitiveBank[primitive_type];
 	if (default_primitive) {
 		for (let attr of default_primitive.attributes) {
 			// check fow missing attributes 
@@ -6176,7 +6217,13 @@ function syncVisual(tprimitive) {
 				// bezierPoints does not exist. Create them
 				connection.resetBezierPoints();
 			}
-			connection.curve.update();
+			for (let i = 0; i < 8; i++) {
+				// the anchor and the handle are co-dependent 
+				// This means that moving the handle moves the anchor which moves the handle ... etc.
+				// this continues until a stable position is reached.
+				// To get around this the Link gets calculated a few times to reach a stable position.
+				connection.update();
+			}
 		}
 		break;
 	}
@@ -6302,17 +6349,37 @@ function removeNewLines(string) {
 	return newString;
 }
 
+function seperatePathAndName(file_path) {
+	let seperator = "\\";
+	if (file_path.includes("/")) {
+		seperator = "/";
+	}
+	let segments = file_path.split(seperator);
+	let path = "";
+	for (let i = 0; i < segments.length-1; i++) {
+		path += segments[i]+seperator;
+	}
+	return {"path": path, "name": segments[segments.length-1]};
+}
+
 function updateRecentsMenu() {
 	if (fileManager.hasRecentFiles()) {
 		if (localStorage.recentFiles) {
 			let recent = JSON.parse(localStorage.recentFiles);
 			if (0 < recent.length) {
 				$('#recent_title').show();
+				$('#btn_recent_clear').show();
 			}
-			for (let i = 0; i < recent.length; i++) {
-				$(`#btn_recent_${i}`).show();
-				$(`#btn_recent_${i}`).html(recent[i]);
-				$(`#btn_recent_${i}`).attr("filePath", recent[i]);
+			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
+				if (i < recent.length) {
+					$(`#btn_recent_${i}`).show();
+					let file = seperatePathAndName(recent[i]);
+					$(`#btn_recent_${i}`).html(`<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
+					$(`#btn_recent_${i}`).attr("data-path", recent[i]);
+				} else {
+					$(`#btn_recent_${i}`).hide();
+				}
+				
 			}
 		}
 	}
@@ -6843,9 +6910,11 @@ class jqDialog {
 	}
 	bindEnterApplyEvents() {
 		$(this.dialogContent).find(".enter-apply").keydown(event => {
-			if (event.keyCode === keyboard["enter"]) {
-				event.preventDefault();
-				this.applyChanges();
+			if (! event.shiftKey) {
+				if (event.keyCode === keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
 			}
 		});
 	}
@@ -7272,7 +7341,9 @@ class DisplayDialog extends jqDialog {
 
 		// set default button listener
 		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
-			this.setRoundToZero(true);
+			// fetches default for numberbox, but this is also used for table 
+			// Should be fixes so it fetches default for the type of object the dialog belongs to  
+			this.setRoundToZero(getDefaultAttributeValue("numberbox", "RoundToZero") === "true");
 			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
 			this.checkValidRoundAtZeroAtField();
 		});
@@ -7520,7 +7591,7 @@ class DisplayDialog extends jqDialog {
 				if (order_diff !== 0) {
 					return order_diff;
 				} else {
-					return getName(a) > getName(b);
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
 				}
 			});
 		} else {
@@ -7528,42 +7599,62 @@ class DisplayDialog extends jqDialog {
 				getName(p).toLowerCase().includes(search_lc)
 			).filter(p => // filter already added primitives 
 				this.displayIdList.includes(getID(p)) === false 
-			).sort((a, b) => // sort by what search word appears first 
-				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
-			);
+			).sort((a, b) => { 
+				let char_match = getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc);
+				if (char_match !== 0) { // sort by what search word appears first 
+					return char_match;
+				} else { // else sort alphabetically 
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
+				}
+			});
 		}
 		return results;
 	}
 	updateNotSelectedPrimitiveList() {
-		let search_lc = $(this.dialogContent).find(".primitive-filter-input").val().toLowerCase();
+		let search_word = $(this.dialogContent).find(".primitive-filter-input").val();
+		let search_lc = search_word.toLowerCase();
 		let results = this.getSearchPrimitiveResults(search_lc);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
-		let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
-		notSelectedDiv.html(`
-			<table class="modern-table"> 
-				${results.map(p => `
-					<tr>
-						<td style="padding: 0;">
-							<button class="primitive-add-button" data-id="${getID(p)}" 
-								${limitReached ? "disabled" : ""} 
-								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
-								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
-								+
-							</button>
-						</td>
-						<td style="width: 100%;">
-						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-							${getName(p)}
-						</div>
-						</td>
-					</tr>
-				`).join("")}
-			</table>
-		`);
-		$(this.dialogContent).find(".primitive-add-button").click((event) => {
-			this.primitiveAddButton($(event.target).attr("data-id"));
-		});
+		let get_highlight_match = (name, match) => {
+			let index = name.toLowerCase().indexOf(match.toLowerCase());
+			if (index === -1) {
+				return name;
+			} else {
+				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
+			}
+		}
+		if (results.length > 0) {
+			let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
+			notSelectedDiv.html(`
+				<table class="modern-table"> 
+					${results.map(p => `
+						<tr>
+							<td style="padding: 0;">
+								<button class="primitive-add-button" data-id="${getID(p)}" 
+									${limitReached ? "disabled" : ""} 
+									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+									style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+									+
+								</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+								${get_highlight_match(getName(p), search_word)}
+							</div>
+							</td>
+						</tr>
+					`).join("")}
+				</table>
+			`);
+			$(this.dialogContent).find(".primitive-add-button").click((event) => {
+				this.primitiveAddButton($(event.target).attr("data-id"));
+			});
+		} else if (search_lc === "") {
+			notSelectedDiv.html(`<div>No more primitives to add.</div>`);
+		} else {
+			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
+		}
 	}
 	primitiveAddButton(id) {
 		this.addIdToDisplay(id);
@@ -7723,7 +7814,9 @@ class TimePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -7736,7 +7829,7 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Left</td>
@@ -7749,9 +7842,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="left-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.leftaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="left-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("LeftLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px;">Right</td>
@@ -7764,9 +7857,9 @@ class TimePlotDialog extends DisplayDialog {
 				<td>
 					<input class="right-yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.rightaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="right-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("RightLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning" ></div>
@@ -7827,7 +7920,7 @@ class TimePlotDialog extends DisplayDialog {
 		} else if (left_log || right_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8053,7 +8146,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Time</td>
@@ -8066,7 +8161,7 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
 				</td>
-				<td></td>
+				<!--<td></td>-->
 			</tr>
 			<tr>
 				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
@@ -8079,9 +8174,9 @@ class ComparePlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
@@ -8126,7 +8221,7 @@ class ComparePlotDialog extends DisplayDialog {
 		} else if (y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -8342,7 +8437,9 @@ class XyPlotDialog extends DisplayDialog {
 				<th>Min</th>
 				<th>Max</th>
 				<th>Auto</th>
-				<th>Log</th>
+				<!--<th>Log</th>-->
+				<!--Remove log option because it is not stable if values > 0 included-->
+				<!--Can cause the program to close-->
 			</tr>
 			<tr>
 				<td>X-axis</td>
@@ -8355,9 +8452,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 			<tr>
 				<td>Y-axis</td>
@@ -8370,9 +8467,9 @@ class XyPlotDialog extends DisplayDialog {
 				<td>
 					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
 				</td>
-				<td>
+				<!--<td>
 					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>
+				</td>-->
 			</tr>
 		</table>
 		<div class="axis-limits-warning-div warning"></div>
@@ -8421,7 +8518,8 @@ class XyPlotDialog extends DisplayDialog {
 		} else if (x_log || y_log) {
 			warning_div.html(`<span class="note">
 				Note: <br/>
-				log(x) requires that all x-values &gt; 0
+				log(x) requires that all x-values &gt; 0 <br/>
+				log(y) requires that all y-values &gt; 0
 			</span>`);
 			return true;
 		}
@@ -9299,8 +9397,9 @@ class CloseDialog extends jqDialog {
 class AboutDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("About");
+		this.setTitle("About StochSD");
 		this.setHtml(`
+			<div style="min-width:300px; max-width: 800px;">
 			<img src="graphics/stochsd_high.png" style="width: 128px; height: 128px"/><br/>
 			<b>StochSD version ${stochsd.version} (YYYY.MM.DD)</b><br/>
 			<br/>
@@ -9310,14 +9409,64 @@ class AboutDialog extends CloseDialog {
 			<br/>
 			StochSD was developed by Leif Gustafsson, Erik Gustafsson and Magnus Gustafsson, Uppsala University, Uppsala, Sweden.<br/>
 			Mail: leif.gunnar.gustafsson@gmail.com 
+			</div>
 		`);
+	}
+}
+
+class FullPotentialCSSDialog extends CloseDialog {
+	constructor() {
+		super();
+		this.setTitle("What is Full Potential CSS?");
+		this.setHtml(`
+		<div style="min-width: 300px; max-width: 1300px; overflow-y: auto;">
+		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each object is represented as an entity, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
+		<table class="modern-table center-horizontally">
+			<tr><th></th><th>Micro approach</th><th>Macro approach</th></tr>
+			<tr><td>Flowing water</td><td>H<sub>2</sub>O molecules</td><td>A river</td></tr>
+			<tr><td>A disease process</td><td>Individual level (Medicine)</td><td>Population level (Epidemiology)</td></tr>
+			<tr><td>Biology</td><td>Individual of a species</td><td>Ecological system</td></tr>
+			<tr><td>Traffic</td><td>Individual vehicles</td><td>Traffic flows</td></tr>
+		</table>
+		<p>Regardless of whether you choose a micro approach using <b>Discrete Event Simulation</b> (DES) or a macro approch using <b>Continuous System Simulation</b> (CSS), the results should be <b>consistent</b> (contradiction free), i.e. averages, variations, correlation, etc. should be the same. See the Figure.</p>
+		<img src="graphics/what_is_fp_css.png" style="display: block; max-width: 700px; margin: 0 auto;"/>
+		<p>Consistency is usually not obtained for <b>Classical CSS</b>. However, if the <b>Full Potential CSS</b> approach is followed, you can obtain results consistent with those from a micro model.</p>
+		<h3>Full Potential CSS requirements</h3>
+		<p>To correctly <i>realise</i> a <b>Conceptual model</b> into an <b>CSS model</b> the following rules must be applied:</p>
+		<ol>
+			<li>Discrete objects must be modelled as discrete (unless they can be regarded as continuous according to the Law of Large Numbers). Continuous matter should be modelled as continuous.</li>
+			<li>Attribute values are realised by multiple parallel sub-structures (Attribute expansion). </li>
+			<li>Distribution of the sojourn (stay) times in a stage are obtained by modelling the stage by a structure of compartments in series and/or parallel. (Stage-to-compartment expansion).</li>
+			<li>
+				Uncertainties of different types must realise the description in the well-defined conceptual model. This applies to:<br/>
+				&bull; Model structure &bull; Initial values &bull; Transitions &bull; Environmental influences &bull; Signals 
+			</li>
+		</ol>
+		<p>Classical CSS cannot fulfil these conditions – but Full Potential CSS can! If one of several of these issues is part of the conceptul model, Full Potential CSS provides the way to correctly implement them in a CSS model.</p>
+		<p>To do so Full Potential CSS requires devices to model discrete/continuous/combined processes and to handle the different types of uncertainties as well as multiple simulations followed by a statistical analysis and presentation of the results in statistical terms.</p>
+		<p style="display: flex; flex-direction: row;">
+			<img src="graphics/stochsd_high.png" style="width: 32px; height: 32px; position: inline; margin-right: 8px;"> 
+			<span><i style="display: flex; flex-direction: column; justify-content: center; height: 100%;">StochSD is a package that can accomplish this.</i></span>
+		</p>
+		<p>
+			At <a target="_blank" href="https://stochsd.sourceforge.io/homepage/" >StochSD’s homepage</a> you find the theoretical papers describing this in detail. You also find Example Models that demonstrates the necessity of following the Full Potential rules. Further there are five Laboratory Exercises that teaches model building and simulation in CSS. &#x25A0;
+		</p>
+		</div>
+		`);
+		$(this.dialogContent).find("a").css("color", "blue");
+		$(this.dialogContent).find("a").click((event)=> {
+			let url = event.currentTarget.href;
+			if(environment.openLink(url)) {			
+				event.preventDefault();
+			}
+		});
 	}
 }
 
 class LicenseDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("License");
+		this.setTitle("StochSD License");
 		
 		this.setHtml(`
 		<p style="display: inline-block">
@@ -9335,7 +9484,7 @@ class LicenseDialog extends CloseDialog {
 class ThirdPartyLicensesDialog extends CloseDialog {
 	constructor() {
 		super();
-		this.setTitle("Third-party licenses");
+		this.setTitle("Third-party Licenses");
 		
 		this.setHtml(`
 		<iframe style="width: 700px; height: 500px;" src="third-party-licenses.html"/>
@@ -9387,8 +9536,11 @@ class EquationEditor extends jqDialog {
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
+			// valid according to insight maker
 			let validName = validPrimitiveName(newName, this.primitive);
-			if (nameFree && validName) {
+			// valid for tools StatRes etc.
+			let validToolVarName = isValidToolName(newName);
+			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
 			} else {
@@ -9397,8 +9549,15 @@ class EquationEditor extends jqDialog {
 					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
 				} else if (newName === "") {
 					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
+				} else if (! validToolVarName) {
+					// not allowed by StatRes and Other tools 
+					$(this.dialogContent).find(".name-warning-div").html(`
+						Allowed characters are: <br/>
+						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
+						<br/><b>0-9</b> (if not first character)`);
 				} else if (! validName) {
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain brackets, parentheses, or quotes`);
+					// not allowed according to insightmaker
+					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain bracket, parenthesis, or quote`);
 				}
 			} 
 		});
@@ -9640,7 +9799,7 @@ class EquationEditor extends jqDialog {
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
-				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
+				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive) && isValidToolName(newName)) {
 					setName(this.primitive, newName);
 					changeReferencesToName(this.primitive.id, oldName, newName);
 				}
@@ -9783,7 +9942,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-40);
+		this.textArea.height(height-50);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
@@ -9892,14 +10051,14 @@ class EquationListDialog extends jqDialog {
 				tableColumns: [
 					{ header: "Name", 			cellFunc: (prim) => { return makePrimitiveName(getName(prim)); } },
 					{ header: "Init. Value", 	cellFunc: getValue, style: "font-family: monospace;" },
-					{ header: "Dif. Equation", 		
+					{ header: "Recalculated as", 		
 						cellFunc: (prim) => {  
 							let flows = primitives("Flow");
 							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
 							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
-							let input_str = input.map(f => ` +Δt*${getName(f)}`).join(""); 
-							let output_str = output.map(f => ` -Δt*${getName(f)}`).join("");
-							return input_str+output_str;
+							let input_str = input.map(f => ` +Δt*${makePrimitiveName(getName(f))}`).join(""); 
+							let output_str = output.map(f => ` -Δt*${makePrimitiveName(getName(f))}`).join("");
+							return makePrimitiveName(getName(prim))+input_str+output_str;
 						}
 					},
 					{ 

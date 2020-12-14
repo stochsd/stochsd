@@ -392,3 +392,30 @@ function getTypeNew(prim) {
 	}
 	return type;
 }
+
+/**
+ 	Method: replaceName
+	replaces all depricated Diagrams objects with new TimePlots primitives 
+	should be done before syncing primitives 
+ */
+
+function replaceDiagamsWithTimePlots() {
+	let primitive_list = primitives("Diagram");
+	for (key in primitive_list) {
+		let name = findFreeName(type_basename["TimePlot"]);
+		let replacePrim = createConnector(name, "TimePlot", null, null);
+		setSourcePosition(replacePrim, getSourcePosition(primitive_list[key]));
+		setTargetPosition(replacePrim, getTargetPosition(primitive_list[key]));
+		replacePrim.setAttribute("Primitives", primitive_list[key].getAttribute("Primitives"));
+		removePrimitive(primitive_list[key]);
+	}
+} 
+
+
+/**
+ 	Method: isValidToolname
+	Checks if name is valid for tools StatRes, ParmVar etc.
+ */
+function isValidToolName(newName) {
+	return /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+}

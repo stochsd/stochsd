@@ -195,27 +195,6 @@ function init_stocsd() {
     panel.show();
     cmd_minimize_click();
     
-    nwjsInit();
-}
-
-function nwjsInit() {
-	if (typeof require === "undefined") {
-		this.nwActive = false;
-	} else {
-		unsafeNwjsInit();
-	}
-}
-
-// This can only executed safely if we know that NWJS is running
-// If one try to execut it without NWJS it will generate errors
-function unsafeNwjsInit() {
-	var ngui = require("nw.gui");
-	var nwin = ngui.Window.get();
-	var app = ngui.App;
-	
-	nwin.on("close",function(event) {
-		runline("quitQuestion();");
-	});
 }
 
 function clear_all_apps() {
