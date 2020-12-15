@@ -5013,6 +5013,7 @@ function tool_deletePrimitive(id) {
 	}
 	cleanUnconnectedLinks();
 	detachFlows(id);
+	RunResults.removeResultsForId(id);
 }
 
 function detachFlows(id) {
@@ -6454,7 +6455,6 @@ class RunResults {
 		this.simulationController = null;
 		this.varnameList = [];
 		this.varIdList = [];
-		this.varnameList = ["Time"];
 		this.results = [];
 		this.runSubscribers = {};
 		this.updateFrequency = 100;
@@ -6465,7 +6465,7 @@ class RunResults {
 		// Get list of primitives that we want to observe from the model
 		let primitive_array = getPrimitiveList();
 
-		// Create list of ids
+		// Create list of ids, id0 is reserved for time 
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
 		
 		// Create list of names
@@ -6526,6 +6526,22 @@ class RunResults {
 			index++;
 		}
 		//~ this.triggerRunFinished();
+	}
+	static removeResultsForId(id) {
+		let index = this.varIdList.indexOf(parseInt(id));
+		if (index !== -1) {
+			// remove id
+			this.varIdList.splice(index, 1);
+			
+			
+			// remove name
+			this.varnameList.splice(index, 1);
+
+			// remove data 
+			this.results.map(row => {
+				row.splice(index, 1);
+			});
+		}
 	}
 	static runPauseSimulation() {
 		switch(this.runState) {
