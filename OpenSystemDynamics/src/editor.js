@@ -4402,13 +4402,7 @@ class MouseTool extends BaseTool {
 			if (move_objects[key].draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
-			} 
-			if (move_objects[key].type == "dummy_anchor") {
-				if (move_objects[key].isAttached()) {
-					// We can't drug and drop attached anchors
-					continue;
-				}
-			} 
+			}
 
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
