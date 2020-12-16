@@ -20,11 +20,11 @@
 }
 
 /* .cm-s-stochsdtheme .CodeMirror-gutters { color: #282a36; } */
-.cm-s-stochsdtheme span.cm-primitive { color: #080; font-weight: bold; }
-.cm-s-stochsdtheme span.cm-functioncall { color: #00d; font-weight: bold; }
-.cm-s-stochsdtheme span.cm-comment { color: #0080FF; font-style: italic; }
-.cm-s-stochsdtheme span.cm-string { color: #d71; }
-.cm-s-stochsdtheme span.cm-number { color: #706; }
+.cm-s-stochsdtheme span.cm-primitive { color: hsl(240deg, 50%, 40%); font-weight: bold; }
+.cm-s-stochsdtheme span.cm-functioncall { color: hsl(30deg, 50%, 40%); font-weight: bold; }
+.cm-s-stochsdtheme span.cm-comment { color: hsl(0deg, 0%, 50%); font-style: italic; }
+.cm-s-stochsdtheme span.cm-string { color: hsl(300deg, 50%, 40%); }
+.cm-s-stochsdtheme span.cm-number { color: hsl(160deg, 50%, 40%); }
 
   
 
