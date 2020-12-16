@@ -271,11 +271,7 @@ h3.equation-list-header {
 .click-function { 
     cursor: pointer; 
 }
-.linked-reference {
-    color: black;
-}
 .linked-reference:hover {
-    color: black;
     text-shadow:0px 0px 1px black;
 }
 /* for warning or note texts when changing settings and properties */

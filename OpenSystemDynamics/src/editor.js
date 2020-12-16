@@ -9727,7 +9727,7 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linked-reference click-function" data-template="${name}">${name}</span>&nbsp;</br>`;
+				result += `<span class = "linked-reference click-function cm-primitive" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
