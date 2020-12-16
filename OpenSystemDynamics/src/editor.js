@@ -9518,7 +9518,7 @@ class EquationEditor extends jqDialog {
 					<div class="table-cell" style="width: 300px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
-							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
+							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
