@@ -1921,6 +1921,17 @@ class FlowVisual extends BaseConnection {
 		this.middleAnchors.push(newAnchor);
 	}
 
+	setStartAttach(new_start_attach) {
+		super.setStartAttach(new_start_attach);
+		// needs to update Links a few times to follow along
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
+	setEndAttach(new_end_attach) {
+		super.setEndAttach(new_end_attach);
+		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+	}
+
 	removeLastMiddleAnchorPoint() {
 		// set valveIndex to 0 to avoid valveplacement bug 
 		if (this.valveIndex === this.middleAnchors.length) {
@@ -4391,13 +4402,7 @@ class MouseTool extends BaseTool {
 			if (move_objects[key].draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
-			} 
-			if (move_objects[key].type == "dummy_anchor") {
-				if (move_objects[key].isAttached()) {
-					// We can't drug and drop attached anchors
-					continue;
-				}
-			} 
+			}
 
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
@@ -4585,6 +4590,8 @@ class FlowTool extends TwoPointerTool {
 				}
 			}
 		} else {
+			// bugfix: unselect to not unattach on next empty click
+			unselect_all();
 			ToolBox.setTool("mouse");
 		}
 	}
@@ -4595,6 +4602,8 @@ class FlowTool extends TwoPointerTool {
 			last_clicked_element = null;
 	
 			if (this.rightClickMode === false) {
+				// bugfix: unselect to not unattach on next empty click
+				unselect_all();
 				ToolBox.setTool("mouse");
 			}
 		}
@@ -4998,6 +5007,7 @@ function tool_deletePrimitive(id) {
 	}
 	cleanUnconnectedLinks();
 	detachFlows(id);
+	RunResults.removeResultsForId(id);
 }
 
 function detachFlows(id) {
@@ -5112,6 +5122,8 @@ function primitive_mousedown(node_id, event, new_primitive) {
 		if (last_clicked_element.type == "dummy_anchor") {
 			let elementId = get_parent_id(last_clicked_element.id);
 			unselect_all_but(elementId);
+		} else if (get_only_selected_anchor_id()) {
+			unselect_all();
 		}
 		if (last_clicked_element.isSelected()) {
 			if (event.shiftKey) {
@@ -6437,7 +6449,6 @@ class RunResults {
 		this.simulationController = null;
 		this.varnameList = [];
 		this.varIdList = [];
-		this.varnameList = ["Time"];
 		this.results = [];
 		this.runSubscribers = {};
 		this.updateFrequency = 100;
@@ -6448,7 +6459,7 @@ class RunResults {
 		// Get list of primitives that we want to observe from the model
 		let primitive_array = getPrimitiveList();
 
-		// Create list of ids
+		// Create list of ids, id0 is reserved for time 
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
 		
 		// Create list of names
@@ -6509,6 +6520,22 @@ class RunResults {
 			index++;
 		}
 		//~ this.triggerRunFinished();
+	}
+	static removeResultsForId(id) {
+		let index = this.varIdList.indexOf(parseInt(id));
+		if (index !== -1) {
+			// remove id
+			this.varIdList.splice(index, 1);
+			
+			
+			// remove name
+			this.varnameList.splice(index, 1);
+
+			// remove data 
+			this.results.map(row => {
+				row.splice(index, 1);
+			});
+		}
 	}
 	static runPauseSimulation() {
 		switch(this.runState) {
@@ -6629,7 +6656,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
-				this.setProgressBarGreen(false);
+				this.setProgressBarGreen(true);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
@@ -6652,9 +6679,10 @@ class RunResults {
 		let number_options = { precision: 3 };
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);
+		let endTime = format_number(this.getRunProgressMax(), number_options);
 		let timeStep = format_number(this.getTimeStep(), number_options);
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
-		$("#runStatusBarText").html(`${startTime} / ${currentTime} </br> ${alg_str}(DT = ${timeStep})`);
+		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;
@@ -6704,13 +6732,13 @@ class RunResults {
 		let lastRow = this.getLastRow();
 		// If we have no last row return null
 		if (lastRow == null && primitives("Setting")[0]) {
-			return primitives("Setting")[0].getAttribute("TimeStart");
+			return parseFloat(primitives("Setting")[0].getAttribute("TimeStart"));
 		}
 		// else return time
 		return lastRow[0];
 	}
 	static getRunProgressFraction() {
-		return this.getRunProgress() / this.getRunProgressMax();
+		return (this.getRunProgress() - this.getRunProgressMin()) / (this.getRunProgressMax() - this.getRunProgressMin());
 	}
 	static getRunProgressMax() {
 		return getTimeStart()+getTimeLength()
@@ -7574,7 +7602,7 @@ class DisplayDialog extends jqDialog {
 				if (order_diff !== 0) {
 					return order_diff;
 				} else {
-					return getName(a) > getName(b);
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
 				}
 			});
 		} else {
@@ -7582,9 +7610,14 @@ class DisplayDialog extends jqDialog {
 				getName(p).toLowerCase().includes(search_lc)
 			).filter(p => // filter already added primitives 
 				this.displayIdList.includes(getID(p)) === false 
-			).sort((a, b) => // sort by what search word appears first 
-				getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc)
-			);
+			).sort((a, b) => { 
+				let char_match = getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc);
+				if (char_match !== 0) { // sort by what search word appears first 
+					return char_match;
+				} else { // else sort alphabetically 
+					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
+				}
+			});
 		}
 		return results;
 	}
@@ -7593,6 +7626,14 @@ class DisplayDialog extends jqDialog {
 		let search_lc = search_word.toLowerCase();
 		let results = this.getSearchPrimitiveResults(search_lc);
 		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
+		let get_highlight_match = (name, match) => {
+			let index = name.toLowerCase().indexOf(match.toLowerCase());
+			if (index === -1) {
+				return name;
+			} else {
+				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
+			}
+		}
 		if (results.length > 0) {
 			let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
 			notSelectedDiv.html(`
@@ -7610,7 +7651,7 @@ class DisplayDialog extends jqDialog {
 							<td style="width: 100%;">
 							<div class="center-vertically-container">
 								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-								${getName(p)}
+								${get_highlight_match(getName(p), search_word)}
 							</div>
 							</td>
 						</tr>
@@ -7620,6 +7661,8 @@ class DisplayDialog extends jqDialog {
 			$(this.dialogContent).find(".primitive-add-button").click((event) => {
 				this.primitiveAddButton($(event.target).attr("data-id"));
 			});
+		} else if (search_lc === "") {
+			notSelectedDiv.html(`<div>No more primitives to add.</div>`);
 		} else {
 			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
 		}
@@ -9504,8 +9547,10 @@ class EquationEditor extends jqDialog {
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
+			// valid according to insight maker
 			let validName = validPrimitiveName(newName, this.primitive);
-			let validToolVarName = /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
+			// valid for tools StatRes etc.
+			let validToolVarName = isValidToolName(newName);
 			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
@@ -9765,7 +9810,7 @@ class EquationEditor extends jqDialog {
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
-				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive)) {
+				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive) && isValidToolName(newName)) {
 					setName(this.primitive, newName);
 					changeReferencesToName(this.primitive.id, oldName, newName);
 				}
@@ -9928,14 +9973,14 @@ class EquationListDialog extends jqDialog {
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
+			"Cancel": () =>
+			{
+				$(this.dialog).dialog('close');
+			},
 			"Print Equations": () =>
 			{
 				let contentHTML = $(this.dialogContent).html();
 				printContentInNewWindow(contentHTML);
-			},
-			"Leave":() =>
-			{
-				$(this.dialog).dialog('close');
 			}
 		};
 	}
