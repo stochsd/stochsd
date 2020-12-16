@@ -9370,7 +9370,6 @@ function do_global_log(line) {
 class DebugDialog extends jqDialog {
 	constructor() {
 		super();
-		this.valueField = null;
 		this.nameField = null;
 		this.setTitle("Debug");
 		this.setHtml(`
@@ -9510,6 +9509,7 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
+		this.cm = null; // codemirror object
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -9521,7 +9521,7 @@ class EquationEditor extends jqDialog {
 							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="value-field enter-apply" style="width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9543,6 +9543,17 @@ class EquationEditor extends jqDialog {
   				</div>
 			</div>
 		`);
+
+		let value_field = document.getElementsByClassName("value-field")[0];
+		this.cmValueField = new CodeMirror.fromTextArea(
+			value_field,
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme",
+				lineWrapping: false
+			}
+		);
+
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9573,7 +9584,14 @@ class EquationEditor extends jqDialog {
 			} 
 		});
 
-		this.bindEnterApplyEvents();
+		$(this.dialogContent).find(".enter-apply").keydown((event) => {
+			if (! event.shiftKey) {
+				if (event.keyCode == keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
+			}
+		});
 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
@@ -9632,18 +9650,6 @@ class EquationEditor extends jqDialog {
 		
 		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
 		
-		$(this.valueField).focusout((event)=>{
-			this.storeValueSelectionRange();
-		});
-		$(".accordion-cluster").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		$(this.dialogContent).find(".primitive-references-div").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		
-		
-		
 		/* Positioning 
 			This is done to avoid blocking the button with the tooltip
 			https://api.jqueryui.com/position/
@@ -9662,7 +9668,6 @@ class EquationEditor extends jqDialog {
 			valueFieldDom.focus();
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
 		}
 	
 	}
@@ -9691,8 +9696,7 @@ class EquationEditor extends jqDialog {
 		this.setTitle(oldNameBrackets+" properties");
 
 		$(this.nameField).val(oldNameBrackets);
-		$(this.valueField).val(oldValue);
-		
+		this.cmValueField.setValue(oldValue);
 		
 		// Handle restrict to non-negative
 		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
@@ -9741,11 +9745,15 @@ class EquationEditor extends jqDialog {
 		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
-			valueFieldDom.focus();
-			let inputLength = valueFieldDom.value.length;
-			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
+			if (this.defaultFocusSelector === ".value-field") {
+				this.cmValueField.focus();
+				this.cmValueField.execCommand("selectAll");
+			} else {
+				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+				valueFieldDom.focus();
+				let inputLength = valueFieldDom.value.length;
+				valueFieldDom.setSelectionRange(0, inputLength);
+			}
 		}
 	}
 	updateRestrictNoteText() {
@@ -9761,15 +9769,14 @@ class EquationEditor extends jqDialog {
 	}
 	templateClick(event) {
 		let templateData = $(event.target).data("template");
-		let start = this.valueField.selectionStart;
+		let start = this.cmValueField.getCursor("start");
+		let end = this.cmValueField.getCursor("end");
+
 		if (typeof templateData == "object") {
 			templateData = "["+templateData.toString()+"]";
 		}
-		let oldValue = $(this.valueField).val();
-		let newValue = oldValue.slice(0, this.valueSelectionStart) + templateData + oldValue.slice(this.valueSelectionEnd);
-		$(this.valueField).val(newValue);
-		let newPosition = this.valueSelectionStart+templateData.length;
-		this.valueField.setSelectionRange(newPosition,newPosition);
+		this.cmValueField.replaceRange(templateData, start, end);
+		this.cmValueField.focus();
 	}
 	beforeClose() {
 		this.closeAccordion();
@@ -9793,18 +9800,10 @@ class EquationEditor extends jqDialog {
 			this.accordionBuilt = true;
 		}
 	}
-	storeValueSelectionRange() {
-		this.valueSelectionStart = this.valueField.selectionStart;
-		this.valueSelectionEnd = this.valueField.selectionEnd;
-	}
-	restoreValueSelectionRange() {
-		$(this.valueField).focus();
-		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
-	}
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.dialogContent).find(".value-field").val();
+			let value = this.cmValueField.getValue();
 			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
