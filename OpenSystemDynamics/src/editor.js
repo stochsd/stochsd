@@ -9509,7 +9509,6 @@ class EquationEditor extends jqDialog {
 		this.accordionBuilt = false;
 		this.setTitle("Equation Editor");
 		this.primitive = null;
-		this.cm = null; // codemirror object
 		
 		// read more about display: table, http://www.mattboldt.com/kicking-ass-with-display-table/
 		this.setHtml(`
@@ -9545,12 +9544,22 @@ class EquationEditor extends jqDialog {
 		`);
 
 		let value_field = document.getElementsByClassName("value-field")[0];
-		this.cmValueField = new CodeMirror.fromTextArea(
-			value_field,
+		this.cmValueField = new CodeMirror.fromTextArea(value_field,
 			{
 				mode: "stochsdmode", 
 				theme: "stochsdtheme",
-				lineWrapping: false
+				lineWrapping: false,
+				extraKeys: {
+					"Esc": () => {
+						this.dialogParameters.buttons["Cancel"]();
+					},
+					"Enter": () => {
+						this.dialogParameters.buttons["Apply"]();
+					},
+					"Shift-Tab": () => {
+						this.nameField.focus();
+					}
+				}
 			}
 		);
 
