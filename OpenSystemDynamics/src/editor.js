@@ -312,6 +312,87 @@ function updateLinkBar() {
 	$(".info-bar__im-link").css("left", linkBarLeft)
 }
 
+
+class InfoBar {
+	static init() {
+		let infoDef = $(".info-bar__definition")[0];
+		this.cmInfoDef = new CodeMirror(infoDef,
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme",
+				readOnly: "nocursor",
+				lineWrapping: false
+			}
+		);
+		this.infoVE = $(".info-bar__value-error");
+		$(infoDef).find(".CodeMirror").css("border", "none");
+	}
+	static update() {
+		let selected_hash = get_selected_root_objects();
+		let selected_array = [];
+		for (let key in selected_hash) {
+			selected_array.push(selected_hash[key]);
+		}
+	
+		if (selected_array == 0) {
+			// infoDef.html("Nothing selected");
+			this.cmInfoDef.setValue("Nothing selected");
+			this.infoVE.html("");
+		} else if (selected_array.length == 1) {
+			let selected = selected_array[0];
+			let primitive = selected_array[0].primitive;
+			if (selected.is_ghost) {
+				primitive = findID(primitive.getAttribute("Source"));
+			}
+			let name = primitive.getAttribute("name");
+			let definition = getValue(primitive);
+			let VE = primitive.getAttribute("ValueError");
+			this.infoVE.html(VE ? ValueErrorToString(VE) : "" );
+	
+			let definitionNoLines = removeNewLines(definition);
+			if (definitionNoLines != "") {
+				// infoDef.html(`[${name}] = ${definitionNoLines}`);
+				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+			} else {
+				let type = selected.type;
+				
+				// Make first letter uppercase
+				// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+				let Type = type_basename[type]; 
+				switch(type) {
+					case("numberbox"):
+						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
+						// infoDef.html(`Numberbox: Value of [${targetName}]`);
+						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
+					break;
+					case("timeplot"):
+					case("compareplot"):
+					case("table"):
+					case("xyplot"):
+					case("histoplot"):
+						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
+						// infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
+						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
+					break;
+					case("link"):
+						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
+						let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
+						// infoDef.html(`Link: ${source} -> ${target}`);
+						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
+					break;
+					default: 
+						// infoDef.html(`${Type} selected`);
+						this.cmInfoDef.setValue(`${Type} selected`);
+				}
+			}
+		} else {
+			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
+			this.infoVE.html("");
+		}
+		updateLinkBar();
+	}
+}
+
 defaultAttributeChangeHandler = function(primitive, attributeName, value) {
 	let id = getID(primitive);
 	let type = getType(primitive);
@@ -4062,7 +4143,7 @@ class DeleteTool extends BaseTool {
 		}
 		delete_selected_objects();
 		History.storeUndoState();
-		updateInfoBar();
+		InfoBar.update();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4098,7 +4179,7 @@ class OnePointCreateTool extends BaseTool {
 		unselect_all();
 		this.create(x, y);
 		update_relevant_objects([]);
-		updateInfoBar();
+		InfoBar.update();
 	}
 	static leftMouseUp(x, y) {
 		if (! this.rightClickMode) {
@@ -4108,7 +4189,7 @@ class OnePointCreateTool extends BaseTool {
 	static rightMouseDown(x, y) {
 		unselect_all();
 		ToolBox.setTool("mouse");
-		updateInfoBar();
+		InfoBar.update();
 	}
 }
 
@@ -5371,7 +5452,7 @@ function mouseUpHandler(event) {
 		
 		currentTool.leftMouseUp(x, y, event.shiftKey);
 		leftmouseisdown = false;
-		updateInfoBar();
+		InfoBar.update();
 		History.storeUndoState();
 	}	
 }
@@ -5781,7 +5862,7 @@ $(window).load(function() {
 					fileManager.loadFromFile(filePath);
 					setTimeout(() => {
 						updateTimeUnitButton();
-						updateInfoBar();
+						InfoBar.update();
 					 },200);
 				});
 			});
@@ -5813,6 +5894,7 @@ $(window).load(function() {
 	
 	History.storeUndoState();
 	History.unsavedChanges = false;
+	InfoBar.init();
 });
 	
 function updateTimeUnitButton() {
@@ -6316,7 +6398,7 @@ function setColorToSelection(color) {
 
 function printDiagram() {
 	unselect_all();
-	updateInfoBar();
+	InfoBar.update();
 	// Write filename and date into editor-footer 
 	let fileName = fileManager.fileName;
 	
@@ -6378,67 +6460,6 @@ function updateRecentsMenu() {
 			}
 		}
 	}
-}
-
-function updateInfoBar() {
-	let infoDef = $(".info-bar__definition");
-	let infoVE = $(".info-bar__value-error");
-	let selected_hash = get_selected_root_objects();
-	let selected_array = [];
-	for (let key in selected_hash) {
-		selected_array.push(selected_hash[key]);
-	}
-
-	if (selected_array == 0) {
-		infoDef.html("Nothing selected");
-		infoVE.html("");
-	} else if (selected_array.length == 1) {
-		let selected = selected_array[0];
-		primitive = selected_array[0].primitive;
-		if (selected.is_ghost) {
-			primitive = findID(primitive.getAttribute("Source"));
-		}
-		let name = primitive.getAttribute("name");
-		let definition = getValue(primitive);
-		let VE = primitive.getAttribute("ValueError");
-		infoVE.html(VE ? ValueErrorToString(VE) : "" );
-
-		definitionNoLines = removeNewLines(definition);
-		if (definitionNoLines != "") {
-			infoDef.html(`[${name}] = ${definitionNoLines}`);
-		} else {
-			let type = selected.type;
-			
-			// Make first letter uppercase
-			// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
-			let Type = type_basename[type]; 
-			switch(type) {
-				case("numberbox"):
-					let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
-					infoDef.html(`Numberbox: Value of [${targetName}]`);
-				break;
-				case("timeplot"):
-				case("compareplot"):
-				case("table"):
-				case("xyplot"):
-				case("histoplot"):
-					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
-					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
-				break;
-				case("link"):
-					let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
-					let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
-					infoDef.html(`Link: ${source} -> ${target}`);
-				break;
-				default: 
-					infoDef.html(`${Type} selected`);
-			}
-		}
-	} else {
-		infoDef.html(`${selected_array.length} objects selected`);
-		infoVE.html("");
-	}
-	updateLinkBar();
 }
 
 class RunResults {
@@ -6936,7 +6957,7 @@ class jqDialog {
 		
 		setTimeout(() => {
 			History.storeUndoState();
-			updateInfoBar();
+			InfoBar.update();
 		}, 200);
 	}
 	makeApply() {
