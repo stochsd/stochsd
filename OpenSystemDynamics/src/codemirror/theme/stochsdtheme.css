@@ -11,7 +11,7 @@
 .cm-s-stochsdtheme.CodeMirror {
     border: 2px solid gray;
     width: 100%; 
-    height: 70px;
+    height: auto;
     font-size: 14px;
 }
 
