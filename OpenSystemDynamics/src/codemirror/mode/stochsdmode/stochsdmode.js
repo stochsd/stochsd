@@ -32,7 +32,7 @@ CodeMirror.defineSimpleMode("stochsdmode", {
         // mode.
             // {regex: /<</, token: "meta", mode: {spec: "xml", end: />>/}},
         /* Magnus added rules here */
-        {regex: /\[[a-z, _]+\]/, token: "primitive"},
+        {regex: /\[[A-Za-z_]+[A-Za-z_0-9]*\]/, token: "primitive"},
         {regex: /#.+/, token: "comment"},
         {regex: /[\w]+(?=\()/, token: "functioncall"}
     ],
