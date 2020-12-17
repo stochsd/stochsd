@@ -9549,6 +9549,7 @@ class EquationEditor extends jqDialog {
 				mode: "stochsdmode", 
 				theme: "stochsdtheme",
 				lineWrapping: false,
+				matchBrackets: true,
 				extraKeys: {
 					"Esc": () => {
 						this.dialogParameters.buttons["Cancel"]();
