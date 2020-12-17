@@ -271,8 +271,11 @@ h3.equation-list-header {
 .click-function { 
     cursor: pointer; 
 }
+.linked-reference {
+    font-family: monospace;
+}
 .linked-reference:hover {
-    text-shadow:0px 0px 1px black;
+    background-color: hsl(0, 0%, 90%);
 }
 /* for warning or note texts when changing settings and properties */
 .warning {
