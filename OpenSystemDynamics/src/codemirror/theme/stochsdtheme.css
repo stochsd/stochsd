@@ -26,8 +26,8 @@
 .cm-string { color: hsl(300deg, 50%, 40%); }
 .cm-number { color: hsl(160deg, 50%, 30%); font-weight: bold; }
 
-div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 85%); font-weight: bold; }
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: hsl(0, 100%, 20%); background-color: hsl(0, 100%, 85%); font-weight: bold; }
+div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 90%); font-weight: bold; }
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: hsl(0, 100%, 20%); background-color: hsl(0, 100%, 90%); font-weight: bold; }
   
 
   /*
