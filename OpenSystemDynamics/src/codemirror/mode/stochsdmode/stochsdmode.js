@@ -34,12 +34,7 @@ CodeMirror.defineSimpleMode("stochsdmode", {
         /* Magnus added rules here */
         {regex: /\[[A-Za-z_]+[A-Za-z_0-9]*\]/, token: "primitive"},
         {regex: /#.+/, token: "comment"},
-        {regex: /[\w]+(?=\()/, token: "functioncall"},
-        // lookahead is not supported by codemirror 
-        // use false positive to filter out when character is ahead
-        // https://github.com/codemirror/CodeMirror/issues/6233
-        {regex: /[^\s](pi|e|eps)/i, token: "normal" }, 
-        {regex: /(pi|e|eps)\b/ig, token: "number"},
+        {regex: /[\w]+(?=\()/, token: "functioncall"}
     ],
     // The multi-line comment state.
     comment: [

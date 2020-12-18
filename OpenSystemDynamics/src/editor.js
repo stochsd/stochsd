@@ -9659,13 +9659,7 @@ class EquationEditor extends jqDialog {
 				}
 				codeSnippetName = functionList[j][0];
 				codeTemplate = `${filterFunctionTemplate(functionList[j][1])}`;
-				let codeTempLower = codeTemplate.toLowerCase();
-				let cmClassName = "";
-				if (codeTemplate.includes("(")) {
-					cmClassName = "cm-functioncall";
-				} else if (codeTempLower === "pi" || codeTempLower === "e" || codeTempLower === "eps") {
-					cmClassName = "cm-number";
-				}
+				let cmClassName = codeTemplate.includes("(") ? "cm-functioncall" : "";
 				codeHelp = `${functionList[j][2]} ${example}`;
 				codeHelp = codeHelp.replace(/\'/g, "&#39;");
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
