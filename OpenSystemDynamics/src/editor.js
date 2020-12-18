@@ -2812,6 +2812,8 @@ class TimePlotVisual extends PlotVisual {
 				show: true,
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
+				fadeTooltip: false,
+				tooltipLocation: "ne",
 				formatString: "Time = %.5p<br/>Value = %.5p",
 				useAxesFormatters: false
 			},
@@ -3090,6 +3092,8 @@ class ComparePlotVisual extends PlotVisual {
 				show: true,
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
+				fadeTooltip: false,
+				tooltipLocation: "ne",
 				formatString: "Time = %.5p<br/>Value = %.5p",
 				useAxesFormatters: false
 			},
@@ -3607,11 +3611,13 @@ class XyPlotVisual extends PlotVisual {
 				show: true,
 				sizeAdjust: 1.5,
 				yvalues: 2,
+				fadeTooltip: false,
+				tooltipLocation: "ne",
 				formatString: (`
 					<table class="jqplot-highlighter" style="color: black;">
-        				<tr><td>${this.serieXName} </td><td> = </td><td>%.5p</td></tr>
-						<tr><td>${this.serieYName} </td><td> = </td><td>%.5p</td></tr>
-						<tr><td>Time </td><td> = </td><td>%.5p</td></tr>
+						<tr><td>Time </td><td> = </td><td>%3$.3p</td></tr>
+        				<tr><td>${this.serieXName} </td><td> = </td><td>%1$.3p</td></tr>
+						<tr><td>${this.serieYName} </td><td> = </td><td>%2$.3p</td></tr>
 					</table>
 				`),
 				useAxesFormatters: false
