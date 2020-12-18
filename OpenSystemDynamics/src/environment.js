@@ -166,8 +166,8 @@ class BaseFileManager {
 		// Only exportFile is implementation specific (different on nwjs and electron)
 		this.exportFile(fileData, Settings.fileExtension, (filePath) => {
 			this.fileName = filePath;
+			History.unsavedChanges = false;
 			this.addToRecent(this.fileName);
-
 			this.updateSaveTime();
 			this.updateTitle();
 			if (this.finishedSaveHandler) {

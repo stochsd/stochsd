@@ -58,6 +58,10 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="imc.js"></script>
 	<script src="transform.js"></script>
 	<script src="libsvg.js"></script>
+	<script type="text/javascript" src="./codemirror/lib/codemirror.js"></script>
+	<script type="text/javascript" src="./codemirror/addon/mode/simple.js"></script>
+	<script type="text/javascript" src="./codemirror/mode/stochsdmode/stochsdmode.js"></script>
+	<script type="text/javascript" src="./codemirror/addon/edit/matchbrackets.js"></script>
 	<script src="jquery/jquery-1.8.3.min.js"></script>
 	<!--<script class="include" type="text/javascript" src="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
 	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.barRenderer.js"></script>
@@ -84,10 +88,12 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<!-- endbuild -->
 
 	<!-- build:css opensystemdynamics.css  -->
+	<link rel="stylesheet" href="./codemirror/lib/codemirror.css" />
+	<link rel="stylesheet" href="./codemirror/theme/stochsdtheme.css" />
 	<link rel="stylesheet" type="text/css" href="style/editor.css">
 	<link class="include" rel="stylesheet" type="text/css" href="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.css" />
-	<link rel="stylesheet" href="jquery/jquery-ui-1.12.1/jquery-ui.css">
-	<link rel="stylesheet" href="style/emenu.css">
+	<link rel="stylesheet" href="jquery/jquery-ui-1.12.1/jquery-ui.css" />
+	<link rel="stylesheet" href="style/emenu.css" />
 	<!-- endbuild -->
 	
 
@@ -401,11 +407,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		</div> <!-- End of toolPanel-->
 
 		<div class="info-bar">
-			<div class="info-bar__definition info-box__element" title="Selection" >
-				&nbsp 
-			</div>
+			<div class="info-bar__definition info-box__element center-vertically-container" title="Selection"></div>
 			<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
-			<div class="info-bar__value-error info-box__element" title="Definition Error">
+			<div class="info-bar__value-error info-box__element center-vertically-container" title="Definition Error">
 				&nbsp 
 			</div>
 			<span class="info-bar__im-link">

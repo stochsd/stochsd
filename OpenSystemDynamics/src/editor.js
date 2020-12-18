@@ -312,6 +312,87 @@ function updateLinkBar() {
 	$(".info-bar__im-link").css("left", linkBarLeft)
 }
 
+
+class InfoBar {
+	static init() {
+		let infoDef = $(".info-bar__definition")[0];
+		this.cmInfoDef = new CodeMirror(infoDef,
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme",
+				readOnly: "nocursor",
+				lineWrapping: false
+			}
+		);
+		this.infoVE = $(".info-bar__value-error");
+		$(infoDef).find(".CodeMirror").css("border", "none");
+	}
+	static update() {
+		let selected_hash = get_selected_root_objects();
+		let selected_array = [];
+		for (let key in selected_hash) {
+			selected_array.push(selected_hash[key]);
+		}
+	
+		if (selected_array == 0) {
+			// infoDef.html("Nothing selected");
+			this.cmInfoDef.setValue("Nothing selected");
+			this.infoVE.html("");
+		} else if (selected_array.length == 1) {
+			let selected = selected_array[0];
+			let primitive = selected_array[0].primitive;
+			if (selected.is_ghost) {
+				primitive = findID(primitive.getAttribute("Source"));
+			}
+			let name = primitive.getAttribute("name");
+			let definition = getValue(primitive);
+			let VE = primitive.getAttribute("ValueError");
+			this.infoVE.html(VE ? ValueErrorToString(VE) : "" );
+	
+			let definitionNoLines = removeNewLines(definition);
+			if (definitionNoLines != "") {
+				// infoDef.html(`[${name}] = ${definitionNoLines}`);
+				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+			} else {
+				let type = selected.type;
+				
+				// Make first letter uppercase
+				// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
+				let Type = type_basename[type]; 
+				switch(type) {
+					case("numberbox"):
+						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
+						// infoDef.html(`Numberbox: Value of [${targetName}]`);
+						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
+					break;
+					case("timeplot"):
+					case("compareplot"):
+					case("table"):
+					case("xyplot"):
+					case("histoplot"):
+						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
+						// infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
+						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
+					break;
+					case("link"):
+						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
+						let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
+						// infoDef.html(`Link: ${source} -> ${target}`);
+						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
+					break;
+					default: 
+						// infoDef.html(`${Type} selected`);
+						this.cmInfoDef.setValue(`${Type} selected`);
+				}
+			}
+		} else {
+			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
+			this.infoVE.html("");
+		}
+		updateLinkBar();
+	}
+}
+
 defaultAttributeChangeHandler = function(primitive, attributeName, value) {
 	let id = getID(primitive);
 	let type = getType(primitive);
@@ -4062,7 +4143,7 @@ class DeleteTool extends BaseTool {
 		}
 		delete_selected_objects();
 		History.storeUndoState();
-		updateInfoBar();
+		InfoBar.update();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4098,7 +4179,7 @@ class OnePointCreateTool extends BaseTool {
 		unselect_all();
 		this.create(x, y);
 		update_relevant_objects([]);
-		updateInfoBar();
+		InfoBar.update();
 	}
 	static leftMouseUp(x, y) {
 		if (! this.rightClickMode) {
@@ -4108,7 +4189,7 @@ class OnePointCreateTool extends BaseTool {
 	static rightMouseDown(x, y) {
 		unselect_all();
 		ToolBox.setTool("mouse");
-		updateInfoBar();
+		InfoBar.update();
 	}
 }
 
@@ -4402,13 +4483,7 @@ class MouseTool extends BaseTool {
 			if (move_objects[key].draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
-			} 
-			if (move_objects[key].type == "dummy_anchor") {
-				if (move_objects[key].isAttached()) {
-					// We can't drug and drop attached anchors
-					continue;
-				}
-			} 
+			}
 
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
@@ -5013,6 +5088,7 @@ function tool_deletePrimitive(id) {
 	}
 	cleanUnconnectedLinks();
 	detachFlows(id);
+	RunResults.removeResultsForId(id);
 }
 
 function detachFlows(id) {
@@ -5376,7 +5452,7 @@ function mouseUpHandler(event) {
 		
 		currentTool.leftMouseUp(x, y, event.shiftKey);
 		leftmouseisdown = false;
-		updateInfoBar();
+		InfoBar.update();
 		History.storeUndoState();
 	}	
 }
@@ -5786,7 +5862,7 @@ $(window).load(function() {
 					fileManager.loadFromFile(filePath);
 					setTimeout(() => {
 						updateTimeUnitButton();
-						updateInfoBar();
+						InfoBar.update();
 					 },200);
 				});
 			});
@@ -5818,6 +5894,7 @@ $(window).load(function() {
 	
 	History.storeUndoState();
 	History.unsavedChanges = false;
+	InfoBar.init();
 });
 	
 function updateTimeUnitButton() {
@@ -6321,7 +6398,7 @@ function setColorToSelection(color) {
 
 function printDiagram() {
 	unselect_all();
-	updateInfoBar();
+	InfoBar.update();
 	// Write filename and date into editor-footer 
 	let fileName = fileManager.fileName;
 	
@@ -6385,67 +6462,6 @@ function updateRecentsMenu() {
 	}
 }
 
-function updateInfoBar() {
-	let infoDef = $(".info-bar__definition");
-	let infoVE = $(".info-bar__value-error");
-	let selected_hash = get_selected_root_objects();
-	let selected_array = [];
-	for (let key in selected_hash) {
-		selected_array.push(selected_hash[key]);
-	}
-
-	if (selected_array == 0) {
-		infoDef.html("Nothing selected");
-		infoVE.html("");
-	} else if (selected_array.length == 1) {
-		let selected = selected_array[0];
-		primitive = selected_array[0].primitive;
-		if (selected.is_ghost) {
-			primitive = findID(primitive.getAttribute("Source"));
-		}
-		let name = primitive.getAttribute("name");
-		let definition = getValue(primitive);
-		let VE = primitive.getAttribute("ValueError");
-		infoVE.html(VE ? ValueErrorToString(VE) : "" );
-
-		definitionNoLines = removeNewLines(definition);
-		if (definitionNoLines != "") {
-			infoDef.html(`[${name}] = ${definitionNoLines}`);
-		} else {
-			let type = selected.type;
-			
-			// Make first letter uppercase
-			// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
-			let Type = type_basename[type]; 
-			switch(type) {
-				case("numberbox"):
-					let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
-					infoDef.html(`Numberbox: Value of [${targetName}]`);
-				break;
-				case("timeplot"):
-				case("compareplot"):
-				case("table"):
-				case("xyplot"):
-				case("histoplot"):
-					let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
-					infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
-				break;
-				case("link"):
-					let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
-					let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
-					infoDef.html(`Link: ${source} -> ${target}`);
-				break;
-				default: 
-					infoDef.html(`${Type} selected`);
-			}
-		}
-	} else {
-		infoDef.html(`${selected_array.length} objects selected`);
-		infoVE.html("");
-	}
-	updateLinkBar();
-}
-
 class RunResults {
 	static init() {		
 		this.runState = runStateEnum.none;
@@ -6454,7 +6470,6 @@ class RunResults {
 		this.simulationController = null;
 		this.varnameList = [];
 		this.varIdList = [];
-		this.varnameList = ["Time"];
 		this.results = [];
 		this.runSubscribers = {};
 		this.updateFrequency = 100;
@@ -6465,7 +6480,7 @@ class RunResults {
 		// Get list of primitives that we want to observe from the model
 		let primitive_array = getPrimitiveList();
 
-		// Create list of ids
+		// Create list of ids, id0 is reserved for time 
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
 		
 		// Create list of names
@@ -6526,6 +6541,22 @@ class RunResults {
 			index++;
 		}
 		//~ this.triggerRunFinished();
+	}
+	static removeResultsForId(id) {
+		let index = this.varIdList.indexOf(parseInt(id));
+		if (index !== -1) {
+			// remove id
+			this.varIdList.splice(index, 1);
+			
+			
+			// remove name
+			this.varnameList.splice(index, 1);
+
+			// remove data 
+			this.results.map(row => {
+				row.splice(index, 1);
+			});
+		}
 	}
 	static runPauseSimulation() {
 		switch(this.runState) {
@@ -6926,7 +6957,7 @@ class jqDialog {
 		
 		setTimeout(() => {
 			History.storeUndoState();
-			updateInfoBar();
+			InfoBar.update();
 		}, 200);
 	}
 	makeApply() {
@@ -9360,7 +9391,6 @@ function do_global_log(line) {
 class DebugDialog extends jqDialog {
 	constructor() {
 		super();
-		this.valueField = null;
 		this.nameField = null;
 		this.setTitle("Debug");
 		this.setHtml(`
@@ -9508,10 +9538,10 @@ class EquationEditor extends jqDialog {
 					<div class="table-cell" style="width: 300px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
-							<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
+							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
-							<textarea class="value-field enter-apply" style="width: 100%; height: 70px;"></textarea>
+							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9533,6 +9563,28 @@ class EquationEditor extends jqDialog {
   				</div>
 			</div>
 		`);
+
+		let value_field = document.getElementsByClassName("value-field")[0];
+		this.cmValueField = new CodeMirror.fromTextArea(value_field,
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme",
+				lineWrapping: false,
+				matchBrackets: true,
+				extraKeys: {
+					"Esc": () => {
+						this.dialogParameters.buttons["Cancel"]();
+					},
+					"Enter": () => {
+						this.dialogParameters.buttons["Apply"]();
+					},
+					"Shift-Tab": () => {
+						this.nameField.focus();
+					}
+				}
+			}
+		);
+
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9563,7 +9615,14 @@ class EquationEditor extends jqDialog {
 			} 
 		});
 
-		this.bindEnterApplyEvents();
+		$(this.dialogContent).find(".enter-apply").keydown((event) => {
+			if (! event.shiftKey) {
+				if (event.keyCode == keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
+			}
+		});
 
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
@@ -9600,10 +9659,11 @@ class EquationEditor extends jqDialog {
 				}
 				codeSnippetName = functionList[j][0];
 				codeTemplate = `${filterFunctionTemplate(functionList[j][1])}`;
+				let cmClassName = codeTemplate.includes("(") ? "cm-functioncall" : "";
 				codeHelp = `${functionList[j][2]} ${example}`;
 				codeHelp = codeHelp.replace(/\'/g, "&#39;");
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
-				result += `<li class = "function-help click-function" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
+				result += `<li class = "function-help click-function ${cmClassName}" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
 			}
 			result += "</ul>";
 			return result;
@@ -9621,18 +9681,6 @@ class EquationEditor extends jqDialog {
 		}
 		
 		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
-		
-		$(this.valueField).focusout((event)=>{
-			this.storeValueSelectionRange();
-		});
-		$(".accordion-cluster").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		$(this.dialogContent).find(".primitive-references-div").click((event) => {
-			this.restoreValueSelectionRange();
-		});
-		
-		
 		
 		/* Positioning 
 			This is done to avoid blocking the button with the tooltip
@@ -9652,7 +9700,6 @@ class EquationEditor extends jqDialog {
 			valueFieldDom.focus();
 			let inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
 		}
 	
 	}
@@ -9681,8 +9728,7 @@ class EquationEditor extends jqDialog {
 		this.setTitle(oldNameBrackets+" properties");
 
 		$(this.nameField).val(oldNameBrackets);
-		$(this.valueField).val(oldValue);
-		
+		this.cmValueField.setValue(oldValue);
 		
 		// Handle restrict to non-negative
 		if (["Flow", "Stock"].indexOf(getType(this.primitive)) != -1) {
@@ -9713,7 +9759,7 @@ class EquationEditor extends jqDialog {
 			let result = "";
 			for(let linked of referenceList) {
 				let name ="["+getName(linked)+"]";
-				result += `<span class = "linked-reference click-function" data-template="${name}">${name}</span>&nbsp;</br>`;
+				result += `<span class = "linked-reference click-function cm-primitive" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
@@ -9731,11 +9777,15 @@ class EquationEditor extends jqDialog {
 		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
-			valueFieldDom.focus();
-			let inputLength = valueFieldDom.value.length;
-			valueFieldDom.setSelectionRange(0, inputLength);
-			this.storeValueSelectionRange();
+			if (this.defaultFocusSelector === ".value-field") {
+				this.cmValueField.focus();
+				this.cmValueField.execCommand("selectAll");
+			} else {
+				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+				valueFieldDom.focus();
+				let inputLength = valueFieldDom.value.length;
+				valueFieldDom.setSelectionRange(0, inputLength);
+			}
 		}
 	}
 	updateRestrictNoteText() {
@@ -9751,15 +9801,14 @@ class EquationEditor extends jqDialog {
 	}
 	templateClick(event) {
 		let templateData = $(event.target).data("template");
-		let start = this.valueField.selectionStart;
+		let start = this.cmValueField.getCursor("start");
+		let end = this.cmValueField.getCursor("end");
+
 		if (typeof templateData == "object") {
 			templateData = "["+templateData.toString()+"]";
 		}
-		let oldValue = $(this.valueField).val();
-		let newValue = oldValue.slice(0, this.valueSelectionStart) + templateData + oldValue.slice(this.valueSelectionEnd);
-		$(this.valueField).val(newValue);
-		let newPosition = this.valueSelectionStart+templateData.length;
-		this.valueField.setSelectionRange(newPosition,newPosition);
+		this.cmValueField.replaceRange(templateData, start, end);
+		this.cmValueField.focus();
 	}
 	beforeClose() {
 		this.closeAccordion();
@@ -9783,18 +9832,10 @@ class EquationEditor extends jqDialog {
 			this.accordionBuilt = true;
 		}
 	}
-	storeValueSelectionRange() {
-		this.valueSelectionStart = this.valueField.selectionStart;
-		this.valueSelectionEnd = this.valueField.selectionEnd;
-	}
-	restoreValueSelectionRange() {
-		$(this.valueField).focus();
-		this.valueField.setSelectionRange(this.valueField.selectionStart,this.valueField.selectionEnd);
-	}
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.dialogContent).find(".value-field").val();
+			let value = this.cmValueField.getValue();
 			setValue2(this.primitive, value);
 			// handle name
 			let oldName = getName(this.primitive);
