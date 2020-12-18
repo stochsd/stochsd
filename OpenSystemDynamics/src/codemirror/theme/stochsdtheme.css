@@ -1,0 +1,60 @@
+/*
+
+    Name:       stochsdmode
+    Author:     Magnus Gustafsson
+
+    special made color scheme for stochsd code 
+
+*/
+
+/* Set height, width, borders, and global font properties here */  
+.cm-s-stochsdtheme.CodeMirror {
+    border: 2px solid gray;
+    width: 100%; 
+    height: auto;
+    font-size: 14px;
+}
+
+.cm-s-stochsdtheme.CodeMirror-focused {
+    border-color: black;
+}
+
+/* .cm-s-stochsdtheme .CodeMirror-gutters { color: #282a36; } */
+.cm-primitive { color: hsl(240deg, 50%, 40%); font-weight: bold; }
+.cm-functioncall { color: hsl(30deg, 50%, 40%); font-weight: bold; }
+.cm-comment { color: hsl(0deg, 0%, 50%); font-style: italic; }
+.cm-string { color: hsl(300deg, 50%, 40%); }
+.cm-number { color: hsl(160deg, 50%, 30%); font-weight: bold; }
+.cm-normal {color: black; font-weight: normal; }
+
+div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 90%); font-weight: bold; }
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: hsl(0, 100%, 20%); background-color: hsl(0, 100%, 90%); font-weight: bold; }
+  
+
+  /*
+  .cm-s-stochsdmode .CodeMirror-gutters { color: #282a36; }
+  .cm-s-stochsdmode .CodeMirror-cursor { border-left: solid thin #f8f8f0; }
+  .cm-s-stochsdmode .CodeMirror-linenumber { color: #6D8A88; }
+  .cm-s-stochsdmode .CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
+  .cm-s-stochsdmode .CodeMirror-line::selection, .cm-s-stochsdmode .CodeMirror-line > span::selection, .cm-s-stochsdmode .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
+  .cm-s-stochsdmode .CodeMirror-line::-moz-selection, .cm-s-stochsdmode .CodeMirror-line > span::-moz-selection, .cm-s-stochsdmode .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+  .cm-s-stochsdmode span.cm-comment { color: #6272a4; }
+  .cm-s-stochsdmode span.cm-string, .cm-s-stochsdmode span.cm-string-2 { color: #f1fa8c; }
+  .cm-s-stochsdmode span.cm-number { color: #bd93f9; }
+  .cm-s-stochsdmode span.cm-variable { color: #50fa7b; }
+  .cm-s-stochsdmode span.cm-variable-2 { color: white; }
+  .cm-s-stochsdmode span.cm-def { color: #50fa7b; }
+  .cm-s-stochsdmode span.cm-operator { color: #ff79c6; }
+  .cm-s-stochsdmode span.cm-keyword { color: #ff79c6; }
+  .cm-s-stochsdmode span.cm-atom { color: #bd93f9; }
+  .cm-s-stochsdmode span.cm-meta { color: #f8f8f2; }
+  .cm-s-stochsdmode span.cm-tag { color: #ff79c6; }
+  .cm-s-stochsdmode span.cm-attribute { color: #50fa7b; }
+  .cm-s-stochsdmode span.cm-qualifier { color: #50fa7b; }
+  .cm-s-stochsdmode span.cm-property { color: #66d9ef; }
+  .cm-s-stochsdmode span.cm-builtin { color: #50fa7b; }
+  .cm-s-stochsdmode span.cm-variable-3, .cm-s-stochsdmode span.cm-type { color: #ffb86c; }
+  
+  .cm-s-stochsdmode .CodeMirror-activeline-background { background: rgba(255,255,255,0.1); }
+  .cm-s-stochsdmode .CodeMirror-matchingbracket { text-decoration: underline; color: white !important; }
+  */
