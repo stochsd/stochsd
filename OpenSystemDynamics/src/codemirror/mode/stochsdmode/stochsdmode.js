@@ -38,7 +38,7 @@ CodeMirror.defineSimpleMode("stochsdmode", {
         // lookahead is not supported by codemirror 
         // use false positive to filter out when character is ahead
         // https://github.com/codemirror/CodeMirror/issues/6233
-        {regex: /[^\s]+(pi|e|eps)/i, token: "normal" }, 
+        {regex: /[^\s](pi|e|eps)/i, token: "normal" }, 
         {regex: /(pi|e|eps)\b/ig, token: "number"},
     ],
     // The multi-line comment state.
