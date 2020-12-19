@@ -183,14 +183,18 @@ const VALUE_ERROR = {
 	"VE3": "Unused Link from",
 	"VE4": "No Ingoing Link", // only for converter
 	"VE5": "More Then One Ingoing Link", // only for converter
-	"VE6": "A Parameter must <u>not</u> have an ingoing link. Please, remove it!" // Only for Parameter (Constant)
+	// VE6 is depricated since it is now impossible
+	"VE6": "A Parameter must <u>not</u> have an ingoing link. Please, remove it!", // Only for Parameter (Constant)
+	"VE7": "Missing open bracket", // e.g. "Rand())"
+	"VE8": "Unmatching bracket types", // Expected other type of bracket, e.g. "Rand(()]"
+	"VE9": "Missing closing bracket" // e.g. "Rand((10+7)"
 }
 
 function ValueErrorToString(valueError) {
 	if (valueError) {
 		let errArr = valueError.split(":");
 		let errType = errArr[0];
-		let errArg = errArr[1];
+		let errArgs = errArr[1].split(",");
 		let str = VALUE_ERROR[errType];
 		switch(errType) {
 			case("VE1"):
@@ -199,9 +203,14 @@ function ValueErrorToString(valueError) {
 			case("VE6"): 
 				return str;
 			case("VE2"):
-				return `${str} [${errArg}]`;
+				return `${str} [${errArgs[0]}]`;
 			case("VE3"):
-				return `${str} ${getName(findID(errArg))}`;
+				return `${str} ${getName(findID(errArgs[0]))}`;
+			case("VE8"):
+				return `${str} "${errArgs[1]}...${errArgs[2]}"`
+			case("VE7"): 
+			case("VE9"):
+				return `${str} "${errArgs[1]}"`;
 			default: 
 				return "Unknown error";
 		}
@@ -213,6 +222,9 @@ function checkValueError(primitive, value) {
 	if (value === "") {
 		return "VE1:";
 	}
+	
+	let brackErr = checkBracketErrors(value);
+	if (brackErr) return brackErr;
 
 	let primType = primitive.value.nodeName;
 	let linkedIds = findLinkedInPrimitives(primitive.id).map(getID);
@@ -256,6 +268,45 @@ function checkValueError(primitive, value) {
 	// No error 
 	return null;
 }
+/**
+ * checks for bracket errors and returns value error
+ * @param {*} string 
+ * 
+ */
+function checkBracketErrors(string) {
+	let openBrackets = 	["(", "{", "["];
+	let closeBrackets = [")", "}", "]"];
+	let bracketStack = []; // {pos, bracket, index} only contains open brackets
+	for (i in string) {
+		let char = string[i];
+		if (openBrackets.includes(char)) {
+			let index = openBrackets.indexOf(char);
+			bracketStack.push({"pos": i, "bracket": openBrackets[index], "index": index});
+		} else if (closeBrackets.includes(char)) {
+			let index = closeBrackets.indexOf(char);
+			if (bracketStack.length === 0) {
+				// missing open bracket
+				return `VE7:${i},${openBrackets[index]}`;
+			}
+			if (openBrackets[index] === bracketStack[bracketStack.length-1].bracket) {
+				bracketStack.pop();
+			} else {
+				// unmatching closing brackets
+				let open = bracketStack[bracketStack.length-1].bracket;
+				let close = char;
+				return `VE8:${i},${open},${close}`;
+			}
+		}
+	}
+	if ( bracketStack.length === 0 ) {
+		return "";
+	} else {
+		// missing close bracket 
+		let last = bracketStack[bracketStack.length-1];
+		return `VE9:${last.pos},${closeBrackets[last.index]}`;
+	}
+}
+
 
 /* 
 	Method: findLinkedOutPrimitives
