@@ -335,12 +335,11 @@ class InfoBar {
 		}
 	
 		if (selected_array == 0) {
-			// infoDef.html("Nothing selected");
 			this.cmInfoDef.setValue("Nothing selected");
 			this.infoDE.html("");
 		} else if (selected_array.length == 1) {
 			let selected = selected_array[0];
-		let primitive = selected_array[0].primitive;
+			let primitive = selected_array[0].primitive;
 			if (selected.is_ghost) {
 				primitive = findID(primitive.getAttribute("Source"));
 			}
@@ -348,10 +347,9 @@ class InfoBar {
 			let definition = getValue(primitive);
 			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
-			let definitionNoLines = removeNewLines(definition);
-			if (definitionNoLines != "") {
-				// infoDef.html(`[${name}] = ${definitionNoLines}`);
-				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+			let definitionLines = definition.split("\n");
+			if (definitionLines[0] !== "") {
+				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
 				let type = selected.type;
 				
@@ -361,7 +359,6 @@ class InfoBar {
 				switch(type) {
 					case("numberbox"):
 						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
-						// infoDef.html(`Numberbox: Value of [${targetName}]`);
 						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
 					break;
 					case("timeplot"):
@@ -370,17 +367,14 @@ class InfoBar {
 					case("xyplot"):
 					case("histoplot"):
 						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
-						// infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
 					break;
 					case("link"):
 						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
 						let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
-						// infoDef.html(`Link: ${source} -> ${target}`);
 						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
 					break;
 					default: 
-						// infoDef.html(`${Type} selected`);
 						this.cmInfoDef.setValue(`${Type} selected`);
 				}
 			}
