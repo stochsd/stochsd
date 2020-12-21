@@ -1,6 +1,10 @@
 
 class DefinitionError {
     static init() {
+        this.isDefErr = (defErr) => {
+            return (typeof defErr === "object") && ("id" in defErr);
+        }
+
         this.messageTable = {
             "1": (defErr) => "Empty Definition",
             "2": (defErr) => `Unknown reference ${defErr["unknownRef"]}`,
@@ -9,15 +13,28 @@ class DefinitionError {
             "5": (defErr) => `More than one ingoing link`, // only for converter 
             "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" at position ${defErr["openPos"]} is unmatched`,
             "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" at position ${defErr["closePos"]} is unmatched`,
-            "8": (defErr) => `Unmatched brackets "${defErr["closeBracket"]}...${defErr["closeBracket"]}" at position ${defErr["openPos"]} and ${defErr["closePos"]}`
+            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}" at position ${defErr["openPos"]} and ${defErr["closePos"]}`
         }
 
         this.checkFunctions = [
             (prim, defString) => {
+                // check empty string 
                 if (defString === "") return { "id": 1 };
             },
             (prim, defString) => {
                 // check brackets 
+                const lines = defString.split("\n");
+                let posCounter = 0;
+                console.log(lines);
+                for(let line of lines) {
+                    let defErr = checkBracketErrors(line);
+                    if (this.isDefErr(defErr)) {
+                        if ("openPos"  in defErr) defErr["openPos"]  += posCounter;
+                        if ("closePos" in defErr) defErr["closePos"] += posCounter;
+                        return defErr;
+                    }
+                    posCounter += line.length+1;
+                }
             },
             (prim, defString) => {
                 // check links  
@@ -71,7 +88,7 @@ class DefinitionError {
     static has(prim) {
         try {
             const defErr = JSON.parse(prim.getAttribute("DefinitionError"));
-            return (typeof defErr) && ("id" in defErr);
+            return this.isDefErr(defErr);
         } catch(err) {
             return false;
         }
@@ -93,100 +110,6 @@ class DefinitionError {
 
 DefinitionError.init();
 
-/*
-const VALUE_ERROR = {
-	"VE1": "Empty Definition",
-	"VE2": "Unknown Reference",
-	"VE3": "Unused Link from",
-	"VE4": "No Ingoing Link", // only for converter
-	"VE5": "More Then One Ingoing Link", // only for converter
-	// VE6 is depricated since it is now impossible
-	"VE6": "A Parameter must <u>not</u> have an ingoing link. Please, remove it!", // Only for Parameter (Constant)
-	"VE7": "Missing open bracket", // e.g. "Rand())"
-	"VE8": "Unmatching bracket types", // Expected other type of bracket, e.g. "Rand(()]"
-	"VE9": "Missing closing bracket" // e.g. "Rand((10+7)"
-}
-
-function ValueErrorToString(valueError) {
-	if (valueError) {
-		let errArr = valueError.split(":");
-		let errType = errArr[0];
-		let errArgs = errArr[1].split(",");
-		let str = VALUE_ERROR[errType];
-		switch(errType) {
-			case("VE1"):
-			case("VE4"):
-			case("VE5"): 
-			case("VE6"): 
-				return str;
-			case("VE2"):
-				return `${str} [${errArgs[0]}]`;
-			case("VE3"):
-				return `${str} ${getName(findID(errArgs[0]))}`;
-			case("VE8"):
-				return `${str} "${errArgs[1]}...${errArgs[2]}"`
-			case("VE7"): 
-			case("VE9"):
-				return `${str} "${errArgs[1]}"`;
-			default: 
-				return "Unknown error";
-		}
-	}
-}
-
-
-function checkValueError(primitive, value) {
-	// 1. Empty string
-	if (value === "") {
-		return "VE1:";
-	}
-	
-	let brackErr = checkBracketErrors(value);
-	if (brackErr) return brackErr;
-
-	let primType = primitive.value.nodeName;
-	let linkedIds = findLinkedInPrimitives(primitive.id).map(getID);
-	if (primType === "Variable" && primitive.value.getAttribute("isConstant") === "true") {
-		if (linkedIds.length > 0) {
-			return "VE6:";
-		}
-	}
-	if (primType === "Stock" || primType === "Variable" || primType === "Flow") {
-		// 2. Unknown reference
-		let valueRefs = value.match(/[^[]+(?=\])/g);
-		let linkedRefs = linkedIds.map(id => getName(findID(id)));
-		if (valueRefs) {
-			for (let ref of valueRefs) {
-				if (linkedRefs.includes(ref) === false) {
-					return `VE2:${ref}`;
-				}
-			}
-		}
-
-		// 3. Unused link 
-		for(let i = 0; i < linkedIds.length; i++) {
-			let ref = linkedRefs[i];
-			if (valueRefs) {
-				if (valueRefs.includes(ref) === false) {
-					return `VE3:${linkedIds[i]}`;
-				}
-			} else {
-				return `VE3:${linkedIds[i]}`;
-			}
-		}
-	} else if (primType === "Converter") {
-		if (linkedIds.length === 0) {
-			// 4. No ingoing link 
-			return "VE4:";
-		} else if (linkedIds.length > 1) {
-			// 5. More then one ingoing link 
-			return `VE5:${linkedIds}`;
-		}
-	}
-	// No error 
-	return null;
-}*/
-
 
 /**
  * checks for bracket errors and returns value error
@@ -199,28 +122,36 @@ function checkBracketErrors(string) {
 		let char = string[i];
 		if (openBrackets.includes(char)) {
 			let index = openBrackets.indexOf(char);
-			bracketStack.push({"pos": i, "bracket": openBrackets[index], "index": index});
+			bracketStack.push({"pos": parseInt(i), "bracket": openBrackets[index], "index": parseInt(index)});
 		} else if (closeBrackets.includes(char)) {
 			let index = closeBrackets.indexOf(char);
 			if (bracketStack.length === 0) {
-				// missing open bracket
-				return `VE7:${i},${openBrackets[index]}`;
+                // unmatched close bracket, e.g. Rand(()
+                let openChar = openBrackets[index];
+                let closePos = parseInt(i);
+                let closeChar = char;
+				return {"id": "7", "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
 			}
 			if (openBrackets[index] === bracketStack[bracketStack.length-1].bracket) {
 				bracketStack.pop();
 			} else {
-				// unmatching closing brackets
-				let open = bracketStack[bracketStack.length-1].bracket;
-				let close = char;
-				return `VE8:${i},${open},${close}`;
+				// unmatching open and close brackets, e.g. Rand(()]
+                let openPos = parseInt(bracketStack[bracketStack.length-1].pos);
+                let openChar = bracketStack[bracketStack.length-1].bracket;
+                let closePos = parseInt(i);
+				let closeChar = char;
+				return {"id": "8", "openPos": openPos, "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
 			}
 		}
 	}
 	if ( bracketStack.length === 0 ) {
 		return "";
 	} else {
-		// missing close bracket 
-		let last = bracketStack[bracketStack.length-1];
-		return `VE9:${last.pos},${closeBrackets[last.index]}`;
+		// unmatched open brackets, e.g. Rand(()
+        const topStack = bracketStack[bracketStack.length-1];
+        const openPos = parseInt(topStack.pos);
+        const openChar = topStack.bracket;
+        const closeChar = closeBrackets[topStack.index];
+		return { "id": "6", "openPos": openPos, "openBracket": openChar, "closeBracket": closeChar };
 	}
 }
