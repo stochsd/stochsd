@@ -163,18 +163,15 @@ function isNameFree(newName, exepctionId) {
 
 /*
 	Method: setValue2
-	sets value of primitive aswell as sets ValueError
+	sets value of primitive aswell as sets Definiton Error 
 */
 function setValue2(primitive, value) {
 	let valueStr = value; 
 	while(valueStr[valueStr.length-1] === " " || valueStr[valueStr.length-1] === ";" || valueStr[valueStr.length-1] === "\n"){
 		valueStr = valueStr.substring(0, valueStr.length-1);
 	}
-	valueStr = valueStr.replace(/\n/g, "\\n");
 	setValue(primitive, valueStr);
-	let error = checkValueError(primitive, valueStr);
-	primitive.setAttribute("ValueError", error ? error : "");
-	return error;
+	let error = DefinitionError.check(primitive);
 }
 
 
