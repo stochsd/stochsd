@@ -25,7 +25,6 @@ class DefinitionError {
                 // check brackets 
                 const lines = defString.split("\n");
                 let posCounter = 0;
-                console.log(lines);
                 for(let line of lines) {
                     let defErr = checkBracketErrors(line);
                     if (this.isDefErr(defErr)) {
