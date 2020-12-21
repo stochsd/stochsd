@@ -2199,7 +2199,7 @@ class FlowVisual extends BaseConnection {
 		this.getAnchors().map( anchor => anchor.updatePosition() );
 
 		if(this.primitive && this.icons) {
-			const hasDefError = DefinitionError.has(prim);
+			const hasDefError = DefinitionError.has(this.primitive);
 			if (hasDefError) {
 				this.icons.set("questionmark", "visible");
 			} else {
