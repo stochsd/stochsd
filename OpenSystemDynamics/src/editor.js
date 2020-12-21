@@ -9536,6 +9536,7 @@ class EquationEditor extends jqDialog {
 							<div class="name-warning-div warning"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
+							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;">number</span></div>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9579,6 +9580,16 @@ class EquationEditor extends jqDialog {
 			}
 		);
 
+		this.cmValueField.on("cursorActivity", (e) => {
+			let cursor = e.doc.getCursor()
+			let lines = e.doc.getValue().split("\n");
+			let pos = 0;
+			for (let lineIndex = 0; lineIndex < cursor.line; lineIndex++) {
+				pos += lines[lineIndex].length+1;
+			}
+			pos += cursor.ch;
+			$(this.dialogContent).find(".equation-cursor-pos").html(`Pos: ${pos}`);
+		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
