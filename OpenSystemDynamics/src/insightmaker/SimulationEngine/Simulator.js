@@ -21,6 +21,9 @@ function Simulator(config){
 	// Added by Magnus 2020-07-15 
 	this.stopFlag = false;
 
+	// Added by Magnus 2020-12-22 
+	this.execStartTime = (new Date()).getTime() / 1000;
+
 	this.sliders = {};
 
 	this.ids = {};

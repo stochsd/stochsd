@@ -18,6 +18,12 @@ var PrimitiveObject = {} ;
 functionLoaders.push(function(){
 	sdsLoadFunctions();	
 
+	// Added by Magnus 2020-12-22 
+	defineFunction("ExecTime", {params:[]}, function(x) {
+		let currentTime = (new Date()).getTime() / 1000;
+		return new Material(currentTime - simulate.execStartTime);
+	});
+
 	defineFunction("Stop", {params:[]}, function(x) {
 		simulate.stopFlag = true;
 		return new Material(0);
