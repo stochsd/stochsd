@@ -112,22 +112,25 @@ DefinitionError.init();
 
 /**
  * checks for bracket errors and returns value error
+ * Input should only be one row
  */
 function checkBracketErrors(string) {
+    //       index:       0    1    2 
 	let openBrackets = 	["(", "{", "["];
 	let closeBrackets = [")", "}", "]"];
-	let bracketStack = []; // {pos, bracket, index} only contains open brackets
-	for (i in string) {
-		let char = string[i];
+    let bracketStack = []; // {pos: pos in string, bracket: openbracket, index: 0..2} only contains open brackets
+    let stringSansComment = string.split("#")[0];
+	for (pos in stringSansComment) { 
+        let char = stringSansComment[pos];
 		if (openBrackets.includes(char)) {
 			let index = openBrackets.indexOf(char);
-			bracketStack.push({"pos": parseInt(i), "bracket": openBrackets[index], "index": parseInt(index)});
+			bracketStack.push({"pos": parseInt(pos), "bracket": openBrackets[index], "index": parseInt(index)});
 		} else if (closeBrackets.includes(char)) {
 			let index = closeBrackets.indexOf(char);
 			if (bracketStack.length === 0) {
                 // unmatched close bracket, e.g. Rand(()
                 let openChar = openBrackets[index];
-                let closePos = parseInt(i);
+                let closePos = parseInt(pos);
                 let closeChar = char;
 				return {"id": "7", "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
 			}
@@ -137,7 +140,7 @@ function checkBracketErrors(string) {
 				// unmatching open and close brackets, e.g. Rand(()]
                 let openPos = parseInt(bracketStack[bracketStack.length-1].pos);
                 let openChar = bracketStack[bracketStack.length-1].bracket;
-                let closePos = parseInt(i);
+                let closePos = parseInt(pos);
 				let closeChar = char;
 				return {"id": "8", "openPos": openPos, "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
 			}
