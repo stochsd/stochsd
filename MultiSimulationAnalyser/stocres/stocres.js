@@ -388,6 +388,7 @@ var stocres=new function() {
 
 		let keys = rows[0].split(",");
 		let obj = {};
+		let containsNaN = {}; // checks which inputs contain only numbers 
 		let unamed_counter = 0;
 		for (let i in keys) {
 			if (keys[i] === "") {
@@ -395,6 +396,7 @@ var stocres=new function() {
 				keys[i] = `noname${unamed_counter}`;
 			}
 			obj[keys[i]] = [];
+			containsNaN[keys[i]] = false;
 		}
 
 		for (let i = 1; i < rows.length; i++) {
@@ -402,9 +404,15 @@ var stocres=new function() {
 			for (let j in current_row) {
 				if (isNaN(current_row[j])) {
 					obj[keys[j]].push(current_row[j]);
+					containsNaN[keys[j]] = true;
 				} else {
 					obj[keys[j]].push(Number(current_row[j]));
 				}
+			}
+		}
+		for (const [key, value] of Object.entries(containsNaN)) {
+			if (value) {
+				delete obj[key];
 			}
 		}
 		return obj;
