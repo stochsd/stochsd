@@ -9051,13 +9051,24 @@ class SimulationSettings extends jqDialog {
 		} else if (Number(this.step_field.val()) <= 0) {
 			this.warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
-		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
+		} else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e5) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
-			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
-			this.warning_div.html(`
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e5, precision: 3});
+			this.warning_div.html(`<span class="warning">
 				This Length requires ${iters_str} time steps. <br/>
-				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
+				The limit is 10<sup>5</sup> time steps per simulation.${nochange_str}
+			</span>`);
 			return false;
+
+		}else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e4) {
+			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e4, precision: 3});
+			this.warning_div.html(`<span class="note">
+				Note: <br/>This Length requires ${iters_str} time steps. <br/>
+				More than 10<sup>4</sup> time steps per simulation <br/>
+				may significantly slow down the simulation.
+			</span>`);
+			return true;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
 			this.warning_div.html(`<span class="note">
 				Note: <br/>
