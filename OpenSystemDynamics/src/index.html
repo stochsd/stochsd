@@ -53,11 +53,16 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="insightmaker/resources/RedBlackTree.js"></script> 
 	<script type="text/javascript" src="insightmaker/resources/graph.js"></script>
 	<script type="text/javascript" src="insightmaker/resources/jstat.min.js"></script>
+	<script type="text/javascript" src="definition-error.js"></script>
 	<script type="text/javascript" src="newAPI.js"></script>
 	<script src="makexml.js"></script>
 	<script type="text/javascript" src="imc.js"></script>
 	<script src="transform.js"></script>
 	<script src="libsvg.js"></script>
+	<script type="text/javascript" src="./codemirror/lib/codemirror.js"></script>
+	<script type="text/javascript" src="./codemirror/addon/mode/simple.js"></script>
+	<script type="text/javascript" src="./codemirror/mode/stochsdmode/stochsdmode.js"></script>
+	<script type="text/javascript" src="./codemirror/addon/edit/matchbrackets.js"></script>
 	<script src="jquery/jquery-1.8.3.min.js"></script>
 	<!--<script class="include" type="text/javascript" src="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
 	<script type="text/javascript" src="jquery/jquery.jqplot.1.0.9/plugins/jqplot.barRenderer.js"></script>
@@ -84,10 +89,12 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<!-- endbuild -->
 
 	<!-- build:css opensystemdynamics.css  -->
+	<link rel="stylesheet" href="./codemirror/lib/codemirror.css" />
+	<link rel="stylesheet" href="./codemirror/theme/stochsdtheme.css" />
 	<link rel="stylesheet" type="text/css" href="style/editor.css">
 	<link class="include" rel="stylesheet" type="text/css" href="jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.css" />
-	<link rel="stylesheet" href="jquery/jquery-ui-1.12.1/jquery-ui.css">
-	<link rel="stylesheet" href="style/emenu.css">
+	<link rel="stylesheet" href="jquery/jquery-ui-1.12.1/jquery-ui.css" />
+	<link rel="stylesheet" href="style/emenu.css" />
 	<!-- endbuild -->
 	
 
@@ -375,7 +382,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			<div class="tool-box-separator">
 			</div>
 			<div id="runControllerArea" style="display: inline-block;">
-				<button id="btn_run" title="Run/Halt (Ctrl 1)" class="tool-button" data-tool="run">
+				<button id="btn_run" title="Run/Pause (Ctrl 1)" class="tool-button" data-tool="run">
 					<img id="imgRunPauseTool" src="graphics/run.svg"/>
 				</button>
 				<button id="btn_step" title="Step (Ctrl 2)" class="tool-button" data-tool="step">
@@ -389,7 +396,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 				</button>
 				<div id="runStatusBarOuter" class="toolSupplement" style="display: inline-block; background: #F0F0F0; width: 110px" >
 					<div id="runStatusBar" class="toolSupplement" style="position: relative; left: 0px; top: 0px; background: #aaeeaa; height: 30px; width: 0px; margin: 0; padding: 0; border: 0;">
-						<div id="runStatusBarText" title="Start Time / Current Time&#013;            (Time Step)" style="text-align: center; width: 110px; font-size: 12px; padding-top: 0px; height: 30px;">
+						<div id="runStatusBarText" title="Start / Current / End &#013;      Method(Step)" style="text-align: center; width: 110px; font-size: 12px; padding-top: 0px; height: 30px;">
 							
 						</div>
 					</div>
@@ -401,11 +408,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		</div> <!-- End of toolPanel-->
 
 		<div class="info-bar">
-			<div class="info-bar__definition info-box__element" title="Selection" >
-				&nbsp 
-			</div>
+			<div class="info-bar__definition info-box__element center-vertically-container" title="Selection"></div>
 			<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
-			<div class="info-bar__value-error info-box__element" title="Definition Error">
+			<div class="info-bar__definition-error info-box__element center-vertically-container" title="Definition Error">
 				&nbsp 
 			</div>
 			<span class="info-bar__im-link">

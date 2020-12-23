@@ -65,7 +65,7 @@ svg * {
     /*width: 20px;*/
 }
 button.pressed {
-    background-color: #777;
+    background-color: #777 !important;
 }
 .tool-button {
     padding: 0px;
@@ -247,10 +247,6 @@ h3.equation-list-header {
     margin: 5px 0px 0px 0px;
 }
 
-.simulation-settings-warning {
-    color: red;
-}
-
 .accordion-cluster ul {
     padding: 0px;
     margin: 0px;
@@ -261,22 +257,17 @@ h3.equation-list-header {
     padding-bottom: 20px !important;
 }
 /* Equation editor start here */
-.function-help {
-    color: black;
-}
 .function-help:hover {
-    color: black;
-    text-shadow:0px 0px 1px black;
+    background-color: hsl(0, 0%, 90%);
 }
 .click-function { 
     cursor: pointer; 
 }
 .linked-reference {
-    color: black;
+    font-family: monospace;
 }
 .linked-reference:hover {
-    color: black;
-    text-shadow:0px 0px 1px black;
+    background-color: hsl(0, 0%, 90%);
 }
 /* for warning or note texts when changing settings and properties */
 .warning {
@@ -295,13 +286,13 @@ h3.equation-list-header {
 .info-bar {
     display:flex; 
     margin: 0px; 
-    font-size: 16px; 
+    font-size: 14px; 
     height: 32px; 
     font-family: Arial, Helvetica, sans-serif;
 }
 .info-box__element {
     /* background: #f0f0f0; */ 
-    margin: 6px 12px;
+    margin: 0px 12px;
     /* padding: 6px 18px; */
     min-width: 140px;
 }
