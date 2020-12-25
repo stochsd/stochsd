@@ -685,6 +685,16 @@ function formatFunction(functionName) {
 	return functionName+"()";
 }
 
+function warningHtml(message, specNotOk=false) {
+	let noChanges = "";
+	if (specNotOk) noChanges = "<br/><b>Your specification is not accepted!</b>";
+	return (`<span class="warning">${message} ${noChanges}</span>`);
+}
+
+function noteHtml(message) {
+	return (`<span class="note">Note:<br/>${message}</span>`);
+}
+
 function checkedHtml(value) {
 	if (value) {
 		return ' checked ';
@@ -3422,7 +3432,7 @@ class HistoPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
-			selected_str += `<span class="warning" >Exactly one primitive must be selected</span>`;
+			selected_str += warningHtml("Exactly one primitive must be selected", false);
 		} 
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">Histogram Plot</div>
@@ -3643,7 +3653,7 @@ class XyPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += `<span class="warning">Exactly two primitives must be selected!</span>`;
+			selected_str += warningHtml("Exactly two primitives must be selected!"); 
 		}
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">XY Plot</div>
@@ -5907,7 +5917,7 @@ function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
-		$("#timeUnitParagraph").html(`<span class="warning">No Time Unit</span>`);
+		$("#timeUnitParagraph").html(warningHtml("No Time Unit", false));
 	}
 }
 
@@ -7287,7 +7297,7 @@ class DisplayDialog extends jqDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="num-len-warn-div warning"></div>`);
+		<div class="num-len-warn-div"></div>`);
 	}
 
 	bindNumberLengthEvents() {
@@ -7314,16 +7324,16 @@ class DisplayDialog extends jqDialog {
 
 	checkValidNumberLength(value) {
 		if (isNaN(value)) {
-			$(".num-len-warn-div").html(`${value} is not a decimal number.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is not a decimal number.`));
 			return false;
 		} else if (Number.isInteger(parseFloat(value)) === false) {
-			$(".num-len-warn-div").html(`${value} is not an integer.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is not an integer.`));
 			return false;
 		} else if (parseInt(value) < 0) {
-			$(".num-len-warn-div").html(`${value} is negative.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is negative.`));
 			return false;
 		} else if (parseInt(value) >= 12) {
-			$(".num-len-warn-div").html(`${value} is above the limit of 12.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is above the limit of 12.`));
 			return false;
 		} else {
 			$(".num-len-warn-div").html("");
@@ -7365,7 +7375,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	bindRoundToZeroEvents() {
@@ -7427,7 +7437,7 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage+"<br/><b>Your specification is not accepted!</b>");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(warningHtml(htmlMessage, true));
 			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
 			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
@@ -7470,7 +7480,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<div class="plot-per-warning warning" ></div>
+			<div class="plot-per-warning" ></div>
 		`);
 	}
 	applyPlotPer() {
@@ -7497,14 +7507,13 @@ class DisplayDialog extends jqDialog {
 		});
 	}
 	checkValidPlotPer() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
 		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
 		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html(`Plot Period must be a decimal number${nochange_str}`);
+			warning_div.html(warningHtml(`Plot Period must be a decimal number`, true));
 			return false;
 		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html(`Plot Period must be &gt;0${nochange_str}`);
+			warning_div.html(warningHtml(`Plot Period must be &gt;0`, true));
 			return false;
 		}
 		
@@ -7691,7 +7700,7 @@ class DisplayDialog extends jqDialog {
 		} else if (search_lc === "") {
 			notSelectedDiv.html(`<div>No more primitives to add.</div>`);
 		} else {
-			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
+			notSelectedDiv.html(noteHtml(`No primitive matches search: <br/><b>${search_word}</b>`));
 		}
 	}
 	primitiveAddButton(id) {
@@ -7900,7 +7909,7 @@ class TimePlotDialog extends DisplayDialog {
 				</td>-->
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div warning" ></div>
+		<div class="axis-limits-warning-div" ></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7942,7 +7951,6 @@ class TimePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -7953,13 +7961,10 @@ class TimePlotDialog extends DisplayDialog {
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
 		let right_log = $(this.dialogContent).find(".right-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
-			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
+			warning_div.html(warningHtml(`Axis limits must be decimal numbers`, true));
 			return false;
 		} else if (left_log || right_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
-				log(y) requires that all y-values &gt; 0
-			</span>`);
+			warning_div.html(noteHtml(`log(y) requires that all y-values &gt; 0`));
 			return true;
 		}
 		warning_div.html("")
@@ -8246,7 +8251,6 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -8254,13 +8258,10 @@ class ComparePlotDialog extends DisplayDialog {
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
+			warning_div.html(warningHtml(`Axis limits must be decimal numbers`, true));
 			return false;
 		} else if (y_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
-				log(y) requires that all y-values &gt; 0
-			</span>`);
+			warning_div.html(noteHtml(`log(y) requires that all y-values &gt; 0`));
 			return true;
 		}
 		warning_div.html("");
@@ -8554,11 +8555,10 @@ class XyPlotDialog extends DisplayDialog {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		} else if (x_log || y_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
+			warning_div.html(noteHtml(`
 				log(x) requires that all x-values &gt; 0 <br/>
 				log(y) requires that all y-values &gt; 0
-			</span>`);
+			`));
 			return true;
 		}
 		warning_div.html("");
@@ -9066,27 +9066,27 @@ class SimulationSettings extends jqDialog {
 		} else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e5) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
 			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e5, precision: 3});
-			this.warning_div.html(`<span class="warning">
+			this.warning_div.html(warningHtml(`
 				This Length requires ${iters_str} time steps. <br/>
 				The limit is 10<sup>5</sup> time steps per simulation.${nochange_str}
-			</span>`);
+			`, true));
 			return false;
 
 		}else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e4) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
 			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e4, precision: 3});
-			this.warning_div.html(`<span class="note">
-				Note: <br/>This Length requires ${iters_str} time steps. <br/>
+			this.warning_div.html(noteHtml(`
+				This Length requires ${iters_str} time steps. <br/>
 				More than 10<sup>4</sup> time steps per simulation <br/>
-				may significantly slow down the simulation.
-			</span>`);
+				may significantly slow down the simulation.`
+			));
 			return true;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
-			this.warning_div.html(`<span class="note">
-				Note: <br/>
+			this.warning_div.html(noteHtml(`
 				Do not use RK4 without a good reason, <br/>
-				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
-			</span>`);
+				and NEVER if the model contains discontinuities <br/>
+				(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
+			`));
 			return true;
 		}
 
@@ -9145,7 +9145,7 @@ class TimeUnitDialog extends jqDialog {
 		if (ok) {
 			complainDiv.html("");
 		} else {
-			complainDiv.html(`<span class="warning">Time Unit must contain character A-Z or a-z.</span>`);
+			complainDiv.html(warningHtml(`Time Unit must contain character A-Z or a-z.`));
 		}
 	}
 	beforeCreateDialog() {
@@ -9337,9 +9337,9 @@ class ConverterDialog extends jqDialog {
 		if (linkedIn.length === 1) {
 			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
 		} else if(linkedIn.length === 0) {
-			this.inLinkParagraph.innerHTML = `<span class="warning" >No Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = warningHtml("No Ingoing Link", false);
 		} else {
-			this.inLinkParagraph.innerHTML = `<span class="warning" >More Then One Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = warningHtml("More Then One Ingoing Link", false);
 		}
 		
 		this.defaultFocusSelector = defaultFocusSelector;
@@ -9556,7 +9556,7 @@ class EquationEditor extends jqDialog {
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
-							<div class="name-warning-div warning"></div><br/>
+							<div class="name-warning-div"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<br/>
@@ -9567,7 +9567,7 @@ class EquationEditor extends jqDialog {
 								<label>
 								<input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/>
 								Restrict to non-negative values</label>
-								<div class="note restrict-note-div"></div>
+								<div class="restrict-note-div"></div>
 							</div>
 						</div>
 					</div>
@@ -9616,18 +9616,19 @@ class EquationEditor extends jqDialog {
 			} else {
 				$(event.target).css("background-color", "pink");
 				if (! nameFree) {
-					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name <b>${newName}</b> is taken.`));
 				} else if (newName === "") {
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name cannot be empty.`));
 				} else if (! validToolVarName) {
 					// not allowed by StatRes and Other tools 
-					$(this.dialogContent).find(".name-warning-div").html(`
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`
 						Allowed characters are: <br/>
 						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
-						<br/><b>0-9</b> (if not first character)`);
+						<br/><b>0-9</b> (if not first character)
+					`));
 				} else if (! validName) {
 					// not allowed according to insightmaker
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain bracket, parenthesis, or quote`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name cannot contain bracket, parenthesis, or quote`));
 				}
 			} 
 		});
@@ -9808,10 +9809,10 @@ class EquationEditor extends jqDialog {
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
 		if (checked) {
-			$(this.restrictNote).html(`
-				NOTE: Restricting to non-negative values may have unintended consequences.<br/>
+			$(this.restrictNote).html(noteHtml(`
+				Restricting to non-negative values may have unintended consequences.<br/>
 				Use only when you have a well motivated reason.
-			`);
+			`));
 		} else {
 			$(this.restrictNote).html("");
 		}
