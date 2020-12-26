@@ -191,22 +191,47 @@ div.center-vertically-container {
 .modern-table tr:nth-child(even){
     background-color: #f4f4f4;
 }
+.modern-table input[type="text"] {
+    width: 50px;
+    text-align: right;
+}
+.modern-table input[type="text"].text-input {
+    text-align: left !important;
+}
 .modern-table td, .modern-table th {
     border: 1px solid var(--table-border-color);
     padding: 1px 8px;
     vertical-align: text-top;
 }
+
+.converter-table td, .converter-table th {
+    border: 1px solid var(--table-border-color);
+    padding: 0px 0px;
+}
+
+.converter-table input {
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+.converter-table input:focus {
+    border: 1px solid black;
+    background-color: transparent;
+}
+
+.converter-table  tr:nth-child(even){
+    background-color: #f4f4f4;
+}
+
+.converter-table > tr:last-child {
+    color: grey;
+}
+
+
+
 .invisible-table table,tr,th, .invisible-table td {
     border: 0px;
     vertical-align: top;
     padding: 0px 10px;
-}
-input[type="text"] {
-    width: 50px;
-    text-align: right;
-}
-input[type="text"].text-input {
-    text-align: left !important;
 }
 /* Overlays */
 .ui-widget-overlay {

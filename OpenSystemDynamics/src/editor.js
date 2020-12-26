@@ -9295,18 +9295,17 @@ class ConverterDialog extends jqDialog {
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
+				<div class="value-table-div">
+					<table class="value-table converter-table"><!-- Add editable table here with code --></table>
+				</div>
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
-				<p style="color:grey; margin:5px 0px">
-					<b>Definition:</b></br>
-					&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
-					</br>
-					<b>Example:</b></br>
-					&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
-				</p>
+				Comment:<br/>
+				<textarea class="comment-field" style="width: 300px; height: 50px;"></textarea>
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
+		this.valueTable = $(this.dialogContent).find(".value-table");
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
@@ -9346,6 +9345,7 @@ class ConverterDialog extends jqDialog {
 		
 		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
+		this.loadTable();
 		
 		let oldName = getName(this.primitive);
 		let oldNameBrackets = makePrimitiveName(oldName);
@@ -9360,6 +9360,30 @@ class ConverterDialog extends jqDialog {
 			valueFieldDom.focus();
 		}
 	}
+
+	loadTable() {
+		let values = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
+		console.log(values);
+		this.valueTable.html(`
+			<tr>
+				<th>Input</th><th>Output</th>
+			</tr>
+			${values.map(row => `
+				<tr>
+					<td class="input-cell"> <input type="text" class="input-field"  value="${row[0]}"/></td>
+					<td class="output-cell"><input type="text" class="output-field" value="${row[1]}"/></td>
+				</tr>
+			`)}
+			<tr>
+				<td colspan="2">Tab to add new row</td>
+			</tr>
+		`);
+	}
+
+	storeTable() {
+
+	}
+
 	afterShow() {
 		let field = $(this.dialogContent).find(".text-input").get(0);
 		let inputLength = field.value.length;  
