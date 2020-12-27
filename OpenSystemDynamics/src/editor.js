@@ -9289,6 +9289,7 @@ class NumberboxDialog extends DisplayDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
+		this.currentValues = [];
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
 				Name:<br/>
@@ -9331,6 +9332,8 @@ class ConverterDialog extends jqDialog {
 			alert("Primitive with id "+id+" does not exist");
 			return;
 		}
+		this.currentValues = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
+		if (this.currentValues.length === 0) this.currentValues = [undefined, undefined];
 		this.show();
 		let linkedIn = findLinkedInPrimitives(id);
 		if (linkedIn.length === 1) {
@@ -9361,27 +9364,50 @@ class ConverterDialog extends jqDialog {
 		}
 	}
 
-	loadTable() {
-		let values = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
-		console.log(values);
+	loadTable(gotoCellId) {
+		console.log(this.currentValues);
 		this.valueTable.html(`
 			<tr>
 				<th>Input</th><th>Output</th>
 			</tr>
-			${values.map(row => `
+			${this.currentValues.map((row, index) => `
 				<tr>
-					<td class="input-cell"> <input type="text" class="input-field"  value="${row[0]}"/></td>
-					<td class="output-cell"><input type="text" class="output-field" value="${row[1]}"/></td>
+					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
+					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
 			<tr>
 				<td colspan="2">Tab to add new row</td>
 			</tr>
 		`);
+		if (gotoCellId) {
+			$(this.valueTable).find(`#${gotoCellId}`).focus();
+		}
+		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).keydown(event => {
+			if (event.key === "Tab") {
+				event.preventDefault();
+				console.log("add new line here and go to it");
+				this.currentValues = this.readTable();
+				this.currentValues.push([undefined, undefined]);
+				this.loadTable(`input-field-${this.currentValues.length-1}`);
+			}
+		});
 	}
 
-	storeTable() {
-
+	readTable() {
+		let values = [];
+		let tempInField = null;
+		let tempOutField = null;
+		for(let i = 0; ; i++) {
+			tempInField = $(this.valueTable).find(`#input-field-${i}`).get(0);
+			tempOutField = $(this.valueTable).find(`#output-field-${i}`).get(0);
+			if (tempInField === undefined || tempOutField === undefined) {
+				break;
+			}
+			values.push([tempInField.value, tempOutField.value])
+		}
+		console.log(values);
+		return values;
 	}
 
 	afterShow() {
