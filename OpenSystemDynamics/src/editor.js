@@ -9365,7 +9365,6 @@ class ConverterDialog extends jqDialog {
 	}
 
 	loadTable(gotoCellId) {
-		console.log(this.currentValues);
 		this.valueTable.html(`
 			<tr>
 				<th>Input</th><th>Output</th>
@@ -9406,7 +9405,20 @@ class ConverterDialog extends jqDialog {
 			}
 			values.push([tempInField.value, tempOutField.value])
 		}
-		console.log(values);
+		// only allow one row of empty
+		values = values.filter(val_pair => {
+			if (val_pair[0] === "" && val_pair[1] === "") {
+				return false;
+			}
+			return (isNaN(val_pair[0]) === false || isNaN(val_pair[1]) === false);
+		}).sort((a, b) => {
+			if (a[0] === "") {
+				return 1;
+			} else if (b[0] === "") {
+				return -1;
+			}
+			return Number(a[0]) - Number(b[0]);
+		});
 		return values;
 	}
 
