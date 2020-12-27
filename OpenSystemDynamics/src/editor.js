@@ -9296,8 +9296,8 @@ class ConverterDialog extends jqDialog {
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
-				<div class="value-table-div">
-					<table class="value-table converter-table"><!-- Add editable table here with code --></table>
+				<div class="converter-table-div">
+					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
 				</div>
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
@@ -9306,7 +9306,7 @@ class ConverterDialog extends jqDialog {
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
-		this.valueTable = $(this.dialogContent).find(".value-table");
+		this.valueTable = $(this.dialogContent).find(".converter-table");
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {

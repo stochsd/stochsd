@@ -203,7 +203,13 @@ div.center-vertically-container {
     padding: 1px 8px;
     vertical-align: text-top;
 }
-
+.converter-table-div {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.converter-table {
+    width: 100%;
+}
 .converter-table td, .converter-table th {
     border: 1px solid var(--table-border-color);
     padding: 0px 0px;
