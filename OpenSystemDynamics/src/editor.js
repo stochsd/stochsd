@@ -9293,9 +9293,7 @@ class ConverterDialog extends jqDialog {
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
 				Name:<br/>
-				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
-				Definition:<br/>
-				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
+				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/>
 				<br/>
 				<div style="font-size: 14px; margin: 2px 0px;">
 					<button class="clear-table-btn enter-apply">Clear Data</button>
@@ -9312,14 +9310,6 @@ class ConverterDialog extends jqDialog {
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueTable = $(this.dialogContent).find(".converter-table");
-		this.valueField = $(this.dialogContent).find(".value-field").get(0);
-		$(this.valueField).keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
-					this.applyChanges();
-				}
-			}
-		});
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.keyCode == keyboard["enter"]) {
@@ -9371,11 +9361,14 @@ class ConverterDialog extends jqDialog {
 		this.setTitle(`${oldNameBrackets} properties`);
 
 		$(this.nameField).val(oldNameBrackets);
-		$(this.valueField).val(oldValue);
 		
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
-			valueFieldDom.focus();
+			if (this.defaultFocusSelector === ".value-field") {
+				this.jumpToBottom();
+			} else {
+				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+				valueFieldDom.focus();
+			}
 		}
 	}
 
@@ -9515,6 +9508,10 @@ class ConverterDialog extends jqDialog {
 		});
 		return values;
 	}
+	tableToString() {
+		let data = this.readTable();
+		return data.join("; ");
+	}
 
 	afterShow() {
 		let field = $(this.dialogContent).find(".text-input").get(0);
@@ -9524,8 +9521,8 @@ class ConverterDialog extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.valueField).val();
-			setValue2(this.primitive,value);
+			let value = this.tableToString();
+			setValue2(this.primitive, value);
 			
 			// handle name
 			let oldName = getName(this.primitive);
