@@ -9298,7 +9298,7 @@ class ConverterDialog extends jqDialog {
 				<div id="converter-help-accodion">
 					<h3>Help</h3>
 					<div>
-						<ul>
+						<ul style="margin: 0; padding: 0;">
 							<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easily</li>
 							<li>Data from spreadsheet programs (e.g. MS Excel) can be copied in directly with <span class="key">Ctrl/&#8984;</span>+<span class="key">V</span></li>
 							<ul>
