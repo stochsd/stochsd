@@ -324,7 +324,7 @@ class InfoBar {
 				lineWrapping: false
 			}
 		);
-		this.infoVE = $(".info-bar__value-error");
+		this.infoDE = $(".info-bar__definition-error");
 		$(infoDef).find(".CodeMirror").css("border", "none");
 	}
 	static update() {
@@ -335,9 +335,8 @@ class InfoBar {
 		}
 	
 		if (selected_array == 0) {
-			// infoDef.html("Nothing selected");
 			this.cmInfoDef.setValue("Nothing selected");
-			this.infoVE.html("");
+			this.infoDE.html("");
 		} else if (selected_array.length == 1) {
 			let selected = selected_array[0];
 			let primitive = selected_array[0].primitive;
@@ -346,13 +345,11 @@ class InfoBar {
 			}
 			let name = primitive.getAttribute("name");
 			let definition = getValue(primitive);
-			let VE = primitive.getAttribute("ValueError");
-			this.infoVE.html(VE ? ValueErrorToString(VE) : "" );
+			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
-			let definitionNoLines = removeNewLines(definition);
-			if (definitionNoLines != "") {
-				// infoDef.html(`[${name}] = ${definitionNoLines}`);
-				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+			let definitionLines = definition.split("\n");
+			if (definitionLines[0] !== "") {
+				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
 				let type = selected.type;
 				
@@ -362,7 +359,6 @@ class InfoBar {
 				switch(type) {
 					case("numberbox"):
 						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
-						// infoDef.html(`Numberbox: Value of [${targetName}]`);
 						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
 					break;
 					case("timeplot"):
@@ -371,23 +367,20 @@ class InfoBar {
 					case("xyplot"):
 					case("histoplot"):
 						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
-						// infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
 					break;
 					case("link"):
 						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
 						let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
-						// infoDef.html(`Link: ${source} -> ${target}`);
 						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
 					break;
 					default: 
-						// infoDef.html(`${Type} selected`);
 						this.cmInfoDef.setValue(`${Type} selected`);
 				}
 			}
 		} else {
 			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
-			this.infoVE.html("");
+			this.infoDE.html("");
 		}
 		updateLinkBar();
 	}
@@ -852,11 +845,11 @@ class BaseObject {
 		}
 	}
 
-	updateValueError() {
-		let valueErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
-		if (valueErrorTypes.includes(this.type)) {
-			let VE = checkValueError(this.primitive, getValue(this.primitive));
-			this.primitive.setAttribute("ValueError", VE ? VE : "");
+	updateDefinitionError() {
+		let definitionErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
+		if (definitionErrorTypes.includes(this.type)) {
+			DefinitionError.check(this.primitive);
+			DefinitionError.has(this.primitive);
 		}
 	}
 
@@ -1083,9 +1076,9 @@ class OnePointer extends BaseObject {
 		
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons && prim) {
-			let VE = prim.getAttribute("ValueError");
-			this.icons.set("questionmark", VE ? "visible" : "hidden");
-			this.icons.set("dice", ( ! VE && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
+			const hasDefError = DefinitionError.has(prim);
+			this.icons.set("questionmark", hasDefError ? "visible" : "hidden");
+			this.icons.set("dice", ( ! hasDefError && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
 		}
 
 		if ( ! this.is_ghost) {
@@ -1260,7 +1253,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 32], [27, 5], [0, -24], [-27, 5]];
 	}
 
@@ -1467,7 +1460,7 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 34],[23, 5],[0, -25],[-23, 5]];
 	}
 
@@ -1553,7 +1546,7 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 29],[23, 5],[0, -21],[-23, 5]];
 	}
 	getImage() {
@@ -1808,7 +1801,7 @@ function getStackTrace() {
 class FlowVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoint]
@@ -2216,13 +2209,13 @@ class FlowVisual extends BaseConnection {
 		this.getAnchors().map( anchor => anchor.updatePosition() );
 
 		if(this.primitive && this.icons) {
-			let VE = this.primitive.getAttribute("ValueError");
-			if (VE) {
+			const hasDefError = DefinitionError.has(this.primitive);
+			if (hasDefError) {
 				this.icons.set("questionmark", "visible");
 			} else {
 				this.icons.set("questionmark", "hidden");
 			}
-			this.icons.set("dice", (! VE && hasRandomFunction(getValue(this.primitive)) ) ? "visible" : "hidden");
+			this.icons.set("dice", (! hasDefError && hasRandomFunction(getValue(this.primitive)) ) ? "visible" : "hidden");
 		}
 	}
 	
@@ -3857,7 +3850,7 @@ class LinkVisual extends BaseConnection {
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
-			this._end_attach.updateValueError();
+			this._end_attach.updateDefinitionError();
 			this._end_attach.update();
 		}
 	}
@@ -3870,11 +3863,11 @@ class LinkVisual extends BaseConnection {
 			this.undashLine();
 		}
 		if (old_end_attach) {
-			old_end_attach.updateValueError();
+			old_end_attach.updateDefinitionError();
 			old_end_attach.update();
 		}
 		if (new_end_attach) {
-			new_end_attach.updateValueError();
+			new_end_attach.updateDefinitionError();
 			new_end_attach.update();
 		}
 	}
@@ -4096,11 +4089,6 @@ class BaseTool {
 }
 BaseTool.init();
 
-function getAllValueErrorPrimitive() {
-	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError")).filter(v => ! isPrimitiveGhost(v));
-	return ValueErrorPrims;
-}
-
 function findVisualByID(id) {
 	let visual = object_array[id];
 	if (visual === undefined) {
@@ -4112,14 +4100,14 @@ function findVisualByID(id) {
 class RunTool extends BaseTool {
 	static enterTool() {
 		/* Check that all primitives are defined */
-		let valueErrorPrims = getAllValueErrorPrimitive();
-		if (valueErrorPrims.length !== 0) {
-			let prim = valueErrorPrims[0];
+		let definitionErrorPrims = DefinitionError.getAllPrims();
+		if (definitionErrorPrims.length !== 0) {
+			let prim = definitionErrorPrims[0];
 			let name = prim.getAttribute("name");
 			let color = prim.getAttribute("Color");
 			let alert = new XAlertDialog(`
 				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
-				&nbsp &nbsp ${ValueErrorToString(prim.getAttribute("ValueError"))}
+				&nbsp &nbsp ${DefinitionError.getMessage(prim)}
 			`);
 			alert.setTitle("Unable to Simulate");
 			alert.show();
@@ -9559,6 +9547,7 @@ class EquationEditor extends jqDialog {
 							<div class="name-warning-div"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
+							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;">number</span></div>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9602,6 +9591,16 @@ class EquationEditor extends jqDialog {
 			}
 		);
 
+		this.cmValueField.on("cursorActivity", (e) => {
+			let cursor = e.doc.getCursor()
+			let lines = e.doc.getValue().split("\n");
+			let pos = 0;
+			for (let lineIndex = 0; lineIndex < cursor.line; lineIndex++) {
+				pos += lines[lineIndex].length+1;
+			}
+			pos += cursor.ch;
+			$(this.dialogContent).find(".equation-cursor-pos").html(`Pos: ${pos}`);
+		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());

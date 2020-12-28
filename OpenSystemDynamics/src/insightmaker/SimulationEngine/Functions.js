@@ -29,7 +29,7 @@ functionLoaders.push(function(){
 		return new Material(0);
 	});
 
-	defineFunction("StopIf", {params:[{name: "Condition", noVector: true, allowBoolean: true, defaultVal: false}]}, function(x) {
+	defineFunction("StopIf", {params:[{name: "Condition", noVector: true, allowBoolean: true}]}, function(x) {
 		if (x[0]) {
 			functionBank["stop"]([]);
 		}

@@ -163,99 +163,17 @@ function isNameFree(newName, exepctionId) {
 
 /*
 	Method: setValue2
-	sets value of primitive aswell as sets ValueError
+	sets value of primitive aswell as sets Definiton Error 
 */
 function setValue2(primitive, value) {
 	let valueStr = value; 
 	while(valueStr[valueStr.length-1] === " " || valueStr[valueStr.length-1] === ";" || valueStr[valueStr.length-1] === "\n"){
 		valueStr = valueStr.substring(0, valueStr.length-1);
 	}
-	valueStr = valueStr.replace(/\n/g, "\\n");
 	setValue(primitive, valueStr);
-	let error = checkValueError(primitive, valueStr);
-	primitive.setAttribute("ValueError", error ? error : "");
-	return error;
+	let error = DefinitionError.check(primitive);
 }
 
-const VALUE_ERROR = {
-	"VE1": "Empty Definition",
-	"VE2": "Unknown Reference",
-	"VE3": "Unused Link from",
-	"VE4": "No Ingoing Link", // only for converter
-	"VE5": "More Then One Ingoing Link", // only for converter
-	"VE6": "A Parameter must <u>not</u> have an ingoing link. Please, remove it!" // Only for Parameter (Constant)
-}
-
-function ValueErrorToString(valueError) {
-	if (valueError) {
-		let errArr = valueError.split(":");
-		let errType = errArr[0];
-		let errArg = errArr[1];
-		let str = VALUE_ERROR[errType];
-		switch(errType) {
-			case("VE1"):
-			case("VE4"):
-			case("VE5"): 
-			case("VE6"): 
-				return str;
-			case("VE2"):
-				return `${str} [${errArg}]`;
-			case("VE3"):
-				return `${str} ${getName(findID(errArg))}`;
-			default: 
-				return "Unknown error";
-		}
-	}
-}
-
-function checkValueError(primitive, value) {
-	// 1. Empty string
-	if (value === "") {
-		return "VE1:";
-	}
-
-	let primType = primitive.value.nodeName;
-	let linkedIds = findLinkedInPrimitives(primitive.id).map(getID);
-	if (primType === "Variable" && primitive.value.getAttribute("isConstant") === "true") {
-		if (linkedIds.length > 0) {
-			return "VE6:";
-		}
-	}
-	if (primType === "Stock" || primType === "Variable" || primType === "Flow") {
-		// 2. Unknown reference
-		let valueRefs = value.match(/[^[]+(?=\])/g);
-		let linkedRefs = linkedIds.map(id => getName(findID(id)));
-		if (valueRefs) {
-			for (let ref of valueRefs) {
-				if (linkedRefs.includes(ref) === false) {
-					return `VE2:${ref}`;
-				}
-			}
-		}
-
-		// 3. Unused link 
-		for(let i = 0; i < linkedIds.length; i++) {
-			let ref = linkedRefs[i];
-			if (valueRefs) {
-				if (valueRefs.includes(ref) === false) {
-					return `VE3:${linkedIds[i]}`;
-				}
-			} else {
-				return `VE3:${linkedIds[i]}`;
-			}
-		}
-	} else if (primType === "Converter") {
-		if (linkedIds.length === 0) {
-			// 4. No ingoing link 
-			return "VE4:";
-		} else if (linkedIds.length > 1) {
-			// 5. More then one ingoing link 
-			return `VE5:${linkedIds}`;
-		}
-	}
-	// No error 
-	return null;
-}
 
 /* 
 	Method: findLinkedOutPrimitives
