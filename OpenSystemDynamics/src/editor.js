@@ -9382,13 +9382,24 @@ class ConverterDialog extends jqDialog {
 		if (gotoCellId) {
 			$(this.valueTable).find(`#${gotoCellId}`).focus();
 		}
-		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).keydown(event => {
+		$(this.valueTable).find(`.output-field , .input-field`).keydown(event => {
+			let TargetId = event.currentTarget.getAttribute("id");
 			if (event.key === "Tab") {
-				event.preventDefault();
-				console.log("add new line here and go to it");
-				this.currentValues = this.readTable();
-				this.currentValues.push([undefined, undefined]);
-				this.loadTable(`input-field-${this.currentValues.length-1}`);
+				if (event.shiftKey) {
+					if (TargetId === `input-field-${this.currentValues.length-1}`) {
+						event.preventDefault();
+						this.currentValues = this.readTable();
+						this.loadTable(`output-field-${this.currentValues.length-2}`);
+					}
+				} else {
+					if (TargetId === `output-field-${this.currentValues.length-1}`) {
+						event.preventDefault();
+						console.log("add new line here and go to it");
+						this.currentValues = this.readTable();
+						this.currentValues.push([undefined, undefined]);
+						this.loadTable(`input-field-${this.currentValues.length-1}`);
+					}
+				}
 			}
 		});
 	}
