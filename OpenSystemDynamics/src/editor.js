@@ -9402,6 +9402,24 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		});
+		$(this.valueTable).find(`.output-field , .input-field`).keyup(event => {
+			let val = event.currentTarget.value
+			if (this.isValidCellValue(val)) {
+				$(event.currentTarget).removeClass("text-input-warning");
+			} else {
+				$(event.currentTarget).addClass("text-input-warning");
+			}
+		});
+	}
+
+	isValidCellValue(strValue) {
+		if (strValue.trim() === "") {
+			return false;
+		} else if (isNaN(strValue)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	readTable() {
@@ -9417,11 +9435,14 @@ class ConverterDialog extends jqDialog {
 			values.push([tempInField.value, tempOutField.value])
 		}
 		// only allow one row of empty
+		let num_nonvalid = 0;
 		values = values.filter(val_pair => {
-			if (val_pair[0] === "" && val_pair[1] === "") {
-				return false;
+			let validIn =  this.isValidCellValue(val_pair[0]);
+			let validOut = this.isValidCellValue(val_pair[1]);
+			if (validIn === false || validOut  === false) {
+				num_nonvalid++;
 			}
-			return (isNaN(val_pair[0]) === false || isNaN(val_pair[1]) === false);
+			return (validIn && validOut) || num_nonvalid < 1;
 		}).sort((a, b) => {
 			if (a[0] === "") {
 				return 1;

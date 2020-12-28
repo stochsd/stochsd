@@ -214,10 +214,10 @@ div.center-vertically-container {
     border: 1px solid var(--table-border-color);
     padding: 0px 0px;
 }
-
 .converter-table input {
     border: 1px solid transparent;
     background-color: transparent;
+    width: calc( 100% - 3px );
 }
 .converter-table input:focus {
     border: 1px solid black;
@@ -299,6 +299,9 @@ h3.equation-list-header {
 }
 .linked-reference:hover {
     background-color: hsl(0, 0%, 90%);
+}
+.text-input-warning {
+    background-color: pink !important;
 }
 /* for warning or note texts when changing settings and properties */
 .warning {
