@@ -9418,6 +9418,23 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		});
+		$(this.valueTable).find(".output-field , .input-field").on("paste", (event) => {
+			let pasteString = event.originalEvent.clipboardData.getData('text/plain');
+			console.log(pasteString);
+			if (isNaN(pasteString) === false) {
+				// let default happen 
+			} else {
+				let pasteData = pasteString.split("\n").map(row => row.split("\t"))
+				pasteData = pasteData.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
+				console.log(pasteData)
+				if (pasteData.length >= 1) {
+					// special spreadsheet paste
+					this.currentValues = pasteData;
+					this.loadTable();
+					this.readTable();
+				}
+			}
+		});
 		$(this.valueTable).find(`.output-field , .input-field`).keyup(event => {
 			let val = event.currentTarget.value
 			if (this.isValidCellValue(val)) {
