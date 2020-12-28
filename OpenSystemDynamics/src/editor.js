@@ -9296,6 +9296,8 @@ class ConverterDialog extends jqDialog {
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				Definition:<br/>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
+				<br/>
+				<button class="clear-table-btn">Clear Data</button>
 				<div class="converter-table-div">
 					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
 				</div>
@@ -9321,6 +9323,9 @@ class ConverterDialog extends jqDialog {
 				this.applyChanges();
 			}
 		});
+		$(this.dialogContent).find(".clear-table-btn").click(() => {
+			this.clearTable();
+		});
 	}
 	open(id,defaultFocusSelector = null) {
 		if (jqDialog.blockingDialogOpen) {
@@ -9333,7 +9338,7 @@ class ConverterDialog extends jqDialog {
 			return;
 		}
 		this.currentValues = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
-		if (this.currentValues.length === 0) this.currentValues = [undefined, undefined];
+		if (getValue(this.primitive).trim() === "") this.currentValues = [[undefined, undefined]];
 		this.show();
 		let linkedIn = findLinkedInPrimitives(id);
 		if (linkedIn.length === 1) {
@@ -9362,6 +9367,11 @@ class ConverterDialog extends jqDialog {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
 		}
+	}
+
+	clearTable() {
+		this.currentValues = [[undefined, undefined]];
+		this.loadTable();
 	}
 
 	loadTable(gotoCellId) {
