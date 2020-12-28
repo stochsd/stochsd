@@ -9387,8 +9387,8 @@ class ConverterDialog extends jqDialog {
 			${this.currentValues.map((row, index) => `
 				<tr>
 					<td><button class="rm-point-btn rm-btn" data-index="${index}" >-</button></td>
-					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" data-index=${index} value="${isNaN(row[0]) ? "" : row[0]}"/></td>
-					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" data-index=${index} value="${isNaN(row[1]) ? "" : row[1]}"/></td>
+					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" data-index="${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
+					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
 			<tr>
@@ -9398,24 +9398,30 @@ class ConverterDialog extends jqDialog {
 		if (gotoCellId) {
 			$(this.valueTable).find(`#${gotoCellId}`).focus();
 		}
-		$(this.valueTable).find(`.output-field , .input-field`).keydown(event => {
-			let TargetId = event.currentTarget.getAttribute("id");
-			if (event.key === "Tab") {
-				if (event.shiftKey) {
-					if (TargetId === `input-field-${this.currentValues.length-1}`) {
-						event.preventDefault();
-						this.currentValues = this.readTable();
-						this.loadTable(`output-field-${this.currentValues.length-2}`);
-					}
+		$(this.valueTable).find(`.input-field`).keydown(event => {
+			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
+			if (event.shiftKey === true && event.key === "Tab") {
+				event.preventDefault();
+				if (targetIndex == 0) {
+					this.currentValues = this.readTable();
+					this.currentValues.push([undefined, undefined]);
+					this.loadTable(`output-field-${this.currentValues.length-1}`);
 				} else {
-					if (TargetId === `output-field-${this.currentValues.length-1}`) {
-						event.preventDefault();
-						console.log("add new line here and go to it");
-						this.currentValues = this.readTable();
-						this.currentValues.push([undefined, undefined]);
-						this.loadTable(`input-field-${this.currentValues.length-1}`);
-					}
-				}
+					this.loadTable(`output-field-${targetIndex-1}`);
+				}	
+			}
+		});
+		$(this.valueTable).find(`.output-field`).keydown(event => {
+			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
+			if (event.shiftKey === false && event.key === "Tab") {
+				event.preventDefault();
+				if (targetIndex == this.currentValues.length-1) {
+					this.currentValues = this.readTable();
+					this.currentValues.push([undefined, undefined]);
+					this.loadTable(`input-field-${this.currentValues.length-1}`);
+				} else {
+					this.loadTable(`input-field-${targetIndex+1}`);
+				}	
 			}
 		});
 		$(this.valueTable).find(".output-field , .input-field").on("paste", (event) => {
