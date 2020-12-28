@@ -9299,7 +9299,7 @@ class ConverterDialog extends jqDialog {
 					<h3>Help</h3>
 					<div>
 						<ul>
-							<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easly</li>
+							<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easily</li>
 							<li>Data from spreadsheet programs (e.g. MS Excel) can be copied in directly with <span class="key">Ctrl/&#8984;</span>+<span class="key">V</span></li>
 							<ul>
 								<li class="note">This requires that only two columns are copied from the spreadsheet program</li>
@@ -9318,7 +9318,7 @@ class ConverterDialog extends jqDialog {
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				Comment:<br/>
-				<textarea class="comment-field" style="width: 300px; height: 50px;"></textarea>
+				<textarea class="comment-field" style="width: 100%; height: 50px;"></textarea>
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
@@ -9407,9 +9407,6 @@ class ConverterDialog extends jqDialog {
 					<td class="output-cell"><input type="text" class="output-field enter-apply" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
-			<tr>
-				<td colspan="3">Tab to add new row</td>
-			</tr>
 		`);
 		if (gotoCellId) {
 			$(this.valueTable).find(`#${gotoCellId}`).focus();
