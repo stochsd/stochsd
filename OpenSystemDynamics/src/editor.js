@@ -9298,6 +9298,7 @@ class ConverterDialog extends jqDialog {
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<br/>
 				<button class="clear-table-btn">Clear Data</button>
+				<button class="add-table-btn"><span>+</span>Add new</button>
 				<div class="converter-table-div">
 					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
 				</div>
@@ -9326,6 +9327,9 @@ class ConverterDialog extends jqDialog {
 		$(this.dialogContent).find(".clear-table-btn").click(() => {
 			this.clearTable();
 		});
+		$(this.dialogContent).find(".add-table-btn").click(() => {
+			this.jumpToBottom();
+		});
 	}
 	open(id,defaultFocusSelector = null) {
 		if (jqDialog.blockingDialogOpen) {
@@ -9338,7 +9342,11 @@ class ConverterDialog extends jqDialog {
 			return;
 		}
 		this.currentValues = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
-		if (getValue(this.primitive).trim() === "") this.currentValues = [[undefined, undefined]];
+		if (getValue(this.primitive).trim() === "") {
+			this.currentValues = [[undefined, undefined]]; 
+		} else {
+			this.currentValues.push([undefined, undefined]);
+		}
 		this.show();
 		let linkedIn = findLinkedInPrimitives(id);
 		if (linkedIn.length === 1) {
@@ -9403,9 +9411,7 @@ class ConverterDialog extends jqDialog {
 			if (event.shiftKey === true && event.key === "Tab") {
 				event.preventDefault();
 				if (targetIndex == 0) {
-					this.currentValues = this.readTable();
-					this.currentValues.push([undefined, undefined]);
-					this.loadTable(`output-field-${this.currentValues.length-1}`);
+					this.jumpToBottom();
 				} else {
 					this.loadTable(`output-field-${targetIndex-1}`);
 				}	
@@ -9416,9 +9422,7 @@ class ConverterDialog extends jqDialog {
 			if (event.shiftKey === false && event.key === "Tab") {
 				event.preventDefault();
 				if (targetIndex == this.currentValues.length-1) {
-					this.currentValues = this.readTable();
-					this.currentValues.push([undefined, undefined]);
-					this.loadTable(`input-field-${this.currentValues.length-1}`);
+					this.jumpToBottom();
 				} else {
 					this.loadTable(`input-field-${targetIndex+1}`);
 				}	
@@ -9458,6 +9462,13 @@ class ConverterDialog extends jqDialog {
 			this.loadTable();
 			this.readTable();
 		}
+	}
+
+	jumpToBottom() {
+		// jumps to bottom so user can insert new value 
+		this.currentValues = this.readTable();
+		this.currentValues.push([undefined, undefined]);
+		this.loadTable(`input-field-${this.currentValues.length-1}`);
 	}
 
 	isValidCellValue(strValue) {
