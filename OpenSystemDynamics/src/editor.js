@@ -9298,8 +9298,8 @@ class ConverterDialog extends jqDialog {
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<br/>
 				<div style="font-size: 14px; margin: 2px 0px;">
-					<button class="clear-table-btn">Clear Data</button>
-					<button class="add-table-btn"><span class="add-text">+</span>Add new</button>
+					<button class="clear-table-btn enter-apply">Clear Data</button>
+					<button class="add-table-btn enter-apply"><span class="add-text">+</span>Add new</button>
 				</div>
 				<div class="converter-table-div">
 					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
@@ -9396,9 +9396,9 @@ class ConverterDialog extends jqDialog {
 			</tr>
 			${this.currentValues.map((row, index) => `
 				<tr>
-					<td><button class="rm-point-btn rm-btn" data-index="${index}" >-</button></td>
-					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" data-index="${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
-					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
+					<td><button class="rm-point-btn rm-btn enter-apply" data-index="${index}" >-</button></td>
+					<td class="input-cell"> <input type="text" class="input-field enter-apply"   id="input-field-${index}" data-index="${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
+					<td class="output-cell"><input type="text" class="output-field enter-apply" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
 			<tr>
@@ -9452,6 +9452,7 @@ class ConverterDialog extends jqDialog {
 			this.removePoint(index);
 			this.loadTable();
 		});
+		this.bindEnterApplyEvents();
 	}
 
 	spreadsheetInsert(insertString) {
