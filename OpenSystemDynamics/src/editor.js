@@ -9387,8 +9387,8 @@ class ConverterDialog extends jqDialog {
 			${this.currentValues.map((row, index) => `
 				<tr>
 					<td><button class="rm-point-btn rm-btn" data-index="${index}" >-</button></td>
-					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
-					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
+					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" data-index=${index} value="${isNaN(row[0]) ? "" : row[0]}"/></td>
+					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" data-index=${index} value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
 			<tr>
