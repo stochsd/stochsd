@@ -238,16 +238,9 @@ div.center-vertically-container {
     border: 1px solid black;
     background-color: transparent;
 }
-
 .converter-table  tr:nth-child(even){
     background-color: #f4f4f4;
 }
-
-.converter-table > tr:last-child {
-    color: grey;
-}
-
-
 
 .invisible-table table,tr,th, .invisible-table td {
     border: 0px;

@@ -9407,10 +9407,15 @@ class ConverterDialog extends jqDialog {
 					<td class="output-cell"><input type="text" class="output-field enter-apply" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
+			<tr class="tab-hint" hidden>
+				<td colspan="3"><p style="text-align: center;"><span class="key">Tab</span> to add new</p></td>
+			</tr>
 		`);
 		if (gotoCellId) {
 			$(this.valueTable).find(`#${gotoCellId}`).focus();
 		}
+		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("focus", () => this.showTabHint(true) );
+		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("blur", () => this.showTabHint(false) );
 		$(this.valueTable).find(`.input-field`).keydown(event => {
 			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
 			if (event.shiftKey === true && event.key === "Tab") {
@@ -9467,6 +9472,14 @@ class ConverterDialog extends jqDialog {
 			this.currentValues = data;
 			this.loadTable();
 			this.readTable();
+		}
+	}
+
+	showTabHint(show) {
+		if (show) {
+			$(this.valueTable).find(".tab-hint").show()
+		} else {
+			$(this.valueTable).find(".tab-hint").hide()
 		}
 	}
 
