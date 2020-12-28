@@ -9291,9 +9291,22 @@ class ConverterDialog extends jqDialog {
 		super();
 		this.currentValues = [];
 		this.setHtml(`
-			<div class="primitive-settings" style="padding: 10px 0px">
+			<div class="primitive-settings" style="padding: 10px 0px; max-width: 400px;">
 				Name:<br/>
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/>
+				<br/>
+				<div id="converter-help-accodion">
+					<h3>Help</h3>
+					<div>
+						<ul>
+							<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easly</li>
+							<li>Data from spreadsheet programs (e.g. MS Excel) can be copied in directly with <span class="key">Ctrl/&#8984;</span>+<span class="key">V</span></li>
+							<ul>
+								<li class="note">This requires that only two columns are copied from the spreadsheet program</li>
+							</ul>
+						</ul>
+					</div>
+				</div>
 				<br/>
 				<div style="font-size: 14px; margin: 2px 0px;">
 					<button class="clear-table-btn enter-apply">Clear Data</button>
@@ -9517,6 +9530,7 @@ class ConverterDialog extends jqDialog {
 		let field = $(this.dialogContent).find(".text-input").get(0);
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
+		$(this.dialogContent).find("#converter-help-accodion").accordion({active: false, header: "h3", collapsible: true });
 	}
 	makeApply() {
 		if (this.primitive) {

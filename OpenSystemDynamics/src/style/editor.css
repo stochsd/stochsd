@@ -35,7 +35,11 @@ button:hover:enabled {
     font-weight: bold; 
     font-family: monospace !important;
 }
-
+.key {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background-color: #ddd;
+}
 #recent_title {
     background-color: #ddd; 
 }
