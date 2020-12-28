@@ -9374,19 +9374,25 @@ class ConverterDialog extends jqDialog {
 		this.loadTable();
 	}
 
+	removePoint(index) {
+		this.currentValues.splice(index, 1);
+		this.loadTable();
+	}
+
 	loadTable(gotoCellId) {
 		this.valueTable.html(`
 			<tr>
-				<th>Input</th><th>Output</th>
+				<th></th><th>Input</th><th>Output</th>
 			</tr>
 			${this.currentValues.map((row, index) => `
 				<tr>
+					<td><button class="rm-point-btn" data-index="${index}" >-</button></td>
 					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
 					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
 			<tr>
-				<td colspan="2">Tab to add new row</td>
+				<td colspan="3">Tab to add new row</td>
 			</tr>
 		`);
 		if (gotoCellId) {
@@ -9419,6 +9425,11 @@ class ConverterDialog extends jqDialog {
 			} else {
 				$(event.currentTarget).addClass("text-input-warning");
 			}
+		});
+		$(this.valueTable).find(".rm-point-btn").click(event => {
+			let index = Number(event.currentTarget.getAttribute("data-index"));
+			this.removePoint(index);
+			this.loadTable();
 		});
 	}
 
