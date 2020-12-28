@@ -7723,9 +7723,9 @@ class DisplayDialog extends jqDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button rm-btn"
 								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								style="font-size: 20px;">
 								-
 							</button>
 							</td>
@@ -9386,7 +9386,7 @@ class ConverterDialog extends jqDialog {
 			</tr>
 			${this.currentValues.map((row, index) => `
 				<tr>
-					<td><button class="rm-point-btn" data-index="${index}" >-</button></td>
+					<td><button class="rm-point-btn rm-btn" data-index="${index}" >-</button></td>
 					<td class="input-cell"> <input type="text" class="input-field"   id="input-field-${index}" value="${isNaN(row[0]) ? "" : row[0]}"/></td>
 					<td class="output-cell"><input type="text" class="output-field" id="output-field-${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>

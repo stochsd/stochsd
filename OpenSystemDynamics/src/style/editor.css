@@ -25,6 +25,11 @@ button {
 button:hover:enabled {
     background-color: white;
 }
+button.rm-btn {
+    color: #aa0000; 
+    font-weight: bold; 
+    font-family: monospace !important;
+}
 #recent_title {
     background-color: #ddd; 
 }
