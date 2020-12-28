@@ -9424,15 +9424,7 @@ class ConverterDialog extends jqDialog {
 			if (isNaN(pasteString) === false) {
 				// let default happen 
 			} else {
-				let pasteData = pasteString.split("\n").map(row => row.split("\t"))
-				pasteData = pasteData.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
-				console.log(pasteData)
-				if (pasteData.length >= 1) {
-					// special spreadsheet paste
-					this.currentValues = pasteData;
-					this.loadTable();
-					this.readTable();
-				}
+				this.spreadsheetInsert(pasteString);
 			}
 		});
 		$(this.valueTable).find(`.output-field , .input-field`).keyup(event => {
@@ -9448,6 +9440,18 @@ class ConverterDialog extends jqDialog {
 			this.removePoint(index);
 			this.loadTable();
 		});
+	}
+
+	spreadsheetInsert(insertString) {
+		let data = insertString.split("\n").map(row => row.split("\t"))
+		data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
+		console.log(data);
+		if (data.length >= 1) {
+			// special spreadsheet paste
+			this.currentValues = data;
+			this.loadTable();
+			this.readTable();
+		}
 	}
 
 	isValidCellValue(strValue) {
