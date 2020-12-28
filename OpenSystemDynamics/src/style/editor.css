@@ -25,11 +25,17 @@ button {
 button:hover:enabled {
     background-color: white;
 }
-button.rm-btn {
+.rm-btn {
     color: #aa0000; 
     font-weight: bold; 
     font-family: monospace !important;
 }
+.add-text {
+    color: #00aa00; 
+    font-weight: bold; 
+    font-family: monospace !important;
+}
+
 #recent_title {
     background-color: #ddd; 
 }

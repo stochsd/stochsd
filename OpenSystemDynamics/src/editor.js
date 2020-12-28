@@ -9297,8 +9297,10 @@ class ConverterDialog extends jqDialog {
 				Definition:<br/>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<br/>
-				<button class="clear-table-btn">Clear Data</button>
-				<button class="add-table-btn"><span>+</span>Add new</button>
+				<div style="font-size: 14px; margin: 2px 0px;">
+					<button class="clear-table-btn">Clear Data</button>
+					<button class="add-table-btn"><span class="add-text">+</span>Add new</button>
+				</div>
 				<div class="converter-table-div">
 					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
 				</div>
