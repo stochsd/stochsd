@@ -9358,9 +9358,7 @@ class ConverterDialog extends jqDialog {
 		}
 		this.currentValues = getValue(this.primitive).split(";").map(row => row.split(",").map(Number));
 		if (getValue(this.primitive).trim() === "") {
-			this.currentValues = [[undefined, undefined]]; 
-		} else {
-			this.currentValues.push([undefined, undefined]);
+			this.currentValues = []; 
 		}
 		this.show();
 		let linkedIn = findLinkedInPrimitives(id);
@@ -9395,7 +9393,7 @@ class ConverterDialog extends jqDialog {
 	}
 
 	clearTable() {
-		this.currentValues = [[undefined, undefined]];
+		this.currentValues = [];
 		this.loadTable();
 	}
 
@@ -9416,6 +9414,11 @@ class ConverterDialog extends jqDialog {
 					<td class="output-cell"><input type="text" class="output-field enter-apply" id="output-field-${index}" data-index="${index}" value="${isNaN(row[1]) ? "" : row[1]}"/></td>
 				</tr>
 			`)}
+			<tr>
+				<td></td>
+				<td class="input-cell"> <input type="text"  id="input-field-append" /></td>
+				<td class="output-cell"><input type="text" id="output-field-append" /></td>
+			</tr>
 			<tr class="tab-hint" hidden>
 				<td colspan="3"><p style="text-align: center;"><span class="key">Tab</span> to add new</p></td>
 			</tr>
@@ -9423,16 +9426,21 @@ class ConverterDialog extends jqDialog {
 		if (gotoCellId) {
 			$(this.valueTable).find(`#${gotoCellId}`).focus();
 		}
-		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("focus", () => this.showTabHint(true) );
-		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("blur", () => this.showTabHint(false) );
+		$(this.valueTable).find(`#output-field-append`).on("focus", () => this.showTabHint(true) );
+		$(this.valueTable).find(`#output-field-append`).on("blur", () => {
+			this.appendValue();
+			this.showTabHint(false);
+			this.loadTable("input-field-append");
+		});
 		$(this.valueTable).find(`.input-field , .output-field`).on("blur", () => { 
 			this.currentValues = this.readTable();
-			this.currentValues.push([undefined, undefined]);
 		});
+
 		$(this.valueTable).find(`.input-field`).keydown(event => {
 			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
 			if (event.shiftKey === true && event.key === "Tab") {
 				event.preventDefault();
+				this.currentValues = this.readTable();
 				if (targetIndex == 0) {
 					this.jumpToBottom();
 				} else {
@@ -9444,11 +9452,10 @@ class ConverterDialog extends jqDialog {
 			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
 			if (event.shiftKey === false && event.key === "Tab") {
 				event.preventDefault();
+				this.currentValues = this.readTable();
 				if (targetIndex == this.currentValues.length-1) {
 					this.jumpToBottom();
 				} else {
-					this.currentValues = this.readTable();
-					this.currentValues.push([undefined, undefined]);
 					this.loadTable(`input-field-${targetIndex+1}`);
 				}	
 			}
@@ -9500,9 +9507,7 @@ class ConverterDialog extends jqDialog {
 
 	jumpToBottom() {
 		// jumps to bottom so user can insert new value 
-		this.currentValues = this.readTable();
-		this.currentValues.push([undefined, undefined]);
-		this.loadTable(`input-field-${this.currentValues.length-1}`);
+		this.loadTable(`input-field-append`);
 	}
 
 	isValidCellValue(strValue) {
@@ -9513,6 +9518,20 @@ class ConverterDialog extends jqDialog {
 		} else {
 			return true;
 		}
+	}
+
+	appendValue() {
+		let inStr  = $(this.valueTable).find(`#input-field-append`).val();
+		let outStr = $(this.valueTable).find(`#output-field-append`).val();
+		if (this.isValidCellValue(inStr) && this.isValidCellValue(outStr)) {
+			this.currentValues.push([inStr, outStr]);
+			this.currentValues.sort((a, b) => {
+				return Number(a[0]) - Number(b[0]);
+			})
+		}
+		// clear fiels 
+		$(this.valueTable).find(`#input-field-append`).val("");
+		$(this.valueTable).find(`#output-field-append`).val("");
 	}
 
 	readTable() {
@@ -9527,21 +9546,11 @@ class ConverterDialog extends jqDialog {
 			}
 			values.push([tempInField.value, tempOutField.value])
 		}
-		// only allow one row of empty
-		let num_nonvalid = 0;
 		values = values.filter(val_pair => {
 			let validIn =  this.isValidCellValue(val_pair[0]);
 			let validOut = this.isValidCellValue(val_pair[1]);
-			if (validIn === false || validOut  === false) {
-				num_nonvalid++;
-			}
-			return (validIn && validOut) || num_nonvalid < 1;
+			return (validIn && validOut);
 		}).sort((a, b) => {
-			if (a[0] === "") {
-				return 1;
-			} else if (b[0] === "") {
-				return -1;
-			}
 			return Number(a[0]) - Number(b[0]);
 		});
 		return values;
