@@ -2792,7 +2792,6 @@ class TimePlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 
-		console.log(this.serieArray);
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.primitive.getAttribute("TitleLabel"),
