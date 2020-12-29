@@ -9540,9 +9540,11 @@ class ConverterDialog extends jqDialog {
 
 	showTabHint(show) {
 		if (show) {
-			$(this.valueTable).find(".tab-hint").show()
+			$(this.valueTable).find(".tab-hint").show();
+			// scroll to bottom 
+			$(this.dialogContent).find(".converter-table-div").get(0).scrollTo(0, this.valueTable.get(0).scrollHeight);
 		} else {
-			$(this.valueTable).find(".tab-hint").hide()
+			$(this.valueTable).find(".tab-hint").hide();
 		}
 	}
 
