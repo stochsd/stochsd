@@ -9350,6 +9350,16 @@ class ConverterDialog extends jqDialog {
 		$(this.dialogContent).find(".add-table-btn").click(() => {
 			this.jumpToBottom();
 		});
+		// add jqplot event at start 
+		// can alternativly use event "jqplotClick"
+		$.jqplot.eventListenerHooks.push(['jqplotMouseMove', (ev, gridpos, datapos, neighbor, plot) => {
+			if (plot.targetId === "#converter-plot-div") {
+				if (neighbor) {
+					console.log(neighbor.pointIndex);
+					$(this.dialogContent).find(`#input-field-${neighbor.pointIndex}`).focus();
+				}
+			}
+		}]);
 	}
 	open(id,defaultFocusSelector = null) {
 		if (jqDialog.blockingDialogOpen) {
