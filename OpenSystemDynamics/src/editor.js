@@ -9425,8 +9425,8 @@ class ConverterDialog extends jqDialog {
 				serieArray.push([Number(row[0]), Number(row[1])]);
 			}
 		}
-		if (serieArray.length === 0) return;
 		$(this.dialogContent).find("#converter-plot-div").empty();
+		if (serieArray.length === 0) return;
 		$.jqplot("converter-plot-div", [serieArray], {
 			grid: {
 				background: "transparent",
