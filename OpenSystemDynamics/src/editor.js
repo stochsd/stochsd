@@ -9293,7 +9293,7 @@ class ConverterDialog extends jqDialog {
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px; max-width: 400px;">
 				Name:<br/>
-				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/>
+				<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
 				<br/>
 				<div id="converter-help-accodion">
 					<h3>Help</h3>
@@ -9318,17 +9318,13 @@ class ConverterDialog extends jqDialog {
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
 				Comment:<br/>
-				<textarea class="comment-field" style="width: 100%; height: 50px;"></textarea>
+				<textarea class="comment-field enter-apply" style="width: 100%; height: 50px;"></textarea>
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueTable = $(this.dialogContent).find(".converter-table");
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
-		$(this.nameField).keydown((event) => {
-			if (event.keyCode == keyboard["enter"]) {
-				this.applyChanges();
-			}
-		});
+		this.commentField = $(this.dialogContent).find(".comment-field").get(0);
 		$(this.dialogContent).find(".clear-table-btn").click(() => {
 			this.clearTable();
 		});
@@ -9367,6 +9363,7 @@ class ConverterDialog extends jqDialog {
 		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		this.loadTable();
+		$(this.commentField).val(this.primitive.getAttribute("Note"));
 		
 		let oldName = getName(this.primitive);
 		let oldNameBrackets = makePrimitiveName(oldName);
@@ -9548,6 +9545,9 @@ class ConverterDialog extends jqDialog {
 			let value = this.tableToString();
 			setValue2(this.primitive, value);
 			
+			// save comment/Note  
+			this.primitive.setAttribute("Note", $(this.commentField).val());
+
 			// handle name
 			let oldName = getName(this.primitive);
 			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
