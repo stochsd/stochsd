@@ -2792,6 +2792,7 @@ class TimePlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 
+		console.log(this.serieArray);
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.primitive.getAttribute("TitleLabel"),
@@ -9335,8 +9336,8 @@ class ConverterDialog extends jqDialog {
 					Comment:<br/>
 					<textarea class="comment-field enter-apply" style="width: 100%; height: 50px;"></textarea>
 				</div>
-				<div style="width: 200px; height: 200px; background: pink;">
-					plot here.
+				<div id="converter-plot-div" style="width: 500px; height: 500px; border: 1px solid #ccc">
+					<!-- Add plot here with code -->
 				</div>
 			</div>
 		`);
@@ -9407,6 +9408,34 @@ class ConverterDialog extends jqDialog {
 	removePoint(index) {
 		this.currentValues.splice(index, 1);
 		this.loadTable();
+	}
+
+	updatePlot() {
+		let serieArray = [];
+		for (let row of this.currentValues) {
+			if (row[0] !== undefined && row[1] !== undefined) {
+				serieArray.push([Number(row[0]), Number(row[1])]);
+			}
+		}
+		if (serieArray.length === 0) return;
+		$(this.dialogContent).find("#converter-plot-div").empty();
+		$.jqplot("converter-plot-div", [serieArray], {
+			grid: {
+				background: "transparent",
+				shadow: false
+			},
+			axesDefaults: {
+				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+			},
+			axes: {
+				xaxis: {
+					label: "Input"
+				},
+				yaxis: {
+					label: "Output"
+				}
+			}
+		});
 	}
 
 	loadTable(gotoCellId) {
@@ -9481,6 +9510,7 @@ class ConverterDialog extends jqDialog {
 			this.loadTable();
 		});
 		this.bindEnterApplyEvents();
+		this.updatePlot();
 	}
 
 	spreadsheetInsert(insertString) {
