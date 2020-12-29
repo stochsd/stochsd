@@ -9305,34 +9305,39 @@ class ConverterDialog extends jqDialog {
 		super();
 		this.currentValues = [];
 		this.setHtml(`
-			<div class="primitive-settings" style="padding: 10px 0px; max-width: 400px;">
-				Name:<br/>
-				<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
-				<br/>
-				<div id="converter-help-accodion">
-					<h3>Help</h3>
-					<div>
-						<ul style="margin: 0; padding: 0;">
-							<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easily</li>
-							<li>Data from spreadsheet programs (e.g. MS Excel) can be copied in directly with <span class="key">Ctrl/&#8984;</span>+<span class="key">V</span></li>
-							<ul>
-								<li class="note">This requires that only two columns are copied from the spreadsheet program</li>
+			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 10px;" >
+				<div class="primitive-settings" style="padding: 10px 0px; max-width: 400px;">
+					Name:<br/>
+					<input class="name-field text-input enter-apply" style="width: 100%;" type="text" value=""><br/>
+					<br/>
+					<div id="converter-help-accodion">
+						<h3>Help</h3>
+						<div>
+							<ul style="margin: 0; padding: 0;">
+								<li>Use <span class="key">Tab</span> and <span class="key">Shift</span>+<span class="key">Tab</span> to navigate the table below more easily</li>
+								<li>Data from spreadsheet programs (e.g. MS Excel) can be copied in directly with <span class="key">Ctrl/&#8984;</span>+<span class="key">V</span></li>
+								<ul>
+									<li class="note">This requires that only two columns are copied from the spreadsheet program</li>
+								</ul>
 							</ul>
-						</ul>
+						</div>
 					</div>
+					<br/>
+					<div style="font-size: 14px; margin: 2px 0px;">
+						<button class="clear-table-btn enter-apply">Clear Data</button>
+						<button class="add-table-btn enter-apply"><span class="add-text">+</span>Add new</button>
+					</div>
+					<div class="converter-table-div">
+						<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
+					</div>
+					<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
+					<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
+					Comment:<br/>
+					<textarea class="comment-field enter-apply" style="width: 100%; height: 50px;"></textarea>
 				</div>
-				<br/>
-				<div style="font-size: 14px; margin: 2px 0px;">
-					<button class="clear-table-btn enter-apply">Clear Data</button>
-					<button class="add-table-btn enter-apply"><span class="add-text">+</span>Add new</button>
+				<div style="width: 200px; height: 200px; background: pink;">
+					plot here.
 				</div>
-				<div class="converter-table-div">
-					<table class="converter-table sticky-table"><!-- Add editable table here with code --></table>
-				</div>
-				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
-				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
-				Comment:<br/>
-				<textarea class="comment-field enter-apply" style="width: 100%; height: 50px;"></textarea>
 			</div>
 		`);
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
