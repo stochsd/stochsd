@@ -9427,6 +9427,9 @@ class ConverterDialog extends jqDialog {
 		}
 		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("focus", () => this.showTabHint(true) );
 		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("blur", () => this.showTabHint(false) );
+		$(this.valueTable).find(`.input-field , .output-field`).on("blur", () => { 
+			this.currentValues = this.readTable();
+		});
 		$(this.valueTable).find(`.input-field`).keydown(event => {
 			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
 			if (event.shiftKey === true && event.key === "Tab") {
@@ -9445,6 +9448,7 @@ class ConverterDialog extends jqDialog {
 				if (targetIndex == this.currentValues.length-1) {
 					this.jumpToBottom();
 				} else {
+					this.currentValues = this.readTable();
 					this.loadTable(`input-field-${targetIndex+1}`);
 				}	
 			}
