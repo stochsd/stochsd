@@ -232,7 +232,8 @@ div.center-vertically-container {
 .converter-table input {
     border: 1px solid transparent;
     background-color: transparent;
-    width: calc( 100% - 3px );
+    width: 100%;
+    box-sizing: border-box;
 }
 .converter-table input:focus {
     border: 1px solid black;
