@@ -351,8 +351,15 @@ class InfoBar {
 	
 			let definitionNoLines = removeNewLines(definition);
 			if (definitionNoLines != "") {
-				// infoDef.html(`[${name}] = ${definitionNoLines}`);
-				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+				if (selected.type === "converter") {
+					let charBreakIndex = definitionNoLines.indexOf(";", 18);
+					let converterDef = charBreakIndex === -1 ? definitionNoLines : truncate(definitionNoLines, charBreakIndex);
+					let converterComment = removeNewLines(primitive.getAttribute("Note"));
+					converterComment = converterComment.trim() === "" ? "" : "# "+truncate(converterComment, 34);
+					this.cmInfoDef.setValue(`[${name}] = ${converterDef} ${converterComment}`);
+				} else {
+					this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+				}
 			} else {
 				let type = selected.type;
 				
@@ -6440,6 +6447,13 @@ function removeNewLines(string) {
 	let newString = string;
 	newString = newString.replace(/\\n/g, " ");
 	return newString;
+}
+
+function truncate (string, maxLength=10) {
+	if (string.length > maxLength) {
+		return string.substring(0, maxLength) + " ...";
+	}
+	return string;
 }
 
 function seperatePathAndName(file_path) {
