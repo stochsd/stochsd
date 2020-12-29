@@ -9336,7 +9336,7 @@ class ConverterDialog extends jqDialog {
 					Comment:<br/>
 					<textarea class="comment-field enter-apply" style="width: 100%; height: 50px;"></textarea>
 				</div>
-				<div id="converter-plot-div" style="width: 500px; height: 500px; border: 1px solid #ccc">
+				<div id="converter-plot-div" style="width: 500px; height: 400px; border: 1px solid #ccc">
 					<!-- Add plot here with code -->
 				</div>
 			</div>
