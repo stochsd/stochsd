@@ -9427,6 +9427,7 @@ class ConverterDialog extends jqDialog {
 		$(this.valueTable).find(`#output-field-${this.currentValues.length-1}`).on("blur", () => this.showTabHint(false) );
 		$(this.valueTable).find(`.input-field , .output-field`).on("blur", () => { 
 			this.currentValues = this.readTable();
+			this.currentValues.push([undefined, undefined]);
 		});
 		$(this.valueTable).find(`.input-field`).keydown(event => {
 			let targetIndex = Number(event.currentTarget.getAttribute("data-index"));
@@ -9447,6 +9448,7 @@ class ConverterDialog extends jqDialog {
 					this.jumpToBottom();
 				} else {
 					this.currentValues = this.readTable();
+					this.currentValues.push([undefined, undefined]);
 					this.loadTable(`input-field-${targetIndex+1}`);
 				}	
 			}
