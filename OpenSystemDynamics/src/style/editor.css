@@ -219,7 +219,7 @@ div.center-vertically-container {
     vertical-align: text-top;
 }
 .converter-table-div {
-    height: 300px;
+    height: 200px;
     overflow-y: auto;
 }
 .converter-table {
