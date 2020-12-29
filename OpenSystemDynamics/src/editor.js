@@ -9374,8 +9374,6 @@ class ConverterDialog extends jqDialog {
 		
 		this.defaultFocusSelector = defaultFocusSelector;
 		
-		let oldValue = getValue(this.primitive);
-		oldValue = oldValue.replace(/\\n/g, "\n");
 		this.loadTable();
 		$(this.commentField).val(this.primitive.getAttribute("Note"));
 		
