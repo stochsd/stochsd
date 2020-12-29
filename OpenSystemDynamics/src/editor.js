@@ -9355,7 +9355,6 @@ class ConverterDialog extends jqDialog {
 		$.jqplot.eventListenerHooks.push(['jqplotMouseMove', (ev, gridpos, datapos, neighbor, plot) => {
 			if (plot.targetId === "#converter-plot-div") {
 				if (neighbor) {
-					console.log(neighbor.pointIndex);
 					$(this.dialogContent).find(`#input-field-${neighbor.pointIndex}`).focus();
 				}
 			}
@@ -9443,7 +9442,11 @@ class ConverterDialog extends jqDialog {
 				yaxis: {
 					label: "Output"
 				}
-			}
+			},
+			highlighter: {
+				show: true,
+				sizeAdjust: 1.5
+			},
 		});
 	}
 
