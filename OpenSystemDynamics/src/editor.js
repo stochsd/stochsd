@@ -9319,6 +9319,7 @@ class ConverterDialog extends jqDialog {
 								<ul>
 									<li class="note">This requires that only two columns are copied from the spreadsheet program</li>
 								</ul>
+								<li>Hover mouse over data points in the plot to more easily find them in the Table</li>
 							</ul>
 						</div>
 					</div>
