@@ -167,13 +167,13 @@ defineFunction("atan", {params:[{name: "Number",  noUnits: true}], recurse: true
 });
 
 defineFunction("arcsin", {params:[{name: "Number",  noUnits: true}], recurse: true}, function(x){
-	return new Material(fn.asin(x[0].toNum().value), getUnitStore(["radians"], [1]));
+	return new Material(fn.asin(x[0].toNum().value));
 });
 defineFunction("arccos", {params:[{name: "Number", noUnits: true}], recurse: true}, function(x){
-	return new Material(fn.acos(x[0].toNum().value), getUnitStore(["radians"], [1]));
+	return new Material(fn.acos(x[0].toNum().value));
 });
 defineFunction("arctan", {params:[{name: "Number", noUnits: true}], recurse: true}, function(x){
-	return new Material(fn.atan(x[0].toNum().value), getUnitStore(["radians"], [1]));
+	return new Material(fn.atan(x[0].toNum().value));
 });
 
 defineFunction("Sign", {params:[{name: "Number"}], recurse: true}, function(x){
