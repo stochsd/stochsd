@@ -6895,7 +6895,7 @@ class jqDialog {
 		this.dialogParameters = {
 			autoOpen: false,
 			modal: this.modal, // Adds overlay on background
-			resizable: true,
+			resizable: false,
 			resize: (event,ui) => {
 				this.resize(event,ui);
 			},
