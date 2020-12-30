@@ -64,9 +64,9 @@ defineFunction("RandNormal", {params: [{name:"Mean", defaultVal: 0, noUnits:true
 		throw "MSG: RandNormal function takes exactly 0 or 2 arguments.";
 	}
 });
-defineFunction("RandExp", {params: [{name:"Rate", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){
+defineFunction("RandExp", {params: [{name:"Beta", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){
 	if (x.length != 0) {
-		return new Material(RandExp(x[0].toNum().value));
+		return new Material(RandExp(div(new Material(1), x[0])));
 	} else {
 		return new Material(RandExp());
 	}

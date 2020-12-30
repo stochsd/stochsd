@@ -553,7 +553,7 @@ function getFunctionHelpData() {
 			["Negative Binomial", "RandNegativeBinomial(##Successes$$, ##Probability$$)", "Generates a negative binomially distributed random number. The number of random events each with Probability of success required to generate the specified Successes."],
 			["Poisson Distribution", "RandPoisson(##Lambda$$)", "Generates a Poisson distributed random number with the rate Lambda events per time unit."],
 			["Triangular Distribution", "RandTriangular(##Minimum$$, ##Maximum$$, ##Peak$$)", "Generates a triangularly distributed random number."],
-			["Exponential Distribution", "RandExp(##Lambda$$)", "Generates an exponentially distributed random number with the specified rate parameter."],
+			["Exponential Distribution", "RandExp(##Beta$$)", "Generates an exponentially distributed random number where the parameter Beta is the expected time between events, e.g. time between arrivals."],
 			["Gamma Distribution", "RandGamma(##Alpha$$, ##Beta$$)", "Generates a Gamma distributed random number."],
 			["Beta Distribution", "RandBeta(##Alpha$$, ##Beta$$)", "Generates a Beta distributed random number."],
 			["Custom Distribution", "RandDist(##X$$, ##Y$$)", "Generates a random number according to a custom distribution. Takes two vectors with the x- and y-coordinates respectively of points defining the distribution. Points are interpolated linearly. The distribution does not have to be normalized such that its area is 1, but the points must be sorted from smallest to largest x locations. You may also pass a single vector containing pairs of {x, y} coordinates (e.g. { {1, 0}, {3, 4}, {4, 0} } ).", ["RandDist({0, 1, 2, 3}, {0, 5, 1, 0})", "1.2"]]
