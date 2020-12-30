@@ -9834,7 +9834,12 @@ class EquationEditor extends jqDialog {
 		// Uses the trick of creating multiple accordions
 		// So that they can be independetly opened and closed
 		// http://stackoverflow.com/questions/3479447/jquery-ui-accordion-that-keeps-multiple-sections-open
-		$(".accordion-cluster > div").accordion({active: false, header: "h3", collapsible: true });
+		$(".accordion-cluster > div").accordion({
+			heightStyle: "content",
+			active: false, 
+			header: "h3", 
+			collapsible: true 
+		});
 	}
 	closeAccordion() {
 		$(".accordion-cluster > div").accordion({
