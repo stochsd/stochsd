@@ -11,9 +11,9 @@ class DefinitionError {
             "3": (defErr) => `Unused link from ${getName(findID(defErr["unusedId"]))}`,
             "4": (defErr) => `No ingoing link`, // only for converter
             "5": (defErr) => `More than one ingoing link`, // only for converter 
-            "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" at position ${defErr["openPos"]} is unmatched`,
-            "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" at position ${defErr["closePos"]} is unmatched`,
-            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}" at position ${defErr["openPos"]} and ${defErr["closePos"]}`
+            "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" at position ${LineColToString(defErr["openPos"])} is unmatched`,
+            "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" at position ${LineColToString(defErr["closePos"])} is unmatched`,
+            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}" at position ${LineColToString(defErr["openPos"])} and ${LineColToString(defErr["closePos"])}`
         }
 
         this.checkFunctions = [
@@ -25,11 +25,12 @@ class DefinitionError {
                 // check brackets 
                 const lines = defString.split("\n");
                 let posCounter = 0;
-                for(let line of lines) {
+                for(let i in lines) {
+                    let line = lines[i];
                     let defErr = checkBracketErrors(line);
                     if (this.isDefErr(defErr)) {
-                        if ("openPos"  in defErr) defErr["openPos"]  += posCounter;
-                        if ("closePos" in defErr) defErr["closePos"] += posCounter;
+                        if ("openPos"  in defErr) defErr["openPos"]["line"]  = Number(i)+1;
+                        if ("closePos" in defErr) defErr["closePos"]["line"] = Number(i)+1;
                         return defErr;
                     }
                     posCounter += line.length+1;
@@ -109,6 +110,9 @@ class DefinitionError {
 
 DefinitionError.init();
 
+function LineColToString(pos) {
+    return `Line: ${pos["line"]}, Col: ${pos["col"]}`;
+}
 
 /**
  * checks for bracket errors and returns value error
@@ -132,7 +136,7 @@ function checkBracketErrors(string) {
                 let openChar = openBrackets[index];
                 let closePos = parseInt(pos);
                 let closeChar = char;
-				return {"id": "7", "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
+				return {"id": "7", "openBracket": openChar, "closePos": {"col": closePos}, "closeBracket": closeChar };
 			}
 			if (openBrackets[index] === bracketStack[bracketStack.length-1].bracket) {
 				bracketStack.pop();
@@ -142,7 +146,7 @@ function checkBracketErrors(string) {
                 let openChar = bracketStack[bracketStack.length-1].bracket;
                 let closePos = parseInt(pos);
 				let closeChar = char;
-				return {"id": "8", "openPos": openPos, "openBracket": openChar, "closePos": closePos, "closeBracket": closeChar };
+				return {"id": "8", "openPos": {"col": openPos}, "openBracket": openChar, "closePos": {"col": closePos}, "closeBracket": closeChar };
 			}
 		}
 	}
@@ -154,6 +158,6 @@ function checkBracketErrors(string) {
         const openPos = parseInt(topStack.pos);
         const openChar = topStack.bracket;
         const closeChar = closeBrackets[topStack.index];
-		return { "id": "6", "openPos": openPos, "openBracket": openChar, "closeBracket": closeChar };
+		return { "id": "6", "openPos": {"col": openPos}, "openBracket": openChar, "closeBracket": closeChar };
 	}
 }

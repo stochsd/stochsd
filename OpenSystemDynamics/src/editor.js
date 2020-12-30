@@ -9592,14 +9592,8 @@ class EquationEditor extends jqDialog {
 		);
 
 		this.cmValueField.on("cursorActivity", (e) => {
-			let cursor = e.doc.getCursor()
-			let lines = e.doc.getValue().split("\n");
-			let pos = 0;
-			for (let lineIndex = 0; lineIndex < cursor.line; lineIndex++) {
-				pos += lines[lineIndex].length+1;
-			}
-			pos += cursor.ch;
-			$(this.dialogContent).find(".equation-cursor-pos").html(`Pos: ${pos}`);
+			let cursor = e.doc.getCursor();
+			$(this.dialogContent).find(".equation-cursor-pos").html(`Line: ${cursor.line+1}, Col: ${cursor.ch}`);
 		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
