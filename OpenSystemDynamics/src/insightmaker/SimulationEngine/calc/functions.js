@@ -47,17 +47,21 @@ defineFunction("RandBoolean", {params: [{name:"Probability", defaultVal: 0.5, no
 	}
 });
 defineFunction("Rand", {params: [{name:"Lower Bound", defaultVal: 0, noUnits:true, noVector:true}, {name:"Upper Bound", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){
-	if (x.length != 0) {
+	if (x.length == 2) {
 		return new Material(Rand(x[0].toNum().value, x[1].toNum().value));
-	} else {
+	} else if (x.length == 0) {
 		return new Material(Rand());
+	} else {
+		throw "MSG: Rand function takes exactly 0 or 2 arguments.";
 	}
 });
 defineFunction("RandNormal", {params: [{name:"Mean", defaultVal: 0, noUnits:true, noVector:true}, {name:"Standard Deviation", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){
-	if (x.length != 0) {
+	if (x.length == 2) {
 		return new Material(RandNormal(x[0].toNum().value, x[1].toNum().value));
-	} else {
+	} else if (x.length == 0){
 		return new Material(RandNormal());
+	} else {
+		throw "MSG: RandNormal function takes exactly 0 or 2 arguments.";
 	}
 });
 defineFunction("RandExp", {params: [{name:"Rate", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){

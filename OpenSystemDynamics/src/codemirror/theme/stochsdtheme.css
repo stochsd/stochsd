@@ -24,7 +24,7 @@
 .cm-functioncall { color: hsl(30deg, 50%, 40%); font-weight: bold; }
 .cm-comment { color: hsl(0deg, 0%, 50%); font-style: italic; }
 .cm-string { color: hsl(300deg, 50%, 40%); }
-.cm-number { color: hsl(160deg, 50%, 30%); font-weight: bold; }
+.cm-number { color: black; font-weight: normal; }
 .cm-normal {color: black; font-weight: normal; }
 
 div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 90%); font-weight: bold; }

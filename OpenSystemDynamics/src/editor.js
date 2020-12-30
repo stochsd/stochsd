@@ -324,7 +324,7 @@ class InfoBar {
 				lineWrapping: false
 			}
 		);
-		this.infoVE = $(".info-bar__value-error");
+		this.infoDE = $(".info-bar__definition-error");
 		$(infoDef).find(".CodeMirror").css("border", "none");
 	}
 	static update() {
@@ -335,9 +335,8 @@ class InfoBar {
 		}
 	
 		if (selected_array == 0) {
-			// infoDef.html("Nothing selected");
 			this.cmInfoDef.setValue("Nothing selected");
-			this.infoVE.html("");
+			this.infoDE.html("");
 		} else if (selected_array.length == 1) {
 			let selected = selected_array[0];
 			let primitive = selected_array[0].primitive;
@@ -346,13 +345,11 @@ class InfoBar {
 			}
 			let name = primitive.getAttribute("name");
 			let definition = getValue(primitive);
-			let VE = primitive.getAttribute("ValueError");
-			this.infoVE.html(VE ? ValueErrorToString(VE) : "" );
+			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
-			let definitionNoLines = removeNewLines(definition);
-			if (definitionNoLines != "") {
-				// infoDef.html(`[${name}] = ${definitionNoLines}`);
-				this.cmInfoDef.setValue(`[${name}] = ${definitionNoLines}`);
+			let definitionLines = definition.split("\n");
+			if (definitionLines[0] !== "") {
+				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
 				let type = selected.type;
 				
@@ -362,7 +359,6 @@ class InfoBar {
 				switch(type) {
 					case("numberbox"):
 						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
-						// infoDef.html(`Numberbox: Value of [${targetName}]`);
 						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
 					break;
 					case("timeplot"):
@@ -371,23 +367,20 @@ class InfoBar {
 					case("xyplot"):
 					case("histoplot"):
 						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
-						// infoDef.html(`${Type}: ${names.map(name => ` [${name}]`)}`);
 						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
 					break;
 					case("link"):
 						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
 						let target = selected.getEndAttach()   ? `[${getName(selected.getEndAttach().primitive)}]`: "NONE";
-						// infoDef.html(`Link: ${source} -> ${target}`);
 						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
 					break;
 					default: 
-						// infoDef.html(`${Type} selected`);
 						this.cmInfoDef.setValue(`${Type} selected`);
 				}
 			}
 		} else {
 			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
-			this.infoVE.html("");
+			this.infoDE.html("");
 		}
 		updateLinkBar();
 	}
@@ -685,6 +678,16 @@ function formatFunction(functionName) {
 	return functionName+"()";
 }
 
+function warningHtml(message, specNotOk=false) {
+	let noChanges = "";
+	if (specNotOk) noChanges = "<br/><b>Your specification is not accepted!</b>";
+	return (`<span class="warning">${message} ${noChanges}</span>`);
+}
+
+function noteHtml(message) {
+	return (`<span class="note">Note:<br/>${message}</span>`);
+}
+
 function checkedHtml(value) {
 	if (value) {
 		return ' checked ';
@@ -842,11 +845,11 @@ class BaseObject {
 		}
 	}
 
-	updateValueError() {
-		let valueErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
-		if (valueErrorTypes.includes(this.type)) {
-			let VE = checkValueError(this.primitive, getValue(this.primitive));
-			this.primitive.setAttribute("ValueError", VE ? VE : "");
+	updateDefinitionError() {
+		let definitionErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
+		if (definitionErrorTypes.includes(this.type)) {
+			DefinitionError.check(this.primitive);
+			DefinitionError.has(this.primitive);
 		}
 	}
 
@@ -1073,9 +1076,9 @@ class OnePointer extends BaseObject {
 		
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons && prim) {
-			let VE = prim.getAttribute("ValueError");
-			this.icons.set("questionmark", VE ? "visible" : "hidden");
-			this.icons.set("dice", ( ! VE && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
+			const hasDefError = DefinitionError.has(prim);
+			this.icons.set("questionmark", hasDefError ? "visible" : "hidden");
+			this.icons.set("dice", ( ! hasDefError && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
 		}
 
 		if ( ! this.is_ghost) {
@@ -1250,7 +1253,7 @@ function sign(value) {
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 32], [27, 5], [0, -24], [-27, 5]];
 	}
 
@@ -1457,7 +1460,7 @@ class NumberboxVisual extends BasePrimitive {
 class VariableVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 34],[23, 5],[0, -25],[-23, 5]];
 	}
 
@@ -1543,7 +1546,7 @@ class ConstantVisual extends VariableVisual {
 class ConverterVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0, 29],[23, 5],[0, -21],[-23, 5]];
 	}
 	getImage() {
@@ -1798,7 +1801,7 @@ function getStackTrace() {
 class FlowVisual extends BaseConnection {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
-		this.updateValueError();
+		this.updateDefinitionError();
 		this.namePosList = [[0,40],[31,5],[0,-33],[-31,5]]; 	// Textplacement when rotating text
 		
 		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoint]
@@ -2206,13 +2209,13 @@ class FlowVisual extends BaseConnection {
 		this.getAnchors().map( anchor => anchor.updatePosition() );
 
 		if(this.primitive && this.icons) {
-			let VE = this.primitive.getAttribute("ValueError");
-			if (VE) {
+			const hasDefError = DefinitionError.has(this.primitive);
+			if (hasDefError) {
 				this.icons.set("questionmark", "visible");
 			} else {
 				this.icons.set("questionmark", "hidden");
 			}
-			this.icons.set("dice", (! VE && hasRandomFunction(getValue(this.primitive)) ) ? "visible" : "hidden");
+			this.icons.set("dice", (! hasDefError && hasRandomFunction(getValue(this.primitive)) ) ? "visible" : "hidden");
 		}
 	}
 	
@@ -3422,7 +3425,7 @@ class HistoPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
-			selected_str += `<span class="warning" >Exactly one primitive must be selected</span>`;
+			selected_str += warningHtml("Exactly one primitive must be selected", false);
 		} 
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">Histogram Plot</div>
@@ -3643,7 +3646,7 @@ class XyPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += `<span class="warning">Exactly two primitives must be selected!</span>`;
+			selected_str += warningHtml("Exactly two primitives must be selected!"); 
 		}
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">XY Plot</div>
@@ -3847,7 +3850,7 @@ class LinkVisual extends BaseConnection {
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach)
 		if (this._end_attach) {
-			this._end_attach.updateValueError();
+			this._end_attach.updateDefinitionError();
 			this._end_attach.update();
 		}
 	}
@@ -3860,11 +3863,11 @@ class LinkVisual extends BaseConnection {
 			this.undashLine();
 		}
 		if (old_end_attach) {
-			old_end_attach.updateValueError();
+			old_end_attach.updateDefinitionError();
 			old_end_attach.update();
 		}
 		if (new_end_attach) {
-			new_end_attach.updateValueError();
+			new_end_attach.updateDefinitionError();
 			new_end_attach.update();
 		}
 	}
@@ -4086,11 +4089,6 @@ class BaseTool {
 }
 BaseTool.init();
 
-function getAllValueErrorPrimitive() {
-	let ValueErrorPrims = primitives().filter(p => p.getAttribute("ValueError")).filter(v => ! isPrimitiveGhost(v));
-	return ValueErrorPrims;
-}
-
 function findVisualByID(id) {
 	let visual = object_array[id];
 	if (visual === undefined) {
@@ -4102,14 +4100,14 @@ function findVisualByID(id) {
 class RunTool extends BaseTool {
 	static enterTool() {
 		/* Check that all primitives are defined */
-		let valueErrorPrims = getAllValueErrorPrimitive();
-		if (valueErrorPrims.length !== 0) {
-			let prim = valueErrorPrims[0];
+		let definitionErrorPrims = DefinitionError.getAllPrims();
+		if (definitionErrorPrims.length !== 0) {
+			let prim = definitionErrorPrims[0];
 			let name = prim.getAttribute("name");
 			let color = prim.getAttribute("Color");
 			let alert = new XAlertDialog(`
 				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
-				&nbsp &nbsp ${ValueErrorToString(prim.getAttribute("ValueError"))}
+				&nbsp &nbsp ${DefinitionError.getMessage(prim)}
 			`);
 			alert.setTitle("Unable to Simulate");
 			alert.show();
@@ -5907,7 +5905,7 @@ function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
 		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
 	} else {
-		$("#timeUnitParagraph").html(`<span class="warning">No Time Unit</span>`);
+		$("#timeUnitParagraph").html(warningHtml("No Time Unit", false));
 	}
 }
 
@@ -7287,7 +7285,7 @@ class DisplayDialog extends jqDialog {
 				</td>
 			</tr>
 		</table>
-		<div class="num-len-warn-div warning"></div>`);
+		<div class="num-len-warn-div"></div>`);
 	}
 
 	bindNumberLengthEvents() {
@@ -7314,16 +7312,16 @@ class DisplayDialog extends jqDialog {
 
 	checkValidNumberLength(value) {
 		if (isNaN(value)) {
-			$(".num-len-warn-div").html(`${value} is not a decimal number.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is not a decimal number.`));
 			return false;
 		} else if (Number.isInteger(parseFloat(value)) === false) {
-			$(".num-len-warn-div").html(`${value} is not an integer.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is not an integer.`));
 			return false;
 		} else if (parseInt(value) < 0) {
-			$(".num-len-warn-div").html(`${value} is negative.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is negative.`));
 			return false;
 		} else if (parseInt(value) >= 12) {
-			$(".num-len-warn-div").html(`${value} is above the limit of 12.`);
+			$(".num-len-warn-div").html(warningHtml(`${value} is above the limit of 12.`));
 			return false;
 		} else {
 			$(".num-len-warn-div").html("");
@@ -7365,7 +7363,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<p class="round-to-zero-warning-div warning" style="margin: 5px 0px;">Warning Text Here</p>
+			<p class="round-to-zero-warning-div" style="margin: 5px 0px;">Warning Text Here</p>
 		`);
 	}
 	bindRoundToZeroEvents() {
@@ -7427,7 +7425,7 @@ class DisplayDialog extends jqDialog {
 
 	setNumberboxWarning(isVisible, htmlMessage) {
 		if (isVisible) {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html(htmlMessage+"<br/><b>Your specification is not accepted!</b>");
+			$(this.dialogContent).find(".round-to-zero-warning-div").html(warningHtml(htmlMessage, true));
 			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
 		} else {
 			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
@@ -7470,7 +7468,7 @@ class DisplayDialog extends jqDialog {
 					</td>
 				</tr>
 			</table>
-			<div class="plot-per-warning warning" ></div>
+			<div class="plot-per-warning" ></div>
 		`);
 	}
 	applyPlotPer() {
@@ -7497,14 +7495,13 @@ class DisplayDialog extends jqDialog {
 		});
 	}
 	checkValidPlotPer() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
 		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
 		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html(`Plot Period must be a decimal number${nochange_str}`);
+			warning_div.html(warningHtml(`Plot Period must be a decimal number`, true));
 			return false;
 		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html(`Plot Period must be &gt;0${nochange_str}`);
+			warning_div.html(warningHtml(`Plot Period must be &gt;0`, true));
 			return false;
 		}
 		
@@ -7691,7 +7688,7 @@ class DisplayDialog extends jqDialog {
 		} else if (search_lc === "") {
 			notSelectedDiv.html(`<div>No more primitives to add.</div>`);
 		} else {
-			notSelectedDiv.html(`<div class="note">No primitive matches search: <br/><b>${search_word}</b></div>`);
+			notSelectedDiv.html(noteHtml(`No primitive matches search: <br/><b>${search_word}</b>`));
 		}
 	}
 	primitiveAddButton(id) {
@@ -7900,7 +7897,7 @@ class TimePlotDialog extends DisplayDialog {
 				</td>-->
 			</tr>
 		</table>
-		<div class="axis-limits-warning-div warning" ></div>
+		<div class="axis-limits-warning-div" ></div>
 		`);
 	}
 	bindAxisLimitsEvents() {
@@ -7942,7 +7939,6 @@ class TimePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -7953,13 +7949,10 @@ class TimePlotDialog extends DisplayDialog {
 		let right_max = $(this.dialogContent).find(".right-yaxis-max-field").val();
 		let right_log = $(this.dialogContent).find(".right-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(left_min) || isNaN(left_max) || isNaN(right_min) || isNaN(right_max) ) {
-			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
+			warning_div.html(warningHtml(`Axis limits must be decimal numbers`, true));
 			return false;
 		} else if (left_log || right_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
-				log(y) requires that all y-values &gt; 0
-			</span>`);
+			warning_div.html(noteHtml(`log(y) requires that all y-values &gt; 0`));
 			return true;
 		}
 		warning_div.html("")
@@ -8246,7 +8239,6 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	checkValidAxisLimits() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
 		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
 		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
 		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
@@ -8254,13 +8246,10 @@ class ComparePlotDialog extends DisplayDialog {
 		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
 		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
 		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
+			warning_div.html(warningHtml(`Axis limits must be decimal numbers`, true));
 			return false;
 		} else if (y_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
-				log(y) requires that all y-values &gt; 0
-			</span>`);
+			warning_div.html(noteHtml(`log(y) requires that all y-values &gt; 0`));
 			return true;
 		}
 		warning_div.html("");
@@ -8554,11 +8543,10 @@ class XyPlotDialog extends DisplayDialog {
 			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
 			return false;
 		} else if (x_log || y_log) {
-			warning_div.html(`<span class="note">
-				Note: <br/>
+			warning_div.html(noteHtml(`
 				log(x) requires that all x-values &gt; 0 <br/>
 				log(y) requires that all y-values &gt; 0
-			</span>`);
+			`));
 			return true;
 		}
 		warning_div.html("");
@@ -9063,19 +9051,30 @@ class SimulationSettings extends jqDialog {
 		} else if (Number(this.step_field.val()) <= 0) {
 			this.warning_div.html(`Step must be &gt;0${nochange_str}`);
 			return false;
-		} else if(Number(this.length_field.val())/Number(this.step_field.val()) > 1e7) {
+		} else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e5) {
 			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
-			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e7, precision: 3});
-			this.warning_div.html(`
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e5, precision: 3});
+			this.warning_div.html(warningHtml(`
 				This Length requires ${iters_str} time steps. <br/>
-				The limit is 10<sup>7</sup> time steps per simulation.${nochange_str}`);
+				The limit is 10<sup>5</sup> time steps per simulation.${nochange_str}
+			`, true));
 			return false;
+
+		}else if( Settings.limitSimulationSteps && Number(this.length_field.val())/Number(this.step_field.val()) > 1e4) {
+			let iterations = Math.ceil(Number(this.length_field.val())/Number(this.step_field.val()));
+			let iters_str = format_number(iterations, {use_e_format_upper_limit: 1e4, precision: 3});
+			this.warning_div.html(noteHtml(`
+				This Length requires ${iters_str} time steps. <br/>
+				More than 10<sup>4</sup> time steps per simulation <br/>
+				may significantly slow down the simulation.`
+			));
+			return true;
 		} else if ($(this.method_select).find(":selected").val() === "RK4") {
-			this.warning_div.html(`<span class="note">
-				Note: <br/>
+			this.warning_div.html(noteHtml(`
 				Do not use RK4 without a good reason, <br/>
-				and NEVER if the model contains discontinuities <br/>(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
-			</span>`);
+				and NEVER if the model contains discontinuities <br/>
+				(e.g. <b>Pulse</b>, <b>Step</b> or <b>Random numbers</b>)!
+			`));
 			return true;
 		}
 
@@ -9134,7 +9133,7 @@ class TimeUnitDialog extends jqDialog {
 		if (ok) {
 			complainDiv.html("");
 		} else {
-			complainDiv.html(`<span class="warning">Time Unit must contain character A-Z or a-z.</span>`);
+			complainDiv.html(warningHtml(`Time Unit must contain character A-Z or a-z.`));
 		}
 	}
 	beforeCreateDialog() {
@@ -9326,9 +9325,9 @@ class ConverterDialog extends jqDialog {
 		if (linkedIn.length === 1) {
 			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
 		} else if(linkedIn.length === 0) {
-			this.inLinkParagraph.innerHTML = `<span class="warning" >No Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = warningHtml("No Ingoing Link", false);
 		} else {
-			this.inLinkParagraph.innerHTML = `<span class="warning" >More Then One Ingoing Link<span>`;
+			this.inLinkParagraph.innerHTML = warningHtml("More Then One Ingoing Link", false);
 		}
 		
 		this.defaultFocusSelector = defaultFocusSelector;
@@ -9545,9 +9544,10 @@ class EquationEditor extends jqDialog {
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
-							<div class="name-warning-div warning"></div><br/>
+							<div class="name-warning-div"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
+							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;">number</span></div>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9556,7 +9556,7 @@ class EquationEditor extends jqDialog {
 								<label>
 								<input class="restrict-to-non-negative-checkbox enter-apply" type="checkbox"/>
 								Restrict to non-negative values</label>
-								<div class="note restrict-note-div"></div>
+								<div class="restrict-note-div"></div>
 							</div>
 						</div>
 					</div>
@@ -9591,6 +9591,16 @@ class EquationEditor extends jqDialog {
 			}
 		);
 
+		this.cmValueField.on("cursorActivity", (e) => {
+			let cursor = e.doc.getCursor()
+			let lines = e.doc.getValue().split("\n");
+			let pos = 0;
+			for (let lineIndex = 0; lineIndex < cursor.line; lineIndex++) {
+				pos += lines[lineIndex].length+1;
+			}
+			pos += cursor.ch;
+			$(this.dialogContent).find(".equation-cursor-pos").html(`Pos: ${pos}`);
+		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9605,18 +9615,19 @@ class EquationEditor extends jqDialog {
 			} else {
 				$(event.target).css("background-color", "pink");
 				if (! nameFree) {
-					$(this.dialogContent).find(".name-warning-div").html(`Name <b>${newName}</b> is taken.`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name <b>${newName}</b> is taken.`));
 				} else if (newName === "") {
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot be empty.`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name cannot be empty.`));
 				} else if (! validToolVarName) {
 					// not allowed by StatRes and Other tools 
-					$(this.dialogContent).find(".name-warning-div").html(`
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`
 						Allowed characters are: <br/>
 						<b>A-Z</b>, <b>a-z</b>, <b>_</b> (anywhere)
-						<br/><b>0-9</b> (if not first character)`);
+						<br/><b>0-9</b> (if not first character)
+					`));
 				} else if (! validName) {
 					// not allowed according to insightmaker
-					$(this.dialogContent).find(".name-warning-div").html(`Name cannot contain bracket, parenthesis, or quote`);
+					$(this.dialogContent).find(".name-warning-div").html(warningHtml(`Name cannot contain bracket, parenthesis, or quote`));
 				}
 			} 
 		});
@@ -9797,10 +9808,10 @@ class EquationEditor extends jqDialog {
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
 		if (checked) {
-			$(this.restrictNote).html(`
-				NOTE: Restricting to non-negative values may have unintended consequences.<br/>
+			$(this.restrictNote).html(noteHtml(`
+				Restricting to non-negative values may have unintended consequences.<br/>
 				Use only when you have a well motivated reason.
-			`);
+			`));
 		} else {
 			$(this.restrictNote).html("");
 		}
