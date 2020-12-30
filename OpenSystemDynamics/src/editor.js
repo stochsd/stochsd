@@ -9791,6 +9791,8 @@ class EquationEditor extends jqDialog {
 			if (this.defaultFocusSelector === ".value-field") {
 				this.cmValueField.focus();
 				this.cmValueField.execCommand("selectAll");
+				// refresh in order to show curosr 
+				this.cmValueField.refresh();
 			} else {
 				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 				valueFieldDom.focus();
