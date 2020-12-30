@@ -9591,11 +9591,11 @@ class EquationEditor extends jqDialog {
 			}
 		);
 
-		this.cmValueField.on("cursorActivity", (e) => {
-			let cursor = e.doc.getCursor();
-			$(this.dialogContent).find(".equation-cursor-pos").html(`Line: ${cursor.line+1}, Col: ${cursor.ch}`);
+		this.cmValueField.on("cursorActivity", () => {
+			this.updateCursorPosInfo();
 		});
-
+		this.updateCursorPosInfo();
+		
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
@@ -9800,6 +9800,10 @@ class EquationEditor extends jqDialog {
 				valueFieldDom.setSelectionRange(0, inputLength);
 			}
 		}
+	}
+	updateCursorPosInfo() {
+		let cursor = this.cmValueField.getCursor();
+		$(this.dialogContent).find(".equation-cursor-pos").html(`Line: ${cursor.line+1}, Col: ${cursor.ch}`);
 	}
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
