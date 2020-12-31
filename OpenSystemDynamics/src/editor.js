@@ -1718,7 +1718,7 @@ class BaseConnection extends TwoPointer {
 	}
 
 	isAcceptableStartAttach(attachVisual) {
-		// function to decide if attachVisual is ok allowed to attach start to 
+		// function to decide if attachVisual is OK allowed to attach start to 
 		return false;
 	}
 	isAcceptableEndAttach(attachVisual) {
@@ -7043,7 +7043,7 @@ class XAlertDialog extends jqDialog {
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
-			"Ok":() =>
+			"OK":() =>
 			{
 				$(this.dialog).dialog('close');
 			}
