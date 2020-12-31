@@ -3844,6 +3844,11 @@ class LinkVisual extends BaseConnection {
 
 	isAcceptableEndAttach(attachVisual) {
 		let okAttachTypes = ["stock", "variable", "converter", "flow"];
+		if (attachVisual.getType() === "converter") {
+			let linkedPrims = getLinkedPrimitives(findID(attachVisual.id));
+			// only allow converter to have one ingoing link 
+			return linkedPrims.length < 1;
+		}
 		return okAttachTypes.includes(attachVisual.getType()) && attachVisual.is_ghost !== true;
 	}	
 
