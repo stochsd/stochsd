@@ -4108,7 +4108,9 @@ class RunTool extends BaseTool {
 			let alert = new XAlertDialog(`
 				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
 				&nbsp &nbsp ${DefinitionError.getMessage(prim)}
-			`);
+			`, () => {
+				get_object(getID(prim)).doubleClick();
+			});
 			alert.setTitle("Unable to Simulate");
 			alert.show();
 			unselect_all();
@@ -4116,6 +4118,7 @@ class RunTool extends BaseTool {
 			if (vis) {
 				vis.select();
 			}
+			InfoBar.update();
 		} else {
 			RunResults.runPauseSimulation();
 		}
