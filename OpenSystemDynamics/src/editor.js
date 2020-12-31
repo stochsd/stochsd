@@ -3274,6 +3274,7 @@ class HistoPlotVisual extends PlotVisual {
 
 	render() {
 		let idsToDisplay = this.dialog.getIdsToDisplay();
+		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		if (idsToDisplay.length !== 1) {
 			this.setEmptyPlot();
 			return;
