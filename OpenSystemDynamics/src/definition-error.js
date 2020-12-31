@@ -11,9 +11,9 @@ class DefinitionError {
             "3": (defErr) => `Unused link from ${getName(findID(defErr["unusedId"]))}`,
             "4": (defErr) => `No ingoing link`, // only for converter
             "5": (defErr) => `More than one ingoing link`, // only for converter 
-            "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" at position ${LineColToString(defErr["openPos"])} is unmatched`,
-            "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" at position ${LineColToString(defErr["closePos"])} is unmatched`,
-            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}" at position ${LineColToString(defErr["openPos"])} and ${LineColToString(defErr["closePos"])}`
+            "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" is unmatched`,
+            "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" is unmatched`,
+            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}"`
         }
 
         this.checkFunctions = [
