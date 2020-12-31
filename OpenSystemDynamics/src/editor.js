@@ -9547,7 +9547,7 @@ class EquationEditor extends jqDialog {
 							<div class="name-warning-div"></div><br/>
 							<b>Definition:</b><br/>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;">number</span></div>
+							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;" hidden></span></div>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9595,7 +9595,7 @@ class EquationEditor extends jqDialog {
 			this.updateCursorPosInfo();
 		});
 		this.updateCursorPosInfo();
-		
+
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
 			let nameFree = isNameFree(newName, this.primitive.id);
@@ -9803,7 +9803,7 @@ class EquationEditor extends jqDialog {
 	}
 	updateCursorPosInfo() {
 		let cursor = this.cmValueField.getCursor();
-		$(this.dialogContent).find(".equation-cursor-pos").html(`Line: ${cursor.line+1}, Col: ${cursor.ch}`);
+		$(this.dialogContent).find(".equation-cursor-pos").html(`Cursor at Line: ${cursor.line+1}, Col: ${cursor.ch}`);
 	}
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
