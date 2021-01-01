@@ -13,7 +13,11 @@ class DefinitionError {
             "5": (defErr) => `More than one ingoing link`, // only for converter 
             "6": (defErr) => `Unmatched ${defErr["openBracket"]}`, // opening bracket unmatched
             "7": (defErr) => `Unmatched ${defErr["closeBracket"]}`, // closing bracket unmatched
-            "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}"`
+            "8": (defErr) => `Unmatched brackets`, // unmatching open and closing brackets  
+            // open and close brackets not disclosed to user in order not to confuse.
+            // uncomment below if
+            // "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}"`,
+            
         }
 
         this.checkFunctions = [
@@ -146,7 +150,22 @@ function checkBracketErrors(string) {
                 let openChar = bracketStack[bracketStack.length-1].bracket;
                 let closePos = parseInt(pos);
 				let closeChar = char;
-				return {"id": "8", "openPos": {"col": openPos}, "openBracket": openChar, "closePos": {"col": closePos}, "closeBracket": closeChar };
+                
+                let openCount = stringSansComment.split(openChar).length - stringSansComment.split(closeBrackets[openBrackets.indexOf(openChar)]).length;
+                let closeCount= stringSansComment.split(openBrackets[closeBrackets.indexOf(closeChar)]).length - stringSansComment.split(closeChar).length;
+                if (openCount !== 0) {
+                    // OpenType bracket: openNum =/= closeNum => unmatched open brackets
+                    // e.g. Sin(T()/two_pi]
+                    return {"id": "6", "openPos": {"col": openPos}, "openBracket": openChar, "closeBracket": closeBrackets[openBrackets.indexOf(openChar)] };
+                } else if (closeCount !== 0) {
+                    // CloseType bracket: openNum =/= closeNum => unmatched close brackets
+                    // e.g. Sin(T()/two_pi])
+                    return {"id": "7", "openBracket": openBrackets[closeBrackets.indexOf(closeChar)], "closePos": {"col": closePos}, "closeBracket": closeChar };
+                } else {
+                    // e.g. Sin(T([)/two_pi])
+                    return {"id": "8", "openPos": {"col": openPos}, "openBracket": openChar, "closePos": {"col": closePos}, "closeBracket": closeChar };
+                }
+
 			}
 		}
 	}
