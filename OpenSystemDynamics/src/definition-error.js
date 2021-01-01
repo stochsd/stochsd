@@ -8,11 +8,11 @@ class DefinitionError {
         this.messageTable = {
             "1": (defErr) => "Empty Definition",
             "2": (defErr) => `Unknown reference ${defErr["unknownRef"]}`,
-            "3": (defErr) => `Unused link from ${getName(findID(defErr["unusedId"]))}`,
+            "3": (defErr) => `Unused link from ${getName(findID(defErr["unusedId"]))}, or bracket pair [...] missing`,
             "4": (defErr) => `No ingoing link`, // only for converter
             "5": (defErr) => `More than one ingoing link`, // only for converter 
-            "6": (defErr) => `Opening bracket "${defErr["openBracket"]}" is unmatched`,
-            "7": (defErr) => `Closing bracket "${defErr["closeBracket"]}" is unmatched`,
+            "6": (defErr) => `Unmatched ${defErr["openBracket"]}`, // opening bracket unmatched
+            "7": (defErr) => `Unmatched ${defErr["closeBracket"]}`, // closing bracket unmatched
             "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}"`
         }
 
