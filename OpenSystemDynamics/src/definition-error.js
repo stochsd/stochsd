@@ -17,7 +17,8 @@ class DefinitionError {
             // open and close brackets not disclosed to user in order not to confuse.
             // uncomment below if
             // "8": (defErr) => `Unmatched brackets "${defErr["openBracket"]}...${defErr["closeBracket"]}"`,
-            
+            "9": (defErr) =>  `Unclear converter definition`, // only for converters
+            "10": (defErr) => `Input values not in ascending order: ${defErr["Xpre"]} &gt; ${defErr["Xpost"]}`, // only for converters 
         }
 
         this.checkFunctions = [
@@ -72,6 +73,30 @@ class DefinitionError {
 		            }
 	            }
             },
+            (prim, defString) => {
+                if (prim.value.nodeName === "Converter") {
+                    let rows = defString.split(";").map(row => row.split(","));
+                    for (let i in rows) {
+                        let row = rows[i];
+                        if (row.length !== 2) {
+                            // unclear definition
+                            return {"id": "9"};
+                        }
+                        if (row[0].trim() === "" || row[1].trim() === "") {
+                            return {"id": "9"};
+                        }
+                        if (isNaN(row[0]) || isNaN(row[1])) {
+                            return {"id": "9"};
+                        }
+                        if (i > 0) {
+                            if (Number(rows[i-1][0]) > Number(rows[i][0])) {
+                                // not sorted inputs order 
+                                return {"id": "10", "Xpre": Number(rows[i-1][0]), "Xpost": Number(rows[i][0]) };
+                            }
+                        }
+                    }
+                }
+            }
         ]
     }
 
