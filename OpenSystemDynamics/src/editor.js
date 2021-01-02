@@ -3846,7 +3846,14 @@ class LinkVisual extends BaseConnection {
 	isAcceptableEndAttach(attachVisual) {
 		let okAttachTypes = ["stock", "variable", "converter", "flow"];
 		if (attachVisual.getType() === "converter") {
-			let linkedPrims = getLinkedPrimitives(findID(attachVisual.id));
+			let linkedPrims = getLinkedPrimitives(findID(attachVisual.id)).filter((prim) => {
+				// filter out linked primitives that have the same source as this link.
+				let source = findID(this.id).source;
+				if (source) {
+					return getID(prim) !== getID(source);
+				}
+				return false;
+			});
 			// only allow converter to have one ingoing link 
 			return linkedPrims.length < 1;
 		}
