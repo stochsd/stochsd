@@ -18,12 +18,18 @@ var PrimitiveObject = {} ;
 functionLoaders.push(function(){
 	sdsLoadFunctions();	
 
+	// Added by Magnus 2020-12-22 
+	defineFunction("ExecTime", {params:[]}, function(x) {
+		let currentTime = (new Date()).getTime() / 1000;
+		return new Material(currentTime - simulate.execStartTime);
+	});
+
 	defineFunction("Stop", {params:[]}, function(x) {
 		simulate.stopFlag = true;
 		return new Material(0);
 	});
 
-	defineFunction("StopIf", {params:[{name: "Condition", noVector: true, allowBoolean: true, defaultVal: false}]}, function(x) {
+	defineFunction("StopIf", {params:[{name: "Condition", noVector: true, allowBoolean: true}]}, function(x) {
 		if (x[0]) {
 			functionBank["stop"]([]);
 		}
