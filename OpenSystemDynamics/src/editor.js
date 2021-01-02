@@ -3426,7 +3426,7 @@ class HistoPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
-			selected_str += warningHtml("Exactly one primitive must be selected", false);
+			selected_str += warningHtml("<br/>Exactly one primitive must be selected", false);
 		} 
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">Histogram Plot</div>
@@ -3647,7 +3647,7 @@ class XyPlotVisual extends PlotVisual {
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2)  {
-			selected_str += warningHtml("Exactly two primitives must be selected!"); 
+			selected_str += warningHtml("<br/>Exactly two primitives must be selected!"); 
 		}
 		this.chartDiv.innerHTML = (`
 			<div class="empty-plot-header">XY Plot</div>
