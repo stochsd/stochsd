@@ -9802,12 +9802,13 @@ class EquationEditor extends jqDialog {
 		
 		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
+		// refresh in order to show curosr 
+		this.cmValueField.refresh();
+
 		if (this.defaultFocusSelector) {
 			if (this.defaultFocusSelector === ".value-field") {
 				this.cmValueField.focus();
 				this.cmValueField.execCommand("selectAll");
-				// refresh in order to show curosr 
-				this.cmValueField.refresh();
 			} else {
 				let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 				valueFieldDom.focus();
