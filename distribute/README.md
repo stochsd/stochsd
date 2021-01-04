@@ -6,9 +6,11 @@
 
 1. Goto: `stochsd/distribute/`
 
-2. Update version with `npm run update-version`
+2. Run `npm install`
 
-3. Run command: `npm run build`
+3. Update version with `npm run update-version`
+
+4. Run command: `npm run build`
 
    ###### This runs `gulp` and creates the folder `stochsd/distribute/output/` containing `package.nw/`  for the desktop version and `stochsd-web/` for the web version.
 
