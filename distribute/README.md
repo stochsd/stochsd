@@ -8,7 +8,8 @@
 
 2. Run `npm install`
 
-3. Update version with `npm run update-version`
+3. Optional(if you want to bump the version): Update version with `npm run update-version`
+   Note: The version number is checked in into git, and does not always need to be bumped
 
 4. Run command: `npm run build`
 
