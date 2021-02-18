@@ -12,10 +12,21 @@ gulp.task('default' , function(done) {
 	process.chdir(__dirname +'/..');
 	buildForWeb("distribute/output/stochsd-web/");
 	buildForDesktop("distribute/output/package.nw/");
+	copyLicenses("distribute/output/");
 
 	// https://stackoverflow.com/questions/36897877/gulp-error-the-following-tasks-did-not-complete-did-you-forget-to-signal-async
 	done();
 });
+
+function copyLicenses(destFolder) {
+	// License
+	gulp.src('OpenSystemDynamics/src/license.html')
+	.pipe(gulp.dest(destFolder));
+
+	// Third party licenses
+	gulp.src('OpenSystemDynamics/src/third-party-licenses.html')
+	.pipe(gulp.dest(destFolder));
+}
 
 function buildForDesktop(destFolder) {
 

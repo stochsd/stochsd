@@ -7599,7 +7599,7 @@ class DisplayDialog extends jqDialog {
 			<table class="modern-table">
 				<tr>
 					<td>
-					<b>Colour From Primitive:</b>
+					<b>Colour from Primitive:</b>
 					<input class="color-from-primitive-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
 					</td>
 				</tr>
