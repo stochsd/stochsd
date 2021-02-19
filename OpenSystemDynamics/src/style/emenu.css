@@ -23,7 +23,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 }
 
 .eMenu .menuContent img {
-	height: 14px;
+	height: 22px;
 	margin-right: 6px;
 }
 
@@ -55,4 +55,12 @@ div.recent-name {
 	width: 100%;
 	text-align: left;
 	white-space: nowrap;
+	display: flex;
+	/* Center text vertically */
+	align-items: center;
+}
+
+.eMenu .menuContent a {
+	/* Dont have any decorations on links (for manuals) */
+	text-decoration: none;
 }
