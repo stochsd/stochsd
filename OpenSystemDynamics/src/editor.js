@@ -1418,6 +1418,8 @@ class NumberboxVisual extends BasePrimitive {
 		let output = `${valueString}`;
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
+
+		this.setColor(this.color);
 	}
 	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
@@ -1430,8 +1432,9 @@ class NumberboxVisual extends BasePrimitive {
 		this.setSelectionSizeToText();
 	}
 	getImage() {
+		this.element = svg_rect(-20,-15,40,30, this.color, defaultFill, "element");
 		return [
-			svg_rect(-20,-15,40,30, this.color, defaultFill, "element"),
+			this.element,
 			svg_rect(-20,-15,40,30, "none", this.color, "highlight"),
 			svg_text(0,0, "", "name_element",{"alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color}),
 		];	
@@ -1439,6 +1442,8 @@ class NumberboxVisual extends BasePrimitive {
 	setColor(color) {
 		super.setColor(color);
 		this.select();
+		let frameColor = this.primitive.getAttribute("HideFrame") === "true" ? "transparent" : color;
+		this.element.setAttribute("stroke", frameColor);
 	}
 	select() {
 		super.select();
