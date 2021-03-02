@@ -68,6 +68,7 @@ primitiveBank.numberbox.setAttribute("NumberLength", JSON.stringify({
 	"precision": 4,
 	"decimal": 2,
 }));
+primitiveBank.numberbox.setAttribute("HideFrame", false);
 primitiveBank.numberbox.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.numberbox);
 
