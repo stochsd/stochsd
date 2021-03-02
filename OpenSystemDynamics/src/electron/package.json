@@ -8,7 +8,7 @@
 	},
 	"dependencies": {
 		"gulp": "^3.9.1",
-		"electron": "^5.0.6"
+		"electron": "^9.1.0"
 	},
 	"scripts": {
 		"build": "node_modules/gulp/bin/gulp.js",

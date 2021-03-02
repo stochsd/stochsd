@@ -12,7 +12,7 @@
 		"gulp-rename": "^1.4.0"
 	},
 	"scripts": {
-		"update-version": "node ./update-stochsd-version.js",
+		"update-version": "node ./update-stochsd-version-from-git.js",
 		"build": "node ./node_modules/gulp/bin/gulp.js",
 		"dist-not-used": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ ."
 	}
