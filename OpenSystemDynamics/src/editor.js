@@ -3197,8 +3197,12 @@ class TextAreaVisual extends HtmlTwoPointer {
 			this.element.setAttribute("visibility", "visible");
 		}
 		// space is replaced with span "&nbsp;" does not work since it does not work with overflow-wrap: break-word
-		// Replace 							new line 		and 	space
-		let formatedText = newText.replace(/\n/g, "<br/>").replace(/ /g, "<span style='display:inline-block; width:5px;'></span>");
+		// Replace <, >, space, new line
+		let formatedText = newText
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/ /g, "<span style='display:inline-block; width:5px;'></span>")
+			.replace(/\n/g, "<br/>");
 		this.updateHTML(formatedText);
 	}
 	setColor(color) {
