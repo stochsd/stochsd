@@ -9264,6 +9264,22 @@ class LineDialog extends GeometryDialog {
 
 class NumberboxDialog extends DisplayDialog {
 
+	renderShowHideFrameHtml() {
+		let hideFrame = this.primitive.getAttribute("HideFrame") === "true";
+		return (`<table class=modern-table>
+			<tr>
+				<td>
+					<b>Hide Frame:</b>
+					<input class="hide-frame" type="checkbox" ${checkedHtml(hideFrame)} />
+				</td>
+			</tr>
+		</table>`);
+	}
+
+	applyHideFrame() {
+		this.primitive.setAttribute("HideFrame", $(this.dialogContent).find(".hide-frame").prop("checked"));
+	}
+
 	beforeShow() {
 		this.setTitle("Number Box Properties");
 		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
@@ -9275,6 +9291,8 @@ class NumberboxDialog extends DisplayDialog {
 					${this.renderNumberLengthHtml()}
 					<div class="vertical-space"></div>
 					${this.renderRoundToZeroHtml()}
+					<div class="vertical-space"></div>
+					${this.renderShowHideFrameHtml()}
 				</div>
 			`);
 			this.bindNumberLengthEvents();
@@ -9290,6 +9308,7 @@ class NumberboxDialog extends DisplayDialog {
 	makeApply() {
 		this.applyNumberLength();
 		this.applyRoundToZero();
+		this.applyHideFrame();
 	}
 }
 
