@@ -6997,7 +6997,8 @@ class jqDialog {
 		</button>`);
 	}
 
-	bindHelpButtonInfo(helpId, title, contentHTML) {
+	setHelpButtonInfo(helpId, title, contentHTML) {
+		$(this.dialogContent).find(`#${helpId}`).unbind();
 		$(this.dialogContent).find(`#${helpId}`).click(event => {
 			let dialog = new XAlertDialog(contentHTML);
 			dialog.setTitle(title);
@@ -9641,16 +9642,6 @@ class EquationEditor extends jqDialog {
 			</div>
 		`);
 
-		this.bindHelpButtonInfo("definition-help", "Definition Help", 
-		`<div>
-			<b>Key bindings</b>
-			<ul>
-				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
-			</ul>
-			${noteHtml("New Line placed inside brackets will cause error when running the simulation.")}
-		</div>`);
 
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
@@ -9811,6 +9802,7 @@ class EquationEditor extends jqDialog {
 		this.show();
 		this.defaultFocusSelector = defaultFocusSelector;
 
+		this.updateHelpText();
 		
 		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
@@ -9883,6 +9875,25 @@ class EquationEditor extends jqDialog {
 				valueFieldDom.setSelectionRange(0, inputLength);
 			}
 		}
+	}
+	updateHelpText() {
+		let typeSpecificTexts = {
+			"Stock": "The initial value of the stock will be calculated by this equation. Inflows and outflows can increase or decrease the stock's value over time.",
+			"Flow": "Material will move out of the source stock and into the sink stock at the rate determined by this equation.",
+			"Variable": "The auxilliary will take on the value calculated from this equation. The value will be recalculated as the simulation progresses.",
+			"Constant": "The parameter will take on the value calculated from this equation. The value will be recalculated as the simulation progresses."
+		}
+		this.setHelpButtonInfo("definition-help", "Definition Help", 
+		`<div style="max-width: 400px;">
+			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 1em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			</ul>
+			${noteHtml("New Line placed inside brackets will cause error when running the simulation.")}
+		</div>`);
 	}
 	updateCursorPosInfo() {
 		let cursor = this.cmValueField.getCursor();
