@@ -10028,6 +10028,7 @@ class MacroDialog extends jqDialog {
 					<textarea class="macro-text enter-apply"></textarea>
 				</td>
 				<td style="padding:0;">
+					${this.renderHelpButtonHtml("macro-help")}
 					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
@@ -10044,6 +10045,17 @@ class MacroDialog extends jqDialog {
 			</tr>
 		</table>
 		`);		
+
+		this.setHelpButtonInfo("macro-help", "Macro Help", `<div style="max-width: 400px;">
+			<p>Macros allow you to define custom model code that is included in the model.</p>
+			<b>Key bindings (for macro text input):</b>
+			<ul style="margin: 1em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			</ul>
+		</div>`);
+
 		this.macroTextArea = $(this.dialogContent).find(".macro-text");
 		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
 		$(this.dialogContent).find(".seed-field").keyup((event) => { 
