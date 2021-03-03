@@ -10092,6 +10092,9 @@ class TextAreaDialog extends DisplayDialog {
 		this.setTitle("Text");
 		this.setHtml(`
 		<div style="height: 100%;">
+			<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Text:</b><span>${this.renderHelpButtonHtml("text-help")}</span>
+			</div>
 			<textarea class="text enter-apply" style="resize: none;"></textarea>
 			<div class="vertical-space"></div>
 			<table class="modern-table"><tr title="Only hides when there is any text.">
@@ -10100,6 +10103,16 @@ class TextAreaDialog extends DisplayDialog {
 			</tr></table>
 		</div>
 		`);		
+
+		this.setHelpButtonInfo("text-help", "Text Help", `<div style="max-width: 400px;">
+			<b>Key bindings:</b>
+			<ul style="margin: 1em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			</ul>
+		</div>`);
+
 		this.textArea = $(this.dialogContent).find(".text");
 		this.hideFrameCheckbox = $(this.dialogContent).find(".hide-frame-checkbox");
 		this.bindEnterApplyEvents();
@@ -10119,7 +10132,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-50);
+		this.textArea.height(height-70);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
