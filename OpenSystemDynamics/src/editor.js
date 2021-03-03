@@ -9349,21 +9349,34 @@ class ConverterDialog extends jqDialog {
 		super();
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
-				Name:<br/>
+				<b>Name:</b><br/>
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
-				Definition:<br/>
+				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
+				</div>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
-				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
-				<p style="color:grey; margin:5px 0px">
-					<b>Definition:</b></br>
-					&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
-					</br>
-					<b>Example:</b></br>
-					&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
-				</p>
 			</div>
 		`);
+
+		this.setHelpButtonInfo("converter-help", "Converter Help", `<div style="max-width: 400px;">
+			<p>The converter is a table look-up function that converterts the input X (the linked-in primitive) to the output Y.</p>
+			<p>
+				<b>Definition:</b></br>
+				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span></br>
+				</br>
+				<b>Example Definition:</b></br>
+				&nbsp &nbsp <span style="font-family: monospace;" >0,0; 1,1; 2,4; 3,9</span>
+			</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 1em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			</ul>
+		</div>
+		`)
+
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
