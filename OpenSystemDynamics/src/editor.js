@@ -9962,13 +9962,13 @@ class MacroDialog extends jqDialog {
 		<table class="invisible-table" style="vertical-align: top;">
 			<tr>
 				<td>
-					<textarea class="macro-text"></textarea>
+					<textarea class="macro-text enter-apply"></textarea>
 				</td>
 				<td style="padding:0;">
 					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
-								Seed = <input class="seed-field enter-apply" type="text" />
+								Seed = <input class="seed-field" type="text" />
 							</td>
 						</tr>
 						<tr>
@@ -9985,12 +9985,17 @@ class MacroDialog extends jqDialog {
 		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
 		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
-			this.setSeedButton.attr("disabled", this.seed.length === 0 );
+			if (event.which === keyboard["enter"] && this.seed.length !== 0) {
+				this.setSeedButton.click();
+			} else {
+				this.setSeedButton.attr("disabled", this.seed.length === 0 );
+			}
 		});
 		this.setSeedButton.click((event) => {
 			let macro = this.macroTextArea.val();
 			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
 		});
+		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
 		let oldMacro = getMacros();
