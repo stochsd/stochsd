@@ -9159,11 +9159,23 @@ class TimeUnitDialog extends jqDialog {
 		this.setHtml(`
 			<div style="min-height: 70px; margin: 8px 0px;">
 				Specify the Time Unit to enable model building.</br></br>
-				Time Unit: 
-				<input class="timeunit-field enter-apply" style="text-align: left; width:200px;" type="text"/>
+				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Time Unit:</b><span>${this.renderHelpButtonHtml("timeunit-help")}</span>
+				</div>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:100%;" type="text"/>
 				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
+
+		this.setHelpButtonInfo("timeunit-help", "Time Unit Help", `<div style="max-width: 400px;">
+			<p>It is crucial to be consistent and choose one, and only one, time unit across the model. The time unit can e.g. be second, minute, hour, day, week, month, year, century, or whatever you choose. For a generic model you can specify it as e.g. "Time Unit", "t.u." or "tu".</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+			</ul>
+		</div>
+		`)
 
 		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
