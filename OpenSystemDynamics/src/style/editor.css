@@ -227,9 +227,6 @@ button.tool-button img {
 .primitive-settings .value-field {
     width: 200px;
 }
-.accordion div {
-    width: 200px;
-}
 
 .table{
   display: table;
@@ -283,6 +280,14 @@ h3.equation-list-header {
     border: 1px solid #ccc;
     border-radius: 2px;
     font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+.example-code {
+    /* Used for text showing key bindings eg. "Enter" */
+    font-family: monospace;
+    border: 1px solid #ccc;
+    border-radius: 2px;
     background-color: #f0f0f0;
 }
 
