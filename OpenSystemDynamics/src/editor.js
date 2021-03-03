@@ -688,6 +688,18 @@ function noteHtml(message) {
 	return (`<span class="note">Note:<br/>${message}</span>`);
 }
 
+// Param keys is array of string or a string 
+function keyHtml(keys) {
+	let result = "";
+	if (Array.isArray(keys)) {
+		result = keys.map(key => `<span class="key">${key}</span>`).join("+");
+	} else {
+		// if string
+		result = `<span class="key">${keys}</span>`;
+	}
+	return result;
+}
+
 function checkedHtml(value) {
 	if (value) {
 		return ' checked ';
@@ -6979,6 +6991,20 @@ class jqDialog {
 			}
 		});
 	}
+	renderHelpButtonHtml(helpId) {
+		return (`<button id="${helpId}" class="help-button">
+			?
+		</button>`);
+	}
+
+	bindHelpButtonInfo(helpId, title, contentHTML) {
+		$(this.dialogContent).find(`#${helpId}`).click(event => {
+			let dialog = new XAlertDialog(contentHTML);
+			dialog.setTitle(title);
+			dialog.show();
+		})
+	}
+
 	applyChanges() {
 		this.makeApply();
 		$(this.dialog).dialog('close');
@@ -9588,7 +9614,9 @@ class EquationEditor extends jqDialog {
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div"></div><br/>
-							<b>Definition:</b><br/>
+							<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
+							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;" hidden></span></div>
 							<br/>
@@ -9612,6 +9640,17 @@ class EquationEditor extends jqDialog {
   				</div>
 			</div>
 		`);
+
+		this.bindHelpButtonInfo("definition-help", "Definition Help", 
+		`<div>
+			<b>Key bindings</b>
+			<ul>
+				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			</ul>
+			${noteHtml("New Line placed inside brackets will cause error when running the simulation.")}
+		</div>`);
 
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
