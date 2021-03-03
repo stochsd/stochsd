@@ -10024,16 +10024,17 @@ class TextAreaDialog extends DisplayDialog {
 		this.setTitle("Text");
 		this.setHtml(`
 		<div style="height: 100%;">
-			<textarea class="text" style="resize: none;"></textarea>
+			<textarea class="text enter-apply" style="resize: none;"></textarea>
 			<div class="vertical-space"></div>
 			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td><input type="checkbox" class="hide-frame-checkbox" /></td>
+				<td><input type="checkbox" class="hide-frame-checkbox enter-apply" /></td>
 			</tr></table>
 		</div>
 		`);		
 		this.textArea = $(this.dialogContent).find(".text");
 		this.hideFrameCheckbox = $(this.dialogContent).find(".hide-frame-checkbox");
+		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
