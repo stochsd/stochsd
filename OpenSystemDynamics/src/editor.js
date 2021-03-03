@@ -692,7 +692,7 @@ function noteHtml(message) {
 function keyHtml(keys) {
 	let result = "";
 	if (Array.isArray(keys)) {
-		result = keys.map(key => `<span class="key">${key}</span>`).join("+");
+		result = keys.map(key => `<span class="key">${key}</span>`).join("-");
 	} else {
 		// if string
 		result = `<span class="key">${keys}</span>`;
@@ -9360,19 +9360,21 @@ class ConverterDialog extends jqDialog {
 		`);
 
 		this.setHelpButtonInfo("converter-help", "Converter Help", `<div style="max-width: 400px;">
-			<p>The converter is a table look-up function that converterts the input X (the linked-in primitive) to the output Y.</p>
+			<p>The converter is a table look-up function that converts the values X<sub>i</sub> from the input (the linked-in primitive) to the output values Y<sub>i</sub> from the converter.</p>
 			<p>
 				<b>Definition:</b></br>
-				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span></br>
+				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span>
+				&nbsp &nbsp &nbsp (Often x is time)
 				</br>
-				<b>Example Definition:</b></br>
+				</br>
+				<b>Example:</b></br>
 				&nbsp &nbsp <span style="font-family: monospace;" >0,0; 1,1; 2,4; 3,9</span>
 			</p>
 			<b>Key bindings:</b>
-			<ul style="margin: 1em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
 		</div>
 		`)
@@ -9891,21 +9893,21 @@ class EquationEditor extends jqDialog {
 	}
 	updateHelpText() {
 		let typeSpecificTexts = {
-			"Stock": "The initial value of the stock will be calculated by this equation. Inflows and outflows can increase or decrease the stock's value over time.",
-			"Flow": "Material will move out of the source stock and into the sink stock at the rate determined by this equation.",
-			"Variable": "The auxilliary will take on the value calculated from this equation. The value will be recalculated as the simulation progresses.",
-			"Constant": "The parameter will take on the value calculated from this equation. The value will be recalculated as the simulation progresses."
+			"Stock": "The initial value of the stock will be set by the definition. (The stock's value over time increases or decreases by inflows and outflows.)",
+			"Flow": "Matter will enter or leave a stock through a flow at the rate determined by the definition.",
+			"Variable": "The auxiliary will take on the value calculated from the definition. The value will be recalculated as the simulation progresses.",
+			"Constant": "The parameter will take on the value calculated from the definition. The value will be recalculated as the simulation progresses."
 		}
 		this.setHelpButtonInfo("definition-help", "Definition Help", 
 		`<div style="max-width: 400px;">
 			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
 			<b>Key bindings:</b>
-			<ul style="margin: 1em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
-			${noteHtml("New Line placed inside brackets will cause error when running the simulation.")}
+			${noteHtml("New line placed inside brackets will cause error when running the simulation.")}
 		</div>`);
 	}
 	updateCursorPosInfo() {
@@ -10047,12 +10049,12 @@ class MacroDialog extends jqDialog {
 		`);		
 
 		this.setHelpButtonInfo("macro-help", "Macro Help", `<div style="max-width: 400px;">
-			<p>Macros allow you to define custom model code that is included in the model.</p>
+			<p>Macros allow you to define code that can be used in the model. For example, you can here define your own functions, or set a seed value to make the simulation reproducible.</p>
 			<b>Key bindings (for macro text input):</b>
-			<ul style="margin: 1em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
 		</div>`);
 
@@ -10118,10 +10120,10 @@ class TextAreaDialog extends DisplayDialog {
 
 		this.setHelpButtonInfo("text-help", "Text Help", `<div style="max-width: 400px;">
 			<b>Key bindings:</b>
-			<ul style="margin: 1em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels Changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies Changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds New Line</li>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
 		</div>`);
 
