@@ -75,7 +75,13 @@ class DefinitionError {
             },
             (prim, defString) => {
                 if (prim.value.nodeName === "Converter") {
-                    let rows = defString.split(";").map(row => row.split(","));
+                    // remove comments
+                    let noCommentsString = defString.split("\n").map((str) => {
+                        let index = str.indexOf("#");
+                        return index === -1 ? str : str.substr(0, index);
+                    }).join("");
+
+                    let rows = noCommentsString.split(";").map(row => row.split(","));
                     for (let i in rows) {
                         let row = rows[i];
                         if (row.length !== 2) {
