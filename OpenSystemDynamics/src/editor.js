@@ -10076,7 +10076,7 @@ class MacroDialog extends jqDialog {
 						myFn(a, b, c) &lt;- sin((a+b+c)/(a*b*c))
 					</p>
 				</div>
-				<h3>Define multiline function</h3>
+				<h3>Define multi-line function</h3>
 				<div>
 					<p class="example-code">
 						Function myFn(a, b, c) <br/>
