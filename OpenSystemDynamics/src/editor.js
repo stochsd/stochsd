@@ -9643,7 +9643,7 @@ class EquationEditor extends jqDialog {
 		this.setHtml(`
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 300px; height: 300px;">
+					<div class="table-cell" style="width: 400px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
