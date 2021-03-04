@@ -227,9 +227,6 @@ button.tool-button img {
 .primitive-settings .value-field {
     width: 200px;
 }
-.accordion div {
-    width: 200px;
-}
 
 .table{
   display: table;
@@ -278,6 +275,38 @@ h3.equation-list-header {
     /* Used when there is somthing to note but still allowed */
     color: #ff8c00;
 }
+.key {
+    /* Used for text showing key bindings eg. "Enter" */
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+.example-code {
+    /* Used for text showing key bindings eg. "Enter" */
+    font-family: monospace;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background-color: #f0f0f0;
+}
+
+.help-button {
+    background: none;
+    border-radius: 50%;
+    border: 2px solid #999;
+    color: #999;
+    height: 1.3em;
+    width: 1.3em;
+    font-weight: bold;
+    font-size: 1.1em !important;
+    padding: 0;
+}
+.help-button:hover {
+    border-color: black;
+    color: black;
+}
+
 .macro-text {
     width: 600px;
     height: 400px;

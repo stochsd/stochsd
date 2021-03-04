@@ -688,6 +688,18 @@ function noteHtml(message) {
 	return (`<span class="note">Note:<br/>${message}</span>`);
 }
 
+// Param keys is array of string or a string 
+function keyHtml(keys) {
+	let result = "";
+	if (Array.isArray(keys)) {
+		result = keys.map(key => `<span class="key">${key}</span>`).join("-");
+	} else {
+		// if string
+		result = `<span class="key">${keys}</span>`;
+	}
+	return result;
+}
+
 function checkedHtml(value) {
 	if (value) {
 		return ' checked ';
@@ -6979,6 +6991,27 @@ class jqDialog {
 			}
 		});
 	}
+	renderHelpButtonHtml(helpId) {
+		return (`<button id="${helpId}" class="help-button">
+			?
+		</button>`);
+	}
+
+	setHelpButtonInfo(helpId, title, contentHTML) {
+		$(this.dialogContent).find(`#${helpId}`).unbind();
+		$(this.dialogContent).find(`#${helpId}`).click(event => {
+			let dialog = new XAlertDialog(contentHTML);
+			$(dialog.dialogContent).find(".accordion").accordion({
+				heightStyle: "content",
+				active: false, 
+				header: "h3", 
+				collapsible: true 
+			});
+			dialog.setTitle(title);
+			dialog.show();
+		})
+	}
+
 	applyChanges() {
 		this.makeApply();
 		$(this.dialog).dialog('close');
@@ -9126,11 +9159,23 @@ class TimeUnitDialog extends jqDialog {
 		this.setHtml(`
 			<div style="min-height: 70px; margin: 8px 0px;">
 				Specify the Time Unit to enable model building.</br></br>
-				Time Unit: 
-				<input class="timeunit-field enter-apply" style="text-align: left; width:200px;" type="text"/>
+				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Time Unit:</b><span>${this.renderHelpButtonHtml("timeunit-help")}</span>
+				</div>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:100%;" type="text"/>
 				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
+
+		this.setHelpButtonInfo("timeunit-help", "Time Unit Help", `<div style="max-width: 400px;">
+			<p>It is crucial to be consistent and choose one, and only one, time unit across the model. The time unit can e.g. be second, minute, hour, day, week, month, year, century, or whatever you choose. For a generic model you can specify it as e.g. "Time Unit", "t.u." or "tu".</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+			</ul>
+		</div>
+		`)
 
 		$(this.dialogContent).find(".timeunit-field").keyup((event) => {
 			this.showComplain(this.checkValid());
@@ -9322,21 +9367,36 @@ class ConverterDialog extends jqDialog {
 		super();
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
-				Name:<br/>
+				<b>Name:</b><br/>
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
-				Definition:<br/>
+				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
+				</div>
 				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
 				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
-				<div style="background-color: grey; width:100%; height: 1px; margin: 10px 0px;"></div>
-				<p style="color:grey; margin:5px 0px">
-					<b>Definition:</b></br>
-					&nbsp &nbsp x1,y1; x2,y2; ...; xn,yn</br>
-					</br>
-					<b>Example:</b></br>
-					&nbsp &nbsp 0,0; 1,1; 2,4; 3,9 
-				</p>
 			</div>
 		`);
+
+		this.setHelpButtonInfo("converter-help", "Converter Help", `<div style="max-width: 400px;">
+			<p>The converter is a table look-up function that converts the values X<sub>i</sub> from the input (the linked-in primitive) to the output values Y<sub>i</sub> from the converter.</p>
+			<p>
+				<b>Definition:</b></br>
+				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span>
+				&nbsp &nbsp &nbsp (Often x is time)
+				</br>
+				</br>
+				<b>Example:</b></br>
+				&nbsp &nbsp <span style="font-family: monospace;" >0,0; 1,1; 2,4; 3,9</span>
+			</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
+			</ul>
+		</div>
+		`)
+
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
@@ -9588,7 +9648,9 @@ class EquationEditor extends jqDialog {
 							<b>Name:</b><br/>
 							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div"></div><br/>
-							<b>Definition:</b><br/>
+							<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
+							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
 							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;" hidden></span></div>
 							<br/>
@@ -9612,6 +9674,7 @@ class EquationEditor extends jqDialog {
   				</div>
 			</div>
 		`);
+
 
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
@@ -9772,6 +9835,7 @@ class EquationEditor extends jqDialog {
 		this.show();
 		this.defaultFocusSelector = defaultFocusSelector;
 
+		this.updateHelpText();
 		
 		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
@@ -9844,6 +9908,25 @@ class EquationEditor extends jqDialog {
 				valueFieldDom.setSelectionRange(0, inputLength);
 			}
 		}
+	}
+	updateHelpText() {
+		let typeSpecificTexts = {
+			"Stock": "The initial value of the stock will be set by the definition. (The stock's value over time increases or decreases by inflows and outflows.)",
+			"Flow": "Matter will enter or leave a stock through a flow at the rate determined by the definition.",
+			"Variable": "The auxiliary will take on the value calculated from the definition. The value will be recalculated as the simulation progresses.",
+			"Constant": "The parameter will take on the value calculated from the definition. The value will be recalculated as the simulation progresses."
+		}
+		this.setHelpButtonInfo("definition-help", "Definition Help", 
+		`<div style="max-width: 400px;">
+			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
+			<b>Key bindings:</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
+			</ul>
+			${noteHtml("New line placed inside brackets will cause error when running the simulation.")}
+		</div>`);
 	}
 	updateCursorPosInfo() {
 		let cursor = this.cmValueField.getCursor();
@@ -9962,13 +10045,14 @@ class MacroDialog extends jqDialog {
 		<table class="invisible-table" style="vertical-align: top;">
 			<tr>
 				<td>
-					<textarea class="macro-text"></textarea>
+					<textarea class="macro-text enter-apply"></textarea>
 				</td>
 				<td style="padding:0;">
+					${this.renderHelpButtonHtml("macro-help")}
 					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
 						<tr>	
 							<td style="padding:1px;">
-								Seed = <input class="seed-field enter-apply" type="text" />
+								Seed = <input class="seed-field" type="text" />
 							</td>
 						</tr>
 						<tr>
@@ -9981,16 +10065,58 @@ class MacroDialog extends jqDialog {
 			</tr>
 		</table>
 		`);		
+
+		this.setHelpButtonInfo("macro-help", "Macro Help", `<div style="max-width: 400px;">
+			<p>Macros allow you to define code that can be used in the model. For example, you can here define your own functions, or set a seed value to make the simulation reproducible.</p>
+			<b>Examples:</b>
+			<div class="accordion">
+				<h3>Define single-line function</h3>
+				<div>
+					<p class="example-code">
+						myFn(a, b, c) &lt;- sin((a+b+c)/(a*b*c))
+					</p>
+				</div>
+				<h3>Define multiline function</h3>
+				<div>
+					<p class="example-code">
+						Function myFn(a, b, c) <br/>
+						x &lt;- (a+b+c) <br/>
+						y &lt;- (a*b*c) <br/>
+						return sin(x/y) <br/>
+						End Function <br/>
+					</p>
+				</div>
+				<h3>Set seed for reproducible stochastic simulations.</h3>
+				<div>
+					<p>To make a stochastic simulation model <i>reproducible</i>, you have to lock the <i>seed</i> for the random number generators in the model. Then the same sequences of random numbers will be generated for each simulation run. This can be done with the following line.</p>
+					<div class="example-code">SetRandSeed(37)</div>
+					<p>By changing the argument, you will get another (reproducible) simulation run.</p>
+				</div>
+			</div>
+			<br/>
+			<b>Key bindings (for macro text input):</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
+			</ul>
+		</div>`);
+
 		this.macroTextArea = $(this.dialogContent).find(".macro-text");
 		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
 		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
-			this.setSeedButton.attr("disabled", this.seed.length === 0 );
+			if (event.which === keyboard["enter"] && this.seed.length !== 0) {
+				this.setSeedButton.click();
+			} else {
+				this.setSeedButton.attr("disabled", this.seed.length === 0 );
+			}
 		});
 		this.setSeedButton.click((event) => {
 			let macro = this.macroTextArea.val();
 			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
 		});
+		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
 		let oldMacro = getMacros();
@@ -10024,16 +10150,30 @@ class TextAreaDialog extends DisplayDialog {
 		this.setTitle("Text");
 		this.setHtml(`
 		<div style="height: 100%;">
-			<textarea class="text" style="resize: none;"></textarea>
+			<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+					<b>Text:</b><span>${this.renderHelpButtonHtml("text-help")}</span>
+			</div>
+			<textarea class="text enter-apply" style="resize: none;"></textarea>
 			<div class="vertical-space"></div>
 			<table class="modern-table"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
-				<td><input type="checkbox" class="hide-frame-checkbox" /></td>
+				<td><input type="checkbox" class="hide-frame-checkbox enter-apply" /></td>
 			</tr></table>
 		</div>
 		`);		
+
+		this.setHelpButtonInfo("text-help", "Text Help", `<div style="max-width: 400px;">
+			<b>Key bindings:</b>
+			<ul style="margin: 0.5em 0;">
+				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
+				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
+			</ul>
+		</div>`);
+
 		this.textArea = $(this.dialogContent).find(".text");
 		this.hideFrameCheckbox = $(this.dialogContent).find(".hide-frame-checkbox");
+		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
 		let oldText = getName(this.primitive);
@@ -10050,7 +10190,7 @@ class TextAreaDialog extends DisplayDialog {
 		let width = this.getWidth();
 		let height = this.getHeight();
 		this.textArea.width(width-10);
-		this.textArea.height(height-50);
+		this.textArea.height(height-70);
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.width = "500";
