@@ -189,3 +189,6 @@ function decimals_in_value_string(value_str) {
 
     return decimals-trailing_zeros;
 }
+
+
+module.exports = format_number;
