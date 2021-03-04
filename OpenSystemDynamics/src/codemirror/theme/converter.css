@@ -1,0 +1,20 @@
+
+
+.cm-s-converter.CodeMirror {
+    border: 2px solid gray;
+    width: 100%; 
+    height: auto;
+    font-size: 14px;
+}
+
+.cm-s-converter.CodeMirror-focused {
+    border-color: black;
+}
+
+/* .cm-s-converter .CodeMirror-gutters { color: #282a36; } */
+.cm-comment { color: hsl(0deg, 0%, 50%); font-style: italic; }
+.cm-xnumber { color: hsl(100deg, 50%, 40%); }
+.cm-ynumber { color: hsl(300deg, 50%, 40%); }
+
+div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 90%); font-weight: bold; }
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: hsl(0, 100%, 20%); background-color: hsl(0, 100%, 90%); font-weight: bold; }

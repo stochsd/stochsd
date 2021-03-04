@@ -9366,7 +9366,7 @@ class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setHtml(`
-			<div class="primitive-settings" style="padding: 10px 0px">
+			<div class="primitive-settings" style="width: 300px; padding: 10px 0px;">
 				<b>Name:</b><br/>
 				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
 				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
@@ -9394,8 +9394,30 @@ class ConverterDialog extends jqDialog {
 				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
 				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
-		</div>
-		`)
+		</div>`);
+
+		let value_field = $(this.dialogContent).find(".value-field").get(0);
+		console.log(value_field);
+		this.cmValueField = new CodeMirror.fromTextArea(value_field,
+			{
+				mode: "converter", 
+				theme: "converter",
+				lineWrapping: true,
+				// lineNumbers: true,
+				// matchBrackets: true,
+				extraKeys: {
+					"Esc": () => {
+						this.dialogParameters.buttons["Cancel"]();
+					},
+					"Enter": () => {
+						this.dialogParameters.buttons["Apply"]();
+					},
+					"Shift-Tab": () => {
+						// this.nameField.focus();
+					}
+				}
+			}
+		);
 
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
