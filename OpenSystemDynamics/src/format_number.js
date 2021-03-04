@@ -63,11 +63,11 @@ function round_digits(digits_above, digits_below, position) {
 let default_options = {
     decimals: undefined,
     precision: undefined, // also called sigificant digits 
-    round_to_zero_limit: undefined,
+    round_to_zero_limit: undefined, // Rounds to zero if abs(value) < round_to_zero_limit and round_to_zero_limit is defined
     use_e_format_upper_limit: 1e8, 
     use_e_format_lower_limit: 1e-6, 
     show_plus_sign: false,
-    not_defined: ""
+    not_defined: "" // return if value is not defined 
 }
 
 function format_number(value, options = {}) {
