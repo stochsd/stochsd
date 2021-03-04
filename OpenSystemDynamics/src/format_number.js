@@ -35,7 +35,7 @@ function round_digits(digits_above, digits_below, position) {
 
     if (Number(digits[index+1]) >= 5) {
         // round up
-        for (let i = index; i >= 0; i--) {
+        for (let i = index; i >= digits_above.length-1; i--) {
             if (digits[i] === "9") {
                 digits = digits.replaceAt(i, "0");
                 if (i === 0) {
