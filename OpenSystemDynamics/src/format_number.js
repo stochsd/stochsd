@@ -190,5 +190,5 @@ function decimals_in_value_string(value_str) {
     return decimals-trailing_zeros;
 }
 
-
-module.exports = format_number;
+// Uncomment for testing since it causes error for commonJS (only runs for node.js)
+// module.exports = format_number;
