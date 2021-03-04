@@ -25,7 +25,7 @@ functionLoaders.push(function(){
 	});
 
 	defineFunction("Stop", {params:[]}, function(x) {
-		simulate.stopFlag = true;
+		simulate.terminate();
 		return new Material(0);
 	});
 
