@@ -7264,8 +7264,8 @@ class PlotPeriodCompontent extends HtmlCompontent {
 
 	applyChange() {
 		if(this.parent.checkValidPlotPer()) {
-			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+			let auto_plot_per = $(this.parent.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+			let plot_per = Number($(this.parent.dialogContent).find(".plot-per-field").val());
 			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
 			this.primitive.setAttribute("PlotPer", plot_per);
 		}
@@ -7892,7 +7892,7 @@ class DisplayDialog extends jqDialog {
 
 
 class TimePlotAxisLimits extends HtmlCompontent {
-	render() {
+	/*render() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
 		let max_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
@@ -8027,7 +8027,7 @@ class TimePlotAxisLimits extends HtmlCompontent {
 			axis_limits.rightaxis.max = Number($(this.parent.dialogContent).find(".right-yaxis-max-field").val());
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
-	}
+	}*/
 }
 
 
