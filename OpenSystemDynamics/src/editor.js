@@ -348,7 +348,7 @@ class InfoBar {
 			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
 			let definitionLines = definition.split("\n");
-			let nonNeg = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true" ? "0≤\t" : "";
+			let nonNeg = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true" ? "Restricted\t" : "";
 			if (definitionLines[0] !== "") {
 				this.cmInfoDef.setValue(`${nonNeg}[${name}] = ${definitionLines[0]}`);
 			} else {
