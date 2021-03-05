@@ -42,10 +42,25 @@ defineFunction("RandBoolean", {params: [{name:"Probability", defaultVal: 0.5, no
 	if(Rand()< p){
 		return true;
 	}else{
-		return false;
-			
+		return false;	
 	}
 });
+// RandBernoulli replaces RandBoolean (Magnus Gustafsson, 2021-03-05)
+defineFunction("RandBernoulli", {params: [{name:"Probability", defaultVal: 0.5, noUnits:true, noVector:true}]}, function(x){
+	var p;
+	if (x.length != 0) {
+		p = x[0].toNum().value;
+	}else{
+		p = 0.5;
+	}
+	
+	if(Rand()< p){
+		return new Material(1);
+	}else{
+		return new Material(0);	
+	}
+});
+
 defineFunction("Rand", {params: [{name:"Lower Bound", defaultVal: 0, noUnits:true, noVector:true}, {name:"Upper Bound", defaultVal: 1, noUnits:true, noVector:true}]}, function(x){
 	if (x.length == 2) {
 		return new Material(Rand(x[0].toNum().value, x[1].toNum().value));
