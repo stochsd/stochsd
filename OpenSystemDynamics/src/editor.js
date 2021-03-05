@@ -7271,8 +7271,37 @@ class PlotPeriodCompontent extends HtmlCompontent {
 
 }
 
+/**
+ * @param labels = [{ text, attribute }]
+ */
+class LabelTableCompontent extends HtmlCompontent {
+	constructor(parent, labels) {
+		super(parent);
+		this.labels = labels;
+	}
+	render() {
+		return (`
+			<table class="modern-table">
+				${this.labels.map(label => {
+					return (`<tr>
+						<th>${label.text}:</th>
+						<td style="padding:1px;" >
+							<input style="width: 150px; text-align: left;" class="${label.attribute}-field enter-apply" spellcheck="false" type="text" value="${this.primitive.getAttribute(label.attribute)}"/>
+						</td>
+					</tr>`);
+				}).join("")}
+			</table>
+		`);
+	}
+	applyChange() {
+		this.labels.forEach(label => {
+			let labelChoosen = removeSpacesAtEnd($(this.parent.dialogContent).find(`.${label.attribute}-field`).val());
+			this.primitive.setAttribute(label.attribute, labelChoosen);
+		})
+	}
+}
+
 class TimePlotSelectorCompontent extends HtmlCompontent { render() 	{ return "TimePlotSelector Here!"} }
-class TimePlotLabelsCompontent extends HtmlCompontent { render() 	{ return "TimePlotLabels Here!"} }
 class LineOptionComponent extends HtmlCompontent { render() 		{ return "LineOptions Here!"} }
 class NumberedLinesCompontent extends HtmlCompontent { render() 	{ return "NumberedLines Here!"} }
 class ColorFromPrimitiveCompontent extends HtmlCompontent { render(){ return "Color from Primitive Here!"} }
@@ -8037,13 +8066,16 @@ class TimePlotDialog extends DisplayDialog {
 		this.compontents.right = [
 			new PlotPeriodCompontent(this),
 			new TimePlotAxisLimits(this),
-			new TimePlotLabelsCompontent(this),
+			new LabelTableCompontent(this, [
+				{text: "Title", attribute: "TitleLabel"}, 
+				{text: "Left",  attribute: "LeftAxisLabel"}, 
+				{text: "Right", attribute: "RightAxisLabel"}
+			]),
 			new LineOptionComponent(this),
 			new NumberedLinesCompontent(this),
 			new ColorFromPrimitiveCompontent(this),
 			new ShowDataPointComponent(this),
 		];
-
 
 		// set default plotPer
 		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -8110,33 +8142,6 @@ class TimePlotDialog extends DisplayDialog {
 	}
 	getSidesToDisplay() {
 		return this.sides;
-	}
-	renderAxisLabelsHtml() {
-		let titleLabel = this.primitive.getAttribute("TitleLabel");
-		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
-		let rightAxisLabel = this.primitive.getAttribute("RightAxisLabel");
-		return (`
-			<table class="modern-table">
-				<tr>
-					<th>Title:</th>
-					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
-					</td>
-				</tr>
-				<tr>
-					<th>Left Label:</th>
-					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
-					</td>
-				</tr>
-				<tr>
-					<th>Right Label:</th>
-					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="right-yaxis-label enter-apply" spellcheck="false" type="text" value="${rightAxisLabel}">
-					</td>
-				</tr>
-			</table>
-		`);
 	}
 	
 	primitiveAddButton(id) {
@@ -8210,13 +8215,6 @@ class TimePlotDialog extends DisplayDialog {
 
 
 		/*super.makeApply();
-		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
-		let rightAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".right-yaxis-label").val());
-		
-		this.primitive.setAttribute("TitleLabel", titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
-		this.primitive.setAttribute("RightAxisLabel", rightAxisLabel);
 
 		this.applyLineOptions();
 		this.applyPlotPer();
