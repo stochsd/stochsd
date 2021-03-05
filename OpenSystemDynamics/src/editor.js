@@ -7211,7 +7211,6 @@ class HtmlCompontent {
 	constructor(parent) {
 		this.parent = parent;
 		this.primitive = parent.primitive;
-		console.log(this.primitive);
 	}
 	render() { return "<p>EmptyCompontent</p>"; }
 	bindEvents() {}
@@ -7221,7 +7220,6 @@ class HtmlCompontent {
 
 class PlotPeriodCompontent extends HtmlCompontent {
 	render() {
-		console.log(this.primitive);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
 		if (auto_plot_per) {
@@ -7954,7 +7952,6 @@ class TimePlotAxisLimits extends HtmlCompontent {
 		<div class="axis-limits-warning-div" ></div>`);
 	}
 	bindEvents() {
-		console.log("Binding TimePLot Axis events!");
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		$(this.parent.dialogContent).find(".xaxis-auto-checkbox").change(event => {
 			let xaxis_auto = $(event.target).prop("checked");
