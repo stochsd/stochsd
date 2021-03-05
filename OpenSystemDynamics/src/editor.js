@@ -7273,12 +7273,12 @@ class PlotPeriodCompontent extends HtmlCompontent {
 
 }
 
-class TimePlotSelectorCompontent extends HtmlCompontent {}
-class TimePlotLabelsCompontent extends HtmlCompontent {}
-class LineOptionComponent extends HtmlCompontent {}
-class NumberedLinesCompontent extends HtmlCompontent {}
-class ColorFromPrimitiveCompontent extends HtmlCompontent {}
-class ShowDataPointComponent extends HtmlCompontent {}
+class TimePlotSelectorCompontent extends HtmlCompontent { render() 	{ return "TimePlotSelector Here!"} }
+class TimePlotLabelsCompontent extends HtmlCompontent { render() 	{ return "TimePlotLabels Here!"} }
+class LineOptionComponent extends HtmlCompontent { render() 		{ return "LineOptions Here!"} }
+class NumberedLinesCompontent extends HtmlCompontent { render() 	{ return "NumberedLines Here!"} }
+class ColorFromPrimitiveCompontent extends HtmlCompontent { render(){ return "Color from Primitive Here!"} }
+class ShowDataPointComponent extends HtmlCompontent { render() 		{ return "Show DataPoint ToolTip Here!"} }
 
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
@@ -7892,6 +7892,7 @@ class DisplayDialog extends jqDialog {
 
 
 class TimePlotAxisLimits extends HtmlCompontent {
+	render() { return "TimePlotAxisLimits" }
 	/*render() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
