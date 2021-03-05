@@ -8248,8 +8248,9 @@ class TimePlotDialog extends DisplayDialog {
 		
 		this.compontents.left.forEach(comp => comp.bindEvents());
 		this.compontents.right.forEach(comp => comp.bindEvents());
+		this.bindEnterApplyEvents();
 
-		// this.bindEnterApplyEvents();
+
 		// this.bindPrimitiveListEvents();
 		// this.bindPlotPerEvents();
 		
