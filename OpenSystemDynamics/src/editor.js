@@ -2831,7 +2831,7 @@ class TimePlotVisual extends PlotVisual {
 				}
 			},
 			highlighter: {
-				show: true,
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
 				fadeTooltip: false,
@@ -3111,7 +3111,7 @@ class ComparePlotVisual extends PlotVisual {
 				}
 			},
 			highlighter: {
-				show: true,
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
 				fadeTooltip: false,
@@ -3635,7 +3635,7 @@ class XyPlotVisual extends PlotVisual {
 				}
 			},
 			highlighter: {
-				show: true,
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
 				sizeAdjust: 1.5,
 				yvalues: 2,
 				fadeTooltip: false,
@@ -7638,6 +7638,20 @@ class DisplayDialog extends jqDialog {
 		}
 		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
 	}
+	renderShowHighlighterHtml() {
+		return (`<table class="modern-table">
+			<tr>
+				<td>
+					<b>Show data point tooltip on hover:</b>
+					<input class="show-tooltip-checkbox" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ShowHighlighter")==="true")} />
+				</td>
+			</tr>
+		</table>`);
+	}
+	applyShowHighlighter() {
+		let showHighighter = $(this.dialogContent).find(".show-tooltip-checkbox").prop("checked");
+		this.primitive.setAttribute("ShowHighlighter", showHighighter);
+	}
 	renderColorCheckboxHtml() {
 		return (`
 			<table class="modern-table">
@@ -8111,6 +8125,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.applyLineOptions();
 		this.applyPlotPer();
 		this.applyAxisLimits();
+		this.applyShowHighlighter();
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
@@ -8139,6 +8154,8 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderNumberedLinesCheckboxHtml()}
 						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="vertical-space"></div>
+						${this.renderShowHighlighterHtml()}
 					</div>
 				</div>
 			</div>
@@ -8343,6 +8360,7 @@ class ComparePlotDialog extends DisplayDialog {
 		this.applyLineOptions();
 		this.applyAxisLimits();
 		this.applyPlotPer();
+		this.applyShowHighlighter();
 
 		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
 		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
@@ -8373,6 +8391,8 @@ class ComparePlotDialog extends DisplayDialog {
 						${this.renderNumberedLinesCheckboxHtml()}
 						<div class="vertical-space"></div>
 						${this.renderColorCheckboxHtml()}
+						<div class="vertical-space"></div>
+						${this.renderShowHighlighterHtml()}
 					</div>
 				</div>
 			</div>
@@ -8723,6 +8743,8 @@ class XyPlotDialog extends DisplayDialog {
 						${this.renderTitleHtml()}
 						<div class="vertical-space"></div>
 						${this.renderLineWidthOptionHtml()}
+						<div class="vertical-space"></div>
+						${this.renderShowHighlighterHtml()}
 					</div>
 				</div>
 			</div>
@@ -8759,6 +8781,7 @@ class XyPlotDialog extends DisplayDialog {
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 		this.applyAxisLimits();
 		this.applyPlotPer();
+		this.applyShowHighlighter();
 	}
 }
 

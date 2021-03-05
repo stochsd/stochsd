@@ -115,6 +115,7 @@ primitiveBank.timeplot.setAttribute("LeftAxisLabel", "");
 primitiveBank.timeplot.setAttribute("RightAxisLabel", "");
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.timeplot.setAttribute("ShowHighlighter", false);
 primitiveBank.timeplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.timeplot);
 
@@ -138,6 +139,7 @@ primitiveBank.compareplot.setAttribute("TitleLabel", "");
 primitiveBank.compareplot.setAttribute("LeftAxisLabel", "");
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.compareplot.setAttribute("ShowHighlighter", false);
 primitiveBank.compareplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.compareplot);
 
@@ -157,6 +159,7 @@ primitiveBank.xyplot.setAttribute('LineWidth', 2);
 primitiveBank.xyplot.setAttribute('TitleLabel', '');
 primitiveBank.xyplot.setAttribute('XLogScale', false);
 primitiveBank.xyplot.setAttribute('YLogScale', false);
+primitiveBank.xyplot.setAttribute("ShowHighlighter", false);
 primitiveBank.xyplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.xyplot);
 
