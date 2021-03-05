@@ -7892,8 +7892,7 @@ class DisplayDialog extends jqDialog {
 
 
 class TimePlotAxisLimits extends HtmlCompontent {
-	render() { return "TimePlotAxisLimits" }
-	/*render() {
+	render() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
 		let max_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
@@ -7957,7 +7956,7 @@ class TimePlotAxisLimits extends HtmlCompontent {
 	bindEvents() {
 		console.log("Binding TimePLot Axis events!");
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
+		$(this.parent.dialogContent).find(".xaxis-auto-checkbox").change(event => {
 			let xaxis_auto = $(event.target).prop("checked");
 			$(this.parent.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
 			$(this.parent.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
@@ -7965,7 +7964,7 @@ class TimePlotAxisLimits extends HtmlCompontent {
 			$(this.parent.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
 			this.checkValidAxisLimits();
 		});
-		$(this.dialogContent).find(".left-yaxis-auto-checkbox").change(event => {
+		$(this.parent.dialogContent).find(".left-yaxis-auto-checkbox").change(event => {
 			let laxis_auto = $(event.target).prop("checked");
 			$(this.parent.dialogContent).find(".left-yaxis-min-field").prop("disabled", laxis_auto);
 			$(this.parent.dialogContent).find(".left-yaxis-max-field").prop("disabled", laxis_auto);
@@ -7973,7 +7972,7 @@ class TimePlotAxisLimits extends HtmlCompontent {
 			$(this.parent.dialogContent).find(".left-yaxis-max-field").val(axis_limits.leftaxis.max);
 			this.checkValidAxisLimits();
 		});
-		$(this.dialogContent).find(".right-yaxis-auto-checkbox").change(event => {
+		$(this.parent.dialogContent).find(".right-yaxis-auto-checkbox").change(event => {
 			let raxis_auto = $(event.target).prop("checked");
 			$(this.parent.dialogContent).find(".right-yaxis-min-field").prop("disabled", raxis_auto);
 			$(this.parent.dialogContent).find(".right-yaxis-max-field").prop("disabled", raxis_auto);
@@ -8028,7 +8027,7 @@ class TimePlotAxisLimits extends HtmlCompontent {
 			axis_limits.rightaxis.max = Number($(this.parent.dialogContent).find(".right-yaxis-max-field").val());
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
-	}*/
+	}
 }
 
 
