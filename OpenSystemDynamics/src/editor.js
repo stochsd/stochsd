@@ -7301,11 +7301,40 @@ class LabelTableComponent extends HtmlComponent {
 	}
 }
 
+/**
+ * @param checkboxes = [{ text, attribute }]
+ */
+// Checkboxhtml
+class CheckboxTableComponent extends HtmlComponent {
+	constructor(parent, checkboxes) {
+		super(parent);
+		this.checkboxes = checkboxes;
+	}
+	render() {
+		return (`
+			<table class="modern-table">
+				${this.checkboxes.map(checkbox => {
+					return (`<tr>
+						<th>${checkbox.text}:</th>
+						<td>
+							<input class="${checkbox.attribute}-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute(checkbox.attribute)==="true")}>
+						</td>
+					</tr>`)
+				}).join("")}
+			</table>
+		`);
+	}
+
+	applyChange() {
+		this.checkboxes.forEach(checkbox => {
+			let boolChosen = $(this.parent.dialogContent).find(`.${checkbox.attribute}-checkbox`).prop("checked");
+			this.primitive.setAttribute(checkbox.attribute, boolChosen);
+		})
+	}
+}
+
 class TimePlotSelectorComponent extends HtmlComponent { render() 	{ return "TimePlotSelector Here!"} }
 class LineOptionComponent extends HtmlComponent { render() 		{ return "LineOptions Here!"} }
-class NumberedLinesComponent extends HtmlComponent { render() 	{ return "NumberedLines Here!"} }
-class ColorFromPrimitiveComponent extends HtmlComponent { render(){ return "Color from Primitive Here!"} }
-class ShowDataPointComponent extends HtmlComponent { render() 		{ return "Show DataPoint ToolTip Here!"} }
 
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
@@ -7670,19 +7699,6 @@ class DisplayDialog extends jqDialog {
 		warning_div.html("");
 		return true;
 	}
-	renderNumberedLinesCheckboxHtml() {
-		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-						<b>Numbered Lines:</b>
-						<input class="numbered-lines-checkbox enter-apply" type="checkbox" ${checkedHtml(hasNumberedLines)}>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
 	renderLineWidthOptionHtml() {
 		return (`
 			<table class="modern-table">
@@ -7739,32 +7755,6 @@ class DisplayDialog extends jqDialog {
 			options[$(pattern_options[i]).attr("data-key")]["pattern"] = selected_pattern;
 		}
 		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
-	}
-	renderShowHighlighterHtml() {
-		return (`<table class="modern-table">
-			<tr>
-				<td>
-					<b>Show data point tooltip on hover:</b>
-					<input class="show-tooltip-checkbox" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ShowHighlighter")==="true")} />
-				</td>
-			</tr>
-		</table>`);
-	}
-	applyShowHighlighter() {
-		let showHighighter = $(this.dialogContent).find(".show-tooltip-checkbox").prop("checked");
-		this.primitive.setAttribute("ShowHighlighter", showHighighter);
-	}
-	renderColorCheckboxHtml() {
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-					<b>Colour from Primitive:</b>
-					<input class="color-from-primitive-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ColorFromPrimitive")==="true")}>
-					</td>
-				</tr>
-			</table>
-		`);
 	}
 	makeApply() {
 		if ($(this.dialogContent).find(".line-width :selected")) {
@@ -8072,9 +8062,11 @@ class TimePlotDialog extends DisplayDialog {
 				{text: "Right", attribute: "RightAxisLabel"}
 			]),
 			new LineOptionComponent(this),
-			new NumberedLinesComponent(this),
-			new ColorFromPrimitiveComponent(this),
-			new ShowDataPointComponent(this),
+			new CheckboxTableComponent(this, [
+				{ text: "Numbered Lines", 					attribute: "HasNumberedLines" },
+				{ text: "Colour from Primitive", 			attribute: "ColorFromPrimitive" },
+				{ text: "Show Data Point Tooltip on Hover", attribute: "ShowHighlighter" },
+			])
 		];
 
 		// set default plotPer
@@ -8219,10 +8211,6 @@ class TimePlotDialog extends DisplayDialog {
 		this.applyLineOptions();
 		this.applyPlotPer();
 
-		this.applyShowHighlighter();
-
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
 		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));*/
 	}
@@ -8434,19 +8422,9 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	makeApply() {
-		let titleLabel = removeSpacesAtEnd($(this.dialogContent).find(".title-label").val());
-		let leftAxisLabel = removeSpacesAtEnd($(this.dialogContent).find(".left-yaxis-label").val());
-
-		this.primitive.setAttribute("TitleLabel", titleLabel);
-		this.primitive.setAttribute("LeftAxisLabel", leftAxisLabel);
-
 		this.applyLineOptions();
 		this.applyAxisLimits();
-		this.applyPlotPer();
-		this.applyShowHighlighter();
 
-		this.primitive.setAttribute("ColorFromPrimitive", $(this.dialogContent).find(".color-from-primitive-checkbox").prop("checked"));
-		this.primitive.setAttribute("HasNumberedLines", $(this.dialogContent).find(".numbered-lines-checkbox").prop("checked"));
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
 
 		this.keep =  $(this.dialogContent).find(".keep_checkbox").prop("checked");
