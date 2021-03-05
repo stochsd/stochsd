@@ -7207,6 +7207,74 @@ function saveChangedAlert(continueHandler) {
 	});
 }
 
+class HtmlCompontent {
+	constructor(parent) {
+		parent.addCompontent(this);
+		this.parent = parent;
+		this.primitive = parent.primitive;
+		console.log(this.primitive);
+	}
+	render() { return "<p>EmptyCompontent</p>"; }
+	bindEvents() {}
+	applyChange() {}
+}
+
+
+class PlotPeriodCompontent extends HtmlCompontent {
+	render() {
+		console.log(this.primitive);
+		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+		if (auto_plot_per) {
+			plot_per = this.parent.getDefaultPlotPeriod();
+		}
+		return (`
+			<table class="modern-table" title="Distance between points in time units. \n (Should not be less then Time Step)" >
+				<tr>
+					<th>
+						Plot Period: 
+					</th>
+					<td style="padding:1px;">
+						<input style="" class="plot-per-field limit-input enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
+					</td>
+					<td>
+						Auto
+						<input style="" class="plot-per-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(auto_plot_per)}/>
+					</td>
+				</tr>
+			</table>
+			<div class="plot-per-warning" ></div>
+		`);
+	}
+
+	bindEvents() {
+		$(this.parent.dialogContent).find(".plot-per-auto-checkbox").change(event => {
+			let plot_per_field = $(this.parent.dialogContent).find(".plot-per-field");
+			plot_per_field.prop("disabled", event.target.checked);
+			
+			let plot_per = Number(this.primitive.getAttribute("PlotPer"));
+			if (event.target.checked) {
+				plot_per = this.parent.getDefaultPlotPeriod();
+			}
+			plot_per_field.val(plot_per);
+		});
+		$(this.dialogContent).find(".plot-per-field").keyup(event => {
+			this.checkValidPlotPer();
+		});
+	}
+
+	applyChange() {
+		if(this.checkValidPlotPer()) {
+			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
+			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
+			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
+			this.primitive.setAttribute("PlotPer", plot_per);
+		}
+	}
+
+}
+
+
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
 	constructor(id) {
@@ -7216,6 +7284,12 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 		this.displayLimit = undefined;
+		this.compontents = [];
+	}
+
+
+	addCompontent(compontent) {
+		this.compontents.push(compontent);
 	}
 
 	getDefaultPlotPeriod() {
@@ -7668,6 +7742,7 @@ class DisplayDialog extends jqDialog {
 		if ($(this.dialogContent).find(".line-width :selected")) {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
+		this.compontents.forEach(comp => comp.bindEvents());
 	}
 	renderPrimitiveListHtml() {
 		// We store the selected variables inside the dialog
@@ -7811,6 +7886,7 @@ class DisplayDialog extends jqDialog {
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
 		this.bindPrimitiveListEvents();
+		this.compontents.forEach(comp => comp.bindEvents());
 	}
 }
 
@@ -8143,7 +8219,7 @@ class TimePlotDialog extends DisplayDialog {
 						${this.renderPrimitiveListHtml()}
 					</div>
 					<div class="table-cell">
-						${this.renderPlotPerHtml()}
+						${new PlotPeriodCompontent(this).render()}
 						<div class="vertical-space"></div>
 						${this.renderAxisLimitsHTML()}
 						<div class="vertical-space"></div>
