@@ -7207,18 +7207,18 @@ function saveChangedAlert(continueHandler) {
 	});
 }
 
-class HtmlCompontent {
+class HtmlComponent {
 	constructor(parent) {
 		this.parent = parent;
 		this.primitive = parent.primitive;
 	}
-	render() { return "<p>EmptyCompontent</p>"; }
+	render() { return "<p>EmptyComponent</p>"; }
 	bindEvents() {}
 	applyChange() {}
 }
 
 
-class PlotPeriodCompontent extends HtmlCompontent {
+class PlotPeriodComponent extends HtmlComponent {
 	render() {
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
@@ -7274,7 +7274,7 @@ class PlotPeriodCompontent extends HtmlCompontent {
 /**
  * @param labels = [{ text, attribute }]
  */
-class LabelTableCompontent extends HtmlCompontent {
+class LabelTableComponent extends HtmlComponent {
 	constructor(parent, labels) {
 		super(parent);
 		this.labels = labels;
@@ -7301,11 +7301,11 @@ class LabelTableCompontent extends HtmlCompontent {
 	}
 }
 
-class TimePlotSelectorCompontent extends HtmlCompontent { render() 	{ return "TimePlotSelector Here!"} }
-class LineOptionComponent extends HtmlCompontent { render() 		{ return "LineOptions Here!"} }
-class NumberedLinesCompontent extends HtmlCompontent { render() 	{ return "NumberedLines Here!"} }
-class ColorFromPrimitiveCompontent extends HtmlCompontent { render(){ return "Color from Primitive Here!"} }
-class ShowDataPointComponent extends HtmlCompontent { render() 		{ return "Show DataPoint ToolTip Here!"} }
+class TimePlotSelectorComponent extends HtmlComponent { render() 	{ return "TimePlotSelector Here!"} }
+class LineOptionComponent extends HtmlComponent { render() 		{ return "LineOptions Here!"} }
+class NumberedLinesComponent extends HtmlComponent { render() 	{ return "NumberedLines Here!"} }
+class ColorFromPrimitiveComponent extends HtmlComponent { render(){ return "Color from Primitive Here!"} }
+class ShowDataPointComponent extends HtmlComponent { render() 		{ return "Show DataPoint ToolTip Here!"} }
 
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
@@ -7316,7 +7316,7 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 		this.displayLimit = undefined;
-		this.compontents = {"left": [], "right": []};
+		this.components = {"left": [], "right": []};
 	}
 
 
@@ -7913,12 +7913,12 @@ class DisplayDialog extends jqDialog {
 	beforeShow() {
 		this.setHtml(this.renderPrimitiveListHtml());
 		this.bindPrimitiveListEvents();
-		this.compontents.forEach(comp => comp.bindEvents());
+		this.components.forEach(comp => comp.bindEvents());
 	}
 }
 
 
-class TimePlotAxisLimits extends HtmlCompontent {
+class TimePlotAxisLimits extends HtmlComponent {
 	render() {
 		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
@@ -8062,18 +8062,18 @@ class TimePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
-		this.compontents.left = [ new TimePlotSelectorCompontent(this) ];
-		this.compontents.right = [
-			new PlotPeriodCompontent(this),
+		this.components.left = [ new TimePlotSelectorComponent(this) ];
+		this.components.right = [
+			new PlotPeriodComponent(this),
 			new TimePlotAxisLimits(this),
-			new LabelTableCompontent(this, [
+			new LabelTableComponent(this, [
 				{text: "Title", attribute: "TitleLabel"}, 
 				{text: "Left",  attribute: "LeftAxisLabel"}, 
 				{text: "Right", attribute: "RightAxisLabel"}
 			]),
 			new LineOptionComponent(this),
-			new NumberedLinesCompontent(this),
-			new ColorFromPrimitiveCompontent(this),
+			new NumberedLinesComponent(this),
+			new ColorFromPrimitiveComponent(this),
 			new ShowDataPointComponent(this),
 		];
 
@@ -8210,8 +8210,8 @@ class TimePlotDialog extends DisplayDialog {
 		}
 	}
 	makeApply() {
-		this.compontents.left.forEach(comp => comp.applyChange());
-		this.compontents.right.forEach(comp => comp.applyChange());
+		this.components.left.forEach(comp => comp.applyChange());
+		this.components.right.forEach(comp => comp.applyChange());
 
 
 		/*super.makeApply();
@@ -8233,16 +8233,16 @@ class TimePlotDialog extends DisplayDialog {
 		this.setHtml(`<div class="table">
 			<div class="table-row">
 				<div class="table-cell">
-					${this.compontents.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
 				</div>
 				<div class="table-cell">
-					${this.compontents.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
 				</div>
 			</div>
 		</div>`)
 		
-		this.compontents.left.forEach(comp => comp.bindEvents());
-		this.compontents.right.forEach(comp => comp.bindEvents());
+		this.components.left.forEach(comp => comp.bindEvents());
+		this.components.right.forEach(comp => comp.bindEvents());
 		this.bindEnterApplyEvents();
 
 
