@@ -24,7 +24,7 @@ String.prototype.replaceAt = function(index, replacement) {
 }
 
 
-function object_format(digits_above, digits_below) {
+function digits_object(digits_above, digits_below) {
     let digits = {};
     for (let i = digits_above.length-1; i >= 0; i--) {
         let currentPos = `${digits_above.length-i-1}`;
@@ -89,6 +89,23 @@ function object_format(digits_above, digits_below) {
         })
         return result;
     }
+
+    digits.to_above_below_format = () => {
+        let digits_above = "";
+        let digits_below = "";
+        digits.iterate(digits.topPos, digits.bottomPos, (pos) => {
+            if (pos >= 0) {
+                digits_above += `${digits.get(pos)}`;
+            } else {
+                digits_below += `${digits.get(pos)}`;
+            }
+        });
+        return {
+            "digits_above": digits_above !== "" ? digits_above : "0",
+            "digits_below": digits_below
+        };
+    }
+
     return digits;
 }
 
@@ -98,38 +115,9 @@ function object_format(digits_above, digits_below) {
     digits:     8 3 4 2 5 . 4 1 0 9 8 4
                 above       below
  */
-
 function round_digits(digits_above, digits_below, position) {
-    let pos = position < 1 ? position : 0;
-    let digits = digits_above+digits_below;
-    let index = digits_above.length-1-pos;
-
-    if (Number(digits[index+1]) >= 5) {
-        // round up
-        for (let i = index; i >= 0; i--) {
-            if (digits[i] === "9" && i < digits_above.length-1) {
-                digits = digits.replaceAt(i, "0");
-                if (i === 0) {
-                    // last digit is 9
-                    // e.g. 999 -> 1000
-                    digits = "1"+digits;
-                    // change length of digits above be be equal
-                    digits_above = "1"+digits_above;
-                }
-            } else {
-                digits = digits.replaceAt(i, `${Number(digits[i])+1}`);
-                break;
-            }
-        }
-        digits_above = digits.substr(0, digits_above.length);
-        digits_below = digits.substr(digits_above.length);
-    }
-    return {
-        "digits_above": digits_above, 
-        "digits_below": digits_below.substr(0, -pos)
-    };
+    return digits_object(digits_above, digits_below).round(position).to_above_below_format();
 }
-
 
 let default_options = {
     decimals: undefined,
@@ -262,4 +250,4 @@ function decimals_in_value_string(value_str) {
 }
 
 // Uncomment for testing since it causes error for commonJS (only runs for node.js)
-module.exports = format_number;
+// module.exports = format_number;
