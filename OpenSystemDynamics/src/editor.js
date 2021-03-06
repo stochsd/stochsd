@@ -1433,7 +1433,6 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
 
-		this.setColor(this.color);
 	}
 	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
@@ -1455,7 +1454,9 @@ class NumberboxVisual extends BasePrimitive {
 	}
 	setColor(color) {
 		super.setColor(color);
-		this.select();
+		if (this.selected) {
+			this.name_element.setAttribute("fill", "white");
+		}
 		let frameColor = this.primitive.getAttribute("HideFrame") === "true" ? "transparent" : color;
 		this.element.setAttribute("stroke", frameColor);
 	}
