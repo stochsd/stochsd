@@ -9707,8 +9707,8 @@ class EquationEditor extends jqDialog {
 			{
 				mode: "stochsdmode", 
 				theme: "stochsdtheme",
-				lineWrapping: true,
-				lineNumbers: true,
+				lineWrapping: false,
+				lineNumbers: false,
 				matchBrackets: true,
 				extraKeys: {
 					"Esc": () => {
