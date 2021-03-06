@@ -7337,7 +7337,51 @@ class CheckboxTableComponent extends HtmlComponent {
 }
 
 class TimePlotSelectorComponent extends HtmlComponent { render() 	{ return "TimePlotSelector Here!"} }
-class LineOptionComponent extends HtmlComponent { render() 		{ return "LineOptions Here!"} }
+
+
+class LineOptionsComponent extends HtmlComponent { 
+	render() {
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		return (`
+			<table class="modern-table">
+				<tr>
+					<th>Type</th><th>Pattern</th><th>Width</th>
+				</tr>
+				${Object.keys(options).map(key => (`<tr>
+					<td>${type_basename[key]}</td>
+					<td>
+						<select data-key="${key}" class="line-pattern-select enter-apply" style="font-family: monospace;">
+						<option value="[1]"		${options[key].pattern[0] === 1  ? "selected" : ""}>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
+						<option value="[10, 5]" ${options[key].pattern[0] === 10 ? "selected" : ""}>------</option>
+						</select>
+					</td>
+					<td>
+						<select data-key="${key}" class="line-width-select enter-apply">
+						<option value=1 ${options[key].width === 1 ? "selected": ""}>1</option>
+						<option value=2 ${options[key].width === 2 ? "selected": ""}>2</option>
+						<option value=3 ${options[key].width === 3 ? "selected": ""}>3</option>
+						</select>
+					</td>
+				</tr>`)).join("")}
+			</table>
+		`);
+	}
+	applyChange() {
+		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+
+		let patternOptions = this.find(".line-pattern-select");
+		let widthOptions = this.find(".line-width-select");
+		for (let i = 0; i < widthOptions.length; i++) {
+			let selectedWidth = JSON.parse($(widthOptions[i]).find(" :selected").val());
+			let selectedPattern = JSON.parse($(patternOptions[i]).find(" :selected").val());
+
+			options[$(widthOptions[i]).attr("data-key")]["width"] = selectedWidth;
+			options[$(patternOptions[i]).attr("data-key")]["pattern"] = selectedPattern;
+		}
+		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
+	}
+}
+	
 
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
@@ -7717,48 +7761,6 @@ class DisplayDialog extends jqDialog {
 			</table>
 		`);
 	}
-	renderLineOptionsHtml() {
-		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
-		return (`
-			<table class="modern-table">
-				<tr>
-					<th>Type</th>
-					<th>Pattern</th>
-					<th>Width</th>
-				</tr>
-				${Object.keys(options).map(key => (`<tr>
-					<td>${type_basename[key]}</td>
-					<td>
-						<select data-key="${key}" class="line-pattern-select enter-apply" style="font-family: monospace;">
-						<option value="[1]"		${options[key].pattern[0] === 1  ? "selected" : ""}>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
-						<option value="[10, 5]" ${options[key].pattern[0] === 10 ? "selected" : ""}>------</option>
-						</select>
-					</td>
-					<td>
-						<select data-key="${key}" class="line-width-select enter-apply">
-						<option value=1 ${options[key].width === 1 ? "selected": ""}>1</option>
-						<option value=2 ${options[key].width === 2 ? "selected": ""}>2</option>
-						<option value=3 ${options[key].width === 3 ? "selected": ""}>3</option>
-						</select>
-					</td>
-				</tr>`)).join('')}
-			</table>
-		`);
-	}
-	applyLineOptions() {
-		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
-
-		let pattern_options = $(this.dialogContent).find(".line-pattern-select");
-		let width_options = $(this.dialogContent).find(".line-width-select");
-		for (let i = 0; i < width_options.length; i++) {
-			let selected_width = JSON.parse($(width_options[i]).find(" :selected").val());
-			let selected_pattern = JSON.parse($(pattern_options[i]).find(" :selected").val());
-
-			options[$(width_options[i]).attr("data-key")]["width"] = selected_width;
-			options[$(pattern_options[i]).attr("data-key")]["pattern"] = selected_pattern;
-		}
-		this.primitive.setAttribute("LineOptions", JSON.stringify(options));
-	}
 	makeApply() {
 		if ($(this.dialogContent).find(".line-width :selected")) {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
@@ -8018,7 +8020,7 @@ class TimePlotDialog extends DisplayDialog {
 				{text: "Left",  attribute: "LeftAxisLabel"}, 
 				{text: "Right", attribute: "RightAxisLabel"}
 			]),
-			new LineOptionComponent(this),
+			new LineOptionsComponent(this),
 			new CheckboxTableComponent(this, [
 				{ text: "Numbered Lines", 					attribute: "HasNumberedLines" },
 				{ text: "Colour from Primitive", 			attribute: "ColorFromPrimitive" },
@@ -8404,7 +8406,7 @@ class ComparePlotDialog extends DisplayDialog {
 						<div class="vertical-space"></div>
 						${this.renderAxisLabelsHtml()}
 						<div class="vertical-space"></div>
-						${this.renderLineOptionsHtml()}
+						// this.renderLineOptionsHtml()
 						<div class="vertical-space"></div>
 						${this.renderNumberedLinesCheckboxHtml()}
 						<div class="vertical-space"></div>
