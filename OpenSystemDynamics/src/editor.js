@@ -390,6 +390,7 @@ class InfoBar {
 		} else {
 			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
 			this.infoDE.html("");
+			this.setRestricted(false);
 		}
 		updateLinkBar();
 	}
