@@ -6754,7 +6754,7 @@ class RunResults {
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);
 		let endTime = format_number(this.getRunProgressMax(), number_options);
-		let timeStep = format_number(this.getTimeStep(), number_options);
+		let timeStep = this.getTimeStep();
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
@@ -6796,11 +6796,11 @@ class RunResults {
 	}
 	static getTimeStep() {
 		if (this.results && 1 < this.results.length) {
-			return this.results[1][0]-this.results[0][0];
+			return `${this.results[1][0]-this.results[0][0]}`;
 		} else if (primitives("Setting")[0]) {
 			return primitives("Setting")[0].getAttribute("TimeStep");
 		}
-		return 0;
+		return "0";
 	}
 	static getRunProgress() {
 		let lastRow = this.getLastRow();
