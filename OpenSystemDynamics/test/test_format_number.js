@@ -51,6 +51,21 @@ function run_tests() {
     test_format_number(9999.5, {precision: 5}, "9999.5");
 
 
+    test_format_number(0.001956, {precision: 1}, "0.002");
+    test_format_number(0.001956, {precision: 2}, "0.0020");
+    test_format_number(0.001956, {precision: 3}, "0.00196");
+    test_format_number(0.001956, {precision: 4}, "0.001956");
+
+    test_format_number(0.1872, {precision: 1}, "0.2");
+    test_format_number(0.1872, {precision: 2}, "0.19");
+    test_format_number(0.1872, {precision: 3}, "0.187");
+    test_format_number(0.1872, {precision: 4}, "0.1872");
+
+    test_format_number(0.1872, {decimals: 0}, "0");
+    test_format_number(0.1872, {decimals: 1}, "0.2");
+    test_format_number(0.1872, {decimals: 2}, "0.19");
+    test_format_number(0.1872, {decimals: 4}, "0.1872");
+
     
     console.table(resultTable);
     console.log(`Num Success: ${numSuccess}`);
