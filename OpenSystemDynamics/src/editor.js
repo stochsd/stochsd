@@ -7318,10 +7318,10 @@ class CheckboxTableComponent extends HtmlComponent {
 			<table class="modern-table">
 				${this.checkboxes.map(checkbox => {
 					return (`<tr>
-						<th>${checkbox.text}:</th>
 						<td>
 							<input class="${checkbox.attribute}-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute(checkbox.attribute)==="true")}>
 						</td>
+						<th style="text-align: left;">${checkbox.text}</th>
 					</tr>`)
 				}).join("")}
 			</table>
