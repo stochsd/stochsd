@@ -324,8 +324,13 @@ class InfoBar {
 				lineWrapping: false
 			}
 		);
+		this.infoRestricted = $(".info-bar__definition-restricted");
 		this.infoDE = $(".info-bar__definition-error");
 		$(infoDef).find(".CodeMirror").css("border", "none");
+	}
+	static setRestricted(isRestricted, primName) {
+		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
+		this.infoRestricted.html(isRestricted ? `<b>(Restricted)<b>` : "" );
 	}
 	static update() {
 		let selected_hash = get_selected_root_objects();
@@ -337,6 +342,7 @@ class InfoBar {
 		if (selected_array == 0) {
 			this.cmInfoDef.setValue("Nothing selected");
 			this.infoDE.html("");
+			this.setRestricted(false);
 		} else if (selected_array.length == 1) {
 			let selected = selected_array[0];
 			let primitive = selected_array[0].primitive;
@@ -347,10 +353,12 @@ class InfoBar {
 			let definition = getValue(primitive);
 			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
+			let isRestricted = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true";
+			this.setRestricted(isRestricted, name);
+
 			let definitionLines = definition.split("\n");
-			let nonNeg = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true" ? "Restricted\t" : "";
 			if (definitionLines[0] !== "") {
-				this.cmInfoDef.setValue(`${nonNeg}[${name}] = ${definitionLines[0]}`);
+				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
 				let type = selected.type;
 				
