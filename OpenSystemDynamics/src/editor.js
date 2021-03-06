@@ -6994,7 +6994,7 @@ class jqDialog {
 		});
 	}
 	renderHelpButtonHtml(helpId) {
-		return (`<button id="${helpId}" class="help-button">
+		return (`<button id="${helpId}" class="help-button enter-apply">
 			?
 		</button>`);
 	}
@@ -7676,7 +7676,7 @@ class DisplayDialog extends jqDialog {
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
 			</div>
 			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
@@ -7739,7 +7739,7 @@ class DisplayDialog extends jqDialog {
 					${results.map(p => `
 						<tr>
 							<td style="padding: 0;">
-								<button class="primitive-add-button" data-id="${getID(p)}" 
+								<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 									${limitReached ? "disabled" : ""} 
 									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
 									style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
@@ -7756,6 +7756,8 @@ class DisplayDialog extends jqDialog {
 					`).join("")}
 				</table>
 			`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-add-button").click((event) => {
 				this.primitiveAddButton($(event.target).attr("data-id"));
 			});
@@ -7785,7 +7787,7 @@ class DisplayDialog extends jqDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -7800,6 +7802,8 @@ class DisplayDialog extends jqDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -8069,7 +8073,7 @@ class TimePlotDialog extends DisplayDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -8094,6 +8098,8 @@ class TimePlotDialog extends DisplayDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -8699,7 +8705,7 @@ class XyPlotDialog extends DisplayDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -8715,6 +8721,8 @@ class XyPlotDialog extends DisplayDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -9312,11 +9320,11 @@ class LineDialog extends GeometryDialog {
 			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
-					<td><input class="arrow-start-checkbox" type="checkbox" ${checkedHtml(arrowStart)} /></td>
+					<td><input class="arrow-start-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowStart)} /></td>
 				</tr>
 				<tr>
 					<td>Arrow head at end point:</td>
-					<td><input class="arrow-end-checkbox" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
+					<td><input class="arrow-end-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
 				</tr>
 			</table>
 		`);
@@ -9345,7 +9353,7 @@ class NumberboxDialog extends DisplayDialog {
 			<tr>
 				<td>
 					<b>Hide Frame:</b>
-					<input class="hide-frame" type="checkbox" ${checkedHtml(hideFrame)} />
+					<input class="hide-frame enter-apply" type="checkbox" ${checkedHtml(hideFrame)} />
 				</td>
 			</tr>
 		</table>`);
