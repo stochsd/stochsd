@@ -7212,6 +7212,9 @@ class HtmlComponent {
 		this.parent = parent;
 		this.primitive = parent.primitive;
 	}
+	find(selector) {
+		return $(this.parent.dialogContent).find(selector);
+	}
 	render() { return "<p>EmptyComponent</p>"; }
 	bindEvents() {}
 	applyChange() {}
@@ -7245,8 +7248,8 @@ class PlotPeriodComponent extends HtmlComponent {
 	}
 
 	bindEvents() {
-		$(this.parent.dialogContent).find(".plot-per-auto-checkbox").change(event => {
-			let plot_per_field = $(this.parent.dialogContent).find(".plot-per-field");
+		this.find(".plot-per-auto-checkbox").change(event => {
+			let plot_per_field = this.find(".plot-per-field");
 			plot_per_field.prop("disabled", event.target.checked);
 			
 			let plot_per = Number(this.primitive.getAttribute("PlotPer"));
@@ -7262,8 +7265,8 @@ class PlotPeriodComponent extends HtmlComponent {
 
 	applyChange() {
 		if(this.parent.checkValidPlotPer()) {
-			let auto_plot_per = $(this.parent.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-			let plot_per = Number($(this.parent.dialogContent).find(".plot-per-field").val());
+			let auto_plot_per = this.find(".plot-per-auto-checkbox").prop("checked");
+			let plot_per = Number(this.find(".plot-per-field").val());
 			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
 			this.primitive.setAttribute("PlotPer", plot_per);
 		}
@@ -7295,7 +7298,7 @@ class LabelTableComponent extends HtmlComponent {
 	}
 	applyChange() {
 		this.labels.forEach(label => {
-			let labelChoosen = removeSpacesAtEnd($(this.parent.dialogContent).find(`.${label.attribute}-field`).val());
+			let labelChoosen = removeSpacesAtEnd(this.find(`.${label.attribute}-field`).val());
 			this.primitive.setAttribute(label.attribute, labelChoosen);
 		})
 	}
@@ -7327,7 +7330,7 @@ class CheckboxTableComponent extends HtmlComponent {
 
 	applyChange() {
 		this.checkboxes.forEach(checkbox => {
-			let boolChosen = $(this.parent.dialogContent).find(`.${checkbox.attribute}-checkbox`).prop("checked");
+			let boolChosen = this.find(`.${checkbox.attribute}-checkbox`).prop("checked");
 			this.primitive.setAttribute(checkbox.attribute, boolChosen);
 		})
 	}
@@ -7945,32 +7948,32 @@ class AxisLimitsComponent extends HtmlComponent {
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.axisOptions.forEach(axis => {
 			let limit = axisLimits[axis.key];
-			$(this.parent.dialogContent).find(`.${axis.key}-checkbox`).change(event => {
+			this.find(`.${axis.key}-checkbox`).change(event => {
 				let checkboxAuto = $(event.target).prop("checked");
 				// Disable/enable input boxes 
-				$(this.parent.dialogContent).find(`.${axis.key}-min-field, .${axis.key}-max-field`).prop("disabled", checkboxAuto);
+				this.find(`.${axis.key}-min-field, .${axis.key}-max-field`).prop("disabled", checkboxAuto);
 
 				// Set input values
 				let min = axis.isTimeAxis && checkboxAuto ? getTimeStart() : limit.min;
 				let max = axis.isTimeAxis && checkboxAuto ? getTimeStart() + getTimeLength() : limit.max;
-				$(this.parent.dialogContent).find(`.${axis.key}-min-field`).val(min);
-				$(this.parent.dialogContent).find(`.${axis.key}-max-field`).val(max);
+				this.find(`.${axis.key}-min-field`).val(min);
+				this.find(`.${axis.key}-max-field`).val(max);
 				
 				this.checkValidAxisLimits();
 			});
 		});
 
-		$(this.parent.dialogContent).find("input[type='text'].limit-input").keyup(() => {
+		this.find("input[type='text'].limit-input").keyup(() => {
 			this.checkValidAxisLimits();
 		});
 	}
 
 	checkValidAxisLimits() {
-		let warningDiv = $(this.parent.dialogContent).find(".axis-limits-warning-div");
+		let warningDiv = this.find(".axis-limits-warning-div");
 
 		let hasFaultReduce = (acc, axis) => {
-			let min = $(this.parent.dialogContent).find(`.${axis.key}-min-field`).val();
-			let max = $(this.parent.dialogContent).find(`.${axis.key}-max-field`).val();
+			let min = this.find(`.${axis.key}-min-field`).val();
+			let max = this.find(`.${axis.key}-max-field`).val();
 			return acc || isNaN(min) || isNaN(max);
 		}
 
@@ -7988,9 +7991,9 @@ class AxisLimitsComponent extends HtmlComponent {
 		if (this.checkValidAxisLimits()) {
 			let axisLimits = JSON.parse(this.parent.primitive.getAttribute("AxisLimits"));
 			this.axisOptions.forEach(axis => {
-				axisLimits[axis.key].auto = $(this.parent.dialogContent).find(`.${axis.key}-checkbox`).prop("checked");
-				axisLimits[axis.key].min = Number($(this.parent.dialogContent).find(`.${axis.key}-min-field`).val());
-				axisLimits[axis.key].max = Number($(this.parent.dialogContent).find(`.${axis.key}-max-field`).val());
+				axisLimits[axis.key].auto = this.find(`.${axis.key}-checkbox`).prop("checked");
+				axisLimits[axis.key].min = Number(this.find(`.${axis.key}-min-field`).val());
+				axisLimits[axis.key].max = Number(this.find(`.${axis.key}-max-field`).val());
 			});
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 		}
