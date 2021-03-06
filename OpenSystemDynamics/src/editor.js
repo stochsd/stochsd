@@ -9312,11 +9312,11 @@ class LineDialog extends GeometryDialog {
 			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
-					<td><input class="arrow-start-checkbox" type="checkbox" ${checkedHtml(arrowStart)} /></td>
+					<td><input class="arrow-start-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowStart)} /></td>
 				</tr>
 				<tr>
 					<td>Arrow head at end point:</td>
-					<td><input class="arrow-end-checkbox" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
+					<td><input class="arrow-end-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
 				</tr>
 			</table>
 		`);
