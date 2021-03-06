@@ -550,7 +550,7 @@ function getFunctionHelpData() {
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
 			// ["Binary Distribution", "RandBoolean(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBoolean(0.1)", "False"]],
-			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "False"]],
+			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "0"]],
 			["Binomial Distribution", "RandBinomial(##Count$$, ##Probability$$)", "Generates a binomially distributed random number. The number of successes in Count random events each with Probability of success."],
 			["Negative Binomial", "RandNegativeBinomial(##Successes$$, ##Probability$$)", "Generates a negative binomially distributed random number. The number of random events each with Probability of success required to generate the specified Successes."],
 			["Poisson Distribution", "RandPoisson(##Lambda$$)", "Generates a Poisson distributed random number with the rate Lambda events per time unit."],
@@ -7642,7 +7642,7 @@ class DisplayDialog extends jqDialog {
 		return (`<table class="modern-table">
 			<tr>
 				<td>
-					<b>Show data point tooltip on hover:</b>
+					<b>Show data when hovering:</b>
 					<input class="show-tooltip-checkbox" type="checkbox" ${checkedHtml(this.primitive.getAttribute("ShowHighlighter")==="true")} />
 				</td>
 			</tr>
@@ -9415,7 +9415,7 @@ class ConverterDialog extends jqDialog {
 			<p>
 				<b>Definition:</b></br>
 				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span>
-				&nbsp &nbsp &nbsp (Often x is time)
+				&nbsp &nbsp &nbsp (Often X is time)
 				</br>
 				</br>
 				<b>Example:</b></br>
