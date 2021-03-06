@@ -10150,6 +10150,7 @@ class MacroDialog extends jqDialog {
 		this.setSeedButton.click((event) => {
 			let macro = this.macroTextArea.val();
 			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
+			this.macroTextArea.focus();
 		});
 		this.bindEnterApplyEvents();
 	}
