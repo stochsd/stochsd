@@ -9345,7 +9345,7 @@ class NumberboxDialog extends DisplayDialog {
 			<tr>
 				<td>
 					<b>Hide Frame:</b>
-					<input class="hide-frame" type="checkbox" ${checkedHtml(hideFrame)} />
+					<input class="hide-frame enter-apply" type="checkbox" ${checkedHtml(hideFrame)} />
 				</td>
 			</tr>
 		</table>`);
