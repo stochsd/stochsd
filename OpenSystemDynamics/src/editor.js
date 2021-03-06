@@ -330,7 +330,7 @@ class InfoBar {
 	}
 	static setRestricted(isRestricted, primName) {
 		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
-		this.infoRestricted.html(isRestricted ? `<b>(Restricted)<b>` : "" );
+		this.infoRestricted.html(isRestricted ? `(Restricted)` : "" );
 	}
 	static update() {
 		let selected_hash = get_selected_root_objects();
