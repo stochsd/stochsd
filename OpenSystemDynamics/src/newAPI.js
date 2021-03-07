@@ -355,7 +355,8 @@ function isValidToolName(newName) {
 	@returns {[string]} primitive's id to display for Plots/Table
  */
 function getDisplayIds(plotId) {
-	let ids = findID(plotId).getAttribute("Primitives").split(",");
+	idsString = findID(plotId).getAttribute("Primitives");
+	let ids = idsString === "" ? [] : idsString.split(",");
 	// Clear ids that have no primitive 
 	ids.filter(id => findID(id) !== null);
 	setDisplayIds(plotId, ids);
