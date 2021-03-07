@@ -2675,20 +2675,14 @@ class TimePlotVisual extends PlotVisual {
 			this.render();
 		});
 	}
-	removePlotReference(id) {
-		if (this.dialog.displayIdList.includes(id)) {
-			this.dialog.removeIdToDisplay(id);
+	removePlotReference(removeId) {
+		let result = removeDisplayId(this.id, removeId);
+		if (result) {
 			this.render();
 		}
 	}
 	fetchData() {
-		this.fetchedIds = this.dialog.getIdsToDisplay();
-		this.fetchedIds.map(id => {
-			if (findID(id) === null) {
-				this.dialog.removeIdToDisplay(id);
-			}
-		});
-		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds = getDisplayIds(this.id);
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -2702,11 +2696,12 @@ class TimePlotVisual extends PlotVisual {
 	render() {
 		this.fetchData();
 
-		// Remove deleted primitves 
-		let idsToDisplay = this.dialog.getIdsToDisplay();
-		let sides = this.dialog.getSidesToDisplay();
-		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
-		this.primitive.setAttribute("Sides", sides.join(","));
+		let idsToDisplay = getDisplayIds(this.id);
+		console.log(idsToDisplay);
+
+		// double axis // let sides = this.dialog.getSidesToDisplay();
+		// double axis // this.primitive.setAttribute("Sides", sides.join(","));
+
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
@@ -2758,13 +2753,13 @@ class TimePlotVisual extends PlotVisual {
 			let label = "";
 			label += hasNumberedLines ? `${counter}. ` : "";
 			label += this.namesToDisplay[i];
-			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
+			// double axis // label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
 					lineWidth: this.widthsToDisplay[i],
 					label: label, 
-					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
+					yaxis: "yaxis", // Removed double axis functionallity while adding components //(sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.patternsToDisplay[i], 
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
@@ -7336,7 +7331,158 @@ class CheckboxTableComponent extends HtmlComponent {
 	}
 }
 
-class TimePlotSelectorComponent extends HtmlComponent { render() 	{ return "TimePlotSelector Here!"} }
+class PrimitiveSelectorComponent extends HtmlComponent { 
+	constructor(parent, displayLimit) {
+		super(parent);
+		this.displayIds = [];
+		this.displayLimit = displayLimit;
+	}
+	updateIncludedList() { 
+		let htmlContent = "No primitives selected";
+		if (this.displayIds.length > 0) {
+			htmlContent = (`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+				</tr>
+				${this.displayIds.map(id => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+							</td>
+					</tr>
+				`).join("")}
+			</table>`);	
+		}
+		this.find(".included-list-div").html(htmlContent);
+		this.find(".primitive-remove-button").click(event => {
+			let removeId = $(event.target).attr("data-id");
+			let removeIndex = this.displayIds.indexOf(removeId);
+			if (removeIndex !== -1) {
+				console.log("Removing "+removeId);
+				this.displayIds.splice(removeIndex, 1);
+			}
+			this.updateIncludedList();
+			this.updateExcludedList();
+		});
+	}
+	updateExcludedList() {
+		// updateNotSelected
+		let searchWord = this.find(".primitive-filter-input").val();
+
+		let searchLowercase = searchWord.toLowerCase();
+		let results = this.getSearchPrimitiveResults(searchLowercase);
+		let get_highlight_match = (name, match) => {
+			let index = name.toLowerCase().indexOf(match.toLowerCase());
+			if (index === -1) {
+				return name;
+			} else {
+				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
+			}
+		}
+		let htmlContent = "";
+		if (results.length > 0) {
+			let limitReached = this.displayLimit && this.displayIds.length >= this.displayLimit;
+			htmlContent = (`<table class="modern-table"> 
+				${results.map(p => `
+					<tr>
+						<td style="padding: 0;">
+							<button class="primitive-add-button" data-id="${getID(p)}" 
+								${limitReached ? "disabled" : ""} 
+								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
+								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+								+
+							</button>
+						</td>
+						<td style="width: 100%;">
+						<div class="center-vertically-container">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
+							${get_highlight_match(getName(p), searchWord)}
+						</div>
+						</td>
+					</tr>
+				`).join("")}
+			</table>`);
+		} else if (searchLowercase === "") {
+			htmlContent = (`<div>No more primitives to add.</div>`);
+		} else {
+			htmlContent = (noteHtml(`No primitive matches search: <br/><b>${searchWord}</b>`));
+		}
+		this.find(".excluded-list-div").html(htmlContent);
+		this.find(".primitive-add-button").click((event) => {
+			let addId = $(event.target).attr("data-id");
+			this.displayIds.push(addId);
+			this.updateIncludedList();
+			this.find(".primitive-filter-input").val("");
+			this.updateExcludedList();
+		});
+	}
+	render() {
+		this.displayIds = getDisplayIds(getID(this.primitive));
+
+		return (`
+			<div class="included-list-div" style="border: 1px solid black;"></div>
+			<div class="vertical-space"></div>
+			<div class="center-vertically-container">
+				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
+				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+			</div>
+			<div class="excluded-list-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
+		`);
+	}
+	bindEvents() {
+		this.find(".primitive-filter-input").keyup(() => {
+			this.updateExcludedList();
+		});
+		this.updateIncludedList();
+		this.updateExcludedList();
+	}
+	getSearchPrimitiveResults(searchLowercase) {
+		let prims = this.parent.getAcceptedPrimitiveList();
+		let results = [];
+
+		let compareByTypeAndName = (a,b) => { // sort by type and by alphabetical 
+			let orderDiff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
+			if (orderDiff !== 0) {
+				return orderDiff;
+			} else { // else sort alphabetically
+				return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
+			}
+		}
+
+		let compareBySearchWord = (a,b) => { // sort by what search word appears first 
+			let charMatch = getName(a).toLowerCase().indexOf(searchLowercase) - getName(b).toLowerCase().indexOf(searchLowercase);
+			if (charMatch !== 0) { 
+				return charMatch;
+			} else { // else sort alphabetically 
+				return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
+			}
+		}
+
+		let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
+		results = prims.filter(p => // filter already added primitives 
+			this.displayIds.includes(getID(p)) === false 
+		).filter(p => // filter search
+			getName(p).toLowerCase().includes(searchLowercase)
+		).sort(searchLowercase === "" ? compareByTypeAndName : compareBySearchWord);
+
+		return results;
+	}
+	applyChange() {
+		setDisplayIds(getID(this.primitive), this.displayIds);
+	}
+}
 
 
 class LineOptionsComponent extends HtmlComponent { 
@@ -8007,7 +8153,7 @@ class TimePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
-		this.components.left = [ new TimePlotSelectorComponent(this) ];
+		this.components.left = [ new PrimitiveSelectorComponent(this) ];
 		this.components.right = [
 			new PlotPeriodComponent(this),
 			new AxisLimitsComponent(this, [
@@ -8040,59 +8186,6 @@ class TimePlotDialog extends DisplayDialog {
 			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
-
-		// For keeping track of what y-axis graph should be ploted ("L" or "R")
-		this.sides = [];
-	}
-	
-	getDisplayId(id, side) {
-		id = id.toString();
-		let index = this.displayIdList.indexOf(id)
-		return (index != -1 && this.sides[index] === side);
-	}
-	
-	removeIdToDisplay(id) {
-		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-			this.sides.splice(idxToRemove, 1);
-		}
-	}
-
-	addIdToDisplay(id, side) {
-		let index = this.displayIdList.indexOf(id)
-		if (index === -1) {
-			this.displayIdList.push(id)
-			this.sides.push(side) 
-		} else {
-			this.sides[index] = side 
-		}
-	}
-
-	setIdsToDisplay(idList, sides) {
-		this.displayIdList = [];
-		this.sides = [];
-		if (sides === undefined || sides.length !== idList.length) {
-			for(let i in idList) {
-				if (this.acceptsId(idList[i])) {
-					this.displayIdList.push(idList[i]);
-					this.sides.push("L");
-				}
-			}
-		} else {
-			for(let i in idList) {
-				if (this.acceptsId(idList[i])) {
-					this.displayIdList.push(idList[i]);
-					this.sides.push(sides[i]);
-				}
-			}
-		}
-	}
-	getIdsToDisplay() {
-		return this.displayIdList;
-	}
-	getSidesToDisplay() {
-		return this.sides;
 	}
 	
 	primitiveAddButton(id) {
