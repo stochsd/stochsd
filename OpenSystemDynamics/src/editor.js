@@ -2855,7 +2855,7 @@ class TimePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = getDisplayIds(this.id);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -4862,7 +4862,7 @@ class TimePlotTool extends TwoPointerTool {
 	static leftMouseDown(x, y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x, y);
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
