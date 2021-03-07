@@ -4272,7 +4272,7 @@ class NumberboxTool extends OnePointCreateTool {
 		
 		let selected_object = get_object(selected_ids[0]);
 		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not watchable");
+			xAlert("This primitive can not have a Number Box");
 			ToolBox.setTool("mouse");
 			return;
 		}
