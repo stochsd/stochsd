@@ -8166,9 +8166,9 @@ class TimePlotDialog extends DisplayDialog {
 			]),
 			new LineOptionsComponent(this),
 			new CheckboxTableComponent(this, [
-				{ text: "Numbered Lines", 					attribute: "HasNumberedLines" },
-				{ text: "Colour from Primitive", 			attribute: "ColorFromPrimitive" },
-				{ text: "Show Data when hovering", attribute: "ShowHighlighter" },
+				{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
+				{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
+				{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
 			])
 		];
 	}
