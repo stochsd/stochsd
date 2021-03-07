@@ -3126,7 +3126,7 @@ class ComparePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = getDisplayIds(this.id);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -4882,7 +4882,7 @@ class ComparePlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -8258,15 +8258,42 @@ class TimePlotDialog extends DisplayDialog {
 		this.components.left.forEach(comp => comp.bindEvents());
 		this.components.right.forEach(comp => comp.bindEvents());
 		this.bindEnterApplyEvents();
-		
 	}
 }
+
+class KeepResultsComponent extends HtmlComponent {
+	render() {
+		return `Keep Results/Clear Results ...`;
+	}
+}
+
 
 class ComparePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
+		this.components.left = [ new PrimitiveSelectorComponent(this) ];
+		this.components.right = [
+			new KeepResultsComponent(this),
+			new PlotPeriodComponent(this),
+			new AxisLimitsComponent(this, [
+				{text: "Time",  key: "timeaxis", isTimeAxis: true },
+				{text: "Y-Axis",  key: "yaxis" }
+			]),
+			new LabelTableComponent(this, [
+				{text: "Title", 		attribute: "TitleLabel"}, 
+				{text: "Y-Axis Label",  attribute: "LeftAxisLabel"}
+			]),
+			new LineOptionsComponent(this),
+			new CheckboxTableComponent(this, [
+				{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
+				{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
+				{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
+			])
+		];
+
+
 		// set default plotPer
 		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		if (autoPlotPer) {
@@ -8315,115 +8342,6 @@ class ComparePlotDialog extends DisplayDialog {
 			</table>
 		`);
 	}
-	renderAxisLabelsHtml() {
-		let titleLabel = this.primitive.getAttribute("TitleLabel");
-		let leftAxisLabel = this.primitive.getAttribute("LeftAxisLabel");
-		return (`
-			<table class="modern-table">
-				<tr>
-					<th>Title:</th>
-					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${titleLabel}">
-					</td>
-				</tr>
-				<tr>
-					<th>Y-axis Label:</th>
-					<td style="padding:1px;">
-						<input style="width: 160px; text-align: left;" class="left-yaxis-label enter-apply" spellcheck="false" type="text" value="${leftAxisLabel}">
-					</td>
-				</tr>
-			</table>
-		`);
-	}
-	renderAxisLimitsHTML() {
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		let min_time = axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min;
-		let max_time = axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max;
-		return (`
-		<table class="modern-table">
-			<tr>
-				<th>Axis</th>
-				<th>Min</th>
-				<th>Max</th>
-				<th>Auto</th>
-				<!--<th>Log</th>-->
-				<!--Remove log option because it is not stable if values > 0 included-->
-				<!--Can cause the program to close-->
-			</tr>
-			<tr>
-				<td style="text-align:center; padding:0px 6px">Time</td>
-				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${min_time}">
-				</td>
-				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.timeaxis.auto ? "disabled" : ""} value="${max_time}">
-				</td>
-				<td>
-					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.timeaxis.auto)}>
-				</td>
-				<!--<td></td>-->
-			</tr>
-			<tr>
-				<td style="text-align:center; padding:0px 6px">Y-Axis</td>
-				<td style="padding:1px;">
-					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
-				</td>
-				<td style="padding:1px;">
-					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
-				</td>
-				<td>
-					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
-				</td>
-				<!--<td>
-					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>-->
-			</tr>
-		</table>
-		<div class="axis-limits-warning-div warning"></div>
-		`);
-	}
-	bindAxisLimitsEvents() {
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
-			let xaxis_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
-			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
-			$(this.dialogContent).find(".xaxis-min-field").val(xaxis_auto ? getTimeStart() : axis_limits.timeaxis.min);
-			$(this.dialogContent).find(".xaxis-max-field").val(xaxis_auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max);
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
-			let yaxis_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
-			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
-			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
-			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(() => {
-			this.checkValidAxisLimits();
-		});
-	}
-	checkValidAxisLimits() {
-		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
-		let time_min = $(this.dialogContent).find(".xaxis-min-field").val();
-		let time_max = $(this.dialogContent).find(".xaxis-max-field").val();
-		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
-		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
-		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
-		if (isNaN(time_min) || isNaN(time_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html(warningHtml(`Axis limits must be decimal numbers`, true));
-			return false;
-		} else if (y_log) {
-			warning_div.html(noteHtml(`log(y) requires that all y-values &gt; 0`));
-			return true;
-		}
-		warning_div.html("");
-		return true;
-	}
 	applyAxisLimits() {
 		if (this.checkValidAxisLimits()) {
 			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8443,17 +8361,19 @@ class ComparePlotDialog extends DisplayDialog {
 		});
 	}
 	makeApply() {
+		/*
 		this.applyLineOptions();
 		this.applyAxisLimits();
-
 		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
-
 		this.keep =  $(this.dialogContent).find(".keep_checkbox").prop("checked");
+		*/
+		this.components.left.forEach(comp => comp.applyChange());
+		this.components.right.forEach(comp => comp.applyChange());
 	}
 	beforeShow() {
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
-		let contentHTML = `
+		/*let contentHTML = `
 			<div class="table">
 				<div class="table-row">
 					<div class="table-cell">
@@ -8485,7 +8405,22 @@ class ComparePlotDialog extends DisplayDialog {
 		this.checkValidAxisLimits();
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
-		this.bindPlotPerEvents();
+		this.bindPlotPerEvents();*/
+
+		this.setHtml(`<div class="table">
+			<div class="table-row">
+				<div class="table-cell">
+					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+				<div class="table-cell">
+					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+			</div>
+		</div>`)
+		
+		this.components.left.forEach(comp => comp.bindEvents());
+		this.components.right.forEach(comp => comp.bindEvents());
+		this.bindEnterApplyEvents();
 	}
 }
 
