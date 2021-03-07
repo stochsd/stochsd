@@ -7014,6 +7014,14 @@ class jqDialog {
 
 	setHelpButtonInfo(helpId, title, contentHTML) {
 		$(this.dialogContent).find(`#${helpId}`).unbind();
+		$(this.dialogContent).find(`.enter-apply#${helpId}`).keydown(event => {
+			if (! event.shiftKey) {
+				if (event.keyCode === keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
+			}
+		});
 		$(this.dialogContent).find(`#${helpId}`).click(event => {
 			let dialog = new XAlertDialog(contentHTML);
 			$(dialog.dialogContent).find(".accordion").accordion({
