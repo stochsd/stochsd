@@ -7348,7 +7348,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -7365,6 +7365,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			</table>`);	
 		}
 		this.find(".included-list-div").html(htmlContent);
+		this.parent.bindEnterApplyEvents();
 		this.find(".primitive-remove-button").click(event => {
 			let removeId = $(event.target).attr("data-id");
 			let removeIndex = this.displayIds.indexOf(removeId);
@@ -7376,7 +7377,6 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		});
 	}
 	updateExcludedList() {
-		// updateNotSelected
 		let searchWord = this.find(".primitive-filter-input").val();
 
 		let searchLowercase = searchWord.toLowerCase();
@@ -7396,7 +7396,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 				${results.map(p => `
 					<tr>
 						<td style="padding: 0;">
-							<button class="primitive-add-button" data-id="${getID(p)}" 
+							<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 								${limitReached ? "disabled" : ""} 
 								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
 								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
@@ -7418,6 +7418,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			htmlContent = (noteHtml(`No primitive matches search: <br/><b>${searchWord}</b>`));
 		}
 		this.find(".excluded-list-div").html(htmlContent);
+		this.parent.bindEnterApplyEvents();
 		this.find(".primitive-add-button").click((event) => {
 			let addId = $(event.target).attr("data-id");
 			this.displayIds.push(addId);
@@ -7434,7 +7435,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
 			</div>
 			<div class="excluded-list-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
