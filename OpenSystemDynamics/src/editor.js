@@ -2697,7 +2697,6 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchData();
 
 		let idsToDisplay = getDisplayIds(this.id);
-		console.log(idsToDisplay);
 
 		// double axis // let sides = this.dialog.getSidesToDisplay();
 		// double axis // this.primitive.setAttribute("Sides", sides.join(","));
@@ -7370,7 +7369,6 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			let removeId = $(event.target).attr("data-id");
 			let removeIndex = this.displayIds.indexOf(removeId);
 			if (removeIndex !== -1) {
-				console.log("Removing "+removeId);
 				this.displayIds.splice(removeIndex, 1);
 			}
 			this.updateIncludedList();
