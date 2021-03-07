@@ -337,3 +337,57 @@ function replaceDiagamsWithTimePlots() {
 function isValidToolName(newName) {
 	return /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
 }
+
+
+/**
+ * 	Method: setIdsToDisplay
+ * 	@param {string} plotId ID of plot to set 
+ * 	@param {[string]} idList lists of IDs To add
+ */
+ function setDisplayIds(plotId, idList) {
+	findID(plotId).setAttribute("Primitives", idList.join(","));
+}
+
+/**
+ 	Method: getIdsToDisplay
+	Gets all ids to display for a given plot
+	@param {string} plotId ID of plot to get 
+	@returns {[string]} primitive's id to display for Plots/Table
+ */
+function getDisplayIds(plotId) {
+	let ids = findID(plotId).getAttribute("Primitives").split(",");
+	// Clear ids that have no primitive 
+	ids.filter(id => findID(id) !== null);
+	setDisplayIds(plotId, ids);
+	return ids;
+}
+
+/**
+ 	Method: removeIdToDisplay
+	Removes id to Diaplay for Plots/Table
+	@param {string} plotId ID of plot to change
+	@param {string} removeId plot to edit
+	@returns {boolean} if ID was successfuly removed 
+ */
+function removeDisplayId(plotId, removeId) {
+	let ids = getDisplayIds(plotId);
+	let removeIndex = ids.indexOf(removeId);
+	if (removeIndex !== -1) {
+		ids.splice(removeIndex, 1);
+	}
+	setDisplayIds(plotId, ids);
+	return removeIndex !== -1;
+}
+
+/**
+ 	Method: addIdToDisplay
+	Removes id to Diaplay for Plots/Table
+	@param {string} plotId ID of plot to change
+ */
+function addDisplayId(plotId, newId) {
+	let ids = getIdsToDisplay(plotId);
+	if (! ids.includes(newId)) {
+		ids.push(newId);
+		setDisplayIds(plotId, ids);
+	}
+}
