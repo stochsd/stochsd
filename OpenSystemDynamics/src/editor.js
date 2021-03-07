@@ -1442,6 +1442,9 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
 
+		// update color in case hide frame changes 
+		this.setColor(this.color);
+
 	}
 	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
