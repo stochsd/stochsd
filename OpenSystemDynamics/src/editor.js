@@ -8171,19 +8171,6 @@ class TimePlotDialog extends DisplayDialog {
 				{ text: "Show Data Point Tooltip on Hover", attribute: "ShowHighlighter" },
 			])
 		];
-
-		// set default plotPer
-		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		if (autoPlotPer) {
-			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
-		}
-
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		if (axis_limits.timeaxis.auto) {
-			axis_limits.timeaxis.min = getTimeStart();
-			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
-			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
-		}
 	}
 	
 	primitiveAddButton(id) {
@@ -8254,20 +8241,8 @@ class TimePlotDialog extends DisplayDialog {
 	makeApply() {
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
-
-
-		/*super.makeApply();
-
-		this.applyLineOptions();
-		this.applyPlotPer();
-
-		this.primitive.setAttribute("LeftLogScale", $(this.dialogContent).find(".left-log-checkbox").prop("checked"));
-		this.primitive.setAttribute("RightLogScale", $(this.dialogContent).find(".right-log-checkbox").prop("checked"));*/
 	}
 	beforeShow() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-
 		this.setHtml(`<div class="table">
 			<div class="table-row">
 				<div class="table-cell">
@@ -8282,12 +8257,7 @@ class TimePlotDialog extends DisplayDialog {
 		this.components.left.forEach(comp => comp.bindEvents());
 		this.components.right.forEach(comp => comp.bindEvents());
 		this.bindEnterApplyEvents();
-
-
-		// this.bindPrimitiveListEvents();
-		// this.bindPlotPerEvents();
 		
-		// this.checkValidAxisLimits();
 	}
 }
 
