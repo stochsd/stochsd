@@ -3249,7 +3249,7 @@ class HistoPlotVisual extends PlotVisual {
 		} else {
 			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
 		}
-		if (this.primitive.getAttribute("NumberOfBarsAuto" === "true")) {
+		if (this.primitive.getAttribute("NumberOfBarsAuto") === "true") {
 			histogram.numBars = Number(getDefaultAttributeValue("histoplot", "NumberOfBars"));
 			this.primitive.setAttribute("NumberOfBars", histogram.numBars);
 		} else {
@@ -8331,12 +8331,68 @@ class ComparePlotDialog extends DisplayDialog {
 	}
 }
 
+class HistogramOptionsComponent extends HtmlComponent {
+	constructor(parent) {
+		super(parent);
+		this.tableData = {
+			headers: ["", "Value", "Auto"],
+			rows: [
+				{label: "Upper Bound",	classPrefix: "upper-bound",	attribute: "UpperBound"},
+				{label: "Lower Bound",	classPrefix: "lower-bound",	attribute: "LowerBound"},
+				{label: "No. Bars",		classPrefix: "num-bars",	attribute: "NumberOfBars"}
+			]
+		};
+	}
+	render() {
+		return(`<table class="modern-table">
+			<tr>	
+				${this.tableData.headers.map(header => `<th>${header}</th>`).join("")}
+			</tr>
+			${this.tableData.rows.map(row => {
+				let value = this.primitive.getAttribute(row.attribute);
+				let auto = this.primitive.getAttribute(`${row.attribute}Auto`) === "true";
+				return (`<tr>
+				<td><b>${row.label}:</b></td>
+				<td><input class="${row.classPrefix}-field enter-apply" type="text" value=${value} ${auto ? "disabled" : ""} /></td>
+				<td><input class="${row.classPrefix}-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(auto)} /></td>
+			</tr>`)}).join("")}
+			<tr>
+				<td><b>Type:</b></td>
+				<td colspan="2">Histogram/PDF</td>
+			</tr>
+		</table>`);
+	}
+	bindEvents() {
+		this.tableData.rows.forEach(row => {
+			let valueField = this.find(`.${row.classPrefix}-field`);
+			let checkbox = this.find(`.${row.classPrefix}-auto-checkbox`);
+			
+			checkbox.click(event => {
+				let auto = $(event.currentTarget).prop("checked");
+				valueField.prop("disabled", auto);
+			});
+		});
+	}
+	applyChange() {
+		this.tableData.rows.forEach(row => {
+			let value = this.find(`.${row.classPrefix}-field`).val();
+			let auto = this.find(`.${row.classPrefix}-auto-checkbox`).prop("checked");
+			this.primitive.setAttribute(`${row.attribute}Auto`, auto);
+			if ( ! auto && ! isNaN(value) ) {
+				this.primitive.setAttribute(row.attribute, value);
+			}
+		});
+	}
+}
 
 class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Histogram Plot Properties");
 		this.displayLimit = 1;
+
+		this.components.left = [ new PrimitiveSelectorComponent(this, 1) ];
+		this.components.right = [ new HistogramOptionsComponent(this) ];
 	}
 	renderHistogramOptionsHtml() {
 		return(`
@@ -8399,7 +8455,7 @@ class HistoPlotDialog extends DisplayDialog {
 		`);
 	}
 	beforeShow() {
-		this.setHtml(`
+		/*this.setHtml(`
 			<div class="table">
 				<div class="table-row">
 					<div class="table-cell">
@@ -8416,9 +8472,24 @@ class HistoPlotDialog extends DisplayDialog {
 
 		this.bindEnterApplyEvents();
 		this.bindPrimitiveListEvents();
-		this.histogramOptionsBeforeShow();
+		this.histogramOptionsBeforeShow();*/
+		this.setHtml(`<div class="table">
+			<div class="table-row">
+				<div class="table-cell">
+					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+				<div class="table-cell">
+					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+			</div>
+		</div>`)
+		
+		this.components.left.forEach(comp => comp.bindEvents());
+		this.components.right.forEach(comp => comp.bindEvents());
+		this.bindEnterApplyEvents();
 	}
 	makeApply() {
+		/*
 		super.makeApply();
 		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
 		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scale-type :selected").val());
@@ -8443,7 +8514,9 @@ class HistoPlotDialog extends DisplayDialog {
 		
 		if ( ! numBarsAuto && ! isNaN(numBars) && numBars > 0) {
 			this.primitive.setAttribute("NumberOfBars", numBars);
-		}
+		}*/
+		this.components.left.forEach(comp => comp.applyChange());
+		this.components.right.forEach(comp => comp.applyChange());
 	}
 }
 
