@@ -3470,14 +3470,14 @@ class XyPlotVisual extends PlotVisual {
 			this.render();
 		});
 	}
-	removePlotReference(id) {
-		if (this.dialog.displayIdList.includes(id)) {
-			this.dialog.removeIdToDisplay(id);
+	removePlotReference(removeId) {
+		let result = removeDisplayId(this.id, removeId);
+		if (result) {
 			this.render();
 		}
 	}
 	render() {		
-		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		let IdsToDisplay = getDisplayIds(this.id);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -3590,7 +3590,7 @@ class XyPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (this.dialog.getIdsToDisplay().length != 2) {
+		if (getDisplayIds(this.id).length != 2) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -4896,7 +4896,7 @@ class XyPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
