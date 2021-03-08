@@ -8458,6 +8458,33 @@ class XyPlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("XY Plot Properties");
 
+		this.components.left = [ new PrimitiveSelectorComponent(this, 2) ];
+		this.components.right = [ 
+			new PlotPeriodComponent(this),
+			new AxisLimitsComponent(this, [
+				{text: "X-Axis", key: "xaxis" },
+				{text: "Y-Axis", key: "yaxis" }
+			]),
+			new CheckboxTableComponent(this, [
+				{ text: "Show Line", 		attribute: "ShowLine" },
+				{ text: "Show Markers", 	attribute: "ShowMarker" },
+				{ text: "Mark Start (🔴)", 	attribute: "MarkStart" },
+				{ text: "Mark End (🟩)", 	attribute: "MarkEnd" },
+				{ text: "Show Data when hovering", attribute: "ShowHighlighter" }
+			]),
+			new LabelTableComponent(this, [{ text: "Title", attribute: "TitleLabel" }]),
+			new RadioCompontent(this, {
+				header: "Line Width", 
+				name: "line-width", 
+				attribute: "LineWidth", 
+				options: [
+					{ value: "1", label: "Thin" },
+					{ value: "2", label: "Thick" }
+				]
+			})
+		];
+
+
 		// set default plotPer
 		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		if (autoPlotPer) {
@@ -8655,6 +8682,7 @@ class XyPlotDialog extends DisplayDialog {
 	}
 
 	beforeShow() {
+		/*
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let contentHTML = `
@@ -8686,7 +8714,21 @@ class XyPlotDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindAxisLimitsEvents();
 		this.bindPlotPerEvents();
-		this.bindMarkersHTML();
+		this.bindMarkersHTML();*/
+		this.setHtml(`<div class="table">
+			<div class="table-row">
+				<div class="table-cell">
+					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+				<div class="table-cell">
+					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+			</div>
+		</div>`)
+		
+		this.components.left.forEach(comp => comp.bindEvents());
+		this.components.right.forEach(comp => comp.bindEvents());
+		this.bindEnterApplyEvents();
 	}
 
 	bindMarkersHTML() {
@@ -8702,9 +8744,13 @@ class XyPlotDialog extends DisplayDialog {
 		$(this.dialogContent).find(".mark-end").change((event) => {
 			this.primitive.setAttribute("MarkEnd", event.target.checked);
 		});
+
 	}
 
 	makeApply() {
+		this.components.left.forEach(comp => comp.applyChange());
+		this.components.right.forEach(comp => comp.applyChange());
+		/*
 		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
 		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
@@ -8712,6 +8758,7 @@ class XyPlotDialog extends DisplayDialog {
 		this.applyAxisLimits();
 		this.applyPlotPer();
 		this.applyShowHighlighter();
+		*/
 	}
 }
 
