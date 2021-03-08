@@ -3005,7 +3005,7 @@ class ComparePlotVisual extends PlotVisual {
 			this.render();
 		});
 	}
-	removePlotReference(id) {
+	removePlotReference(removeId) {
 		let result = removeDisplayId(this.id, removeId);
 		if (result) {
 			this.render();
@@ -3283,7 +3283,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 
 	render() {
-		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = getDisplayIds(this.id);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		if (idsToDisplay.length !== 1) {
 			this.setEmptyPlot();
@@ -3359,7 +3359,7 @@ class HistoPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (this.dialog.getIdsToDisplay().length !== 1) {
+		if (getDisplayIds(this.id).length !== 1) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -3367,7 +3367,7 @@ class HistoPlotVisual extends PlotVisual {
 
 		
 		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `${getName(findID(this.dialog.getIdsToDisplay()[0]))}`;
+		let targetPrimName = `${getName(findID(getDisplayIds(this.id)[0]))}`;
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
@@ -3428,7 +3428,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = getDisplayIds(this.id);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -4918,7 +4918,7 @@ class HistoPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -8431,85 +8431,7 @@ class HistoPlotDialog extends DisplayDialog {
 			})
 		];
 	}
-	renderHistogramOptionsHtml() {
-		return(`
-			<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Value</th>
-					<th>Auto</th>
-				</tr>
-				<tr>
-					<td>Upper Bound</td>
-					<td><input class="upper-bound-field enter-apply" type="text"/></td>
-					<td><input class="upper-bound-auto-checkbox enter-apply" type="checkbox" ></td>
-				</tr>
-				<tr>
-					<td>Lower Bound</td>
-					<td><input class="lower-bound-field enter-apply" type="text"/></td>
-					<td><input class="lower-bound-auto-checkbox enter-apply" type="checkbox"></td>
-				</tr>
-				<tr>
-					<td>No. Bars</td>
-					<td><input class="num-bars-field enter-apply" type="text"/></td>
-					<td><input class="num-bars-auto-checkbox enter-apply" type="checkbox"></td>
-				</tr>
-			</table>
-		`);
-	}
-	histogramOptionsBeforeShow() {
-
-		let bindAndSetValue = (checkboxTag, fieldTag, attributeName) => {
-			// set values at start 
-			$(this.dialogContent).find(fieldTag).prop("value", this.primitive.getAttribute(attributeName));
-			let auto = (this.primitive.getAttribute(`${attributeName}Auto`) === "true");
-			$(this.dialogContent).find(checkboxTag).prop("checked", auto);
-			$(this.dialogContent).find(fieldTag).prop("disabled", auto);
-			
-			// bind checkbox click
-			$(this.dialogContent).find(checkboxTag).click((event) => {
-				$(this.dialogContent).find(fieldTag).prop("disabled", $(event.target).prop("checked"));
-			});
-		}
-
-		bindAndSetValue(".upper-bound-auto-checkbox", ".upper-bound-field", "UpperBound");
-		bindAndSetValue(".lower-bound-auto-checkbox", ".lower-bound-field", "LowerBound");
-		bindAndSetValue(".num-bars-auto-checkbox", ".num-bars-field", "NumberOfBars");
-	}
-	renderHistOrPDFHtml() {
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-					<b>Type:</b>
-						<select class="scale-type enter-apply">
-							<option ${this.primitive.getAttribute("ScaleType") === "Histogram" ? "selected": ""} value="Histogram" >Histogram</option>
-							<option ${this.primitive.getAttribute("ScaleType") === "PDF" ? "selected": ""} value="PDF" >P.D.F</option>
-						</select>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
 	beforeShow() {
-		/*this.setHtml(`
-			<div class="table">
-				<div class="table-row">
-					<div class="table-cell">
-						${this.renderPrimitiveListHtml()}
-					</div>
-					<div class="table-cell">
-						${this.renderHistogramOptionsHtml()}
-						<div class="vertical-space"></div>
-						${this.renderHistOrPDFHtml()}
-					</div>
-				</div>
-			</div>`
-		);
-
-		this.bindEnterApplyEvents();
-		this.bindPrimitiveListEvents();
-		this.histogramOptionsBeforeShow();*/
 		this.setHtml(`<div class="table">
 			<div class="table-row">
 				<div class="table-cell">
@@ -8526,32 +8448,6 @@ class HistoPlotDialog extends DisplayDialog {
 		this.bindEnterApplyEvents();
 	}
 	makeApply() {
-		/*
-		super.makeApply();
-		this.primitive.setAttribute("Primitives", this.getIdsToDisplay().join(","));
-		this.primitive.setAttribute("ScaleType", $(this.dialogContent).find(".scale-type :selected").val());
-		let upperBoundAuto = $(this.dialogContent).find(".upper-bound-auto-checkbox").prop("checked");
-		let lowerBoundAuto = $(this.dialogContent).find(".lower-bound-auto-checkbox").prop("checked");
-		let numBarsAuto = $(this.dialogContent).find(".num-bars-auto-checkbox").prop("checked");
-		let upperBound = $(this.dialogContent).find(".upper-bound-field").val();
-		let lowerBound = $(this.dialogContent).find(".lower-bound-field").val();
-		let numBars = $(this.dialogContent).find(".num-bars-field").val();
-		
-		this.primitive.setAttribute("UpperBoundAuto", upperBoundAuto);
-		this.primitive.setAttribute("LowerBoundAuto", lowerBoundAuto);
-		this.primitive.setAttribute("NumberOfBarsAuto", numBarsAuto);
-
-		if ( ! upperBoundAuto && ! isNaN(upperBound) && ! isNaN(lowerBound) && Number(lowerBound) < Number(upperBound) ) {
-			this.primitive.setAttribute("UpperBound", upperBound);
-		}
-
-		if ( ! lowerBoundAuto && ! isNaN(lowerBound) && ! isNaN(upperBound) && Number(lowerBound) < Number(upperBound) ) {
-			this.primitive.setAttribute("LowerBound", lowerBound);
-		}
-		
-		if ( ! numBarsAuto && ! isNaN(numBars) && numBars > 0) {
-			this.primitive.setAttribute("NumberOfBars", numBars);
-		}*/
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
 	}
