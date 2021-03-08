@@ -8483,161 +8483,6 @@ class XyPlotDialog extends DisplayDialog {
 				]
 			})
 		];
-
-
-		// set default plotPer
-		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		if (autoPlotPer) {
-			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
-		}
-		this.displayLimit = 2;
-	}
-	renderAxisLimitsHTML() {
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		return (`
-		<table class="modern-table">
-			<tr>
-				<th></th>
-				<th>Min</th>
-				<th>Max</th>
-				<th>Auto</th>
-				<!--<th>Log</th>-->
-				<!--Remove log option because it is not stable if values > 0 included-->
-				<!--Can cause the program to close-->
-			</tr>
-			<tr>
-				<td>X-axis</td>
-				<td style="padding:1px;">
-					<input class="xaxis-min-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.min}">
-				</td>
-				<td style="padding:1px;">
-					<input class="xaxis-max-field limit-input enter-apply" type="text" ${axis_limits.xaxis.auto ? "disabled" : ""} value="${axis_limits.xaxis.max}">
-				</td>
-				<td>
-					<input class="xaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.xaxis.auto)}>
-				</td>
-				<!--<td>
-					<input class="xaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("XLogScale") === "true")}>
-				</td>-->
-			</tr>
-			<tr>
-				<td>Y-axis</td>
-				<td style="padding:1px;">
-					<input class="yaxis-min-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.min}">
-				</td>
-				<td style="padding:1px;">
-					<input class="yaxis-max-field limit-input enter-apply" type="text" ${axis_limits.yaxis.auto ? "disabled" : ""} value="${axis_limits.yaxis.max}">
-				</td>
-				<td>
-					<input class="yaxis-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(axis_limits.yaxis.auto)}>
-				</td>
-				<!--<td>
-					<input class="yaxis-log-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute("YLogScale") === "true")}>
-				</td>-->
-			</tr>
-		</table>
-		<div class="axis-limits-warning-div warning"></div>
-		`);
-	}
-	bindAxisLimitsEvents() {
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		$(this.dialogContent).find(".xaxis-auto-checkbox").change(event => {
-			let xaxis_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".xaxis-min-field").prop("disabled", xaxis_auto);
-			$(this.dialogContent).find(".xaxis-max-field").prop("disabled", xaxis_auto);
-			$(this.dialogContent).find(".xaxis-min-field").val(axis_limits.xaxis.min);
-			$(this.dialogContent).find(".xaxis-max-field").val(axis_limits.xaxis.max);
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find(".yaxis-auto-checkbox").change(event => {
-			let yaxis_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".yaxis-min-field").prop("disabled", yaxis_auto);
-			$(this.dialogContent).find(".yaxis-max-field").prop("disabled", yaxis_auto);
-			$(this.dialogContent).find(".yaxis-min-field").val(axis_limits.yaxis.min);
-			$(this.dialogContent).find(".yaxis-max-field").val(axis_limits.yaxis.max);
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find(".xaxis-log-checkbox").change(() => {
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find(".yaxis-log-checkbox").change(() => {
-			this.checkValidAxisLimits();
-		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
-			this.checkValidAxisLimits();
-		});
-	}
-	checkValidAxisLimits() { 
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
-		let warning_div = $(this.dialogContent).find(".axis-limits-warning-div");
-		let x_min = $(this.dialogContent).find(".xaxis-min-field").val();
-		let x_max = $(this.dialogContent).find(".xaxis-max-field").val();
-		let x_log = $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked");
-		let y_min = $(this.dialogContent).find(".yaxis-min-field").val();
-		let y_max = $(this.dialogContent).find(".yaxis-max-field").val();
-		let y_log = $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked");
-		if (isNaN(x_min) || isNaN(x_max) || isNaN(y_min) || isNaN(y_max)) {
-			warning_div.html(`Axis limits must be decimal numbers${nochange_str}`);
-			return false;
-		} else if (x_log || y_log) {
-			warning_div.html(noteHtml(`
-				log(x) requires that all x-values &gt; 0 <br/>
-				log(y) requires that all y-values &gt; 0
-			`));
-			return true;
-		}
-		warning_div.html("");
-		return true;
-	}
-	applyAxisLimits() {
-		if (this.checkValidAxisLimits()) {
-			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-			axis_limits.xaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
-			axis_limits.xaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
-			axis_limits.xaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
-			axis_limits.yaxis.auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
-			axis_limits.yaxis.min = Number($(this.dialogContent).find(".yaxis-min-field").val());
-			axis_limits.yaxis.max = Number($(this.dialogContent).find(".yaxis-max-field").val());
-			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
-		}
-	}
-
-	renderMarkerHTML() {
-		return (`
-			<table class="modern-table" style="text-align: left;">
-				<tr>
-					<td style="text-align: left">Show Line</td>	
-					<td><input class="line enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowLine")))}></td>
-				</tr>
-				<tr>
-					<td style="text-align: left">Show Markers</td>
-					<td><input class="markers enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("ShowMarker")))}></td>
-				</tr>
-				<tr>
-					<td style="text-align: left">Mark Start (🔴)</td>
-					<td><input class="mark-start enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkStart")))}></td>
-				</tr>
-				<tr>
-					<td style="text-align: left" >Mark End (🟩)</td>
-					<td><input class="mark-end enter-apply" type="checkbox" ${checkedHtml(JSON.parse(this.primitive.getAttribute("MarkEnd")))}></td>
-				</tr>
-			</table>
-		`);
-	}
-
-	renderTitleHtml() {
-		let title = this.primitive.getAttribute("TitleLabel");
-		title = (title !== null ? title : "");
-		return (
-			`<table class="modern-table">
-				<tr>
-					<th>Title:</th>
-					<td style="padding:1px;">
-						<input style="width: 150px; text-align: left;" class="title-label enter-apply" spellcheck="false" type="text" value="${title}">
-					</td>
-				</tr>
-			</table>`
-		);
 	}
 
 	updateSelectedPrimitiveList() {
@@ -8682,39 +8527,6 @@ class XyPlotDialog extends DisplayDialog {
 	}
 
 	beforeShow() {
-		/*
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let contentHTML = `
-			<div class="table">
-				<div class="table-row">
-					<div class="table-cell">
-						${this.renderPrimitiveListHtml()}
-					</div>
-					<div class="table-cell">
-						${this.renderPlotPerHtml()}
-						<div class="vertical-space"></div>
-						${this.renderAxisLimitsHTML()}
-						<div class="vertical-space"></div>
-						${this.renderMarkerHTML()} 
-						<div class="vertical-space"></div>
-						${this.renderTitleHtml()}
-						<div class="vertical-space"></div>
-						${this.renderLineWidthOptionHtml()}
-						<div class="vertical-space"></div>
-						${this.renderShowHighlighterHtml()}
-					</div>
-				</div>
-			</div>
-		`;
-		this.setHtml(contentHTML);
-		
-		this.bindEnterApplyEvents();
-		this.checkValidAxisLimits();
-		this.bindPrimitiveListEvents();
-		this.bindAxisLimitsEvents();
-		this.bindPlotPerEvents();
-		this.bindMarkersHTML();*/
 		this.setHtml(`<div class="table">
 			<div class="table-row">
 				<div class="table-cell">
@@ -8731,36 +8543,12 @@ class XyPlotDialog extends DisplayDialog {
 		this.bindEnterApplyEvents();
 	}
 
-	bindMarkersHTML() {
-		$(this.dialogContent).find(".line").change((event) => {
-			this.primitive.setAttribute("ShowLine", event.target.checked);
-		});
-		$(this.dialogContent).find(".markers").change((event) => {
-			this.primitive.setAttribute("ShowMarker", event.target.checked);
-		});
-		$(this.dialogContent).find(".mark-start").change((event) => {
-			this.primitive.setAttribute("MarkStart", event.target.checked);
-		});
-		$(this.dialogContent).find(".mark-end").change((event) => {
-			this.primitive.setAttribute("MarkEnd", event.target.checked);
-		});
-
-	}
-
 	makeApply() {
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
-		/*
-		this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
-		this.primitive.setAttribute("TitleLabel", $(this.dialogContent).find(".title-label").val());
-		this.primitive.setAttribute("XLogScale", $(this.dialogContent).find(".xaxis-log-checkbox").prop("checked"));
-		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
-		this.applyAxisLimits();
-		this.applyPlotPer();
-		this.applyShowHighlighter();
-		*/
 	}
 }
+
 
 class TableData {
 	constructor() {
