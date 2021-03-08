@@ -3006,8 +3006,8 @@ class ComparePlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(id) {
-		if (this.dialog.displayIdList.includes(id)) {
-			this.dialog.removeIdToDisplay(id);
+		let result = removeDisplayId(this.id, removeId);
+		if (result) {
 			this.render();
 		}
 	}
@@ -3015,13 +3015,8 @@ class ComparePlotVisual extends PlotVisual {
 		this.gens.reset();
 	}
 	fetchData() {
-		this.fetchedIds = this.dialog.getIdsToDisplay();
-		this.fetchedIds.map(id => {
-			if (findID(id) === null) {
-				this.dialog.removeIdToDisplay(id);
-			}
-		});
-		this.fetchedIds = this.dialog.getIdsToDisplay();
+		this.fetchedIds = getDisplayIds(this.id);
+
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
 		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
@@ -3032,14 +3027,14 @@ class ComparePlotVisual extends PlotVisual {
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.primitive.getAttribute("KeepResults") === "true") {
 			// add generation 
-			this.gens.append(this.dialog.getIdsToDisplay(), results, line_options);
+			this.gens.append(getDisplayIds(this.id), results, line_options);
 		} else {
-			this.gens.setCurrent(this.dialog.getIdsToDisplay(), results, line_options);
+			this.gens.setCurrent(getDisplayIds(this.id), results, line_options);
 		}
 	}
 	render() {
 
-		let idsToDisplay = this.dialog.getIdsToDisplay();
+		let idsToDisplay = getDisplayIds(this.id);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		
 		if (this.gens.numGenerations == 0) {
@@ -8276,7 +8271,6 @@ class KeepResultsComponent extends HtmlComponent {
 		`);
 	}
 	bindEvents() {
-		console.log("binding events!");
 		this.find(".clear-button").click((event) => {
 			$(event.currentTarget).prop("disabled", true);
 			let id = getID(this.primitive);
@@ -8314,96 +8308,12 @@ class ComparePlotDialog extends DisplayDialog {
 				{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
 			])
 		];
-
-
-		// set default plotPer
-		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		if (autoPlotPer) {
-			this.primitive.setAttribute("PlotPer", this.getDefaultPlotPeriod());
-		}
-
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		if (axis_limits.timeaxis.auto) {
-			axis_limits.timeaxis.min = getTimeStart();
-			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
-			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
-		}
-	}
-
-	getDisplayId(id) {
-		id = id.toString();
-		let index = this.displayIdList.indexOf(id)
-		return (index != -1);
-	}
-
-	setIdsToDisplay(idList) {
-		this.displayIdList = [];
-		for(let i in idList) {
-			if (this.acceptsId(idList[i])) {
-				this.displayIdList.push(idList[i]);
-			}
-		}
-	}
-	getIdsToDisplay() {
-		return this.displayIdList;
-	}
-	applyAxisLimits() {
-		if (this.checkValidAxisLimits()) {
-			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-			axis_limits.timeaxis.auto = $(this.dialogContent).find(".xaxis-auto-checkbox").prop("checked");
-			axis_limits.timeaxis.min = Number($(this.dialogContent).find(".xaxis-min-field").val());
-			axis_limits.timeaxis.max = Number($(this.dialogContent).find(".xaxis-max-field").val());
-			axis_limits.yaxis.auto = $(this.dialogContent).find(".yaxis-auto-checkbox").prop("checked");
-			axis_limits.yaxis.min = Number($(this.dialogContent).find(".yaxis-min-field").val());
-			axis_limits.yaxis.max = Number($(this.dialogContent).find(".yaxis-max-field").val());
-			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
-		}
 	}
 	makeApply() {
-		/*
-		this.applyLineOptions();
-		this.applyAxisLimits();
-		*/
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
 	}
 	beforeShow() {
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		/*let contentHTML = `
-			<div class="table">
-				<div class="table-row">
-					<div class="table-cell">
-						${this.renderPrimitiveListHtml()}
-					</div>
-					<div class="table-cell">
-						${this.renderKeepHtml()}
-						<div class="vertical-space"></div>
-						${this.renderPlotPerHtml()}
-						<div class="vertical-space"></div>
-						${this.renderAxisLimitsHTML()}
-						<div class="vertical-space"></div>
-						${this.renderAxisLabelsHtml()}
-						<div class="vertical-space"></div>
-						// this.renderLineOptionsHtml()
-						<div class="vertical-space"></div>
-						${this.renderNumberedLinesCheckboxHtml()}
-						<div class="vertical-space"></div>
-						${this.renderColorCheckboxHtml()}
-						<div class="vertical-space"></div>
-						${this.renderShowHighlighterHtml()}
-					</div>
-				</div>
-			</div>
-		`;
-		this.setHtml(contentHTML);
-		
-		this.bindEnterApplyEvents();
-		this.checkValidAxisLimits();
-		this.bindPrimitiveListEvents();
-		this.bindAxisLimitsEvents();
-		this.bindPlotPerEvents();*/
-
 		this.setHtml(`<div class="table">
 			<div class="table-row">
 				<div class="table-cell">
