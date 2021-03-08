@@ -8356,10 +8356,6 @@ class HistogramOptionsComponent extends HtmlComponent {
 				<td><input class="${row.classPrefix}-field enter-apply" type="text" value=${value} ${auto ? "disabled" : ""} /></td>
 				<td><input class="${row.classPrefix}-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(auto)} /></td>
 			</tr>`)}).join("")}
-			<tr>
-				<td><b>Type:</b></td>
-				<td colspan="2">Histogram/PDF</td>
-			</tr>
 		</table>`);
 	}
 	bindEvents() {
@@ -8385,6 +8381,36 @@ class HistogramOptionsComponent extends HtmlComponent {
 	}
 }
 
+/**
+ * @param {header: string, name: string, attribute, options: [{value, label}]} data 
+ */
+ class RadioCompontent extends HtmlComponent {
+	constructor(parent, data) {
+		super(parent);
+		this.data = data;
+	}
+	render() {
+		return (`<table class="modern-table">
+			<tr><th colspan="2" >${this.data.header}</th></tr>
+			${this.data.options.map(option => {
+				let checkString = checkedHtml(this.primitive.getAttribute(this.data.attribute) === option.value);
+				return (`<tr>
+					<td>
+						<input type="radio" id="${option.value}" class="enter-apply" name="${this.data.name}" value="${option.value}" ${checkString} >
+					</td>
+					<td>
+						<label for="${option.value}" >${option.label}</label>
+					</td>
+				</tr>`);
+			}).join("")}
+		</table>`);
+	}
+	applyChange() {
+		let value = this.find(`input[name="${this.data.name}"]:checked`).val();
+		this.primitive.setAttribute(this.data.attribute, value);
+	}
+}
+
 class HistoPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
@@ -8392,7 +8418,18 @@ class HistoPlotDialog extends DisplayDialog {
 		this.displayLimit = 1;
 
 		this.components.left = [ new PrimitiveSelectorComponent(this, 1) ];
-		this.components.right = [ new HistogramOptionsComponent(this) ];
+		this.components.right = [ 
+			new HistogramOptionsComponent(this),
+			new RadioCompontent(this, {
+				header: "Select Scaling Type",
+				name: "scaling", 
+				attribute: "ScaleType",
+				options: [
+					{value: "Histogram", label: "Histogram" },
+					{value: "PDF", label: "Probability Density Function" }
+				]
+			})
+		];
 	}
 	renderHistogramOptionsHtml() {
 		return(`
