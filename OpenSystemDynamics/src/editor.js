@@ -3011,6 +3011,9 @@ class ComparePlotVisual extends PlotVisual {
 			this.render();
 		}
 	}
+	clearGenerations() {
+		this.gens.reset();
+	}
 	fetchData() {
 		this.fetchedIds = this.dialog.getIdsToDisplay();
 		this.fetchedIds.map(id => {
@@ -3027,7 +3030,7 @@ class ComparePlotVisual extends PlotVisual {
 		}
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
-		if(this.dialog.keep) {
+		if(this.primitive.getAttribute("KeepResults") === "true") {
 			// add generation 
 			this.gens.append(this.dialog.getIdsToDisplay(), results, line_options);
 		} else {
@@ -3042,11 +3045,6 @@ class ComparePlotVisual extends PlotVisual {
 		if (this.gens.numGenerations == 0) {
 			this.setEmptyPlot();
 			return;
-		}
-		
-		if (this.dialog.clear) {
-			this.gens.reset();
-			this.dialog.clear = false;
 		}
 		
 		// Declare series and settings for series
@@ -8263,7 +8261,31 @@ class TimePlotDialog extends DisplayDialog {
 
 class KeepResultsComponent extends HtmlComponent {
 	render() {
-		return `Keep Results/Clear Results ...`;
+		let keep = this.primitive.getAttribute("KeepResults") === "true";
+		return (`
+			<table class="modern-table" style="width:100%; text-align:center;">
+				<tr>
+					<td style="width:50%">
+						Keep Results <input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}>
+					</td>
+					<td>
+						<button class="clear-button enter-apply">Clear Results</button>
+					</td>
+				</tr>
+			</table>
+		`);
+	}
+	bindEvents() {
+		console.log("binding events!");
+		this.find(".clear-button").click((event) => {
+			$(event.currentTarget).prop("disabled", true);
+			let id = getID(this.primitive);
+			let parentVisual = connection_array[id];
+			parentVisual.clearGenerations();
+		});
+	}
+	applyChange() {
+		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
 	}
 }
 
@@ -8306,9 +8328,6 @@ class ComparePlotDialog extends DisplayDialog {
 			axis_limits.timeaxis.max = getTimeStart()+getTimeLength();
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
-
-		this.keep = false;
-		this.clear = false;
 	}
 
 	getDisplayId(id) {
@@ -8328,20 +8347,6 @@ class ComparePlotDialog extends DisplayDialog {
 	getIdsToDisplay() {
 		return this.displayIdList;
 	}
-	renderKeepHtml() {
-		return (`
-			<table class="modern-table" style="width:100%; text-align:center;">
-				<tr>
-					<td style="width:50%">
-						Keep Results <input type="checkbox" class="keep_checkbox enter-apply" ${checkedHtml(this.keep)}>
-					</td>
-					<td>
-						<button class="clear-button enter-apply">Clear Results</button>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
 	applyAxisLimits() {
 		if (this.checkValidAxisLimits()) {
 			let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
@@ -8354,18 +8359,10 @@ class ComparePlotDialog extends DisplayDialog {
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
 		}
 	}
-	bindPrimitiveListEvents() {
-		super.bindPrimitiveListEvents();
-		$(this.dialogContent).find(".clear-button").click((event) => {
-			this.clear = true;
-		});
-	}
 	makeApply() {
 		/*
 		this.applyLineOptions();
 		this.applyAxisLimits();
-		this.primitive.setAttribute("YLogScale", $(this.dialogContent).find(".yaxis-log-checkbox").prop("checked"));
-		this.keep =  $(this.dialogContent).find(".keep_checkbox").prop("checked");
 		*/
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
