@@ -2424,9 +2424,9 @@ class TableVisual extends HtmlTwoPointer {
 		RunResults.subscribeRun(id, this.runHandler);
 		this.data = new TableData();
 	}
-	removePlotReference(id) {
-		if (this.dialog.displayIdList.includes(id)) {
-			this.dialog.removeIdToDisplay(id);
+	removePlotReference(removeId) {
+		let result = removeDisplayId(this.id, removeId);
+		if (result) {
 			this.render();
 		}
 	}
@@ -2434,7 +2434,7 @@ class TableVisual extends HtmlTwoPointer {
 		html = "";
 		html += "<table class='sticky-table'><thead><tr>";
 		
-		let IdsToDisplay = this.dialog.getIdsToDisplay();
+		let IdsToDisplay = getDisplayIds(this.id);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
@@ -4834,7 +4834,7 @@ class TableTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		this.current_connection.dialog.setIdsToDisplay(this.initialSelectedIds);
+		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -8783,7 +8783,6 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 
 		let value = this.find(`.${selected}-field`).val();
 		if (this.checkValidNumberLength(value)) {
-			console.log('saving options!');
 			numLength[selected] = parseInt(value);
 			numLength.usePrecision = usePrecision;	
 			this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
