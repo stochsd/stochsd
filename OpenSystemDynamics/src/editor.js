@@ -9258,40 +9258,30 @@ class LineDialog extends GeometryDialog {
 }
 
 class NumberboxDialog extends DisplayDialog {
-
-	renderShowHideFrameHtml() {
-		let hideFrame = this.primitive.getAttribute("HideFrame") === "true";
-		return (`<table class=modern-table>
-			<tr>
-				<td>
-					<b>Hide Frame:</b>
-					<input class="hide-frame" type="checkbox" ${checkedHtml(hideFrame)} />
-				</td>
-			</tr>
-		</table>`);
-	}
-
-	applyHideFrame() {
-		this.primitive.setAttribute("HideFrame", $(this.dialogContent).find(".hide-frame").prop("checked"));
+	constructor(id) {
+		super(id);
+		this.setTitle("Number Box Properties");
+		
+		this.components = [ 
+			new ArithmeticPrecisionComponent(this),
+			new RoundToZeroComponent(this),
+			new CheckboxTableComponent(this, [
+				{ text: "Hide Frame", attribute: "HideFrame" },
+			])
+		];
 	}
 
 	beforeShow() {
-		this.setTitle("Number Box Properties");
 		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
 		if (this.targetPrimitive) {
 			let primitiveName = makePrimitiveName(getName(this.targetPrimitive));
 			this.setHtml(`
 				<div>
 					<p>Value of ${primitiveName}</p>
-					${this.renderNumberLengthHtml()}
-					<div class="vertical-space"></div>
-					${this.renderRoundToZeroHtml()}
-					<div class="vertical-space"></div>
-					${this.renderShowHideFrameHtml()}
+					${this.components.map(comp => comp.render()).join('<div class="vertical-space"></div>')}
 				</div>
 			`);
-			this.bindNumberLengthEvents();
-			this.bindRoundToZeroEvents();
+			this.components.forEach(comp => comp.bindEvents());
 		} else {
 			this.setHtml(`
 				Target primitive not found
@@ -9301,9 +9291,7 @@ class NumberboxDialog extends DisplayDialog {
 	}
 
 	makeApply() {
-		this.applyNumberLength();
-		this.applyRoundToZero();
-		this.applyHideFrame();
+		this.components.forEach(comp => comp.applyChange());
 	}
 }
 
