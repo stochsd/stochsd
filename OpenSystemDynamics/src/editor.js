@@ -8790,6 +8790,101 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 	}
 }
 
+class RoundToZeroComponent extends HtmlComponent {
+	render() {
+		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
+		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+		let disabled = roundToZero ? "" : "disabled";
+		return (`
+			<table class="modern-table">
+				<tr>
+					<td>
+						<input class="round-to-zero-checkbox enter-apply" type="checkbox" ${checkedHtml(roundToZero)} /> 
+						Show <b>0</b> when <i>abs(value) &lt;</i> 
+						<input class="round-to-zero-field enter-apply" type="text" value="${roundToZeroAtValue}" ${disabled}/>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: center;">
+						<button class="default-round-to-zero-button enter-apply">Reset to Default</button>
+					</td>
+				</tr>
+			</table>
+			<span class="round-to-zero-warning-div warning" style="margin: 5px 0px;"></span>
+		`);
+	}
+	bindEvents() {
+		let roundToZeroCheckbox = this.find(".round-to-zero-checkbox");
+		let roundToZeroField = this.find(".round-to-zero-field");
+
+		// set default button listener
+		this.find(".default-round-to-zero-button").click(() => {
+			// fetches default for numberbox, but this is also used for table 
+			// Should be fixes so it fetches default for the type of object the dialog belongs to  
+			this.setRoundToZero(getDefaultAttributeValue("numberbox", "RoundToZero") === "true");
+			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
+			this.checkValidRoundAtZeroAtField();
+		});
+
+		roundToZeroCheckbox.click(() => {
+			this.setRoundToZero(roundToZeroCheckbox.prop("checked"));
+		});
+
+		roundToZeroField.keyup((event) => {
+			this.checkValidRoundAtZeroAtField();
+		});
+	}
+	setRoundToZero(roundToZero) {
+		this.find(".round-to-zero-checkbox").prop("checked", roundToZero);
+		this.find(".round-to-zero-field").prop("disabled", ! roundToZero);
+		this.checkValidRoundAtZeroAtField();
+	}
+
+	checkValidRoundAtZeroAtField() {
+		let roundToZeroFieldValue = this.find(".round-to-zero-field").val();
+		if (this.find(".round-to-zero-checkbox").prop("checked")) {
+			if (isNaN(roundToZeroFieldValue)) {
+				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
+				return false;
+			} else if (roundToZeroFieldValue == "") {
+				this.setNumberboxWarning(true, "No value choosen.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) >= 1) {
+				this.setNumberboxWarning(true, "Value must be less then 1.");
+				return false;
+			} else if (Number(roundToZeroFieldValue) <= 0) {
+				this.setNumberboxWarning(true, "Value must be strictly positive.");
+				return false;
+			} else {
+				this.setNumberboxWarning(false);
+				return true;
+			}
+		} else {
+			this.setNumberboxWarning(false);
+			return false;
+		}
+	}
+
+	setNumberboxWarning(isVisible, htmlMessage) {
+		let message = isVisible ? warningHtml(htmlMessage, true) : "";
+		let visibility = isVisible ? "visible" : "hidden";
+		this.find(".round-to-zero-warning-div").html(message);
+		this.find(".round-to-zero-warning-div").css("visibility", visibility);
+	}
+
+	applyChange() {
+		if (this.primitive) {
+			let roundToZero = this.find(".round-to-zero-checkbox").prop("checked");
+			this.primitive.setAttribute("RoundToZero", roundToZero);
+			
+			if ( this.checkValidRoundAtZeroAtField() ) {
+				let roundToZeroAtValue = this.find(".round-to-zero-field").val();
+				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
+			}
+		}
+	}
+}
+
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
@@ -8799,6 +8894,7 @@ class TableDialog extends DisplayDialog {
 		this.components.right = [
 			new TableLimitsComponent(this),
 			new ArithmeticPrecisionComponent(this),
+			new RoundToZeroComponent(this),
 			new ExportDataComponent(this)
 		];
 	}
