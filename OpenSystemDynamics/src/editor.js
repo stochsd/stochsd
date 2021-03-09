@@ -330,7 +330,7 @@ class InfoBar {
 	}
 	static setRestricted(isRestricted, primName) {
 		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
-		this.infoRestricted.html(isRestricted ? `<b>(Restricted)<b>` : "" );
+		this.infoRestricted.html(isRestricted ? `(Restricted)` : "" );
 	}
 	static update() {
 		let selected_hash = get_selected_root_objects();
@@ -1441,6 +1441,9 @@ class NumberboxVisual extends BasePrimitive {
 		let output = `${valueString}`;
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
+
+		// update color in case hide frame changes 
+		this.setColor(this.color);
 
 	}
 	get targetID() {
@@ -4256,7 +4259,7 @@ class NumberboxTool extends OnePointCreateTool {
 		
 		let selected_object = get_object(selected_ids[0]);
 		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not watchable");
+			xAlert("This primitive can not have a Number Box");
 			ToolBox.setTool("mouse");
 			return;
 		}
@@ -6998,6 +7001,14 @@ class jqDialog {
 
 	setHelpButtonInfo(helpId, title, contentHTML) {
 		$(this.dialogContent).find(`#${helpId}`).unbind();
+		$(this.dialogContent).find(`.enter-apply#${helpId}`).keydown(event => {
+			if (! event.shiftKey) {
+				if (event.keyCode === keyboard["enter"]) {
+					event.preventDefault();
+					this.applyChanges();
+				}
+			}
+		});
 		$(this.dialogContent).find(`#${helpId}`).click(event => {
 			let dialog = new XAlertDialog(contentHTML);
 			$(dialog.dialogContent).find(".accordion").accordion({
