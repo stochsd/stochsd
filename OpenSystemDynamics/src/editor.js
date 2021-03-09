@@ -7350,33 +7350,36 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.displayIds = [];
 		this.displayLimit = displayLimit;
 	}
+	renderIncludedList() {
+		return (`<table class="modern-table">
+			<tr>
+				<th></th>
+				<th>Added Primitives</td>
+			</tr>
+			${this.displayIds.map(id => `
+				<tr>
+					<td style="padding: 0;">
+						<button 
+							class="primitive-remove-button enter-apply" 
+							data-id="${id}"
+							style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+							-
+						</button>
+						</td>
+						<td style="width: 100%;">
+						<div class="center-vertically-container">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+							${getName(findID(id))}
+						</div>
+						</td>
+				</tr>
+			`).join("")}
+		</table>`);
+	}
 	updateIncludedList() { 
 		let htmlContent = "No primitives selected";
 		if (this.displayIds.length > 0) {
-			htmlContent = (`<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Added Primitives</td>
-				</tr>
-				${this.displayIds.map(id => `
-					<tr>
-						<td style="padding: 0;">
-							<button 
-								class="primitive-remove-button enter-apply" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
-								-
-							</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								${getName(findID(id))}
-							</div>
-							</td>
-					</tr>
-				`).join("")}
-			</table>`);	
+			htmlContent = this.renderIncludedList();
 		}
 		this.find(".included-list-div").html(htmlContent);
 		this.parent.bindEnterApplyEvents();
@@ -8480,12 +8483,45 @@ class HistoPlotDialog extends DisplayDialog {
 	}
 }
 
+class XySelectorComponent extends PrimitiveSelectorComponent {
+	renderIncludedList() {
+		let axies = ["X", "Y"];
+			return (`<table class="modern-table">
+				<tr>
+					<th></th>
+					<th>Added Primitives</td>
+					<th>Axis</th>
+				</tr>
+				${this.displayIds.map((id, index) => `
+					<tr>
+						<td style="padding: 0;">
+							<button 
+								class="primitive-remove-button enter-apply" 
+								data-id="${id}"
+								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								-
+							</button>
+							</td>
+							<td style="width: 100%;">
+							<div class="center-vertically-container">
+								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								${getName(findID(id))}
+							</div>
+						</td>
+						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
+					</tr>
+				`).join("")}
+			</table>`);
+	}
+}
+
+
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
 
-		this.components.left = [ new PrimitiveSelectorComponent(this, 2) ];
+		this.components.left = [ new XySelectorComponent(this, 2) ];
 		this.components.right = [ 
 			new PlotPeriodComponent(this),
 			new AxisLimitsComponent(this, [
