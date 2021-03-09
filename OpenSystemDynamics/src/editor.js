@@ -8715,6 +8715,82 @@ class ExportDataComponent extends HtmlComponent {
 }
 
 
+class ArithmeticPrecisionComponent extends HtmlComponent {
+	render() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let options = [{key: "precision", label: "Precision"}, {key: "decimal", label: "Decimal"}];
+		return (`<table class="modern-table">
+			${options.map(option => {
+				let key = option.key;
+				let isChecked = numLength.usePrecision === (option.key === "precision");
+				let disabled = isChecked ? "": "disabled";
+				return (`<tr>
+					<td>
+						<input class="num-len-radio enter-apply" type="radio" id="${key}" name="num-len" value="${key}" ${checkedHtml(isChecked)}>
+					</td>
+					<td>
+						<label for="${key}" >${option.label}</label>
+					</td>
+					<td>
+						<input class="${key}-field enter-apply" type="text" ${disabled} value="${numLength[key]}">
+					</td>
+				</tr>`);
+			}).join("")}
+			
+		</table>
+		<div class="num-len-warn-div"></div>`);
+	}
+	bindEvents() {
+		this.find(".num-len-radio[name='num-len']").change(event => {
+			let selectedKey = event.target.value;
+			let	otherKey = (selectedKey === "precision") ? "decimal" : "precision"; 
+
+			let selectedField = this.find(`.${selectedKey}-field`);
+			let otherField = this.find(`.${otherKey}-field`);
+
+			selectedField.prop("disabled", false);
+			otherField.prop("disabled", true);
+
+			this.checkValidNumberLength(selectedField.val());
+		});
+		this.find(".precision-field, .decimal-field").keyup(event => {
+			this.checkValidNumberLength(event.target.value);
+		});
+	}
+
+	checkValidNumberLength(value) {
+		if (isNaN(value)) {
+			$(".num-len-warn-div").html(warningHtml(`${value} is not a decimal number.`, true));
+			return false;
+		} else if (Number.isInteger(parseFloat(value)) === false) {
+			$(".num-len-warn-div").html(warningHtml(`${value} is not an integer.`, true));
+			return false;
+		} else if (parseInt(value) < 0) {
+			$(".num-len-warn-div").html(warningHtml(`${value} is negative.`, true));
+			return false;
+		} else if (parseInt(value) >= 12) {
+			$(".num-len-warn-div").html(warningHtml(`${value} is above the limit of 12.`, true));
+			return false;
+		} else {
+			$(".num-len-warn-div").html("");
+			return true;
+		}
+	}
+	applyChange() {
+		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		let selected = this.find("input[name='num-len']:checked").val();
+		let usePrecision = selected === "precision";
+
+		let value = this.find(`.${selected}-field`).val();
+		if (this.checkValidNumberLength(value)) {
+			console.log('saving options!');
+			numLength[selected] = parseInt(value);
+			numLength.usePrecision = usePrecision;	
+			this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
+		}
+	}
+}
+
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
@@ -8723,6 +8799,7 @@ class TableDialog extends DisplayDialog {
 		this.components.left = [ new PrimitiveSelectorComponent(this) ];
 		this.components.right = [
 			new TableLimitsComponent(this),
+			new ArithmeticPrecisionComponent(this),
 			new ExportDataComponent(this)
 		];
 	}
