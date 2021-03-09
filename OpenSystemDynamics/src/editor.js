@@ -8590,112 +8590,107 @@ class TableData {
 	}
 }
 
+class TableLimitsComponent extends HtmlComponent {
+	render() {
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		let startValue = limits.start.auto ? getTimeStart() : limits.start.value;
+		let endValue = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
+		let stepValue = limits.step.auto ? this.parent.getDefaultPlotPeriod() : limits.step.value;
+		return (`
+		<table class="modern-table">
+			${["", "Value", "Auto"].map(header => `<th>${header}</th>`).join("")}
+			<tr>
+				<th class="text">From</th>
+				<td style="padding:1px;">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${startValue}" type="text">
+				</td>
+				<td><input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
+			</tr><tr>
+				<th class="text">To</th>
+				<td style="padding:1px;">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${endValue}" type="text">
+				</td>
+				<td><input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
+				</td>
+			</tr><tr title="Step &#8805; DT should hold">
+				<th class="text">Step</th>
+				<td style="padding:1px;">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${stepValue}" type="text">
+				</td>
+				<td><input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
+			</tr>
+		</table>
+		<div class="limits-warning-div warning"></div>`);
+	}
+	bindEvents() {
+		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		this.find(".start-auto-checkbox").change(event => {
+			let startAuto = $(event.target).prop("checked");
+			this.find(".start-field").prop("disabled", startAuto);
+			this.find(".start-field").val(startAuto ? getTimeStart() : limits.start.value);
+		});
+		this.find(".end-auto-checkbox").change(event => {
+			let endAuto = $(event.target).prop("checked");
+			this.find(".end-field").prop("disabled", endAuto);
+			this.find(".end-field").val(endAuto ? getTimeStart()+getTimeLength() : limits.end.value);
+		});
+		this.find(".step-auto-checkbox").change(event => {
+			let stepAuto = $(event.target).prop("checked");
+			this.find(".step-field").prop("disabled", stepAuto);
+			this.find(".step-field").val(stepAuto ? getTimeStep() : limits.step.value);
+		});
+		this.find("input[type='text'].limit-input").keyup(event => {
+			this.checkValidTableLimits();
+		});
+	}
+	checkValidTableLimits() {
+		let warningDiv = this.find(".limits-warning-div");
+		let startStr = this.find(".start-field").val();
+		let endStr = this.find(".end-field").val();
+		let stepStr = this.find(".step-field").val();
+		if (isNaN(startStr) || startStr === "") {
+			warningDiv.html(warningHtml(`"From" must be a decimal number`, true));
+			return false;
+		} else if (isNaN(endStr) || endStr === "") {
+			warningDiv.html(warningHtml(`"To" must be a decimal number`, true));
+			return false;
+		} else if (isNaN(stepStr) || stepStr === "") {
+			warningDiv.html(warningHtml(`"Step" must be a decimal number`, true));
+			return false;
+		} else if (Number(stepStr) <= 0) {
+			warningDiv.html(warningHtml(`"Step" must be &gt;0`, true));
+			return false;
+		} 
+		warningDiv.html("");
+		return true;
+	}
+	applyChange() {
+		if (this.checkValidTableLimits()) {
+			let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+
+			limits.start.value = Number(this.find(".start-field").val());
+			limits.end.value = Number(this.find(".end-field").val());
+			limits.step.value = Number(this.find(".step-field").val());
+
+			limits.start.auto = this.find(".start-auto-checkbox").prop("checked");
+			limits.end.auto = this.find(".end-auto-checkbox").prop("checked");
+			limits.step.auto = this.find(".step-auto-checkbox").prop("checked");
+			this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
+		}
+	}
+}
+
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Table Properties");
 		
-		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		if (limits.start.auto) {
-			limits.start.value = getTimeStart();
-		}
-		if (limits.end.auto) {
-			limits.end.value = getTimeStart() + getTimeLength();
-		}
-		if (limits.step.auto) {
-			limits.step.value = this.getDefaultPlotPeriod();
-		}
-		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
-		this.data = null;
+		this.components.left = [ new PrimitiveSelectorComponent(this) ];
+		this.components.right = [
+			new TableLimitsComponent(this)
+		];
 	}
-	renderTableLimitsHTML() {
-		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		let start_val = limits.start.auto ? getTimeStart() : limits.start.value;
-		let end_val = limits.end.auto ? getTimeStart()+getTimeLength() : limits.end.value;
-		let step_val = limits.step.auto ? this.getDefaultPlotPeriod() : limits.step.value;
-		return (`
-		<table class="modern-table">
-			<tr>
-				<th class="text">From</th>
-				<td style="padding:1px;">
-					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${start_val}" type="text">
-				</td>
-				<td>Auto <input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
-			</tr><tr>
-				<th class="text">To</th>
-				<td style="padding:1px;">
-					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${end_val}" type="text">
-				</td>
-				<td>Auto <input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
-				</td>
-			</tr><tr title="Step &#8805; DT should hold">
-				<th class="text">Step</th>
-				<td style="padding:1px;">
-					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${step_val}" type="text">
-				</td>
-				<td>Auto <input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
-			</tr>
-		</table>
-		<div class="limits-warning-div warning"></div>
-		`);
-	}
-	bindTableLimitsEvents() {
-		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		$(this.dialogContent).find(".start-auto-checkbox").change(event => {
-			let start_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".start-field").prop("disabled", start_auto);
-			$(this.dialogContent).find(".start-field").val(start_auto ? getTimeStart() : limits.start.value);
-		});
-		$(this.dialogContent).find(".end-auto-checkbox").change(event => {
-			let end_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".end-field").prop("disabled", end_auto);
-			$(this.dialogContent).find(".end-field").val(end_auto ? getTimeStart()+getTimeLength() : limits.end.value);
-		});
-		$(this.dialogContent).find(".step-auto-checkbox").change(event => {
-			let step_auto = $(event.target).prop("checked");
-			$(this.dialogContent).find(".step-field").prop("disabled", step_auto);
-			$(this.dialogContent).find(".step-field").val(step_auto ? getTimeStep() : limits.step.value);
-		});
-		$(this.dialogContent).find("input[type='text'].limit-input").keyup(event => {
-			this.checkValidTableLimits();
-		});
-	}
-	checkValidTableLimits() {
-		let nochange_str = "<br/><b>Your specification is not accepted!</b>";
-		let warning_div = $(this.dialogContent).find(".limits-warning-div");
-		let start_str = $(this.dialogContent).find(".start-field").val();
-		let end_str = $(this.dialogContent).find(".end-field").val();
-		let step_str = $(this.dialogContent).find(".step-field").val();
-		if (isNaN(start_str) || start_str === "") {
-			warning_div.html(`"From" must be a decimal number${nochange_str}`);
-			return false;
-		} else if (isNaN(end_str) || start_str === "") {
-			warning_div.html(`"To" must be a decimal number${nochange_str}`);
-			return false;
-		} else if (isNaN(step_str) || step_str === "") {
-			warning_div.html(`Step must be a decimal number${nochange_str}`);
-			return false;
-		} else if (Number(step_str) <= 0) {
-			warning_div.html(`Step must be &gt;0${nochange_str}`);
-			return false;
-		} 
-		warning_div.html("");
-		return true;
-	}
-	applyAxisLimits() {
-		if (this.checkValidTableLimits()) {
-			let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-
-			limits.start.value = Number($(this.dialogContent).find(".start-field").val());
-			limits.end.value = Number($(this.dialogContent).find(".end-field").val());
-			limits.step.value = Number($(this.dialogContent).find(".step-field").val());
-
-			limits.start.auto = $(this.dialogContent).find(".start-auto-checkbox").prop("checked");
-			limits.end.auto = $(this.dialogContent).find(".end-auto-checkbox").prop("checked");
-			limits.step.auto = $(this.dialogContent).find(".step-auto-checkbox").prop("checked");
-			this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
-		}
-	}
+	
 	renderExportHtml() {
 		return (`
 			<table class="modern-table">
@@ -8718,6 +8713,21 @@ class TableDialog extends DisplayDialog {
 		
 	}
 	beforeShow() {
+		this.setHtml(`<div class="table">
+			<div class="table-row">
+				<div class="table-cell">
+					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+				<div class="table-cell">
+					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
+				</div>
+			</div>
+		</div>`)
+		
+		this.components.left.forEach(comp => comp.bindEvents());
+		this.components.right.forEach(comp => comp.bindEvents());
+		this.bindEnterApplyEvents();
+		/*
 		// We store the selected variables inside the dialog
 		// The dialog is owned by the table to which it belongs
 		let primitives = this.getAcceptedPrimitiveList();
@@ -8756,12 +8766,16 @@ class TableDialog extends DisplayDialog {
 			if (this.data) {
 				this.data.exportTSV();
 			}
-		});
+		});*/
 	}
 	makeApply() {
+		/*
 		this.applyAxisLimits();
 		this.applyNumberLength();
 		this.applyRoundToZero();
+		*/
+		this.components.left.forEach(comp => comp.applyChange());
+		this.components.right.forEach(comp => comp.applyChange());
 	}
 }
 
