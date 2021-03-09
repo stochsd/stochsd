@@ -8898,28 +8898,6 @@ class TableDialog extends DisplayDialog {
 			new ExportDataComponent(this)
 		];
 	}
-	
-	renderExportHtml() {
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-						<button class="exportCSV">
-							Export Table (CSV)
-						</button>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<button class="exportTSV">
-							Export Table (TSV)
-						</button>
-					</td>
-				</tr>
-			</table>
-		`);
-		
-	}
 	beforeShow() {
 		this.setHtml(`<div class="table">
 			<div class="table-row">
@@ -8930,48 +8908,13 @@ class TableDialog extends DisplayDialog {
 					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
 				</div>
 			</div>
-		</div>`)
+		</div>`);
 		
 		this.components.left.forEach(comp => comp.bindEvents());
 		this.components.right.forEach(comp => comp.bindEvents());
 		this.bindEnterApplyEvents();
-		/*
-		// We store the selected variables inside the dialog
-		// The dialog is owned by the table to which it belongs
-		let primitives = this.getAcceptedPrimitiveList();
-		this.setHtml(`
-			<div class="table">
-				<div class="table-row">
-					<div class="table-cell">
-						${this.renderPrimitiveListHtml()}
-					</div>
-					<div class="table-cell">
-						${this.renderTableLimitsHTML()}
-						<div class="vertical-space"></div>
-						${this.renderNumberLengthHtml()}
-						<div class="vertical-space"></div>
-						${this.renderRoundToZeroHtml()}
-						<div class="vertical-space"></div>
-						${this.renderExportHtml()}
-					</div>
-				</div>
-			</div>
-		`);
-
-		this.bindEnterApplyEvents();
-		this.bindNumberLengthEvents();
-		this.bindRoundToZeroEvents();
-		this.bindPrimitiveListEvents();
-		this.bindTableLimitsEvents();
-		
-		*/
 	}
 	makeApply() {
-		/*
-		this.applyAxisLimits();
-		this.applyNumberLength();
-		this.applyRoundToZero();
-		*/
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
 	}
