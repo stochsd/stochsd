@@ -8680,6 +8680,41 @@ class TableLimitsComponent extends HtmlComponent {
 	}
 }
 
+class ExportDataComponent extends HtmlComponent {
+	render() {
+		return (`<table class="modern-table">
+			<tr>
+				<td>
+					<button class="export-csv">
+						Export Table (CSV)
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="export-tsv">
+						Export Table (TSV)
+					</button>
+				</td>
+			</tr>
+		</table>`);
+	}
+	bindEvents() {
+		this.find(".export-csv").click(event => {
+			if (this.parent.data) {
+				this.parent.data.exportCSV();
+			}
+		});
+
+		this.find(".export-tsv").click(event => {
+			if (this.parent.data) {
+				this.parent.data.exportTSV();
+			}
+		});
+	}
+}
+
+
 class TableDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
@@ -8687,7 +8722,8 @@ class TableDialog extends DisplayDialog {
 		
 		this.components.left = [ new PrimitiveSelectorComponent(this) ];
 		this.components.right = [
-			new TableLimitsComponent(this)
+			new TableLimitsComponent(this),
+			new ExportDataComponent(this)
 		];
 	}
 	
@@ -8756,17 +8792,7 @@ class TableDialog extends DisplayDialog {
 		this.bindPrimitiveListEvents();
 		this.bindTableLimitsEvents();
 		
-		$(this.dialogContent).find(".exportCSV").click(event => {
-			if (this.data) {
-				this.data.exportCSV();
-			}
-		});
-
-		$(this.dialogContent).find(".exportTSV").click(event => {
-			if (this.data) {
-				this.data.exportTSV();
-			}
-		});*/
+		*/
 	}
 	makeApply() {
 		/*
