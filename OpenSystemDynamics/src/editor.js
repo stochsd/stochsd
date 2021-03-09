@@ -324,8 +324,13 @@ class InfoBar {
 				lineWrapping: false
 			}
 		);
+		this.infoRestricted = $(".info-bar__definition-restricted");
 		this.infoDE = $(".info-bar__definition-error");
 		$(infoDef).find(".CodeMirror").css("border", "none");
+	}
+	static setRestricted(isRestricted, primName) {
+		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
+		this.infoRestricted.html(isRestricted ? `<b>(Restricted)<b>` : "" );
 	}
 	static update() {
 		let selected_hash = get_selected_root_objects();
@@ -337,6 +342,7 @@ class InfoBar {
 		if (selected_array == 0) {
 			this.cmInfoDef.setValue("Nothing selected");
 			this.infoDE.html("");
+			this.setRestricted(false);
 		} else if (selected_array.length == 1) {
 			let selected = selected_array[0];
 			let primitive = selected_array[0].primitive;
@@ -347,10 +353,12 @@ class InfoBar {
 			let definition = getValue(primitive);
 			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 	
+			let isRestricted = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true";
+			this.setRestricted(isRestricted, name);
+
 			let definitionLines = definition.split("\n");
-			let nonNeg = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true" ? "0≤\t" : "";
 			if (definitionLines[0] !== "") {
-				this.cmInfoDef.setValue(`${nonNeg}[${name}] = ${definitionLines[0]}`);
+				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
 				let type = selected.type;
 				
@@ -382,6 +390,7 @@ class InfoBar {
 		} else {
 			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
 			this.infoDE.html("");
+			this.setRestricted(false);
 		}
 		updateLinkBar();
 	}
@@ -550,7 +559,7 @@ function getFunctionHelpData() {
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
 			// ["Binary Distribution", "RandBoolean(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBoolean(0.1)", "False"]],
-			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "False"]],
+			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "0"]],
 			["Binomial Distribution", "RandBinomial(##Count$$, ##Probability$$)", "Generates a binomially distributed random number. The number of successes in Count random events each with Probability of success."],
 			["Negative Binomial", "RandNegativeBinomial(##Successes$$, ##Probability$$)", "Generates a negative binomially distributed random number. The number of random events each with Probability of success required to generate the specified Successes."],
 			["Poisson Distribution", "RandPoisson(##Lambda$$)", "Generates a Poisson distributed random number with the rate Lambda events per time unit."],
@@ -1433,7 +1442,6 @@ class NumberboxVisual extends BasePrimitive {
 		this.name_element.innerHTML = output;
 		this.setSelectionSizeToText();
 
-		this.setColor(this.color);
 	}
 	get targetID() {
 		return Number(this.primitive.getAttribute("Target"));
@@ -1455,7 +1463,9 @@ class NumberboxVisual extends BasePrimitive {
 	}
 	setColor(color) {
 		super.setColor(color);
-		this.select();
+		if (this.selected) {
+			this.name_element.setAttribute("fill", "white");
+		}
 		let frameColor = this.primitive.getAttribute("HideFrame") === "true" ? "transparent" : color;
 		this.element.setAttribute("stroke", frameColor);
 	}
@@ -6731,7 +6741,7 @@ class RunResults {
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);
 		let endTime = format_number(this.getRunProgressMax(), number_options);
-		let timeStep = format_number(this.getTimeStep(), number_options);
+		let timeStep = this.getTimeStep();
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
 	}
@@ -6773,11 +6783,11 @@ class RunResults {
 	}
 	static getTimeStep() {
 		if (this.results && 1 < this.results.length) {
-			return this.results[1][0]-this.results[0][0];
+			return `${this.results[1][0]-this.results[0][0]}`;
 		} else if (primitives("Setting")[0]) {
 			return primitives("Setting")[0].getAttribute("TimeStep");
 		}
-		return 0;
+		return "0";
 	}
 	static getRunProgress() {
 		let lastRow = this.getLastRow();
@@ -6981,7 +6991,7 @@ class jqDialog {
 		});
 	}
 	renderHelpButtonHtml(helpId) {
-		return (`<button id="${helpId}" class="help-button">
+		return (`<button id="${helpId}" class="help-button enter-apply">
 			?
 		</button>`);
 	}
@@ -7911,7 +7921,7 @@ class DisplayDialog extends jqDialog {
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
 			</div>
 			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
@@ -7974,7 +7984,7 @@ class DisplayDialog extends jqDialog {
 					${results.map(p => `
 						<tr>
 							<td style="padding: 0;">
-								<button class="primitive-add-button" data-id="${getID(p)}" 
+								<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 									${limitReached ? "disabled" : ""} 
 									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
 									style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
@@ -7991,6 +8001,8 @@ class DisplayDialog extends jqDialog {
 					`).join("")}
 				</table>
 			`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-add-button").click((event) => {
 				this.primitiveAddButton($(event.target).attr("data-id"));
 			});
@@ -8020,7 +8032,7 @@ class DisplayDialog extends jqDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -8035,6 +8047,8 @@ class DisplayDialog extends jqDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -8189,7 +8203,7 @@ class TimePlotDialog extends DisplayDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -8214,6 +8228,8 @@ class TimePlotDialog extends DisplayDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -8501,7 +8517,7 @@ class XyPlotDialog extends DisplayDialog {
 					<tr>
 						<td style="padding: 0;">
 							<button 
-								class="primitive-remove-button" 
+								class="primitive-remove-button enter-apply" 
 								data-id="${id}"
 								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
 								-
@@ -8517,6 +8533,8 @@ class XyPlotDialog extends DisplayDialog {
 					</tr>
 				`).join("")}
 			</table>`);
+			// Enter Apply bindings must be before click bindings for enter-apply to work
+			this.bindEnterApplyEvents();
 			$(this.dialogContent).find(".primitive-remove-button").click(event => {
 				let remove_id = $(event.target).attr("data-id");
 				this.removeIdToDisplay(remove_id);
@@ -9232,11 +9250,11 @@ class LineDialog extends GeometryDialog {
 			<table class="modern-table">
 				<tr>
 					<td>Arrow head at start point:</td>
-					<td><input class="arrow-start-checkbox" type="checkbox" ${checkedHtml(arrowStart)} /></td>
+					<td><input class="arrow-start-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowStart)} /></td>
 				</tr>
 				<tr>
 					<td>Arrow head at end point:</td>
-					<td><input class="arrow-end-checkbox" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
+					<td><input class="arrow-end-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowEnd)} /></td>
 				</tr>
 			</table>
 		`);
@@ -9315,7 +9333,7 @@ class ConverterDialog extends jqDialog {
 			<p>
 				<b>Definition:</b></br>
 				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span>
-				&nbsp &nbsp &nbsp (Often x is time)
+				&nbsp &nbsp &nbsp (Often X is time)
 				</br>
 				</br>
 				<b>Example:</b></br>
@@ -9615,8 +9633,8 @@ class EquationEditor extends jqDialog {
 			{
 				mode: "stochsdmode", 
 				theme: "stochsdtheme",
-				lineWrapping: true,
-				lineNumbers: true,
+				lineWrapping: false,
+				lineNumbers: false,
 				matchBrackets: true,
 				extraKeys: {
 					"Esc": () => {
@@ -10050,6 +10068,7 @@ class MacroDialog extends jqDialog {
 		this.setSeedButton.click((event) => {
 			let macro = this.macroTextArea.val();
 			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
+			this.macroTextArea.focus();
 		});
 		this.bindEnterApplyEvents();
 	}
