@@ -2710,9 +2710,7 @@ class TimePlotVisual extends PlotVisual {
 		this.fetchData();
 
 		let idsToDisplay = getDisplayIds(this.primitive);
-
-		// double axis // let sides = this.dialog.getSidesToDisplay();
-		// double axis // this.primitive.setAttribute("Sides", sides.join(","));
+		let sides = getDisplaySides(this.primitive);
 
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
@@ -2765,13 +2763,13 @@ class TimePlotVisual extends PlotVisual {
 			let label = "";
 			label += hasNumberedLines ? `${counter}. ` : "";
 			label += this.namesToDisplay[i];
-			// double axis // label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
+			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
 					lineWidth: this.widthsToDisplay[i],
 					label: label, 
-					yaxis: "yaxis", // Removed double axis functionallity while adding components //(sides[i] === "L") ? "yaxis": "y2axis",
+					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.patternsToDisplay[i], 
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
@@ -4867,8 +4865,10 @@ class TimePlotTool extends TwoPointerTool {
 	}
 	static leftMouseDown(x, y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		let sides = this.initialSelectedIds.map(() => "L");
+		console.log(sides);
 		super.leftMouseDown(x, y);
-		setDisplayIds(this.primitive, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds, sides);
 		this.current_connection.render();
 	}
 	static getType() {
