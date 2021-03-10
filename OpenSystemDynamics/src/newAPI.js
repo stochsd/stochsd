@@ -455,7 +455,7 @@ function getDisplaySides(plotPrimitive) {
 	let ids = idsString === "" ? [] : idsString.split(",");
 	
 	let sidesString = plotPrimitive.getAttribute("Sides");
-	let sides = sidesString === "" ? [] : idsString.split(",");
+	let sides = sidesString === "" ? [] : sidesString.split(",");
 
 	if (ids.length !== sides.length) {
 		// if sides and ids different sizes make sides have same size
