@@ -4265,7 +4265,11 @@ class NumberboxTool extends OnePointCreateTool {
 	static enterTool() {
 		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length != 1) {
-			xAlert("You must first select exactly one primitive to watch");
+			if (selected_ids.length == 0) {
+				xAlert("You must first select a primitive for the Number Box.");
+			} else {
+				xAlert("You must first select exactly one primitive for the Number Box.");
+			}
 			ToolBox.setTool("mouse");
 			return;
 		}
@@ -9448,6 +9452,7 @@ class ConverterDialog extends jqDialog {
 				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
 				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
+			${noteHtml("Comments are not allowed in the converter.")}
 		</div>
 		`)
 
@@ -9968,7 +9973,7 @@ class EquationEditor extends jqDialog {
 	updateHelpText() {
 		let typeSpecificTexts = {
 			"Stock": "The initial value of the stock will be set by the definition. (The stock's value over time increases or decreases by inflows and outflows.)",
-			"Flow": "Matter will enter or leave a stock through a flow at the rate determined by the definition.",
+			"Flow": "The content in a stock will enter or leave through a flow at the rate determined by the definition.",
 			"Variable": "The auxiliary will take on the value calculated from the definition. The value will be recalculated as the simulation progresses.",
 			"Constant": "The parameter will take on the value calculated from the definition. The value will be recalculated as the simulation progresses."
 		}
@@ -9979,9 +9984,13 @@ class EquationEditor extends jqDialog {
 			<ul style="margin: 0.5em 0;">
 				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
 				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
-				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
 			</ul>
-			${noteHtml("New line placed inside brackets will cause error when running the simulation.")}
+			<b>Tip:</b><br/>
+			<p style="margin: 0.5em 0;"> "#" will comment out the rest of the line: <br/>
+				<span class="example-code">1+2^3 
+					<span class="cm-comment"># this is ignored</span>
+				</span>
+			</p>
 		</div>`);
 	}
 	updateCursorPosInfo() {
