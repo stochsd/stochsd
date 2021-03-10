@@ -2438,7 +2438,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.data = new TableData();
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
@@ -2447,7 +2447,7 @@ class TableVisual extends HtmlTwoPointer {
 		html = "";
 		html += "<table class='sticky-table'><thead><tr>";
 		
-		let IdsToDisplay = getDisplayIds(this.id);
+		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
@@ -2689,13 +2689,13 @@ class TimePlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
 	}
 	fetchData() {
-		this.fetchedIds = getDisplayIds(this.id);
+		this.fetchedIds = getDisplayIds(this.primitive);
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -2709,7 +2709,7 @@ class TimePlotVisual extends PlotVisual {
 	render() {
 		this.fetchData();
 
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 
 		// double axis // let sides = this.dialog.getSidesToDisplay();
 		// double axis // this.primitive.setAttribute("Sides", sides.join(","));
@@ -2868,7 +2868,7 @@ class TimePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3019,7 +3019,7 @@ class ComparePlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
@@ -3028,7 +3028,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.gens.reset();
 	}
 	fetchData() {
-		this.fetchedIds = getDisplayIds(this.id);
+		this.fetchedIds = getDisplayIds(this.primitive);
 
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
@@ -3040,14 +3040,14 @@ class ComparePlotVisual extends PlotVisual {
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.primitive.getAttribute("KeepResults") === "true") {
 			// add generation 
-			this.gens.append(getDisplayIds(this.id), results, line_options);
+			this.gens.append(getDisplayIds(this.primitive), results, line_options);
 		} else {
-			this.gens.setCurrent(getDisplayIds(this.id), results, line_options);
+			this.gens.setCurrent(getDisplayIds(this.primitive), results, line_options);
 		}
 	}
 	render() {
 
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		
 		if (this.gens.numGenerations == 0) {
@@ -3132,7 +3132,7 @@ class ComparePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3296,7 +3296,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 
 	render() {
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		if (idsToDisplay.length !== 1) {
 			this.setEmptyPlot();
@@ -3372,7 +3372,7 @@ class HistoPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (getDisplayIds(this.id).length !== 1) {
+		if (getDisplayIds(this.primitive).length !== 1) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -3380,7 +3380,7 @@ class HistoPlotVisual extends PlotVisual {
 
 		
 		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `${getName(findID(getDisplayIds(this.id)[0]))}`;
+		let targetPrimName = `${getName(findID(getDisplayIds(this.primitive)[0]))}`;
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
@@ -3441,7 +3441,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3484,13 +3484,13 @@ class XyPlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
 	}
 	render() {		
-		let IdsToDisplay = getDisplayIds(this.id);
+		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -3603,7 +3603,7 @@ class XyPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (getDisplayIds(this.id).length != 2) {
+		if (getDisplayIds(this.primitive).length != 2) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -4847,7 +4847,7 @@ class TableTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4868,7 +4868,7 @@ class TimePlotTool extends TwoPointerTool {
 	static leftMouseDown(x, y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x, y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4888,7 +4888,7 @@ class ComparePlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4909,7 +4909,7 @@ class XyPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4931,7 +4931,7 @@ class HistoPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -7445,7 +7445,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		});
 	}
 	render() {
-		this.displayIds = getDisplayIds(getID(this.primitive));
+		this.displayIds = getDisplayIds(this.primitive);
 
 		return (`
 			<div class="included-list-div" style="border: 1px solid black;"></div>
@@ -7496,7 +7496,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		return results;
 	}
 	applyChange() {
-		setDisplayIds(getID(this.primitive), this.displayIds);
+		setDisplayIds(this.primitive, this.displayIds);
 	}
 }
 

@@ -344,51 +344,51 @@ function isValidToolName(newName) {
  * 	@param {string} plotId ID of plot to set 
  * 	@param {[string]} idList lists of IDs To add
  */
- function setDisplayIds(plotId, idList) {
-	findID(plotId).setAttribute("Primitives", idList.join(","));
+ function setDisplayIds(plotPrimitive, idList) {
+	plotPrimitive.setAttribute("Primitives", idList.join(","));
 }
 
 /**
  	Method: getIdsToDisplay
 	Gets all ids to display for a given plot
-	@param {string} plotId ID of plot to get 
+	@param {string} plotPrimitive ID of plot to get 
 	@returns {[string]} primitive's id to display for Plots/Table
  */
-function getDisplayIds(plotId) {
-	idsString = findID(plotId).getAttribute("Primitives");
+function getDisplayIds(plotPrimitive) {
+	idsString = plotPrimitive.getAttribute("Primitives");
 	let ids = idsString === "" ? [] : idsString.split(",");
 	// Clear ids that have no primitive 
 	ids.filter(id => findID(id) !== null);
-	setDisplayIds(plotId, ids);
+	setDisplayIds(plotPrimitive, ids);
 	return ids;
 }
 
 /**
  	Method: removeIdToDisplay
 	Removes id to Diaplay for Plots/Table
-	@param {string} plotId ID of plot to change
+	@param {string} plotPrimitive ID of plot to change
 	@param {string} removeId plot to edit
 	@returns {boolean} if ID was successfuly removed 
  */
-function removeDisplayId(plotId, removeId) {
-	let ids = getDisplayIds(plotId);
+function removeDisplayId(plotPrimitive, removeId) {
+	let ids = getDisplayIds(plotPrimitive);
 	let removeIndex = ids.indexOf(removeId);
 	if (removeIndex !== -1) {
 		ids.splice(removeIndex, 1);
 	}
-	setDisplayIds(plotId, ids);
+	setDisplayIds(plotPrimitive, ids);
 	return removeIndex !== -1;
 }
 
 /**
  	Method: addIdToDisplay
 	Removes id to Diaplay for Plots/Table
-	@param {string} plotId ID of plot to change
+	@param {string} plotPrimitive ID of plot to change
  */
-function addDisplayId(plotId, newId) {
-	let ids = getIdsToDisplay(plotId);
+function addDisplayId(plotPrimitive, newId) {
+	let ids = getIdsToDisplay(plotPrimitive);
 	if (! ids.includes(newId)) {
 		ids.push(newId);
-		setDisplayIds(plotId, ids);
+		setDisplayIds(plotPrimitive, ids);
 	}
 }
