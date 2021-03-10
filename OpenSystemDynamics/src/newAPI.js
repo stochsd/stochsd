@@ -338,6 +338,17 @@ function isValidToolName(newName) {
 	return /^[A-Za-z_]+[A-Za-z_0-9]*$/.test(newName);
 }
 
+/**
+ * Get Comma Seperated Attribute
+ * @return {[string]} array of the objects 
+ */
+function getCSA(primitive, attribute) {
+	let tempString = primitive.getAttribute(attribute);
+	return tempString === "" ? [] : tempString.split(",");
+}
+
+
+const trackableTypes = ["Stock", "Flow", "Variable", "Converter"];
 
 /**
  * 	Method: setIdsToDisplay
@@ -348,7 +359,14 @@ function isValidToolName(newName) {
 	if (isTimePlot(plotPrimitive)) {
 		setDisplayIdsForTimePlot(plotPrimitive, idList, sideList);
 	} else {
-		plotPrimitive.setAttribute("Primitives", idList.join(","));
+
+		// Clear primitives 
+		plotPrimitive.setAttribute("Primitives", "");
+
+		// Add new primitives 
+		idList.forEach(newId => {
+			addDisplayId(plotPrimitive, newId);
+		});
 	}
 }
 
@@ -376,14 +394,14 @@ function getDisplayIds(plotPrimitive) {
  	Method: removeIdToDisplay
 	Removes id to Diaplay for Plots/Table
 	@param {string} plotPrimitive ID of plot to change
-	@param {string} removeId plot to edit
+	@param {string} removeId plot to remove 
 	@returns {boolean} if ID was successfuly removed 
  */
 function removeDisplayId(plotPrimitive, removeId) {
 	if (isTimePlot(plotPrimitive)) {
 		return removeDisplayIdForTimePlot(plotPrimitive, removeId);
 	} else {
-		let ids = getDisplayIds(plotPrimitive);
+		let ids = getCSA(plotPrimitive, "Primitives");
 		let removeIndex = ids.indexOf(removeId);
 		if (removeIndex !== -1) {
 			ids.splice(removeIndex, 1);
@@ -399,11 +417,19 @@ function removeDisplayId(plotPrimitive, removeId) {
 	Removes id to Diaplay for Plots/Table
 	@param {string} plotPrimitive ID of plot to change
  */
-function addDisplayId(plotPrimitive, newId) {
-	let ids = getIdsToDisplay(plotPrimitive);
-	if (! ids.includes(newId)) {
-		ids.push(newId);
-		setDisplayIds(plotPrimitive, ids);
+function addDisplayId(plotPrimitive, newId, newSide) {
+	let isTrackable = trackableTypes.includes(getType(findID(newId)));
+	if (isTrackable) {
+		if (isTimePlot(plotPrimitive)) {
+			addDisplayIdForTimePlot(plotPrimitive, newId, newSide);
+		} else {
+			idsString = plotPrimitive.getAttribute("Primitives");
+			let ids = idsString === "" ? [] : idsString.split(",");
+			if (! ids.includes(newId)) {
+				ids.push(newId);
+				plotPrimitive.setAttribute("Primitives", ids.join(","));
+			}
+		}
 	}
 }
 
@@ -419,17 +445,20 @@ function setDisplayIdsForTimePlot(plotPrimitive, idList, sideList) {
 	} else if (idList.length !== sideList.length) {
 		throw Error(`idList.length ${idList.length} !== sideList.length ${sideList.length}`);
 	}
+	
+	// Clear display ids
+	plotPrimitive.setAttribute("Primitives", "");
+	plotPrimitive.setAttribute("Sides", "");
 
-	plotPrimitive.setAttribute("Primitives", idList.join(","));
-	plotPrimitive.setAttribute("Sides", sideList.join(","));
+	// Add new display ids 
+	idList.forEach((id, index) => {
+		addDisplayIdForTimePlot(plotPrimitive, id, sideList[index]);
+	});
 }
 
 function getDisplayIdsForTimePlot(plotPrimitive) {
-	idsString = plotPrimitive.getAttribute("Primitives");
-	let ids = idsString === "" ? [] : idsString.split(",");
-	
-	let sidesString = plotPrimitive.getAttribute("Sides");
-	let sides = sidesString === "" ? [] : idsString.split(",");
+	let ids = getCSA(plotPrimitive, "Primitives");
+	let sides = getCSA(plotPrimitive, "Sides");
 
 	// if sides and ids different sizes make sides have same size
 	if (ids.length !== sides.length) {
@@ -444,18 +473,14 @@ function getDisplayIdsForTimePlot(plotPrimitive) {
 		}
 	}
 
-	idsString = plotPrimitive.getAttribute("Primitives");
-	ids = idsString === "" ? [] : idsString.split(",");
+	ids = getCSA(plotPrimitive, "Primitives");
 
 	return ids;
 }
 
 function getDisplaySides(plotPrimitive) {
-	idsString = plotPrimitive.getAttribute("Primitives");
-	let ids = idsString === "" ? [] : idsString.split(",");
-	
-	let sidesString = plotPrimitive.getAttribute("Sides");
-	let sides = sidesString === "" ? [] : sidesString.split(",");
+	let ids = getCSA(plotPrimitive, "Primitives");
+	let sides = getCSA(plotPrimitive, "Sides");
 
 	if (ids.length !== sides.length) {
 		// if sides and ids different sizes make sides have same size
@@ -466,11 +491,8 @@ function getDisplaySides(plotPrimitive) {
 
 function removeDisplayIdForTimePlot(plotPrimitive, removeId) {
 
-	idsString = plotPrimitive.getAttribute("Primitives");
-	let ids = idsString === "" ? [] : idsString.split(",");
-	
-	let sidesString = plotPrimitive.getAttribute("Sides");
-	let sides = sidesString === "" ? [] : idsString.split(",");
+	let ids = getCSA(plotPrimitive, "Primitives");
+	let sides = getCSA(plotPrimitive, "Sides");
 
 	if (ids.length !== sides.length) {
 		// if sides and ids different sizes make sides have same size
@@ -488,6 +510,18 @@ function removeDisplayIdForTimePlot(plotPrimitive, removeId) {
 	return removeIndex !== -1;
 }
 
-function addDisplayIdForTimePlot(plotPrimitive, addId, side) {
+function addDisplayIdForTimePlot(plotPrimitive, newId, newSide) {
+	let isTrackable = trackableTypes.includes(getType(findID(newId)));
+	if (isTrackable) {
+		let ids = getCSA(plotPrimitive, "Primitives");
+		let sides = getCSA(plotPrimitive, "Sides");
 
+		if (! ids.includes(newId)) {
+			ids.push(newId);
+			sides.push(newSide);
+		}
+
+		plotPrimitive.setAttribute("Primitives", ids.join(","));
+		plotPrimitive.setAttribute("Sides", sides.join(","));
+	}
 }
