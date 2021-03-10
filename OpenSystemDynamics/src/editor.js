@@ -8281,74 +8281,6 @@ class TimePlotDialog extends DisplayDialog {
 			])
 		];
 	}
-	
-	primitiveAddButton(id) {
-		this.addIdToDisplay(id, "L");
-		this.updateSelectedPrimitiveList();
-		$(this.dialogContent).find(".primitive-filter-input").val("");
-		this.updateNotSelectedPrimitiveList();
-	}
-	updateSelectedPrimitiveList() {
-		let selectedDiv = $(this.dialogContent).find(".selected-div");
-		if (this.displayIdList.length === 0) {
-			selectedDiv.html("No primitives selected");
-		} else {
-			selectedDiv.html(`<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Added Primitives</td>
-					<th>Left</td>
-					<th>Right</td>
-				</tr>
-				${this.displayIdList.map(id => `
-					<tr>
-						<td style="padding: 0;">
-							<button 
-								class="primitive-remove-button enter-apply" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
-								-
-							</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								${getName(findID(id))}
-							</div>
-							</td>
-							<td style="padding: 0; text-align: center;">
-								<input type="checkbox" class="side-checkbox" data-side="L" data-id="${id}"
-									${checkedHtml(this.getDisplayId(id, "L"))}
-								/>
-							</td>
-							<td style="padding: 0; text-align: center;">
-								<input type="checkbox" class="side-checkbox" data-side="R" data-id="${id}"
-									${checkedHtml(this.getDisplayId(id, "R"))}
-								/>
-							</td>
-					</tr>
-				`).join("")}
-			</table>`);
-			// Enter Apply bindings must be before click bindings for enter-apply to work
-			this.bindEnterApplyEvents();
-			$(this.dialogContent).find(".primitive-remove-button").click(event => {
-				let remove_id = $(event.target).attr("data-id");
-				this.removeIdToDisplay(remove_id);
-				this.updateSelectedPrimitiveList();
-				this.updateNotSelectedPrimitiveList();
-			});
-			$(this.dialogContent).find(".side-checkbox").click(event => {
-				let id = $(event.target).attr("data-id");
-				let side = $(event.target).attr("data-side");
-				let checked = $(event.target).prop("checked");
-				if (! checked) {
-					side = (side === "L") ? "R" : "L"; 	
-				}
-				this.addIdToDisplay(id, side);
-				this.updateSelectedPrimitiveList();
-			})
-		}
-	}
 	makeApply() {
 		this.components.left.forEach(comp => comp.applyChange());
 		this.components.right.forEach(comp => comp.applyChange());
@@ -8634,50 +8566,6 @@ class XyPlotDialog extends DisplayDialog {
 			})
 		];
 	}
-
-	updateSelectedPrimitiveList() {
-		let selectedDiv = $(this.dialogContent).find(".selected-div");
-		if (this.displayIdList.length === 0) {
-			selectedDiv.html("No primitives selected");
-		} else {
-			let axies = ["X", "Y"];
-			selectedDiv.html(`<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Added Primitives</td>
-					<th>Axis</th>
-				</tr>
-				${this.displayIdList.map((id, index) => `
-					<tr>
-						<td style="padding: 0;">
-							<button 
-								class="primitive-remove-button enter-apply" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
-								-
-							</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								${getName(findID(id))}
-							</div>
-						</td>
-						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
-					</tr>
-				`).join("")}
-			</table>`);
-			// Enter Apply bindings must be before click bindings for enter-apply to work
-			this.bindEnterApplyEvents();
-			$(this.dialogContent).find(".primitive-remove-button").click(event => {
-				let remove_id = $(event.target).attr("data-id");
-				this.removeIdToDisplay(remove_id);
-				this.updateSelectedPrimitiveList();
-				this.updateNotSelectedPrimitiveList();
-			});
-		}
-	}
-
 	beforeShow() {
 		this.setHtml(`<div class="table">
 			<div class="table-row">
