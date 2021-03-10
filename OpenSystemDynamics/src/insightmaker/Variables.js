@@ -96,6 +96,7 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
+primitiveBank.timeplot.setAttribute('Sides', '');
 primitiveBank.timeplot.setAttribute("AxisLimits", JSON.stringify({
 	"timeaxis": 	{"min": 0, "max": 100, 	"auto": true}, 
 	"leftaxis": 	{"min": 0, "max": 1, 	"auto": true}, 

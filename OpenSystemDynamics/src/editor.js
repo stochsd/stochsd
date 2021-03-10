@@ -2438,7 +2438,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.data = new TableData();
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
@@ -2447,7 +2447,7 @@ class TableVisual extends HtmlTwoPointer {
 		html = "";
 		html += "<table class='sticky-table'><thead><tr>";
 		
-		let IdsToDisplay = getDisplayIds(this.id);
+		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
 		this.data.namesToDisplay = IdsToDisplay.map(findID).map(getName);
@@ -2689,13 +2689,13 @@ class TimePlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
 	}
 	fetchData() {
-		this.fetchedIds = getDisplayIds(this.id);
+		this.fetchedIds = getDisplayIds(this.primitive);
 		
 		this.data.resultIds = ["time"].concat(this.fetchedIds);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -2709,10 +2709,8 @@ class TimePlotVisual extends PlotVisual {
 	render() {
 		this.fetchData();
 
-		let idsToDisplay = getDisplayIds(this.id);
-
-		// double axis // let sides = this.dialog.getSidesToDisplay();
-		// double axis // this.primitive.setAttribute("Sides", sides.join(","));
+		let idsToDisplay = getDisplayIds(this.primitive);
+		let sides = getDisplaySides(this.primitive);
 
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
@@ -2765,13 +2763,13 @@ class TimePlotVisual extends PlotVisual {
 			let label = "";
 			label += hasNumberedLines ? `${counter}. ` : "";
 			label += this.namesToDisplay[i];
-			// double axis // label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
+			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
 			this.serieSettingsArray.push(
 				{
 					showLabel: true,
 					lineWidth: this.widthsToDisplay[i],
 					label: label, 
-					yaxis: "yaxis", // Removed double axis functionallity while adding components //(sides[i] === "L") ? "yaxis": "y2axis",
+					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
 					linePattern: this.patternsToDisplay[i], 
 					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
 					shadow: false,
@@ -2868,7 +2866,7 @@ class TimePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3019,7 +3017,7 @@ class ComparePlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
@@ -3028,7 +3026,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.gens.reset();
 	}
 	fetchData() {
-		this.fetchedIds = getDisplayIds(this.id);
+		this.fetchedIds = getDisplayIds(this.primitive);
 
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
 		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
@@ -3040,14 +3038,14 @@ class ComparePlotVisual extends PlotVisual {
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		if(this.primitive.getAttribute("KeepResults") === "true") {
 			// add generation 
-			this.gens.append(getDisplayIds(this.id), results, line_options);
+			this.gens.append(getDisplayIds(this.primitive), results, line_options);
 		} else {
-			this.gens.setCurrent(getDisplayIds(this.id), results, line_options);
+			this.gens.setCurrent(getDisplayIds(this.primitive), results, line_options);
 		}
 	}
 	render() {
 
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		
 		if (this.gens.numGenerations == 0) {
@@ -3132,7 +3130,7 @@ class ComparePlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3296,7 +3294,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 
 	render() {
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
 		if (idsToDisplay.length !== 1) {
 			this.setEmptyPlot();
@@ -3372,7 +3370,7 @@ class HistoPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (getDisplayIds(this.id).length !== 1) {
+		if (getDisplayIds(this.primitive).length !== 1) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -3380,7 +3378,7 @@ class HistoPlotVisual extends PlotVisual {
 
 		
 		let scaleType = this.primitive.getAttribute("ScaleType");
-		let targetPrimName = `${getName(findID(getDisplayIds(this.id)[0]))}`;
+		let targetPrimName = `${getName(findID(getDisplayIds(this.primitive)[0]))}`;
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
@@ -3441,7 +3439,7 @@ class HistoPlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
@@ -3484,13 +3482,13 @@ class XyPlotVisual extends PlotVisual {
 		});
 	}
 	removePlotReference(removeId) {
-		let result = removeDisplayId(this.id, removeId);
+		let result = removeDisplayId(this.primitive, removeId);
 		if (result) {
 			this.render();
 		}
 	}
 	render() {		
-		let IdsToDisplay = getDisplayIds(this.id);
+		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
@@ -3603,7 +3601,7 @@ class XyPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		if (getDisplayIds(this.id).length != 2) {
+		if (getDisplayIds(this.primitive).length != 2) {
 			this.setEmptyPlot();
 			return;
 		}
@@ -4851,7 +4849,7 @@ class TableTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4871,8 +4869,10 @@ class TimePlotTool extends TwoPointerTool {
 	}
 	static leftMouseDown(x, y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		let sides = this.initialSelectedIds.map(() => "L");
+		console.log(sides);
 		super.leftMouseDown(x, y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds, sides);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4892,7 +4892,7 @@ class ComparePlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4913,7 +4913,7 @@ class XyPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y)
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -4935,7 +4935,7 @@ class HistoPlotTool extends TwoPointerTool {
 	static leftMouseDown(x,y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		super.leftMouseDown(x,y);
-		setDisplayIds(this.current_connection.id, this.initialSelectedIds);
+		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
 	}
 	static getType() {
@@ -7388,14 +7388,17 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.find(".included-list-div").html(htmlContent);
 		this.parent.bindEnterApplyEvents();
 		this.find(".primitive-remove-button").click(event => {
-			let removeId = $(event.target).attr("data-id");
-			let removeIndex = this.displayIds.indexOf(removeId);
-			if (removeIndex !== -1) {
-				this.displayIds.splice(removeIndex, 1);
-			}
+			this.removeButtonHandler(event);
 			this.updateIncludedList();
 			this.updateExcludedList();
 		});
+	}
+	removeButtonHandler(event) {
+		let removeId = $(event.target).attr("data-id");
+		let removeIndex = this.displayIds.indexOf(removeId);
+		if (removeIndex !== -1) {
+			this.displayIds.splice(removeIndex, 1);
+		}
 	}
 	updateExcludedList() {
 		let searchWord = this.find(".primitive-filter-input").val();
@@ -7441,15 +7444,18 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.find(".excluded-list-div").html(htmlContent);
 		this.parent.bindEnterApplyEvents();
 		this.find(".primitive-add-button").click((event) => {
-			let addId = $(event.target).attr("data-id");
-			this.displayIds.push(addId);
+			this.addButtonHandler(event);
 			this.updateIncludedList();
 			this.find(".primitive-filter-input").val("");
 			this.updateExcludedList();
 		});
 	}
+	addButtonHandler(event) {
+		let addId = $(event.target).attr("data-id");
+		this.displayIds.push(addId);
+	}
 	render() {
-		this.displayIds = getDisplayIds(getID(this.primitive));
+		this.displayIds = getDisplayIds(this.primitive);
 
 		return (`
 			<div class="included-list-div" style="border: 1px solid black;"></div>
@@ -7500,7 +7506,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		return results;
 	}
 	applyChange() {
-		setDisplayIds(getID(this.primitive), this.displayIds);
+		setDisplayIds(this.primitive, this.displayIds);
 	}
 }
 
@@ -8172,12 +8178,90 @@ class AxisLimitsComponent extends HtmlComponent {
 	}
 }
 
+class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
+	constructor(parent) {
+		super(parent);
+		this.sides = [];
+	}
+	renderIncludedList() {
+		return (`<table class="modern-table">
+			<tr>
+				${["", "Added Primitives", "Left", "Right"].map(title => `<th>${title}</th>`).join("")}
+			</tr>
+			${this.displayIds.map((id, index) => {
+				let selectedSide = this.sides[index];
+				return (`<tr>
+					<td style="padding: 0;">
+						<button 
+							class="primitive-remove-button enter-apply" 
+							data-id="${id}"
+							style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+							-
+						</button>
+						</td>
+						<td style="width: 100%;">
+						<div class="center-vertically-container">
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+							${getName(findID(id))}
+						</div>
+						</td>
+						<td style="padding: 0; text-align: center;">
+							<input type="radio" name="id-${id}" class="side-radio" value="L" data-id="${id}"
+								${checkedHtml(selectedSide === "L")}
+							/>
+						</td>
+						<td style="padding: 0; text-align: center;">
+							<input type="radio" name="id-${id}" class="side-radio" value="R" data-id="${id}"
+								${checkedHtml(selectedSide === "R")}
+							/>
+						</td>
+				</tr>
+			`)
+		}).join("")}
+		</table>`);
+	}
+	updateIncludedList() {
+		super.updateIncludedList();
+		this.find(".side-radio").change(event => {
+			this.switchSideHandler(event);
+		});
+	}
+	switchSideHandler(event) {
+		let value = $(event.target).val();
+		let id = $(event.target).attr("data-id");
+		let index = this.displayIds.indexOf(id);
+		if (index !== -1) {
+			this.sides[index] = value;
+		}
+	} 
+	removeButtonHandler(event) {
+		let removeId = $(event.target).attr("data-id");
+		let removeIndex = this.displayIds.indexOf(removeId);
+		if (removeIndex !== -1) {
+			this.displayIds.splice(removeIndex, 1);
+			this.sides.splice(removeIndex, 1);
+		}
+	}
+	addButtonHandler(event) {
+		let addId = $(event.target).attr("data-id");
+		this.displayIds.push(addId);
+		this.sides.push("L");
+	}
+	render() {
+		this.sides = getDisplaySides(this.primitive);
+		return super.render();
+	}
+	applyChange() {
+		setDisplayIds(this.primitive, this.displayIds, this.sides);
+	}
+}
+
 class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
-		this.components.left = [ new PrimitiveSelectorComponent(this) ];
+		this.components.left = [ new TimePlotSelectorComponent(this) ];
 		this.components.right = [
 			new PlotPeriodComponent(this),
 			new AxisLimitsComponent(this, [
