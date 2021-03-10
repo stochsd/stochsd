@@ -8168,12 +8168,19 @@ class AxisLimitsComponent extends HtmlComponent {
 	}
 }
 
+class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
+	applyChange() {
+		let sides = this.displayIds.map(() => "L");
+		setDisplayIds(this.primitive, this.displayIds, sides);
+	}
+}
+
 class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Time Plot Properties");
 
-		this.components.left = [ new PrimitiveSelectorComponent(this) ];
+		this.components.left = [ new TimePlotSelectorComponent(this) ];
 		this.components.right = [
 			new PlotPeriodComponent(this),
 			new AxisLimitsComponent(this, [

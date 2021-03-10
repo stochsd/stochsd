@@ -344,8 +344,12 @@ function isValidToolName(newName) {
  * 	@param {string} plotId ID of plot to set 
  * 	@param {[string]} idList lists of IDs To add
  */
- function setDisplayIds(plotPrimitive, idList) {
-	plotPrimitive.setAttribute("Primitives", idList.join(","));
+ function setDisplayIds(plotPrimitive, idList, sideList) {
+	if (isTimePlot(plotPrimitive)) {
+		setDisplayIdsForTimePlot(plotPrimitive, idList, sideList);
+	} else {
+		plotPrimitive.setAttribute("Primitives", idList.join(","));
+	}
 }
 
 /**
@@ -355,12 +359,17 @@ function isValidToolName(newName) {
 	@returns {[string]} primitive's id to display for Plots/Table
  */
 function getDisplayIds(plotPrimitive) {
-	idsString = plotPrimitive.getAttribute("Primitives");
-	let ids = idsString === "" ? [] : idsString.split(",");
-	// Clear ids that have no primitive 
-	ids.filter(id => findID(id) !== null);
-	setDisplayIds(plotPrimitive, ids);
-	return ids;
+	if (isTimePlot(plotPrimitive)) {
+		return getDisplayIdsForTimePlot(plotPrimitive);
+	} else {
+		idsString = plotPrimitive.getAttribute("Primitives");
+		let ids = idsString === "" ? [] : idsString.split(",");
+		// Clear ids that have no primitive 
+		ids.filter(id => findID(id) !== null);
+		setDisplayIds(plotPrimitive, ids);
+		return ids;
+	}
+	
 }
 
 /**
@@ -371,13 +380,18 @@ function getDisplayIds(plotPrimitive) {
 	@returns {boolean} if ID was successfuly removed 
  */
 function removeDisplayId(plotPrimitive, removeId) {
-	let ids = getDisplayIds(plotPrimitive);
-	let removeIndex = ids.indexOf(removeId);
-	if (removeIndex !== -1) {
-		ids.splice(removeIndex, 1);
+	if (isTimePlot(plotPrimitive)) {
+		return removeDisplayIdForTimePlot(plotPrimitive, removeId);
+	} else {
+		let ids = getDisplayIds(plotPrimitive);
+		let removeIndex = ids.indexOf(removeId);
+		if (removeIndex !== -1) {
+			ids.splice(removeIndex, 1);
+		}
+		setDisplayIds(plotPrimitive, ids);
+		return removeIndex !== -1;
 	}
-	setDisplayIds(plotPrimitive, ids);
-	return removeIndex !== -1;
+	
 }
 
 /**
@@ -391,4 +405,89 @@ function addDisplayId(plotPrimitive, newId) {
 		ids.push(newId);
 		setDisplayIds(plotPrimitive, ids);
 	}
+}
+
+function isTimePlot(plotPrimitive) {
+	return getType(plotPrimitive) === "TimePlot";
+}
+
+
+function setDisplayIdsForTimePlot(plotPrimitive, idList, sideList) {
+	
+	if (sideList === undefined) {
+		throw Error(`sideList is undefined for TimePlot`);
+	} else if (idList.length !== sideList.length) {
+		throw Error(`idList.length ${idList.length} !== sideList.length ${sideList.length}`);
+	}
+
+	plotPrimitive.setAttribute("Primitives", idList.join(","));
+	plotPrimitive.setAttribute("Sides", sideList.join(","));
+}
+
+function getDisplayIdsForTimePlot(plotPrimitive) {
+	idsString = plotPrimitive.getAttribute("Primitives");
+	let ids = idsString === "" ? [] : idsString.split(",");
+	
+	let sidesString = plotPrimitive.getAttribute("Sides");
+	let sides = sidesString === "" ? [] : idsString.split(",");
+
+	// if sides and ids different sizes make sides have same size
+	if (ids.length !== sides.length) {
+		sides = ids.map(() => "L");
+	}
+
+	// Clear ids that have no primitive 
+	for(let i = ids.length-1; i >= 0; i--) {
+		currentId = ids[i];
+		if (findID(currentId) === null) {
+			removeDisplayIdForTimePlot(plotPrimitive, currentId);
+		}
+	}
+
+	idsString = plotPrimitive.getAttribute("Primitives");
+	ids = idsString === "" ? [] : idsString.split(",");
+
+	return ids;
+}
+
+function getDisplaySides(plotPrimitive) {
+	idsString = plotPrimitive.getAttribute("Primitives");
+	let ids = idsString === "" ? [] : idsString.split(",");
+	
+	let sidesString = plotPrimitive.getAttribute("Sides");
+	let sides = sidesString === "" ? [] : idsString.split(",");
+
+	if (ids.length !== sides.length) {
+		// if sides and ids different sizes make sides have same size
+		sides = ids.map(() => "L");
+	}
+	return sides;
+}
+
+function removeDisplayIdForTimePlot(plotPrimitive, removeId) {
+
+	idsString = plotPrimitive.getAttribute("Primitives");
+	let ids = idsString === "" ? [] : idsString.split(",");
+	
+	let sidesString = plotPrimitive.getAttribute("Sides");
+	let sides = sidesString === "" ? [] : idsString.split(",");
+
+	if (ids.length !== sides.length) {
+		// if sides and ids different sizes make sides have same size
+		sides = ids.map(() => "L");
+	}
+
+	let removeIndex = ids.indexOf(removeId);
+	if (removeIndex !== -1) {
+		ids.splice(removeIndex, 1);
+		sides.splice(removeIndex, 1);
+	}
+
+	plotPrimitive.setAttribute("Primitives", ids.join(","));
+	plotPrimitive.setAttribute("Sides", sides.join(","));
+	return removeIndex !== -1;
+}
+
+function addDisplayIdForTimePlot(plotPrimitive, addId, side) {
+
 }
