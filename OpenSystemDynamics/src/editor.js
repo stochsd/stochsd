@@ -3660,7 +3660,7 @@ class XyPlotVisual extends PlotVisual {
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.id);
+		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected<br/>";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
