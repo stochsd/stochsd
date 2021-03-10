@@ -9986,10 +9986,7 @@ class EquationEditor extends jqDialog {
 				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
 			</ul>
 			<b>Tip:</b><br/>
-			<p style="margin: 0.5em 0;"> "#" will comment out the rest of the line: <br/>
-				<span class="example-code">1+2^3 
-					<span class="cm-comment"># this is ignored</span>
-				</span>
+			<p style="margin: 0.5em 0;"> With a "#" after the definition you may add a comment.
 			</p>
 		</div>`);
 	}
