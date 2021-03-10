@@ -4870,7 +4870,6 @@ class TimePlotTool extends TwoPointerTool {
 	static leftMouseDown(x, y) {
 		this.initialSelectedIds = Object.keys(get_selected_root_objects());
 		let sides = this.initialSelectedIds.map(() => "L");
-		console.log(sides);
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds, sides);
 		this.current_connection.render();
