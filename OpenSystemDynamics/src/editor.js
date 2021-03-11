@@ -4352,24 +4352,26 @@ class GhostTool extends OnePointCreateTool {
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static enterTool() {
-		let selected_ids = get_selected_ids();
-		if (selected_ids.length != 1) {
+		let selectedIds = get_selected_ids();
+		// filter out non root object, e.g. anchors 
+		let selectedObjects = selectedIds.filter(id => ! id.includes(".")).map(get_object);
+		if (selectedObjects.length != 1) {
 			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		let selected_object = get_object(selected_ids[0]);
-		if (selected_object.is_ghost) {
+		let selectedObject = selectedObjects[0];
+		if (selectedObject.is_ghost) {
 			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		if (this.ghostable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not ghostable");
+		if (this.ghostable_primitives.indexOf(selectedObject.type) == -1) {
+			xAlert(`This primitive is not ghostable`);
 			ToolBox.setTool("mouse");
 			return;
 		}
-		this.id_to_ghost = selected_ids[0];
+		this.id_to_ghost = selectedObjects[0].id;
 	}
 }
 GhostTool.init();
