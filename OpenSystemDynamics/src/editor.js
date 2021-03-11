@@ -28,6 +28,9 @@ const type_size = {
 	"text":				[120, 60]
 }
 
+// Name type translations
+// the keys are what the visuals have as type
+// The values what new names should be based on when creating new visuals 
 const type_basename = {
 	"timeplot": 	"TimePlot",
 	"compareplot":	"ComparePlot",
