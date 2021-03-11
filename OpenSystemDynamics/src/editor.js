@@ -9161,7 +9161,7 @@ class TimeUnitDialog extends jqDialog {
 				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Time Unit:</b><span>${this.renderHelpButtonHtml("timeunit-help")}</span>
 				</div>
-				<input class="timeunit-field enter-apply" style="text-align: left; width:100%;" type="text"/>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:100%; box-sizing: border-box;" type="text"/>
 				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
