@@ -3383,7 +3383,7 @@ class HistoPlotVisual extends PlotVisual {
 		let widthPerTick = width/this.histogram.numBars;
 
 		let tempTick = this.ticks;
-		let minTickWidth = 35;
+		let minTickWidth = Number.isInteger(this.histogram.intervalWidth) ? 30 : 40;
 		if (widthPerTick < minTickWidth) {
 			let tickIndexSkip = Math.ceil(minTickWidth/widthPerTick);
 			tempTick = this.ticks.filter((_, index) => index%tickIndexSkip === 0 || index === this.ticks.length-1);	
