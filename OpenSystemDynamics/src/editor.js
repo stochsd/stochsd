@@ -10140,8 +10140,7 @@ class TextAreaDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Text");
-		this.setHtml(`
-		<div style="height: 100%;">
+		this.setHtml(`<div style="height: 100%;">
 			<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Text:</b><span>${this.renderHelpButtonHtml("text-help")}</span>
 			</div>
@@ -10151,8 +10150,7 @@ class TextAreaDialog extends DisplayDialog {
 				<td>Hide frame when there is text:</td>
 				<td><input type="checkbox" class="hide-frame-checkbox enter-apply" /></td>
 			</tr></table>
-		</div>
-		`);		
+		</div>`);
 
 		this.setHelpButtonInfo("text-help", "Text Help", `<div style="max-width: 400px;">
 			<b>Key bindings:</b>
@@ -10171,6 +10169,7 @@ class TextAreaDialog extends DisplayDialog {
 		let oldText = getName(this.primitive);
 		this.textArea.val(oldText);
 		this.hideFrameCheckbox.prop("checked", this.primitive.getAttribute("HideFrame") === "true");
+		$(this.dialogContent).find(".text").focus();
 	}
 	afterShow() {
 		this.updateSize();
