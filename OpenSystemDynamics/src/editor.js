@@ -3418,12 +3418,12 @@ class HistoPlotVisual extends PlotVisual {
 		let outsideLimitInfoID = [`${getID(this.primitive)}_histoBelow`, `${getID(this.primitive)}_histoAbove`];
 		$(this.chartDiv).append(`
 				<div id="${outsideLimitInfoID[0]}">
-					${this.histogram.below_data.length} values below ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}
+					${this.histogram.below_data.length} values &lt; ${Number(this.primitive.getAttribute("LowerBound")).toFixed(2)}
 				</div>
 		`);
 		$(this.chartDiv).append(`
 				<div id="${outsideLimitInfoID[1]}">
-					${this.histogram.above_data.length} values above ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
+					${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)} &leq; ${this.histogram.above_data.length} values
 				</div>
 		`);
 		$(`#${outsideLimitInfoID[0]}`).css("left", "8px");
