@@ -3316,6 +3316,8 @@ class HistoPlotVisual extends PlotVisual {
 		this.serieSettingsArray = [];
 		
 		this.histogram = this.calcHistogram(results);
+		let tickDecimal = Number.isInteger(this.histogram.intervalWidth) ? 0 : 2;
+
 		let serie = [];
 		for(let i = 0; i < this.histogram.bars.length; i++) {
 			let bar = this.histogram.bars[i];
@@ -3330,7 +3332,7 @@ class HistoPlotVisual extends PlotVisual {
 			// (1)
 			serie.push([bar.lowerLimit, barValue]);
 			this.labels.push("");
-			this.ticks.push(bar.lowerLimit.toFixed(2));
+			this.ticks.push(bar.lowerLimit.toFixed(tickDecimal));
 
 			// (2) label here 
 			serie.push([(bar.lowerLimit+bar.upperLimit)/2 , barValue]);
@@ -3343,7 +3345,7 @@ class HistoPlotVisual extends PlotVisual {
 
 		serie.push([this.histogram.max, 0]);
 		this.labels.push("");
-		this.ticks.push(this.histogram.max.toFixed(2));
+		this.ticks.push(this.histogram.max.toFixed(tickDecimal));
 
 		this.serieArray.push(serie);
 		let targetPrim = findID(idsToDisplay[0]);
