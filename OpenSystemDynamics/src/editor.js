@@ -28,6 +28,9 @@ const type_size = {
 	"text":				[120, 60]
 }
 
+// Name type translations
+// the keys are what the visuals have as type
+// The values what new names should be based on when creating new visuals 
 const type_basename = {
 	"timeplot": 	"TimePlot",
 	"compareplot":	"ComparePlot",
@@ -4375,24 +4378,26 @@ class GhostTool extends OnePointCreateTool {
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static enterTool() {
-		let selected_ids = get_selected_ids();
-		if (selected_ids.length != 1) {
+		let selectedIds = get_selected_ids();
+		// filter out non root object, e.g. anchors 
+		let selectedObjects = selectedIds.filter(id => ! id.includes(".")).map(get_object);
+		if (selectedObjects.length != 1) {
 			xAlert("You must first select exactly one primitive to ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		let selected_object = get_object(selected_ids[0]);
-		if (selected_object.is_ghost) {
+		let selectedObject = selectedObjects[0];
+		if (selectedObject.is_ghost) {
 			xAlert("You cannot ghost a ghost");
 			ToolBox.setTool("mouse");
 			return;
 		}
-		if (this.ghostable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive is not ghostable");
+		if (this.ghostable_primitives.indexOf(selectedObject.type) == -1) {
+			xAlert(`This primitive is not ghostable`);
 			ToolBox.setTool("mouse");
 			return;
 		}
-		this.id_to_ghost = selected_ids[0];
+		this.id_to_ghost = selectedObjects[0].id;
 	}
 }
 GhostTool.init();
@@ -9184,7 +9189,7 @@ class TimeUnitDialog extends jqDialog {
 				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Time Unit:</b><span>${this.renderHelpButtonHtml("timeunit-help")}</span>
 				</div>
-				<input class="timeunit-field enter-apply" style="text-align: left; width:100%;" type="text"/>
+				<input class="timeunit-field enter-apply" style="text-align: left; width:100%; box-sizing: border-box;" type="text"/>
 				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
@@ -10163,8 +10168,7 @@ class TextAreaDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Text");
-		this.setHtml(`
-		<div style="height: 100%;">
+		this.setHtml(`<div style="height: 100%;">
 			<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Text:</b><span>${this.renderHelpButtonHtml("text-help")}</span>
 			</div>
@@ -10174,8 +10178,7 @@ class TextAreaDialog extends DisplayDialog {
 				<td>Hide frame when there is text:</td>
 				<td><input type="checkbox" class="hide-frame-checkbox enter-apply" /></td>
 			</tr></table>
-		</div>
-		`);		
+		</div>`);
 
 		this.setHelpButtonInfo("text-help", "Text Help", `<div style="max-width: 400px;">
 			<b>Key bindings:</b>
@@ -10194,6 +10197,7 @@ class TextAreaDialog extends DisplayDialog {
 		let oldText = getName(this.primitive);
 		this.textArea.val(oldText);
 		this.hideFrameCheckbox.prop("checked", this.primitive.getAttribute("HideFrame") === "true");
+		$(this.dialogContent).find(".text").focus();
 	}
 	afterShow() {
 		this.updateSize();
