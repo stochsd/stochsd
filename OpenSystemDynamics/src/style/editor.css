@@ -86,14 +86,13 @@ button.pressed {
     width: 30px;
     height:  30px;
     display: inline-block;
-    vertical-align: text-bottom;
+    vertical-align: top;
 }
 #btn_timeunit {
     height:30px; 
     vertical-align: top; 
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block; 
-    margin-top: 1px;
 }
 button svg {
     border-width: 0px;
