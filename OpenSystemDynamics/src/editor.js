@@ -3379,7 +3379,18 @@ class HistoPlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 
+		let width = parseInt(this.chartDiv.style.width);
+		let widthPerTick = width/this.histogram.numBars;
+
+		let tempTick = this.ticks;
+		let minTickWidth = 35;
+		if (widthPerTick < minTickWidth) {
+			let tickIndexSkip = Math.ceil(minTickWidth/widthPerTick);
+			tempTick = this.ticks.filter((_, index) => index%tickIndexSkip === 0 || index === this.ticks.length-1);	
+		}
 		
+		
+
 		let scaleType = this.primitive.getAttribute("ScaleType");
 		let targetPrimName = `${getName(findID(getDisplayIds(this.primitive)[0]))}`;
 
@@ -3406,7 +3417,7 @@ class HistoPlotVisual extends PlotVisual {
 					}, 
 					label: "&nbsp;", // make sure there is space for below/above labels 
 					pad: 0,
-					ticks: this.ticks
+					ticks: tempTick
 				},
 				yaxis: {
 					min: 0
