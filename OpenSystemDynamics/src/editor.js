@@ -3255,7 +3255,8 @@ class HistoPlotVisual extends PlotVisual {
 		}
 		if (this.primitive.getAttribute("UpperBoundAuto") === "true") {
 			histogram.max = Math.max.apply(null, histogram.data);
-			histogram.max += (histogram.max-histogram.min)*0.0001;
+			// This line is to slightly elevate the upper limit so the top most value is included.
+			// histogram.max += (histogram.max-histogram.min)*0.0001;
 			this.primitive.setAttribute("UpperBound", histogram.max);
 		} else {
 			histogram.max = Number(this.primitive.getAttribute("UpperBound"));
