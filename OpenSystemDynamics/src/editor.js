@@ -2813,14 +2813,14 @@ class TimePlotVisual extends PlotVisual {
 
 
 		// Calculate minTimeSubDivision
-		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/100;
+		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/10;
 
 		// Measure in pixels 
 		let pxWidth = parseInt(this.chartDiv.style.width);
 		let minPxStep = 40;
 		let maxSteps = Math.floor(pxWidth/minPxStep);
 
-		let viableMultiples = [1, 2, 5, 10, 20, 50, 100, 500];
+		let viableMultiples = [1, 2, 5, 10, 20, 50];
 		let stepSizeList = viableMultiples.map(muliple => {
 			return muliple*tickSubDivStep;
 		})
