@@ -6807,10 +6807,10 @@ class RunResults {
 		return lastRow[varIdIndex];
 	}
 	static getTimeStep() {
-		if (this.results && 1 < this.results.length) {
-			return `${this.results[1][0]-this.results[0][0]}`;
-		} else if (primitives("Setting")[0]) {
+		if (primitives("Setting")[0]) {
 			return primitives("Setting")[0].getAttribute("TimeStep");
+		} else if (this.results && 1 < this.results.length) {
+			return `${this.results[1][0]-this.results[0][0]}`;
 		}
 		return "0";
 	}
