@@ -3439,7 +3439,7 @@ class HistoPlotVisual extends PlotVisual {
 		`);
 		$(this.chartDiv).append(`
 				<div id="${outsideLimitInfoID[1]}">
-					${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)} &leq; ${this.histogram.above_data.length} values
+					${this.histogram.above_data.length} values &geq; ${Number(this.primitive.getAttribute("UpperBound")).toFixed(2)}
 				</div>
 		`);
 		$(`#${outsideLimitInfoID[0]}`).css("left", "8px");
@@ -9906,7 +9906,7 @@ class EquationEditor extends jqDialog {
 	}
 	updateHelpText() {
 		let typeSpecificTexts = {
-			"Stock": "The initial value of the stock will be set by the definition. (The stock's value over time increases or decreases by inflows and outflows.)",
+			"Stock": "The initial value of the stock is set in the definition. (The stock's value over time increases or decreases by inflows and outflows.)",
 			"Flow": "The content in a stock will enter or leave through a flow at the rate determined by the definition.",
 			"Variable": "The auxiliary will take on the value calculated from the definition. The value will be recalculated as the simulation progresses.",
 			"Constant": "The parameter will take on the value calculated from the definition. The value will be recalculated as the simulation progresses."
