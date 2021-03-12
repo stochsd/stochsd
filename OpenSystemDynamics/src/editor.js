@@ -2655,7 +2655,14 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 		if (oldWidth !== newWidth || oldHeight !== newHeight) {
 			this.chartDiv.style.width = newWidth;
 			this.chartDiv.style.height = newHeight;
-			this.updateChart();
+
+			// Clear updating chart so only the last updateGraphics updates chart
+			// This limits the number of times updateCharts runs (updateChart is an expensive call)
+			if (this.updateChartTimeOut) {
+				clearTimeout(this.updateChartTimeOut);
+				this.updateChartTimeOut = null;
+			}
+			this.updateChartTimeOut = setTimeout(this.updateChart.bind(this), 10);
 		}
 	}
 	makeGraphics() {
@@ -2851,6 +2858,10 @@ class TimePlotVisual extends PlotVisual {
 		return ticks;
 	}
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			this.setEmptyPlot();
 			return;
@@ -3139,6 +3150,10 @@ class ComparePlotVisual extends PlotVisual {
 		 },200);
 	}
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+
 		if (this.serieArray == null || this.serieArray.length == 0 || this.serieArray[0].length === 0) {
 			// The series are not initialized yet
 			this.setEmptyPlot();
@@ -3428,6 +3443,10 @@ class HistoPlotVisual extends PlotVisual {
 		 },200);
 	}
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+
 		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.setEmptyPlot();
@@ -3670,6 +3689,10 @@ class XyPlotVisual extends PlotVisual {
 	}
 	
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+
 		if (this.serieArray == null) {
 			// The series are not initialized yet
 			this.setEmptyPlot();
