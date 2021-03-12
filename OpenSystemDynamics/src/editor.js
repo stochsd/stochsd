@@ -2798,6 +2798,58 @@ class TimePlotVisual extends PlotVisual {
 		 },200);
 		
 	}
+	getTickStep() {
+		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let length = axisLimits.timeaxis.auto ? getTimeLength() : axisLimits.timeaxis.max - axisLimits.timeaxis.min;
+		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
+		let max = Number(axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max);
+
+
+		// Calculate minTimeSubDivision
+		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/100;
+
+		// Measure in pixels 
+		let pxWidth = parseInt(this.chartDiv.style.width);
+		let minPxStep = 40;
+		let maxSteps = Math.floor(pxWidth/minPxStep);
+
+		let viableMultiples = [1, 2, 5, 10, 20, 50, 100, 500];
+		let stepSizeList = viableMultiples.map(muliple => {
+			return muliple*tickSubDivStep;
+		})
+		let okStepSize = stepSizeList.find(step => { 
+			return maxSteps >= length/step;
+		});
+
+		let ticks = [min.toFixed(2), max.toFixed(2)];
+		if (okStepSize !== undefined) {
+			let tickStep = okStepSize;
+
+			let decimals = Number.isInteger(okStepSize) ? 0 : 2;
+			
+			ticks = [];
+			let lowerIndex = Math.ceil(min/tickStep);
+			let upperIndex = Math.floor(max/tickStep);
+
+			if (tickStep*lowerIndex !== min) {
+				// Add empty tick if min is not included
+				// ticks can be formated as 2D array [[val,label],[val,label],...]
+				// see reference: http://www.music.mcgill.ca/~ich/classes/mumt301_11/js/jqPlot/docs/files/jqplot-core-js.html#Axis.ticks
+				ticks.push([min, ""]);
+			}
+
+			for(let i = lowerIndex; i <= upperIndex ; i++) {
+				let currentTick = tickStep*i;
+				ticks.push([currentTick, currentTick.toFixed(decimals)]);
+			}
+
+			if (tickStep*upperIndex !== max) {
+				ticks.push([max, ""]);
+			}
+		}
+
+		return ticks;
+	}
 	updateChart() {
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			this.setEmptyPlot();
@@ -2805,7 +2857,11 @@ class TimePlotVisual extends PlotVisual {
 		}
 		$(this.chartDiv).empty();
 
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+
+		let tickList = this.getTickStep();
+
+		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			title: this.primitive.getAttribute("TitleLabel"),
 			series: this.serieSettingsArray,
@@ -2817,22 +2873,23 @@ class TimePlotVisual extends PlotVisual {
 				xaxis: {
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: "Time",
-					min: axis_limits.timeaxis.auto ? getTimeStart() : axis_limits.timeaxis.min,
-					max: axis_limits.timeaxis.auto ? getTimeStart()+getTimeLength() : axis_limits.timeaxis.max 
+					min: axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min,
+					max: axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max,
+					ticks: tickList
 				},
 				yaxis: {
 					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("LeftAxisLabel"),
-					min: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.min,
-					max: axis_limits.leftaxis.auto ? undefined : axis_limits.leftaxis.max
+					min: axisLimits.leftaxis.auto ? undefined : axisLimits.leftaxis.min,
+					max: axisLimits.leftaxis.auto ? undefined : axisLimits.leftaxis.max
 				},
 				y2axis: {
 					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: this.primitive.getAttribute("RightAxisLabel"),
-					min: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.min,
-					max: axis_limits.rightaxis.auto ? undefined : axis_limits.rightaxis.max,
+					min: axisLimits.rightaxis.auto ? undefined : axisLimits.rightaxis.min,
+					max: axisLimits.rightaxis.auto ? undefined : axisLimits.rightaxis.max,
 					tickOptions: {
 						showGridline: false
 					}
@@ -2852,20 +2909,20 @@ class TimePlotVisual extends PlotVisual {
 				placement: 'outsideGrid'
 			 }
 		});
-		if (axis_limits.leftaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("yaxis")) {
+		if (axisLimits.leftaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("yaxis")) {
 			if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
-				axis_limits.leftaxis.min = this.plot.axes.yaxis.min; 
-				axis_limits.leftaxis.max = this.plot.axes.yaxis.max; 
+				axisLimits.leftaxis.min = this.plot.axes.yaxis.min; 
+				axisLimits.leftaxis.max = this.plot.axes.yaxis.max; 
 			}
 		}
-		if (axis_limits.rightaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("y2axis") ) {
+		if (axisLimits.rightaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("y2axis") ) {
 			if ( ! isNaN(this.plot.axes.y2axis.min) && ! isNaN(this.plot.axes.y2axis.max) ) {
-				axis_limits.rightaxis.min = this.plot.axes.y2axis.min;
-				axis_limits.rightaxis.max = this.plot.axes.y2axis.max;
+				axisLimits.rightaxis.min = this.plot.axes.y2axis.min;
+				axisLimits.rightaxis.max = this.plot.axes.y2axis.max;
 			}
 		}
 
-		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
