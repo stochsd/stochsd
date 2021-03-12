@@ -2805,7 +2805,7 @@ class TimePlotVisual extends PlotVisual {
 		 },200);
 		
 	}
-	getTickStep() {
+	getTicks() {
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let length = axisLimits.timeaxis.auto ? getTimeLength() : axisLimits.timeaxis.max - axisLimits.timeaxis.min;
 		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
@@ -2816,7 +2816,7 @@ class TimePlotVisual extends PlotVisual {
 		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/10;
 
 		// Measure in pixels 
-		let pxWidth = parseInt(this.chartDiv.style.width);
+		let pxWidth = parseInt(this.chartDiv.style.width)-50;
 		let minPxStep = 40;
 		let maxSteps = Math.floor(pxWidth/minPxStep);
 
@@ -2870,7 +2870,7 @@ class TimePlotVisual extends PlotVisual {
 
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 
-		let tickList = this.getTickStep();
+		let tickList = this.getTicks();
 
 		$.jqplot.config.enablePlugins = true;
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
