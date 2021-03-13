@@ -2816,8 +2816,8 @@ class TimePlotVisual extends PlotVisual {
 		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/10;
 
 		// Measure in pixels 
-		let pxWidth = parseInt(this.chartDiv.style.width)-50;
-		let minPxStep = 40;
+		let pxWidth = parseInt(this.chartDiv.style.width)-80;
+		let minPxStep = 50;
 		let maxSteps = Math.floor(pxWidth/minPxStep);
 
 		let viableMultiples = [1, 2, 5, 10, 20, 50];
