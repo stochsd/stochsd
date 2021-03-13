@@ -1212,8 +1212,8 @@ class AnchorPoint extends OnePointer {
 			];
 		} else {
 			return [
-				svg_circle(0, 0, 4, this.color, "white", "element"),
-				svg_circle(0, 0, 4, "none", this.color, "highlight")
+				svg_circle(0, 0, 5, this.color, "white", "element"),
+				svg_circle(0, 0, 5, "none", this.color, "highlight")
 			];
 		}
 		
