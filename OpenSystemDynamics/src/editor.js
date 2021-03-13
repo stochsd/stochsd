@@ -305,14 +305,6 @@ function updateWindowSize() {
 		$("#svgplanebackground").width(windowWidth-18);
 		$("#svgplanebackground").height(windowHeight-svgPosition.top);
 	},100);
-	
-	updateLinkBar();
-
-}
-
-function updateLinkBar() {
-	let linkBarLeft = $(window).width()-30-$(".info-bar__im-link").width();
-	$(".info-bar__im-link").css("left", linkBarLeft)
 }
 
 
@@ -395,7 +387,6 @@ class InfoBar {
 			this.infoDE.html("");
 			this.setRestricted(false);
 		}
-		updateLinkBar();
 	}
 }
 
