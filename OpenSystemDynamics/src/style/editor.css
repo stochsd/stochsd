@@ -313,33 +313,30 @@ h3.equation-list-header {
 /*  Info bar start here */
 .info-bar {
     display:flex; 
+    justify-content: space-between;
     margin: 0px; 
     font-size: 14px; 
     height: 32px; 
     font-family: Arial, Helvetica, sans-serif;
 }
 .info-box__element {
-    /* background: #f0f0f0; */ 
-    margin: 0px 12px;
-    /* padding: 6px 18px; */
-    min-width: 140px;
+    white-space:nowrap; 
+    margin: 0px 24px;
+    /* min-width: 140px; */
 }
 .info-bar__definition {
     font-family: monospace;
-    float:left; 
-    white-space:nowrap; 
     overflow:hidden; 
     text-overflow:ellipsis; 
-    max-width:50%;
+    max-width: 50vw;
 }
 .info-bar__value-error {
     color: red;
     float: right;
 }
 .info-bar__im-link {
-    position: absolute; 
     white-space: nowrap;
-    left: 500px;
+    margin: 0px 24px;
 }
 
 /* Add style to jqplot elements */
