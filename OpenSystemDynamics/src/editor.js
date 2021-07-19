@@ -290,24 +290,6 @@ const keyboard = makeKeyboardCodes();
 // event.button will give incorrect results 
 const mouse = {"left": 1, "middle": 2, "right": 3};
 
-function updateWindowSize() {
-	let windowWidth = $(window).width();
-	let windowHeight = $(window).height();
-	
-	$("#coverEverythingDiv").width(windowWidth);
-	$("#coverEverythingDiv").height(windowHeight);
-	
-	// resizing of the svgplane must be done after everything else is resized to fit with the new height of the toolbar
-	// The resize of the toolbar is decided by css depending on how many lines the toolbar is so its very hard if we would calculate this size in advanced
-	// Instead we wait until it is resized and then adopt to the result
-	setTimeout(function() {
-		let svgPosition = $("#svgplanebackground").position();
-		$("#svgplanebackground").width(windowWidth-18);
-		$("#svgplanebackground").height(windowHeight-svgPosition.top);
-	},100);
-}
-
-
 class InfoBar {
 	static init() {
 		let infoDef = $(".info-bar__definition")[0];
@@ -6019,8 +6001,6 @@ $(window).load(function() {
 	// When the program is fully loaded we create a new model
 	//~ fileManager.newModel();
 	
-	$(window).resize(updateWindowSize);
-	updateWindowSize();
 	nwController.ready();
 	environment.ready();
 	fileManager.ready();
@@ -6545,6 +6525,7 @@ function printDiagram() {
 	let minutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
 	let fullDate = `${d.getFullYear().toString()}-${month}-${day} ${hours}:${minutes} (yyyy-mm-dd hh:mm)`;
 
+	$(".editor-footer").css("display", "block");
 	if (fileName.length > 0) {
 		$(".editor-footer-filepath").html(fileName);
 	} else {
@@ -6554,6 +6535,7 @@ function printDiagram() {
 	$(".editor-footer-date").html(fullDate);
 
 	hideAndPrint([$("#topPanel").get(0)]);
+	$(".editor-footer").css("display", "none");
 }
 
 function removeNewLines(string) {

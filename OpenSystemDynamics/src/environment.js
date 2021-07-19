@@ -768,7 +768,6 @@ class NwEnvironment extends BaseEnvironment {
 			if (event.keyCode == keyboard["0"]) {
 				NwZoomController.zoomReset();
 			}
-			updateWindowSize();
 		}
 	}
 	getFileManager() {
