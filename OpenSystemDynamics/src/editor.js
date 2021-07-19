@@ -3696,7 +3696,7 @@ class XyPlotVisual extends PlotVisual {
 			return;
 		}
 		$(this.chartDiv).empty();
-		let axis_limits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
 			title: this.primitive.getAttribute("TitleLabel"),
@@ -3712,14 +3712,16 @@ class XyPlotVisual extends PlotVisual {
 				xaxis: {
 					label: this.serieXName,
 					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.min,
-					max: axis_limits.xaxis.auto ? undefined : axis_limits.xaxis.max
+					min: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.min,
+					max: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.max,
+					ticks: axisLimits.xaxis.auto ? undefined : this.getTicks(Number(axisLimits.xaxis.min), Number(axisLimits.xaxis.max)),
 				},
 				yaxis: {
 					label: this.serieYName,
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					min: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.min,
-					max: axis_limits.yaxis.auto ? undefined : axis_limits.yaxis.max
+					min: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.min,
+					max: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.max,
+					ticks: axisLimits.yaxis.auto ? undefined : this.getTicks(Number(axisLimits.yaxis.min), Number(axisLimits.yaxis.max)),
 				}
 			},
 			highlighter: {
@@ -3738,15 +3740,15 @@ class XyPlotVisual extends PlotVisual {
 				useAxesFormatters: false
 			}
 		});
-		if (axis_limits.xaxis.auto) {
-			axis_limits.xaxis.min = this.plot.axes.xaxis.min;
-			axis_limits.xaxis.max = this.plot.axes.xaxis.max;
+		if (axisLimits.xaxis.auto) {
+			axisLimits.xaxis.min = this.plot.axes.xaxis.min;
+			axisLimits.xaxis.max = this.plot.axes.xaxis.max;
 		}
-		if (axis_limits.yaxis.auto) {
-			axis_limits.yaxis.min = this.plot.axes.yaxis.min;
-			axis_limits.yaxis.max = this.plot.axes.yaxis.max;
+		if (axisLimits.yaxis.auto) {
+			axisLimits.yaxis.min = this.plot.axes.yaxis.min;
+			axisLimits.yaxis.max = this.plot.axes.yaxis.max;
 		}
-		this.primitive.setAttribute("AxisLimits", JSON.stringify(axis_limits));
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 	}
 	setEmptyPlot() {
 		$(this.chartDiv).empty();
