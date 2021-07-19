@@ -305,6 +305,9 @@ h3.equation-list-header {
     border-color: black;
     color: black;
 }
+.help-button:focus {
+    outline: none;
+}
 
 .macro-text {
     width: 600px;
