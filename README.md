@@ -4,7 +4,7 @@
 
 ## What does the program do
 
-StochSD is a stochastic simulation application, primarily developed to introduce statistical pos-analysis from multiple simulations.
+StochSD is a stochastic simulation application, primarily developed to introduce statistical post-analysis from multiple simulations.
 
 ## How to run the software
 
