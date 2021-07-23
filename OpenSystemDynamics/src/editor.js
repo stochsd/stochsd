@@ -7073,7 +7073,7 @@ class jqDialog {
 		});
 	}
 	renderHelpButtonHtml(helpId) {
-		return (`<button id="${helpId}" class="help-button enter-apply">
+		return (`<button id="${helpId}" class="help-button enter-apply" tabindex="-1" >
 			?
 		</button>`);
 	}
