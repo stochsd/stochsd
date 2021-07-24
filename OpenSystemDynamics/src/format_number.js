@@ -168,6 +168,7 @@ function format_number(value, options = {}) {
             digits_below += `${tmpNum}`;
         }
         rest -= tmpNum*10**i;
+        rest = rest < 0 ? 0 : rest;
     }
     
     // set sign character 
