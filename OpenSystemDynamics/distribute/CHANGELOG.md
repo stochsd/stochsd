@@ -14,3 +14,4 @@
 - HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 - *Enter* and *Shift+Enter* works consistently in *DefinitionEditor*, *ConverterEditor*, *TextBox* and *Macro Dialog*
 - Progressbar changes width to accomodate simulation info.
+- Added icons for *Tools* (Optim, Sensi, StatRes and ParmVar) in menu.
