@@ -6,7 +6,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 */
 
 // Dialoge window handlers 
-var equationEditor;
+var definitionEditor;
 var converterDialog;
 var simulationSettings;
 var timeUnitDialog;
@@ -804,7 +804,7 @@ function default_double_click(id) {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
 	}
-	equationEditor.open(id, ".value-field");
+	definitionEditor.open(id, ".value-field");
 }
 
 class BaseObject {
@@ -922,7 +922,7 @@ class BaseObject {
 			return;
 		}
 		let id = get_parent_id(this.id)
-		equationEditor.open(id, ".name-field");
+		definitionEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
 	
@@ -5980,7 +5980,7 @@ $(window).load(function() {
 		}
 	}
 	macroDialog = new MacroDialog();
-	equationEditor = new EquationEditor();
+	definitionEditor = new DefinitionEditor();
 	converterDialog = new ConverterDialog();
 	simulationSettings = new SimulationSettings();
 	timeUnitDialog = new TimeUnitDialog();
@@ -9672,7 +9672,7 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 	}
 }
 
-class EquationEditor extends jqDialog {
+class DefinitionEditor extends jqDialog {
 	constructor() {
 		super();
 		this.accordionBuilt = false;
