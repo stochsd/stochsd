@@ -25,6 +25,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 .eMenu .menuContent img {
 	height: 22px;
 	margin-right: 6px;
+	pointer-events: none;
 }
 
 div.recent-path {
