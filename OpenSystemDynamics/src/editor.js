@@ -2469,7 +2469,7 @@ class TableVisual extends HtmlTwoPointer {
 						column_index == 0 
 						? `<td class="time-value-cell">${format_number(row[column_index], { round_to_zero_limit,  decimals: time_decimals }
 						)}</td>`
-						: `<td>${format_number(row[column_index], number_options)}</td>`
+						: `<td class="prim-value-cell">${format_number(row[column_index], number_options)}</td>`
 					).join("")}
 				</tr>`).join("")}
 			</tbody>
