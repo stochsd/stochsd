@@ -66,6 +66,7 @@ function run_tests() {
     test_format_number(0.1872, {decimals: 2}, "0.19");
     test_format_number(0.1872, {decimals: 4}, "0.1872");
 
+    test_format_number(0.00006, {decimals: 6} , "0.000060")
     
     console.table(resultTable);
     console.log(`Num Success: ${numSuccess}`);
