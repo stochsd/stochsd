@@ -2627,11 +2627,11 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 			return maxSteps >= length/step;
 		});
 
-		let ticks = [min.toFixed(2), max.toFixed(2)];
+		let ticks = [`${min}`, `${max}`];
 		if (okStepSize !== undefined) {
 			let tickStep = okStepSize;
 
-			let decimals = Number.isInteger(okStepSize) ? 0 : 2;
+			let decimals = Number.isInteger(okStepSize) ? 0 : undefined;
 			
 			ticks = [];
 			let lowerIndex = Math.ceil(min/tickStep);
@@ -2646,7 +2646,7 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 
 			for(let i = lowerIndex; i <= upperIndex ; i++) {
 				let currentTick = tickStep*i;
-				ticks.push([currentTick, currentTick.toFixed(decimals)]);
+				ticks.push([currentTick, format_number(currentTick, {decimals})]);
 			}
 
 			if (tickStep*upperIndex !== max) {
