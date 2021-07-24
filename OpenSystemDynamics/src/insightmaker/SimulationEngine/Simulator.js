@@ -18,9 +18,6 @@ function Simulator(config){
 
 	this.distanceCache = {};
 
-	// Added by Magnus 2020-07-15 
-	this.stopFlag = false;
-
 	// Added by Magnus 2020-12-22 
 	this.execStartTime = (new Date()).getTime() / 1000;
 
@@ -142,8 +139,8 @@ Simulator.prototype.resume = function(){
 
 }
 
-Simulator.prototype.completed = function(){
-	return this.terminated || this.tasks.completed() || this.stopFlag;
+Simulator.prototype.completed = function() {
+	return this.terminated || this.tasks.completed();
 }
 
 Simulator.prototype.terminate = function(){

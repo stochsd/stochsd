@@ -24,50 +24,109 @@ String.prototype.replaceAt = function(index, replacement) {
 }
 
 
+function digits_object(digits_above, digits_below) {
+    let digits = {};
+    for (let i = digits_above.length-1; i >= 0; i--) {
+        let currentPos = `${digits_above.length-i-1}`;
+        digits[currentPos] = Number(digits_above.charAt(i));
+    }
+    for (let i = 0; i < digits_below.length; i++) {
+        let currentPos = `-${i+1}`;
+        digits[currentPos] = Number(digits_below.charAt(i));
+    }
+
+    digits.topPos = digits_above.length-1;
+    digits.bottomPos = -digits_below.length;
+
+    digits.get = (pos) => { return digits[`${pos}`] }
+    digits.set = (pos, newDigit) => { digits[`${pos}`] = newDigit }
+    digits.increment = (pos) => { 
+        let currentDigit = digits.get(pos);
+        if (currentDigit === undefined) {
+            digits.set(pos, 1);
+            digits.topPos++;
+        } else {
+            if (currentDigit === 9) {
+                digits.set(pos, 0);
+                digits.increment(pos+1);
+            } else {
+                digits.set(pos, currentDigit+1);
+            }
+        }
+        return digits;
+    }
+    digits.iterate = (from, to, func) => {
+        for (let pos = from; pos >= to; pos--) {
+            func(pos);
+        }
+    }
+    digits.round = (desiredRoundingPos) => {
+        if (desiredRoundingPos < digits.bottomPos) return digits;
+        
+        // Never round integers 
+        let roundingPos = desiredRoundingPos < 0 ? desiredRoundingPos : 0;
+
+        // round up if above previod number is 5 or above 
+        if (digits.get(roundingPos-1) >= 5) {
+            digits.increment(roundingPos);
+        }
+
+        // clear digits below the rounding position 
+        digits.iterate(roundingPos-1, digits.bottomPos, (pos) => {
+            delete digits[`${pos}`];
+        });
+        digits.bottomPos = roundingPos;
+
+        return digits;
+    }
+    digits.toString = () => {
+        let result = "";
+        digits.iterate(digits.topPos, digits.bottomPos, (pos) => {
+            if(pos == -1) {
+                result += ".";
+            }
+            result += `${digits.get(pos)}`;
+        })
+        return result;
+    }
+
+    digits.to_above_below_format = () => {
+        let digits_above = "";
+        let digits_below = "";
+        digits.iterate(digits.topPos, digits.bottomPos, (pos) => {
+            if (pos >= 0) {
+                digits_above += `${digits.get(pos)}`;
+            } else {
+                digits_below += `${digits.get(pos)}`;
+            }
+        });
+        return {
+            "digits_above": digits_above !== "" ? digits_above : "0",
+            "digits_below": digits_below
+        };
+    }
+
+    return digits;
+}
+
+
 /*
     positions:  4 3 2 1 0  -1-2-3-4-5-6
     digits:     8 3 4 2 5 . 4 1 0 9 8 4
                 above       below
  */
 function round_digits(digits_above, digits_below, position) {
-    let digits = digits_above+digits_below;
-    let index = digits_above.length-1-position;
-
-    if (Number(digits[index+1]) >= 5) {
-        // round up
-        for (let i = index; i >= 0; i--) {
-            if (digits[i] === "9") {
-                digits = digits.replaceAt(i, "0");
-                if (i === 0) {
-                    // last digit is 9
-                    // e.g. 999 -> 1000
-                    digits = "1"+digits;
-                    // change length of digits above be be equal
-                    digits_above = "1"+digits_above;
-                }
-            } else {
-                digits = digits.replaceAt(i, `${Number(digits[i])+1}`);
-                break;
-            }
-        }
-        digits_above = digits.substr(0, digits_above.length);
-        digits_below = digits.substr(digits_above.length);
-    }
-    return {
-        "digits_above": digits_above, 
-        "digits_below": digits_below.substr(0, -position)
-    };
+    return digits_object(digits_above, digits_below).round(position).to_above_below_format();
 }
-
 
 let default_options = {
     decimals: undefined,
     precision: undefined, // also called sigificant digits 
-    round_to_zero_limit: undefined,
+    round_to_zero_limit: undefined, // Rounds to zero if abs(value) < round_to_zero_limit and round_to_zero_limit is defined
     use_e_format_upper_limit: 1e8, 
     use_e_format_lower_limit: 1e-6, 
     show_plus_sign: false,
-    not_defined: ""
+    not_defined: "" // return if value is not defined 
 }
 
 function format_number(value, options = {}) {
@@ -109,6 +168,7 @@ function format_number(value, options = {}) {
             digits_below += `${tmpNum}`;
         }
         rest -= tmpNum*10**i;
+        rest = rest < 0 ? 0 : rest;
     }
     
     // set sign character 
@@ -189,3 +249,6 @@ function decimals_in_value_string(value_str) {
 
     return decimals-trailing_zeros;
 }
+
+// Uncomment for testing since it causes error for commonJS (only runs for node.js)
+// module.exports = format_number;

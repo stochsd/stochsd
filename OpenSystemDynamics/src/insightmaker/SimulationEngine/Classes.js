@@ -31,13 +31,13 @@ AggregateSeries.method("get", function(data) {
 	}
 	
 	while (this.oldValues.length - 1 < index) {
-		this.oldValues.push(evaluateNode(data.node,data.scope));
+		let node = evaluateNode(data.node,data.scope);
+		// if node is a primitive get value of primitive otherwise node is Material/Vector
+		let val = node.value instanceof Function ? node.value() : node;
+		this.oldValues.push(val);
 	}
-	if(this.oldValues[index].fullClone){
-		return this.oldValues[index].fullClone();
-	}else{
-		return this.oldValues[index];
-	}
+	
+	return this.oldValues[index].fullClone();
 });
 
 function DataBank() {

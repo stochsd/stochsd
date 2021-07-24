@@ -68,6 +68,7 @@ primitiveBank.numberbox.setAttribute("NumberLength", JSON.stringify({
 	"precision": 4,
 	"decimal": 2,
 }));
+primitiveBank.numberbox.setAttribute("HideFrame", false);
 primitiveBank.numberbox.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.numberbox);
 
@@ -95,6 +96,7 @@ setValuedProperties(primitiveBank.diagram);
 
 primitiveBank.timeplot = doc.createElement('TimePlot');
 primitiveBank.timeplot.setAttribute('Primitives', '');
+primitiveBank.timeplot.setAttribute('Sides', '');
 primitiveBank.timeplot.setAttribute("AxisLimits", JSON.stringify({
 	"timeaxis": 	{"min": 0, "max": 100, 	"auto": true}, 
 	"leftaxis": 	{"min": 0, "max": 1, 	"auto": true}, 
@@ -114,6 +116,7 @@ primitiveBank.timeplot.setAttribute("LeftAxisLabel", "");
 primitiveBank.timeplot.setAttribute("RightAxisLabel", "");
 primitiveBank.timeplot.setAttribute("HasNumberedLines", true);
 primitiveBank.timeplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.timeplot.setAttribute("ShowHighlighter", false);
 primitiveBank.timeplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.timeplot);
 
@@ -124,6 +127,7 @@ primitiveBank.compareplot.setAttribute("AxisLimits", JSON.stringify({
 	"timeaxis": {"min": 0, "max": 100, 	"auto": true}, 
 	"yaxis": 	{"min": 0, "max": 1, 	"auto": true}
 }));
+primitiveBank.compareplot.setAttribute('KeepResults', false);
 primitiveBank.compareplot.setAttribute('PlotPer', 1);
 primitiveBank.compareplot.setAttribute('AutoPlotPer', true);
 primitiveBank.compareplot.setAttribute('LineOptions', JSON.stringify({
@@ -137,6 +141,7 @@ primitiveBank.compareplot.setAttribute("TitleLabel", "");
 primitiveBank.compareplot.setAttribute("LeftAxisLabel", "");
 primitiveBank.compareplot.setAttribute("HasNumberedLines", true);
 primitiveBank.compareplot.setAttribute("ColorFromPrimitive", true);
+primitiveBank.compareplot.setAttribute("ShowHighlighter", false);
 primitiveBank.compareplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.compareplot);
 
@@ -156,6 +161,7 @@ primitiveBank.xyplot.setAttribute('LineWidth', 2);
 primitiveBank.xyplot.setAttribute('TitleLabel', '');
 primitiveBank.xyplot.setAttribute('XLogScale', false);
 primitiveBank.xyplot.setAttribute('YLogScale', false);
+primitiveBank.xyplot.setAttribute("ShowHighlighter", false);
 primitiveBank.xyplot.setAttribute("Color", "black");
 setValuedProperties(primitiveBank.xyplot);
 

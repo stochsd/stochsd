@@ -100,8 +100,8 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 	</head>
 	<body>
-			<div id="coverEverythingDiv" style="position: absolute; left: 0px; top: 0px; width: 1100px; height: 900px; background-color: white;z-index:6;">
-	<div id="topPanel"> <!-- This panel is hidden when printing-->
+	<div id="coverEverythingDiv" style="position: absolute; left: 0px; top: 0px; bottom: 0px; right: 0px; background-color: white; display: flex; flex-direction: column;">
+		<div id="topPanel"> <!-- This panel is hidden when printing-->
 		<div class="fileToolBox">
 			<div class="eMenu">
 			  <button class="menuButton" id="btn_file">File</button>
@@ -394,9 +394,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 				<button id="btn_reset" title="Reset (Ctrl 3)" class="tool-button" data-tool="reset">
 					<img src="graphics/reset.svg"/>
 				</button>
-				<div id="runStatusBarOuter" class="toolSupplement" style="display: inline-block; background: #F0F0F0; width: 110px" >
+				<div id="runStatusBarOuter" class="toolSupplement" style="display: inline-block; background: #F0F0F0; min-width: 110px; width: max-content" >
 					<div id="runStatusBar" class="toolSupplement" style="position: relative; left: 0px; top: 0px; background: #aaeeaa; height: 30px; width: 0px; margin: 0; padding: 0; border: 0;">
-						<div id="runStatusBarText" title="Start / Current / End &#013;      Method(Step)" style="text-align: center; width: 110px; font-size: 12px; padding-top: 0px; height: 30px;">
+						<div id="runStatusBarText" title="Start / Current / End &#013;      Method(Step)" style="text-align: center; min-width: 110px; width: max-content; font-size: 12px; padding-top: 0px; height: 30px;">
 							
 						</div>
 					</div>
@@ -408,29 +408,34 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		</div> <!-- End of toolPanel-->
 
 		<div class="info-bar">
-			<div class="info-bar__definition info-box__element center-vertically-container" title="Selection"></div>
-			<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
-			<div class="info-bar__definition-error info-box__element center-vertically-container" title="Definition Error">
-				&nbsp 
+			<div style="display:flex">
+				<div class="info-bar__definition info-box__element center-vertically-container" title="Selection"></div>
+				<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
+				<div class="info-bar__definition-restricted info-box__element center-vertically-container" title="Restricted"></div>
+				<div class="info-bar__definition-error info-box__element center-vertically-container" title="Definition Error">
+					&nbsp 
+				</div>
 			</div>
-			<span class="info-bar__im-link">
+			<div class="info-bar__im-link center-vertically-container">
 				<!--
 					Don't remove
 					This link to insight maker is a requirments of using the Insight Maker Public License, used by the Insight Maker engine
 					https://insightmaker.com/impl
 				-->
-				Home pages: <a href="https://stochsd.sourceforge.io" target="_blank">StochSD</a> (based on <a target="_blank" href="http://insightmaker.com">InsightMaker.com</a>)
-			</span>
+				<span>
+					Home pages: <a href="https://stochsd.sourceforge.io" target="_blank">StochSD</a> (based on <a target="_blank" href="http://insightmaker.com">InsightMaker.com</a>)
+				</span>
+			</div>
 		</div>
 
         <!-- Working area -->
-		<div id="svgplanebackground" style="overflow: scroll; border-width: 1px; border-color: black; border-style: solid; position: absolute; z-index: 3; width: 1024px; height: 768px; display: inline-block; font-family: Arial, Helvetica, sans-serif">
+		<div id="svgplanebackground" style="overflow: scroll; flex-grow: 1; border: 1px solid black; z-index: 3; width: calc(100% - 1em); position: relative; height: 768px; display: inline-block; font-family: Arial, Helvetica, sans-serif">
 			<div id="svgBlockOverlay" style="position: absolute; left: 0px; top: 0px; display: none; z-index: 110; width: 100%; height: 100%; background-color: red; opacity: 0;">
 			</div>
-			<svg draggable="false" id="svgplane" width="6000" height="2000" style="position: absolute; left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
+			<svg draggable="false" id="svgplane" width="6000" height="2000" style="left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
 			</svg>
 		</div>
-		<div class="editor-footer" style="position: absolute; bottom: 0;">
+		<div class="editor-footer" style="display: none;">
 			<div class="editor-footer-filepath"  >FilePath/FileName</div>
 			<div style="padding: 0px 16px;">|</div>
 			<div class="editor-footer-date">YYYY-MM-DD</div>
