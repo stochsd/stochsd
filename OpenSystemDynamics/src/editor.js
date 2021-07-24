@@ -2420,9 +2420,6 @@ class TableVisual extends HtmlTwoPointer {
 		}
 	}
 	render() {
-		html = "";
-		html += "<table class='sticky-table'><thead><tr>";
-		
 		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
 		do_global_log(IdsToDisplay);
@@ -2437,54 +2434,46 @@ class TableVisual extends HtmlTwoPointer {
 		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
 		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 		
-		// Make header
-		html += "<th class='time-header-cell'>Time</th>";
-		for(let i in this.data.namesToDisplay) {
-			html += `<th class="prim-header-cell">${this.data.namesToDisplay[i]}</th>`;
-		}
-		// Make content
-		html += "</thead><tbody>";
-
 		let time_step_str = `${getTimeStep()}`;
 		let time_decimals = decimals_in_value_string(time_step_str);
-
+		
 		// We must get the data in column_index+1 since column 1 is reserved for time
 		let roundToZero = this.primitive.getAttribute("RoundToZero");
-		let roundToZeroAtValue = -1;
+		let round_to_zero_limit = -1;
 		if (roundToZero === "true") {
-			roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-			if (isNaN(roundToZeroAtValue)) {
-				roundToZeroAtValue = getDefaultAttributeValue("table", "RoundToAtZeroValue");
+			round_to_zero_limit = this.primitive.getAttribute("RoundToZeroAtValue");
+			if (isNaN(round_to_zero_limit)) {
+				round_to_zero_limit = getDefaultAttributeValue("table", "RoundToAtZeroValue");
 			} else {
-				roundToZeroAtValue = Number(roundToZeroAtValue);
+				round_to_zero_limit = Number(round_to_zero_limit);
 			}
 		}
 
 		let number_length = JSON.parse(this.primitive.getAttribute("NumberLength"));
 		let number_options = {
-			"round_to_zero_limit": roundToZeroAtValue, 
+			round_to_zero_limit, 
 			"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
 			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
 		};
 
-		for(let row_index in this.data.results) {
-			html += "<tr>";
-			for(let column_index in ["Time"].concat(this.data.namesToDisplay)) {
-				if (column_index == 0) {
-					// time column 
-					let valueString = format_number(
-						this.data.results[row_index][column_index], 
-						{ "round_to_zero_limit": roundToZeroAtValue,  "decimals": time_decimals }
-					);
-					html += `<td class="time-value-cell">${valueString}</td>`;
-				} else {
-					let valueString = format_number(this.data.results[row_index][column_index], number_options);
-					html += `<td class="prim-value-cell">${valueString}</td>`;
-				}
-			}
-			html += "</tr>";
-		}
-		html += "</tbody></table>";
+		html = `<table class='sticky-table'>
+			<thead>
+				<tr>
+					<th class='time-header-cell'>Time</th>
+					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">${name}</th>`).join("")}
+				</tr>
+			</thead>
+			<tbody>
+				${this.data.results.map((row) => `<tr>
+					${["Time"].concat(this.data.namesToDisplay).map((_, column_index) => 
+						column_index == 0 
+						? `<td class="time-value-cell">${format_number(row[column_index], { round_to_zero_limit,  decimals: time_decimals }
+						)}</td>`
+						: `<td>${format_number(row[column_index], number_options)}</td>`
+					).join("")}
+				</tr>`).join("")}
+			</tbody>
+		</table>`;
 		
 		if (this.data.results.length === 0) {
 			// show this when empty table 
