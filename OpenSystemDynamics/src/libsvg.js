@@ -216,7 +216,7 @@ function svg_foreign_scrollable(x, y, width, height, innerHTML, fill="white") {
 
 	// This div holds the scrolling and sets the background color
 	let scrollDiv = document.createElement("div");
-	scrollDiv.setAttribute(`style`, `background-color: ${fill}; overflow: scroll`);
+	scrollDiv.setAttribute(`style`, `background-color: ${fill}; overflow: auto;`);
 	scrollDiv.setAttribute("class","scrollDiv");
 
 	// This div is on the inside of the scroll div and reacts to things such as clicks
