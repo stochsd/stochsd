@@ -244,7 +244,7 @@ class BaseFileManager {
   }
 }
 
-class WebFileManager extends BaseFileManager {
+class WebFileManagerBasic extends BaseFileManager {
   constructor() {
     super();
     this.softwareName = appName + " Web";
@@ -298,6 +298,83 @@ class WebFileManager extends BaseFileManager {
     if (onSuccess) {
       onSuccess(exportFileName);
     }
+  }
+  loadModel() {
+    openFile({
+      read: "text",
+      multiple: false,
+      accept: Settings.fileExtension,
+      onCompleted: (model) => {
+        this.fileName = model.name;
+        //~ this.loadModelData(model.contents);
+        //~ this.updateTitle();
+
+        do_global_log("web load file call  back");
+        var fileData = model.contents;
+        History.forceCustomUndoState(fileData);
+        this.updateTitle();
+        preserveRestart();
+      },
+    });
+  }
+}
+
+class WebFileManagerModern extends BaseFileManager {
+  constructor() {
+    super();
+    this.softwareName = appName + " Web";
+    this.saveHandle = null;
+  }
+  hasSaveAs() {
+    return true;
+  }
+
+  async chooseFilename() {
+    // Based on Chromes new file management API
+    // https://web.dev/file-system-access/
+    // So far only supported by Chromium based browsers, such as Chrome, Chromium and Edge
+
+    const options = {
+      suggestedName: "model.ssd",
+      types: [
+        {
+          description: "StochSD Models",
+          accept: {
+            "text/stochsd": [".ssd"],
+          },
+        },
+      ],
+    };
+    this.saveHandle = await window.showSaveFilePicker(options);
+  }
+  async writeToFile(contents) {
+    // Create a FileSystemWritableFileStream to write to.
+    const writable = await this.saveHandle.createWritable();
+    // Write the contents of the file to the stream.
+    await writable.write(contents);
+    // Close the file and write the contents to disk.
+    await writable.close();
+  }
+
+  async saveModelAs() {
+    let contents = createModelFileData();
+    try {
+      await this.chooseFilename();
+      await this.writeToFile(contents);
+      alert("Saved");
+    } catch (e) {
+      alert("Canceld");
+    }
+  }
+
+  async saveModel() {
+    let contents = createModelFileData();
+    if (this.saveHandle == null) {
+      await this.saveModelAs();
+      return;
+    }
+    await this.writeToFile(contents);
+    alert("Saved");
   }
   loadModel() {
     openFile({
@@ -723,7 +800,13 @@ class WebEnvironment extends BaseEnvironment {
 		*/
   }
   getFileManager() {
-    return new WebFileManager();
+    if (window.showSaveFilePicker) {
+      // Uses modern APIs for file mangement
+      return new WebFileManagerModern();
+    } else {
+      // Uses only file upload and download
+      return new WebFileManagerBasic();
+    }
   }
 }
 
