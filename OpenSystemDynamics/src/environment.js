@@ -346,14 +346,21 @@ class WebFileManagerModern extends BaseFileManager {
       ],
     };
     this.saveHandle = await window.showSaveFilePicker(options);
+    this.fileName = this.saveHandle.name;
   }
   async writeToFile(contents) {
-    // Create a FileSystemWritableFileStream to write to.
     const writable = await this.saveHandle.createWritable();
-    // Write the contents of the file to the stream.
     await writable.write(contents);
-    // Close the file and write the contents to disk.
     await writable.close();
+  }
+
+  async updateUIAfterSave() {
+    this.updateSaveTime();
+    this.updateTitle();
+    History.unsavedChanges = false;
+    if (this.finishedSaveHandler) {
+      this.finishedSaveHandler();
+    }
   }
 
   async saveModelAs() {
@@ -361,9 +368,9 @@ class WebFileManagerModern extends BaseFileManager {
     try {
       await this.chooseFilename();
       await this.writeToFile(contents);
-      alert("Saved");
+      await this.updateUIAfterSave();
     } catch (e) {
-      alert("Canceld");
+      // Canceld
     }
   }
 
@@ -374,7 +381,7 @@ class WebFileManagerModern extends BaseFileManager {
       return;
     }
     await this.writeToFile(contents);
-    alert("Saved");
+    await this.updateUIAfterSave();
   }
   loadModel() {
     openFile({
@@ -800,7 +807,9 @@ class WebEnvironment extends BaseEnvironment {
 		*/
   }
   getFileManager() {
-    if (window.showSaveFilePicker) {
+    // To use modern file api we need showSaveFilePicker
+    // and unfortunatly it does not work from file://, so we need a server e.g. npm install -g http-server
+    if (window.showSaveFilePicker && location.protocol !== "file:") {
       // Uses modern APIs for file mangement
       return new WebFileManagerModern();
     } else {
