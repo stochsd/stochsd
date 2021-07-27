@@ -1,3 +1,8 @@
+[license-badge]: https://img.shields.io/badge/License-AGPL%20v3-blue.svg?style=flat
+[license-url]: https://www.gnu.org/licenses/agpl-3.0
+
+[![License: AGPL v3][license-badge]][license-url]
+
 # StochSD
 
 [StochSD Homepage](https://stochsd.sourceforge.io/homepage/)
