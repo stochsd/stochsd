@@ -1,10 +1,10 @@
 [license-badge]: https://img.shields.io/badge/License-AGPL%20v3-blue.svg?style=flat
 [license-url]: https://www.gnu.org/licenses/agpl-3.0
 
-[![License: AGPL v3][license-badge]][license-url]
 
 # StochSD
 
+[![License: AGPL v3][license-badge]][license-url]
 [StochSD Homepage](https://stochsd.sourceforge.io/homepage/)
 
 ## What does the program do
