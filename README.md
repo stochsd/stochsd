@@ -5,6 +5,7 @@
 # StochSD
 
 [![License: AGPL v3][license-badge]][license-url]
+
 [StochSD Homepage](https://stochsd.sourceforge.io/homepage/)
 
 ## What does the program do
