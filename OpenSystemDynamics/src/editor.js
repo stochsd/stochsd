@@ -2915,6 +2915,7 @@ class DataGenerations {
 		this.numGenerations = 0;
 		this.numLines = 0;
 		this.idGen = [];
+		this.labelGen = [];
 		this.nameGen = [];
 		this.colorGen = [];
 		this.patternGen = [];
@@ -2922,11 +2923,19 @@ class DataGenerations {
 		this.resultGen = []; 
 		this.plotPers = [];
 	}
+	setLabel(genIndex, id, label) {
+		const index = this.idGen[genIndex].indexOf(id)
+		if (index != -1) {
+			this.label[genIndex][index] = label
+		}
+	}
 	append(ids, results, lineOptions) {
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
 		this.idGen.push(ids);
+		const d = new Date();
+		this.labelGen.push(ids.map(findID).map(id => `${getName(id)} ${d.getHours()}:${`${d.getMinutes()}`.padStart(2, "0")}:${`${d.getSeconds()}`.padStart(2, "0")}`));
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke 
@@ -3000,7 +3009,7 @@ class DataGenerations {
 					countLine++;
 					let label = "";
 					label += (hasNumberedLines ? `${countLine}. ` : "");
-					label += this.nameGen[i][j];
+					label += this.labelGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
 						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
@@ -8392,13 +8401,52 @@ class KeepResultsComponent extends HtmlComponent {
 	}
 }
 
+class GenerationsNameComponent extends HtmlComponent {
+	constructor(parent, gens) {
+		super(parent)
+		this.gens = gens
+	}
+	render() {
+		let result = ""
+		if (this.gens.idGen.length != 0) {
+			result = (`<table class="modern-table" style="width: 100%;">
+			<tr>
+				<th>Name</th><th>Label</th>
+			</tr>
+			${this.gens.idGen.map((ids, genIndex) => {
+				const header = `<tr>
+					<th colspan="2">
+						Generation ${genIndex}
+					</th>
+				</tr>`
+				return header+ids.map((id, index) => {
+					return (`<tr>
+						<td>
+							<img style="height: 20px; padding-right: 4px;" src="graphics/stock.svg" />
+							<span class="color-sample" style="background: ${this.gens.colorGen[genIndex][index]};"></span>
+							<span>${this.gens.nameGen[genIndex][index]}</span>
+							</td>
+						<td>
+							<input type="text" style="width: 100%;" value="${this.gens.labelGen[genIndex][index]}"/>
+						</td>
+					</tr>
+					`)}
+				).join("")
+			}).join("")}</table>`);
+		}
+		return result;
+	}
+}
 
 class ComparePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
-		this.components.left = [ new PrimitiveSelectorComponent(this) ];
+		this.components.left = [ 
+			new GenerationsNameComponent(this, connection_array[this.primitive.id].gens),
+			new PrimitiveSelectorComponent(this)
+		];
 		this.components.right = [
 			new KeepResultsComponent(this),
 			new PlotPeriodComponent(this),
