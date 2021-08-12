@@ -7437,8 +7437,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 					<td style="padding: 0;">
 						<button 
 							class="primitive-remove-button enter-apply" 
-							data-id="${id}"
-							style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+							data-id="${id}">
 							-
 						</button>
 						</td>
@@ -7494,8 +7493,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						<td style="padding: 0;">
 							<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 								${limitReached ? "disabled" : ""} 
-								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
-								style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}>
 								+
 							</button>
 						</td>
@@ -8128,8 +8126,7 @@ class DisplayDialog extends jqDialog {
 						<td style="padding: 0;">
 							<button 
 								class="primitive-remove-button enter-apply" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								data-id="${id}">
 								-
 							</button>
 							</td>
