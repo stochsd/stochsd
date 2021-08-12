@@ -2930,6 +2930,32 @@ class DataGenerations {
 			this.label[genIndex][index] = label
 		}
 	}
+	removeSim(genIndex, id) {
+		const index = this.idGen[genIndex].indexOf(id)
+		if (index != -1) {
+			this.idGen[genIndex].splice(index, 1)
+			this.labelGen[genIndex].splice(index, 1)
+			this.nameGen[genIndex].splice(index, 1)
+			this.primitiveTypeGen[genIndex].splice(index, 1)
+			this.colorGen[genIndex].splice(index, 1)
+			this.patternGen[genIndex].splice(index, 1)
+			this.lineWidthGen[genIndex].splice(index, 1)
+			this.resultGen[genIndex].splice(index, 1)
+			this.numLines--;
+		}
+		if (this.idGen[genIndex].length == 0) {
+			this.numGenerations--;
+			this.idGen.splice(genIndex, 1);
+			this.labelGen.splice(genIndex, 1)
+			this.nameGen.splice(genIndex, 1)
+			this.primitiveTypeGen.splice(genIndex, 1)
+			this.colorGen.splice(genIndex, 1)
+			this.patternGen.splice(genIndex, 1)
+			this.lineWidthGen.splice(genIndex, 1)
+			this.resultGen.splice(genIndex, 1)
+		}
+		console.log(this)
+	}
 	append(ids, results, lineOptions) {
 		this.resultGen.push(results);
 		this.numGenerations++;
@@ -7293,6 +7319,7 @@ function saveChangedAlert(continueHandler) {
 
 class HtmlComponent {
 	constructor(parent) {
+		this.componentId = "component-"+Math.ceil(Math.random()*(2**32)).toString(16)
 		this.parent = parent;
 		this.primitive = parent.primitive;
 	}
@@ -7427,7 +7454,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.displayLimit = displayLimit;
 	}
 	renderIncludedList() {
-		return (`<table class="modern-table">
+		return (`<table id=${this.componentId} class="modern-table">
 			<tr>
 				<th></th>
 				<th>Added Primitives</td>
@@ -7458,7 +7485,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		}
 		this.find(".included-list-div").html(htmlContent);
 		this.parent.bindEnterApplyEvents();
-		this.find(".primitive-remove-button").click(event => {
+		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
 			this.removeButtonHandler(event);
 			this.updateIncludedList();
 			this.updateExcludedList();
@@ -8407,9 +8434,16 @@ class GenerationsNameComponent extends HtmlComponent {
 	}
 	render() {
 		let result = ""
+		console.log(this.gens.idGen)
 		if (this.gens.idGen.length != 0) {
-			result = (`<div style="max-height: 300px; overflow-x: auto;">
-			<table class="modern-table" style="width: 100%;">
+			result = (`<div id=${this.componentId} style="max-height: 300px; overflow-x: auto;">
+				${this.renderTable()}
+			</div>`);
+		}
+		return result;
+	}
+	renderTable() {
+		return `<table class="modern-table" style="width: 100%;">
 			<tr>
 				<th>Primitive</th><th>Label</th><th></th>
 			</tr>
@@ -8426,13 +8460,18 @@ class GenerationsNameComponent extends HtmlComponent {
 						<input type="text" style="width: 100%; text-align: left;" value="${this.gens.labelGen[genIndex][index]}"/>
 					</td>
 					<td style="padding:0;" >
-						<button class="primitive-remove-button enter-apply" data-gen-index="${genIndex}" data-index="${index}">X</button>
+						<button class="primitive-remove-button enter-apply" data-gen-index="${genIndex}" data-id="${id}">X</button>
 					</td>
 				</tr>`).join("")
-			).join(`<tr style="background-color: #ccc;"><td colspan="2"></td></tr>`)}</table>
-			</div>`);
-		}
-		return result;
+			).join(`<tr style="background-color: #ccc;"><td colspan="2"></td></tr>`)}</table>`
+	}
+	bindEvents() {
+		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
+			const button = $(event.currentTarget);
+			this.gens.removeSim(button.attr("data-gen-index"), button.attr("data-id"));
+			// re-render table
+			this.find(`#${this.componentId}`).html(this.renderTable());
+		})
 	}
 }
 
