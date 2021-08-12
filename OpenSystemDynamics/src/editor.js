@@ -2916,6 +2916,7 @@ class DataGenerations {
 		this.numLines = 0;
 		this.idGen = [];
 		this.labelGen = [];
+		this.primitiveTypeGen = [];
 		this.nameGen = [];
 		this.colorGen = [];
 		this.patternGen = [];
@@ -2937,6 +2938,7 @@ class DataGenerations {
 		const d = new Date();
 		this.labelGen.push(ids.map(findID).map(id => `${getName(id)} ${d.getHours()}:${`${d.getMinutes()}`.padStart(2, "0")}:${`${d.getSeconds()}`.padStart(2, "0")}`));
 		this.nameGen.push(ids.map(findID).map(getName));
+		this.primitiveTypeGen.push(ids.map(id => getTypeNew(findID(id))));
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke 
 		));
@@ -2955,7 +2957,9 @@ class DataGenerations {
 			let numRemoved = removedIds.length;
 			this.numLines -= numRemoved;
 			this.numGenerations--;
+			this.labelGen.pop();
 			this.nameGen.pop();
+			this.primitiveTypeGen.pop();
 			this.colorGen.pop();
 			this.patternGen.pop();
 			this.lineWidthGen.pop();
@@ -8078,8 +8082,7 @@ class DisplayDialog extends jqDialog {
 							<td style="padding: 0;">
 								<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 									${limitReached ? "disabled" : ""} 
-									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}
-									style="color: ${limitReached ? "gray": "#00aa00"} ; font-size: 20px; font-weight: bold; font-family: monospace;">
+									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}>
 									+
 								</button>
 							</td>
@@ -8262,8 +8265,7 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 					<td style="padding: 0;">
 						<button 
 							class="primitive-remove-button enter-apply" 
-							data-id="${id}"
-							style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+							data-id="${id}">
 							-
 						</button>
 						</td>
@@ -8409,30 +8411,29 @@ class GenerationsNameComponent extends HtmlComponent {
 	render() {
 		let result = ""
 		if (this.gens.idGen.length != 0) {
-			result = (`<table class="modern-table" style="width: 100%;">
+			result = (`<div style="max-height: 300px; overflow-x: auto;">
+			<table class="modern-table" style="width: 100%;">
 			<tr>
-				<th>Name</th><th>Label</th>
+				<th>Primitive</th><th>Label</th><th></th>
 			</tr>
-			${this.gens.idGen.map((ids, genIndex) => {
-				const header = `<tr>
-					<th colspan="2">
-						Generation ${genIndex}
-					</th>
-				</tr>`
-				return header+ids.map((id, index) => {
-					return (`<tr>
-						<td>
-							<img style="height: 20px; padding-right: 4px;" src="graphics/stock.svg" />
+			${this.gens.idGen.map((ids, genIndex) => 
+				ids.map((id, index) => `<tr>
+					<td>
+						<div class="center-vertically-container">
 							<span class="color-sample" style="background: ${this.gens.colorGen[genIndex][index]};"></span>
+							<img style="height: 20px; padding-right: 4px;" src="graphics/${this.gens.primitiveTypeGen[genIndex][index]?.toLowerCase()}.svg" />
 							<span>${this.gens.nameGen[genIndex][index]}</span>
-							</td>
-						<td>
-							<input type="text" style="width: 100%;" value="${this.gens.labelGen[genIndex][index]}"/>
-						</td>
-					</tr>
-					`)}
-				).join("")
-			}).join("")}</table>`);
+						</div>
+					</td>
+					<td>
+						<input type="text" style="width: 100%; text-align: left;" value="${this.gens.labelGen[genIndex][index]}"/>
+					</td>
+					<td style="padding:0;" >
+						<button class="primitive-remove-button enter-apply" data-gen-index="${genIndex}" data-index="${index}">X</button>
+					</td>
+				</tr>`).join("")
+			).join(`<tr style="background-color: #ccc;"><td colspan="2"></td></tr>`)}</table>
+			</div>`);
 		}
 		return result;
 	}
@@ -8624,8 +8625,7 @@ class XySelectorComponent extends PrimitiveSelectorComponent {
 						<td style="padding: 0;">
 							<button 
 								class="primitive-remove-button enter-apply" 
-								data-id="${id}"
-								style="color: #aa0000; font-size: 20px; font-weight: bold; font-family: monospace;">
+								data-id="${id}">
 								-
 							</button>
 							</td>

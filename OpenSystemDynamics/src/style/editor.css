@@ -174,7 +174,6 @@ table.sticky-table tr:nth-child(even) {
 div.vertical-space {
     height: 12px;
 }
-
 div.center-vertically-container {
     display: flex; 
     flex-direction: row; 
@@ -211,6 +210,21 @@ input[type="text"].text-input {
 .ui-widget-overlay {
     background: #000000;
     opacity: 0.3 !important;
+}
+button.primitive-add-button {
+    color: #00aa00; 
+    font-size: 20px !important; 
+    font-weight: bold; 
+    font-family: monospace !important;
+}
+button.primitive-add-button[disabled]{
+    color: grey;
+}
+button.primitive-remove-button {
+    color: #aa0000; 
+    font-size: 20px; 
+    font-weight: bold; 
+    font-family: monospace;
 }
 button.tool-button img {
     width: 100%; 
