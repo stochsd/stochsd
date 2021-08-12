@@ -7319,7 +7319,7 @@ class PlotPeriodComponent extends HtmlComponent {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plot-per-field limit-input enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
+						<input style="" class="plot-per-field limit-input enter-apply" type="number" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
 					</td>
 					<td>
 						Auto
@@ -7373,7 +7373,7 @@ class LabelTableComponent extends HtmlComponent {
 					return (`<tr>
 						<th>${label.text}:</th>
 						<td style="padding:1px;" >
-							<input style="width: 150px; text-align: left;" class="${label.attribute}-field enter-apply" spellcheck="false" type="text" value="${this.primitive.getAttribute(label.attribute)}"/>
+							<input style="width: 150px;" class="${label.attribute}-field enter-apply" spellcheck="false" type="text" value="${this.primitive.getAttribute(label.attribute)}"/>
 						</td>
 					</tr>`);
 				}).join("")}
@@ -7534,7 +7534,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="height: 18px; width: 220px;"> 
 			</div>
 			<div class="excluded-list-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
@@ -7748,7 +7748,7 @@ class DisplayDialog extends jqDialog {
 					<label for="precision">Precision<label/>
 				</td>
 				<td>
-					<input class="precision-field enter-apply" type="text" style="float: right;"
+					<input class="precision-field enter-apply" type="number"
 					${numLength["usePrecision"] ? '' : 'disabled'}
 					value="${numLength["precision"]}">
 				</td>
@@ -7761,7 +7761,7 @@ class DisplayDialog extends jqDialog {
 					<label for="decimal">Decimal<label/>
 				</td>
 				<td>
-					<input class="decimal-field enter-apply" type="text" style="float: right;"
+					<input class="decimal-field enter-apply" type="number"
 					${numLength["usePrecision"] ? 'disabled' : ''}
 					value="${numLength["decimal"]}">
 				</td>
@@ -7942,7 +7942,7 @@ class DisplayDialog extends jqDialog {
 						Plot Period: 
 					</th>
 					<td style="padding:1px;">
-						<input style="" class="plot-per-field limit-input enter-apply" type="text" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
+						<input style="" class="plot-per-field limit-input enter-apply" type="number" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
 					</td>
 					<td>
 						Auto
@@ -8017,7 +8017,7 @@ class DisplayDialog extends jqDialog {
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="text-align: left; height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="height: 18px; width: 220px;">
 			</div>
 			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
@@ -8180,10 +8180,10 @@ class AxisLimitsComponent extends HtmlComponent {
 				return (`<tr>
 					<td style="text-align:center; padding:0px 6px">${axis.text}</td>
 					<td style="padding:1px;">
-						<input class="${axis.key}-min-field limit-input enter-apply" type="text" ${limit.auto ? "disabled" : ""} value="${min}">
+						<input class="${axis.key}-min-field limit-input enter-apply" type="number" ${limit.auto ? "disabled" : ""} value="${min}">
 					</td>
 					<td style="padding:1px;">
-						<input class="${axis.key}-max-field limit-input enter-apply" type="text" ${limit.auto ? "disabled" : ""} value="${max}">
+						<input class="${axis.key}-max-field limit-input enter-apply" type="number" ${limit.auto ? "disabled" : ""} value="${max}">
 					</td>
 					<td>
 						<input class="${axis.key}-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(limit.auto)}>
@@ -8511,7 +8511,7 @@ class HistogramOptionsComponent extends HtmlComponent {
 				let auto = this.primitive.getAttribute(`${row.attribute}Auto`) === "true";
 				return (`<tr>
 				<td><b>${row.label}:</b></td>
-				<td><input class="${row.classPrefix}-field enter-apply" type="text" value=${value} ${auto ? "disabled" : ""} /></td>
+				<td><input class="${row.classPrefix}-field enter-apply" type="number" value=${value} ${auto ? "disabled" : ""} /></td>
 				<td><input class="${row.classPrefix}-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(auto)} /></td>
 			</tr>`)}).join("")}
 		</table>`);
@@ -8748,22 +8748,22 @@ class TableLimitsComponent extends HtmlComponent {
 		<table class="modern-table">
 			${["", "Value", "Auto"].map(header => `<th>${header}</th>`).join("")}
 			<tr>
-				<th class="text">From</th>
+				<th>From</th>
 				<td style="padding:1px;">
-					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${startValue}" type="text">
+					<input class="limit-input start-field enter-apply" ${limits.start.auto ? "disabled" : ""} value="${startValue}" type="number">
 				</td>
 				<td><input class="limit-input start-auto-checkbox enter-apply" type="checkbox"  ${checkedHtml(limits.start.auto)}/></td>
 			</tr><tr>
-				<th class="text">To</th>
+				<th>To</th>
 				<td style="padding:1px;">
-					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${endValue}" type="text">
+					<input class="limit-input end-field enter-apply" ${limits.end.auto ? "disabled" : ""} value="${endValue}" type="number">
 				</td>
 				<td><input class="limit-input end-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.end.auto)}/>
 				</td>
 			</tr><tr title="Step &#8805; DT should hold">
-				<th class="text">Step</th>
+				<th>Step</th>
 				<td style="padding:1px;">
-					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${stepValue}" type="text">
+					<input class="limit-input step-field enter-apply" ${limits.step.auto ? "disabled" : ""} value="${stepValue}" type="number">
 				</td>
 				<td><input class="limit-input step-auto-checkbox enter-apply" type="checkbox" ${checkedHtml(limits.step.auto)}/></td>
 			</tr>
@@ -8880,7 +8880,7 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 						<label for="${key}" >${option.label}</label>
 					</td>
 					<td>
-						<input class="${key}-field enter-apply" type="text" ${disabled} value="${numLength[key]}">
+						<input class="${key}-field enter-apply" type="number" ${disabled} value="${numLength[key]}">
 					</td>
 				</tr>`);
 			}).join("")}
@@ -8949,7 +8949,7 @@ class RoundToZeroComponent extends HtmlComponent {
 					<td>
 						<input class="round-to-zero-checkbox enter-apply" type="checkbox" ${checkedHtml(roundToZero)} /> 
 						Show <b>0</b> when <i>abs(value) &lt;</i> 
-						<input class="round-to-zero-field enter-apply" type="text" value="${roundToZeroAtValue}" ${disabled}/>
+						<input class="round-to-zero-field enter-apply" type="number" value="${roundToZeroAtValue}" ${disabled}/>
 					</td>
 				</tr>
 				<tr>
@@ -9082,7 +9082,7 @@ class NewModelDialog extends jqDialog {
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
-				<input class="input-timeunits enter-apply text-input" name="length" style="width:100px;" value="" type="text">
+				<input class="input-timeunits enter-apply" name="length" style="width:100px;" value="" type="text">
 				<!--
 				<button class="input-timeunits-default-value" data-default-value="Years">Years</button>
 				<button class="input-timeunits-default-value" data-default-value="Minutes">Minutes</button>
@@ -9143,19 +9143,19 @@ class SimulationSettings extends jqDialog {
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
-				<input class="input-start enter-apply" name="start" style="width:100px;" value="${start}" type="text">
+				<input class="input-start enter-apply" name="start" style="width:100px;" value="${start}" type="number">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Length</td>
 			<td style="padding:1px;">
-				<input class="input-length enter-apply" name="length" style="width:100px;" value="${length}" type="text">
+				<input class="input-length enter-apply" name="length" style="width:100px;" value="${length}" type="number">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
 			<td>Time Step</td>
 			<td style="padding:1px;">
-				<input class="input-step enter-apply" name="step" style="width:100px;" value="${step}" type="text">
+				<input class="input-step enter-apply" name="step" style="width:100px;" value="${step}" type="number">
 				&nbsp ${timeUnit} &nbsp
 			</td>
 		</tr><tr>
@@ -9255,7 +9255,7 @@ class TimeUnitDialog extends jqDialog {
 				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Time Unit:</b><span>${this.renderHelpButtonHtml("timeunit-help")}</span>
 				</div>
-				<input class="timeunit-field enter-apply" style="text-align: left; width:100%; box-sizing: border-box;" type="text"/>
+				<input class="timeunit-field enter-apply" style="width:100%; box-sizing: border-box;" type="text"/>
 				<div style="margin-top: 4px;" class="complain-div"></div>
 			</div>
 		`);	
@@ -9449,7 +9449,7 @@ class ConverterDialog extends jqDialog {
 		this.setHtml(`
 			<div class="primitive-settings" style="padding: 10px 0px">
 				<b>Name:</b><br/>
-				<input class="name-field text-input" style="width: 100%;" type="text" value=""><br/><br/>
+				<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
 				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 					<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
 				</div>
@@ -9534,7 +9534,7 @@ class ConverterDialog extends jqDialog {
 		}
 	}
 	afterShow() {
-		let field = $(this.dialogContent).find(".text-input").get(0);
+		let field = $(this.dialogContent).find(".name-field").get(0);
 		let inputLength = field.value.length;  
 		field.setSelectionRange(0, inputLength);
 	}
@@ -9851,7 +9851,7 @@ class DefinitionEditor extends jqDialog {
 					<div class="table-cell" style="width: 400px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
-							<input class="name-field text-input enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
+							<input class="name-field enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
 							<div class="name-warning-div"></div><br/>
 							<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>

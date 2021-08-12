@@ -103,9 +103,6 @@ button svg {
 table {
     border-collapse: collapse;
 }
-td.text {
-    text-align: left;		
-}
 /* for empty plot */
 .empty-plot-header {
     font-size: 25px; 
@@ -199,12 +196,21 @@ div.center-vertically-container {
     vertical-align: top;
     padding: 0px 10px;
 }
-input[type="text"] {
-    width: 60px;
+input[type="number"] {
+    width: 70px;
     text-align: right;
 }
-input[type="text"].text-input {
-    text-align: left !important;
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+input[type=text] {
+    width: 100%;
+    text-align: left;
 }
 /* Overlays */
 .ui-widget-overlay {
