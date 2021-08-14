@@ -7403,7 +7403,19 @@ class PlotPeriodComponent extends HtmlComponent {
 			<div class="plot-per-warning" ></div>
 		`);
 	}
-
+	checkValidPlotPer() {
+		let plotPerStr = this.find(".plot-per-field").val();
+		let warningDiv = this.find(".plot-per-warning");	
+		if (isNaN(plotPerStr) || plotPerStr === "") {
+			warningDiv.html(warningHtml(`Plot Period must be a decimal number`, true));
+			return false;
+		} else if (Number(plotPerStr) <= 0) {
+			warningDiv.html(warningHtml(`Plot Period must be &gt;0`, true));
+			return false;
+		}
+		warningDiv.html("");
+		return true;
+	}
 	bindEvents() {
 		this.find(".plot-per-auto-checkbox").change(event => {
 			let plot_per_field = this.find(".plot-per-field");
@@ -7415,13 +7427,12 @@ class PlotPeriodComponent extends HtmlComponent {
 			}
 			plot_per_field.val(plot_per);
 		});
-		$(this.dialogContent).find(".plot-per-field").keyup(event => {
-			this.parent.checkValidPlotPer();
+		this.find(".plot-per-field").keyup(() => {
+			this.checkValidPlotPer();
 		});
 	}
-
 	applyChange() {
-		if(this.parent.checkValidPlotPer()) {
+		if(this.checkValidPlotPer()) {
 			let auto_plot_per = this.find(".plot-per-auto-checkbox").prop("checked");
 			let plot_per = Number(this.find(".plot-per-field").val());
 			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
@@ -7998,233 +8009,12 @@ class DisplayDialog extends jqDialog {
 		}
 	}
 	/* RoundToZero html and logic ends here */
-	renderPlotPerHtml() {
-		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-		if (auto_plot_per) {
-			plot_per = this.getDefaultPlotPeriod();
-		}
-		return (`
-			<table class="modern-table" 
-				title="Distance between points in time units. \n (Should not be less then Time Step)"
-			>
-				<tr>
-					<th>
-						Plot Period: 
-					</th>
-					<td style="padding:1px;">
-						<input style="" class="plot-per-field limit-input enter-apply" type="number" value="${plot_per}" ${auto_plot_per ? "disabled" : ""}/>
-					</td>
-					<td>
-						Auto
-						<input style="" class="plot-per-auto-checkbox limit-input enter-apply" type="checkbox" ${checkedHtml(auto_plot_per)}/>
-					</td>
-				</tr>
-			</table>
-			<div class="plot-per-warning" ></div>
-		`);
-	}
-	applyPlotPer() {
-		if(this.checkValidPlotPer()) {
-			let auto_plot_per = $(this.dialogContent).find(".plot-per-auto-checkbox").prop("checked");
-			let plot_per = Number($(this.dialogContent).find(".plot-per-field").val());
-			this.primitive.setAttribute("AutoPlotPer", auto_plot_per);
-			this.primitive.setAttribute("PlotPer", plot_per);
-		}
-	}
-	bindPlotPerEvents() {
-		$(this.dialogContent).find(".plot-per-auto-checkbox").change(event => {
-			let plot_per_field = $(this.dialogContent).find(".plot-per-field");
-			plot_per_field.prop("disabled", event.target.checked);
-			
-			let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-			if (event.target.checked) {
-				plot_per = this.getDefaultPlotPeriod();
-			}
-			plot_per_field.val(plot_per);
-		});
-		$(this.dialogContent).find(".plot-per-field").keyup(event => {
-			this.checkValidPlotPer();
-		});
-	}
-	checkValidPlotPer() {
-		let plot_per_str = $(this.dialogContent).find(".plot-per-field").val();
-		let warning_div = $(this.dialogContent).find(".plot-per-warning");	
-		if (isNaN(plot_per_str) || plot_per_str === "") {
-			warning_div.html(warningHtml(`Plot Period must be a decimal number`, true));
-			return false;
-		} else if (Number(plot_per_str) <= 0) {
-			warning_div.html(warningHtml(`Plot Period must be &gt;0`, true));
-			return false;
-		}
-		
-		warning_div.html("");
-		return true;
-	}
-	renderLineWidthOptionHtml() {
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-					<b>Line Width:</b>
-						<select class="line-width enter-apply">
-						<option value=1 ${(this.primitive.getAttribute("LineWidth") == 1) ? "selected" : ""}>Thin</option>
-						<option value=2 ${(this.primitive.getAttribute("LineWidth") == 2) ? "selected" : ""}>Thick</option>
-						</select>
-					</td>
-				</tr>
-			</table>
-		`);
-	}
 	makeApply() {
 		if ($(this.dialogContent).find(".line-width :selected")) {
 			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
 		}
 	}
-	renderPrimitiveListHtml() {
-		// We store the selected variables inside the dialog
-		return (`
-			<div class="selected-div" style="border: 1px solid black;"></div>
-			<div class="vertical-space"></div>
-			<div class="center-vertically-container">
-				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="height: 18px; width: 220px;">
-			</div>
-			<div class="not-selected-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
-		`);
-	}
-	bindPrimitiveListEvents() {
-		$(this.dialogContent).find(".primitive-filter-input").keyup(() => {
-			this.updateNotSelectedPrimitiveList();
-		});
-		this.updateNotSelectedPrimitiveList();
-		this.updateSelectedPrimitiveList();
-	}
-	getSearchPrimitiveResults(search_lc) {
-		let prims = this.getAcceptedPrimitiveList();
-		let results = [];
-		if (search_lc == "") {
-			let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
-			results = prims.filter(p => // filter already added primitives 
-				this.displayIdList.includes(getID(p)) === false 
-			).sort((a,b) => { // sort by type and by alphabetical 
-				let order_diff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
-				if (order_diff !== 0) {
-					return order_diff;
-				} else {
-					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
-				}
-			});
-		} else {
-			results = prims.filter(p => // filter search
-				getName(p).toLowerCase().includes(search_lc)
-			).filter(p => // filter already added primitives 
-				this.displayIdList.includes(getID(p)) === false 
-			).sort((a, b) => { 
-				let char_match = getName(a).toLowerCase().indexOf(search_lc) - getName(b).toLowerCase().indexOf(search_lc);
-				if (char_match !== 0) { // sort by what search word appears first 
-					return char_match;
-				} else { // else sort alphabetically 
-					return getName(a).toLowerCase() > getName(b).toLowerCase() ? 1: -1;
-				}
-			});
-		}
-		return results;
-	}
-	updateNotSelectedPrimitiveList() {
-		let search_word = $(this.dialogContent).find(".primitive-filter-input").val();
-		let search_lc = search_word.toLowerCase();
-		let results = this.getSearchPrimitiveResults(search_lc);
-		let notSelectedDiv = $(this.dialogContent).find(".not-selected-div");
-		let get_highlight_match = (name, match) => {
-			let index = name.toLowerCase().indexOf(match.toLowerCase());
-			if (index === -1) {
-				return name;
-			} else {
-				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
-			}
-		}
-		if (results.length > 0) {
-			let limitReached = this.displayLimit && this.displayIdList.length >= this.displayLimit;
-			notSelectedDiv.html(`
-				<table class="modern-table"> 
-					${results.map(p => `
-						<tr>
-							<td style="padding: 0;">
-								<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
-									${limitReached ? "disabled" : ""} 
-									${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}>
-									+
-								</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-								${get_highlight_match(getName(p), search_word)}
-							</div>
-							</td>
-						</tr>
-					`).join("")}
-				</table>
-			`);
-			// Enter Apply bindings must be before click bindings for enter-apply to work
-			this.bindEnterApplyEvents();
-			$(this.dialogContent).find(".primitive-add-button").click((event) => {
-				this.primitiveAddButton($(event.target).attr("data-id"));
-			});
-		} else if (search_lc === "") {
-			notSelectedDiv.html(`<div>No more primitives to add.</div>`);
-		} else {
-			notSelectedDiv.html(noteHtml(`No primitive matches search: <br/><b>${search_word}</b>`));
-		}
-	}
-	primitiveAddButton(id) {
-		this.addIdToDisplay(id);
-		this.updateSelectedPrimitiveList();
-		$(this.dialogContent).find(".primitive-filter-input").val("");
-		this.updateNotSelectedPrimitiveList();
-	}
-	updateSelectedPrimitiveList() {
-		let selectedDiv = $(this.dialogContent).find(".selected-div");
-		if (this.displayIdList.length === 0) {
-			selectedDiv.html("No primitives selected");
-		} else {
-			selectedDiv.html(`<table class="modern-table">
-				<tr>
-					<th></th>
-					<th>Added Primitives</td>
-				</tr>
-				${this.displayIdList.map(id => `
-					<tr>
-						<td style="padding: 0;">
-							<button 
-								class="primitive-remove-button enter-apply" 
-								data-id="${id}">
-								-
-							</button>
-							</td>
-							<td style="width: 100%;">
-							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								${getName(findID(id))}
-							</div>
-							</td>
-					</tr>
-				`).join("")}
-			</table>`);
-			// Enter Apply bindings must be before click bindings for enter-apply to work
-			this.bindEnterApplyEvents();
-			$(this.dialogContent).find(".primitive-remove-button").click(event => {
-				let remove_id = $(event.target).attr("data-id");
-				this.removeIdToDisplay(remove_id);
-				this.updateSelectedPrimitiveList();
-				this.updateNotSelectedPrimitiveList();
-			});
-		}
-	}
 	beforeShow() {
-		this.setHtml(this.renderPrimitiveListHtml());
-		this.bindPrimitiveListEvents();
 		this.components.forEach(comp => comp.bindEvents());
 	}
 }
