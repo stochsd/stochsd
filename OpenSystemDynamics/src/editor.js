@@ -7734,9 +7734,7 @@ class DisplayDialog extends jqDialog {
 		let results = [];
 		let primitiveList = getPrimitiveList();
 		for(let primitive of primitiveList) {
-			if (this.acceptsId(primitive.id)) {
-				results.push(primitive);
-			}
+			this.acceptsId(primitive.id) && results.push(primitive);
 		}
 		return results;
 	}
@@ -7746,21 +7744,11 @@ class DisplayDialog extends jqDialog {
 	}
 	removeIdToDisplay(id) {
 		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-		}
+		idxToRemove !== -1 && this.displayIdList.splice(idxToRemove, 1);
 	}
 	addIdToDisplay(id) {
 		let index = this.displayIdList.indexOf(id)
-		if (index === -1) {
-			this.displayIdList.push(id)
-		}
-	}
-	removeIdToDisplay(id) {
-		let idxToRemove = this.displayIdList.indexOf(id);
-		if (idxToRemove !== -1) {
-			this.displayIdList.splice(idxToRemove, 1);
-		}
+		index === -1 &&	this.displayIdList.push(id)
 	}
 	setDisplayId(id,value) {
 		let oldIdIndex = this.displayIdList.indexOf(id);
@@ -7789,17 +7777,11 @@ class DisplayDialog extends jqDialog {
 	}
 	getDisplayId(id) {
 		id = id.toString();
-		if (this.displayIdList.indexOf(id) == -1) {
-			return false;
-		} else {
-			return true;
-		}
+		return this.displayIdList.indexOf(id) != -1
 	}
 	setIdsToDisplay(idList) {
 		this.displayIdList = [];
-		for(let i in idList) {
-			this.setDisplayId(idList[i],true);
-		}
+		idList.forEach((id) => this.setDisplayId(id, true))
 	}
 	getIdsToDisplay() {
 		this.clearRemovedIds();
