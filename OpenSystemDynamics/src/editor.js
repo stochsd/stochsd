@@ -8325,7 +8325,7 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 		this.sides = [];
 	}
 	renderIncludedList() {
-		return (`<table class="modern-table">
+		return (`<table id="${this.componentId}" class="modern-table">
 			<tr>
 				${["", "Added Primitives", "Left", "Right"].map(title => `<th>${title}</th>`).join("")}
 			</tr>
