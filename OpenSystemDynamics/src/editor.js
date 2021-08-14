@@ -2993,6 +2993,62 @@ class DataGenerations {
 		// Add new 
 		this.append(ids, results, lineOptions);
 	}
+	iterator() {
+		let genIndex = 0;
+		let index = -1;
+		let iter = {
+			next: () => {
+				index++;
+				let result;
+				if (this.idGen[genIndex] && index == this.idGen[genIndex].length) {
+					genIndex++;
+					index = 0;
+				}
+				if (genIndex < this.idGen.length && index < this.idGen[genIndex].length) {
+					result = {
+						value: {
+							genIndex,
+							index,
+							id: this.idGen[genIndex][index], 
+							name: this.nameGen[genIndex][index],
+							label: this.labelGen[genIndex][index],
+							type: this.primitiveTypeGen[genIndex][index],
+							color: this.colorGen[genIndex][index],
+							patern: this.patternGen[genIndex][index],
+							lineWidth: this.lineWidthGen[genIndex][index],
+						}, 
+						done: false
+					}
+				} else {
+					result = { done: true }
+				}
+				return result;
+			},
+		}
+		return iter;
+	}
+	forEach(fn) {
+		const it = this.iterator();
+		let counter = 0;
+		let sim = it.next();
+		while(!sim.done) {
+			fn(sim.value, counter)
+			sim = it.next();
+			counter++;
+		}
+	}
+	map(fn) {
+		const list = []
+		let counter = 0;
+		const it = this.iterator();
+		let sim = it.next();
+		while(!sim.done) {
+			list.push(fn(sim.value, counter))
+			sim = it.next();
+			counter++;
+		}
+		return list
+	}
 	getSeriesArray(wantedIds, hasNumberedLines) {
 		let seriesArray = [];
 		let lineCount = 0;
@@ -8424,7 +8480,6 @@ class GenerationsNameComponent extends HtmlComponent {
 	}
 	render() {
 		let result = ""
-		console.log(this.gens.idGen)
 		if (this.gens.idGen.length != 0) {
 			result = (`<div id=${this.componentId} style="max-height: 300px; overflow-x: auto;">
 				${this.renderTable()}
@@ -8437,23 +8492,24 @@ class GenerationsNameComponent extends HtmlComponent {
 			<tr>
 				<th>Primitive</th><th>Label</th><th></th>
 			</tr>
-			${this.gens.idGen.map((ids, genIndex) => 
-				ids.map((id, index) => `<tr>
-					<td>
-						<div class="center-vertically-container">
-							<span class="color-sample" style="background: ${this.gens.colorGen[genIndex][index]};"></span>
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${this.gens.primitiveTypeGen[genIndex][index]?.toLowerCase()}.svg" />
-							<span>${this.gens.nameGen[genIndex][index]}</span>
-						</div>
-					</td>
-					<td>
-						<input type="text" style="width: 100%; text-align: left;" value="${this.gens.labelGen[genIndex][index]}"/>
-					</td>
-					<td style="padding:0;" >
-						<button class="primitive-remove-button enter-apply" data-gen-index="${genIndex}" data-id="${id}">X</button>
-					</td>
-				</tr>`).join("")
-			).join(`<tr style="background-color: #ccc;"><td colspan="2"></td></tr>`)}</table>`
+			${this.gens.map(value => `
+			${value.index == 0 && value.genIndex != 0 ? `<tr style="background-color: #ccc;"><td colspan="3"></td></tr>` : ""}
+			<tr>
+				<td>
+					<div>
+						<span class="color-sample" style="background: ${value.color};"></span>
+						<img style="height: 20px; padding-right: 4px;" src="graphics/${value.type.toLowerCase()}.svg" />
+						<span>${value.name}</span>
+					</div>
+				</td>
+				<td>
+					<input type="text" style="width: 100%; text-align: left;" value="${value.label}"/>
+				</td>
+				<td style="padding:0;" >
+					<button class="primitive-remove-button enter-apply" data-gen-index="${value.genIndex}" data-id="${value.id}">X</button>
+				</td>
+			</tr>`).join("")}
+		</table>`
 	}
 	bindEvents() {
 		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
