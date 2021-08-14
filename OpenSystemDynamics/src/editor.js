@@ -7718,7 +7718,7 @@ class DisplayDialog extends jqDialog {
 		this.subscribePool = new SubscribePool();
 		this.acceptedPrimitveTypes = ["Stock", "Flow", "Variable", "Converter"];
 		this.displayLimit = undefined;
-		this.components = {"left": [], "right": []};
+		this.components = [];
 	}
 	getDefaultPlotPeriod() {
 		return getTimeStep();
@@ -7808,9 +7808,19 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
-	makeApply() {}
+	makeApply() {
+		this.components.forEach(column => column.forEach(component => component.applyChange()));
+	}
 	beforeShow() {
-		this.components.forEach(comp => comp.bindEvents());
+		this.setHtml(`<div class="table">
+			<div class="table-row">
+				${this.components.map(column => `<div class="table-cell">
+					${column.map(component => component.render()).join(`<div class="vertical-space"></div>`)}
+				</div>`).join("")}
+			</div>
+		</div>`);
+		this.components.forEach(column => column.forEach(component => component.bindEvents()));
+		this.bindEnterApplyEvents();
 	}
 }
 /**
@@ -7985,47 +7995,28 @@ class TimePlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("Time Plot Properties");
-
-		this.components.left = [ new TimePlotSelectorComponent(this) ];
-		this.components.right = [
-			new PlotPeriodComponent(this),
-			new AxisLimitsComponent(this, [
-				{text: "Time",  key: "timeaxis", isTimeAxis: true },
-				{text: "Left",  key: "leftaxis" },
-				{text: "Right", key: "rightaxis" },
-			]),
-			new LabelTableComponent(this, [
-				{text: "Title", attribute: "TitleLabel"}, 
-				{text: "Left",  attribute: "LeftAxisLabel"}, 
-				{text: "Right", attribute: "RightAxisLabel"}
-			]),
-			new LineOptionsComponent(this),
-			new CheckboxTableComponent(this, [
-				{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
-				{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
-				{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
-			])
+		this.components = [
+			[ new TimePlotSelectorComponent(this) ],
+			[
+				new PlotPeriodComponent(this),
+				new AxisLimitsComponent(this, [
+					{text: "Time",  key: "timeaxis", isTimeAxis: true },
+					{text: "Left",  key: "leftaxis" },
+					{text: "Right", key: "rightaxis" },
+				]),
+				new LabelTableComponent(this, [
+					{text: "Title", attribute: "TitleLabel"}, 
+					{text: "Left",  attribute: "LeftAxisLabel"}, 
+					{text: "Right", attribute: "RightAxisLabel"}
+				]),
+				new LineOptionsComponent(this),
+				new CheckboxTableComponent(this, [
+					{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
+					{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
+					{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
+				])
+			]
 		];
-	}
-	makeApply() {
-		this.components.left.forEach(comp => comp.applyChange());
-		this.components.right.forEach(comp => comp.applyChange());
-	}
-	beforeShow() {
-		this.setHtml(`<div class="table">
-			<div class="table-row">
-				<div class="table-cell">
-					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-				<div class="table-cell">
-					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-			</div>
-		</div>`)
-		
-		this.components.left.forEach(comp => comp.bindEvents());
-		this.components.right.forEach(comp => comp.bindEvents());
-		this.bindEnterApplyEvents();
 	}
 }
 
@@ -8121,48 +8112,30 @@ class ComparePlotDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Compare Simulations Plot Properties");
 		
-		this.components.left = [ 
-			new GenerationsNameComponent(this, connection_array[this.primitive.id].gens),
-			new PrimitiveSelectorComponent(this)
+		this.components = [
+			[ 
+				new GenerationsNameComponent(this, connection_array[this.primitive.id].gens),
+				new PrimitiveSelectorComponent(this)
+			],
+			[
+				new KeepResultsComponent(this),
+				new PlotPeriodComponent(this),
+				new AxisLimitsComponent(this, [
+					{text: "Time",  key: "timeaxis", isTimeAxis: true },
+					{text: "Y-Axis",  key: "yaxis" }
+				]),
+				new LabelTableComponent(this, [
+					{text: "Title", 		attribute: "TitleLabel"}, 
+					{text: "Y-Axis Label",  attribute: "LeftAxisLabel"}
+				]),
+				new LineOptionsComponent(this),
+				new CheckboxTableComponent(this, [
+					{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
+					{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
+					{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
+				])
+			]
 		];
-		this.components.right = [
-			new KeepResultsComponent(this),
-			new PlotPeriodComponent(this),
-			new AxisLimitsComponent(this, [
-				{text: "Time",  key: "timeaxis", isTimeAxis: true },
-				{text: "Y-Axis",  key: "yaxis" }
-			]),
-			new LabelTableComponent(this, [
-				{text: "Title", 		attribute: "TitleLabel"}, 
-				{text: "Y-Axis Label",  attribute: "LeftAxisLabel"}
-			]),
-			new LineOptionsComponent(this),
-			new CheckboxTableComponent(this, [
-				{ text: "Numbered Lines", 			attribute: "HasNumberedLines" },
-				{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
-				{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
-			])
-		];
-	}
-	makeApply() {
-		this.components.left.forEach(comp => comp.applyChange());
-		this.components.right.forEach(comp => comp.applyChange());
-	}
-	beforeShow() {
-		this.setHtml(`<div class="table">
-			<div class="table-row">
-				<div class="table-cell">
-					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-				<div class="table-cell">
-					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-			</div>
-		</div>`)
-		
-		this.components.left.forEach(comp => comp.bindEvents());
-		this.components.right.forEach(comp => comp.bindEvents());
-		this.bindEnterApplyEvents();
 	}
 }
 
@@ -8252,39 +8225,21 @@ class HistoPlotDialog extends DisplayDialog {
 		this.setTitle("Histogram Plot Properties");
 		this.displayLimit = 1;
 
-		this.components.left = [ new PrimitiveSelectorComponent(this, 1) ];
-		this.components.right = [ 
-			new HistogramOptionsComponent(this),
-			new RadioCompontent(this, {
-				header: "Select Scaling Type",
-				name: "scaling", 
-				attribute: "ScaleType",
-				options: [
-					{value: "Histogram", label: "Histogram" },
-					{value: "PDF", label: "Probability Density Function" }
-				]
-			})
+		this.components = [
+			[ new PrimitiveSelectorComponent(this, 1) ],
+			[ 
+				new HistogramOptionsComponent(this),
+				new RadioCompontent(this, {
+					header: "Select Scaling Type",
+					name: "scaling", 
+					attribute: "ScaleType",
+					options: [
+						{value: "Histogram", label: "Histogram" },
+						{value: "PDF", label: "Probability Density Function" }
+					]
+				})
+			]
 		];
-	}
-	beforeShow() {
-		this.setHtml(`<div class="table">
-			<div class="table-row">
-				<div class="table-cell">
-					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-				<div class="table-cell">
-					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-			</div>
-		</div>`)
-		
-		this.components.left.forEach(comp => comp.bindEvents());
-		this.components.right.forEach(comp => comp.bindEvents());
-		this.bindEnterApplyEvents();
-	}
-	makeApply() {
-		this.components.left.forEach(comp => comp.applyChange());
-		this.components.right.forEach(comp => comp.applyChange());
 	}
 }
 
@@ -8319,61 +8274,40 @@ class XySelectorComponent extends PrimitiveSelectorComponent {
 	}
 }
 
-
 class XyPlotDialog extends DisplayDialog {
 	constructor(id) {
 		super(id);
 		this.setTitle("XY Plot Properties");
 
-		this.components.left = [ new XySelectorComponent(this, 2) ];
-		this.components.right = [ 
-			new PlotPeriodComponent(this),
-			new AxisLimitsComponent(this, [
-				{text: "X-Axis", key: "xaxis" },
-				{text: "Y-Axis", key: "yaxis" }
-			]),
-			new CheckboxTableComponent(this, [
-				{ text: "Show Line", 		attribute: "ShowLine" },
-				{ text: "Show Markers", 	attribute: "ShowMarker" },
-				{ text: "Mark Start (🔴)", 	attribute: "MarkStart" },
-				{ text: "Mark End (🟩)", 	attribute: "MarkEnd" },
-				{ text: "Show Data when hovering", attribute: "ShowHighlighter" }
-			]),
-			new LabelTableComponent(this, [{ text: "Title", attribute: "TitleLabel" }]),
-			new RadioCompontent(this, {
-				header: "Line Width", 
-				name: "line-width", 
-				attribute: "LineWidth", 
-				options: [
-					{ value: "1", label: "Thin" },
-					{ value: "2", label: "Thick" }
-				]
-			})
+		this.components = [
+			[ new XySelectorComponent(this, 2) ],
+			[ 
+				new PlotPeriodComponent(this),
+				new AxisLimitsComponent(this, [
+					{text: "X-Axis", key: "xaxis" },
+					{text: "Y-Axis", key: "yaxis" }
+				]),
+				new CheckboxTableComponent(this, [
+					{ text: "Show Line", 		attribute: "ShowLine" },
+					{ text: "Show Markers", 	attribute: "ShowMarker" },
+					{ text: "Mark Start (🔴)", 	attribute: "MarkStart" },
+					{ text: "Mark End (🟩)", 	attribute: "MarkEnd" },
+					{ text: "Show Data when hovering", attribute: "ShowHighlighter" }
+				]),
+				new LabelTableComponent(this, [{ text: "Title", attribute: "TitleLabel" }]),
+				new RadioCompontent(this, {
+					header: "Line Width", 
+					name: "line-width", 
+					attribute: "LineWidth", 
+					options: [
+						{ value: "1", label: "Thin" },
+						{ value: "2", label: "Thick" }
+					]
+				})
+			]
 		];
 	}
-	beforeShow() {
-		this.setHtml(`<div class="table">
-			<div class="table-row">
-				<div class="table-cell">
-					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-				<div class="table-cell">
-					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-			</div>
-		</div>`)
-		
-		this.components.left.forEach(comp => comp.bindEvents());
-		this.components.right.forEach(comp => comp.bindEvents());
-		this.bindEnterApplyEvents();
-	}
-
-	makeApply() {
-		this.components.left.forEach(comp => comp.applyChange());
-		this.components.right.forEach(comp => comp.applyChange());
-	}
 }
-
 
 class TableData {
 	constructor() {
@@ -8715,33 +8649,15 @@ class TableDialog extends DisplayDialog {
 		super(id);
 		this.setTitle("Table Properties");
 		
-		this.components.left = [ new PrimitiveSelectorComponent(this) ];
-		this.components.right = [
-			new TableLimitsComponent(this),
-			new ArithmeticPrecisionComponent(this),
-			new RoundToZeroComponent(this),
-			new ExportDataComponent(this)
+		this.components = [
+			[ new PrimitiveSelectorComponent(this) ],
+			[
+				new TableLimitsComponent(this),
+				new ArithmeticPrecisionComponent(this),
+				new RoundToZeroComponent(this),
+				new ExportDataComponent(this)
+			]
 		];
-	}
-	beforeShow() {
-		this.setHtml(`<div class="table">
-			<div class="table-row">
-				<div class="table-cell">
-					${this.components.left.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-				<div class="table-cell">
-					${this.components.right.map(comp => comp.render()).join(`<div class="vertical-space"></div>`)}
-				</div>
-			</div>
-		</div>`);
-		
-		this.components.left.forEach(comp => comp.bindEvents());
-		this.components.right.forEach(comp => comp.bindEvents());
-		this.bindEnterApplyEvents();
-	}
-	makeApply() {
-		this.components.left.forEach(comp => comp.applyChange());
-		this.components.right.forEach(comp => comp.applyChange());
 	}
 }
 
@@ -9090,12 +9006,9 @@ class NumberboxDialog extends DisplayDialog {
 		this.components = [ 
 			new ArithmeticPrecisionComponent(this),
 			new RoundToZeroComponent(this),
-			new CheckboxTableComponent(this, [
-				{ text: "Hide Frame", attribute: "HideFrame" },
-			])
+			new CheckboxTableComponent(this, [{ text: "Hide Frame", attribute: "HideFrame" }])
 		];
 	}
-
 	beforeShow() {
 		this.targetPrimitive = findID(this.primitive.getAttribute("Target"));
 		if (this.targetPrimitive) {
@@ -9114,7 +9027,6 @@ class NumberboxDialog extends DisplayDialog {
 		}
 		this.bindEnterApplyEvents();
 	}
-
 	makeApply() {
 		this.components.forEach(comp => comp.applyChange());
 	}
