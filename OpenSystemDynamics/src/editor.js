@@ -2922,7 +2922,6 @@ class DataGenerations {
 		this.patternGen = [];
 		this.lineWidthGen = [];
 		this.resultGen = []; 
-		this.plotPers = [];
 	}
 	setLabel(genIndex, id, label) {
 		const index = this.idGen[genIndex].indexOf(id)
@@ -3000,7 +2999,6 @@ class DataGenerations {
 		// Loop generations 
 		for(let i = 0; i < this.idGen.length; i++) {
 			let currentIds = this.idGen[i];
-			let plotPer = this.plotPers[i];
 			// Loop through one generation (each simulation run)
 			for(let j = 0; j < currentIds.length; j++) {
 				let id = currentIds[j];
@@ -3013,12 +3011,8 @@ class DataGenerations {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
-						let showNumHere = (k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx); 
-						if (showNumHere && hasNumberedLines) {
-							tmpArr.push([time, value, Math.floor(lineCount).toString()]);
-						} else {
-							tmpArr.push([time, value, null]);
-						}
+						let showNumHere = (k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx);
+						tmpArr.push([time, value, showNumHere && hasNumberedLines ? Math.floor(lineCount).toString() : null]);
 					}
 					seriesArray.push(tmpArr);
 				}
@@ -3036,13 +3030,10 @@ class DataGenerations {
 				let id = currentIds[j];
 				if(wantedIds.includes(id)) {
 					countLine++;
-					let label = "";
-					label += (hasNumberedLines ? `${countLine}. ` : "");
-					label += this.labelGen[i][j];
 					seriesSettingsArray.push({
 						showLabel: true, 
 						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
-						label: label,
+						label: `${(hasNumberedLines ? `${countLine}. ` : "")}${this.labelGen[i][j]}`,
 						linePattern: this.patternGen[i][j],
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						shadow: false,
