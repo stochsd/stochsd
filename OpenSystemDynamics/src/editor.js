@@ -2926,7 +2926,7 @@ class DataGenerations {
 	setLabel(genIndex, id, label) {
 		const index = this.idGen[genIndex].indexOf(id)
 		if (index != -1) {
-			this.label[genIndex][index] = label
+			this.labelGen[genIndex][index] = label
 		}
 	}
 	removeSim(genIndex, id) {
@@ -8503,13 +8503,23 @@ class GenerationsNameComponent extends HtmlComponent {
 					</div>
 				</td>
 				<td>
-					<input type="text" style="width: 100%; text-align: left;" value="${value.label}"/>
+					<input type="text" class="sim-label enter-apply" style="width: 100%; text-align: left;" data-gen-index="${value.genIndex}" data-id="${value.id}" value="${value.label}"/>
 				</td>
 				<td style="padding:0;" >
-					<button class="primitive-remove-button enter-apply" data-gen-index="${value.genIndex}" data-id="${value.id}">X</button>
+					<button class="primitive-remove-button enter-apply" title="Delete Simulation" data-gen-index="${value.genIndex}" data-id="${value.id}">X</button>
 				</td>
 			</tr>`).join("")}
 		</table>`
+	}
+	applyChange() {
+		let fields = this.find(`#${this.componentId} input[type="text"].sim-label`);
+		this.find(`#${this.componentId} input[type="text"].sim-label`).each((index) => {
+			const elem = $(fields[index]);
+			const genIndex = elem.attr("data-gen-index");
+			const id = elem.attr("data-id");
+			const value = elem.val();
+			this.gens.setLabel(genIndex, id, value);
+		});
 	}
 	bindEvents() {
 		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
