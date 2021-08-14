@@ -2940,7 +2940,7 @@ class DataGenerations {
 			this.colorGen[genIndex].splice(index, 1)
 			this.patternGen[genIndex].splice(index, 1)
 			this.lineWidthGen[genIndex].splice(index, 1)
-			this.resultGen[genIndex].splice(index, 1)
+			this.resultGen[genIndex].map(r => r.splice(index+1, 1))
 			this.numLines--;
 		}
 		if (this.idGen[genIndex].length == 0) {
@@ -2954,7 +2954,6 @@ class DataGenerations {
 			this.lineWidthGen.splice(genIndex, 1)
 			this.resultGen.splice(genIndex, 1)
 		}
-		console.log(this)
 	}
 	append(ids, results, lineOptions) {
 		this.resultGen.push(results);
