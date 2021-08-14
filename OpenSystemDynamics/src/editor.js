@@ -7720,8 +7720,6 @@ class DisplayDialog extends jqDialog {
 		this.displayLimit = undefined;
 		this.components = {"left": [], "right": []};
 	}
-
-
 	getDefaultPlotPeriod() {
 		return getTimeStep();
 	}
@@ -7732,7 +7730,6 @@ class DisplayDialog extends jqDialog {
 			}
 		}
 	}
-	
 	getAcceptedPrimitiveList() {
 		let results = [];
 		let primitiveList = getPrimitiveList();
@@ -7743,33 +7740,28 @@ class DisplayDialog extends jqDialog {
 		}
 		return results;
 	}
-	
 	acceptsId(id) {
 		let type = getType(findID(id));
 		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
 	}
-
 	removeIdToDisplay(id) {
 		let idxToRemove = this.displayIdList.indexOf(id);
 		if (idxToRemove !== -1) {
 			this.displayIdList.splice(idxToRemove, 1);
 		}
 	}
-
 	addIdToDisplay(id) {
 		let index = this.displayIdList.indexOf(id)
 		if (index === -1) {
 			this.displayIdList.push(id)
 		}
 	}
-
 	removeIdToDisplay(id) {
 		let idxToRemove = this.displayIdList.indexOf(id);
 		if (idxToRemove !== -1) {
 			this.displayIdList.splice(idxToRemove, 1);
 		}
 	}
-	
 	setDisplayId(id,value) {
 		let oldIdIndex = this.displayIdList.indexOf(id);
 		switch(value) {
@@ -7795,7 +7787,6 @@ class DisplayDialog extends jqDialog {
 			break;
 		}
 	}
-	
 	getDisplayId(id) {
 		id = id.toString();
 		if (this.displayIdList.indexOf(id) == -1) {
@@ -7804,7 +7795,6 @@ class DisplayDialog extends jqDialog {
 			return true;
 		}
 	}
-	
 	setIdsToDisplay(idList) {
 		this.displayIdList = [];
 		for(let i in idList) {
@@ -7818,202 +7808,7 @@ class DisplayDialog extends jqDialog {
 	afterClose() {
 		this.subscribePool.publish("window closed");
 	}
-
-	renderNumberLengthHtml() {
-		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
-		return (`<table class="modern-table">
-			<tr>
-				<td>
-					<input class="num-length-radio enter-apply" type="radio" 
-					id="precision" name="number-length" value="precision"
-					${numLength["usePrecision"] ? "checked" : ""}>
-					<label for="precision">Precision<label/>
-				</td>
-				<td>
-					<input class="precision-field enter-apply" type="number"
-					${numLength["usePrecision"] ? '' : 'disabled'}
-					value="${numLength["precision"]}">
-				</td>
-			</tr>	
-			<tr>
-				<td>
-					<input class="num-length-radio enter-apply" type="radio" 
-					id="decimal" name="number-length" value="decimal" 
-					${numLength["usePrecision"] ? '' : 'checked'}>
-					<label for="decimal">Decimal<label/>
-				</td>
-				<td>
-					<input class="decimal-field enter-apply" type="number"
-					${numLength["usePrecision"] ? 'disabled' : ''}
-					value="${numLength["decimal"]}">
-				</td>
-			</tr>
-		</table>
-		<div class="num-len-warn-div"></div>`);
-	}
-
-	bindNumberLengthEvents() {
-		$(this.dialogContent).find(".num-length-radio[name='number-length']").change(event => {
-			if (event.target.value === "precision") {
-				let precision_field = $(this.dialogContent).find(".precision-field");
-				$(this.dialogContent).find(".decimal-field"  ).prop("disabled", true);
-				precision_field.prop("disabled", false);
-				this.checkValidNumberLength(precision_field.val());
-			} else if (event.target.value === "decimal") {
-				let decimal_field = $(this.dialogContent).find(".decimal-field");
-				$(this.dialogContent).find(".precision-field").prop("disabled", true);
-				decimal_field.prop("disabled", false);
-				this.checkValidNumberLength(decimal_field.val());
-			}
-		});
-		$(this.dialogContent).find(".precision-field").keyup(event => {
-			this.checkValidNumberLength(event.target.value);
-		});
-		$(this.dialogContent).find(".decimal-field").keyup(event => {
-			this.checkValidNumberLength(event.target.value);
-		});
-	}
-
-	checkValidNumberLength(value) {
-		if (isNaN(value)) {
-			$(".num-len-warn-div").html(warningHtml(`${value} is not a decimal number.`));
-			return false;
-		} else if (Number.isInteger(parseFloat(value)) === false) {
-			$(".num-len-warn-div").html(warningHtml(`${value} is not an integer.`));
-			return false;
-		} else if (parseInt(value) < 0) {
-			$(".num-len-warn-div").html(warningHtml(`${value} is negative.`));
-			return false;
-		} else if (parseInt(value) >= 12) {
-			$(".num-len-warn-div").html(warningHtml(`${value} is above the limit of 12.`));
-			return false;
-		} else {
-			$(".num-len-warn-div").html("");
-			return true;
-		}
-	}
-
-	applyNumberLength() {
-		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
-		let usePrecision = $(this.dialogContent).find("input[name='number-length']:checked").val() === "precision";
-		if (usePrecision) {
-			let value = $(this.dialogContent).find(".precision-field").val();
-			if (this.checkValidNumberLength(value)) {
-				numLength["precision"] = parseInt(value);
-				numLength["usePrecision"] = usePrecision;
-			}
-		} else {
-			let value = $(this.dialogContent).find(".decimal-field").val();
-			if (this.checkValidNumberLength(value)) {
-				numLength["decimal"] = parseInt(value);	
-				numLength["usePrecision"] = usePrecision;
-			}
-		}
-		this.primitive.setAttribute("NumberLength", JSON.stringify(numLength));
-	}
-
-	/* RoundToZero html and logic starts here */
-	renderRoundToZeroHtml() {
-		return (`
-			<table class="modern-table">
-				<tr>
-					<td>
-						<input class="round-to-zero-checkbox enter-apply" type="checkbox" /> Show <b>0</b> when <i>abs(value) &lt;</i> <input class="round-to-zero-field enter-apply" type="text" value="no value"/>
-					</td>
-				</tr>
-				<tr>
-					<td style="text-align: center;">
-						<button class="default-round-to-zero-button enter-apply">Reset to Default</button>
-					</td>
-				</tr>
-			</table>
-			<p class="round-to-zero-warning-div" style="margin: 5px 0px;">Warning Text Here</p>
-		`);
-	}
-	bindRoundToZeroEvents() {
-		let roundToZeroCheckbox = $(this.dialogContent).find(".round-to-zero-checkbox");
-		let roundToZeroField = $(this.dialogContent).find(".round-to-zero-field");
-
-		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
-		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-		roundToZeroField.val(roundToZeroAtValue);
-		this.setRoundToZero(roundToZero);
-
-		// set default button listener
-		$(this.dialogContent).find(".default-round-to-zero-button").click(() => {
-			// fetches default for numberbox, but this is also used for table 
-			// Should be fixes so it fetches default for the type of object the dialog belongs to  
-			this.setRoundToZero(getDefaultAttributeValue("numberbox", "RoundToZero") === "true");
-			roundToZeroField.val(getDefaultAttributeValue("numberbox", "RoundToZeroAtValue"));
-			this.checkValidRoundAtZeroAtField();
-		});
-
-		roundToZeroCheckbox.click(() => {
-			this.setRoundToZero(roundToZeroCheckbox.prop("checked"));
-		});
-
-		roundToZeroField.keyup((event) => {
-			this.checkValidRoundAtZeroAtField();
-		});
-	}
-	setRoundToZero(roundToZero) {
-		$(this.dialogContent).find(".round-to-zero-checkbox").prop("checked", roundToZero);
-		$(this.dialogContent).find(".round-to-zero-field").prop("disabled", ! roundToZero);
-		this.checkValidRoundAtZeroAtField();
-	}
-
-	checkValidRoundAtZeroAtField() {
-		let roundToZeroFieldValue = $(this.dialogContent).find(".round-to-zero-field").val();
-		if ($(this.dialogContent).find(".round-to-zero-checkbox").prop("checked")) {
-			if (isNaN(roundToZeroFieldValue)) {
-				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
-				return false;
-			} else if (roundToZeroFieldValue == "") {
-				this.setNumberboxWarning(true, "No value choosen.");
-				return false;
-			} else if (Number(roundToZeroFieldValue) >= 1) {
-				this.setNumberboxWarning(true, "Value must be less then 1.");
-				return false;
-			} else if (Number(roundToZeroFieldValue) <= 0) {
-				this.setNumberboxWarning(true, "Value must be strictly positive.");
-				return false;
-			} else {
-				this.setNumberboxWarning(false);
-				return true;
-			}
-		} else {
-			this.setNumberboxWarning(false);
-			return false;
-		}
-	}
-
-	setNumberboxWarning(isVisible, htmlMessage) {
-		if (isVisible) {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html(warningHtml(htmlMessage, true));
-			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "visible");
-		} else {
-			$(this.dialogContent).find(".round-to-zero-warning-div").html("");
-			$(this.dialogContent).find(".round-to-zero-warning-div").css("visibility", "hidden");
-		}
-	}
-
-	applyRoundToZero() {
-		if (this.primitive) {
-			let roundToZero = $(this.dialogContent).find(".round-to-zero-checkbox").prop("checked");
-			this.primitive.setAttribute("RoundToZero", roundToZero);
-			
-			if ( this.checkValidRoundAtZeroAtField() ) {
-				let roundToZeroAtValue = $(this.dialogContent).find(".round-to-zero-field").val();
-				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
-			}
-		}
-	}
-	/* RoundToZero html and logic ends here */
-	makeApply() {
-		if ($(this.dialogContent).find(".line-width :selected")) {
-			this.primitive.setAttribute("LineWidth", $(this.dialogContent).find(".line-width :selected").val());
-		}
-	}
+	makeApply() {}
 	beforeShow() {
 		this.components.forEach(comp => comp.bindEvents());
 	}
