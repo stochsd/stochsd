@@ -8085,6 +8085,7 @@ class GenerationsNameComponent extends HtmlComponent {
 			this.gens.removeSim(button.attr("data-gen-index"), button.attr("data-id"));
 			// re-render table
 			this.find(`#${this.componentId}`).html(this.renderTable());
+			this.bindEvents();
 		})
 	}
 }
