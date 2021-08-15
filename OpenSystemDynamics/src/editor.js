@@ -2955,6 +2955,7 @@ class DataGenerations {
 		}
 	}
 	append(ids, results, lineOptions) {
+		if (results.length == 0) return;
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
