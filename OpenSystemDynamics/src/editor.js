@@ -8055,7 +8055,7 @@ class GenerationsNameComponent extends HtmlComponent {
 			${value.index == 0 && value.genIndex != 0 ? `<tr style="background-color: #ccc;"><td colspan="3"></td></tr>` : ""}
 			<tr>
 				<td>
-					<div>
+					<div class="center-vertically-container">
 						<span class="color-sample" style="background: ${value.color};"></span>
 						<img style="height: 20px; padding-right: 4px;" src="graphics/${value.type.toLowerCase()}.svg" />
 						<span>${value.name}</span>
