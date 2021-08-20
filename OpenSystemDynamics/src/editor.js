@@ -2955,7 +2955,7 @@ class DataGenerations {
 		}
 	}
 	append(ids, results, lineOptions) {
-		if (results.length == 0) return;
+		if (!RunResults.simulationDone || results.length == 0) return;
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
@@ -6859,6 +6859,7 @@ class RunResults {
 		runOverlay.block();
 		runModel({
 			onPause: (res) => {
+				this.simulationDone = false;
 				this.storeResults(res);
 				this.updateProgressBar();
 				this.setProgressBarGreen(false);
@@ -6866,6 +6867,7 @@ class RunResults {
 				this.simulationController = res;
 			},
 			onSuccess: (res) => {
+				this.simulationDone = true;
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
