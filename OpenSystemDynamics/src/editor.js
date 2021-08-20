@@ -2915,6 +2915,7 @@ class DataGenerations {
 		this.numGenerations = 0;
 		this.numLines = 0;
 		this.idGen = [];
+		this.labelSuffixId = "";
 		this.labelGen = [];
 		this.primitiveTypeGen = [];
 		this.nameGen = [];
@@ -2924,7 +2925,7 @@ class DataGenerations {
 		this.resultGen = []; 
 	}
 	setLabel(genIndex, id, label) {
-		const index = this.idGen[genIndex].indexOf(id)
+		const index = this.idGen[genIndex] ? this.idGen[genIndex].indexOf(id) : -1
 		if (index != -1) {
 			this.labelGen[genIndex][index] = label
 		}
@@ -2960,8 +2961,9 @@ class DataGenerations {
 		this.numGenerations++;
 		this.numLines += ids.length;
 		this.idGen.push(ids);
-		const d = new Date();
-		this.labelGen.push(ids.map(findID).map(id => `${getName(id)} ${d.getHours()}:${`${d.getMinutes()}`.padStart(2, "0")}:${`${d.getSeconds()}`.padStart(2, "0")}`));
+		let suffixPrim = findID(this.labelSuffixId)
+		let suffix = suffixPrim ? `, ${getName(suffixPrim)} = ${getValue(suffixPrim)}` : ""
+		this.labelGen.push(ids.map(findID).map(id => getName(id)+suffix));
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.primitiveTypeGen.push(ids.map(id => getTypeNew(findID(id))));
 		this.colorGen.push(ids.map(findID).map(
@@ -8006,20 +8008,35 @@ class TimePlotDialog extends DisplayDialog {
 }
 
 class KeepResultsComponent extends HtmlComponent {
+	constructor(parent, gens) {
+		super(parent)
+		this.gens = gens
+	}
 	render() {
 		let keep = this.primitive.getAttribute("KeepResults") === "true";
-		return (`
+		return (`<div id=${this.componentId}>
 			<table class="modern-table" style="width:100%; text-align:center;">
 				<tr>
+					<td colspan="2">
+					Automatic primitive suffix: 
+					<select value="none">
+						<option value="">No suffix primitive selected</option>
+						${[...primitives("Stock"), ...primitives("Flow"), ...primitives("Variable"), ...primitives("Flow")].map(p => `
+						<option value=${p.id} ${this.gens.labelSuffixId == p.id ? "selected" : ""}>${getName(p)}</option>`)}
+					</select>
+					</td>
+				</tr>	
+				<tr>
+					
 					<td style="width:50%">
-						Keep Results <input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}>
+					<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}> Keep Results
 					</td>
 					<td>
 						<button class="clear-button enter-apply">Clear Results</button>
 					</td>
 				</tr>
 			</table>
-		`);
+		</div>`);
 	}
 	bindEvents() {
 		this.find(".clear-button").click((event) => {
@@ -8031,6 +8048,8 @@ class KeepResultsComponent extends HtmlComponent {
 	}
 	applyChange() {
 		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
+		let suffixId = this.find(`#${this.componentId} select`).val();
+		this.gens.labelSuffixId = suffixId
 	}
 }
 
@@ -8099,12 +8118,8 @@ class ComparePlotDialog extends DisplayDialog {
 		this.setTitle("Compare Simulations Plot Properties");
 		
 		this.components = [
-			[ 
-				new GenerationsNameComponent(this, connection_array[this.primitive.id].gens),
-				new PrimitiveSelectorComponent(this)
-			],
+			[ new PrimitiveSelectorComponent(this) ],
 			[
-				new KeepResultsComponent(this),
 				new PlotPeriodComponent(this),
 				new AxisLimitsComponent(this, [
 					{text: "Time",  key: "timeaxis", isTimeAxis: true },
@@ -8120,6 +8135,10 @@ class ComparePlotDialog extends DisplayDialog {
 					{ text: "Colour from Primitive", 	attribute: "ColorFromPrimitive" },
 					{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
 				])
+			],
+			[ 
+				new GenerationsNameComponent(this, connection_array[this.primitive.id].gens), 
+				new KeepResultsComponent(this, connection_array[this.primitive.id].gens)
 			]
 		];
 	}
