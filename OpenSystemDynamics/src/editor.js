@@ -75,6 +75,9 @@ var global_log = "";
 var defaultFill = "transparent";
 var defaultStroke = "black";
 
+function html(text, ...arguments) {
+	return text.map((t, i) => t+(arguments[i] ?? "")).join("")
+}
 
 function applicationReload() {
 	environment.reloadingStarted = true;
@@ -7390,10 +7393,10 @@ class CheckboxTableComponent extends HtmlComponent {
 		this.checkboxes = checkboxes;
 	}
 	render() {
-		return (`
+		return (html`
 			<table class="modern-table">
 				${this.checkboxes.map(checkbox => {
-					return (`<tr>
+					return (html`<tr>
 						<td>
 							<input class="${checkbox.attribute}-checkbox enter-apply" type="checkbox" ${checkedHtml(this.primitive.getAttribute(checkbox.attribute)==="true")}>
 						</td>
