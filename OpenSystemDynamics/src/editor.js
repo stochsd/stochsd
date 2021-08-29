@@ -8007,68 +8007,19 @@ class TimePlotDialog extends DisplayDialog {
 	}
 }
 
-class KeepResultsComponent extends HtmlComponent {
+class GenerationsComponent extends HtmlComponent {
 	constructor(parent, gens) {
 		super(parent)
 		this.gens = gens
 	}
 	render() {
-		let keep = this.primitive.getAttribute("KeepResults") === "true";
-		return (`<div id=${this.componentId}>
-			<table class="modern-table" style="width:100%; text-align:center;">
-				<tr>
-					<td colspan="2">
-					Automatic primitive suffix: 
-					<select value="none">
-						<option value="">No suffix primitive selected</option>
-						${[...primitives("Stock"), ...primitives("Flow"), ...primitives("Variable"), ...primitives("Flow")].map(p => `
-						<option value=${p.id} ${this.gens.labelSuffixId == p.id ? "selected" : ""}>${getName(p)}</option>`)}
-					</select>
-					</td>
-				</tr>	
-				<tr>
-					
-					<td style="width:50%">
-					<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}> Keep Results
-					</td>
-					<td>
-						<button class="clear-button enter-apply">Clear Results</button>
-					</td>
-				</tr>
-			</table>
+		const result = (`<div id=${this.componentId} style="max-height: 300px; overflow-x: auto;">
+			${this.renderTable()}
 		</div>`);
-	}
-	bindEvents() {
-		this.find(".clear-button").click((event) => {
-			$(event.currentTarget).prop("disabled", true);
-			let id = getID(this.primitive);
-			let parentVisual = connection_array[id];
-			parentVisual.clearGenerations();
-		});
-	}
-	applyChange() {
-		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
-		let suffixId = this.find(`#${this.componentId} select`).val();
-		this.gens.labelSuffixId = suffixId
-	}
-}
-
-class GenerationsNameComponent extends HtmlComponent {
-	constructor(parent, gens) {
-		super(parent)
-		this.gens = gens
-	}
-	render() {
-		let result = ""
-		if (this.gens.idGen.length != 0) {
-			result = (`<div id=${this.componentId} style="max-height: 300px; overflow-x: auto;">
-				${this.renderTable()}
-			</div>`);
-		}
 		return result;
 	}
 	renderTable() {
-		return `<table class="modern-table" style="width: 100%;">
+		const generationsHtml = `<table class="modern-table" style="width: 100%;">
 			<tr>
 				<th>Primitive</th><th>Label</th><th></th>
 			</tr>
@@ -8090,6 +8041,31 @@ class GenerationsNameComponent extends HtmlComponent {
 				</td>
 			</tr>`).join("")}
 		</table>`
+		const keep = this.primitive.getAttribute("KeepResults") === "true";
+		const keepResultsHtml = `<table class="modern-table" style="width:100%; text-align:center;">
+			<tr>
+				<td colspan="2">
+				Automatic primitive suffix: 
+				<select value="none">
+					<option value="">No suffix primitive selected</option>
+					${[...primitives("Stock"), ...primitives("Flow"), ...primitives("Variable"), ...primitives("Flow")].map(p => `
+					<option value=${p.id} ${this.gens.labelSuffixId == p.id ? "selected" : ""}>${getName(p)}</option>`)}
+				</select>
+				</td>
+			</tr>	
+			<tr>
+				<td style="width:50%">
+				<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}> Keep Results
+				</td>
+				<td>
+					<button class="clear-button enter-apply">Clear Results</button>
+				</td>
+			</tr>
+		</table>`
+		return `<div id="${this.componentId}">
+			${this.gens.idGen.length != 0 ? generationsHtml : ""}
+			${keepResultsHtml}
+		</div>`
 	}
 	applyChange() {
 		let fields = this.find(`#${this.componentId} input[type="text"].sim-label`);
@@ -8100,6 +8076,9 @@ class GenerationsNameComponent extends HtmlComponent {
 			const value = elem.val();
 			this.gens.setLabel(genIndex, id, value);
 		});
+		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
+		let suffixId = this.find(`#${this.componentId} select`).val();
+		this.gens.labelSuffixId = suffixId
 	}
 	bindEvents() {
 		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
@@ -8109,6 +8088,14 @@ class GenerationsNameComponent extends HtmlComponent {
 			this.find(`#${this.componentId}`).html(this.renderTable());
 			this.bindEvents();
 		})
+		this.find(".clear-button").click((event) => {
+			$(event.currentTarget).prop("disabled", true);
+			let id = getID(this.primitive);
+			let parentVisual = connection_array[id];
+			parentVisual.clearGenerations();
+			this.find(`#${this.componentId}`).html(this.renderTable());
+			this.bindEvents();
+		});
 	}
 }
 
@@ -8136,10 +8123,7 @@ class ComparePlotDialog extends DisplayDialog {
 					{ text: "Show Data when hovering", 	attribute: "ShowHighlighter" },
 				])
 			],
-			[ 
-				new GenerationsNameComponent(this, connection_array[this.primitive.id].gens), 
-				new KeepResultsComponent(this, connection_array[this.primitive.id].gens)
-			]
+			[ new GenerationsComponent(this, connection_array[this.primitive.id].gens) ]
 		];
 	}
 }
