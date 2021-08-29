@@ -8044,17 +8044,7 @@ class GenerationsComponent extends HtmlComponent {
 		const keep = this.primitive.getAttribute("KeepResults") === "true";
 		const keepResultsHtml = `<table class="modern-table" style="width:100%; text-align:center;">
 			<tr>
-				<td colspan="2">
-				Automatic primitive suffix: 
-				<select value="none">
-					<option value="">No suffix primitive selected</option>
-					${[...primitives("Stock"), ...primitives("Flow"), ...primitives("Variable"), ...primitives("Flow")].map(p => `
-					<option value=${p.id} ${this.gens.labelSuffixId == p.id ? "selected" : ""}>${getName(p)}</option>`)}
-				</select>
-				</td>
-			</tr>	
-			<tr>
-				<td style="width:50%">
+				<td style="width:50%; white-space: nowrap;">
 				<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}> Keep Results
 				</td>
 				<td>
@@ -8077,8 +8067,6 @@ class GenerationsComponent extends HtmlComponent {
 			this.gens.setLabel(genIndex, id, value);
 		});
 		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
-		let suffixId = this.find(`#${this.componentId} select`).val();
-		this.gens.labelSuffixId = suffixId
 	}
 	bindEvents() {
 		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {
