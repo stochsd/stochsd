@@ -97,6 +97,13 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<link rel="stylesheet" href="style/emenu.css" />
 	<!-- endbuild -->
 	
+	<link rel="manifest" href="opensystemdynamics-manifest.json">
+
+	<script>
+		navigator.serviceWorker.register('opensystemdynamics-serviceworker.js').then(function() {
+			console.log('service worker register');
+		});
+	</script>
 
 	</head>
 	<body>
