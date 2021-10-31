@@ -10,7 +10,7 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "stochsd-256.png",
+            "src": "../../icons/stochsd-256.png",
             "sizes": "256x256",
             "type": "image/png"
         }
