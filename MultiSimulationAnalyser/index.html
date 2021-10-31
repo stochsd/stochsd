@@ -57,6 +57,15 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
         <!-- endbuild -->
         
         <link rel="shortcut icon" type="image/png" href="../icons/stochsd.png"/>
+        <link rel="icon" type="image/png" href="../icons/stochsd.png"/>
+
+        <link rel="manifest" href="../webapp/manifest.json">
+
+        <script>
+            navigator.serviceWorker.register('../webapp/serviceworker.js').then(function() {
+                console.log('service worker register');
+            });
+        </script>
     </head>
     <!--body onload="load()" style="background-color: #CFB897; margin: 0; overflow: none;"-->
     <body class="gui_background" style="margin: 0; overflow: none;">

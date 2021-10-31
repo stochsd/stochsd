@@ -57,6 +57,14 @@ function buildForDesktop(destFolder) {
 
 function buildForWeb(destFolder) {
 	
+	// icons 
+	gulp.src('icons/**')
+	.pipe(gulp.dest(destFolder+'/icons'));
+
+	// icons 
+	gulp.src('webapp/**')
+	.pipe(gulp.dest(destFolder+'/webapp'));
+
 	// Launcher
 	gulp.src('start.html')
 	.pipe(rename('index.html'))
