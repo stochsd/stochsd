@@ -62,6 +62,19 @@ function buildForWeb(destFolder) {
 	.pipe(rename('index.html'))
 	.pipe(gulp.dest(destFolder));
 
+	// Webapp
+	gulp.src('MultiSimulationAnalyser/multisimulationanalyser-manifest.json')
+	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser/'));
+
+	gulp.src('MultiSimulationAnalyser/multisimulationanalyser-serviceworker.js')
+	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser/'));
+
+	gulp.src('MultiSimulationAnalyser/stochsd-128.png')
+	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser/'));
+
+	gulp.src('MultiSimulationAnalyser/stochsd-256.png')
+	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser/'));
+
 	// OpenSystemDynamics
 	gulp.src('OpenSystemDynamics/src/*.html')
 	.pipe(useref())
