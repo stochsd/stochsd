@@ -57,12 +57,11 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
         <!-- endbuild -->
         
         <link rel="shortcut icon" type="image/png" href="../icons/stochsd.png"/>
-        <link rel="icon" type="image/png" href="../icons/stochsd.png"/>
 
-        <link rel="manifest" href="../webapp/manifest.json">
+        <link rel="manifest" href="multisimulationanalyser-manifest.json">
 
         <script>
-            navigator.serviceWorker.register('../webapp/serviceworker.js').then(function() {
+            navigator.serviceWorker.register('multisimulationanalyser-serviceworker.js').then(function() {
                 console.log('service worker register');
             });
         </script>
