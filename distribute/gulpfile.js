@@ -98,7 +98,13 @@ function buildForWeb(destFolder) {
 	gulp.src('MultiSimulationAnalyser/index.html')
 	.pipe(useref())
 	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser'));
-
+	
+	// Make standalone.html for PWA web app
+	gulp.src('MultiSimulationAnalyser/index.html')
+	.pipe(rename('standalone.html'))
+	.pipe(useref())
+	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser'));
+	
 	gulp.src('MultiSimulationAnalyser/img/**')
 	.pipe(gulp.dest(destFolder+'MultiSimulationAnalyser/img'));
 

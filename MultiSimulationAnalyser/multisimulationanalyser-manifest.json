@@ -1,7 +1,7 @@
 {
     "name": "StochSD",
     "short_name": "StochSD",
-    "start_url": ".",
+    "start_url": "./standalone.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#0000ff",
