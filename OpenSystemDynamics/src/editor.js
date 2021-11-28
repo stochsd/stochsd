@@ -2608,14 +2608,14 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 }
 
 class PlotVisual extends HtmlOverlayTwoPointer {
-	getTicks(min, max) {
+	getTicks(min, max, dimention="width") {
 		let length = max - min;
 
 		// Calculate minTimeSubDivision
 		let tickSubDivStep = (10**Math.floor(Math.log10(length)))/10;
 
 		// Measure in pixels 
-		let pxWidth = parseInt(this.chartDiv.style.width)-80;
+		let pxWidth = parseInt(this.chartDiv.style[dimention])-80;
 		let minPxStep = 50;
 		let maxSteps = Math.floor(pxWidth/minPxStep);
 
@@ -3692,7 +3692,7 @@ class XyPlotVisual extends PlotVisual {
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					min: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.min,
 					max: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.max,
-					ticks: axisLimits.yaxis.auto ? undefined : this.getTicks(Number(axisLimits.yaxis.min), Number(axisLimits.yaxis.max)),
+					ticks: axisLimits.yaxis.auto ? undefined : this.getTicks(Number(axisLimits.yaxis.min), Number(axisLimits.yaxis.max), "height"),
 				}
 			},
 			highlighter: {
