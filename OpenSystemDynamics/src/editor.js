@@ -5681,6 +5681,7 @@ class Clipboard {
 		let oldName = getName(vertex);
 		setName(vertex,findFreeName(oldName+"_"));
 		syncAllVisuals();
+		return vertex.id
 	}
 	static copy() {
 		this.copiedItems = [];
@@ -5723,9 +5724,27 @@ class Clipboard {
 		}
 	}
 	static paste() {
-		for(let i in this.copiedItems) {
-			this.copyObject(this.copiedItems[i]);
+		console.log(this.copiedItems)
+		console.log(this.copiedItems.map(item => getTypeNew(findID(item.id))))
+		const idTable = {}
+		const nameTable = {}
+		for(let item of this.copiedItems) {
+			const originalName = getName(findID(item.id))
+			const newId = this.copyObject(item);
+			idTable[item.id] = newId
+			const type = getTypeNew(findID(item.id))
+			const newPrim = findID(newId)
+			console.log(type)
+			switch (type) {
+				case "Flow":
+					setSource(newPrim, idTable[findID(item.id)?.source?.id] ?? null)
+					setTarget(newPrim, idTable[findID(item.id)?.target?.id] ?? null)
+					break;
+				default:
+					break;
+			}
 		}
+		console.log("idTable", idTable)
 	}
 }
 Clipboard.init();
@@ -5834,11 +5853,11 @@ $(window).load(function() {
 				History.doRedo();
 			}
 			if (event.keyCode == keyboard["C"]) {
-				// Clipboard.copy();
+				Clipboard.copy();
 			}
 			if (event.keyCode == keyboard["V"]) {
-				// Clipboard.paste();
-				// History.storeUndoState();
+				Clipboard.paste();
+				History.storeUndoState();
 			}
 		}
 		environment.keyDown(event);
