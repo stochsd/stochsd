@@ -33,7 +33,7 @@ functionLoaders.push(function(){
 		if (x[0]) {
 			functionBank["stop"]([]);
 		}
-		return new Material(0);
+		return new Material(x[0] ? 1 : 0);
 	});
 	
 	defineFunction("Pause", {params:[]}, function(x) {
