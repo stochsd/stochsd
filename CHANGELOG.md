@@ -11,9 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Progresive Web App with chromium based browsers.
 - KeepResults option saved to file for ComparePlots.
 - Show/hide tooltip highlighter in plots.
+- NumberBoxes have **Hide frame** option.
 - Help-button in ConverterDialog, TextAreaDialog and MacroDialog.
 - Hide-frame option in Numberbox.
-- Tools-icons in menu.
+- Tools-icons in menu (Optim, Sensi, StatRes and ParmVar).
 
 ### Changed
 - StopIf function returns 1 on stop and otherwise 0.
@@ -22,12 +23,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Custom tick-setter for TimePlots, ComparePlots and XyPlot. (To remove weird numbers like 0.333...)
 - Histogram no longer include maximum value by default, by setting a max-limit slightly higher than max.
 - Make `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent accross all text inputs.
+- Progressbar changes width to accomodate simulation info.
+- HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 
 ### Fixed 
 - MacroDialog getting smaller each times it's open.
 - Number formatting bugs.
 - TextArea now interprets `<` and `>` correctly and not as html.
 - Fix-function bugs.
+- RK4 and function `StopI` sometimes resulted in NumberBoxes not showing a value at the end of a simulation.
 - Minor bugs.
 
 ### Depricated
