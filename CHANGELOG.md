@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Make `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent accross all text inputs.
 
 ### Fixed 
+- MacroDialog getting smaller each times it's open.
 - Number formatting bugs.
 - TextArea now interprets `<` and `>` correctly and not as html.
 - Fix-function bugs.

@@ -10084,28 +10084,24 @@ class MacroDialog extends jqDialog {
 		this.setTitle("Macro");
 		this.seed = "";
 		this.setHtml(`
-		<table class="invisible-table" style="vertical-align: top;">
-			<tr>
-				<td>
-					<textarea class="macro-text enter-apply"></textarea>
-				</td>
-				<td style="padding:0;">
-					${this.renderHelpButtonHtml("macro-help")}
-					<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable.">
-						<tr>	
-							<td style="padding:1px;">
-								Seed = <input class="seed-field" type="text" />
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<button class="set-seed-button" disabled>SetRandSeed</button>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
+		<div style="display: flex;">
+			<textarea class="macro-text enter-apply"></textarea>
+			<div style="padding:0; margin-left: 1em;">
+				${this.renderHelpButtonHtml("macro-help")}
+				<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
+					<tr>	
+						<td style="padding:1px;">
+							Seed = <input class="seed-field" type="text" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button class="set-seed-button" disabled>SetRandSeed</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 		`);		
 
 		this.setHelpButtonInfo("macro-help", "Macro Help", `<div style="max-width: 400px;">
@@ -10156,7 +10152,7 @@ class MacroDialog extends jqDialog {
 		});
 		this.setSeedButton.click((event) => {
 			let macro = this.macroTextArea.val();
-			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})\n`);
+			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})`);
 			this.macroTextArea.focus();
 		});
 		this.bindEnterApplyEvents();
@@ -10171,12 +10167,7 @@ class MacroDialog extends jqDialog {
 	resize() {
 		this.updateSize();
 	}
-	updateSize() {
-		let width = this.getWidth();
-		let height = this.getHeight();
-		this.macroTextArea.width(width-150);
-		this.macroTextArea.height(height-20);
-	}
+	updateSize() {}
 	beforeCreateDialog() {
 		// this.dialogParameters.width = "500";
 		// this.dialogParameters.height = "400";
