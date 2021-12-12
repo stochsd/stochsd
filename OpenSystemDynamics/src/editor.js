@@ -633,10 +633,15 @@ function sdsLoadFunctions() {
 	});
     defineFunction("PoFlow", {params:[{name:"Rate", noUnits:true, noVector:true}]}, function(x) {
         let dt = simulate.timeStep.toNum().value;
-        
         return new Material(RandPoisson(dt*x[0].toNum().value)/dt);
 	});
-
+	defineFunction("getRandSeed", {params:[]}, function(x) {
+        if (Math.seed == undefined) {
+			throw "No seed specified.";
+		} else {
+			return new Material(Math.seed)
+		}
+	});
 }
 
 function getVisibleNeighborhoodIds(id) {

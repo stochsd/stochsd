@@ -109,6 +109,8 @@ math['seedrandom'] = function seedrandom(seed, use_entropy) {
   var key = [];
   var arc4;
 
+  // Set by Magnus to save seed (2021-12-06)
+  math["seed"] = seed
   // Flatten the seed string or build one from local entropy if needed.
   seed = mixkey(flatten(
     use_entropy ? [seed, pool] :
