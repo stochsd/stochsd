@@ -9672,6 +9672,54 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 	}
 }
 
+class Autocomplete {
+	static getFunctions(currentText, start, end) {
+		const funcs = [{name: "Rand", note: "uniform"}, {name: "RandBernoulli"}, {name: "RandExp"}, {name: "PoFlow"},{name: "IfThenElse"},{name: "Stop"},{name: "StopIf"},{name: "T"}]
+		return funcs.filter(f => f.name.toLowerCase().startsWith(currentText.toLowerCase())).map(f => {
+			return {
+				className: "cm-functioncall", 
+				displayText: f.name, 
+				text: `${f.name}()`, 
+				note: f.note ?? "",
+				from: { line: 0, ch: start },
+				to: { line: 0, ch: end },
+				// render: Autocomplete.render
+			}
+		})
+	}
+	static getPrimitiveNames(currentText, start, end, linkedPrims) {
+		return linkedPrims.filter(prim => getName(prim).toLowerCase().startsWith(currentText.toLowerCase())).map(prim => {
+			const name = getName(prim)
+			return {
+				className: "cm-primitive",
+				displayText: `[${name}]`,
+				text: `[${name}]`,
+				note: getTypeNew(prim).toLowerCase(),
+				from: { line: 0, ch: start },
+				to: { line: 0, ch: end },
+				render: Autocomplete.render
+			}
+		})
+	}
+	static render(elem, self, cur) {
+		elem.style.display = "flex"
+		elem.style.width = "100%"
+		elem.style.justifyContent = "space-between"
+		elem.style.boxSizing = "border-box"
+		let preview = document.createElement("span")
+		cur.className && preview.classList.add(cur.className)
+		preview.innerText = cur.displayText
+		let note = document.createElement("i")
+		note.innerText = cur.note ?? ""
+		note.style.paddingLeft = "1em"
+		note.style.fontWeight = "normal"
+		note.style.color = "#888"
+		elem.appendChild(preview)
+		elem.appendChild(note)
+	}
+
+}
+
 class DefinitionEditor extends jqDialog {
 	constructor() {
 		super();
@@ -9744,34 +9792,10 @@ class DefinitionEditor extends jqDialog {
 					while (start && /\w/.test(line.charAt(start - 1))) --start
         	while (end < line.length && /\w/.test(line.charAt(end))) ++end
 					let currentText = cm.getRange({line: cursor.line, ch: start}, {line: cursor.line, ch: end})
-					const funcs = [{name: "Rand", note: "uniform"}, {name: "RandBernoulli"}, {name: "RandExp"}, {name: "PoFlow"},{name: "IfThenElse"},{name: "Stop"},{name: "StopIf"},{name: "T"}]
+					const linked = getLinkedPrimitives(this.primitive)
+					console.log("linked prims: ", linked)
 					return {
-						list: funcs.filter(f => f.name.toLowerCase().startsWith(currentText.toLowerCase())).map(f => {
-							return {
-								className: "cm-functioncall", 
-								displayText: f.name, 
-								text: `${f.name}()`, 
-								note: f.note ?? "",
-								from: { line: 0, ch: start },
-								to: { line: 0, ch: end },
-								render: (element, self, cur) => {
-									element.style.display = "flex"
-									element.style.width = "100%"
-									element.style.justifyContent = "space-between"
-									element.style.boxSizing = "border-box"
-									let preview = document.createElement("span")
-									cur.className && preview.classList.add(cur.className)
-									preview.innerText = cur.displayText
-									let note = document.createElement("i")
-									note.innerText = cur.note ?? ""
-									note.style.paddingLeft = "1em"
-									note.style.fontWeight = "normal"
-									note.style.color = "#888"
-									element.appendChild(preview)
-									element.appendChild(note)
-								}
-							}
-						}), 
+						list: [...Autocomplete.getFunctions(currentText, start, end), ...Autocomplete.getPrimitiveNames(currentText, start, end, linked)],
 						from: { line: cursor.line, ch: start}, 
 						to: {line: cursor.line, ch: end},
 					}
