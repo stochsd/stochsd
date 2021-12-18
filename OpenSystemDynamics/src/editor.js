@@ -9733,11 +9733,19 @@ class DefinitionEditor extends jqDialog {
 					},
 					"Shift-Tab": () => {
 						this.nameField.focus();
-					}
-				}
+					},
+					"Ctrl-Space": "autocomplete"
+				},
+				hintOptions: {hint: (cm, options) => {
+					console.log("token", cm)
+					console.log("context", options)
+					return {list:["Rand", "IfThenElse", "StopIf", "T"], from: { line: 1, ch: 0}, to: {line: 1, ch: 5}}
+				}}
 			}
 		);
-
+		this.cmValueField.on("inputRead", (e) => {
+			console.log("New input read:", e)
+		})
 		this.cmValueField.on("cursorActivity", () => {
 			this.updateCursorPosInfo();
 		});
