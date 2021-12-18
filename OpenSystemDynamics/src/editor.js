@@ -9737,9 +9737,44 @@ class DefinitionEditor extends jqDialog {
 					"Ctrl-Space": "autocomplete"
 				},
 				hintOptions: {hint: (cm, options) => {
-					console.log("token", cm)
-					console.log("context", options)
-					return {list:["Rand", "IfThenElse", "StopIf", "T"], from: { line: 1, ch: 0}, to: {line: 1, ch: 5}}
+					let cursor = cm.getCursor()
+					let line = cm.getLine(cursor.line)
+        	let start = cursor.ch 
+					let end = cursor.ch
+					while (start && /\w/.test(line.charAt(start - 1))) --start
+        	while (end < line.length && /\w/.test(line.charAt(end))) ++end
+					let currentText = cm.getRange({line: cursor.line, ch: start}, {line: cursor.line, ch: end})
+					const funcs = [{name: "Rand", note: "uniform"}, {name: "RandBernoulli"}, {name: "RandExp"}, {name: "PoFlow"},{name: "IfThenElse"},{name: "Stop"},{name: "StopIf"},{name: "T"}]
+					return {
+						list: funcs.filter(f => f.name.toLowerCase().startsWith(currentText.toLowerCase())).map(f => {
+							return {
+								className: "cm-functioncall", 
+								displayText: f.name, 
+								text: `${f.name}()`, 
+								note: f.note ?? "",
+								from: { line: 0, ch: start },
+								to: { line: 0, ch: end },
+								render: (element, self, cur) => {
+									element.style.display = "flex"
+									element.style.width = "100%"
+									element.style.justifyContent = "space-between"
+									element.style.boxSizing = "border-box"
+									let preview = document.createElement("span")
+									cur.className && preview.classList.add(cur.className)
+									preview.innerText = cur.displayText
+									let note = document.createElement("i")
+									note.innerText = cur.note ?? ""
+									note.style.paddingLeft = "1em"
+									note.style.fontWeight = "normal"
+									note.style.color = "#888"
+									element.appendChild(preview)
+									element.appendChild(note)
+								}
+							}
+						}), 
+						from: { line: cursor.line, ch: start}, 
+						to: {line: cursor.line, ch: end},
+					}
 				}}
 			}
 		);
