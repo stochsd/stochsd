@@ -8021,11 +8021,12 @@ class GenerationsComponent extends HtmlComponent {
 	renderTable() {
 		const generationsHtml = `<table class="modern-table" style="width: 100%;">
 			<tr>
-				<th>Primitive</th><th>Label</th><th></th>
+				<th>#</th><th>Primitive</th><th>Label</th><th></th>
 			</tr>
-			${this.gens.map(value => `
-			${value.index == 0 && value.genIndex != 0 ? `<tr style="background-color: #ccc;"><td colspan="3"></td></tr>` : ""}
+			${this.gens.map((value, index) => `
+			${value.index == 0 && value.genIndex != 0 ? `<tr style="background-color: #ccc;"><td colspan="4"></td></tr>` : ""}
 			<tr>
+				<td>${index+1}</td>
 				<td>
 					<div class="center-vertically-container">
 						<span class="color-sample" style="background: ${value.color};"></span>
