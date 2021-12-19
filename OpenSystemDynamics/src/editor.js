@@ -9843,7 +9843,7 @@ class MacroDialog extends jqDialog {
 				<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
 					<tr>	
 						<td style="padding:1px;">
-							Seed = <input class="seed-field" type="text" />
+							Seed = <input class="seed-field" type="number" />
 						</td>
 					</tr>
 					<tr>
