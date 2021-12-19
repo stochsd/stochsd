@@ -9672,6 +9672,53 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 	}
 }
 
+const functions = [
+	{name: "PoFlow", arguments: [{name: "lambda"}]},
+	{name: "Rand", note: "uniform", arguments: [{name: "minimum"},{name: "maximum"}], description: "Rand takes two"}, 
+	{name: "RandBernoulli", arguments: [{name: "probability", note: "min: 0, max: 1"}]}, 
+	{name: "RandBinomial", arguments: [{name: "count"}, {name: "probability"}]},
+	{name: "RandNormal", arguments: [{name: "mean", name: "standard deviation"}]},
+	{name: "RandLognormal", arguments: [{name: "mean", name: "standard deviation"}]},
+	{name: "RandNegativeBinomial", arguments: [{name: "successes", name: "probability"}]},
+	{name: "RandTriangular", arguments: [{name: "minimum", name: "maximum"},{name: "peak"}]},
+	{name: "RandGamma", arguments: [{name: "alpha", name: "beta"}]},
+	{name: "RandBeta", arguments: [{name: "alpha", name: "beta"}]},
+	{name: "RandExp", arguments: [{name: "beta"}]}, 
+	{name: "RandPoisson", arguments: [{name: "lambda"}]},
+	{name: "Round", arguments: [{name: "value"}]},
+	{name: "Ceiling", arguments: [{name: "value"}]},
+	{name: "Floor", arguments: [{name: "value"}]},
+	{name: "Sin", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "Cos", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "Tan", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "ArcSin", arguments: [{name: "value"}]},
+	{name: "ArcCos", arguments: [{name: "value"}]},
+	{name: "ArcTan", arguments: [{name: "value"}]},
+	{name: "Log", note: "base-10 logarithm", arguments: [{name: "value", suggestions: ["10"]}]},
+	{name: "Ln", note: "natural logarithm", arguments: [{name: "value", suggestions: ["e"]}]},
+	{name: "Exp", arguments: [{name: "value"}]},
+	{name: "Max", arguments: {name: "...values"}},
+	{name: "Min", arguments: {name: "...values"}},
+	{name: "Sum", arguments: {name: "...values"}},
+	{name: "Sqrt", note: "square root", arguments: [{name: "value"}]},
+	{name: "Sign", arguments: [{name: "value"}]},
+	{name: "Abs", note: "absolute value", arguments: [{name: "value"}]},
+	{name: "Product", arguments: {name: "...values"}},
+	{name: "Mean", arguments: {name: "...values"}},
+	{name: "Median", arguments: {name: "...values"}},
+	{name: "Logit", arguments: [{name: "value", note: "maps [0,1] to [-infinity, inifinity]"}]},
+	{name: "Expit", arguments: [{name: "value", note: "maps [-infinity, inifinity] to [0,1]"}]},
+	{name: "StdDev", arguments: {name: "...values"}},
+	{name: "IfThenElse", arguments: [{name: "condition"},{name: "value if true"},{name:"value if false"}]},
+	{name: "Stop"},
+	{name: "StopIf", arguments: [{name: "condidtion"}]},
+	{name: "T", note: "time"},
+	{name: "DT", note: "step time"},
+	{name: "TS", note: "start time"},
+	{name: "TL", note: "time length"},
+	{name: "TE", note: "time end"},
+]
+
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
 		let cursor = cm.getCursor()
@@ -9697,8 +9744,7 @@ class Autocomplete {
 		while (start && /\w/.test(line.charAt(start - 1))) --start
 		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		let word = line.substring(start, end)
-		const funcs = [{name: "Rand", note: "uniform"}, {name: "RandBernoulli"}, {name: "RandExp"}, {name: "PoFlow"},{name: "IfThenElse"},{name: "Stop"},{name: "StopIf"},{name: "T"}]
-		return funcs.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
+		return functions.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
 			return {
 				className: "cm-functioncall", 
 				displayText: f.name, 
@@ -9720,7 +9766,6 @@ class Autocomplete {
 		const linkedPrims = getLinkedPrimitives(prim)
 		return linkedPrims.filter(prim => getName(prim).toLowerCase().startsWith(word.toLowerCase())).map(prim => {
 			const name = getName(prim)
-			console.log(name)
 			return {
 				className: "cm-primitive",
 				displayText: `[${name}]`,
