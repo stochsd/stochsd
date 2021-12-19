@@ -9673,9 +9673,32 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 }
 
 class Autocomplete {
-	static getFunctions(currentText, start, end) {
+	static getCompletions(cm, options, prim) {
+		let cursor = cm.getCursor()
+		let line = cm.getLine(cursor.line)
+		const prevStr = line.substring(0, cursor.ch)
+		const matchEmpty = prevStr == "" || (/ /gi).test(prevStr)
+		const matchWord = (/\w+$/gi).test(prevStr)
+		const matchPrim = (/\[\w*$/gi).test(prevStr)
+		const useFunc = matchEmpty || (matchWord && !matchPrim)
+		const usePrim = matchEmpty || matchWord || matchPrim
+		const useArgu = (/\w+\(( *,*)*$/gi).test(prevStr)
+		console.log("useFunc", useFunc, "usePrim", usePrim, "useArgument", useArgu)
+		return [
+			...(useFunc ? this.getFunctions(line, cursor) : []),
+			...(usePrim ? this.getPrimitiveNames(line, cursor, prim) : []),
+			...(useArgu ? this.getArgumentTips(line, cursor) : []),
+		]
+	}
+	/* row:string, cursor: Cursor */
+	static getFunctions(line, cursor) {
+		let start = cursor.ch 
+		let end = cursor.ch
+		while (start && /\w/.test(line.charAt(start - 1))) --start
+		while (end < line.length && /\w/.test(line.charAt(end))) ++end
+		let word = line.substring(start, end)
 		const funcs = [{name: "Rand", note: "uniform"}, {name: "RandBernoulli"}, {name: "RandExp"}, {name: "PoFlow"},{name: "IfThenElse"},{name: "Stop"},{name: "StopIf"},{name: "T"}]
-		return funcs.filter(f => f.name.toLowerCase().startsWith(currentText.toLowerCase())).map(f => {
+		return funcs.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
 			return {
 				className: "cm-functioncall", 
 				displayText: f.name, 
@@ -9683,13 +9706,21 @@ class Autocomplete {
 				note: f.note ?? "",
 				from: { line: 0, ch: start },
 				to: { line: 0, ch: end },
-				// render: Autocomplete.render
+				render: Autocomplete.render
 			}
 		})
 	}
-	static getPrimitiveNames(currentText, start, end, linkedPrims) {
-		return linkedPrims.filter(prim => getName(prim).toLowerCase().startsWith(currentText.toLowerCase())).map(prim => {
+	static getPrimitiveNames(line, cursor, prim) {
+		let start = cursor.ch 
+		let end = cursor.ch
+		while (start && /\w/.test(line.charAt(start - 1))) --start
+		while (end < line.length && /\w/.test(line.charAt(end))) ++end
+		let word = line.substring(start, end)
+		if ((/\[/gi).test(line.charAt(start - 1))) --start;
+		const linkedPrims = getLinkedPrimitives(prim)
+		return linkedPrims.filter(prim => getName(prim).toLowerCase().startsWith(word.toLowerCase())).map(prim => {
 			const name = getName(prim)
+			console.log(name)
 			return {
 				className: "cm-primitive",
 				displayText: `[${name}]`,
@@ -9700,6 +9731,15 @@ class Autocomplete {
 				render: Autocomplete.render
 			}
 		})
+	}
+	static getArgumentTips() {
+		return [{
+			className: "cm-string",
+			displayText: "Here",
+			text: "",
+			note: "Argument",
+			render: Autocomplete.render
+		}]
 	}
 	static render(elem, self, cur) {
 		elem.style.display = "flex"
@@ -9717,7 +9757,6 @@ class Autocomplete {
 		elem.appendChild(preview)
 		elem.appendChild(note)
 	}
-
 }
 
 class DefinitionEditor extends jqDialog {
@@ -9786,24 +9825,16 @@ class DefinitionEditor extends jqDialog {
 				},
 				hintOptions: {hint: (cm, options) => {
 					let cursor = cm.getCursor()
-					let line = cm.getLine(cursor.line)
-        	let start = cursor.ch 
-					let end = cursor.ch
-					while (start && /\w/.test(line.charAt(start - 1))) --start
-        	while (end < line.length && /\w/.test(line.charAt(end))) ++end
-					let currentText = cm.getRange({line: cursor.line, ch: start}, {line: cursor.line, ch: end})
-					const linked = getLinkedPrimitives(this.primitive)
-					console.log("linked prims: ", linked)
 					return {
-						list: [...Autocomplete.getFunctions(currentText, start, end), ...Autocomplete.getPrimitiveNames(currentText, start, end, linked)],
-						from: { line: cursor.line, ch: start}, 
-						to: {line: cursor.line, ch: end},
+						list: Autocomplete.getCompletions(cm, options, this.primitive),
+						from: { line: cursor.line, ch: 0}, 
+						to: {line: cursor.line, ch: 0},
 					}
 				}}
 			}
 		);
 		this.cmValueField.on("inputRead", (e) => {
-			console.log("New input read:", e)
+			// console.log("New input read:", e)
 		})
 		this.cmValueField.on("cursorActivity", () => {
 			this.updateCursorPosInfo();
