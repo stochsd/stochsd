@@ -9680,6 +9680,13 @@ const functions = [
 	{name: "RandBeta", arguments: [{name: "alpha", name: "beta"}]},
 	{name: "RandExp", arguments: [{name: "beta"}]}, 
 	{name: "RandPoisson", arguments: [{name: "lambda"}]},
+	{name: "Pulse", arguments: [{name: "time"}, {name: "volume", default: "0"}, {name: "repeat", default: "1"}]},
+	{name: "Step", arguments: [{name: "start"}, {name: "height", default: "1"}]},
+	{name: "Ramp", arguments: [{name: "start"}, {name: "finish"}, {name: "height", default: "1"}]},
+	{name: "Delay", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Delay1", note: "smoothed, first-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Delay3", note: "smoothed, third-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Smooth", note: "smoothing of past values", arguments: [{name: "primitive"}, {name: "length"}, {name: "initial value"}]},
 	{name: "Round", arguments: [{name: "value"}]},
 	{name: "Ceiling", arguments: [{name: "value"}]},
 	{name: "Floor", arguments: [{name: "value"}]},
@@ -9717,10 +9724,11 @@ const functions = [
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
 		let cursor = cm.getCursor()
-		let line = cm.getLine(cursor.line)		
+		let line = cm.getLine(cursor.line)
+		const prevStr = line.substring(0, cursor.ch)
 		return [
 			...this.getPrimitiveNames(line, cursor, prim),
-			...this.getFunctions(line, cursor),
+			...((/\[\w*$/gi).test(prevStr) ? [] : this.getFunctions(line, cursor)),
 		]
 	}
 	/* row:string, cursor: Cursor */
@@ -9847,10 +9855,15 @@ class DefinitionEditor extends jqDialog {
 				},
 				hintOptions: {hint: (cm, options) => {
 					let cursor = cm.getCursor()
+					let line = cm.getLine(cursor.line)
+					let start = cursor.ch 
+					let end = cursor.ch
+					while (start && /\w/.test(line.charAt(start - 1))) --start
+					while (end < line.length && /\w/.test(line.charAt(end))) ++end
 					return {
 						list: Autocomplete.getCompletions(cm, options, this.primitive),
-						from: { line: cursor.line, ch: 0}, 
-						to: {line: cursor.line, ch: 0},
+						from: { line: cursor.line, ch: start}, 
+						to: {line: cursor.line, ch: end},
 					}
 				}}
 			}
@@ -10081,7 +10094,7 @@ class DefinitionEditor extends jqDialog {
 		`<div style="max-width: 400px;">
 			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
 			<b>Key bindings:</b>
-			<ul style="margin: 0.5em 0;">
+			<ul style="margin: 0.5em 0; padding-left: 2em;">
 				<li>${keyHtml("Esc")} &rarr; Cancel changes</li>
 				<li>${keyHtml("Enter")} &rarr; Apply changes</li>
 				<li>
