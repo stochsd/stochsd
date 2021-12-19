@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- Add autocomplete to DefinitionDialog (suggests functions and linked primitives).
 - CHANGELOG.
 - Progresive Web App with chromium based browsers.
 - KeepResults option saved to file for ComparePlots.

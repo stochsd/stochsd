@@ -677,14 +677,9 @@ function noteHtml(message) {
 
 // Param keys is array of string or a string 
 function keyHtml(keys) {
-	let result = "";
-	if (Array.isArray(keys)) {
-		result = keys.map(key => `<span class="key">${key}</span>`).join("-");
-	} else {
-		// if string
-		result = `<span class="key">${keys}</span>`;
-	}
-	return result;
+	return Array.isArray(keys) 
+		? keys.map(key => `<kbd>${key}</kbd>`).join("-") 
+		: `<kbd>${keys}</kbd>`
 }
 
 function checkedHtml(value) {
@@ -9672,6 +9667,128 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 	}
 }
 
+const functions = [
+	{name: "PoFlow", arguments: [{name: "lambda"}]},
+	{name: "Rand", note: "uniform", arguments: [{name: "minimum"},{name: "maximum"}], description: "Rand takes two"}, 
+	{name: "RandBernoulli", arguments: [{name: "probability", note: "min: 0, max: 1"}]}, 
+	{name: "RandBinomial", arguments: [{name: "count"}, {name: "probability"}]},
+	{name: "RandNormal", arguments: [{name: "mean", name: "standard deviation"}]},
+	{name: "RandLognormal", arguments: [{name: "mean", name: "standard deviation"}]},
+	{name: "RandNegativeBinomial", arguments: [{name: "successes", name: "probability"}]},
+	{name: "RandTriangular", arguments: [{name: "minimum", name: "maximum"},{name: "peak"}]},
+	{name: "RandGamma", arguments: [{name: "alpha", name: "beta"}]},
+	{name: "RandBeta", arguments: [{name: "alpha", name: "beta"}]},
+	{name: "RandExp", arguments: [{name: "beta"}]}, 
+	{name: "RandPoisson", arguments: [{name: "lambda"}]},
+	{name: "Pulse", arguments: [{name: "time"}, {name: "volume", default: "0"}, {name: "repeat", default: "1"}]},
+	{name: "Step", arguments: [{name: "start"}, {name: "height", default: "1"}]},
+	{name: "Ramp", arguments: [{name: "start"}, {name: "finish"}, {name: "height", default: "1"}]},
+	{name: "Delay", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Delay1", note: "smoothed, first-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Delay3", note: "smoothed, third-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
+	{name: "Smooth", note: "smoothing of past values", arguments: [{name: "primitive"}, {name: "length"}, {name: "initial value"}]},
+	{name: "Round", arguments: [{name: "value"}]},
+	{name: "Ceiling", arguments: [{name: "value"}]},
+	{name: "Floor", arguments: [{name: "value"}]},
+	{name: "Sin", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "Cos", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "Tan", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
+	{name: "ArcSin", arguments: [{name: "value"}]},
+	{name: "ArcCos", arguments: [{name: "value"}]},
+	{name: "ArcTan", arguments: [{name: "value"}]},
+	{name: "Log", note: "base-10 logarithm", arguments: [{name: "value", suggestions: ["10"]}]},
+	{name: "Ln", note: "natural logarithm", arguments: [{name: "value", suggestions: ["e"]}]},
+	{name: "Exp", arguments: [{name: "value"}]},
+	{name: "Max", arguments: {name: "...values"}},
+	{name: "Min", arguments: {name: "...values"}},
+	{name: "Sum", arguments: {name: "...values"}},
+	{name: "Sqrt", note: "square root", arguments: [{name: "value"}]},
+	{name: "Sign", arguments: [{name: "value"}]},
+	{name: "Abs", note: "absolute value", arguments: [{name: "value"}]},
+	{name: "Product", arguments: {name: "...values"}},
+	{name: "Mean", arguments: {name: "...values"}},
+	{name: "Median", arguments: {name: "...values"}},
+	{name: "Logit", arguments: [{name: "value", note: "maps [0,1] to [-infinity, inifinity]"}]},
+	{name: "Expit", arguments: [{name: "value", note: "maps [-infinity, inifinity] to [0,1]"}]},
+	{name: "StdDev", arguments: {name: "...values"}},
+	{name: "IfThenElse", arguments: [{name: "condition"},{name: "value if true"},{name:"value if false"}]},
+	{name: "Stop"},
+	{name: "StopIf", arguments: [{name: "condidtion"}]},
+	{name: "T", note: "time"},
+	{name: "DT", note: "step time"},
+	{name: "TS", note: "start time"},
+	{name: "TL", note: "time length"},
+	{name: "TE", note: "time end"},
+]
+
+class Autocomplete {
+	static getCompletions(cm, options, prim) {
+		let cursor = cm.getCursor()
+		let line = cm.getLine(cursor.line)
+		const prevStr = line.substring(0, cursor.ch)
+		return [
+			...this.getPrimitiveNames(line, cursor, prim),
+			...((/\[\w*$/gi).test(prevStr) ? [] : this.getFunctions(line, cursor)),
+		]
+	}
+	/* row:string, cursor: Cursor */
+	static getFunctions(line, cursor) {
+		let start = cursor.ch 
+		let end = cursor.ch
+		while (start && /\w/.test(line.charAt(start - 1))) --start
+		while (end < line.length && /\w/.test(line.charAt(end))) ++end
+		let word = line.substring(start, end)
+		return functions.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
+			return {
+				className: "cm-functioncall", 
+				displayText: f.name, 
+				text: `${f.name}()`, 
+				note: f.note ?? "",
+				from: { line: 0, ch: start },
+				to: { line: 0, ch: end },
+				render: Autocomplete.render
+			}
+		})
+	}
+	static getPrimitiveNames(line, cursor, prim) {
+		let start = cursor.ch 
+		let end = cursor.ch
+		while (start && /\w/.test(line.charAt(start - 1))) --start
+		while (end < line.length && /\w/.test(line.charAt(end))) ++end
+		let word = line.substring(start, end)
+		if ((/\[/gi).test(line.charAt(start - 1))) --start;
+		const linkedPrims = getLinkedPrimitives(prim)
+		return linkedPrims.filter(prim => getName(prim).toLowerCase().startsWith(word.toLowerCase())).map(prim => {
+			const name = getName(prim)
+			return {
+				className: "cm-primitive",
+				displayText: `[${name}]`,
+				text: `[${name}]`,
+				note: getTypeNew(prim).toLowerCase(),
+				from: { line: 0, ch: start },
+				to: { line: 0, ch: end },
+				render: Autocomplete.render
+			}
+		})
+	}
+	static render(elem, self, cur) {
+		elem.style.display = "flex"
+		elem.style.width = "100%"
+		elem.style.justifyContent = "space-between"
+		elem.style.boxSizing = "border-box"
+		let preview = document.createElement("span")
+		cur.className && preview.classList.add(cur.className)
+		preview.innerText = cur.displayText
+		let note = document.createElement("i")
+		note.innerText = cur.note ?? ""
+		note.style.paddingLeft = "1em"
+		note.style.fontWeight = "normal"
+		note.style.color = "#888"
+		elem.appendChild(preview)
+		elem.appendChild(note)
+	}
+}
+
 class DefinitionEditor extends jqDialog {
 	constructor() {
 		super();
@@ -9733,11 +9850,27 @@ class DefinitionEditor extends jqDialog {
 					},
 					"Shift-Tab": () => {
 						this.nameField.focus();
+					},
+					"Ctrl-Space": "autocomplete"
+				},
+				hintOptions: {hint: (cm, options) => {
+					let cursor = cm.getCursor()
+					let line = cm.getLine(cursor.line)
+					let start = cursor.ch 
+					let end = cursor.ch
+					while (start && /\w/.test(line.charAt(start - 1))) --start
+					while (end < line.length && /\w/.test(line.charAt(end))) ++end
+					return {
+						list: Autocomplete.getCompletions(cm, options, this.primitive),
+						from: { line: cursor.line, ch: start}, 
+						to: {line: cursor.line, ch: end},
 					}
-				}
+				}}
 			}
 		);
-
+		this.cmValueField.on("inputRead", (e) => {
+			// console.log("New input read:", e)
+		})
 		this.cmValueField.on("cursorActivity", () => {
 			this.updateCursorPosInfo();
 		});
@@ -9961,9 +10094,13 @@ class DefinitionEditor extends jqDialog {
 		`<div style="max-width: 400px;">
 			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
 			<b>Key bindings:</b>
-			<ul style="margin: 0.5em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+			<ul style="margin: 0.5em 0; padding-left: 2em;">
+				<li>${keyHtml("Esc")} &rarr; Cancel changes</li>
+				<li>${keyHtml("Enter")} &rarr; Apply changes</li>
+				<li>
+				${keyHtml(["Ctrl", "Space"])} &rarr; Show autocomplete definition
+				<img src="./graphics/autocomplete.png" style="width: 100%;" />
+				</li>
 			</ul>
 			<b>Tip:</b><br/>
 			<p style="margin: 0.5em 0;"> With a "#" after the definition you may add a comment.
