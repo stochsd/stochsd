@@ -9722,19 +9722,10 @@ const functions = [
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
 		let cursor = cm.getCursor()
-		let line = cm.getLine(cursor.line)
-		const prevStr = line.substring(0, cursor.ch)
-		const matchEmpty = prevStr == "" || (/ /gi).test(prevStr)
-		const matchWord = (/\w+$/gi).test(prevStr)
-		const matchPrim = (/\[\w*$/gi).test(prevStr)
-		const useFunc = matchEmpty || (matchWord && !matchPrim)
-		const usePrim = matchEmpty || matchWord || matchPrim
-		const useArgu = (/\w+\(( *,*)*$/gi).test(prevStr)
-		console.log("useFunc", useFunc, "usePrim", usePrim, "useArgument", useArgu)
+		let line = cm.getLine(cursor.line)		
 		return [
-			...(useArgu ? this.getArgumentTips(line, cursor) : []),
-			...(usePrim ? this.getPrimitiveNames(line, cursor, prim) : []),
-			...(useFunc ? this.getFunctions(line, cursor) : []),
+			...this.getPrimitiveNames(line, cursor, prim),
+			...this.getFunctions(line, cursor),
 		]
 	}
 	/* row:string, cursor: Cursor */
@@ -9776,15 +9767,6 @@ class Autocomplete {
 				render: Autocomplete.render
 			}
 		})
-	}
-	static getArgumentTips() {
-		return [{
-			className: "cm-string",
-			displayText: "Here",
-			text: "",
-			note: "Argument",
-			render: Autocomplete.render
-		}]
 	}
 	static render(elem, self, cur) {
 		elem.style.display = "flex"
