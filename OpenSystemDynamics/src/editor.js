@@ -677,14 +677,9 @@ function noteHtml(message) {
 
 // Param keys is array of string or a string 
 function keyHtml(keys) {
-	let result = "";
-	if (Array.isArray(keys)) {
-		result = keys.map(key => `<span class="key">${key}</span>`).join("-");
-	} else {
-		// if string
-		result = `<span class="key">${keys}</span>`;
-	}
-	return result;
+	return Array.isArray(keys) 
+		? keys.map(key => `<kbd>${key}</kbd>`).join("-") 
+		: `<kbd>${keys}</kbd>`
 }
 
 function checkedHtml(value) {
@@ -10087,8 +10082,12 @@ class DefinitionEditor extends jqDialog {
 			<p>${typeSpecificTexts[getTypeNew(this.primitive)]}</p>
 			<b>Key bindings:</b>
 			<ul style="margin: 0.5em 0;">
-				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
-				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
+				<li>${keyHtml("Esc")} &rarr; Cancel changes</li>
+				<li>${keyHtml("Enter")} &rarr; Apply changes</li>
+				<li>
+				${keyHtml(["Ctrl", "Space"])} &rarr; Show autocomplete definition
+				<img src="./graphics/autocomplete.png" style="width: 100%;" />
+				</li>
 			</ul>
 			<b>Tip:</b><br/>
 			<p style="margin: 0.5em 0;"> With a "#" after the definition you may add a comment.
