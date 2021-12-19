@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- ComplarePlot has added generations list in Dialog, with editable labels.
 - Add autocomplete to DefinitionDialog (suggests functions and linked primitives).
 - CHANGELOG.
 - Progresive Web App with chromium based browsers.
@@ -28,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 
 ### Fixed 
+- ComplarePlot bugs.
 - MacroDialog getting smaller each times it's open.
 - Number formatting bugs.
 - TextArea now interprets `<` and `>` correctly and not as html.
