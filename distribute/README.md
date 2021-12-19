@@ -1,8 +1,8 @@
 # Todo list for uploading new version
 
-###Create new StochSD version (2020 july):
+### Create new StochSD version (2020 july):
 
-####Build general versions with gulp
+#### Build general versions with gulp
 
 1. Goto: `stochsd/distribute/`
 
@@ -18,7 +18,7 @@
 **Note:** If problems arise with gulp, set latest versions of [gulp](https://www.npmjs.com/package/gulp) and [gulp-useref](https://www.npmjs.com/package/gulp-useref) or 
 learn more at https://www.udemy.com/starting-with-gulp/learn/v4/content.
 
-####Make Windows version of StochSD
+#### Make Windows version of StochSD
 
 goto: `stochsd/distribute/package-for-windows/`
 
@@ -34,7 +34,7 @@ The version is dependent on the file: `stochsd/OpenSystemDynamics/src/version.js
 
 
 
-##Uploading StochSD to SourceForge via the website. 
+## Uploading StochSD to SourceForge via the website. 
 
 __NOTE__: don't use the SourceForge website for uploading since it is not as reliable.
 
@@ -65,7 +65,7 @@ __NOTE__: don't use the SourceForge website for uploading since it is not as rel
 
 - upload `./build` to Filezilla and replace `homepage/`
 
-##Local App data on windows
+## Local App data on windows
 
 Settings for applications in folder:
 

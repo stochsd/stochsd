@@ -103,9 +103,6 @@ button svg {
 table {
     border-collapse: collapse;
 }
-td.text {
-    text-align: left;		
-}
 /* for empty plot */
 .empty-plot-header {
     font-size: 25px; 
@@ -174,7 +171,6 @@ table.sticky-table tr:nth-child(even) {
 div.vertical-space {
     height: 12px;
 }
-
 div.center-vertically-container {
     display: flex; 
     flex-direction: row; 
@@ -200,17 +196,41 @@ div.center-vertically-container {
     vertical-align: top;
     padding: 0px 10px;
 }
-input[type="text"] {
-    width: 60px;
+input[type="number"] {
+    width: 70px;
     text-align: right;
 }
-input[type="text"].text-input {
-    text-align: left !important;
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+input[type=text] {
+    width: 100%;
+    text-align: left;
 }
 /* Overlays */
 .ui-widget-overlay {
     background: #000000;
     opacity: 0.3 !important;
+}
+button.primitive-add-button {
+    color: #00aa00 !important; 
+    font-size: 1.3em !important; 
+    font-weight: bold !important; 
+    font-family: monospace !important;
+}
+button.primitive-add-button[disabled]{
+    color: grey !important;
+}
+button.primitive-remove-button {
+    color: #aa0000 !important; 
+    font-size: 1.3em !important; 
+    font-weight: bold !important; 
+    font-family: monospace !important;
 }
 button.tool-button img {
     width: 100%; 
