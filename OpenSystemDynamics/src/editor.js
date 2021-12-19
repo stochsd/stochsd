@@ -9685,9 +9685,9 @@ class Autocomplete {
 		const useArgu = (/\w+\(( *,*)*$/gi).test(prevStr)
 		console.log("useFunc", useFunc, "usePrim", usePrim, "useArgument", useArgu)
 		return [
-			...(useFunc ? this.getFunctions(line, cursor) : []),
-			...(usePrim ? this.getPrimitiveNames(line, cursor, prim) : []),
 			...(useArgu ? this.getArgumentTips(line, cursor) : []),
+			...(usePrim ? this.getPrimitiveNames(line, cursor, prim) : []),
+			...(useFunc ? this.getFunctions(line, cursor) : []),
 		]
 	}
 	/* row:string, cursor: Cursor */
