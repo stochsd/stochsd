@@ -177,7 +177,7 @@ class BaseFileManager {
   saveModel() {
     // Override this
   }
-  loadModel() {
+  async loadModel() {
     // Override this
   }
   setTitle(newTitleRaw) {
@@ -299,7 +299,7 @@ class WebFileManagerBasic extends BaseFileManager {
       onSuccess(exportFileName);
     }
   }
-  loadModel() {
+  async loadModel() {
     openFile({
       read: "text",
       multiple: false,
@@ -329,12 +329,8 @@ class WebFileManagerModern extends BaseFileManager {
     return true;
   }
 
-  async chooseFilename() {
-    // Based on Chromes new file management API
-    // https://web.dev/file-system-access/
-    // So far only supported by Chromium based browsers, such as Chrome, Chromium and Edge
-
-    const options = {
+  getFilePickerOptions() {
+    return {
       suggestedName: "model.ssd",
       types: [
         {
@@ -345,6 +341,14 @@ class WebFileManagerModern extends BaseFileManager {
         },
       ],
     };
+  }
+
+  async chooseFilename() {
+    // Based on Chromes new file management API
+    // https://web.dev/file-system-access/
+    // So far only supported by Chromium based browsers, such as Chrome, Chromium and Edge
+
+    const options = this.getFilePickerOptions();
     this.saveHandle = await window.showSaveFilePicker(options);
     this.fileName = this.saveHandle.name;
   }
@@ -383,23 +387,15 @@ class WebFileManagerModern extends BaseFileManager {
     await this.writeToFile(contents);
     await this.updateUIAfterSave();
   }
-  loadModel() {
-    openFile({
-      read: "text",
-      multiple: false,
-      accept: Settings.fileExtension,
-      onCompleted: (model) => {
-        this.fileName = model.name;
-        //~ this.loadModelData(model.contents);
-        //~ this.updateTitle();
-
-        do_global_log("web load file call  back");
-        var fileData = model.contents;
-        History.forceCustomUndoState(fileData);
-        this.updateTitle();
-        preserveRestart();
-      },
-    });
+  async loadModel() {
+    const options = this.getFilePickerOptions();
+    const [fileHandle] = await window.showOpenFilePicker(options);
+    const file = await fileHandle.getFile();
+    const fileData = await file.text();
+    this.fileName = file.name;
+    History.forceCustomUndoState(fileData);
+    this.updateTitle();
+    preserveRestart();
   }
 }
 
@@ -486,7 +482,7 @@ class ElectronFileManager extends BaseFileManager {
     this.addToRecent(this.fileName);
   }
 
-  loadModel() {
+  async loadModel() {
     do_global_log("Electron: load model");
     const { dialog } = require("electron").remote;
     console.log("dialog ", dialog);
@@ -730,7 +726,7 @@ class NwFileManager extends BaseFileManager {
         alert("Error in file saving " + getStackTrace());
       });
   }
-  loadModel() {
+  async loadModel() {
     do_global_log("NW: load model");
     this.modelLoaderInput.value = "";
     this.modelLoaderInput.click();
