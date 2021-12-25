@@ -9336,6 +9336,43 @@ const functions = [
 	{name: "TE", note: "time end"},
 ]
 
+class FunctionHelper {
+	static updateFunctionHelp(cm) {
+		let func = undefined
+		let cursor = cm.getCursor()
+		let line = cm.getLine(cursor.line)
+		const prevStr = line.substring(0, cursor.ch)
+		const bracketStack = []
+		let argIndex = 0
+		for (let index = prevStr.length-1; index >= 0; index--) {
+			const current = prevStr[index]
+			console.log("current", current)
+			if (bracketStack.length == 0 && current == "(") {
+				func = FunctionHelper.getFunctionData(prevStr, index)
+				break;
+			} else if (bracketStack.length > 0 && current == ",") {
+				break
+			// } else if (current == "," && bracketStack.length == 0) {
+			// 	argIndex++
+			} else if (current == ")" || current == "]") {
+				bracketStack.push(current)
+			} else if (current == "(" && bracketStack[bracketStack.length-1] == ")") {
+				bracketStack.pop()
+			} else if (current == "[" && bracketStack[bracketStack.length-1] == "]") {
+				bracketStack.pop()
+			}
+		}
+		return func ? {...func, argIndex} : undefined
+	}
+	static getFunctionData(str, lastIndex) {
+		console.log("matching with", str.substring(0, lastIndex))
+		const match = str.substring(0, lastIndex).match(/\w+$/gi)
+		return match && typeof match[0] == "string" 
+			? functions.find(f => f.name.toLowerCase() == match[0].toLowerCase()) 
+			: undefined
+	}
+}
+
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
 		let cursor = cm.getCursor()
@@ -9424,7 +9461,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;" hidden></span></div>
+							<div class="function-helper" style="width: 100%; height: 5em; outline: 3px solid green;" ></div>
 							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
@@ -9483,13 +9520,21 @@ class DefinitionEditor extends jqDialog {
 				}}
 			}
 		);
-		this.cmValueField.on("inputRead", (e) => {
-			// console.log("New input read:", e)
-		})
 		this.cmValueField.on("cursorActivity", () => {
-			this.updateCursorPosInfo();
+			const func = FunctionHelper.updateFunctionHelp(this.cmValueField)
+			let result = ""
+			if (func) {
+				console.log("func", func)
+				const args = func.arguments 
+					? (
+						Array.isArray(func.arguments) 
+						? func.arguments.map((a, index) => func.argIndex == index ? `<b>${a.name}</b>` : a.name).join(", ") 
+						: func.arguments.name
+					) : ""
+				result = `${func.name}(${args})`
+			}
+			$(this.dialogContent).find(".function-helper").html(result)
 		});
-		this.updateCursorPosInfo();
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9721,10 +9766,6 @@ class DefinitionEditor extends jqDialog {
 			<p style="margin: 0.5em 0;"> With a "#" after the definition you may add a comment.
 			</p>
 		</div>`);
-	}
-	updateCursorPosInfo() {
-		let cursor = this.cmValueField.getCursor();
-		$(this.dialogContent).find(".equation-cursor-pos").html(`Cursor at Line: ${cursor.line+1}, Col: ${cursor.ch}`);
 	}
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
