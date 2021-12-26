@@ -9284,7 +9284,7 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 
 const functions = [
 	{name: "PoFlow", arguments: [{name: "lambda"}]},
-	{name: "Rand", note: "uniform", arguments: [{name: "minimum"},{name: "maximum"}], description: "Rand takes two"}, 
+	{name: "Rand", note: "uniform", arguments: [{name: "minimum", note: "minimum value", default: "0"},{name: "maximum",note: "maximum value", default: "1"}], description: "Rand takes two"}, 
 	{name: "RandBernoulli", arguments: [{name: "probability", note: "min: 0, max: 1"}]}, 
 	{name: "RandBinomial", arguments: [{name: "count"}, {name: "probability"}]},
 	{name: "RandNormal", arguments: [{name: "mean", name: "standard deviation"}]},
@@ -9337,6 +9337,27 @@ const functions = [
 ]
 
 class FunctionHelper {
+	static getHtml(cm) {
+		let result = "\n"
+		const func = FunctionHelper.updateFunctionHelp(cm)
+		if (func) {
+			console.log("func", func)
+			func.note && (result = `${func.note}\n`)
+			const args = func.arguments 
+				? (
+					Array.isArray(func.arguments) 
+					? func.arguments.map((a, index) => {
+						const argInfo = (a.note ? `Note: ${a.note}\n`: "") + (a.default ? `Default value: ${a.default}` : "")
+						return func.argIndex == index 
+							? `<b style="position:relative; text-decoration:underline;" data-arg="${argInfo}">${a.name}</b>` 
+							: `${a.name}`
+					}).join(", ")
+					: `<b>${func.arguments.name}</b>`
+				) : ""
+			result += `<span class="example-code"><span class="cm-functioncall">${func.name}</span>(${args})</span>`
+		}
+		return result
+	}
 	static updateFunctionHelp(cm) {
 		let func = undefined
 		let cursor = cm.getCursor()
@@ -9459,7 +9480,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<pre class="function-helper" style="width: 100%; height: 4em; margin: 0.4em 0.2em; font-family: DejaVu Sans Mono;" ></pre>
+							<pre class="function-helper" style="width: 100%; height: 5em; margin: 0.4em 0.2em; font-family: DejaVu Sans Mono;" ></pre>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
@@ -9517,24 +9538,7 @@ class DefinitionEditor extends jqDialog {
 			}
 		);
 		this.cmValueField.on("cursorActivity", () => {
-			const func = FunctionHelper.updateFunctionHelp(this.cmValueField)
-			let result = ""
-			if (func) {
-				console.log("func", func)
-				func.note && (result += `${func.note}\n`)
-				const args = func.arguments 
-					? (
-						Array.isArray(func.arguments) 
-						? func.arguments.map((a, index) => {
-							const note = a.note ? `data-arg-note="${a.note}"`:""
-							const defaultValue = a.default ? `=${a.default}` : ""
-							return func.argIndex == index ? `<b style="position:relative; text-decoration:underline;" ${note}>${a.name}</b>${defaultValue}` : `${a.name}${defaultValue}`
-						}).join(", ")
-						: `<b>${func.arguments.name}</b>`
-					) : ""
-				result += `<span class="example-code"><span class="cm-functioncall">${func.name}</span>(${args})</span>`
-			}
-			$(this.dialogContent).find(".function-helper").html(result)
+			$(this.dialogContent).find(".function-helper").html(FunctionHelper.getHtml(this.cmValueField))
 		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {

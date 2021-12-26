@@ -379,8 +379,8 @@ td.jqplot-table-legend {
 .editor-footer div {
     display: inline;
 }
-b[data-arg-note]::before {
-    content: attr(data-arg-note);
+b[data-arg]::before {
+    content: attr(data-arg);
     position: absolute;
     top: 1.3em;
     font-weight: normal;
