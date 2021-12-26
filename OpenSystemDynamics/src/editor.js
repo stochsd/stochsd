@@ -9371,14 +9371,20 @@ class FunctionHelper {
 			if (bracketStack.length == 0 && current == "(") {
 				func = FunctionHelper.getFunctionData(prevStr, index)
 				break;
-			} else if (current == "," && bracketStack.length == 0) {
+			} else if (current == "," && bracketStack.length == 0)
 				argIndex++
-			} else if (current == ")" || current == "]") {
+			else if (current == ")" || current == "]")
 				bracketStack.push(current)
-			} else if (current == "(" && bracketStack[bracketStack.length-1] == ")") {
-				bracketStack.pop()
-			} else if (current == "[" && bracketStack[bracketStack.length-1] == "]") {
-				bracketStack.pop()
+			else if (current == "(") {
+				if (bracketStack[bracketStack.length-1] == ")")
+					bracketStack.pop()
+				else
+					break
+			} else if (current == "[") {
+				if (bracketStack[bracketStack.length-1] == "]")
+					bracketStack.pop()
+				else
+					break
 			}
 		}
 		return func ? {...func, argIndex} : undefined
