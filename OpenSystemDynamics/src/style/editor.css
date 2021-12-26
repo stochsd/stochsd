@@ -376,7 +376,12 @@ td.jqplot-table-legend {
     /* Avoid line break in plot legend */
     white-space: nowrap;
 }
-
 .editor-footer div {
     display: inline;
+}
+b[data-arg-note]::before {
+    content: attr(data-arg-note);
+    position: absolute;
+    top: 1.3em;
+    font-weight: normal;
 }

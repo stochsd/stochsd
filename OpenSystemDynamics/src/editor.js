@@ -9291,8 +9291,8 @@ const functions = [
 	{name: "RandLognormal", arguments: [{name: "mean", name: "standard deviation"}]},
 	{name: "RandNegativeBinomial", arguments: [{name: "successes", name: "probability"}]},
 	{name: "RandTriangular", arguments: [{name: "minimum", name: "maximum"},{name: "peak"}]},
-	{name: "RandGamma", arguments: [{name: "alpha", name: "beta"}]},
-	{name: "RandBeta", arguments: [{name: "alpha", name: "beta"}]},
+	{name: "RandGamma", arguments: [{name: "alpha"}, {name: "beta"}]},
+	{name: "RandBeta", arguments: [{name: "alpha"}, {name: "beta"}]},
 	{name: "RandExp", arguments: [{name: "beta"}]}, 
 	{name: "RandPoisson", arguments: [{name: "lambda"}]},
 	{name: "Pulse", arguments: [{name: "time"}, {name: "volume", default: "0"}, {name: "repeat", default: "1"}]},
@@ -9326,7 +9326,7 @@ const functions = [
 	{name: "Logit", arguments: [{name: "value", note: "maps [0,1] to [-infinity, inifinity]"}]},
 	{name: "Expit", arguments: [{name: "value", note: "maps [-infinity, inifinity] to [0,1]"}]},
 	{name: "StdDev", arguments: {name: "...values"}},
-	{name: "IfThenElse", arguments: [{name: "condition"},{name: "value if true"},{name:"value if false"}]},
+	{name: "IfThenElse", arguments: [{name: "condition"},{name: "then value", note: "value if true"},{name: "else value", note:"value if false"}]},
 	{name: "Stop"},
 	{name: "StopIf", arguments: [{name: "condidtion"}]},
 	{name: "T", note: "time"},
@@ -9350,10 +9350,8 @@ class FunctionHelper {
 			if (bracketStack.length == 0 && current == "(") {
 				func = FunctionHelper.getFunctionData(prevStr, index)
 				break;
-			} else if (bracketStack.length > 0 && current == ",") {
-				break
-			// } else if (current == "," && bracketStack.length == 0) {
-			// 	argIndex++
+			} else if (current == "," && bracketStack.length == 0) {
+				argIndex++
 			} else if (current == ")" || current == "]") {
 				bracketStack.push(current)
 			} else if (current == "(" && bracketStack[bracketStack.length-1] == ")") {
@@ -9452,7 +9450,7 @@ class DefinitionEditor extends jqDialog {
 		this.setHtml(`
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 400px; height: 300px;">
+					<div class="table-cell" style="width: 500px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
@@ -9461,8 +9459,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div class="function-helper" style="width: 100%; height: 5em; outline: 3px solid green;" ></div>
-							<br/>
+							<pre class="function-helper" style="width: 100%; height: 4em; margin: 0.4em 0.2em; font-family: DejaVu Sans Mono;" ></pre>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
@@ -9483,7 +9480,6 @@ class DefinitionEditor extends jqDialog {
   				</div>
 			</div>
 		`);
-
 
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
@@ -9525,13 +9521,18 @@ class DefinitionEditor extends jqDialog {
 			let result = ""
 			if (func) {
 				console.log("func", func)
+				func.note && (result += `${func.note}\n`)
 				const args = func.arguments 
 					? (
 						Array.isArray(func.arguments) 
-						? func.arguments.map((a, index) => func.argIndex == index ? `<b>${a.name}</b>` : a.name).join(", ") 
-						: func.arguments.name
+						? func.arguments.map((a, index) => {
+							const note = a.note ? `data-arg-note="${a.note}"`:""
+							const defaultValue = a.default ? `=${a.default}` : ""
+							return func.argIndex == index ? `<b style="position:relative; text-decoration:underline;" ${note}>${a.name}</b>${defaultValue}` : `${a.name}${defaultValue}`
+						}).join(", ")
+						: `<b>${func.arguments.name}</b>`
 					) : ""
-				result = `${func.name}(${args})`
+				result += `<span class="example-code"><span class="cm-functioncall">${func.name}</span>(${args})</span>`
 			}
 			$(this.dialogContent).find(".function-helper").html(result)
 		});
