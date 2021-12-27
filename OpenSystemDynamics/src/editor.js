@@ -504,9 +504,9 @@ function getFunctionHelpData() {
 			["Mod", "##(Value One)$$ mod ##(Value Two)$$", "Returns the remainder of the division of two numbers.", ["13 mod 5", "3"]],
 			["Square Root", "Sqrt(##Value$$)", "Returns the square root of a number.", ["Sqrt(9)", "3"]],
 			["Sign", "Sign(##Value$$)", "1 if the value is greater than 0, -1 if it is less than 0, and 0 if it is 0.", ["Sign(-12)", "-1"]],
-			["Pi", "pi", "The value 3.14159265."],
+			["pi", "pi", "The value 3.14159265."],
 			["e", "e", "The value 2.71828183."],
-			["Epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
+			["epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
 		]],
 		["Historical Functions", [
 			["Delay", "Delay(##[Primitive]$$, ##Delay Length$$, ##Default Value$$)", "Returns the value of a primitive for a specified length of time ago. Default Value stands in for the primitive value in the case of negative times.", "Delay([Income], 5)"],
