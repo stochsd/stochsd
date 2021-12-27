@@ -9292,13 +9292,13 @@ const functions = [
 	{name: "TS", note: "start time"},
 	{name: "TL", note: "time length"},
 	{name: "TE", note: "time end"},
-	{name: "PastMax", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMin", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMedian", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMean", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastStdDev", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastCorrelation", arguments: [{name: "[Primitive1]"},{name: "[Primitive2]"},{name: "Period", default: "all time"}]},
-	{name: "Fix", arguments:[{name: "value"}, {name: "period", default: "-1"}]},
+	{name: "PastMax", arguments: [{name: "primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMin", arguments: [{name: "primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMedian", arguments: [{name: "primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMean", arguments: [{name: "primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastStdDev", arguments: [{name: "primitive"},{name: "Period", default: "all time"}],desc:"Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."},
+	{name: "PastCorrelation", arguments: [{name: "primitive1"},{name: "primitive2"},{name: "Period", default: "all time"}],desc:"Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation."},
+	{name: "Fix", arguments:[{name: "value"}, {name: "period", default: "-1"}], desc: "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation."},
 ]
 
 class FunctionHelper {
@@ -9307,7 +9307,7 @@ class FunctionHelper {
 		const func = FunctionHelper.updateFunctionHelp(cm)
 		if (func) {
 			console.log("func", func)
-			func.note && (result = `${func.note}\n`)
+			func.desc && (result = `<span style="white-space: break-spaces;">${func.desc}</span>\n`)
 			const args = func.arguments 
 				? (
 					Array.isArray(func.arguments) 
@@ -9451,7 +9451,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<pre class="function-helper" style="width: 100%; height: 5em; margin: 0.4em 0.2em; font-family: DejaVu Sans Mono;" ></pre>
+							<div class="function-helper" style="width: 100%; height: 7em; margin: 0.4em 0.2em;" ></div>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">

@@ -384,6 +384,7 @@ b[data-arg]::before {
     position: absolute;
     top: 1.3em;
     font-weight: normal;
+    white-space: pre;
 }
 .ui-tooltip {
     min-width: 22em;
