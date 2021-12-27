@@ -385,3 +385,6 @@ b[data-arg]::before {
     top: 1.3em;
     font-weight: normal;
 }
+.ui-tooltip {
+    min-width: 22em;
+}

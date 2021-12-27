@@ -470,10 +470,27 @@ function callAPI(e) {
 
 function getFunctionHelpData() {
 	let helpData = [
+		["Programming Functions", [
+			["IfThenElse", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
+			["If-Then-Else", "If ##Condition$$ Then\n  ##Expression$$\nElse If ##Condition$$ Then\n  ##Expression$$\nElse\n  ##Expression$$\nEnd If", "Test one or more conditions and selectively execute code based on these tests."],
+			["Max", "Max(##Values$$)", "Returns the largest of a vector or list of numbers.", ["Max(2, 4, -1)", "4"]],
+			["Min", "Min(##Values$$)", "Returns the smallest of a vector or list of numbers.", ["Min(2, 4, -1, 3)", "-1"]],
+			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"],
+			["Define Function", "Function ##Name$$()\n  ##Expression$$\nEnd Function", "Creates a reusable function.", ['Function Square(x)\n  x^2\nEnd Function\nSquare(5)', "25"]],
+			["Throwing Errors", "throw '##Message$$'", "Passes an error message up to the nearest Try-Catch block or aborts the simulation with the error message.", 'throw "Error: Index out of range."'],
+		]],
 		["Mathematical Functions", [
+			["Current Time", "T()", "The current simulation time."],
+			["Time Start", "TS()", "The simulation start time."],
+			["Time Step", "DT()", "The simulation time step."],
+			["Time Length", "TL()", "The total length of the simulation."],
+			["Time End", "TE()", "The time at which the simulation ends."],
 			["Round", "Round(##Value$$)", "Rounds a number to the nearest integer.", ["Round(3.6)", "4"]],
 			["Round Up", "Ceiling(##Value$$)", "Rounds a number up to the nearest integer.", ["Ceiling(3.6)", "4"]],
 			["Round Down", "Floor(##Value$$)", "Rounds a number down to the nearest integer.", ["Floor(3.6)", "3"]],
+			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
+			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
+			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
 			["Sin", "Sin(##Angle$$)", "Finds the sine of an angle, where the angle is given in radians.", ["Sin(Pi/2)", "1"]],
 			["Cos", "Cos(##Angle$$)", "Finds the cosine of an angle, where the angle is given in radians.", ["Cos(Pi)", "-1"]],
 			["Tan", "Tan(##Angle$$)", "Finds the tangent of an angle, where the angle is given in radians.", ["Tan(Pi/4)", "1"]],
@@ -483,13 +500,6 @@ function getFunctionHelpData() {
 			["Log", "Log(##Value$$)", "Returns the base-10 logarithm of a number.", ["Log(1000)", "3"]],
 			["Ln", "Ln(##Value$$)", "Returns the natural logarithm of a number.", ["Ln(e^2)", "2"]],
 			["Exp", "Exp(##Value$$)", "Returns e taken to a power.", ["Exp(1)", "e"]],
-			["Sum", "Sum(##Values$$)", "Returns the sum of a vector or list of numbers.", ["Sum(7, 5, 6)", "18"]],
-			["Product", "Product(##Values$$)", "Returns the product of a vector or list of numbers.", ["Product(2, 4, -1)", "-8"]],
-			["Maximum", "Max(##Values$$)", "Returns the largest of a vector or list of numbers.", ["Max(2, 4, -1)", "4"]],
-			["Minimum", "Min(##Values$$)", "Returns the smallest of a vector or list of numbers.", ["Min(2, 4, -1, 3)", "-1"]],
-			["Mean", "Mean(##Values$$)", "Returns the mean of a vector or list of numbers.", ["Mean(2, 7, 3)", "4"]],
-			["Median", "Median(##Values$$)", "Returns the median of a vector or list of numbers.", ["Median(2, 7, 3)", "3"]],
-			["Standard Deviation", "StdDev(##Values$$)", "Returns the standard deviation of a vector or list of numbers.", ["StdDev(1, 2, 3)", "1"]],
 			["Absolute Value", "Abs(##Value$$)", "Returns the absolute value of a number.", ["Abs(-23)", "23"]],
 			["Mod", "##(Value One)$$ mod ##(Value Two)$$", "Returns the remainder of the division of two numbers.", ["13 mod 5", "3"]],
 			["Square Root", "Sqrt(##Value$$)", "Returns the square root of a number.", ["Sqrt(9)", "3"]],
@@ -497,72 +507,34 @@ function getFunctionHelpData() {
 			["Pi", "pi", "The value 3.14159265."],
 			["e", "e", "The value 2.71828183."],
 			["Epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
-			["Logit", "Logit(##Value$$)", "Returns the logit transformation of the value. Converts values on a 0 to 1 scale to a -Infinity to Infinity scale.", ["Logit(0.5)", "0"]],
-			["Expit", "Expit(##Value$$)", "Returns the expit transformation of the value. Converts values on a -Infinity to Infinity scale to a 0 to 1 scale.", ["Expit(0)", "0.5"]]
-		]],
-		["Time Functions", [
-			["Current Time", "T()", "The current simulation time."],
-			["Time Start", "TS()", "The simulation start time."],
-			["Time Step", "DT()", "The simulation time step."],
-			["Time Length", "TL()", "The total length of the simulation."],
-			["Time End", "TE()", "The time at which the simulation ends."]
-			
-			/*
-			["Current Time with Units", "Time()", "The current time including units.", "IfThenElse(Time() > 10, 15, 0)"],
-			["Time Start with Units", "TimeStart()", "The simulation start time including units."],
-			["Time Step with Units", "TimeStep()", "The simulation time step including units."],
-			["Time Length with Units", "TimeLength()", "The total length of the simulation including units."],
-			["Time End with Units", "TimeEnd()", "The time at which the simulation ends including units.", ["TimeStart() + TimeLength() = TimeEnd()", "True"]]
-			*/
 		]],
 		["Historical Functions", [
 			["Delay", "Delay(##[Primitive]$$, ##Delay Length$$, ##Default Value$$)", "Returns the value of a primitive for a specified length of time ago. Default Value stands in for the primitive value in the case of negative times.", "Delay([Income], 5)"],
 			["Delay1", "Delay1(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, first-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay1([Income], 5, 10000)"],
 			["Delay3", "Delay3(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, third-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay3([Income], 20, 10000)"],
 			["Smooth", "Smooth(##[Primitive]$$, ##Length$$, ##Initial Value$$)", "Returns a smoothing of a primitive's past values. Results in an averaged curve fit. Length affects the weight of past values. The Initial Value is optional."],
-			// ["PastValues", "PastValues(##[Primitive]$$, ##Period = All Time$$)", "Returns the values a primitive has taken on over the course of the simulation as a vector. The second optional argument is a time window to limit the depth of the history.", ["Sum(PastValues([Income]))", "Total past income"]],
-			["Maximum", "PastMax(##[Primitive]$$, ##Period = All Time$$)", "Returns the maximum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMax([Income], 10)", "The maximum income in the past 10 time units"]],
-			["Minimum", "PastMin(##[Primitive]$$, ##Period = All Time$$)", "Returns the minimum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMin([Income], 10)", "The minimum income in the past 10 units of time"]],
-			["Median", "PastMedian(##[Primitive]$$, ##Period = All Time$$)", "Returns the median of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["Mean", "PastMean(##[Primitive]$$, ##Period = All Time$$)", "Returns the mean of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["Standard Deviation", "PastStdDev(##[Primitive]$$, ##Period = All Time$$)", "Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["Correlation", "PastCorrelation(##[Primitive]$$, ##[Primitive]$$, ##Period = All Time$$)", "Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation.", ["PastCorrelation([Income], [Expenditures], 10)", "The correlation between income and expenditures over the past 10 time units."]],
-			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), 5)", "Chooses a new random value every five time units"]]
+			["PastMax", "PastMax(##[Primitive]$$, ##Period = All Time$$)", "Returns the maximum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMax([Income], 10)", "The maximum income in the past 10 time units"]],
+			["PastMin", "PastMin(##[Primitive]$$, ##Period = All Time$$)", "Returns the minimum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMin([Income], 10)", "The minimum income in the past 10 units of time"]],
+			["PastMedian", "PastMedian(##[Primitive]$$, ##Period = All Time$$)", "Returns the median of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
+			["PastMean", "PastMean(##[Primitive]$$, ##Period = All Time$$)", "Returns the mean of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
+			["PastStdDev", "PastStdDev(##[Primitive]$$, ##Period = All Time$$)", "Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
+			["PastCorrelation", "PastCorrelation(##[Primitive]$$, ##[Primitive]$$, ##Period = All Time$$)", "Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation.", ["PastCorrelation([Income], [Expenditures], 10)", "The correlation between income and expenditures over the past 10 time units."]],
+			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), 5)", "A new random value every five time units"]]
 		]],
 		["Random Number Functions", [
 			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span> <br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transfered entities with the expected rate of Lambda entities per time unit."],
 			["Uniform Distribution", "Rand(##Minimum$$, ##Maximum$$)", "Generates a uniformly distributed random number between the minimum and maximum. The minimum and maximum are optional and default to 0 and 1 respectively.", ["Rand()", "0.7481"]],
 			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
 			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
-			// ["Binary Distribution", "RandBoolean(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBoolean(0.1)", "False"]],
 			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "0"]],
 			["Binomial Distribution", "RandBinomial(##Count$$, ##Probability$$)", "Generates a binomially distributed random number. The number of successes in Count random events each with Probability of success."],
 			["Negative Binomial", "RandNegativeBinomial(##Successes$$, ##Probability$$)", "Generates a negative binomially distributed random number. The number of random events each with Probability of success required to generate the specified Successes."],
 			["Poisson Distribution", "RandPoisson(##Lambda$$)", "Generates a Poisson distributed random number with the rate Lambda events per time unit."],
-			["Triangular Distribution", "RandTriangular(##Minimum$$, ##Maximum$$, ##Peak$$)", "Generates a triangularly distributed random number."],
 			["Exponential Distribution", "RandExp(##Beta$$)", "Generates an exponentially distributed random number where the parameter Beta is the expected time between events, e.g. time between arrivals."],
-			["Gamma Distribution", "RandGamma(##Alpha$$, ##Beta$$)", "Generates a Gamma distributed random number."],
 			["Beta Distribution", "RandBeta(##Alpha$$, ##Beta$$)", "Generates a Beta distributed random number."],
+			["Gamma Distribution", "RandGamma(##Alpha$$, ##Beta$$)", "Generates a Gamma distributed random number."],
+			["Triangular Distribution", "RandTriangular(##Minimum$$, ##Maximum$$, ##Peak$$)", "Generates a triangularly distributed random number."],
 			["Custom Distribution", "RandDist(##X$$, ##Y$$)", "Generates a random number according to a custom distribution. Takes two vectors with the x- and y-coordinates respectively of points defining the distribution. Points are interpolated linearly. The distribution does not have to be normalized such that its area is 1, but the points must be sorted from smallest to largest x locations. You may also pass a single vector containing pairs of {x, y} coordinates (e.g. { {1, 0}, {3, 4}, {4, 0} } ).", ["RandDist({0, 1, 2, 3}, {0, 5, 1, 0})", "1.2"]]
-		]],
-		["General Functions", [
-			["If Then Else", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
-			["Lookup", "Lookup(##Value$$, ##Values Vector$$, ##Results Vector$$)", "Finds the Value in the Values Vector and returns the corresponding item in the Results Vector. If the exact Value is not found in the Values Vector, linear interpolation of the nearby values will be used.", ["Lookup(6, {5, 7}, {10, 15})", "12.5"]],
-			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
-			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
-			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
-			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"]
-		]],
-		["Programming Functions", [
-			["Variables", "##Variable$$ <- ##Value$$", "Assigns a value to a reusable variable.", ['x <- 10\nx^2', "100"]],
-			["If-Then-Else", "If ##Condition$$ Then\n  ##Expression$$\nElse If ##Condition$$ Then\n  ##Expression$$\nElse\n  ##Expression$$\nEnd If", "Test one or more conditions and selectively execute code based on these tests."],
-			["While Loop", "While ##Condition$$\n  ##Expression$$\nEnd Loop", "Repeats an action until a condition is no longer true.", ['x <- 1\nWhile x < 10\n  x <- x*2\nEnd Loop\nx', "16"]],
-			["For-In Loop", "For ##Variable$$ in ##Vector$$\n  ##Expression$$\nEnd Loop", "Repeats an action for each element in a vector.", ['sum <- 0\nFor x in {1, 10, 27}\n  sum <- sum + x\nEnd Loop\nsum', "38"]],
-			["Functions", "Function ##Name$$()\n  ##Expression$$\nEnd Function", "Creates a reusable function.", ['Function Square(x)\n  x^2\nEnd Function\nSquare(5)', "25"]],
-			["Anonymous Functions", "##Variable$$ <- Function()\n  ##Expression$$\nEnd Function", "Creates an anonymous function.", ['square <- Function(x)\n  x^2\nEnd Function\nsquare(5)', "25"]],
-			["Anonymous Functions", "Function() ##Expression$$", "Creates a single-line anonymous function.", ['{1, 2, 3}.Map(Function(value) value^2 - value)', "{0, 2, 6}"]],
-			["Throwing Errors", "throw '##Message$$'", "Passes an error message up to the nearest Try-Catch block or aborts the simulation with the error message.", 'throw "Error: Index out of range."'],
-			["Error Handling", "Try\n  ##Expression$$\nCatch ##ErrorString$$\n  ##Expression // Handle the error$$\nEnd Try", 'Attempts to execute some code. If an error occurs, the error is passed as a string variable to the catch block which will then be executed. The catch block will not be executed unless an error occurs.', 'Try\n  mean(x)\nCatch err\n  alert("Could not calculate the mean of the variable. Error Message: "+err)\nEnd Try']
 		]],
 		["Statistical Distributions", [
 			["CDFNormal", "CDFNormal(##x$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of x in the CDF of the Normal Distribution.", ["CDFNormal(1.96)", "0.975"]],
@@ -588,13 +560,6 @@ function getFunctionHelpData() {
 		]]
 
 	];
-	helpData = helpData.sort(function(a, b) {
-		let categoryA = a[0];
-		let categoryB = b[0];
-		if (categoryA < categoryB) return -1;
-		if (categoryA > categoryB) return 1;
-		return 0;
-	});
 	return helpData;
 }
 
@@ -9316,17 +9281,10 @@ const functions = [
 	{name: "Exp", arguments: [{name: "value"}]},
 	{name: "Max", arguments: {name: "...values"}},
 	{name: "Min", arguments: {name: "...values"}},
-	{name: "Sum", arguments: {name: "...values"}},
 	{name: "Sqrt", note: "square root", arguments: [{name: "value"}]},
 	{name: "Sign", arguments: [{name: "value"}]},
 	{name: "Abs", note: "absolute value", arguments: [{name: "value"}]},
-	{name: "Product", arguments: {name: "...values"}},
-	{name: "Mean", arguments: {name: "...values"}},
-	{name: "Median", arguments: {name: "...values"}},
-	{name: "Logit", arguments: [{name: "value", note: "maps [0,1] to [-infinity, inifinity]"}]},
-	{name: "Expit", arguments: [{name: "value", note: "maps [-infinity, inifinity] to [0,1]"}]},
-	{name: "StdDev", arguments: {name: "...values"}},
-	{name: "IfThenElse", arguments: [{name: "condition"},{name: "then value", note: "value if true"},{name: "else value", note:"value if false"}]},
+	{name: "IfThenElse", arguments: [{name: "condition"},{name: "then value", note: "value if true"},{name:"else value",note:"value if false"}]},
 	{name: "Stop"},
 	{name: "StopIf", arguments: [{name: "condidtion"}]},
 	{name: "T", note: "time"},
@@ -9334,6 +9292,13 @@ const functions = [
 	{name: "TS", note: "start time"},
 	{name: "TL", note: "time length"},
 	{name: "TE", note: "time end"},
+	{name: "PastMax", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
+	{name: "PastMin", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
+	{name: "PastMedian", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
+	{name: "PastMean", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
+	{name: "PastStdDev", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
+	{name: "PastCorrelation", arguments: [{name: "[Primitive1]"},{name: "[Primitive2]"},{name: "Period", default: "all time"}]},
+	{name: "Fix", arguments:[{name: "value"}, {name: "period", default: "-1"}]},
 ]
 
 class FunctionHelper {
@@ -9613,7 +9578,7 @@ class DefinitionEditor extends jqDialog {
 					if ((functionList[j][3]).constructor === Array) {
 						let codeSample = functionList[j][3][0];
 						let returnValue = functionList[j][3][1];
-						example = `<br/><br/><b>Example</b><br/>${codeSample}<br/><br/><b>Returns:</b><br/> ${returnValue}`;
+						example = `<br/><br/><b>Example</b><pre style="padding:0;margin:0;">${codeSample}</pre><br/><b>Returns:</b><br/> ${returnValue}`;
 					} else {
 						let codeSample = functionList[j][3];
 						example = `<br/><br/><b>Example</b><br/>${codeSample}`;
