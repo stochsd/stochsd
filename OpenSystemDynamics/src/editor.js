@@ -9557,7 +9557,7 @@ class DefinitionEditor extends jqDialog {
 					if ((functionList[j][3]).constructor === Array) {
 						let codeSample = functionList[j][3][0];
 						let returnValue = functionList[j][3][1];
-						example = `<br/><br/><b>Example</b><br/>${codeSample}<br/><br/><b>Returns:</b><br/> ${returnValue}`;
+						example = `<br/><br/><b>Example</b><pre style="padding:0;margin:0;">${codeSample}</pre><br/><b>Returns:</b><br/> ${returnValue}`;
 					} else {
 						let codeSample = functionList[j][3];
 						example = `<br/><br/><b>Example</b><br/>${codeSample}`;

@@ -380,3 +380,6 @@ td.jqplot-table-legend {
 .editor-footer div {
     display: inline;
 }
+.ui-tooltip {
+    min-width: 22em;
+}
