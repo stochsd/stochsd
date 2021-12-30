@@ -859,26 +859,16 @@ class NwEnvironment extends BaseEnvironment {
   keyDown(event) {
     if (event.ctrlKey) {
       // Does not work in web browsers-since ctrl+N is reserved
-      if (event.keyCode == keyboard["N"]) {
+      if (event.key.toLowerCase() == "n") {
         event.preventDefault();
         $("#btn_new").click();
       }
-
-      if (
-        event.keyCode == keyboard["+"] ||
-        event.keyCode == keyboard["numpad+"]
-      ) {
+      if (event.key == "+")
         NwZoomController.zoomIn();
-      }
-      if (
-        event.keyCode == keyboard["-"] ||
-        event.keyCode == keyboard["numpad-"]
-      ) {
+      if (event.key == "-")
         NwZoomController.zoomOut();
-      }
-      if (event.keyCode == keyboard["0"]) {
+      if (event.key == "0")
         NwZoomController.zoomReset();
-      }
     }
   }
   getFileManager() {
