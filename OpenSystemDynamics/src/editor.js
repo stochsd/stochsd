@@ -3114,12 +3114,8 @@ class ComparePlotVisual extends PlotVisual {
 		}
 		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
-		if(this.primitive.getAttribute("KeepResults") === "true") {
-			// add generation 
-			this.gens.append(getDisplayIds(this.primitive), results, line_options);
-		} else {
-			this.gens.setCurrent(getDisplayIds(this.primitive), results, line_options);
-		}
+		// add generation 
+		this.gens.append(getDisplayIds(this.primitive), results, line_options);
 	}
 	render() {
 
@@ -8007,22 +8003,12 @@ class GenerationsComponent extends HtmlComponent {
 				</td>
 			</tr>`).join("")}
 		</table>`
-		const keep = this.primitive.getAttribute("KeepResults") === "true";
-		const keepResultsHtml = `<table class="modern-table" style="width:100%; text-align:center;">
-			<tr>
-				<td style="width:50%; white-space: nowrap;" title="If checked keeps the latest simulation results, else overwrites the latest results when running a new simulation." >
-				<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}>Keep Last Simulation Results
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<button class="clear-button enter-apply">Clear Results</button>
-				</td>
-			</tr>
-		</table>`
+		const clearButtonHtml = `<table class="modern-table" style="width:100%; text-align:center;"><tr><td>
+			<button class="clear-button enter-apply">Clear Results</button>
+		</td></tr></table>`
 		return `<div id="${this.componentId}">
 			${this.gens.idGen.length != 0 ? generationsHtml : ""}
-			${keepResultsHtml}
+			${clearButtonHtml}
 		</div>`
 	}
 	applyChange() {
@@ -8034,7 +8020,6 @@ class GenerationsComponent extends HtmlComponent {
 			const value = elem.val();
 			this.gens.setLabel(genIndex, id, value);
 		});
-		this.primitive.setAttribute("KeepResults", this.find(".keep-checkbox").prop("checked"));
 	}
 	bindEvents() {
 		this.find(`#${this.componentId} .primitive-remove-button`).click(event => {

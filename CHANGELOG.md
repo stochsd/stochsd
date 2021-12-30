@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to StochSD will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this the versioning of this project is based on the date of release (YYYY.MM.DD).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the versioning of StochSD is based on the date of release (YYYY.MM.DD).
 
 ## [Unreleased]
 
@@ -12,12 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Autocomplete to DefinitionDialog (suggests functions and linked primitives).
 - CHANGELOG.
 - Progresive Web App with chromium based browsers.
-- KeepResults option saved to file for ComparePlots.
 - Show/hide tooltip highlighter in plots.
 - NumberBoxes have **Hide frame** option.
 - Help-button in ConverterDialog, TextAreaDialog and MacroDialog.
 - Hide-frame option in Numberbox.
 - Tools-icons in menu (Optim, Sensi, StatRes and ParmVar).
+
+## Removed
+- KeepResults Option in ComparePlot, (simulations are always kept and results appear in editable table).
 
 ### Changed
 - StopIf function returns 1 on stop and otherwise 0.
@@ -35,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Number formatting bugs.
 - TextArea now interprets `<` and `>` correctly and not as html.
 - Fix-function bugs.
-- RK4 and function `StopI` sometimes resulted in NumberBoxes not showing a value at the end of a simulation.
+- RK4 and function `StopIf` sometimes resulted in NumberBoxes not showing a value at the end of a simulation.
 - Minor bugs.
 
 ### Depricated
