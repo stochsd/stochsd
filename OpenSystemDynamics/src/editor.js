@@ -9251,58 +9251,117 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 }
 
 const functions = [
-	{name: "PoFlow", arguments: [{name: "lambda"}]},
-	{name: "Rand", note: "uniform", arguments: [{name: "minimum"},{name: "maximum"}], description: "Rand takes two"}, 
-	{name: "RandBernoulli", arguments: [{name: "probability", note: "min: 0, max: 1"}]}, 
-	{name: "RandBinomial", arguments: [{name: "count"}, {name: "probability"}]},
-	{name: "RandNormal", arguments: [{name: "mean", name: "standard deviation"}]},
-	{name: "RandLognormal", arguments: [{name: "mean", name: "standard deviation"}]},
-	{name: "RandNegativeBinomial", arguments: [{name: "successes", name: "probability"}]},
-	{name: "RandTriangular", arguments: [{name: "minimum", name: "maximum"},{name: "peak"}]},
-	{name: "RandGamma", arguments: [{name: "alpha", name: "beta"}]},
-	{name: "RandBeta", arguments: [{name: "alpha", name: "beta"}]},
-	{name: "RandExp", arguments: [{name: "beta"}]}, 
-	{name: "RandPoisson", arguments: [{name: "lambda"}]},
-	{name: "Pulse", arguments: [{name: "time"}, {name: "volume", default: "0"}, {name: "repeat", default: "1"}]},
-	{name: "Step", arguments: [{name: "start"}, {name: "height", default: "1"}]},
-	{name: "Ramp", arguments: [{name: "start"}, {name: "finish"}, {name: "height", default: "1"}]},
+	{name: "PoFlow", arguments: [{name: "Lambda"}], desc: "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span><br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transfered entities with the expected rate of Lambda entities per time unit."},
+	{name: "Rand", note: "uniform", arguments: [{name: "Minimum", default: "0"},{name: "Maximum",default: "1"}], description: "Rand takes two"}, 
+	{name: "RandBernoulli", arguments: [{name: "Probability", note: "min: 0, max: 1"}]}, 
+	{name: "RandBinomial", arguments: [{name: "Count"},{name: "Probability"}]},
+	{name: "RandNormal", arguments: [{name: "Mean"},{name: "Standard Deviation"}], desc: "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively."},
+	{name: "RandLognormal", arguments: [{name: "Mean"},{name: "Standard Deviation"}]},
+	{name: "RandNegativeBinomial", arguments: [{name: "Successes"}, {name: "probability"}]},
+	{name: "RandTriangular", arguments: [{name: "minimum"},{name: "maximum"},{name: "peak"}]},
+	{name: "RandGamma", arguments: [{name: "Alpha"},{name: "Beta"}]},
+	{name: "RandBeta", arguments: [{name: "Alpha"},{name: "Beta"}]},
+	{name: "RandExp", arguments: [{name: "Beta"}]}, 
+	{name: "RandPoisson", arguments: [{name: "Lambda"}]},
+	{name: "Pulse", arguments: [{name: "Time"}, {name: "Volume", default: "0"}, {name: "Repeat", default: "1"}]},
+	{name: "Step", arguments: [{name: "Start"}, {name: "Height", default: "1"}]},
+	{name: "Ramp", arguments: [{name: "Start"}, {name: "Finish"}, {name: "Height", default: "1"}]},
 	{name: "Delay", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
-	{name: "Delay1", note: "smoothed, first-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
-	{name: "Delay3", note: "smoothed, third-order exponential", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
-	{name: "Smooth", note: "smoothing of past values", arguments: [{name: "primitive"}, {name: "length"}, {name: "initial value"}]},
-	{name: "Round", arguments: [{name: "value"}]},
-	{name: "Ceiling", arguments: [{name: "value"}]},
-	{name: "Floor", arguments: [{name: "value"}]},
-	{name: "Sin", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
-	{name: "Cos", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
-	{name: "Tan", arguments: [{name: "angle rad", suggestions: ["pi"]}]},
-	{name: "ArcSin", arguments: [{name: "value"}]},
-	{name: "ArcCos", arguments: [{name: "value"}]},
-	{name: "ArcTan", arguments: [{name: "value"}]},
-	{name: "Log", note: "base-10 logarithm", arguments: [{name: "value", suggestions: ["10"]}]},
-	{name: "Ln", note: "natural logarithm", arguments: [{name: "value", suggestions: ["e"]}]},
-	{name: "Exp", arguments: [{name: "value"}]},
-	{name: "Max", arguments: {name: "...values"}},
-	{name: "Min", arguments: {name: "...values"}},
-	{name: "Sqrt", note: "square root", arguments: [{name: "value"}]},
+	{name: "Delay1", note: "smoothed, first-order exponential", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
+	{name: "Delay3", note: "smoothed, third-order exponential", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
+	{name: "Smooth", note: "smoothing of past values", arguments: [{name: "Primitive"}, {name: "Length"}, {name: "Initial Value"}]},
+	{name: "Round", arguments: [{name: "Value"}]},
+	{name: "Ceiling", arguments: [{name: "Value"}]},
+	{name: "Floor", arguments: [{name: "Value"}]},
+	{name: "Sin", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
+	{name: "Cos", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
+	{name: "Tan", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
+	{name: "ArcSin", arguments: [{name: "Value"}]},
+	{name: "ArcCos", arguments: [{name: "Value"}]},
+	{name: "ArcTan", arguments: [{name: "Value"}]},
+	{name: "Log", note: "base-10 logarithm", arguments: [{name: "Value", suggestions: ["10"]}]},
+	{name: "Ln", note: "natural logarithm", arguments: [{name: "Value", suggestions: ["e"]}]},
+	{name: "Exp", arguments: [{name: "Value"}]},
+	{name: "Max", arguments: {name: "...Values"}},
+	{name: "Min", arguments: {name: "...Values"}},
+	{name: "Sqrt", note: "square root", arguments: [{name: "Value"}]},
 	{name: "Sign", arguments: [{name: "value"}]},
-	{name: "Abs", note: "absolute value", arguments: [{name: "value"}]},
-	{name: "IfThenElse", arguments: [{name: "condition"},{name: "value if true"},{name:"value if false"}]},
+	{name: "Abs", note: "absolute value", arguments: [{name: "Value"}]},
+	{name: "IfThenElse", arguments: [{name: "Condition"},{name: "Then Value", note: "value if true"},{name:"Else Value",note:"value if false"}]},
 	{name: "Stop"},
-	{name: "StopIf", arguments: [{name: "condidtion"}]},
-	{name: "T", note: "time"},
-	{name: "DT", note: "step time"},
-	{name: "TS", note: "start time"},
-	{name: "TL", note: "time length"},
-	{name: "TE", note: "time end"},
-	{name: "PastMax", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMin", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMedian", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastMean", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastStdDev", arguments: [{name: "[Primitive]"},{name: "Period", default: "all time"}]},
-	{name: "PastCorrelation", arguments: [{name: "[Primitive1]"},{name: "[Primitive2]"},{name: "Period", default: "all time"}]},
-	{name: "Fix", arguments:[{name: "value"}, {name: "period", default: "-1"}]},
+	{name: "StopIf", arguments: [{name: "Condidtion"}]},
+	{name: "T", note: "Time"},
+	{name: "DT", note: "Step Time"},
+	{name: "TS", note: "Start Time"},
+	{name: "TL", note: "Time Length"},
+	{name: "TE", note: "Time End"},
+	{name: "PastMax", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMin", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMedian", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMean", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastStdDev", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}],desc:"Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."},
+	{name: "PastCorrelation", arguments: [{name: "Primitive1"},{name: "Primitive2"},{name: "Period", default: "all time"}],desc:"Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation."},
+	{name: "Fix", arguments:[{name: "Value"}, {name: "Period", default: "-1"}], desc: "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation."},
 ]
+
+class FunctionHelper {
+	static getHtml(cm) {
+		let result = "<br/>"
+		const func = FunctionHelper.updateFunctionHelp(cm)
+		if (func) {
+			func.note && (result = `<pre style="margin: 0;">${func.note}\n</pre>`)
+			const args = func.arguments 
+				? (
+					Array.isArray(func.arguments) 
+					? func.arguments.map((a, index) => {
+						const argInfo = (a.note ? `Note: ${a.note}\n`: "") + (a.default ? `Default value: ${a.default}` : "")
+						return func.argIndex == index 
+							? `<b style="position:relative; text-decoration:underline;" data-arg="${argInfo}">${a.name}</b>` 
+							: `${a.name}`
+					}).join(", ")
+					: `<b>${func.arguments.name}</b>`
+				) : ""
+			result += `<span class="example-code"><span class="cm-functioncall">${func.name}</span>(${args})</span>`
+		}
+		return result
+	}
+	static updateFunctionHelp(cm) {
+		let func = undefined
+		let cursor = cm.getCursor()
+		let line = cm.getLine(cursor.line)
+		const prevStr = line.substring(0, cursor.ch)
+		const bracketStack = []
+		let argIndex = 0
+		for (let index = prevStr.length-1; index >= 0; index--) {
+			const current = prevStr[index]
+			if (bracketStack.length == 0 && current == "(") {
+				func = FunctionHelper.getFunctionData(prevStr, index)
+				break;
+			} else if (current == "," && bracketStack.length == 0)
+				argIndex++
+			else if (current == ")" || current == "]")
+				bracketStack.push(current)
+			else if (current == "(") {
+				if (bracketStack[bracketStack.length-1] == ")")
+					bracketStack.pop()
+				else
+					break
+			} else if (current == "[") {
+				if (bracketStack[bracketStack.length-1] == "]")
+					bracketStack.pop()
+				else
+					break
+			}
+		}
+		return func ? {...func, argIndex} : undefined
+	}
+	static getFunctionData(str, lastIndex) {
+		const match = str.substring(0, lastIndex).match(/\w+$/gi)
+		return match && typeof match[0] == "string" 
+			? functions.find(f => f.name.toLowerCase() == match[0].toLowerCase()) 
+			: undefined
+	}
+}
 
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
@@ -9321,7 +9380,9 @@ class Autocomplete {
 		while (start && /\w/.test(line.charAt(start - 1))) --start
 		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		let word = line.substring(start, end)
-		return functions.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
+		return functions.filter(f => 
+			f.name.toLowerCase().startsWith(word.toLowerCase()) || (f.note && f.note.split(" ").some(n => n.toLowerCase().startsWith(word.toLowerCase())))
+		).map(f => {
 			return {
 				className: "cm-functioncall", 
 				displayText: f.name, 
@@ -9383,7 +9444,7 @@ class DefinitionEditor extends jqDialog {
 		this.setHtml(`
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 400px; height: 300px;">
+					<div class="table-cell" style="width: 500px; height: 300px;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
@@ -9392,8 +9453,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div style="width: 100%;"><span class="equation-cursor-pos" style="float: right;" hidden></span></div>
-							<br/>
+							<div class="function-helper" style="width: 100%; height: 5em; margin: 0.4em 0.2em;" ></div>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
@@ -9414,7 +9474,6 @@ class DefinitionEditor extends jqDialog {
   				</div>
 			</div>
 		`);
-
 
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
@@ -9451,13 +9510,9 @@ class DefinitionEditor extends jqDialog {
 				}}
 			}
 		);
-		this.cmValueField.on("inputRead", (e) => {
-			// console.log("New input read:", e)
-		})
 		this.cmValueField.on("cursorActivity", () => {
-			this.updateCursorPosInfo();
+			$(this.dialogContent).find(".function-helper").html(FunctionHelper.getHtml(this.cmValueField))
 		});
-		this.updateCursorPosInfo();
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
@@ -9689,10 +9744,6 @@ class DefinitionEditor extends jqDialog {
 			<p style="margin: 0.5em 0;"> With a "#" after the definition you may add a comment.
 			</p>
 		</div>`);
-	}
-	updateCursorPosInfo() {
-		let cursor = this.cmValueField.getCursor();
-		$(this.dialogContent).find(".equation-cursor-pos").html(`Cursor at Line: ${cursor.line+1}, Col: ${cursor.ch}`);
 	}
 	updateRestrictNoteText() {
 		let checked = $(this.restrictNonNegativeCheckbox).prop("checked");
