@@ -9303,11 +9303,10 @@ const functions = [
 
 class FunctionHelper {
 	static getHtml(cm) {
-		let result = "\n"
+		let result = "<br/>"
 		const func = FunctionHelper.updateFunctionHelp(cm)
 		if (func) {
-			console.log("func", func)
-			func.desc && (result = `<span style="white-space: break-spaces;">${func.desc}\n</span>`)
+			func.note && (result = `<pre style="margin: 0;">${func.note}\n</pre>`)
 			const args = func.arguments 
 				? (
 					Array.isArray(func.arguments) 
@@ -9332,7 +9331,6 @@ class FunctionHelper {
 		let argIndex = 0
 		for (let index = prevStr.length-1; index >= 0; index--) {
 			const current = prevStr[index]
-			console.log("current", current)
 			if (bracketStack.length == 0 && current == "(") {
 				func = FunctionHelper.getFunctionData(prevStr, index)
 				break;
@@ -9355,7 +9353,6 @@ class FunctionHelper {
 		return func ? {...func, argIndex} : undefined
 	}
 	static getFunctionData(str, lastIndex) {
-		console.log("matching with", str.substring(0, lastIndex))
 		const match = str.substring(0, lastIndex).match(/\w+$/gi)
 		return match && typeof match[0] == "string" 
 			? functions.find(f => f.name.toLowerCase() == match[0].toLowerCase()) 
@@ -9380,7 +9377,9 @@ class Autocomplete {
 		while (start && /\w/.test(line.charAt(start - 1))) --start
 		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		let word = line.substring(start, end)
-		return functions.filter(f => f.name.toLowerCase().startsWith(word.toLowerCase())).map(f => {
+		return functions.filter(f => 
+			f.name.toLowerCase().startsWith(word.toLowerCase()) || (f.note && f.note.split(" ").some(n => n.toLowerCase().startsWith(word.toLowerCase())))
+		).map(f => {
 			return {
 				className: "cm-functioncall", 
 				displayText: f.name, 
@@ -9451,7 +9450,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div class="function-helper" style="width: 100%; height: 7em; margin: 0.4em 0.2em;" ></div>
+							<div class="function-helper" style="width: 100%; height: 5em; margin: 0.4em 0.2em;" ></div>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
