@@ -9407,7 +9407,7 @@ class Autocomplete {
 				className: "cm-primitive",
 				displayText: `[${name}]`,
 				text: `[${name}]`,
-				note: getTypeNew(prim).toLowerCase(),
+				note: "primitive",
 				from: { line: 0, ch: start },
 				to: { line: 0, ch: end },
 				render: Autocomplete.render
