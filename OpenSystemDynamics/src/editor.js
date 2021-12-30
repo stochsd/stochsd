@@ -9251,7 +9251,7 @@ class ThirdPartyLicensesDialog extends CloseDialog {
 
 const functions = [
 	{name: "PoFlow", arguments: [{name: "Lambda"}], desc: "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span><br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transfered entities with the expected rate of Lambda entities per time unit."},
-	{name: "Rand", note: "uniform", arguments: [{name: "Minimum", default: "0"},{name: "Maximum",default: "1"}], description: "Rand takes two"}, 
+	{name: "Rand", arguments: [{name: "Minimum", default: "0"},{name: "Maximum",default: "1"}]}, 
 	{name: "RandBernoulli", arguments: [{name: "Probability", note: "min: 0, max: 1"}]}, 
 	{name: "RandBinomial", arguments: [{name: "Count"},{name: "Probability"}]},
 	{name: "RandNormal", arguments: [{name: "Mean"},{name: "Standard Deviation"}], desc: "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively."},
