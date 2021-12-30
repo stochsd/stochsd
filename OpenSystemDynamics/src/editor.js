@@ -8018,7 +8018,6 @@ class GenerationsComponent extends HtmlComponent {
 				<td>
 					<button class="clear-button enter-apply">Clear Results</button>
 				</td>
-				<tr>
 			</tr>
 		</table>`
 		return `<div id="${this.componentId}">
