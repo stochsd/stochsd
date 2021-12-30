@@ -8010,12 +8010,15 @@ class GenerationsComponent extends HtmlComponent {
 		const keep = this.primitive.getAttribute("KeepResults") === "true";
 		const keepResultsHtml = `<table class="modern-table" style="width:100%; text-align:center;">
 			<tr>
-				<td style="width:50%; white-space: nowrap;">
-				<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}> Keep Results
+				<td style="width:50%; white-space: nowrap;" title="If checked keeps the latest simulation results, else overwrites the latest results when running a new simulation." >
+				<input type="checkbox" class="keep-checkbox enter-apply" ${checkedHtml(keep)}>Keep Last Simulation Results
 				</td>
+			</tr>
+			<tr>
 				<td>
 					<button class="clear-button enter-apply">Clear Results</button>
 				</td>
+				<tr>
 			</tr>
 		</table>`
 		return `<div id="${this.componentId}">
