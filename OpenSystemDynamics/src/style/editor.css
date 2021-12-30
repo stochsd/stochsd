@@ -389,3 +389,7 @@ b[data-arg]::before {
 .ui-tooltip {
     min-width: 22em;
 }
+.selected {
+    outline: 2px solid #08f;
+    outline-offset: -1px;
+}

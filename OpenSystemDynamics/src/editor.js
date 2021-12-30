@@ -7454,6 +7454,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		super(parent);
 		this.displayIds = [];
 		this.displayLimit = displayLimit;
+		this.selectIndex = 0;
 	}
 	renderIncludedList() {
 		return (`<table id=${this.componentId} class="modern-table">
@@ -7505,22 +7506,22 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 
 		let searchLowercase = searchWord.toLowerCase();
 		let results = this.getSearchPrimitiveResults(searchLowercase);
-		let get_highlight_match = (name, match) => {
+		let getHighlightMatch = (name, match) => {
 			let index = name.toLowerCase().indexOf(match.toLowerCase());
-			if (index === -1) {
-				return name;
-			} else {
-				return `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
-			}
+			return index === -1 
+				? name 
+				: `${name.slice(0, index)}<b>${name.slice(index, index+match.length)}</b>${name.slice(index+match.length, name.length)}`
 		}
 		let htmlContent = "";
+		this.selectIndex = (this.selectIndex + results.length) % results.length
 		if (results.length > 0) {
 			let limitReached = this.displayLimit && this.displayIds.length >= this.displayLimit;
+			const focus = this.find(".primitive-filter-input").is(":focus")
 			htmlContent = (`<table class="modern-table"> 
-				${results.map(p => `
-					<tr>
+				${results.map((p, index) => `
+					<tr ${focus && this.selectIndex == index ? `class="selected" data-id="${getID(p)}"`: ""}>
 						<td style="padding: 0;">
-							<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
+							<button class="primitive-add-button" data-id="${getID(p)}" 
 								${limitReached ? "disabled" : ""} 
 								${limitReached ? `title="Max ${this.displayLimit} primitives selected"` : ""}>
 								+
@@ -7529,7 +7530,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
 							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-							${get_highlight_match(getName(p), searchWord)}
+							${getHighlightMatch(getName(p), searchWord)}
 						</div>
 						</td>
 					</tr>
@@ -7555,24 +7556,37 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 	}
 	render() {
 		this.displayIds = getDisplayIds(this.primitive);
-
 		return (`
 			<div class="included-list-div" style="border: 1px solid black;"></div>
 			<div class="vertical-space"></div>
 			<div class="center-vertically-container">
 				<img style="height: 22px; padding: 0px 5px;" src="graphics/exchange.svg"/>
-				<input type="text" class="primitive-filter-input enter-apply" placeholder="Find Primitive ..." style="height: 18px; width: 220px;"> 
+				<input type="text" class="primitive-filter-input" placeholder="Find Primitive ..." style="height: 18px; width: 220px;"> 
 			</div>
 			<div class="excluded-list-div" style="max-height: 300px; overflow: auto; border: 1px solid black;"></div>
 		`);
 	}
 	bindEvents() {
-		this.find(".primitive-filter-input").keydown((e) => {
-			console.log(e)
+		this.find(".primitive-filter-input").keydown((event) => {
+			if (event.key == "ArrowDown") {
+				this.selectIndex++
+				event.preventDefault()
+			} else if (event.key == "ArrowUp") {
+				this.selectIndex--
+				event.preventDefault()
+			} else if (event.key == "Enter") {
+				const addId = this.find(".selected").attr("data-id")
+				!isNaN(addId) && this.displayIds.push(addId)
+				this.updateIncludedList();
+				this.find(".primitive-filter-input").val("");
+				this.updateExcludedList();
+			}
 		});
 		this.find(".primitive-filter-input").keyup(() => {
 			this.updateExcludedList();
 		});
+		this.find(".primitive-filter-input").focus(() => {this.updateIncludedList(); this.updateExcludedList(); this.selectIndex = 0;})
+		this.find(".primitive-filter-input").blur(() => {this.updateIncludedList(); this.updateExcludedList()})
 		this.updateIncludedList();
 		this.updateExcludedList();
 	}
