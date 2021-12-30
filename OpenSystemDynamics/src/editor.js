@@ -643,7 +643,7 @@ function noteHtml(message) {
 // Param keys is array of string or a string 
 function keyHtml(keys) {
 	return Array.isArray(keys) 
-		? keys.map(key => `<kbd>${key}</kbd>`).join("-") 
+		? keys.map(key => `<kbd>${key}</kbd>`).join("+") 
 		: `<kbd>${keys}</kbd>`
 }
 
@@ -9734,8 +9734,14 @@ class DefinitionEditor extends jqDialog {
 			<ul style="margin: 0.5em 0; padding-left: 2em;">
 				<li>${keyHtml("Esc")} &rarr; Cancel changes</li>
 				<li>${keyHtml("Enter")} &rarr; Apply changes</li>
+				<li>${keyHtml(["Shift","Enter"])} &rarr; add new line</li>
 				<li>
 				${keyHtml(["Ctrl", "Space"])} &rarr; Show autocomplete definition
+				<ul>
+					<li>Navigate with suggestions with ${keyHtml("&uarr;")} and ${keyHtml("&darr;")}</li>
+					<li>Select with ${keyHtml("Enter")}</li>
+					<li>Close suggestions with ${keyHtml("Esc")}</li>
+				</ul>
 				<img src="./graphics/autocomplete.png" style="width: 100%;" />
 				</li>
 			</ul>
