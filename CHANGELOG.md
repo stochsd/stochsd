@@ -8,44 +8,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Function argument help in DefinitionEditor, based on cursor position.
-- ComplarePlot has added generations list in Dialog, with editable labels.
+- Generations list in Dialog ComparePlot, with editable labels.
 - Autocomplete to DefinitionDialog (suggests functions and linked primitives).
 - CHANGELOG.
-- Progresive Web App with chromium based browsers.
-- Show/hide tooltip highlighter in plots.
-- NumberBoxes have **Hide frame** option.
-- Help-button in ConverterDialog, TextAreaDialog and MacroDialog.
-- Hide-frame option in Numberbox.
-- Tools-icons in menu (Optim, Sensi, StatRes and ParmVar).
+- Progresive Web App with Chromium based browsers.
+- **Show/hide-option** data in plots when hovering.
+- **Help-button** in ConverterDialog, TextAreaDialog and MacroDialog.
+- **Hide-frame-option** in Numberbox.
+- Icons in tool-menu (Optim, Sensi, StatRes and ParmVar).
 
 ## Removed
 - KeepResults Option in ComparePlot, (simulations are always kept and results appear in editable table).
 
 ### Changed
+- Function-libraries visible to user, edited and reorganized.
 - StopIf function returns 1 on stop and otherwise 0.
 - Resizing of svgplane is done with css and js (for performance).
 - Update plots more sparingly when resizing them (for performance).
 - Custom tick-setter for TimePlots, ComparePlots and XyPlot. (To remove weird numbers like 0.333...)
 - Histogram no longer include maximum value by default, by setting a max-limit slightly higher than max.
-- Make `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent accross all text inputs.
+- `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent accross all text inputs.
 - Progressbar changes width to accomodate simulation info.
 - HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 
 ### Fixed 
-- ComplarePlot bugs.
-- MacroDialog getting smaller each times it's open.
+- ComparePlot bugs.
+- MacroDialog-bug (dialog smaller each time it opened).
 - Number formatting bugs.
-- TextArea now interprets `<` and `>` correctly and not as html.
+- TextArea now interprets `<` and `>` characters correctly and not as HTML.
 - Fix-function bugs.
-- RK4 and function `StopIf` sometimes resulted in NumberBoxes not showing a value at the end of a simulation.
+- Bug for RK4 and function `StopIf` sometimes resulted in NumberBoxes not showing a value at the end of a simulation.
 - Minor bugs.
 
-### Depricated
+### Depricated 
 - Function RandBoolean, replaced with RandBernoulli.
 
-
 ## 2021-01-03
-### Added 
+### Added
 - Converter error messages.
 - Clearer error messages for unmatched brackets.
 - Values `pi`, `eps` and `e`.
