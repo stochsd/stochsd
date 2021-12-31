@@ -10,35 +10,29 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	position: relative;
 	z-index: 1000;
 }
-
 .eMenu .menuContent {
 	position: absolute;
 	display: none;
 	min-width: 100px;
 	z-index: 1001;
 }
-
 .eMenu .menuContent img {
 	height: 22px;
 	margin-right: 6px;
 	pointer-events: none;
 }
-
 div.recent-path {
 	display: inline; 
 	color: dimgray; 
 	font-size: 12px;
 }
-
 button:hover > .recent-path {
 	color: black;
 }
-
 div.recent-name {
 	display: inline;
 }
-
-.color-sample {
+.eMenu .menuContent.colors .color-sample {
 	display: inline-block;
 	box-sizing: border-box;
 	width: 14px;
@@ -46,8 +40,11 @@ div.recent-name {
 	border: 2px solid white;
 	border-radius: 100%;
 	margin-right: 4px;
+	background-color: var(--clr);
 }
-
+.eMenu .menuContent.colors button {
+	color: var(--clr);
+}
 .eMenu .menuContent button {
 	width: 100%;
 	text-align: left;
@@ -56,7 +53,6 @@ div.recent-name {
 	/* Center text vertically */
 	align-items: center;
 }
-
 .eMenu .menuContent button > .keybinding {
 	padding-left: 2em;
 	color: #666;
@@ -64,7 +60,6 @@ div.recent-name {
 	width: 100%;
 	opacity: 0.6;
 }
-
 .eMenu .menuContent a {
 	/* Dont have any decorations on links (for manuals) */
 	text-decoration: none;
