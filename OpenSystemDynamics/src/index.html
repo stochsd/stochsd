@@ -98,8 +98,6 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<link rel="stylesheet" href="style/emenu.css" />
 	<link rel="stylesheet" href="./codemirror/addon/hint/show-hint.css" />
 	<!-- endbuild -->
-	
-
 
 	<link rel="shortcut icon" type="image/png" href="../../icons/stochsd.png"/>
 	<link rel="icon" type="image/png" href="../../icons/stochsd.png"/>
@@ -111,83 +109,43 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 			<div class="eMenu">
 			  <button class="menuButton" id="btn_file">File</button>
 			  <div class="menuContent">
-				<span>
 					<button id="btn_new">New</button>	
-				</span>
-				<span>
-					<button id="btn_load"><u>O</u>pen (Ctrl O)</button>
-				</span>
-				<span>
-					<button id="btn_save"><u>S</u>ave (Ctrl S)</button>
-				</span>
-				<span>
+					<button id="btn_load"><u>O</u>pen <span class="keybinding"><kbd>Ctrl</kbd>+<kbd>O</kbd></span></button>
+					<button id="btn_save"><u>S</u>ave <span class="keybinding"><kbd>Ctrl</kbd>+<kbd>S</kbd></span></button>
 					<button id="btn_save_as" style="display: none;">Save As...</button>
-				</span>
-				<span id="recent_title" style="display: none">
+				<div id="recent_title" style="display: none">
 					<p style="margin: 0; padding: 0.2em; font-weight: bold; text-align: center; font-size: 14px;">
 						Recent List
 					</p>
-				</span>
-				<span>
+				</div>
 					<button id="btn_recent_0" style="display: none;">Recent 0</button>
-				</span>
-				<span>
 					<button id="btn_recent_1" style="display: none;">Recent 1</button>
-				</span>
-				<span>
 					<button id="btn_recent_2" style="display: none;">Recent 2</button>
-				</span>
-				<span>
 					<button id="btn_recent_3" style="display: none;">Recent 3</button>
-				</span>
-				<span>
 					<button id="btn_recent_4" style="display: none;">Recent 4</button>
-				</span>
-				<span>
 					<button id="btn_recent_5" style="display: none;">Recent 5</button>
-				</span>
-				<span>
 					<button id="btn_recent_6" style="display: none;">Recent 6</button>
-				</span>
-				<span>
 					<button id="btn_recent_7" style="display: none;">Recent 7</button>
-				</span>
-				<span>
 					<button id="btn_recent_8" style="display: none;">Recent 8</button>
-				</span>
-				<span>
 					<button id="btn_recent_9" style="display: none;">Recent 9</button>
-				</span>
-				<span>
 					<button id="btn_recent_clear" style="display: none;">Clear Recent List</button>
-				</span>
 			  </div>
 			</div>
 			
 			<div class="eMenu hideUnlessNwjs">
 			  <button class="menuButton">View</button>
 			  <div class="menuContent">
-				<span>
-					<button id="btn_zoom_in">Zoom In (Ctrl +)</span></button>
-				</span>
-				<span>
-					<button id="btn_zoom_out">Zoom Out (Ctrl -)</button>
-				</span>
-				<span>
-					<button id="btn_zoom_reset">Reset Zoom (Ctrl 0)</button>
-				</span>
+					<button id="btn_zoom_in">Zoom In <span class="keybinding"><kbd>Ctrl</kbd>+<kbd>+</kbd></span></button>
+					<button id="btn_zoom_out">Zoom <span class="keybinding"><kbd>Ctrl</kbd>+<kbd>-</kbd></span></button>
+					<button id="btn_zoom_reset">Reset Zoom <span class="keybinding"><kbd>Ctrl</kbd>+<kbd>0</kbd></span></button>
 			  </div>
 			</div>
 			
 			<div class="eMenu">
 			  <button class="menuButton">Print</button>
 			  <div class="menuContent">
-				<span>
 					<button id="btn_print_model">Print Diagram</button>
-				</span>
-				<span>
 					<button id="btn_equation_list">Print Equations</button>
-				</span>
 			  </div>
 			</div>
 		<button id="btn_simulation_settings">Simulation Settings</button>
@@ -196,79 +154,38 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 		<div class="eMenu">
 			<button class="menuButton">Colour</button>
 			<div class="menuContent">
-				<span>
 					<button id="btn_black" style="color: black"><div class="color-sample" style="background-color:black;"></div>Black</button>
-				</span>
-				<span>
 					<button id="btn_grey" style="color: silver"><div class="color-sample" style="background-color:silver;"></div>Grey</button>
-				</span>
-				<span>
 					<button id="btn_red" style="color: red"><div class="color-sample" style="background-color:red;"></div>Red</button>
-				</span>
-				<span>
 					<button id="btn_deeppink" style="color: deeppink"><div class="color-sample" style="background-color:deeppink;"></div>Pink</button>
-				</span>
-				<span>
-						<button id="btn_brown" style="color: brown"><div class="color-sample" style="background-color:brown;"></div>Brown</button>
-				</span>
-				<span>
+					<button id="btn_brown" style="color: brown"><div class="color-sample" style="background-color:brown;"></div>Brown</button>
 					<button id="btn_orange" style="color: orange"><div class="color-sample" style="background-color:orange;"></div>Orange</button>
-				</span>
-				<span>
 					<button id="btn_gold" style="color: gold"><div class="color-sample" style="background-color:gold;"></div>Gold</button>
-				</span>
-				<span>
-						<button id="btn_olive" style="color: olive"><div class="color-sample" style="background-color:olive;"></div>Olive</button>
-				</span>
-				<span>
+					<button id="btn_olive" style="color: olive"><div class="color-sample" style="background-color:olive;"></div>Olive</button>
 					<button id="btn_green" style="color: green"><div class="color-sample" style="background-color:green;"></div>Green</button>
-				</span>
-				<span>
 					<button id="btn_teal" style="color: teal"><div class="color-sample" style="background-color:teal;"></div>Teal</button>
-				</span>
-				<span>
 					<button id="btn_blue" style="color: blue"><div class="color-sample" style="background-color:blue;"></div>Blue</button>
-				</span>
-				<span>
-						<button id="btn_magenta" style="color: magenta"><div class="color-sample" style="background-color:magenta;"></div>Magenta</button>
-				</span>
+					<button id="btn_magenta" style="color: magenta"><div class="color-sample" style="background-color:magenta;"></div>Magenta</button>
 			</div>
 		</div>
 
 			<div style="display: none;" class="eMenu pluginMenu">
 			  <button class="menuButton">Tools</button>
 			  <div class="menuContent">
-				<span>
 					<button class="btn_load_plugin" data-plugin-name="optim"><img src="../../MultiSimulationAnalyser/icons/optim.svg"/>Optim</button>
-				</span>
-				<span>
 					<button class="btn_load_plugin" data-plugin-name="sensi"><img src="../../MultiSimulationAnalyser/icons/sensi.svg"/>Sensi</button>
-				</span>
-				<span>
 					<button class="btn_load_plugin" data-plugin-name="stocres"><img src="../../MultiSimulationAnalyser/icons/statres.svg"/>StatRes</button>
-				</span>
-				<span>
 					<button class="btn_load_plugin" data-plugin-name="parmest"><img src="../../MultiSimulationAnalyser/icons/parmvar.svg"/>ParmVar</button>
-				</span>
-				<span>
 					<button class="btn_load_plugin" data-plugin-name="none"><div style="width: calc(22px + 6px); height: calc(22px); pointer-events: none;"></div>Hide Tool</button>
-				</span>
 			  </div>
 			</div>
 
 			<div class="eMenu">
 			  <button class="menuButton">Help</button>
 			  <div class="menuContent">
-				<span>
 					<button id="btn_about">About StochSD</button>
-				</span>
-				<span>
 					<button id="btn_license">StochSD License</button>
-				</span>
-				<span>
 					<button id="btn_thirdparty">Third-party Licenses</button>
-				</span>
-				<span>
 					<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_User_Manual.pdf"><button id="btn_manual">
 						StochSD User's Manual
 					</button></a>
@@ -284,20 +201,10 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 					<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_ParmVar.pdf"><button>
 						ParmVar Manual
 					</button></a>
-				</span>
-				<span>
 					<button id="btn_fullpotentialcss">What is Full Potential CSS?</button>
-				</span>
-				<span>
 					<button id="btn_debug" style="display: none;">Debug Log</button>
-				</span>
-				<span>
 					<button id="btn_restart">Restart and Clear Model</button>
-				</span>
-				
-				<span style=>
 					<button id="btn_preserve_restart">Restart and Keep Model</button>
-				</span>
 			  </div>
 
 			</div>

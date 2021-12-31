@@ -18,10 +18,6 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	z-index: 1001;
 }
 
-.eMenu .menuContent > span {
-	display: block;
-}
-
 .eMenu .menuContent img {
 	height: 22px;
 	margin-right: 6px;
@@ -59,6 +55,14 @@ div.recent-name {
 	display: flex;
 	/* Center text vertically */
 	align-items: center;
+}
+
+.eMenu .menuContent button > .keybinding {
+	padding-left: 2em;
+	color: #666;
+	text-align: right;
+	width: 100%;
+	opacity: 0.6;
 }
 
 .eMenu .menuContent a {
