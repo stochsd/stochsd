@@ -9272,7 +9272,6 @@ const functions = [
 	{name: "Sign", arguments: [{name: "value"}]},
 	{name: "Abs", note: "absolute value", arguments: [{name: "Value"}]},
 	{name: "IfThenElse", arguments: [{name: "Condition"},{name: "Then Value", note: "value if true"},{name:"Else Value",note:"value if false"}]},
-	{name: "Stop"},
 	{name: "StopIf", arguments: [{name: "Condidtion"}]},
 	{name: "T", note: "Time"},
 	{name: "DT", note: "Step Time"},
