@@ -5925,6 +5925,9 @@ $(window).load(function() {
 			}
 		});
 	});
+	$("#runStatusBarOuter").dblclick(() => {
+		simulationSettings.show();
+	})
 	$("#btn_simulation_settings").click(function() {
 		simulationSettings.show();
 	});
