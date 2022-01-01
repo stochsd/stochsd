@@ -477,7 +477,7 @@ function getFunctionHelpData() {
 			["Min", "Min(##Values$$)", "Returns the smallest of a vector or list of numbers.", ["Min(2, 4, -1, 3)", "-1"]],
 			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"],
 			["Define Function", "Function ##Name$$()\n  ##Expression$$\nEnd Function", "Creates a reusable function.", ['Function Square(x)\n  x^2\nEnd Function\nSquare(5)', "25"]],
-			["Throwing Errors", "throw '##Message$$'", "Passes an error message up to the nearest Try-Catch block or aborts the simulation with the error message.", 'throw "Error: Index out of range."'],
+			["Throwing Errors", `Throw "##Message$$"`, "Passes an error message up to the nearest Try-Catch block or aborts the simulation with the error message.", 'If T() > 50 Then\n  Throw "Error: Time exceeded 50"\nElse\n  1\nEnd If'],
 		]],
 		["Mathematical Functions", [
 			["Current Time", "T()", "The current simulation time."],
@@ -9573,7 +9573,7 @@ class DefinitionEditor extends jqDialog {
 						example = `<br/><br/><b>Example</b><pre style="padding:0;margin:0;">${codeSample}</pre><br/><b>Returns:</b><br/> ${returnValue}`;
 					} else {
 						let codeSample = functionList[j][3];
-						example = `<br/><br/><b>Example</b><br/>${codeSample}`;
+						example = `<br/><br/><b>Example</b><br/><pre style="padding:0;margin:0;">${codeSample}</pre>`;
 					}
 				}
 				codeSnippetName = functionList[j][0];
