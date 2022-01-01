@@ -9251,38 +9251,38 @@ const functions = [
 	{name: "Step", arguments: [{name: "Start"}, {name: "Height", default: "1"}]},
 	{name: "Ramp", arguments: [{name: "Start"}, {name: "Finish"}, {name: "Height", default: "1"}]},
 	{name: "Delay", arguments: [{name: "primitive"}, {name: "delay"}, {name: "initial value"}]},
-	{name: "Delay1", note: "smoothed, first-order exponential", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
-	{name: "Delay3", note: "smoothed, third-order exponential", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
-	{name: "Smooth", note: "smoothing of past values", arguments: [{name: "Primitive"}, {name: "Length"}, {name: "Initial Value"}]},
+	{name: "Delay1", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
+	{name: "Delay3", arguments: [{name: "Primitive"}, {name: "Delay"}, {name: "Initial Value"}]},
+	{name: "Smooth", synonyms: "delay", arguments: [{name: "Primitive"}, {name: "Length"}, {name: "Initial Value"}]},
 	{name: "Round", arguments: [{name: "Value"}]},
-	{name: "Ceiling", arguments: [{name: "Value"}]},
-	{name: "Floor", arguments: [{name: "Value"}]},
+	{name: "Ceiling", synonyms: "round", arguments: [{name: "Value"}]},
+	{name: "Floor", synonyms: "round", arguments: [{name: "Value"}]},
 	{name: "Sin", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
 	{name: "Cos", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
 	{name: "Tan", arguments: [{name: "Angle Radians", suggestions: ["pi"]}]},
 	{name: "ArcSin", arguments: [{name: "Value"}]},
 	{name: "ArcCos", arguments: [{name: "Value"}]},
 	{name: "ArcTan", arguments: [{name: "Value"}]},
-	{name: "Log", note: "base-10 logarithm", arguments: [{name: "Value", suggestions: ["10"]}]},
-	{name: "Ln", note: "natural logarithm", arguments: [{name: "Value", suggestions: ["e"]}]},
+	{name: "Log", note: "base-10 logarithm", synonyms: "base-10 logarithm", arguments: [{name: "Value", suggestions: ["10"]}]},
+	{name: "Ln", note: "natural logarithm", synonyms: "natural logarithm", arguments: [{name: "Value", suggestions: ["e"]}]},
 	{name: "Exp", arguments: [{name: "Value"}]},
-	{name: "Max", arguments: {name: "...Values"}},
-	{name: "Min", arguments: {name: "...Values"}},
-	{name: "Sqrt", note: "square root", arguments: [{name: "Value"}]},
+	{name: "Max", synonyms: "maximum", arguments: {name: "...Values"}},
+	{name: "Min", synonyms: "minimum", arguments: {name: "...Values"}},
+	{name: "Sqrt", note: "square root", synonyms: "square root", arguments: [{name: "Value"}]},
 	{name: "Sign", arguments: [{name: "value"}]},
-	{name: "Abs", note: "absolute value", arguments: [{name: "Value"}]},
+	{name: "Abs", note: "absolute value", synonyms: "absolute", arguments: [{name: "Value"}]},
 	{name: "IfThenElse", arguments: [{name: "Condition"},{name: "Then Value", note: "value if true"},{name:"Else Value",note:"value if false"}]},
 	{name: "StopIf", arguments: [{name: "Condidtion"}]},
-	{name: "T", note: "Time"},
-	{name: "DT", note: "Step Time"},
-	{name: "TS", note: "Start Time"},
-	{name: "TL", note: "Time Length"},
-	{name: "TE", note: "Time End"},
-	{name: "PastMax", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
-	{name: "PastMin", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
-	{name: "PastMedian", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
-	{name: "PastMean", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
-	{name: "PastStdDev", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}],desc:"Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."},
+	{name: "T", note: "Time", synonyms: "time"},
+	{name: "DT", note: "Step Time", synonyms: "step time"},
+	{name: "TS", note: "Start Time", synonyms: "start time"},
+	{name: "TL", note: "Time Length", synonyms: "time length"},
+	{name: "TE", note: "Time End", synonyms: "time end"},
+	{name: "PastMax", synonyms: "max", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMin", synonyms: "min", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMedian", synonyms: "median", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastMean", synonyms: "mean", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}]},
+	{name: "PastStdDev", synonyms: "standard deviation", arguments: [{name: "Primitive"},{name: "Period", default: "all time"}],desc:"Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."},
 	{name: "PastCorrelation", arguments: [{name: "Primitive1"},{name: "Primitive2"},{name: "Period", default: "all time"}],desc:"Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation."},
 	{name: "Fix", arguments:[{name: "Value"}, {name: "Period", default: "-1"}], desc: "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation."},
 ]
@@ -9363,19 +9363,24 @@ class Autocomplete {
 		while (start && /\w/.test(line.charAt(start - 1))) --start
 		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		let word = line.substring(start, end)
-		return functions.filter(f => 
-			f.name.toLowerCase().startsWith(word.toLowerCase()) || (f.note && f.note.split(" ").some(n => n.toLowerCase().startsWith(word.toLowerCase())))
-		).map(f => {
-			return {
-				className: "cm-functioncall", 
-				displayText: f.name, 
-				text: `${f.name}()`, 
-				note: f.note ?? "",
-				from: { line: 0, ch: start },
-				to: { line: 0, ch: end },
-				render: Autocomplete.render
+		let suggestions = []
+		functions.forEach(f => {
+			const nameMatch = f.name.toLowerCase().startsWith(word.toLowerCase())
+			const synonymMatch = f.synonyms ? f.synonyms.split(" ").some(n => n.toLowerCase().startsWith(word.toLowerCase())) : false
+			if (nameMatch || synonymMatch) {
+				suggestions.push({
+					matchScore: nameMatch ? 2 : 1,
+					className: "cm-functioncall", 
+					displayText: f.name, 
+					text: `${f.name}()`, 
+					note: f.note ?? "",
+					from: { line: 0, ch: start },
+					to: { line: 0, ch: end },
+					render: Autocomplete.render
+				})
 			}
-		})
+		});
+		return suggestions.sort((a, b) => b.matchScore - a.matchScore)
 	}
 	static getPrimitiveNames(line, cursor, prim) {
 		let start = cursor.ch 
@@ -9478,7 +9483,9 @@ class DefinitionEditor extends jqDialog {
 					},
 					"Ctrl-Space": "autocomplete"
 				},
-				hintOptions: {hint: (cm, options) => {
+				hintOptions: {
+					completeSingle: false,
+					hint: (cm, options) => {
 					let cursor = cm.getCursor()
 					let line = cm.getLine(cursor.line)
 					let start = cursor.ch 
