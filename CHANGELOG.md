@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
-- Function argument help in DefinitionEditor, based on cursor position.
 - Generations list in Dialog ComparePlot, with editable labels.
 - Autocomplete to DefinitionDialog, suggests functions and linked primitives (`Ctrl`+`Space` to show).
 - CHANGELOG.

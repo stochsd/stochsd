@@ -9441,7 +9441,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<div class="function-helper" style="width: 100%; height: 5em; margin: 0.4em 0.2em;" ></div>
+							<br/>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
@@ -9500,9 +9500,6 @@ class DefinitionEditor extends jqDialog {
 				}}
 			}
 		);
-		this.cmValueField.on("cursorActivity", () => {
-			$(this.dialogContent).find(".function-helper").html(FunctionHelper.getHtml(this.cmValueField))
-		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
