@@ -4,4 +4,4 @@ set -x
 # Version v0.32.4 is well tested on Ubuntu 18.04. Don't update without testing
 
 pwd
-./build-for-windows.sh "nwjs-0.15.4-win32-stochsd" win32
+./build-for-win-helper.sh "nwjs-0.15.4-win32-stochsd" win32
