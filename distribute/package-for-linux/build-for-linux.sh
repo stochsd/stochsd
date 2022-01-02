@@ -17,7 +17,12 @@ cp md5sum.nwjs-linux tmp/
 cd tmp
 
 RELEASE_NAME="stochsd-$STOCHSD_VERSION-linux"
-cd $(dirname $0)
+
+if [ ! -f https://dl.nwjs.io/v0.32.4/nwjs-sdk-v0.32.4-linux-x64.tar.gz ]
+then
+  wget https://dl.nwjs.io/v0.32.4/nwjs-sdk-v0.32.4-linux-x64.tar.gz
+fi
+
 if ! md5sum --check md5sum.nwjs-linux
 then
   rm nwjs-sdk-v0.32.4-linux-x64.tar.gz
@@ -34,4 +39,4 @@ cp ../../../../OpenSystemDynamics/src/third-party-licenses.html .
 pwd
 mv nw stochsd
 cd ..
-tar -czvf $RELEASE_NAME.tar.gz $RELEASE_NAME/
+tar -czvf $RELEASE_NAME.tgz $RELEASE_NAME/
