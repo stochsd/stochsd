@@ -8176,7 +8176,7 @@ class HistoPlotDialog extends DisplayDialog {
 class XySelectorComponent extends PrimitiveSelectorComponent {
 	renderIncludedList() {
 		let axies = ["X", "Y"];
-			return (`<table class="modern-table">
+			return (`<table id="${this.componentId}" class="modern-table">
 				<tr>
 					<th></th>
 					<th>Added Primitives</td>
