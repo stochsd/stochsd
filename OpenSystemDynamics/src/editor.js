@@ -9373,7 +9373,7 @@ class Autocomplete {
 					className: "cm-functioncall", 
 					displayText: f.name, 
 					text: `${f.name}()`, 
-					note: f.note ?? "",
+					note: f.note ? f.note : "",
 					from: { line: 0, ch: start },
 					to: { line: 0, ch: end },
 					render: Autocomplete.render
