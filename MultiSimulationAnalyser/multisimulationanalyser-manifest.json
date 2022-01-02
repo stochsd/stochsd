@@ -4,7 +4,7 @@
     "start_url": "./standalone.html",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#0000ff",
+    "theme_color": "#24527e",
     "description": "Stochastic System Dynamics",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
