@@ -8,30 +8,25 @@ if ! test -d "../output/package.nw"; then
        exit 1
 fi
 
+NWJS_URL='https://dl.nwjs.io/v0.59.1/nwjs-sdk-v0.59.1-linux-x64.tar.gz'
+NWJS_FILENAME=$(basename $NWJS_URL)
+NWJS_UNZIPPED_FILENAME=$(echo "${NWJS_FILENAME%.*.*}")
+
 STOCHSD_VERSION=$(node ../get-stochsd-version.js)
 echo "Building stochsd version "$STOCHSD_VERSION
 
 # Work in a temporary directory
+rm -Rf tmp
 mkdir -p tmp
-cp md5sum.nwjs-linux tmp/
 cd tmp
 
 RELEASE_NAME="stochsd-$STOCHSD_VERSION-linux"
 
-if [ ! -f https://dl.nwjs.io/v0.32.4/nwjs-sdk-v0.32.4-linux-x64.tar.gz ]
-then
-  wget https://dl.nwjs.io/v0.32.4/nwjs-sdk-v0.32.4-linux-x64.tar.gz
-fi
+wget $NWJS_URL
 
-if ! md5sum --check md5sum.nwjs-linux
-then
-  rm nwjs-sdk-v0.32.4-linux-x64.tar.gz
-  wget https://dl.nwjs.io/v0.32.4/nwjs-sdk-v0.32.4-linux-x64.tar.gz
-fi
-rm -Rf stochsd
-tar -xzvf nwjs-sdk-v0.32.4-linux-x64.tar.gz
+tar -xzvf $NWJS_FILENAME
 rm -Rf $RELEASE_NAME
-mv nwjs-sdk-v0.32.4-linux-x64 $RELEASE_NAME
+mv $NWJS_UNZIPPED_FILENAME $RELEASE_NAME
 cd $RELEASE_NAME
 cp -av ../../../output/package.nw package.nw
 cp ../../../../OpenSystemDynamics/src/license.html .
