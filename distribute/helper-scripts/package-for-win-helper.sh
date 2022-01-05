@@ -51,6 +51,9 @@ cp $GIT_ROOT/OpenSystemDynamics/src/license.html .
 cp $GIT_ROOT/OpenSystemDynamics/src/third-party-licenses.html .
 cp -av $GIT_ROOT/distribute/output/package.nw package.nw
 
+# Rename binary to stochsd.exe
+mv nw.exe StochSD.exe 
+
 # Pack the final zip file
 cd ..
 zip -r $RELEASE_NAME.zip $RELEASE_NAME
