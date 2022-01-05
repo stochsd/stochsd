@@ -11,6 +11,7 @@ NWJS_URL=$2
 NWJS_ZIP_NAME=$(basename $NWJS_URL)
 NWJS_FOLDER_NAME=$(basename $NWJS_ZIP_NAME .zip)
 
+mkdir -p ../nwjs-templates
 cd ../nwjs-templates
 mkdir -p $PLATFORM_NAME
 cd $PLATFORM_NAME
