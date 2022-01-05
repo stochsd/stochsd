@@ -20,13 +20,15 @@ learn more at https://www.udemy.com/starting-with-gulp/learn/v4/content.
 
 #### Make Windows version of StochSD
 
-goto: `stochsd/distribute/package-for-windows/`
+goto: `stochsd/distribute/package-for-win32/`
+or `stochsd/distribute/package-for-win64/`
 
 And run command:
 
-`./build-for-win32.sh` or `./build-for-win64.sh` depending on what version is wanted.
+`./download.sh` to download nwjs
+then `./package.sh` to package
 
-This will create the folder `stochsd/distribute/package-for-windows/tmp/` containing `stochsd-yyyy.mm.dd-winXX`.
+This will create the folder `stochsd/distribute/nwjs-output/` containing `stochsd-yyyy.mm.dd-winXX`.
 
 The version is dependent on the file: `stochsd/OpenSystemDynamics/src/version.js`
 
