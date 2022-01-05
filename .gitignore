@@ -1,5 +1,6 @@
+distribute/nwjs-output
+distribute/nwjs-templates
 distribute/package-for-linux/tmp/
-distribute/package-for-windows/tmp/
 distribute/package-for-mac/download
 distribute/package-for-mac/output
 OpenSystemDynamics/build/
