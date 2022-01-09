@@ -393,3 +393,17 @@ b[data-arg]::before {
     outline: 2px solid #08f;
     outline-offset: -1px;
 }
+
+
+.preferences > .preference {
+    padding: 0.75em 1.5em;
+}
+.preferences > .preference:hover {
+    background-color: #f4f4f4;
+}
+.preferences > .preference:not(:hover) .btn_reset {
+    visibility: hidden;
+}
+.preferences > .preference .title {
+    font-weight: bold;
+}

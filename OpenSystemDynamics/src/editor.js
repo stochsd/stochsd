@@ -8,6 +8,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 // Dialoge window handlers 
 var definitionEditor;
 var converterDialog;
+var preferencesDialog;
 var simulationSettings;
 var timeUnitDialog;
 var macroDialog;
@@ -5966,6 +5967,9 @@ $(window).load(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_preferences").click(function() {
+		preferencesDialog.show();
+	});
 	$("#btn_fullpotentialcss").click(function () {
 		fullpotentialcssDialog.show();
 	});
@@ -6010,6 +6014,7 @@ $(window).load(function() {
 	macroDialog = new MacroDialog();
 	definitionEditor = new DefinitionEditor();
 	converterDialog = new ConverterDialog();
+	preferencesDialog = new PreferencesDialog();
 	simulationSettings = new SimulationSettings();
 	timeUnitDialog = new TimeUnitDialog();
 	equationList = new EquationListDialog();
@@ -8633,6 +8638,28 @@ class NewModelDialog extends jqDialog {
 		updateTimeUnitButton();
 
 		$(this.dialog).dialog('close');
+	}
+}
+
+class PreferencesDialog extends jqDialog {
+	constructor() {
+		super();
+		this.setTitle("Preferences");
+		this.setHtml(`<div class="preferences">${Object.entries(preferences).map(pref => {
+			const name = pref[0]
+			const id = "preference-" + name
+			const p = pref[1]
+			return `<div class="preference">
+				<div style="display: flex; justify-content: space-between;">
+					<span class="title">${p.title}</span>
+					<button class="btn_reset">Reset</button>
+				</div>
+				<div>
+					<input id="${id}" type="checkbox" ${checkedHtml(p.default)}>
+					<label for="${id}">${p.description}<label/>
+				</div>
+			</div>`
+		}).join("")}`)
 	}
 }
 
