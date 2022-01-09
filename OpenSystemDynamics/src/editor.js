@@ -265,27 +265,6 @@ function quitQuestion() {
 	});
 }
 
-function makeKeyboardCodes() {
-	let keyboard = {};
-	for(let tkey = 0; tkey <= 255; tkey++) {
-		keyboard[String.fromCharCode(tkey)] = tkey;
-	}
-	//~ alert(key["B"]);
-	keyboard["delete"] = 46;
-	keyboard["+"] = 187;
-	keyboard["-"] = 189;
-	keyboard["numpad+"] = 107;
-	keyboard["numpad-"] = 109;
-	keyboard["enter"] = 13;
-	keyboard["right"] = 37;
-	keyboard["up"] = 38;
-	keyboard["left"] = 39;
-	keyboard["down"] = 40;
-	return keyboard;
-}
-
-const keyboard = makeKeyboardCodes();
-
 // NOTE: values for event.which should be used
 // event.button will give incorrect results 
 const mouse = {"left": 1, "middle": 2, "right": 3};
@@ -296,7 +275,7 @@ class InfoBar {
 		this.cmInfoDef = new CodeMirror(infoDef,
 			{
 				mode: "stochsdmode", 
-				theme: "stochsdtheme",
+				theme: "stochsdtheme oneline",
 				readOnly: "nocursor",
 				lineWrapping: false
 			}
@@ -5819,68 +5798,68 @@ $(window).load(function() {
 		if (jqDialog.blockingDialogOpen) {
 			return;
 		}
-		if (event.keyCode == keyboard["delete"]) {
+		if (event.key == "Delete") {
 			DeleteTool.enterTool();
 		}
 		let moveSize = 2;
 		if (event.shiftKey) {
 			moveSize = 16;
 		}
-		if (event.keyCode == keyboard["right"]) {
+		if (event.key == "ArrowRight") {
 			MouseTool.mouseMove(mousedown_x-moveSize, mousedown_y, false);
 			event.preventDefault();
 		}
-		if (event.keyCode == keyboard["up"]) {
+		if (event.key == "ArrowUp") {
 			MouseTool.mouseMove(mousedown_x, mousedown_y-moveSize, false);
 			event.preventDefault();
 		}
-		if (event.keyCode == keyboard["left"]) {
+		if (event.key == "ArrowLeft") {
 			MouseTool.mouseMove(mousedown_x+moveSize, mousedown_y, false);
 			event.preventDefault();
 		}
-		if (event.keyCode == keyboard["down"]) {
+		if (event.key == "ArrowDown") {
 			MouseTool.mouseMove(mousedown_x, mousedown_y+moveSize, false);
 			event.preventDefault();
 		}
 		if (event.ctrlKey) {
-			if (event.keyCode == keyboard["1"] || event.keyCode === keyboard["R"]) {
+			if (event.key == "1" || event.key.toLowerCase() == "r") {
 				event.preventDefault();
 				RunTool.enterTool();
 			}
-			if (event.keyCode == keyboard["2"]) {
+			if (event.key == "2") {
 				event.preventDefault();
 				StepTool.enterTool();
 			}
-			if (event.keyCode == keyboard["3"]) {
+			if (event.key == "3") {
 				event.preventDefault();
 				ResetTool.enterTool();
 			}
-			if (event.keyCode == keyboard["O"]) {
+			if (event.key.toLowerCase() == "o") {
 				event.preventDefault();
 				$("#btn_load").click();
 			}
-			if (event.keyCode == keyboard["S"]) {
+			if (event.key.toLowerCase() == "s") {
 				event.preventDefault();
 				$("#btn_save").click();
 			}
-			if (event.keyCode == keyboard["P"]) {
+			if (event.key.toLowerCase() == "p") {
 				event.preventDefault();
 				$("#btn_print_model").click();
 			}
-			if (event.keyCode == keyboard["A"]) {
+			if (event.key.toLowerCase() == "a") {
 				for (let id in object_array) { object_array[id].select(); }
 				for (let id in connection_array) { connection_array[id].select(); }
 			}
-			if (event.keyCode == keyboard["Z"]) {
+			if (event.key.toLowerCase() == "z") {
 				History.doUndo();
 			}
-			if (event.keyCode == keyboard["Y"]) {
+			if (event.key.toLowerCase() == "y") {
 				History.doRedo();
 			}
-			if (event.keyCode == keyboard["C"]) {
+			if (event.key.toLowerCase() == "c") {
 				// Clipboard.copy();
 			}
-			if (event.keyCode == keyboard["V"]) {
+			if (event.key.toLowerCase() == "v") {
 				// Clipboard.paste();
 				// History.storeUndoState();
 			}
@@ -7100,7 +7079,7 @@ class jqDialog {
 	bindEnterApplyEvents() {
 		$(this.dialogContent).find(".enter-apply").keydown(event => {
 			if (! event.shiftKey) {
-				if (event.keyCode === keyboard["enter"]) {
+				if (event.key === "Enter") {
 					event.preventDefault();
 					this.applyChanges();
 				}
@@ -7117,7 +7096,7 @@ class jqDialog {
 		$(this.dialogContent).find(`#${helpId}`).unbind();
 		$(this.dialogContent).find(`.enter-apply#${helpId}`).keydown(event => {
 			if (! event.shiftKey) {
-				if (event.keyCode === keyboard["enter"]) {
+				if (event.key === "Enter") {
 					event.preventDefault();
 					this.applyChanges();
 				}
@@ -8797,7 +8776,7 @@ class TimeUnitDialog extends jqDialog {
 			this.showComplain(this.checkValid());
 		});
 		$(this.dialogContent).find(".enter-apply").keydown(event => {
-			if (event.keyCode === keyboard["enter"]) {
+			if (event.key === "Enter") {
 				event.preventDefault();
 				this.dialogParameters.buttons["Apply"]();
 			}
@@ -9002,14 +8981,14 @@ class ConverterDialog extends jqDialog {
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
 		$(this.valueField).keydown((event) => {
 			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
+				if (event.key == "Enter") {
 					this.applyChanges();
 				}
 			}
 		});
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
-			if (event.keyCode == keyboard["enter"]) {
+			if (event.key == "Enter") {
 				this.applyChanges();
 			}
 		});
@@ -9350,11 +9329,19 @@ class Autocomplete {
 	static getCompletions(cm, options, prim) {
 		let cursor = cm.getCursor()
 		let line = cm.getLine(cursor.line)
+		let start = cursor.ch 
+		let end = cursor.ch
+		while (start && /\w/.test(line.charAt(start - 1))) --start
+		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		const prevStr = line.substring(0, cursor.ch)
-		return [
-			...this.getPrimitiveNames(line, cursor, prim),
-			...((/\[\w*$/gi).test(prevStr) ? [] : this.getFunctions(line, cursor)),
-		]
+		return {
+			list: [
+				...this.getPrimitiveNames(line, cursor, prim),
+				...((/\[\w*$/gi).test(prevStr) ? [] : this.getFunctions(line, cursor)),
+			],
+			from: {line: cursor.line, ch: start},
+			to: {line: cursor.line, ch: end},
+		}
 	}
 	/* row:string, cursor: Cursor */
 	static getFunctions(line, cursor) {
@@ -9467,7 +9454,7 @@ class DefinitionEditor extends jqDialog {
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
 			{
 				mode: "stochsdmode", 
-				theme: "stochsdtheme",
+				theme: "stochsdtheme oneline",
 				lineWrapping: false,
 				lineNumbers: false,
 				matchBrackets: true,
@@ -9484,20 +9471,8 @@ class DefinitionEditor extends jqDialog {
 					"Ctrl-Space": "autocomplete"
 				},
 				hintOptions: {
-					completeSingle: false,
-					hint: (cm, options) => {
-					let cursor = cm.getCursor()
-					let line = cm.getLine(cursor.line)
-					let start = cursor.ch 
-					let end = cursor.ch
-					while (start && /\w/.test(line.charAt(start - 1))) --start
-					while (end < line.length && /\w/.test(line.charAt(end))) ++end
-					return {
-						list: Autocomplete.getCompletions(cm, options, this.primitive),
-						from: { line: cursor.line, ch: start}, 
-						to: {line: cursor.line, ch: end},
-					}
-				}}
+					hint: (cm, options) => Autocomplete.getCompletions(cm, options, this.primitive)
+				}
 			}
 		);
 
@@ -9533,7 +9508,7 @@ class DefinitionEditor extends jqDialog {
 
 		$(this.dialogContent).find(".enter-apply").keydown((event) => {
 			if (! event.shiftKey) {
-				if (event.keyCode == keyboard["enter"]) {
+				if (event.key == "Enter") {
 					event.preventDefault();
 					this.applyChanges();
 				}
@@ -9693,7 +9668,7 @@ class DefinitionEditor extends jqDialog {
 		
 		$(this.referenceDiv).find(".click-function").click((event) => this.templateClick(event));
 		
-		// refresh in order to show curosr 
+		// refresh in order to show cursor 
 		this.cmValueField.refresh();
 
 		if (this.defaultFocusSelector) {
@@ -9849,7 +9824,9 @@ class MacroDialog extends jqDialog {
 		this.seed = "";
 		this.setHtml(`
 		<div style="display: flex;">
-			<textarea class="macro-text enter-apply"></textarea>
+			<div style="min-width: 400px;" >
+				<textarea class="macro-text enter-apply" cols="30" rows="10"></textarea>
+			</div>
 			<div style="padding:0; margin-left: 1em;">
 				${this.renderHelpButtonHtml("macro-help")}
 				<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
@@ -9904,41 +9881,58 @@ class MacroDialog extends jqDialog {
 			</ul>
 		</div>`);
 
-		this.macroTextArea = $(this.dialogContent).find(".macro-text");
+		this.cmMacroField = new CodeMirror.fromTextArea(document.getElementsByClassName("macro-text")[0],
+			{
+				mode: "stochsdmode", 
+				theme: "stochsdtheme resize",
+				lineWrapping: false,
+				lineNumbers: false,
+				matchBrackets: true,
+				extraKeys: {
+					"Esc": () => {
+						this.dialogParameters.buttons["Cancel"]();
+					},
+					"Enter": () => {
+						this.dialogParameters.buttons["Apply"]();
+					},
+					"Ctrl-Space": "autocomplete"
+				},
+				hintOptions: {
+					hint: (cm, options) => Autocomplete.getCompletions(cm, options, this.primitive)
+				}
+			}
+		);
+		this.cmMacroField.refresh()
+
 		this.setSeedButton = $(this.dialogContent).find(".set-seed-button");
 		$(this.dialogContent).find(".seed-field").keyup((event) => { 
 			this.seed = $(event.target).val();
-			if (event.which === keyboard["enter"] && this.seed.length !== 0) {
+			if (event.key === "Enter" && this.seed.length !== 0) {
 				this.setSeedButton.click();
 			} else {
 				this.setSeedButton.attr("disabled", this.seed.length === 0 );
 			}
 		});
 		this.setSeedButton.click((event) => {
-			let macro = this.macroTextArea.val();
-			this.macroTextArea.val(`${macro}\nSetRandSeed(${this.seed})`);
-			this.macroTextArea.focus();
+			const macro = this.cmMacroField.getValue();
+			this.cmMacroField.setValue(`${macro}\nSetRandSeed(${this.seed})`);
+			this.cmMacroField.focus();
 		});
 		this.bindEnterApplyEvents();
 	}
 	beforeShow() {
-		let oldMacro = getMacros();
-		this.macroTextArea.val(oldMacro);
+		this.cmMacroField.setValue(getMacros());
 	}
 	afterShow() {
 		this.updateSize();
+		this.cmMacroField.refresh()
 	}
 	resize() {
 		this.updateSize();
 	}
 	updateSize() {}
-	beforeCreateDialog() {
-		// this.dialogParameters.width = "500";
-		// this.dialogParameters.height = "400";
-	}
 	makeApply() {
-		let newMacro = $(this.dialogContent).find(".macro-text").val();
-		setMacros(newMacro);
+		setMacros(this.cmMacroField.getValue());
 	}
 }
 
