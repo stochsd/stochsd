@@ -180,6 +180,12 @@ class BaseFileManager {
   async loadModel() {
     // Override this
   }
+  async init() {
+    // Override this
+  }
+  async clean() {
+    // Override this
+  }
   setTitle(newTitleRaw) {
     // None breaking space
     const nbsp = String.fromCharCode(160);
@@ -323,9 +329,22 @@ class WebFileManagerModern extends BaseFileManager {
   constructor() {
     super();
     this.softwareName = appName + " Web";
-    this.saveHandle = null;
+    this.fileHandle = undefined;
   }
+
+  async init() {
+    this.fileHandle = await idbKeyval.get('fileHandle');
+  }
+
+  async clean() {
+    await idbKeyval.del('fileHandle');
+  }
+
   hasSaveAs() {
+    return true;
+  }
+
+  hasRecentFiles() {
     return true;
   }
 
@@ -349,11 +368,11 @@ class WebFileManagerModern extends BaseFileManager {
     // So far only supported by Chromium based browsers, such as Chrome, Chromium and Edge
 
     const options = this.getFilePickerOptions();
-    this.saveHandle = await window.showSaveFilePicker(options);
-    this.fileName = this.saveHandle.name;
+    this.fileHandle = await window.showSaveFilePicker(options);
+    this.fileName = this.fileHandle.name;
   }
   async writeToFile(contents) {
-    const writable = await this.saveHandle.createWritable();
+    const writable = await this.fileHandle.createWritable();
     await writable.write(contents);
     await writable.close();
   }
@@ -380,7 +399,7 @@ class WebFileManagerModern extends BaseFileManager {
 
   async saveModel() {
     let contents = createModelFileData();
-    if (this.saveHandle == null) {
+    if (this.fileHandle == undefined) {
       await this.saveModelAs();
       return;
     }
@@ -388,9 +407,12 @@ class WebFileManagerModern extends BaseFileManager {
     await this.updateUIAfterSave();
   }
   async loadModel() {
+    await idbKeyval.del('fileHandle');
     const options = this.getFilePickerOptions();
-    const [fileHandle] = await window.showOpenFilePicker(options);
-    const file = await fileHandle.getFile();
+    const [tmpFileHandle] = await window.showOpenFilePicker(options);
+    this.fileHandle = tmpFileHandle
+    await idbKeyval.set('fileHandle', this.fileHandle);
+    const file = await this.fileHandle.getFile();
     const fileData = await file.text();
     this.fileName = file.name;
     History.forceCustomUndoState(fileData);

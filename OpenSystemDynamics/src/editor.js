@@ -95,6 +95,10 @@ function restoreAfterRestart() {
 	if (reloadPending == null) {
 		// No reload is pending
 		do_global_log("nothing pending to restore");
+		
+		// Clean up file manager - file handle
+		fileManager.clean();
+
 		if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false) {
 			// if creating new file without OK timeUnit => promt TimeUnitDialog
 			// prompt TimeUnitDialog is unit not set 
@@ -102,6 +106,7 @@ function restoreAfterRestart() {
 		}
 		return;
 	}
+	fileManager.init();
 	do_global_log("removing pending flag");
 	// Else remove the pending reload
 	localStorage.removeItem("reloadPending");
