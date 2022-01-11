@@ -160,7 +160,6 @@ class BaseFileManager {
     this.exportFile(fileData, Settings.fileExtension, (filePath) => {
       this.fileName = filePath;
       History.unsavedChanges = false;
-      this.addToRecent(this.fileName);
       this.updateSaveTime();
       this.updateTitle();
       if (this.finishedSaveHandler) {
@@ -347,6 +346,56 @@ class WebFileManagerModern extends BaseFileManager {
   hasRecentFiles() {
     return true;
   }
+  async getRecentDisplayList() {
+    let recentFiles = await this.getRecentFiles();
+    return recentFiles.map((fileHandle) => {
+      return fileHandle.name;
+    })
+  }
+  async getRecentFiles() {
+    let recentFiles;
+    try {
+       recentFiles = await idbKeyval.get("recentFiles") ?? []
+    } catch { 
+      recentFiles = [];
+    }
+    return recentFiles;
+  }
+  async setRecentFiles(recentFiles) {
+    idbKeyval.set("recentFiles", recentFiles);
+  }
+  async clearRecent() {
+    idbKeyval.set("recentFiles", []);
+  }
+
+  async removeDuplicatesFromRecent(fileHandle, recentFiles) {
+    let newRecentFiles = []
+    for(let i in recentFiles) {
+      if(!await recentFiles[i].isSameEntry(fileHandle))  {
+        newRecentFiles.push(recentFiles[i]);
+      }
+    }
+    return newRecentFiles;
+  }
+
+  async addToRecent() {
+    let limit = Settings.MaxRecentFiles;
+
+    let recentFiles = await this.getRecentFiles();
+
+    recentFiles = await this.removeDuplicatesFromRecent(this.fileHandle, recentFiles);
+
+    if (recentFiles.length <= limit) {
+      recentFiles.splice(limit - 1);
+    }
+    recentFiles.unshift(this.fileHandle);
+    await this.setRecentFiles(recentFiles);
+  }
+  async loadRecentByIndex(recentFileIndex) {
+    const recentFiles = await this.getRecentFiles();
+    const fileHandle = recentFiles[recentFileIndex];
+    await this.loadFromFileHandle(fileHandle);
+  }
 
   getFilePickerOptions() {
     return {
@@ -391,6 +440,7 @@ class WebFileManagerModern extends BaseFileManager {
     try {
       await this.chooseFilename();
       await this.writeToFile(contents);
+      await this.addToRecent();
       await this.updateUIAfterSave();
     } catch (e) {
       // Canceld
@@ -404,17 +454,51 @@ class WebFileManagerModern extends BaseFileManager {
       return;
     }
     await this.writeToFile(contents);
+    await this.addToRecent();
     await this.updateUIAfterSave();
   }
   async loadModel() {
-    await idbKeyval.del('fileHandle');
     const options = this.getFilePickerOptions();
     const [tmpFileHandle] = await window.showOpenFilePicker(options);
-    this.fileHandle = tmpFileHandle
+    await this.loadFromFileHandle(tmpFileHandle);
+  }
+
+  async verifyPermission(fileHandle, withWrite) {
+    // Re-asking for permissons needed after page reload.
+    // See:
+    // https://developer.mozilla.org/en-US/docs/Web/API/FileSystemHandle/requestPermission
+    // https://stackoverflow.com/questions/66500836/domexception-the-request-is-not-allowed-by-the-user-agent-or-the-platform-in-th
+    const opts = {};
+    if (withWrite) {
+      opts.mode = 'readwrite';
+    }
+  
+    // Check if we already have permission, if so, return true.
+    if (await fileHandle.queryPermission(opts) === 'granted') {
+      return true;
+    }
+  
+    // Request permission to the file, if the user grants permission, return true.
+    if (await fileHandle.requestPermission(opts) === 'granted') {
+      return true;
+    }
+  
+    // The user did not grant permission, return false.
+    return false;
+  }
+
+  async loadFromFileHandle(fileHandle) {
+    const allowedPermisson = await this.verifyPermission(fileHandle, false);
+    if(!allowedPermisson) {
+      return;
+    }
+    await idbKeyval.del('fileHandle');
+    this.fileHandle = fileHandle
     await idbKeyval.set('fileHandle', this.fileHandle);
-    const file = await this.fileHandle.getFile();
+    const file = await fileHandle.getFile();
     const fileData = await file.text();
     this.fileName = file.name;
+    await this.addToRecent();
     History.forceCustomUndoState(fileData);
     this.updateTitle();
     preserveRestart();
@@ -433,25 +517,6 @@ class ElectronFileManager extends BaseFileManager {
   }
   hasSaveAs() {
     return true;
-  }
-  hasRecentFiles() {
-    return true;
-  }
-  addToRecent(filePath) {
-    let limit = Settings.MaxRecentFiles;
-    let recentFiles = [];
-    if (localStorage.recentFiles) {
-      recentFiles = JSON.parse(localStorage.recentFiles);
-    }
-    if (recentFiles.includes(filePath)) {
-      let index = recentFiles.indexOf(filePath);
-      recentFiles.splice(index, 1);
-    }
-    if (recentFiles.length <= limit) {
-      recentFiles.splice(limit - 1);
-    }
-    recentFiles.unshift(filePath);
-    localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
   }
   writeFile(fileName, FileData) {
     do_global_log("NW: In write file");
@@ -495,13 +560,12 @@ class ElectronFileManager extends BaseFileManager {
       onSuccess(fileName);
     }
   }
-  doSaveModel(fileName) {
+  async doSaveModel(fileName) {
     let fileData = createModelFileData();
     this.writeFile(this.fileName, fileData);
     History.unsavedChanges = false;
     this.updateSaveTime();
     this.updateTitle();
-    this.addToRecent(this.fileName);
   }
 
   async loadModel() {
@@ -527,7 +591,6 @@ class ElectronFileManager extends BaseFileManager {
       this.fileName = absoluteFileName;
       this.loadModelData(data);
       this.updateTitle();
-      this.addToRecent(this.fileName);
     });
   }
 }
@@ -561,7 +624,6 @@ class NwFileManager extends BaseFileManager {
             var fileData = reader_event.target.result;
             History.forceCustomUndoState(fileData);
 
-            // Add to localStorage.recentFiles
             this.addToRecent(this.fileName);
 
             this.updateTitle();
@@ -593,7 +655,6 @@ class NwFileManager extends BaseFileManager {
           let fileData = createModelFileData();
           this.writeFile(this.fileName, fileData);
 
-          // adds to file localStorage.recentFiles list
           this.addToRecent(this.fileName);
 
           this.updateSaveTime();
@@ -666,12 +727,21 @@ class NwFileManager extends BaseFileManager {
   hasRecentFiles() {
     return true;
   }
-  addToRecent(filePath) {
+  async getRecentDisplayList() {
+    // this just returns getRecentFiles, but this is not the case for
+    // other implementations of getRecentDisplayList
+    return await this.getRecentFiles();
+  }
+  async getRecentFiles() {
+    let recentFiles = JSON.parse(await idbKeyval.get("recentFiles")) ?? []
+    return recentFiles;
+  }
+  async setRecentFiles(recentFiles) {
+    idbKeyval.set("recentFiles", JSON.stringify(recentFiles));
+  }
+  async addToRecent(filePath) {
     let limit = Settings.MaxRecentFiles;
-    let recentFiles = [];
-    if (localStorage.recentFiles) {
-      recentFiles = JSON.parse(localStorage.recentFiles);
-    }
+    let recentFiles = await this.getRecentFiles();
     if (recentFiles.includes(filePath)) {
       let index = recentFiles.indexOf(filePath);
       recentFiles.splice(index, 1);
@@ -680,21 +750,23 @@ class NwFileManager extends BaseFileManager {
       recentFiles.splice(limit - 1);
     }
     recentFiles.unshift(filePath);
-    localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
+    await this.setRecentFiles(recentFiles);
   }
-  removeFromRecent(filePath) {
-    let recentFiles = [];
-    if (localStorage.recentFiles) {
-      recentFiles = JSON.parse(localStorage.recentFiles);
-      let index = recentFiles.indexOf(filePath);
-      if (index !== -1) {
-        recentFiles.splice(index, 1);
-        -localStorage.setItem("recentFiles", JSON.stringify(recentFiles));
-      }
+  async removeFromRecent(filePath) {
+    let recentFiles = this.getRecentFiles();
+    let index = recentFiles.indexOf(filePath);
+    if (index !== -1) {
+      recentFiles.splice(index, 1);
+      this.setRecentFiles(recentFiles);
     }
   }
-  clearRecent() {
-    localStorage.setItem("recentFiles", JSON.stringify([]));
+  async loadRecentByIndex(recentFileIndex) {
+    const recentFiles = await this.getRecentFiles();
+    const filePath = recentFiles[recentFileIndex];
+    this.loadFromFile(filePath);
+  }
+  async clearRecent() {
+    await idbKeyval.set("recentFiles", JSON.stringify([]));
   }
   writeFile(fileName, FileData) {
     do_global_log("NW: In write file");
@@ -747,6 +819,20 @@ class NwFileManager extends BaseFileManager {
         console.log(trace);
         alert("Error in file saving " + getStackTrace());
       });
+  }
+  saveModelAs() {
+    let fileData = createModelFileData();
+    // Only exportFile is implementation specific (different on nwjs and electron)
+    this.exportFile(fileData, Settings.fileExtension, (filePath) => {
+      this.fileName = filePath;
+      History.unsavedChanges = false;
+      this.addToRecent(this.fileName);
+      this.updateSaveTime();
+      this.updateTitle();
+      if (this.finishedSaveHandler) {
+        this.finishedSaveHandler();
+      }
+    });
   }
   async loadModel() {
     do_global_log("NW: load model");
