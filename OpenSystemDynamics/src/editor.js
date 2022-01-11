@@ -5881,8 +5881,8 @@ $(window).load(function() {
 	$("html").mousemove(mouseMoveHandler);
 	$("html").mouseup(mouseUpHandler);
 	ToolBox.setTool("mouse");
-	$("#btn_file").click(function() {
-		updateRecentsMenu();
+	$("#btn_file").click(async function() {
+		await updateRecentsMenu();
 	});
 	$("#btn_new").click(function() {
 		saveChangedAlert(function() {
@@ -5995,10 +5995,10 @@ $(window).load(function() {
 	}
 	if (fileManager.hasRecentFiles()) {
 		for (let i = 0; i < Settings.MaxRecentFiles; i++) {
-			$(`#btn_recent_${i}`).click(function(event) {
-				saveChangedAlert(function () {
-					let filePath = event.currentTarget.getAttribute("data-path");
-					fileManager.loadFromFile(filePath);
+			$(`#btn_recent_${i}`).click(async function(event) {
+				saveChangedAlert(async function () {
+					let recentIndex = parseInt(event.currentTarget.getAttribute("data-recent-index"));
+					await fileManager.loadRecentByIndex(recentIndex);
 					setTimeout(() => {
 						updateTimeUnitButton();
 						InfoBar.update();
@@ -6565,7 +6565,7 @@ function removeNewLines(string) {
 	return newString;
 }
 
-function seperatePathAndName(file_path) {
+function seperateFolderAndFilename(file_path) {
 	let seperator = "\\";
 	if (file_path.includes("/")) {
 		seperator = "/";
@@ -6578,26 +6578,27 @@ function seperatePathAndName(file_path) {
 	return {"path": path, "name": segments[segments.length-1]};
 }
 
-function updateRecentsMenu() {
-	if (fileManager.hasRecentFiles()) {
-		if (localStorage.recentFiles) {
-			let recent = JSON.parse(localStorage.recentFiles);
-			if (0 < recent.length) {
-				$('#recent_title').show();
-				$('#btn_recent_clear').show();
-			}
-			for (let i = 0; i < Settings.MaxRecentFiles; i++) {
-				if (i < recent.length) {
-					$(`#btn_recent_${i}`).show();
-					let file = seperatePathAndName(recent[i]);
-					$(`#btn_recent_${i}`).html(`<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
-					$(`#btn_recent_${i}`).attr("data-path", recent[i]);
-				} else {
-					$(`#btn_recent_${i}`).hide();
-				}
-				
-			}
-		}
+async function updateRecentsMenu() {
+	if (!fileManager.hasRecentFiles()) {
+		return;
+	}
+	let recent = await fileManager.getRecentDisplayList();
+	if (recent.length > 0) {
+		$('#recent_title').show();
+		$('#btn_recent_clear').show();
+	} else {
+		$('#recent_title').hide();
+		$('#btn_recent_clear').hide();
+	}
+	for (let i = 0; i < Settings.MaxRecentFiles; i++) {
+		if (i < recent.length) {
+			$(`#btn_recent_${i}`).show();
+			let file = seperateFolderAndFilename(recent[i]);
+			$(`#btn_recent_${i}`).html(`<div class="recent-path">${file.path}</div><div class="recent-name">${file.name}</div>`);
+			$(`#btn_recent_${i}`).attr("data-recent-index", i.toString());
+		} else {
+			$(`#btn_recent_${i}`).hide();
+		}	
 	}
 }
 
