@@ -3,14 +3,25 @@ const useref = require('gulp-useref');
 const rename = require('gulp-rename');
 const process = require('process');
 
+function getStochSDVersion() {
+	var fs = require("fs");
+	process.chdir(__dirname)
+	var content = fs.readFileSync('../OpenSystemDynamics/src/version.js', 'utf8');
+	eval(content);
+	return stochsd.version;
+}
+
 gulp.task('default' , function(done) {
 	// The difference between the web build and the nwjs build is that the web build compresses everything to one single .js file
 	// To load faster over the web
 	// When we run locally in nwjs we have no intressed in doing so, and instead just run the code as is
 	// Which makes it easier to debug
 
+	const StochSDVersion = getStochSDVersion()
+	console.log("Building StochSD version ", StochSDVersion);
+
 	process.chdir(__dirname +'/..');
-	buildForWeb("distribute/output/stochsd-web/");
+	buildForWeb("distribute/output/web/"+StochSDVersion+"/");
 	buildForDesktop("distribute/output/package.nw/");
 	copyLicenses("distribute/output/");
 
