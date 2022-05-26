@@ -11,6 +11,13 @@ var preferencesTemplate = {
 		title: "Force TimeUnit",
 		description: "Controls if a TimeUnit must be set in order to edit."
 	},
+	"showFunctionHelper": {
+		default: false,
+		type: "boolean",
+		title: "Show Function Helper",
+		description: "Show help in DefinitionEditor depending on cursor position. (Experimental feature)",
+		image: "./graphics/showArgumentHelper.png",
+	},
 	// primitiveFontSize
 	// showArgumentHelper
 	// theme (classic/modern)
