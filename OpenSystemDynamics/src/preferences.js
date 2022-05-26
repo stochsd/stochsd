@@ -20,7 +20,7 @@ class Preferences {
 	static setup() {
 		const prefs = Preferences.get()
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
-			if (!prefs[key])
+			if (prefs[key] == undefined)
 				prefs[key] = info.default
 		})
 		Preferences.store(prefs)
