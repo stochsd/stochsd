@@ -8656,7 +8656,7 @@ class PreferencesDialog extends jqDialog {
 			return `<div class="preference">
 				<div style="display: flex; justify-content: space-between;">
 					<span class="title">${info.title}</span>
-					<button class="btn_reset">Reset</button>
+					<button class="btn_reset" id="reset-${key}" >Reset</button>
 				</div>
 				${info.type == "boolean" 
 				? `<div>
@@ -8666,6 +8666,12 @@ class PreferencesDialog extends jqDialog {
 				: ""}
 			</div>`
 		}).join("")}`)
+		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+			$(this.dialogContent).find(`#reset-${key}`).on("click", () => {
+				if (info.type == "boolean")
+					$(this.dialogContent).find("#preference-"+key).prop("checked", info.default)
+			})
+		})
 	}
 	makeApply() {
 		const preferences = Preferences.get()
