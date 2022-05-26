@@ -8664,6 +8664,7 @@ class PreferencesDialog extends jqDialog {
 					<label for="${id}">${info.description}<label/>
 				</div>` 
 				: ""}
+				${info.image ? `<img src="${info.image}"/>` : ""}
 			</div>`
 		}).join("")}`)
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
@@ -9482,7 +9483,7 @@ class DefinitionEditor extends jqDialog {
 								<b>Definition:</b><span>${this.renderHelpButtonHtml("definition-help")}</span>
 							</div>
 							<textarea class="value-field enter-apply" cols="30" rows="30"></textarea>
-							<br/>
+							<div class="function-helper" style="width: 100%; margin: 0.4em 0.2em;" ></div>
 							<div class="primitive-references-div" style="width: 100%; overflow-x: auto" ><!-- References goes here-->
 							</div>
 							<div class="restrict-to-non-negative-div">
@@ -9529,6 +9530,15 @@ class DefinitionEditor extends jqDialog {
 				}
 			}
 		);
+
+		this.cmValueField.on("cursorActivity", () => {
+			const functionHelperDiv = $(this.dialogContent).find(".function-helper")
+			if (Preferences.get("showFunctionHelper")) {
+				functionHelperDiv.css("height", "5em");
+				functionHelperDiv.html(FunctionHelper.getHtml(this.cmValueField))
+			} else
+				functionHelperDiv.css("height", "")
+		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
 			let newName = stripBrackets($(event.target).val());
