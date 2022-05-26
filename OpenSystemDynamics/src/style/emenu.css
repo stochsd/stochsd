@@ -15,6 +15,8 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	display: none;
 	min-width: 100px;
 	z-index: 1001;
+	border: 1px solid #222;
+	box-sizing: border-box;
 }
 .eMenu .menuContent img {
 	height: 22px;
@@ -45,13 +47,24 @@ div.recent-name {
 .eMenu .menuContent.colors button {
 	color: var(--clr);
 }
-.eMenu .menuContent button {
+.eMenu .menuContent > button,
+.eMenu .menuContent > a {
+	color: unset;
 	width: 100%;
 	text-align: left;
 	white-space: nowrap;
+	padding: 0.25em 0.5em;
+	background-color: #e9e9ed;
+	box-sizing: border-box;
 	display: flex;
-	/* Center text vertically */
 	align-items: center;
+	border: none;
+	font-family: ubuntu, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+}
+.eMenu .menuContent > button:hover,
+.eMenu .menuContent > a:hover {
+	background-color: #f9f9f9;
 }
 .eMenu .menuContent button > .keybinding {
 	padding-left: 2em;
