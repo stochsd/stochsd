@@ -8,6 +8,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 // Dialoge window handlers 
 var definitionEditor;
 var converterDialog;
+var preferencesDialog;
 var simulationSettings;
 var timeUnitDialog;
 var macroDialog;
@@ -99,7 +100,7 @@ function restoreAfterRestart() {
 		// Clean up file manager - file handle
 		fileManager.clean();
 
-		if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false) {
+		if(Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
 			// if creating new file without OK timeUnit => promt TimeUnitDialog
 			// prompt TimeUnitDialog is unit not set 
 			timeUnitDialog.show();
@@ -120,7 +121,7 @@ function restoreAfterRestart() {
 	// Read the history from localStorage
 	History.fromLocalStorage();
 	
-	if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false ) {
+	if(Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false ) {
 		// if opening new file without OK timeUnit => promt TimeUnitDialog
 		// prompt TimeUnitDialog is unit not set 
 		timeUnitDialog.show();
@@ -5545,7 +5546,7 @@ function update_name_pos(node_id) {
 
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
-	if (! isTimeUnitOk(getTimeUnits()) && Settings.forceTimeUnit) {
+	if (! isTimeUnitOk(getTimeUnits()) && Preferences.get("forceTimeUnit")) {
 		event.preventDefault();
 		timeUnitDialog.show();
 		return;
@@ -5786,6 +5787,8 @@ $(window).load(function() {
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
 	
+	Preferences.setup();
+
 	$(".tool-button").mousedown(function(event) {
 		let toolName = $(this).attr("data-tool");
 		ToolBox.setTool(toolName, event.which);
@@ -5966,6 +5969,9 @@ $(window).load(function() {
 	$("#btn_about").click(function() {
 		aboutDialog.show();
 	});
+	$("#btn_preferences").click(function() {
+		preferencesDialog.show();
+	});
 	$("#btn_fullpotentialcss").click(function () {
 		fullpotentialcssDialog.show();
 	});
@@ -6010,6 +6016,7 @@ $(window).load(function() {
 	macroDialog = new MacroDialog();
 	definitionEditor = new DefinitionEditor();
 	converterDialog = new ConverterDialog();
+	preferencesDialog = new PreferencesDialog();
 	simulationSettings = new SimulationSettings();
 	timeUnitDialog = new TimeUnitDialog();
 	equationList = new EquationListDialog();
@@ -8633,6 +8640,47 @@ class NewModelDialog extends jqDialog {
 		updateTimeUnitButton();
 
 		$(this.dialog).dialog('close');
+	}
+}
+
+
+class PreferencesDialog extends jqDialog {
+	constructor() {
+		super();
+		this.setTitle("Preferences");
+	}
+	beforeShow() {
+		const preferences = Preferences.get()
+		this.setHtml(`<div class="preferences">${Object.entries(preferencesTemplate).map(([key, info]) => {
+			const id = "preference-" + key
+			return `<div class="preference">
+				<div style="display: flex; justify-content: space-between;">
+					<span class="title">${info.title}</span>
+					<button class="btn_reset" id="reset-${key}" >Reset</button>
+				</div>
+				${info.type == "boolean" 
+				? `<div>
+					<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(preferences[key])}>
+					<label for="${id}">${info.description}<label/>
+				</div>` 
+				: ""}
+			</div>`
+		}).join("")}`)
+		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+			$(this.dialogContent).find(`#reset-${key}`).on("click", () => {
+				if (info.type == "boolean")
+					$(this.dialogContent).find("#preference-"+key).prop("checked", info.default)
+			})
+		})
+	}
+	makeApply() {
+		const preferences = Preferences.get()
+		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+			const element = $(this.dialogContent).find("#preference-"+key)
+			const value = info.type == "boolean" ? element.is(":checked") : undefined
+			preferences[key] = value
+		})
+		Preferences.store(preferences)
 	}
 }
 
