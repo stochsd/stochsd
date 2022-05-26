@@ -100,7 +100,7 @@ function restoreAfterRestart() {
 		// Clean up file manager - file handle
 		fileManager.clean();
 
-		if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false) {
+		if(Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
 			// if creating new file without OK timeUnit => promt TimeUnitDialog
 			// prompt TimeUnitDialog is unit not set 
 			timeUnitDialog.show();
@@ -121,7 +121,7 @@ function restoreAfterRestart() {
 	// Read the history from localStorage
 	History.fromLocalStorage();
 	
-	if(Settings.promptTimeUnitDialogOnStart && isTimeUnitOk(getTimeUnits()) === false ) {
+	if(Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false ) {
 		// if opening new file without OK timeUnit => promt TimeUnitDialog
 		// prompt TimeUnitDialog is unit not set 
 		timeUnitDialog.show();
@@ -5546,7 +5546,7 @@ function update_name_pos(node_id) {
 
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
-	if (! isTimeUnitOk(getTimeUnits()) && Settings.forceTimeUnit) {
+	if (! isTimeUnitOk(getTimeUnits()) && Preferences.get("forceTimeUnit")) {
 		event.preventDefault();
 		timeUnitDialog.show();
 		return;
@@ -5787,6 +5787,8 @@ $(window).load(function() {
 	rectselector.setVisible(false);
 	let svgplane = document.getElementById("svgplane");
 	
+	Preferences.setup();
+
 	$(".tool-button").mousedown(function(event) {
 		let toolName = $(this).attr("data-tool");
 		ToolBox.setTool(toolName, event.which);
@@ -8641,25 +8643,38 @@ class NewModelDialog extends jqDialog {
 	}
 }
 
+
 class PreferencesDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("Preferences");
-		this.setHtml(`<div class="preferences">${Object.entries(preferences).map(pref => {
-			const name = pref[0]
-			const id = "preference-" + name
-			const p = pref[1]
+	}
+	beforeShow() {
+		const preferences = Preferences.get()
+		this.setHtml(`<div class="preferences">${Object.entries(preferencesTemplate).map(([key, info]) => {
+			const id = "preference-" + key
 			return `<div class="preference">
 				<div style="display: flex; justify-content: space-between;">
-					<span class="title">${p.title}</span>
+					<span class="title">${info.title}</span>
 					<button class="btn_reset">Reset</button>
 				</div>
-				<div>
-					<input id="${id}" type="checkbox" ${checkedHtml(p.default)}>
-					<label for="${id}">${p.description}<label/>
-				</div>
+				${info.type == "boolean" 
+				? `<div>
+					<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(preferences[key])}>
+					<label for="${id}">${info.description}<label/>
+				</div>` 
+				: ""}
 			</div>`
 		}).join("")}`)
+	}
+	makeApply() {
+		const preferences = Preferences.get()
+		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+			const element = $(this.dialogContent).find("#preference-"+key)
+			const value = info.type == "boolean" ? element.is(":checked") : undefined
+			preferences[key] = value
+		})
+		Preferences.store(preferences)
 	}
 }
 
