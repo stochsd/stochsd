@@ -733,11 +733,16 @@ class NwFileManager extends BaseFileManager {
     return await this.getRecentFiles();
   }
   async getRecentFiles() {
-    let recentFiles = JSON.parse(await idbKeyval.get("recentFiles")) ?? []
+    let recentTemp = await idbKeyval.get("recentFiles")
+    let recentFiles = typeof recentTemp == "string" 
+      ? JSON.parse(recentTemp) 
+      : Array.isArray(recentTemp)
+      ? recentTemp 
+      : []
     return recentFiles;
   }
   async setRecentFiles(recentFiles) {
-    idbKeyval.set("recentFiles", JSON.stringify(recentFiles));
+    idbKeyval.set("recentFiles", recentFiles);
   }
   async addToRecent(filePath) {
     let limit = Settings.MaxRecentFiles;
