@@ -742,14 +742,24 @@ function hasSelectedChildren(parentId) {
 	}
 	return false;
 }
-
-function default_double_click(id) {
-	let primitive_type = getType(findID(id));
-	if (primitive_type == "Ghost") {
+/**
+ * 
+ * @param {*} id
+ * @param {"value" | "field"} field 
+ */
+function openPrimitiveDialog(id, field="value") {
+	let primitive = findID(id)
+	if (getType(primitive) == "Ghost") {
 		// If we click on a ghost change id to point to source
 		id = findID(id).getAttribute("Source");
+		primitive = findID(id)
 	}
-	definitionEditor.open(id, ".value-field");
+	primitiveType = getType(primitive)
+	if (primitiveType == "Converter") {
+		converterDialog.open(id, `.${field}-field`);
+	} else {
+		definitionEditor.open(id, `.${field}-field`);
+	}
 }
 
 class BaseObject {
@@ -1050,7 +1060,7 @@ class BasePrimitive extends OnePointer {
 		super(id, type, pos, extras);
 	}
 	doubleClick() {
-		default_double_click(get_parent_id(this.id));
+		openPrimitiveDialog(get_parent_id(this.id));
 	}
 }
 
@@ -1543,17 +1553,13 @@ class ConverterVisual extends BasePrimitive {
 		if (linkedPrimitives.length > 0) {
 			do_global_log("choose yes");
 			this.primitive.setAttribute("Source", linkedPrimitives[0].id);
-		} else {
-			do_global_log("choose no");
-			this.primitive.setAttribute("Source", "Time");
 		}
 	}
 	nameDoubleClick() {
-		converterDialog.open(this.id, ".name-field");
+		openPrimitiveDialog(this.id, "name")
 	}
-	
 	doubleClick() {
-		converterDialog.open(this.id, ".value-field");
+		openPrimitiveDialog(this.id, "value")
 	}
 }
 
@@ -2216,7 +2222,7 @@ class FlowVisual extends BaseConnection {
 	}
 	
 	doubleClick() {
-		default_double_click(this.id);
+		openPrimitiveDialog(this.id);
 	}
 }
 
