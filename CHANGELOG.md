@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Code-highlighting and autocomplete suggestions to MacroDialog with CodeMirror.
+- PreferenceDialog
+  - Force TimeUnit pereferences
+  - Show Experimental Function Helper
+- Link to official StochSD forum inside StochSD.
+- Better support for PWA StochSD
+
+## Fixed
+- Ghosted Converter Bugs
+- Recent Files fixes for nwjs-environment (desktop version).
 
 ## 2022.01.02
 
