@@ -18,6 +18,12 @@ var preferencesTemplate = {
 		description: "Show help in DefinitionEditor depending on cursor position. (Experimental feature)",
 		image: "./graphics/showArgumentHelper.png",
 	},
+	"showConverterPlotPreview": {
+		default: false,
+		type: "boolean",
+		title: "Show Converter Plot Preview",
+		description: "Show Converter Plot Preview while editing converter values."
+	}
 	// primitiveFontSize
 	// showArgumentHelper
 	// theme (classic/modern)
