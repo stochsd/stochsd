@@ -9005,15 +9005,23 @@ class NumberboxDialog extends DisplayDialog {
 class ConverterDialog extends jqDialog {
 	constructor() {
 		super();
+		// [number,number][]
+		this.currentValues = [];
 		this.setHtml(`
-			<div class="primitive-settings" style="padding: 10px 0px">
-				<b>Name:</b><br/>
-				<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
-				<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
-					<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
+			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 1rem;">
+				<div class="primitive-settings" style="padding: 10px 0px;">
+						<b>Name:</b><br/>
+						<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
+						<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
+							<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
+						</div>
+						<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
+						<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
+					</div>
+					<div id="converter-plot-div" style="">
+						<!-- Add plot here with code -->
+					</div>
 				</div>
-				<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
-				<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 			</div>
 		`);
 
@@ -9047,6 +9055,10 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		});
+		$(this.valueField).keyup((event) => {
+			this.updateValues(event.target.value)
+			this.updatePlot()
+		})
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.key == "Enter") {
@@ -9078,6 +9090,8 @@ class ConverterDialog extends jqDialog {
 		
 		let oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
+		this.updateValues(oldValue)
+		this.updatePlot()
 		
 		let oldName = getName(this.primitive);
 		let oldNameBrackets = makePrimitiveName(oldName);
@@ -9090,6 +9104,49 @@ class ConverterDialog extends jqDialog {
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
+		}
+	}
+	updateValues(str) {
+		this.currentValues = str.split("#")[0].split(";").map(row => row.split(",").map(Number))
+	}
+	updatePlot() {
+		$(this.dialogContent).find("#converter-plot-div").empty()
+		if (!Preferences.get("showConverterPlotPreview")) return;
+		let serieArray = [];
+		for (let row of this.currentValues) {
+			if (row[0] !== undefined && row[1] !== undefined)
+				serieArray.push([Number(row[0]), Number(row[1])]);
+		}
+		$(this.dialogContent).find("#converter-plot-div").empty()
+		if (serieArray.length < 2) {
+			$(this.dialogContent).find("#converter-plot-div").html(`
+				<div style="padding: 1rem 2rem;">
+					<h1>Plot Preview</h1>
+					<p style="font-size: 1rem;">Plot Preview will be shown here when at least two points are defined</p>
+				</div>
+			`);
+		} else {
+			$.jqplot("converter-plot-div", [serieArray], {
+				grid: {
+					background: "transparent",
+					shadow: false
+				},
+				axesDefaults: {
+					labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+				},
+				axes: {
+					xaxis: {
+						label: "Input"
+					},
+					yaxis: {
+						label: "Output"
+					}
+				},
+				highlighter: {
+					show: true,
+					sizeAdjust: 1.5
+				},
+			});
 		}
 	}
 	afterShow() {

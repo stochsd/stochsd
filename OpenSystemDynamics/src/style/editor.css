@@ -246,6 +246,9 @@ button.tool-button img {
 .primitive-settings .value-field {
     width: 200px;
 }
+.primitive-settings > * {
+    box-sizing: border-box;
+}
 
 .table{
   display: table;
