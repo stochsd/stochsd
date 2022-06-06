@@ -190,11 +190,11 @@ class LinePlot {
 		const descHtml = Array.isArray(description)
 			? `<ul>${description.map(d => `<li>${d}</li>`).join(",")}</ul>`
 			: description
-		const warnHtml = !warning 
+		const warnHtml = !warning
 			? ""
 			: Array.isArray(warning)
-			? `<ul class="warning">${warning.map(d => `<li>${d}</li>`).join(",")}</ul>`
-			: `<span class="warning">${warning}</span>`
+				? `<ul class="warning">${warning.map(d => `<li>${d}</li>`).join(",")}</ul>`
+				: `<span class="warning">${warning}</span>`
 		$(parent).html(titleHtml + descHtml + warnHtml)
 	}
 	/**
@@ -235,7 +235,7 @@ class LinePlot {
 				markerOptions: { size: 5 },
 				showLabel: settings.showLabel,
 				lineWidth: settings.lineWidth ?? 2,
-				label: (settings.pointLabels?.show ? `${this.lines.length+1}. ` : "") + settings.label ?? "Untitled",
+				label: (settings.pointLabels?.show ? `${this.lines.length + 1}. ` : "") + settings.label ?? "Untitled",
 				yaxis: settings.side === "R" ? "y2axis" : "yaxis",
 				linePattern: settings.linePattern,
 				color: settings.color,
@@ -341,6 +341,26 @@ class LinePlot {
 				}
 				: undefined)
 		}
+	}
+	/**
+	 * @param {Record<string, any>} value 
+	 */
+	addOption(value) {
+		this.options = this.deepMerge(this.options ?? {}, value)
+	}
+	deepMerge(target, merge) {
+		return target == undefined
+			? merge
+			: typeof merge == "object" && !Array.isArray(merge)
+				? {
+						...target,
+						...Object.fromEntries(Object.entries(merge).map(e => {
+						const key = e[0]
+						const value = e[1]
+						return [[key], this.deepMerge(target[key], value)]
+					}))
+				}
+				: merge
 	}
 	/**
 	 * @returns {JqPlot}

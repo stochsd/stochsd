@@ -2760,6 +2760,11 @@ class TimePlotVisual extends PlotVisual {
 			this.setEmptyPlot()
 			return;
 		}
+		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
+		let max = Number(axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max);
+		this.linePlot.addOption({axes: {xaxis: {min, max}}})
+
 		const plot = this.linePlot.draw()
 		console.log(plot)
 	}
