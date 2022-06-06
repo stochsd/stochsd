@@ -2559,6 +2559,12 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 }
 
 class PlotVisual extends HtmlOverlayTwoPointer {
+	/**
+	 * @param {number} min 
+	 * @param {number} max 
+	 * @param {"width" | "height"} dimention 
+	 * @returns {number[] | [number, string][]}
+	 */
 	getTicks(min, max, dimention="width") {
 		let length = max - min;
 
@@ -2653,7 +2659,7 @@ class TimePlotVisual extends PlotVisual {
 			resultIds: [],
 			results: []
 		}
-		
+		this.linePlot = new LinePlot(this.chartId)
 		this.dialog = new TimePlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
@@ -2680,93 +2686,84 @@ class TimePlotVisual extends PlotVisual {
 	render() {
 		this.fetchData();
 
-		let idsToDisplay = getDisplayIds(this.primitive);
-		let sides = getDisplaySides(this.primitive);
+		const idsToDisplay = getDisplayIds(this.primitive);
+		const sides = getDisplaySides(this.primitive);
 
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
 		);
-
-		let types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
-		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		const types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
+		const line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
 		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);
-
 		if (this.data.results.length == 0) {
 			this.setEmptyPlot();
 			return;
 		}
-
-		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
-
-		let makeSerie = (resultColumn, lineCount) => {
-			let serie = []; 
-			let plotPerIdx = Math.floor(this.data.results.length/4);
-			for (let i = 0; i < this.data.results.length; i++) {
-				let row = this.data.results[i];
-				let time = Number(row[0]);
-				let value = Number(row[resultColumn]);
-				let showNumHere = i%plotPerIdx === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx);
-				if (showNumHere && hasNumberedLines) {
-					serie.push([time, value, Math.floor(lineCount).toString()]);
-				} else {
-					serie.push([time, value, null]);
-				}
+		this.linePlot.clearLines()
+		const hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
+		let counter = 0
+		idsToDisplay.forEach((id, i) => {
+			const index = this.data.resultIds.indexOf(id)
+			if (index != -1) {
+				counter++
+				let label = "";
+				label += this.namesToDisplay[i];
+				label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
+				this.linePlot.addLine(
+					this.data.results.map(row => [row[0], row[index]]),
+					{
+						label,
+						showLabel: true,
+						lineWidth: this.widthsToDisplay[i],
+						side: sides[i],
+						linePattern: this.patternsToDisplay[i],
+						color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
+						pointLabels: {show: hasNumberedLines},
+					},
+					true
+				)
 			}
-			return serie;
-		}
-
-		// Declare series and settings for series
-		this.serieSettingsArray = [];
-		this.serieArray = [];
-		
-		// Make time series & Settings 
-		let counter = 0;
-		for(let i = 0; i < idsToDisplay.length; i++) {
-			counter++;
-			let index = this.data.resultIds.indexOf(idsToDisplay[i]);
-			if (index === -1) {
-				this.serieArray.push([null, null, null]);
-			} else {
-				this.serieArray.push(makeSerie(index, counter));
-			}
-			let label = "";
-			label += hasNumberedLines ? `${counter}. ` : "";
-			label += this.namesToDisplay[i];
-			label += ((sides.includes("R") && sides.includes("L")) ? ((sides[i] === "L") ? " - L": " - R") : (""));
-			this.serieSettingsArray.push(
-				{
-					showLabel: true,
-					lineWidth: this.widthsToDisplay[i],
-					label: label, 
-					yaxis: (sides[i] === "L") ? "yaxis": "y2axis",
-					linePattern: this.patternsToDisplay[i], 
-					color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
-					shadow: false,
-					showMarker: false,
-					markerOptions: { size: 5 },
-					pointLabels: {
-						show: true,
-						edgeTolerance: 0,
-						ypadding: 0,
-						location: "n"
-					}
+		})
+		this.linePlot.setOptions({
+			title: this.primitive.getAttribute("TitleLabel"),
+			axes: {
+				xaxis: {
+					label: "Time",
+				},
+				yaxis: {
+					renderer: this.primitive.getAttribute("LeftLogScale")==="true" ? "log" : "linear",
+					label: this.primitive.getAttribute("LeftAxisLabel"),
+				},
+				yaxis: {
+					renderer: this.primitive.getAttribute("RightLogScale")==="true" ? "log" : "linear",
+					label: this.primitive.getAttribute("RightAxisLabel"),
 				}
-			);
-		}
-
-		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-
-		do_global_log(JSON.stringify(this.serieSettingsArray));
-		
+			},
+			highlighter: {
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
+				display: [{name: "Time", format: "%.5p"}, {name: "Value", format: "%.5p"}]
+			},
+			showLegend: true
+		})
 		// We need to ad a delay and respond to events first to make this work in firefox
 		setTimeout(() => {
 			this.updateChart();
 		 },200);
-		
 	}
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+		if(!this.linePlot.lines || this.linePlot.lines.length == 0) {
+			this.setEmptyPlot()
+			return;
+		}
+		const plot = this.linePlot.draw()
+		console.log(plot)
+	}
+/* 	updateChart() {
 		// Dont update chart if primitive has been deleted
 		// This check needs to be here since updateChart is updated with a timeout 
 		if (! (this.id in connection_array)) return;
@@ -2844,8 +2841,8 @@ class TimePlotVisual extends PlotVisual {
 		}
 
 		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
-	}
-	setEmptyPlot() {
+	} */
+	/* setEmptyPlot() {
 		$(this.chartDiv).empty();
 		let idsToDisplay = getDisplayIds(this.primitive);
 		let selected_str = "None selected";
@@ -2858,6 +2855,16 @@ class TimePlotVisual extends PlotVisual {
 			<div class="empty-plot-header">Time Plot</div>
 			${selected_str}
 		`);
+	} */
+	setEmptyPlot() {
+		this.linePlot.clear()
+		const idsToDisplay = getDisplayIds(this.primitive);
+		this.linePlot.setEmpty(
+			"Time Plot", 
+			idsToDisplay.length == 0 
+				? "None selected" 
+				: idsToDisplay.map(id => getName(findID(id)))
+			)
 	}
 }
 
