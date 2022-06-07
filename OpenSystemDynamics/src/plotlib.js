@@ -171,7 +171,6 @@ class LinePlot {
 		this.connect(parentId)
 		this.lines = [] // {points: [], settings: {...}}[]
 		this.options = {}
-		this.tickGenerator = { x: "jqplot", y: "jqplot", y2: "jqplot" } // <Record<"x" | "y" | "y2", "jqplot" | "custom">>
 	}
 	connect(parentId) {
 		this.parentId = parentId
@@ -179,12 +178,6 @@ class LinePlot {
 	}
 	clear() {
 		this.parent.empty()
-	}
-	/**
-	 * @param {{x?: "jqplot" | "custom", y?: "jqplot" | "custom", y2?: "jqplot" | "custom"}} tickGenerator 
-	 */
-	setTickGenerator(tickGenerator) {
-		this.tickGenerator = this.deepMerge(this.tickGenerator, tickGenerator)
 	}
 	/**
 	 * @param {string} title 
@@ -372,13 +365,13 @@ class LinePlot {
 	getTickOptions() {
 		return {
 			axes: {
-				...(this.tickGenerator.x == "custom" && this.options.axes.xaxis.min != undefined && this.options.axes.xaxis.max != undefined
+				...(this.options.axes.xaxis.min != undefined && this.options.axes.xaxis.max != undefined
 					? { xaxis: { ticks: this.getTicks(this.options.axes.xaxis.min, this.options.axes.xaxis.max, "width") } }
 					: {}),
-				...(this.tickGenerator.y == "custom" && this.options.axes.yaxis.min != undefined && this.options.axes.yaxis.max != undefined
+				...(this.options.axes.yaxis.min != undefined && this.options.axes.yaxis.max != undefined
 					? { yaxis: { ticks: this.getTicks(this.options.axes.yaxis.min, this.options.axes.yaxis.max, "height") } }
 					: {}),
-				...(this.tickGenerator.y2 == "custom" && this.options.axes.y2axis.min != undefined && this.options.axes.y2axis.max != undefined
+				...(this.options.axes.y2axis.min != undefined && this.options.axes.y2axis.max != undefined
 					? { y2axis: { ticks: this.getTicks(this.options.axes.y2axis.min, this.options.axes.y2axis.max, "height") } }
 					: {})
 			}

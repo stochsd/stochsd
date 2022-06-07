@@ -2747,7 +2747,6 @@ class TimePlotVisual extends PlotVisual {
 			},
 			showLegend: true
 		})
-		this.linePlot.setTickGenerator({x: "custom"})
 		// We need to ad a delay and respond to events first to make this work in firefox
 		setTimeout(() => {
 			this.updateChart();
@@ -2770,6 +2769,20 @@ class TimePlotVisual extends PlotVisual {
 
 		const plot = this.linePlot.draw()
 		console.log(plot)
+
+		if (axisLimits.leftaxis.auto) {
+			if (!isNaN(this.plot.axes.yaxis.min) && !isNaN(this.plot.axes.yaxis.max)) {
+				axisLimits.leftaxis.min = this.plot.axes.yaxis.min; 
+				axisLimits.leftaxis.max = this.plot.axes.yaxis.max; 
+			}
+		}
+		if (axisLimits.rightaxis.auto) {
+			if (!isNaN(this.plot.axes.y2axis.min) && !isNaN(this.plot.axes.y2axis.max)) {
+				axisLimits.rightaxis.min = this.plot.axes.y2axis.min;
+				axisLimits.rightaxis.max = this.plot.axes.y2axis.max;
+			}
+		}
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 	}
 /* 	updateChart() {
 		// Dont update chart if primitive has been deleted
