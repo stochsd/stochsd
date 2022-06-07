@@ -2747,6 +2747,7 @@ class TimePlotVisual extends PlotVisual {
 			},
 			showLegend: true
 		})
+		this.linePlot.setTickGenerator({x: "custom"})
 		// We need to ad a delay and respond to events first to make this work in firefox
 		setTimeout(() => {
 			this.updateChart();
@@ -2764,6 +2765,8 @@ class TimePlotVisual extends PlotVisual {
 		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
 		let max = Number(axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max);
 		this.linePlot.addOption({axes: {xaxis: {min, max}}})
+		!axisLimits.leftaxis.auto && this.linePlot.addOption({axes: {yaxis: {min: axisLimits.leftaxis.min, max: axisLimits.leftaxis.max}}})
+		!axisLimits.rightaxis.auto && this.linePlot.addOption({axes: {yaxis: {min: axisLimits.rightaxis.min, max: axisLimits.rightaxis.max}}})
 
 		const plot = this.linePlot.draw()
 		console.log(plot)

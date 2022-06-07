@@ -110,14 +110,13 @@ class Plot1 {
 			},
 			axes: {
 				xaxis: {
-					renderer: option?.axes.xaxis.renderer == "log"
+					renderer: option?.axes?.xaxis?.renderer == "log"
 						? $.jqplot.LinearAxisRenderer
 						: $.jqplot.LogAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
 					label: option?.axes?.xaxis?.label,
-					min: option.min,
-					max: option.max,
-					// ticks: tickList
+					min: option?.axes?.xaxis?.min,
+					max: option?.axes?.xaxis?.max,
 				},
 				yaxis: {
 					renderer: option?.axes?.yaxis?.renderer == "log"
@@ -129,13 +128,13 @@ class Plot1 {
 					max: option?.axes?.yaxis?.max
 				},
 				y2axis: {
-					renderer: option?.axes.y2axis.renderer == "log"
+					renderer: option?.axes?.y2axis.renderer == "log"
 						? $.jqplot.LinearAxisRenderer
 						: $.jqplot.LogAxisRenderer,
 					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: option?.axes.y2axis.label,
-					min: option?.axes.y2axis.min,
-					max: option?.axes.y2axis.max,
+					label: option?.axes?.y2axis.label,
+					min: option?.axes?.y2axis.min,
+					max: option?.axes?.y2axis.max,
 					tickOptions: {
 						showGridline: false
 					}
@@ -172,13 +171,20 @@ class LinePlot {
 		this.connect(parentId)
 		this.lines = [] // {points: [], settings: {...}}[]
 		this.options = {}
+		this.tickGenerator = { x: "jqplot", y: "jqplot", y2: "jqplot" } // <Record<"x" | "y" | "y2", "jqplot" | "custom">>
 	}
 	connect(parentId) {
 		this.parentId = parentId
 		this.parent = $(`#${parentId}`)
 	}
 	clear() {
-		$(this.parent).empty()
+		this.parent.empty()
+	}
+	/**
+	 * @param {{x?: "jqplot" | "custom", y?: "jqplot" | "custom", y2?: "jqplot" | "custom"}} tickGenerator 
+	 */
+	setTickGenerator(tickGenerator) {
+		this.tickGenerator = this.deepMerge(this.tickGenerator, tickGenerator)
 	}
 	/**
 	 * @param {string} title 
@@ -195,7 +201,7 @@ class LinePlot {
 			: Array.isArray(warning)
 				? `<ul class="warning">${warning.map(d => `<li>${d}</li>`).join(",")}</ul>`
 				: `<span class="warning">${warning}</span>`
-		$(parent).html(titleHtml + descHtml + warnHtml)
+		parent.html(titleHtml + descHtml + warnHtml)
 	}
 	/**
 	 * Add numbered lines to datapoints
@@ -353,8 +359,8 @@ class LinePlot {
 			? merge
 			: typeof merge == "object" && !Array.isArray(merge)
 				? {
-						...target,
-						...Object.fromEntries(Object.entries(merge).map(e => {
+					...target,
+					...Object.fromEntries(Object.entries(merge).map(e => {
 						const key = e[0]
 						const value = e[1]
 						return [[key], this.deepMerge(target[key], value)]
@@ -362,18 +368,84 @@ class LinePlot {
 				}
 				: merge
 	}
+
+	getTickOptions() {
+		return {
+			axes: {
+				...(this.tickGenerator.x == "custom" && this.options.axes.xaxis.min != undefined && this.options.axes.xaxis.max != undefined
+					? { xaxis: { ticks: this.getTicks(this.options.axes.xaxis.min, this.options.axes.xaxis.max, "width") } }
+					: {}),
+				...(this.tickGenerator.y == "custom" && this.options.axes.yaxis.min != undefined && this.options.axes.yaxis.max != undefined
+					? { yaxis: { ticks: this.getTicks(this.options.axes.yaxis.min, this.options.axes.yaxis.max, "height") } }
+					: {}),
+				...(this.tickGenerator.y2 == "custom" && this.options.axes.y2axis.min != undefined && this.options.axes.y2axis.max != undefined
+					? { y2axis: { ticks: this.getTicks(this.options.axes.y2axis.min, this.options.axes.y2axis.max, "height") } }
+					: {})
+			}
+		}
+	}
 	/**
 	 * @returns {JqPlot}
 	 */
 	draw() {
+		const options = this.deepMerge({
+			...this.options,
+			series: this.lines.map(l => l.settings)
+		}, this.getTickOptions())
+
 		this.clear()
 		return $.jqplot(
 			this.parentId,
 			this.lines.map(l => l.points),
-			{
-				...this.options,
-				series: this.lines.map(l => l.settings)
-			}
+			options
 		)
+	}
+	/**
+	 * @param {number} min 
+	 * @param {number} max 
+	 * @param {"width" | "height"} dimention 
+	 * @returns {number[] | [number, string][]}
+	 */
+	getTicks(min, max, dimention = "width") {
+		let length = max - min;
+
+		// Calculate minTimeSubDivision
+		let tickSubDivStep = (10 ** Math.floor(Math.log10(length))) / 10;
+
+		// Measure in pixels 
+		console.log("this.parent", this.parent)
+		console.log("this.parent", this.parent)
+		let pxWidth = this.parent[dimention]() - 80;
+		let minPxStep = 50;
+		let maxSteps = Math.floor(pxWidth / minPxStep);
+
+		let viableMultiples = [1, 2, 5, 10, 20, 50];
+		let stepSizeList = viableMultiples.map(muliple => muliple * tickSubDivStep)
+		let okStepSize = stepSizeList.find(step => maxSteps >= length / step);
+
+		let ticks = [`${min}`, `${max}`];
+		if (okStepSize !== undefined) {
+			let tickStep = okStepSize;
+			let decimals = Number.isInteger(okStepSize) ? 0 : undefined;
+
+			ticks = [];
+			let lowerIndex = Math.ceil(min / tickStep);
+			let upperIndex = Math.floor(max / tickStep);
+
+			// Add empty tick if min is not included
+			// ticks can be formated as 2D array [[val,label],[val,label],...]
+			// see reference: http://www.music.mcgill.ca/~ich/classes/mumt301_11/js/jqPlot/docs/files/jqplot-core-js.html#Axis.ticks
+			if (tickStep * lowerIndex !== min)
+				ticks.push([min, ""]);
+
+			for (let i = lowerIndex; i <= upperIndex; i++) {
+				let currentTick = tickStep * i;
+				ticks.push([currentTick, format_number(currentTick, { decimals })]);
+			}
+			if (tickStep * upperIndex !== max)
+				ticks.push([max, ""]);
+		}
+
+		return ticks;
 	}
 }
