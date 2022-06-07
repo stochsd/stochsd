@@ -2659,7 +2659,7 @@ class TimePlotVisual extends PlotVisual {
 			resultIds: [],
 			results: []
 		}
-		this.linePlot = new LinePlot(this.chartId)
+		this.linePlot = new LinePlot(this.chartDiv, this.chartId)
 		this.dialog = new TimePlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
@@ -2766,22 +2766,17 @@ class TimePlotVisual extends PlotVisual {
 		this.linePlot.addOption({axes: {xaxis: {min, max}}})
 		!axisLimits.leftaxis.auto && this.linePlot.addOption({axes: {yaxis: {min: axisLimits.leftaxis.min, max: axisLimits.leftaxis.max}}})
 		!axisLimits.rightaxis.auto && this.linePlot.addOption({axes: {yaxis: {min: axisLimits.rightaxis.min, max: axisLimits.rightaxis.max}}})
-
 		const plot = this.linePlot.draw()
-		console.log(plot)
-
-		if (axisLimits.leftaxis.auto) {
-			if (!isNaN(this.plot.axes.yaxis.min) && !isNaN(this.plot.axes.yaxis.max)) {
-				axisLimits.leftaxis.min = this.plot.axes.yaxis.min; 
-				axisLimits.leftaxis.max = this.plot.axes.yaxis.max; 
+		if (axisLimits.leftaxis.auto)
+			if (!isNaN(plot.axes.yaxis.min) && !isNaN(plot.axes.yaxis.max)) {
+				axisLimits.leftaxis.min = plot.axes.yaxis.min; 
+				axisLimits.leftaxis.max = plot.axes.yaxis.max; 
 			}
-		}
-		if (axisLimits.rightaxis.auto) {
-			if (!isNaN(this.plot.axes.y2axis.min) && !isNaN(this.plot.axes.y2axis.max)) {
-				axisLimits.rightaxis.min = this.plot.axes.y2axis.min;
-				axisLimits.rightaxis.max = this.plot.axes.y2axis.max;
+		if (axisLimits.rightaxis.auto)
+			if (!isNaN(plot.axes.y2axis.min) && !isNaN(plot.axes.y2axis.max)) {
+				axisLimits.rightaxis.min = plot.axes.y2axis.min;
+				axisLimits.rightaxis.max = plot.axes.y2axis.max;
 			}
-		}
 		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 	}
 /* 	updateChart() {

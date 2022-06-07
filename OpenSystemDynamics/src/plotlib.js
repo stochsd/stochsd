@@ -167,14 +167,14 @@ class Plot1 {
 
 
 class LinePlot {
-	constructor(parentId) {
-		this.connect(parentId)
+	constructor(parent, parentId) {
+		this.connect(parent, parentId)
 		this.lines = [] // {points: [], settings: {...}}[]
 		this.options = {}
 	}
-	connect(parentId) {
+	connect(parent, parentId) {
 		this.parentId = parentId
-		this.parent = $(`#${parentId}`)
+		this.parent = $(parent) // $(`#${parentId}`)
 	}
 	clear() {
 		this.parent.empty()
@@ -194,7 +194,7 @@ class LinePlot {
 			: Array.isArray(warning)
 				? `<ul class="warning">${warning.map(d => `<li>${d}</li>`).join(",")}</ul>`
 				: `<span class="warning">${warning}</span>`
-		parent.html(titleHtml + descHtml + warnHtml)
+		this.parent.html(titleHtml + descHtml + warnHtml)
 	}
 	/**
 	 * Add numbered lines to datapoints
@@ -294,7 +294,6 @@ class LinePlot {
 					label: option?.axes?.xaxis?.label,
 					min: option.min,
 					max: option.max,
-					// ticks: tickList
 				},
 				yaxis: {
 					renderer: option?.axes?.yaxis?.renderer == "log"
@@ -327,7 +326,7 @@ class LinePlot {
 				formatString: `<table class="jqplot-highlighter" style="color: black;">
 						${option.highlighter?.display?.map(d => (
 					`<tr><td>${d.name}</td><td> = </td><td>${d.format}</td></tr>`
-				))}
+				)).join("")}
 				</table>`,
 				useAxesFormatters: false
 			},
@@ -408,7 +407,7 @@ class LinePlot {
 		// Measure in pixels 
 		console.log("this.parent", this.parent)
 		console.log("this.parent", this.parent)
-		let pxWidth = this.parent[dimention]() - 80;
+		let pxWidth = this.parent[dimention]() - (dimention == "width" ? 80 : 20);
 		let minPxStep = 50;
 		let maxSteps = Math.floor(pxWidth / minPxStep);
 
