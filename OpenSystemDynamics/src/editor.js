@@ -2720,7 +2720,7 @@ class TimePlotVisual extends PlotVisual {
 						side: sides[i],
 						linePattern: this.patternsToDisplay[i],
 						color: this.primitive.getAttribute("ColorFromPrimitive") === "true" ? this.colorsToDisplay[i] : undefined,
-						pointLabels: {show: hasNumberedLines},
+						pointLabels: { show: hasNumberedLines },
 					},
 					true
 				)
@@ -2736,7 +2736,7 @@ class TimePlotVisual extends PlotVisual {
 					renderer: this.primitive.getAttribute("LeftLogScale")==="true" ? "log" : "linear",
 					label: this.primitive.getAttribute("LeftAxisLabel"),
 				},
-				yaxis: {
+				y2axis: {
 					renderer: this.primitive.getAttribute("RightLogScale")==="true" ? "log" : "linear",
 					label: this.primitive.getAttribute("RightAxisLabel"),
 				}
@@ -2779,99 +2779,6 @@ class TimePlotVisual extends PlotVisual {
 			}
 		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 	}
-/* 	updateChart() {
-		// Dont update chart if primitive has been deleted
-		// This check needs to be here since updateChart is updated with a timeout 
-		if (! (this.id in connection_array)) return;
-
-		if (this.serieArray == null || this.serieArray.length == 0) {
-			this.setEmptyPlot();
-			return;
-		}
-		$(this.chartDiv).empty();
-
-		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
-		let max = Number(axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max);
-		let tickList = this.getTicks(min, max);
-
-		$.jqplot.config.enablePlugins = true;
-		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.primitive.getAttribute("TitleLabel"),
-			series: this.serieSettingsArray,
-			grid: {
-				background: "transparent",
-				shadow: false
-			},
-			axes: {
-				xaxis: {
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: "Time",
-					min: min,
-					max: max,
-					ticks: tickList
-				},
-				yaxis: {
-					renderer: (this.primitive.getAttribute("LeftLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.primitive.getAttribute("LeftAxisLabel"),
-					min: axisLimits.leftaxis.auto ? undefined : axisLimits.leftaxis.min,
-					max: axisLimits.leftaxis.auto ? undefined : axisLimits.leftaxis.max
-				},
-				y2axis: {
-					renderer: (this.primitive.getAttribute("RightLogScale")==="true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.primitive.getAttribute("RightAxisLabel"),
-					min: axisLimits.rightaxis.auto ? undefined : axisLimits.rightaxis.min,
-					max: axisLimits.rightaxis.auto ? undefined : axisLimits.rightaxis.max,
-					tickOptions: {
-						showGridline: false
-					}
-				}
-			},
-			highlighter: {
-				show: this.primitive.getAttribute("ShowHighlighter") === "true",
-				sizeAdjust: 1.5,
-				tooltipAxes: "xy",
-				fadeTooltip: false,
-				tooltipLocation: "ne",
-				formatString: "Time = %.5p<br/>Value = %.5p",
-				useAxesFormatters: false
-			},
-			legend: {
-				show: true,
-				placement: 'outsideGrid'
-			 }
-		});
-		if (axisLimits.leftaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("yaxis")) {
-			if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
-				axisLimits.leftaxis.min = this.plot.axes.yaxis.min; 
-				axisLimits.leftaxis.max = this.plot.axes.yaxis.max; 
-			}
-		}
-		if (axisLimits.rightaxis.auto && this.serieSettingsArray.map(ss => ss["yaxis"]).includes("y2axis") ) {
-			if ( ! isNaN(this.plot.axes.y2axis.min) && ! isNaN(this.plot.axes.y2axis.max) ) {
-				axisLimits.rightaxis.min = this.plot.axes.y2axis.min;
-				axisLimits.rightaxis.max = this.plot.axes.y2axis.max;
-			}
-		}
-
-		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
-	} */
-	/* setEmptyPlot() {
-		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.primitive);
-		let selected_str = "None selected";
-		if (idsToDisplay.length !== 0) {
-			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
-			</ul>`);
-		}
-		this.chartDiv.innerHTML = (`
-			<div class="empty-plot-header">Time Plot</div>
-			${selected_str}
-		`);
-	} */
 	setEmptyPlot() {
 		this.linePlot.clear()
 		const idsToDisplay = getDisplayIds(this.primitive);
@@ -2971,7 +2878,6 @@ class DataGenerations {
 			this.lineWidthGen.pop();
 			this.resultGen.pop();
 		}
-		
 		// Add new 
 		this.append(ids, results, lineOptions);
 	}
@@ -3031,9 +2937,13 @@ class DataGenerations {
 		}
 		return list
 	}
-	getSeriesArray(wantedIds, hasNumberedLines) {
-		let seriesArray = [];
-		let lineCount = 0;
+	/**
+	 * @param {string[]} wantedIds 
+	 * @param {boolean} colorFromPrimitive 
+	 * @returns {{points: [number, number][], settings: any}[]}
+	 */
+	getLines(wantedIds, colorFromPrimitive=true, hasNumberedLines=true) {
+		let lines = []
 		// Loop generations 
 		for(let i = 0; i < this.idGen.length; i++) {
 			let currentIds = this.idGen[i];
@@ -3041,53 +2951,28 @@ class DataGenerations {
 			for(let j = 0; j < currentIds.length; j++) {
 				let id = currentIds[j];
 				if(wantedIds.includes(id)) {
-					let tmpArr = [];
-					lineCount++;
-					let plotPerIdx = Math.floor(this.resultGen[i].length/4);
+					const settings = {
+						label: this.labelGen[i][j],
+						showLabel: true, 
+						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
+						side: "L",
+						linePattern: this.patternGen[i][j],
+						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
+						pointLabels: { show: hasNumberedLines }
+					};
+					const points = [] // this.resultGen[i].map(row => [row[0], row[j+1]])
 					// loop through simulation run (each value)
 					for (let k = 0; k < this.resultGen[i].length; k++) {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
 						let value = Number(row[j+1]);
-						let showNumHere = (k%plotPerIdx) === Math.floor((plotPerIdx/2 + (plotPerIdx*lineCount)/8)%plotPerIdx);
-						tmpArr.push([time, value, showNumHere && hasNumberedLines ? Math.floor(lineCount).toString() : null]);
+						points.push([time, value]);
 					}
-					seriesArray.push(tmpArr);
+					lines.push({points, settings})
 				}
 			}
 		}
-		return seriesArray;
-	}
-	getSeriesSettingsArray(wantedIds, hasNumberedLines, colorFromPrimitive) {
-		let seriesSettingsArray = [];
-		let countLine = 0;
-		// Loop generations 
-		for(let i = 0; i < this.idGen.length; i++) {
-			let currentIds = this.idGen[i];
-			for(let j = 0; j < currentIds.length; j++) {
-				let id = currentIds[j];
-				if(wantedIds.includes(id)) {
-					countLine++;
-					seriesSettingsArray.push({
-						showLabel: true, 
-						lineWidth: this.lineWidthGen[i][j], // change according to lineOptions here 
-						label: `${(hasNumberedLines ? `${countLine}. ` : "")}${this.labelGen[i][j]}`,
-						linePattern: this.patternGen[i][j],
-						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
-						shadow: false,
-						showMarker: false,
-						markerOptions: { size: 5 },
-						pointLabels: {
-							show: true,
-							edgeTolerance: 0,
-							ypadding: 0,
-							location: "n" 
-						}
-					});
-				}
-			}
-		}
-		return seriesSettingsArray;
+		return lines;
 	}
 }
 
@@ -3102,7 +2987,7 @@ class ComparePlotVisual extends PlotVisual {
 		this.plot = null;
 		this.serieArray = null;
 		this.gens = new DataGenerations();
-		
+		this.linePlot = new LinePlot(this.chartDiv, this.chartId);
 		this.dialog = new ComparePlotDialog(id);
 		this.dialog.subscribePool.subscribe(()=>{
 			this.render();
@@ -3132,41 +3017,58 @@ class ComparePlotVisual extends PlotVisual {
 		this.gens.append(getDisplayIds(this.primitive), results, line_options);
 	}
 	render() {
-
-		let idsToDisplay = getDisplayIds(this.primitive);
-		this.primitive.setAttribute("Primitives", idsToDisplay.join(","));
+		let displayIds = getDisplayIds(this.primitive);
+		this.primitive.setAttribute("Primitives", displayIds.join(","));
 		
 		if (this.gens.numGenerations == 0) {
 			this.setEmptyPlot();
 			return;
 		}
 		
-		// Declare series and settings for series
-		this.serieSettingsArray = [];
-		this.serieArray = [];
-
+		const colorFromPrimitive = this.primitive.getAttribute("ColorFromPrimitive") === "true";
 		let hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true";
 
-		// Make time series
-		this.serieArray = this.gens.getSeriesArray(idsToDisplay, hasNumberedLines);
+		this.linePlot.clearLines()
+		this.gens.getLines(displayIds, colorFromPrimitive, hasNumberedLines).forEach(line => {
+			this.linePlot.addLine(line.points, line.settings, true)
+		})
+		this.linePlot.setOptions({
+			title: this.primitive.getAttribute("TitleLabel"),
+			axes: {
+				xaxis: {
+					label: "Time",
+				},
+				yaxis: {
+					renderer: this.primitive.getAttribute("LeftLogScale")==="true" ? "log" : "linear",
+					label: this.primitive.getAttribute("LeftAxisLabel"),
+				},
+			},
+			highlighter: {
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
+				display: [{name: "Time", format: "%.5p"}, {name: "Value", format: "%.5p"}]
+			},
+			showLegend: true
+		})
 
-		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-
-		// Make serie settings
-		this.serieSettingsArray = this.gens.getSeriesSettingsArray(
-			idsToDisplay, 
-			hasNumberedLines, 
-			this.primitive.getAttribute("ColorFromPrimitive") === "true"
-		);
-
-		do_global_log(JSON.stringify(this.serieSettingsArray));
-		
-		// We need to ad a delay and respond to events first to make this work in firefox
+		// We need to add a delay and respond to events first to make this work in firefox
 		setTimeout(() => {
 			this.updateChart();
 		 },200);
 	}
 	updateChart() {
+		// Dont update chart if primitive has been deleted
+		// This check needs to be here since updateChart is updated with a timeout 
+		if (! (this.id in connection_array)) return;
+
+		if (!this.linePlot.lines || this.linePlot.lines.length == 0) {
+			// The series are not initialized yet
+			this.setEmptyPlot();
+			return;
+		}
+		const plot = this.linePlot.draw()
+		console.log("plot", plot)
+	}
+	/* updateChart() {
 		// Dont update chart if primitive has been deleted
 		// This check needs to be here since updateChart is updated with a timeout 
 		if (! (this.id in connection_array)) return;
@@ -3224,20 +3126,15 @@ class ComparePlotVisual extends PlotVisual {
 			axisLimits.yaxis.max = this.plot.axes.yaxis.max; 
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 		}
-	}
+	} */
 	setEmptyPlot() {
-		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.primitive);
-		let selected_str = "None selected";
-		if (idsToDisplay.length !== 0) {
-			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
-			</ul>`);
-		}
-		this.chartDiv.innerHTML = (`
-			<div class="empty-plot-header">Compare Simulations Plot</div>
-			${selected_str}
-		`);
+		let displayIds = getDisplayIds(this.primitive);
+		this.linePlot.setEmpty(
+			"Compare Simulations Plot", 
+			displayIds.length == 0 
+				? "None selected" 
+				: displayIds.map(id => getName(findID(id)))
+		)
 	}
 }
 

@@ -374,7 +374,7 @@ const trackableTypes = ["Stock", "Flow", "Variable", "Converter"];
  	Method: getIdsToDisplay
 	Gets all ids to display for a given plot
 	@param {string} plotPrimitive ID of plot to get 
-	@returns {[string]} primitive's id to display for Plots/Table
+	@returns {string[]} primitive's id to display for Plots/Table
  */
 function getDisplayIds(plotPrimitive) {
 	if (isTimePlot(plotPrimitive)) {
