@@ -2960,8 +2960,8 @@ class DataGenerations {
 						color: (colorFromPrimitive ? this.colorGen[i][j] : undefined),
 						pointLabels: { show: hasNumberedLines }
 					};
-					const points = [] // this.resultGen[i].map(row => [row[0], row[j+1]])
 					// loop through simulation run (each value)
+					const points = []; 
 					for (let k = 0; k < this.resultGen[i].length; k++) {
 						let row = this.resultGen[i][k];
 						let time = Number(row[0]);
@@ -3005,19 +3005,19 @@ class ComparePlotVisual extends PlotVisual {
 	fetchData() {
 		this.fetchedIds = getDisplayIds(this.primitive);
 
-		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
-			plot_per = this.dialog.getDefaultPlotPeriod();
-			this.primitive.setAttribute("PlotPer", plot_per);
+		const autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let plotPer = Number(this.primitive.getAttribute("PlotPer"));
+		if (autoPlotPer && plotPer !== this.dialog.getDefaultPlotPeriod()) {
+			plotPer = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plotPer);
 		}
-		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
-		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		const results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plotPer);
+		const lineOptions = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		// add generation 
-		this.gens.append(getDisplayIds(this.primitive), results, line_options);
+		this.gens.append(getDisplayIds(this.primitive), results, lineOptions);
 	}
 	render() {
-		let displayIds = getDisplayIds(this.primitive);
+		const displayIds = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", displayIds.join(","));
 		
 		if (this.gens.numGenerations == 0) {
@@ -3026,7 +3026,7 @@ class ComparePlotVisual extends PlotVisual {
 		}
 		
 		const colorFromPrimitive = this.primitive.getAttribute("ColorFromPrimitive") === "true";
-		let hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true";
+		const hasNumberedLines = this.primitive.getAttribute("HasNumberedLines") === "true";
 
 		this.linePlot.clearLines()
 		this.gens.getLines(displayIds, colorFromPrimitive, hasNumberedLines).forEach(line => {
@@ -3065,68 +3065,18 @@ class ComparePlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		const plot = this.linePlot.draw()
-		console.log("plot", plot)
-	}
-	/* updateChart() {
-		// Dont update chart if primitive has been deleted
-		// This check needs to be here since updateChart is updated with a timeout 
-		if (! (this.id in connection_array)) return;
-
-		if (this.serieArray == null || this.serieArray.length == 0 || this.serieArray[0].length === 0) {
-			// The series are not initialized yet
-			this.setEmptyPlot();
-			return;
-		}
-		$(this.chartDiv).empty();
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		let min = Number(axisLimits.timeaxis.auto ? getTimeStart() : axisLimits.timeaxis.min);
 		let max = Number(axisLimits.timeaxis.auto ? getTimeStart()+getTimeLength() : axisLimits.timeaxis.max);
-		let tickList = this.getTicks(min, max);
-
-		this.plot = $.jqplot(this.chartId, this.serieArray, {  
-			title: this.primitive.getAttribute("TitleLabel"),
-			series: this.serieSettingsArray,
-			grid: {
-				background: "transparent",
-				shadow: false
-			},
-			axes: {
-				xaxis: {
-					label: "Time",
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					min: min,
-					max: max,
-					ticks: tickList, 
-				},
-				yaxis: {
-					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
-					labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-					label: this.primitive.getAttribute("LeftAxisLabel"),
-					min: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.min,
-					max: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.max
-				}
-			},
-			highlighter: {
-				show: this.primitive.getAttribute("ShowHighlighter") === "true",
-				sizeAdjust: 1.5,
-				tooltipAxes: "xy",
-				fadeTooltip: false,
-				tooltipLocation: "ne",
-				formatString: "Time = %.5p<br/>Value = %.5p",
-				useAxesFormatters: false
-			},
-			legend: {
-				show: true,
-				placement: 'outsideGrid'
-			 }
-		});
-		if ( ! isNaN(this.plot.axes.yaxis.min) && ! isNaN(this.plot.axes.yaxis.max) ) {
-			axisLimits.yaxis.min = this.plot.axes.yaxis.min; 
-			axisLimits.yaxis.max = this.plot.axes.yaxis.max; 
+		this.linePlot.addOption({axes: {xaxis: {min, max}}})
+		!axisLimits.yaxis.auto && this.linePlot.addOption({axes: {yaxis: {min: axisLimits.yaxis.min, max: axisLimits.yaxis.max}}})
+		const plot = this.linePlot.draw()
+		if (!isNaN(plot.axes.yaxis.min) && !isNaN(plot.axes.yaxis.max)) {
+			axisLimits.yaxis.min = plot.axes.yaxis.min; 
+			axisLimits.yaxis.max = plot.axes.yaxis.max; 
 			this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
 		}
-	} */
+	}
 	setEmptyPlot() {
 		let displayIds = getDisplayIds(this.primitive);
 		this.linePlot.setEmpty(
