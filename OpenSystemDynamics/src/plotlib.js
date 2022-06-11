@@ -64,7 +64,7 @@ class LinePlot {
 			settings: {
 				shadow: false,
 				showMarker: false,
-				markerOptions: { size: 5 },
+				markerOptions: { size: 5, style: settings.markerOptions?.style },
 				showLabel: settings.showLabel,
 				lineWidth: settings.lineWidth ?? 2,
 				label: (settings.pointLabels?.show ? `${this.lines.length + 1}. ` : "") + settings.label ?? "Untitled",
@@ -118,6 +118,7 @@ class LinePlot {
 				background: "transparent",
 				shadow: false
 			},
+			sortData: false,
 			axes: {
 				xaxis: {
 					renderer: option?.axes.xaxis.renderer == "log"
@@ -151,14 +152,14 @@ class LinePlot {
 				},
 			},
 			highlighter: {
-				show: option.highlighter.show,
+				show: option?.highlighter?.show,
 				sizeAdjust: 1.5,
 				tooltipAxes: "xy",
 				fadeTooltip: false,
 				tooltipLocation: "ne",
 				formatString: `<table class="jqplot-highlighter" style="color: black;">
 						${option.highlighter?.display?.map(d => (
-					`<tr><td>${d.name}</td><td> = </td><td>${d.format}</td></tr>`
+					`<tr><td>${d.name} </td><td> = </td><td> ${d.format}</td></tr>`
 				)).join("")}
 				</table>`,
 				useAxesFormatters: false
@@ -197,13 +198,13 @@ class LinePlot {
 	getTickOptions() {
 		return {
 			axes: {
-				...(this.options.axes.xaxis.min != undefined && this.options.axes.xaxis.max != undefined
+				...(this.options?.axes?.xaxis?.min != undefined && this.options?.axes?.xaxis?.max != undefined
 					? { xaxis: { ticks: this.getTicks(this.options.axes.xaxis.min, this.options.axes.xaxis.max, "width") } }
 					: {}),
-				...(this.options.axes.yaxis.min != undefined && this.options.axes.yaxis.max != undefined
+				...(this.options?.axes?.yaxis?.min != undefined && this.options?.axes?.yaxis?.max != undefined
 					? { yaxis: { ticks: this.getTicks(this.options.axes.yaxis.min, this.options.axes.yaxis.max, "height") } }
 					: {}),
-				...(this.options.axes.y2axis.min != undefined && this.options.axes.y2axis.max != undefined
+				...(this.options?.axes?.y2axis?.min != undefined && this.options?.axes?.y2axis?.max != undefined
 					? { y2axis: { ticks: this.getTicks(this.options.axes.y2axis.min, this.options.axes.y2axis.max, "height") } }
 					: {})
 			}

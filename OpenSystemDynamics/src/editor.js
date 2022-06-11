@@ -3428,7 +3428,7 @@ class XyPlotVisual extends PlotVisual {
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
-		
+		this.linePlot = new LinePlot(this.chartDiv, this.chartId)
 		this.xAxisColor = defaultStroke;
 		this.yAxisColor = defaultStroke;
 
@@ -3450,16 +3450,17 @@ class XyPlotVisual extends PlotVisual {
 		}
 	}
 	render() {		
-		let IdsToDisplay = getDisplayIds(this.primitive);
-		this.primitive.setAttribute("Primitives",IdsToDisplay.join(","));
-		this.namesToDisplay = IdsToDisplay.map(findID).map(getName);
-		let auto_plot_per = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
-		let plot_per = Number(this.primitive.getAttribute("PlotPer"));
-		if (auto_plot_per && plot_per !== this.dialog.getDefaultPlotPeriod()) {
-			plot_per = this.dialog.getDefaultPlotPeriod();
-			this.primitive.setAttribute("PlotPer", plot_per);
+		console.log("XY Plot.render")
+		let displayIds = getDisplayIds(this.primitive);
+		this.primitive.setAttribute("Primitives", displayIds.join(","));
+		this.namesToDisplay = displayIds.map(findID).map(getName);
+		let autoPlotPer = JSON.parse(this.primitive.getAttribute("AutoPlotPer"));
+		let plotPer = Number(this.primitive.getAttribute("PlotPer"));
+		if (autoPlotPer && plotPer !== this.dialog.getDefaultPlotPeriod()) {
+			plotPer = this.dialog.getDefaultPlotPeriod();
+			this.primitive.setAttribute("PlotPer", plotPer);
 		}
-		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
+		let results = RunResults.getFilteredSelectiveIdResults(displayIds, getTimeStart(), getTimeLength(), plotPer);
 		if (results.length == 0) {
 			this.setEmptyPlot();
 			return;
@@ -3471,10 +3472,10 @@ class XyPlotVisual extends PlotVisual {
 		this.minYValue = 0;
 		this.maxYValue = 0;
 		
-		this.serieXName = "X series";
-		this.serieYName = "Y series";
+		let serieXName = "X series";
+		let serieYName = "Y series";
 		
-		if (IdsToDisplay.length != 2) {
+		if (displayIds.length != 2) {
 			// We have no series to display
 			this.setEmptyPlot();
 			return;
@@ -3482,8 +3483,8 @@ class XyPlotVisual extends PlotVisual {
 		
 		let makeXYSerie = () => {
 			let serie = [];
-			this.serieXName = this.namesToDisplay[0];
-			this.serieYName = this.namesToDisplay[1];
+			serieXName = this.namesToDisplay[0];
+			serieYName = this.namesToDisplay[1];
 			
 			for(let row of results) {
 				let x = Number(row[1]);
@@ -3505,81 +3506,97 @@ class XyPlotVisual extends PlotVisual {
 			}
 			return serie;
 		}
-		
-		// Declare series and settings for series
-		this.serieSettingsArray = [];
-		this.serieArray = [];
-		
-		// Make time series
-		let dataSerie = makeXYSerie();
-		this.serieArray.push(dataSerie);
-		do_global_log("serieArray "+JSON.stringify(this.serieArray));
-		
-		// Make serie settings
-		this.serieSettingsArray.push({
-			lineWidth: this.primitive.getAttribute("LineWidth"), 
-			color: "black",
-			shadow: false,
-			showLine: this.primitive.getAttribute("ShowLine") === "true",
-			showMarker: this.primitive.getAttribute("ShowMarker") === "true",
-			markerOptions: { shadow: false, size: 5 },
-			pointLabels: { show: false }
-		});
+		let points = makeXYSerie();
+		this.linePlot.clearLines()
+		this.linePlot.addLine(
+			points, 
+			{
+				color: "black",				
+				lineWidth: this.primitive.getAttribute("LineWidth"), 
+				showLine: this.primitive.getAttribute("ShowLine") === "true",
+				showMarker: this.primitive.getAttribute("ShowMarker") === "true",
+				pointLabels: {show: false},
+			},
+			false
+		)
 		if (this.primitive.getAttribute("MarkStart") === "true") {
-			this.serieArray.push([dataSerie[0]]);
-			this.serieSettingsArray.push({
-				color: "#ff4444", 
-				showLine: false, 
-				showMarker: true, 
-				markerOptions: {shadow: false}, 
-				pointLabels: { show: false }
-			});
-		} 
-		if (this.primitive.getAttribute("MarkEnd") === "true") {
-			this.serieArray.push([dataSerie[dataSerie.length-1]]);
-			this.serieSettingsArray.push({
-				color: "#00aa00", 
-				showLine: false, 
-				showMarker: true, 
-				markerOptions: { 
-					style: "filledSquare",
-					shadow: false,
-					pointLabels: { show: false } 
-				} 
-			});
+			this.linePlot.addLine(
+				[points[0]], 
+				{
+					color: "#ff4444",
+					showMarker: true,
+					pointLabels: {show: false}
+				}
+			)
 		}
-		
-		do_global_log(JSON.stringify(this.serieSettingsArray));
-		
+		if (this.primitive.getAttribute("MarkEnd") === "true") {
+			this.linePlot.addLine(
+				[points[points.length-1]], 
+				{
+					color: "#00aa00",
+					showMarker: true,
+					markerOptions: {
+						style: "filledSquare",
+					},
+					pointLabels: {show: false}
+				}
+			)
+		}
+		console.log("show XY hightlighter", this.primitive.getAttribute("ShowHighlighter") === "true")
+		this.linePlot.setOptions({
+			title: this.primitive.getAttribute("TitleLabel"),
+			sortData: false,
+			axes: {
+				xaxis: {
+					label: serieXName,
+				},
+				yaxis: {
+					label: serieYName,
+				},
+			},
+			highlighter: {
+				show: this.primitive.getAttribute("ShowHighlighter") === "true",
+				display: [
+					{name: "Time", format: "%3$.3p"}, 
+					{name: serieXName, format: "%1$.3p"}, 
+					{name: serieYName, format: "%2$.3p"}
+				]
+			},
+		})
 		// We need to ad a delay and respond to events first to make this work in firefox
 		setTimeout(() => {
 			this.updateChart();
 		 },200);
 	}
-	
 	updateChart() {
 		// Dont update chart if primitive has been deleted
 		// This check needs to be here since updateChart is updated with a timeout 
 		if (! (this.id in connection_array)) return;
-
-		if (this.serieArray == null) {
+		if (!this.linePlot.lines || this.linePlot.lines.length == 0 || getDisplayIds(this.primitive).length != 2) {
 			// The series are not initialized yet
 			this.setEmptyPlot();
 			return;
 		}
-		if (getDisplayIds(this.primitive).length != 2) {
-			this.setEmptyPlot();
-			return;
+		this.linePlot.clear()
+		const axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
+		// this.linePlot.addOption({})
+		const plot = this.linePlot.draw()
+		console.log(plot)
+		if (axisLimits.xaxis.auto) {
+			axisLimits.xaxis.min = plot.axes.xaxis.min;
+			axisLimits.xaxis.max = plot.axes.xaxis.max;
 		}
-		$(this.chartDiv).empty();
+		if (axisLimits.yaxis.auto) {
+			axisLimits.yaxis.min = plot.axes.yaxis.min;
+			axisLimits.yaxis.max = plot.axes.yaxis.max;
+		}
+		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
+	}
+	/* updateChart() {
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		this.plot = $.jqplot(this.chartId, this.serieArray, {  
 			series: this.serieSettingsArray,
 			title: this.primitive.getAttribute("TitleLabel"),
-			grid: {
-				background: "transparent",
-				shadow: false
-			},
 			sortData: false,
 			axesDefaults: {
 				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
@@ -3609,7 +3626,7 @@ class XyPlotVisual extends PlotVisual {
 				formatString: (`
 					<table class="jqplot-highlighter" style="color: black;">
 						<tr><td>Time </td><td> = </td><td>%3$.3p</td></tr>
-        				<tr><td>${this.serieXName} </td><td> = </td><td>%1$.3p</td></tr>
+        		<tr><td>${this.serieXName} </td><td> = </td><td>%1$.3p</td></tr>
 						<tr><td>${this.serieYName} </td><td> = </td><td>%2$.3p</td></tr>
 					</table>
 				`),
@@ -3625,23 +3642,14 @@ class XyPlotVisual extends PlotVisual {
 			axisLimits.yaxis.max = this.plot.axes.yaxis.max;
 		}
 		this.primitive.setAttribute("AxisLimits", JSON.stringify(axisLimits));
-	}
+	} */
 	setEmptyPlot() {
-		$(this.chartDiv).empty();
-		let idsToDisplay = getDisplayIds(this.primitive);
-		let selected_str = "None selected<br/>";
-		if (idsToDisplay.length !== 0) {
-			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
-			</ul>`);
-		}
-		if (idsToDisplay.length !== 2)  {
-			selected_str += warningHtml("<br/>Exactly two primitives must be selected!"); 
-		}
-		this.chartDiv.innerHTML = (`
-			<div class="empty-plot-header">XY Plot</div>
-			${selected_str}
-		`);
+		let displayIds = getDisplayIds(this.primitive);
+		this.linePlot.setEmpty(
+			"XY Plot", 
+			displayIds.length != 0 ? displayIds.map(id => getName(findID(id))) : "", 
+			displayIds.length != 2 ? "Exactly two primitives must be selected!": undefined
+		)
 	}
 }
 
