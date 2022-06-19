@@ -3579,7 +3579,18 @@ class XyPlotVisual extends PlotVisual {
 		}
 		this.linePlot.clear()
 		const axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
-		// this.linePlot.addOption({})
+		this.linePlot.addOption({
+			axes: {
+				xaxis: {
+					min: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.min,
+					max: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.max
+				}, 
+				yaxis: {
+					min: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.min,
+					max: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.max
+				}
+			}
+		})
 		const plot = this.linePlot.draw()
 		console.log(plot)
 		if (axisLimits.xaxis.auto) {
