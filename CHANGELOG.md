@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Show Experimental Function Helper
 - Link to official StochSD forum inside StochSD.
 - Better support for PWA StochSD
+- Pasting two columns from speadsheet application into converter dialog works.
 
 ## Fixed
 - Ghosted Converter Bugs

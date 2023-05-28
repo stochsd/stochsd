@@ -9059,12 +9059,25 @@ class ConverterDialog extends jqDialog {
 			this.updateValues(event.target.value)
 			this.updatePlot()
 		})
+		$(this.valueField).on("paste", (event) => {
+			let pasteString = event.originalEvent.clipboardData.getData('text/plain');
+			let data = pasteString.split("\n").map(row => row.split("\t"))
+			data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
+			if (data.length >= 1) {
+				event.preventDefault()
+				$(event.target).val(data.map(d => d.join(",\t")).join(";\n"))
+				this.updatePlot()
+			}
+		})
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.key == "Enter") {
 				this.applyChanges();
 			}
 		});
+	}
+	isValidCellValue(strValue) {
+		return !(strValue.trim() === "" || isNaN(strValue))
 	}
 	open(id,defaultFocusSelector = null) {
 		if (jqDialog.blockingDialogOpen) {
