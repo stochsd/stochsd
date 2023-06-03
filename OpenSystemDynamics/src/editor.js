@@ -9008,8 +9008,8 @@ class ConverterDialog extends jqDialog {
 		// [number,number][]
 		this.currentValues = [];
 		this.setHtml(`
-			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 1rem;">
-				<div class="primitive-settings" style="padding: 10px 0px;">
+			<div style="display: grid; grid-template-columns: 25rem auto; grid-gap: 1rem;">
+				<div class="primitive-settings" style="padding: 1rem 0;">
 						<b>Name:</b><br/>
 						<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
 						<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
@@ -9029,18 +9029,23 @@ class ConverterDialog extends jqDialog {
 			<p>The converter is a table look-up function that converts the values X<sub>i</sub> from the input (the linked-in primitive) to the output values Y<sub>i</sub> from the converter.</p>
 			<p>
 				<b>Definition:</b></br>
-				&nbsp &nbsp <span style="font-family: monospace;">X<sub>1</sub>,Y<sub>1</sub>; X<sub>2</sub>,Y<sub>2</sub>; ...; X<sub>n</sub>,Y<sub>n</sub></span>
-				&nbsp &nbsp &nbsp (Often X is time)
+				&nbsp &nbsp <span style="font-family: monospace;" >
+				${["1","2", undefined, "n"].map(e => e ? `<span class="cm-x">X<sub>${e}</sub></span>,<span class="cm-y">Y<sub>${e}</sub></span>` : "...").join("; ")}
+				</span>
+				&nbsp &nbsp &nbsp (Often <span>X is time)
 				</br>
 				</br>
 				<b>Example:</b></br>
-				&nbsp &nbsp <span style="font-family: monospace;" >0,0; 1,1; 2,4; 3,9</span>
+				&nbsp &nbsp <span style="font-family: monospace;" >
+				${[[0,0], [1,1], [2,4], [3,9]].map(e => `<span class="cm-x">${e[0]}</span>,<span class="cm-y">${e[1]}</span>`).join("; ")}
+				</span>
 			</p>
 			<b>Key bindings:</b>
 			<ul style="margin: 0.5em 0;">
 				<li>${keyHtml("Esc")} &rarr; Cancels changes</li>
 				<li>${keyHtml("Enter")} &rarr; Applies changes</li>
 				<li>${keyHtml(["Shift","Enter"])} &rarr; Adds new line</li>
+				<li>${keyHtml(["Ctrl","v"])} &rarr; Paste (you can paste two columns from spreadsheet program)</li>
 			</ul>
 			${noteHtml("Comments are not allowed in the converter.")}
 		</div>
@@ -9048,25 +9053,38 @@ class ConverterDialog extends jqDialog {
 
 		this.inLinkParagraph = $(this.dialogContent).find(".in-link").get(0);
 		this.valueField = $(this.dialogContent).find(".value-field").get(0);
-		$(this.valueField).keydown((event) => {
-			if (! event.shiftKey) {
-				if (event.key == "Enter") {
-					this.applyChanges();
+		this.cmValueField = new CodeMirror.fromTextArea(this.valueField,
+			{
+				mode: "convertermode", 
+				theme: "stochsdtheme oneline",
+				lineWrapping: true,
+				lineNumbers: false,
+				extraKeys: {
+					"Esc": () => {
+						this.dialogParameters.buttons["Cancel"]();
+					},
+					"Enter": () => {
+						this.dialogParameters.buttons["Apply"]();
+					},
+					"Shift-Tab": () => {
+						this.nameField.focus();
+					}
 				}
 			}
-		});
-		$(this.valueField).keyup((event) => {
-			this.updateValues(event.target.value)
+		);
+		this.cmValueField.on("keyup", (cm) => {
+			this.updateValues(cm.getValue())
 			this.updatePlot()
 		})
-		$(this.valueField).on("paste", (event) => {
-			let pasteString = event.originalEvent.clipboardData.getData('text/plain');
-			let data = pasteString.split("\n").map(row => row.split("\t"))
-			data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
-			if (data.length >= 1) {
-				event.preventDefault()
-				$(event.target).val(data.map(d => d.join(",\t")).join(";\n"))
-				this.updatePlot()
+		this.cmValueField.on("inputRead", (cm, event) => {
+			if (event.origin == "paste") {
+				console.log(event.text)
+				let data = event.text.map(row => row.split("\t"))
+				data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
+				if (data.length >= 1) {
+					cm.setValue(data.map(d => d.join(",\t")).join(";\n"))
+					this.updatePlot()
+				}
 			}
 		})
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
@@ -9112,7 +9130,7 @@ class ConverterDialog extends jqDialog {
 		this.setTitle(`${oldNameBrackets} properties`);
 
 		$(this.nameField).val(oldNameBrackets);
-		$(this.valueField).val(oldValue);
+		this.cmValueField.setValue(oldValue);
 		
 		if (this.defaultFocusSelector) {
 			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
@@ -9170,7 +9188,7 @@ class ConverterDialog extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.valueField).val();
+			let value = $(this.cmValueField).getValue();
 			setValue2(this.primitive,value);
 			
 			// handle name
@@ -9550,7 +9568,7 @@ class DefinitionEditor extends jqDialog {
 		this.setHtml(`
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 500px; height: 300px;">
+					<div class="table-cell" style="width: 30rem; height: 20rem;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
