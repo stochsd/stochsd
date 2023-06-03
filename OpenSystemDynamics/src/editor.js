@@ -9087,12 +9087,37 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		})
+		// add jqplot event at start 
+		// can alternativly use event "jqplotClick"
+		$.jqplot.eventListenerHooks.push(['jqplotMouseMove', (ev, gridpos, datapos, neighbor, plot) => {
+			if (plot.targetId === "#converter-plot-div") {
+				if (neighbor && Array.isArray(neighbor.data) && neighbor.data.length == 2) {
+					const value = this.cmValueField.getValue()
+					this.hightlightMatch(value, neighbor.pointIndex)
+				}
+			}
+		}]);
 		this.nameField = $(this.dialogContent).find(".name-field").get(0);
 		$(this.nameField).keydown((event) => {
 			if (event.key == "Enter") {
 				this.applyChanges();
 			}
 		});
+	}
+	hightlightMatch(string, index) {
+		const positions = [{line: 0, ch: 0}]
+		const lines = string.split("\n")
+		lines.map((lineString, lineNumber )=> {
+			let position = 0
+			do {
+				position = lineString.indexOf(";", position + 1)
+				position != -1 && positions.push({line: lineNumber, ch: position})
+			}	while (position != -1)
+			positions.push({line: lines.length, ch: 0})
+		})
+		// TODO: Hightlight text between position[index] and position[index+1]
+		this.cmValueField.setSelection(positions[index], positions[index+1])
+		return positions
 	}
 	isValidCellValue(strValue) {
 		return !(strValue.trim() === "" || isNaN(strValue))
