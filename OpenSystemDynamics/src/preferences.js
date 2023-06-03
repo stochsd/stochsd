@@ -19,7 +19,7 @@ var preferencesTemplate = {
 		image: "./graphics/showArgumentHelper.png",
 	},
 	"showConverterPlotPreview": {
-		default: false,
+		default: true,
 		type: "boolean",
 		title: "Show Converter Plot Preview",
 		description: "Show Converter Plot Preview while editing converter values."
