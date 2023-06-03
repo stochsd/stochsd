@@ -9008,8 +9008,8 @@ class ConverterDialog extends jqDialog {
 		// [number,number][]
 		this.currentValues = [];
 		this.setHtml(`
-			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 1rem;">
-				<div class="primitive-settings" style="padding: 10px 0px;">
+			<div style="display: grid; grid-template-columns: 25rem auto; grid-gap: 1rem;">
+				<div class="primitive-settings" style="padding: 1rem 0;">
 						<b>Name:</b><br/>
 						<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
 						<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
@@ -9568,7 +9568,7 @@ class DefinitionEditor extends jqDialog {
 		this.setHtml(`
 			<div class="table">
   				<div class="table-row">
-					<div class="table-cell" style="width: 500px; height: 300px;">
+					<div class="table-cell" style="width: 30rem; height: 20rem;">
 						<div class="primitive-settings" style="padding: 10px 20px 20px 0px">
 							<b>Name:</b><br/>
 							<input class="name-field enter-apply cm-primitive" style="width: 100%;" type="text" value=""><br/>
