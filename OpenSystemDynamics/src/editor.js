@@ -9156,7 +9156,41 @@ class ConverterDialog extends jqDialog {
 				</div>
 			`);
 		} else {
-			$.jqplot("converter-plot-div", [serieArray], {
+			// TODO: Add before and after series with dashed lines
+			const start = serieArray[0][0]
+			const end = serieArray.at(-1)[0]
+			const xDist = end - start
+			const beforeSeries = [ 
+				[start - 0.3*xDist, serieArray[0][1]], 
+				serieArray[0]
+			]
+			const afterSeries = [ 
+				serieArray.at(-1), 
+				[end + 0.3*xDist, serieArray.at(-1)[1]]
+			]
+			const color = this.primitive.getAttribute("Color")
+			const beforeAfterSeries = {
+				color: color,
+				showLine: true, 
+				showMarker: false,
+				linePattern: "dashed",
+				shadow: false,
+			}
+			$.jqplot("converter-plot-div", [serieArray, beforeSeries, afterSeries], {
+				series: [
+					{
+						color: color, 
+						showLine: true, 
+						showMarker: true, 
+						markerOptions: { 
+							size: 5,
+							shadow: false,
+							pointLabels: { show: false } 
+						}
+					},
+					beforeAfterSeries,
+					beforeAfterSeries
+				],
 				grid: {
 					background: "transparent",
 					shadow: false
@@ -9166,7 +9200,9 @@ class ConverterDialog extends jqDialog {
 				},
 				axes: {
 					xaxis: {
-						label: "Input"
+						label: "Input",
+						min: start - 0.2*xDist,
+						max: end + 0.2*xDist,
 					},
 					yaxis: {
 						label: "Output"
