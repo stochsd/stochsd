@@ -9078,7 +9078,6 @@ class ConverterDialog extends jqDialog {
 		})
 		this.cmValueField.on("inputRead", (cm, event) => {
 			if (event.origin == "paste") {
-				console.log(event.text)
 				let data = event.text.map(row => row.split("\t"))
 				data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
 				if (data.length >= 1) {
@@ -9188,7 +9187,7 @@ class ConverterDialog extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = $(this.cmValueField).getValue();
+			let value = this.cmValueField.getValue();
 			setValue2(this.primitive,value);
 			
 			// handle name
