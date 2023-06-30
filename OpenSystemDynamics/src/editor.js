@@ -1648,15 +1648,18 @@ class TwoPointer extends BaseObject {
 	}
 	syncAnchorToPrimitive(anchorType) {
 		// This function should sync anchor position to primitive 
+		console.log(this.name, this.id)
 		let Primitive = findID(this.id);
-		switch(anchorType) {
-			case anchorTypeEnum.start:
-				setSourcePosition(Primitive, this.start_anchor.getPos());
-			break;
-			case anchorTypeEnum.end:
-				setTargetPosition(Primitive, this.end_anchor.getPos());
-			break;
-		}
+		// if (Primitive) { // BUG stems from Primitive being undefined for misterious resons
+			switch(anchorType) {
+				case anchorTypeEnum.start:
+					setSourcePosition(Primitive, this.start_anchor.getPos());
+				break;
+				case anchorTypeEnum.end:
+					setTargetPosition(Primitive, this.end_anchor.getPos());
+				break;
+			}
+		//}
 	}
 }
 
@@ -3987,6 +3990,7 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	setEndAttach(new_end_attach) {
+		console.log("link.setEndAttach", this.id)
 		let old_end_attach = this._end_attach;
 		super.setEndAttach(new_end_attach);
 		if(new_end_attach != null && new_end_attach.getType() == "stock") {
@@ -6195,6 +6199,7 @@ function syncVisual(tprimitive) {
 	addMissingPrimitiveAttributes(tprimitive);
 
 	let nodeType = tprimitive.value.nodeName;
+	console.log(nodeType)
 	switch(nodeType) {
 		case "Numberbox":
 		{
