@@ -27,8 +27,14 @@
 .cm-normal {color: black; font-weight: normal; }
 
 /* Theme for converters */
-.cm-x { color: hsl(184, 100%, 31%); font-weight: bold; }
-.cm-y { color: hsl(295, 100%, 35%); font-weight: bold; }
+.cm-point { 
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    color: #123;
+    border-radius: 0.25em;
+}
+/* .cm-x { color: hsl(184, 100%, 31%); font-weight: bold; }
+.cm-y { color: hsl(295, 100%, 35%); font-weight: bold; } */
 
 div.CodeMirror span.CodeMirror-matchingbracket { color: black; background-color: hsl(0, 0%, 90%); font-weight: bold; }
 div.CodeMirror span.CodeMirror-nonmatchingbracket {color: hsl(0, 100%, 20%); background-color: hsl(0, 100%, 90%); font-weight: bold; }
