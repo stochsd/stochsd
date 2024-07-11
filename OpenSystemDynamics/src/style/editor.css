@@ -25,6 +25,10 @@ button {
 button:hover:enabled {
     background-color: white;
 }
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 #recent_title {
     background-color: #ddd; 
 }

@@ -129,6 +129,27 @@ function restoreAfterRestart() {
 }
 
 class History {
+	static #undoStates = []
+	static get undoStates() {
+		return this.#undoStates
+	}
+	static set undoStates(value) {
+		this.#undoStates = value
+		this.#updateUndoRedoButtons()
+	}
+	static #undoIndex = -1
+	static get undoIndex() {
+		return this.#undoIndex
+	}
+	static set undoIndex(value) {
+		this.#undoIndex = value
+		this.#updateUndoRedoButtons()
+	}
+	static #updateUndoRedoButtons() {
+		$("#btn_undo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == 0)
+		$("#btn_redo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == this.undoStates.length - 1)
+	}
+
 	static init() {
 		// We define this.undoIndex as pointing to the currently active undoState
 		// If we are at the first step with no undo-states behind it is -1
@@ -149,7 +170,7 @@ class History {
 		InsightMakerDocumentWriter.appendPrimitives();
 		let undoState = InsightMakerDocumentWriter.getXmlString();
 
-		// Add to undo history if it is different then previus state
+		// Add to undo history if it is different then previous state
 		if (this.lastUndoState != undoState) {
 			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex+1);
@@ -164,6 +185,7 @@ class History {
 				this.undoIndex = this.undoStates.length-1;
 			}
 		}
+		console.trace("Stored undo state", this.undoStates.length, this.undoIndex);
 	}
 
 	static forceCustomUndoState(newState) {
@@ -176,8 +198,8 @@ class History {
 	
 	static doUndo() {
 		if (this.undoIndex > 0) {
-			this.undoIndex --;
-			this.restoreUndoState();	
+			this.undoIndex--;
+			this.restoreUndoState();
 		} else {
 			xAlert("No more undo");
 		}
@@ -185,7 +207,7 @@ class History {
 	
 	static doRedo() {
 		if (this.undoIndex < this.undoStates.length-1) {
-			this.undoIndex ++;
+			this.undoIndex++;
 			this.restoreUndoState();
 		} else {
 			xAlert("No more redo");
@@ -1648,13 +1670,14 @@ class TwoPointer extends BaseObject {
 	}
 	syncAnchorToPrimitive(anchorType) {
 		// This function should sync anchor position to primitive 
-		let Primitive = findID(this.id);
+		let primitive = findID(this.id);
+		if (!primitive) return;
 		switch(anchorType) {
 			case anchorTypeEnum.start:
-				setSourcePosition(Primitive, this.start_anchor.getPos());
+				setSourcePosition(primitive, this.start_anchor.getPos());
 			break;
 			case anchorTypeEnum.end:
-				setTargetPosition(Primitive, this.end_anchor.getPos());
+				setTargetPosition(primitive, this.end_anchor.getPos());
 			break;
 		}
 	}
@@ -6042,7 +6065,6 @@ $(window).load(function() {
 
 	updateTimeUnitButton();
 	
-	History.storeUndoState();
 	History.unsavedChanges = false;
 	InfoBar.init();
 });
