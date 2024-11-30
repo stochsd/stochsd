@@ -81,12 +81,12 @@ class nwController {
     nwin.show();
     nwin.maximize();
   }
-  static getParams() {}
+  static getParams() { }
   static unsafeGetParams() {
     var nwgui = require("nw.gui");
     return nwgui.App.argv;
   }
-  static openFile() {}
+  static openFile() { }
   static unsafeOpenFile(fileName) {
     nwjsGui.Shell.openItem(fileName);
   }
@@ -290,7 +290,7 @@ class WebFileManagerBasic extends BaseFileManager {
   exportFile(dataToSave, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
 
     var fileName = prompt("Filename:", fileExtension);
@@ -316,7 +316,7 @@ class WebFileManagerBasic extends BaseFileManager {
 
         do_global_log("web load file call  back");
         var fileData = model.contents;
-        History.forceCustomUndoState(fileData);
+        SDHistory.forceCustomUndoState(fileData);
         this.updateTitle();
         preserveRestart();
       },
@@ -355,8 +355,8 @@ class WebFileManagerModern extends BaseFileManager {
   async getRecentFiles() {
     let recentFiles;
     try {
-       recentFiles = await idbKeyval.get("recentFiles") ?? []
-    } catch { 
+      recentFiles = await idbKeyval.get("recentFiles") ?? []
+    } catch {
       recentFiles = [];
     }
     return recentFiles;
@@ -370,8 +370,8 @@ class WebFileManagerModern extends BaseFileManager {
 
   async removeDuplicatesFromRecent(fileHandle, recentFiles) {
     let newRecentFiles = []
-    for(let i in recentFiles) {
-      if(!await recentFiles[i].isSameEntry(fileHandle))  {
+    for (let i in recentFiles) {
+      if (!await recentFiles[i].isSameEntry(fileHandle)) {
         newRecentFiles.push(recentFiles[i]);
       }
     }
@@ -472,24 +472,24 @@ class WebFileManagerModern extends BaseFileManager {
     if (withWrite) {
       opts.mode = 'readwrite';
     }
-  
+
     // Check if we already have permission, if so, return true.
     if (await fileHandle.queryPermission(opts) === 'granted') {
       return true;
     }
-  
+
     // Request permission to the file, if the user grants permission, return true.
     if (await fileHandle.requestPermission(opts) === 'granted') {
       return true;
     }
-  
+
     // The user did not grant permission, return false.
     return false;
   }
 
   async loadFromFileHandle(fileHandle) {
     const allowedPermisson = await this.verifyPermission(fileHandle, false);
-    if(!allowedPermisson) {
+    if (!allowedPermisson) {
       return;
     }
     await idbKeyval.del('fileHandle');
@@ -499,7 +499,7 @@ class WebFileManagerModern extends BaseFileManager {
     const fileData = await file.text();
     this.fileName = file.name;
     await this.addToRecent();
-    History.forceCustomUndoState(fileData);
+    SDHistory.forceCustomUndoState(fileData);
     this.updateTitle();
     preserveRestart();
   }
@@ -549,7 +549,7 @@ class ElectronFileManager extends BaseFileManager {
   exportFile(fileData, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
     const { dialog } = require("electron").remote;
     let fileName = dialog.showSaveDialog();
@@ -622,7 +622,7 @@ class NwFileManager extends BaseFileManager {
           reader.onload = (reader_event) => {
             do_global_log("NW: reader.onload callback");
             var fileData = reader_event.target.result;
-            History.forceCustomUndoState(fileData);
+            SDHistory.forceCustomUndoState(fileData);
 
             this.addToRecent(this.fileName);
 
@@ -711,7 +711,7 @@ class NwFileManager extends BaseFileManager {
   exportFile(dataToSave, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
     this.fileExportInput.onSuccess = onSuccess;
     do_global_log("NW: export file");
@@ -734,11 +734,11 @@ class NwFileManager extends BaseFileManager {
   }
   async getRecentFiles() {
     let recentTemp = await idbKeyval.get("recentFiles")
-    let recentFiles = typeof recentTemp == "string" 
-      ? JSON.parse(recentTemp) 
+    let recentFiles = typeof recentTemp == "string"
+      ? JSON.parse(recentTemp)
       : Array.isArray(recentTemp)
-      ? recentTemp 
-      : []
+        ? recentTemp
+        : []
     return recentFiles;
   }
   async setRecentFiles(recentFiles) {
@@ -861,7 +861,7 @@ class NwFileManager extends BaseFileManager {
         return console.error(err);
       }
       this.fileName = absoluteFileName;
-      History.forceCustomUndoState(data);
+      SDHistory.forceCustomUndoState(data);
       this.updateTitle();
       this.addToRecent(this.fileName);
       preserveRestart();
@@ -901,19 +901,19 @@ class WebEnvironment extends BaseEnvironment {
   ready() {
     return null;
     /*
-		window.onbeforeunload = (e) => {
-			if (this.reloadingStarted) {
-				// We never want to complain if we have initialized a reload
-				// We only want to complain when the user is closing the page
-				return null;
-			}
-			if (History.unsavedChanges) {
-				return 'You have unsaved changes. Are you sure you want to quit?';
-			} else {
-				return null;
-			}
-		};
-		*/
+    window.onbeforeunload = (e) => {
+      if (this.reloadingStarted) {
+        // We never want to complain if we have initialized a reload
+        // We only want to complain when the user is closing the page
+        return null;
+      }
+      if (History.unsavedChanges) {
+        return 'You have unsaved changes. Are you sure you want to quit?';
+      } else {
+        return null;
+      }
+    };
+    */
   }
   getFileManager() {
     // To use modern file api we need showSaveFilePicker

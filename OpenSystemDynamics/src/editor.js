@@ -83,7 +83,7 @@ function applicationReload() {
 }
 
 function preserveRestart() {
-	History.toLocalStorage();
+	SDHistory.toLocalStorage();
 	localStorage.setItem("fileName", fileManager.fileName);
 	localStorage.setItem("reloadPending", "1");
 	applicationReload();
@@ -119,7 +119,7 @@ function restoreAfterRestart() {
 	fileManager.fileName = localStorage.getItem("fileName");
 
 	// Read the history from localStorage
-	History.fromLocalStorage();
+	SDHistory.fromLocalStorage();
 
 	if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
 		// if opening new file without OK timeUnit => promt TimeUnitDialog
@@ -128,7 +128,7 @@ function restoreAfterRestart() {
 	}
 }
 
-class History {
+class SDHistory {
 	static #undoStates = []
 	static get undoStates() {
 		return this.#undoStates
@@ -160,7 +160,7 @@ class History {
 
 		// Tells if the last state is saved to file
 		// This is used for determining if the program should ask about saving
-		History.unsavedChanges = false;
+		SDHistory.unsavedChanges = false;
 
 	}
 
@@ -256,7 +256,7 @@ class History {
 		this.restoreUndoState();
 	}
 }
-History.init();
+SDHistory.init();
 
 function loadModelFromXml(XmlString) {
 	clearModel();
@@ -4304,7 +4304,7 @@ class DeleteTool extends BaseTool {
 			return;
 		}
 		delete_selected_objects();
-		History.storeUndoState();
+		SDHistory.storeUndoState();
 		InfoBar.update();
 		ToolBox.setTool("mouse");
 	}
@@ -4313,7 +4313,7 @@ DeleteTool.init();
 
 class UndoTool extends BaseTool {
 	static enterTool() {
-		History.doUndo();
+		SDHistory.doUndo();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4321,7 +4321,7 @@ UndoTool.init();
 
 class RedoTool extends BaseTool {
 	static enterTool() {
-		History.doRedo();
+		SDHistory.doRedo();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -4414,7 +4414,7 @@ class RotateNameTool extends BaseTool {
 		ToolBox.setTool("mouse");
 	}
 	static leaveTool() {
-		History.storeUndoState();
+		SDHistory.storeUndoState();
 	}
 }
 
@@ -5622,7 +5622,7 @@ function mouseUpHandler(event) {
 		currentTool.leftMouseUp(x, y, event.shiftKey);
 		leftmouseisdown = false;
 		InfoBar.update();
-		History.storeUndoState();
+		SDHistory.storeUndoState();
 	}
 }
 
@@ -5719,7 +5719,7 @@ class ToolBox {
 }
 ToolBox.init();
 
-class ClipboardItem {
+class SDClipboardItem {
 	constructor(id) {
 		this.id = id;
 		this.absolutePosition = [0, 0];
@@ -5727,7 +5727,7 @@ class ClipboardItem {
 	}
 }
 
-class Clipboard {
+class SDClipboard {
 	static init() {
 		this.copiedItems = [];
 	}
@@ -5755,7 +5755,7 @@ class Clipboard {
 
 		// Create clipboard items
 		for (let i in parentIdArray) {
-			let clipboardItem = new ClipboardItem(parentIdArray[i]);
+			let clipboardItem = new SDClipboardItem(parentIdArray[i]);
 			let tmp_object = get_object(parentIdArray[i]);
 
 			let absolutePosition = tmp_object.getPos();
@@ -5786,7 +5786,7 @@ class Clipboard {
 		}
 	}
 }
-Clipboard.init();
+SDClipboard.init();
 
 function showDebug() {
 	$("#btn_debug").show();
@@ -5888,17 +5888,17 @@ $(window).load(function () {
 				for (let id in connection_array) { connection_array[id].select(); }
 			}
 			if (event.key.toLowerCase() == "z") {
-				History.doUndo();
+				SDHistory.doUndo();
 			}
 			if (event.key.toLowerCase() == "y") {
-				History.doRedo();
+				SDHistory.doRedo();
 			}
 			if (event.key.toLowerCase() == "c") {
-				// Clipboard.copy();
+				// SDClipboard.copy();
 			}
 			if (event.key.toLowerCase() == "v") {
-				// Clipboard.paste();
-				// History.storeUndoState();
+				// SDClipboard.paste();
+				// SDHistory.storeUndoState();
 			}
 		}
 		environment.keyDown(event);
@@ -5927,11 +5927,11 @@ $(window).load(function () {
 		});
 	});
 	$("#btn_save").click(function () {
-		History.storeUndoState();
+		SDHistory.storeUndoState();
 		fileManager.saveModel();
 	});
 	$("#btn_save_as").click(function () {
-		History.storeUndoState();
+		SDHistory.storeUndoState();
 		fileManager.saveModelAs();
 	});
 	$("#btn_recent_clear").click(function () {
@@ -6065,7 +6065,7 @@ $(window).load(function () {
 
 	updateTimeUnitButton();
 
-	History.unsavedChanges = false;
+	SDHistory.unsavedChanges = false;
 	InfoBar.init();
 });
 
@@ -6565,7 +6565,7 @@ function setColorToSelection(color) {
 		let obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
-	History.storeUndoState();
+	SDHistory.storeUndoState();
 }
 
 function printDiagram() {
@@ -7162,7 +7162,7 @@ class jqDialog {
 		// We add a delay to make sure we closed first
 
 		setTimeout(() => {
-			History.storeUndoState();
+			SDHistory.storeUndoState();
 			InfoBar.update();
 		}, 200);
 	}
@@ -7323,7 +7323,7 @@ function yesNoCancelAlert(message, closeHandler) {
 
 function saveChangedAlert(continueHandler) {
 	// If we have no unsaved changes we just continue directly	
-	if (!History.unsavedChanges) {
+	if (!SDHistory.unsavedChanges) {
 		continueHandler();
 		return;
 	}
@@ -8885,7 +8885,7 @@ class TimeUnitDialog extends jqDialog {
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
 					$("#timeUnitParagraph").html(`Time Unit: ${timeUnit}`);
-					History.storeUndoState();
+					SDHistory.storeUndoState();
 				} else {
 					this.showComplain(this.validName);
 				}
