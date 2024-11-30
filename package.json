@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"clean": "rm -rf ./node_modules ./OpenSystemDynamics/node_modules ./OpenSystemDynamics/dist MultiSimulationAnalyser/node_modules MultiSimulationAnalyser/dist",
-		"build": "tsc",
+		"build": "tsc --build",
 		"watch:msa": "tsc --build MultiSimulationAnalyser --watch",
 		"watch:osd": "tsc --build OpenSystemDynamics --watch",
 		"watch:all": "concurrently --raw \"npm run watch:msa\" \"npm run watch:osd\"",
