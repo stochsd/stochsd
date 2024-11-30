@@ -798,7 +798,7 @@ class BaseObject {
 
 		this.element_array = [];
 		this.selector_array = [];
-		this.icons; 	// svg_group with icons such as ghost and questionmark
+		this.icons; 	// SVG.group with icons such as ghost and questionmark
 		this.group = null;
 
 		this.namePosList = [[0, this.name_radius + 8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
@@ -1010,7 +1010,7 @@ class OnePointer extends BaseObject {
 				});
 			}
 		}
-		this.group = svg_group(this.element_array);
+		this.group = SVG.group(this.element_array);
 		this.group.setAttribute("class", "testgroup");
 		this.group.setAttribute("node_id", this.id);
 
@@ -1035,7 +1035,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
-			this.icons.set_color("white");
+			this.icons.setColor("white");
 		}
 	}
 	unselect() {
@@ -1044,7 +1044,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
-			this.icons.set_color(this.color);
+			this.icons.setColor(this.color);
 		}
 	}
 	update() {
@@ -1157,13 +1157,13 @@ class AnchorPoint extends OnePointer {
 	getImage() {
 		if (this.isSquare) {
 			return [
-				svg_rect(-4, -4, 8, 8, this.color, "white", "element"),
-				svg_rect(-4, -4, 8, 8, "none", this.color, "highlight")
+				SVG.rect(-4, -4, 8, 8, this.color, "white", "element"),
+				SVG.rect(-4, -4, 8, 8, "none", this.color, "highlight")
 			];
 		} else {
 			return [
-				svg_circle(0, 0, 5, this.color, "white", "element"),
-				svg_circle(0, 0, 5, "none", this.color, "highlight")
+				SVG.circle(0, 0, 5, this.color, "white", "element"),
+				SVG.circle(0, 0, 5, "none", this.color, "highlight")
 			];
 		}
 
@@ -1300,17 +1300,17 @@ class StockVisual extends BasePrimitive {
 	}
 
 	getImage() {
-		// let textElem = svg_text(0, 39, "stock", "name_element");
-		let textElem = svg_text(0, 39, this.primitive.getAttribute("name"), "name_element");
+		// let textElem = SVG.text(0, 39, "stock", "name_element");
+		let textElem = SVG.text(0, 39, this.primitive.getAttribute("name"), "name_element");
 		textElem.setAttribute("fill", this.color);
 		let size = this.getSize();
 		let w = size[0];
 		let h = size[1];
 		return [
-			svg_rect(-w / 2, -h / 2, w, h, this.color, defaultFill, "element"),
-			svg_rect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, "none", this.color, "highlight"),
+			SVG.rect(-w / 2, -h / 2, w, h, this.color, defaultFill, "element"),
+			SVG.rect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, "none", this.color, "highlight"),
 			textElem,
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 }
@@ -1393,11 +1393,11 @@ class NumberboxVisual extends BasePrimitive {
 		this.setSelectionSizeToText();
 	}
 	getImage() {
-		this.element = svg_rect(-20, -15, 40, 30, this.color, defaultFill, "element");
+		this.element = SVG.rect(-20, -15, 40, 30, this.color, defaultFill, "element");
 		return [
 			this.element,
-			svg_rect(-20, -15, 40, 30, "none", this.color, "highlight"),
-			svg_text(0, 0, "", "name_element", { "alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color }),
+			SVG.rect(-20, -15, 40, 30, "none", this.color, "highlight"),
+			SVG.text(0, 0, "", "name_element", { "alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color }),
 		];
 	}
 	setColor(color) {
@@ -1449,10 +1449,10 @@ class VariableVisual extends BasePrimitive {
 
 	getImage() {
 		return [
-			svg_circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
-			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1480,10 +1480,10 @@ class ConstantVisual extends VariableVisual {
 		let r = this.getRadius();
 		let rs = r - 3; // Selector radius 
 		return [
-			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
-			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1519,10 +1519,10 @@ class ConverterVisual extends BasePrimitive {
 	}
 	getImage() {
 		return [
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
-			svg_icons(defaultStroke, defaultFill, "icons"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
+			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
+			SVG.icons(defaultStroke, defaultFill, "icons"),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 		];
 	}
 
@@ -2091,22 +2091,22 @@ class FlowVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
-		this.startCloud = svg_cloud(this.color, defaultFill, { "class": "element" });
-		this.endCloud = svg_cloud(this.color, defaultFill, { "class": "element" });
-		this.outerPath = svg_wide_path(5, this.color, { "class": "element" });
-		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, { "class": "element" });
-		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
-		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
-		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
-		this.variable = svg_group(
-			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"),
-			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
+		this.startCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
+		this.endCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
+		this.outerPath = SVG.widePath(5, this.color, { "class": "element" });
+		this.innerPath = SVG.widePath(3, "white"); // Must have white ohterwise path is black
+		this.arrowHeadPath = SVG.arrowHead(this.color, defaultFill, { "class": "element" });
+		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
+		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
+		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
+		this.icons = SVG.icons(defaultStroke, defaultFill, "icons");
+		this.variable = SVG.group(
+			[SVG.circle(0, 0, this.getRadius(), this.color, "white", "element"),
+			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			this.icons,
 			this.name_element]
 		);
-		this.icons.set_color("white");
+		this.icons.setColor("white");
 		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2115,7 +2115,7 @@ class FlowVisual extends BaseConnection {
 			this.nameDoubleClick();
 		});
 
-		this.group = svg_group([this.flowPathGroup, this.valve, this.variable]);
+		this.group = SVG.group([this.flowPathGroup, this.valve, this.variable]);
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
@@ -2205,8 +2205,8 @@ class FlowVisual extends BaseConnection {
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
 		let [varX, varY] = this.getVariablePos();
-		svg_transform(this.valve, valveX, valveY, valveRot, 1);
-		svg_translate(this.variable, varX, varY);
+		SVG.transform(this.valve, valveX, valveY, valveRot, 1);
+		SVG.translate(this.variable, varX, varY);
 		// Update
 		this.startCloud.update();
 		this.endCloud.update();
@@ -2218,13 +2218,13 @@ class FlowVisual extends BaseConnection {
 	unselect() {
 		super.unselect();
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "hidden");
-		this.icons.set_color(this.color);
+		this.icons.setColor(this.color);
 	}
 
 	select() {
 		super.select();
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "visible");
-		this.icons.set_color("white");
+		this.icons.setColor("white");
 	}
 
 	doubleClick() {
@@ -2241,10 +2241,10 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
+		this.clickRect = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2253,7 +2253,7 @@ class RectangleVisual extends TwoPointer {
 		this.clickCoordRect = new CoordRect();
 		this.clickCoordRect.element = this.clickRect;
 
-		this.group = svg_group([this.element, this.clickRect]);
+		this.group = SVG.group([this.element, this.clickRect]);
 		this.group.setAttribute("node_id", this.id);
 		this.element_array = [this.element];
 		for (let key in this.element_array) {
@@ -2302,14 +2302,14 @@ class EllipseVisual extends TwoPointer {
 		let cy = (this.startY + this.endY) / 2;
 		let rx = Math.max(Math.abs(this.startX - this.endX) / 2, 1);
 		let ry = Math.max(Math.abs(this.startY - this.endY) / 2, 1);
-		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
-		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none", "element", { "stroke-width": "10" });
-		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", { "stroke-dasharray": "2 2" });
+		this.element = SVG.ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
+		this.clickEllipse = SVG.ellipse(cx, cy, rx, ry, "transparent", "none", "element", { "stroke-width": "10" });
+		this.selector = SVG.rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", { "stroke-dasharray": "2 2" });
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.group = svg_group([this.element, this.clickEllipse, this.selector]);
+		this.group = SVG.group([this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
@@ -2445,8 +2445,8 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(() => {
 			this.render();
 		});
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.htmlElement = svg_foreign_scrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.htmlElement = SVG.foreignScrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not renderd yet", "white");
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
@@ -2462,7 +2462,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -2523,12 +2523,12 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.doubleClick(this.id);
 		});
 
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element", "");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element", "");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -3250,12 +3250,12 @@ class TextAreaVisual extends HtmlTwoPointer {
 		this.coordRect.update();
 	}
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.htmlElement = svg_foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
+		this.htmlElement = SVG.foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
@@ -3273,7 +3273,7 @@ class TextAreaVisual extends HtmlTwoPointer {
 			this.doubleClick();
 		});
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -3790,15 +3790,15 @@ class LineVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
-		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", { "stroke-width": "10" });
-		this.arrowHeadStart = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
-		this.arrowHeadEnd = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
+		this.line = SVG.line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
+		this.clickLine = SVG.line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", { "stroke-width": "10" });
+		this.arrowHeadStart = SVG.arrowHead(defaultStroke, defaultStroke, { "class": "element" });
+		this.arrowHeadEnd = SVG.arrowHead(defaultStroke, defaultStroke, { "class": "element" });
 		let arrowPathPoints = [[8, 0], [13, -5], [0, 0], [13, 5]];
 		this.arrowHeadStart.set_template_points(arrowPathPoints);
 		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 
-		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
+		this.group = SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id", this.id);
 		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
 		for (let key in this.element_array) {
@@ -4040,23 +4040,23 @@ class LinkVisual extends BaseConnection {
 		let [x3, y3] = this.b2_anchor.getPos();
 		let [x4, y4] = this.end_anchor.getPos();
 
-		this.arrowPath = svg_from_string(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
-		this.arrowHead = svg_group([this.arrowPath]);
-		svg_translate(this.arrowHead, x4, y4);
+		this.arrowPath = SVG.fromString(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
+		this.arrowHead = SVG.group([this.arrowPath]);
+		SVG.translate(this.arrowHead, x4, y4);
 
-		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
-		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, { "stroke": "black", "stroke-width": "1" });
+		this.click_area = SVG.curve("twoway", x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
+		this.curve = SVG.curve("oneway", x1, y1, x2, y2, x3, y3, x4, y4, { "stroke": "black", "stroke-width": "1" });
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
 
 		// curve is not included in group since it is one-way and will therefore span an area
 		// The area will be clickable if included in the group 
-		this.group = svg_group([this.click_area, this.arrowHead]);
+		this.group = SVG.group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id", this.id);
 
-		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" });
-		this.b2_line = svg_line(x4, y4, x3, y3, "black", "black", "", { "stroke-dasharray": "5 5" });
+		this.b1_line = SVG.line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" });
+		this.b2_line = SVG.line(x4, y4, x3, y3, "black", "black", "", { "stroke-dasharray": "5 5" });
 
 		this.showOnlyOnSelect = [this.b1_line, this.b2_line];
 
@@ -4148,7 +4148,7 @@ class LinkVisual extends BaseConnection {
 		let xdiff = this.endX - b2pos[0];
 		let ydiff = this.endY - b2pos[1];
 		let angle = Math.atan2(xdiff, -ydiff) * (180 / Math.PI);
-		svg_transform(this.arrowHead, this.endX, this.endY, angle, 1);
+		SVG.transform(this.arrowHead, this.endX, this.endY, angle, 1);
 
 		// Update end position so that we get the drawing effect when link is created
 		this.curve.x4 = this.endX;
@@ -5532,7 +5532,7 @@ function mouseDownHandler(event) {
 		timeUnitDialog.show();
 		return;
 	}
-	let offset = $(svgplane).offset();
+	let offset = $(SVG.svgElement).offset();
 	let x = event.pageX - offset.left;
 	let y = event.pageY - offset.top;
 	do_global_log("x:" + x + " y:" + y);
@@ -5549,7 +5549,7 @@ function mouseDownHandler(event) {
 	}
 }
 function mouseMoveHandler(event) {
-	let offset = $(svgplane).offset();
+	let offset = $(SVG.svgElement).offset();
 	let x = event.pageX - offset.left;
 	let y = event.pageY - offset.top;
 
@@ -5567,7 +5567,7 @@ function mouseUpHandler(event) {
 		}
 		// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
 		do_global_log("mouseUpHandler");
-		let offset = $(svgplane).offset();
+		let offset = $(SVG.svgElement).offset();
 		let x = event.pageX - offset.left;
 		let y = event.pageY - offset.top;
 
@@ -5754,6 +5754,7 @@ function hashUpdate() {
 // https://stackoverflow.com/questions/7083693/detect-if-page-has-finished-loading
 // Initilzing without everything load = $(document).ready caused bugs. $(window).load solves this
 $(window).load(function () {
+
 	$("a").click((e) => {
 		// Important to use "currentTarget" instead of "target", because sometimes
 		// the <a> element is outside a <button>
@@ -5763,10 +5764,10 @@ $(window).load(function () {
 			e.preventDefault();
 		}
 	});
-	rectselector.element = svg_rect(-30, -30, 60, 60, "black", "none", "rect-selector");
+	rectselector.element = SVG.rect(-30, -30, 60, 60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
-	let svgplane = document.getElementById("svgplane");
+	SVG.init();
 
 	Preferences.setup();
 
@@ -5856,8 +5857,8 @@ $(window).load(function () {
 		environment.keyDown(event);
 	});
 
-	$(svgplane).mousedown(mouseDownHandler);
-	svgplane.addEventListener('contextmenu', function (event) {
+	$(SVG.svgElement).mousedown(mouseDownHandler);
+	SVG.svgElement.addEventListener('contextmenu', function (event) {
 		event.preventDefault();
 		return false;
 	}, false);
