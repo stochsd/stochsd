@@ -12,11 +12,11 @@
 		"build": "tsc --build",
 		"watch:msa": "tsc --build MultiSimulationAnalyser --watch",
 		"watch:osd": "tsc --build OpenSystemDynamics --watch",
-		"watch:all": "concurrently --raw \"npm run watch:msa\" \"npm run watch:osd\"",
+		"watch": "concurrently --raw \"npm run watch:msa\" \"npm run watch:osd\"",
 		"start": "static-server . -p 8080",
-		"dev": "concurrently --raw \"npm run watch:all\" \"npm run start\"",
+		"dev": "concurrently --raw \"npm run watch\" \"npm run start\"",
 		"start:nw": "nw .",
-		"dev:nw": "concurrently --raw \"npm watch:all\" \"npm run start:nw\""
+		"dev:nw": "concurrently --raw \"npm watch\" \"npm run start:nw\""
 	},
 	"dependencies": {
 		"typescript": "^5.7.2"

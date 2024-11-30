@@ -20,6 +20,23 @@ npm i
 ```
 
 ### Run locally in browser
+
+#### Option 1 - Two terminals
+To run I this project open 2 terminals to run 2 commands:
+First to build, project and have any changes you do trigger rebuild:
+```
+npm run watch:all
+```
+
+Second:
+```
+npm run start
+```
+
+### Option 2 - One terminal less feedback
+
+To run on localhost specified in [package.json](./package.json) under `scripts`.
+This will however not show the link to open the page.
 ```
 npm run dev
 ```
