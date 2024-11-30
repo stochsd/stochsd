@@ -1,0 +1,506 @@
+<!--
+/*
+
+This file may distributed and/or modified under the
+terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0.html).
+
+*/
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title></title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- Prevent rightclick contextmenu -->
+	<script type="text/javascript">
+		document.addEventListener('contextmenu', event => event.preventDefault());
+	</script>
+	<!-- build:js opensystemdynamics.min.js  -->
+	<script type="text/javascript" src="./src/libs/idbkeyval.js"></script>
+	<script type="text/javascript" src="./src/version.js"></script>
+	<script type="text/javascript" src="./src/preferences.js"></script>
+	<script type="text/javascript" src="./src/settings.js"></script>
+	<script type="text/javascript" src="./src/debug.js"></script>
+	<!-- environment.js determines whatever to use web or NWJS. Must be executed early to work -->
+	<script type="text/javascript" src="./src/environment.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/Localization.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/Variables.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/Utilities.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/API/API.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/mxShim.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/Sanitize.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/Updater.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/OO.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/unitsStructure.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/units.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/SimpleCalc.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/antlr3-all-min.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/output/FormulaLexer.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/output/FormulaParser.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/rand.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/random.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/formula.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/calc/functions.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/Functions.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/Classes.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/Primitives.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/TaskScheduler.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/Simulator.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/SimulationEngine/Modeler.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/resources/RedBlackNode.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/resources/RedBlackTree.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/resources/graph.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/resources/jstat.min.js"></script>
+	<script type="text/javascript" src="./src/definition-error.js"></script>
+	<script type="text/javascript" src="./src/newAPI.js"></script>
+	<script src="./src/makexml.js"></script>
+	<script type="text/javascript" src="./src/imc.js"></script>
+	<script src="./src/transform.js"></script>
+	<script src="./src/libsvg.js"></script>
+	<script type="text/javascript" src="./src/codemirror/lib/codemirror.js"></script>
+	<script type="text/javascript" src="./src/codemirror/addon/hint/show-hint.js"></script>
+	<script type="text/javascript" src="./src/codemirror/addon/mode/simple.js"></script>
+	<script type="text/javascript" src="./src/codemirror/mode/stochsd/stochsdmode.js"></script>
+	<script type="text/javascript" src="./src/codemirror/mode/stochsd/convertermode.js"></script>
+	<script type="text/javascript" src="./src/codemirror/addon/edit/matchbrackets.js"></script>
+	<script src="./src/jquery/jquery-1.8.3.min.js"></script>
+	<!--<script class="include" type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.barRenderer.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.logAxisRenderer.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.highlighter.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.pointLabels.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasTextRenderer.js"></script>
+	<script type="text/javascript" src="./src/jquery/jquery.jqplot.1.0.9/plugins/jqplot.canvasAxisLabelRenderer.js"></script>
+	-->
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.barRenderer.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.pointLabels.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.logAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.highlighter.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+	<script src="./src/jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="./src/emenu.js"></script>
+	<script type="text/javascript" src="./src/format_number.js"></script>
+	<script type="text/javascript" src="./src/editor.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:css opensystemdynamics.css  -->
+	<link rel="stylesheet" href="./src/codemirror/lib/codemirror.css" />
+	<link rel="stylesheet" href="./src/codemirror/theme/stochsdtheme.css" />
+	<link rel="stylesheet" href="./src/codemirror/theme/oneline.css" />
+	<link rel="stylesheet" href="./src/codemirror/theme/resize.css" />
+	<link rel="stylesheet" type="text/css" href="./src/style/editor.css">
+	<link class="include" rel="stylesheet" type="text/css"
+		href="./src/jquery/jquery.jqplot.1.0.9/jquery.jqplot.min.css" />
+	<link rel="stylesheet" href="./src/jquery/jquery-ui-1.12.1/jquery-ui.css" />
+	<link rel="stylesheet" href="./src/style/emenu.css" />
+	<link rel="stylesheet" href="./src/codemirror/addon/hint/show-hint.css" />
+	<!-- endbuild -->
+
+
+	<link rel="shortcut icon" type="image/png" href="../icons/stochsd.png" />
+	<link rel="icon" type="image/png" href="../icons/stochsd.png" />
+</head>
+
+<body>
+	<div id="coverEverythingDiv"
+		style="position: absolute; left: 0px; top: 0px; bottom: 0px; right: 0px; background-color: white; display: flex; flex-direction: column;">
+		<div id="topPanel"> <!-- This panel is hidden when printing-->
+			<div class="fileToolBox">
+				<div class="eMenu">
+					<button class="menuButton" id="btn_file">File</button>
+					<div class="menuContent">
+						<span>
+							<button id="btn_new">New</button>
+						</span>
+						<span>
+							<button id="btn_load"><u>O</u>pen (Ctrl O)</button>
+						</span>
+						<span>
+							<button id="btn_save"><u>S</u>ave (Ctrl S)</button>
+						</span>
+						<span>
+							<button id="btn_save_as" style="display: none;">Save As...</button>
+						</span>
+						<span id="recent_title" style="display: none">
+							<p style="margin: 0; padding: 0.2em; font-weight: bold; text-align: center; font-size: 14px;">
+								Recent List
+							</p>
+						</span>
+						<span>
+							<button id="btn_recent_0" style="display: none;">Recent 0</button>
+						</span>
+						<span>
+							<button id="btn_recent_1" style="display: none;">Recent 1</button>
+						</span>
+						<span>
+							<button id="btn_recent_2" style="display: none;">Recent 2</button>
+						</span>
+						<span>
+							<button id="btn_recent_3" style="display: none;">Recent 3</button>
+						</span>
+						<span>
+							<button id="btn_recent_4" style="display: none;">Recent 4</button>
+						</span>
+						<span>
+							<button id="btn_recent_5" style="display: none;">Recent 5</button>
+						</span>
+						<span>
+							<button id="btn_recent_6" style="display: none;">Recent 6</button>
+						</span>
+						<span>
+							<button id="btn_recent_7" style="display: none;">Recent 7</button>
+						</span>
+						<span>
+							<button id="btn_recent_8" style="display: none;">Recent 8</button>
+						</span>
+						<span>
+							<button id="btn_recent_9" style="display: none;">Recent 9</button>
+						</span>
+						<span>
+							<button id="btn_recent_clear" style="display: none;">Clear Recent List</button>
+						</span>
+					</div>
+				</div>
+
+				<div class="eMenu hideUnlessNwjs">
+					<button class="menuButton">View</button>
+					<div class="menuContent">
+						<span>
+							<button id="btn_zoom_in">Zoom In (Ctrl +)</span></button>
+						</span>
+						<span>
+							<button id="btn_zoom_out">Zoom Out (Ctrl -)</button>
+						</span>
+						<span>
+							<button id="btn_zoom_reset">Reset Zoom (Ctrl 0)</button>
+						</span>
+					</div>
+				</div>
+
+				<div class="eMenu">
+					<button class="menuButton">Print</button>
+					<div class="menuContent">
+						<span>
+							<button id="btn_print_model">Print Diagram</button>
+						</span>
+						<span>
+							<button id="btn_equation_list">Print Equations</button>
+						</span>
+					</div>
+				</div>
+				<button id="btn_simulation_settings">Simulation Settings</button>
+				<button id="btn_macro">Macros</button>
+
+				<div class="eMenu">
+					<button class="menuButton">Colour</button>
+					<div class="menuContent">
+						<span>
+							<button id="btn_black" style="color: black">
+								<div class="color-sample" style="background-color:black;"></div>Black
+							</button>
+						</span>
+						<span>
+							<button id="btn_grey" style="color: silver">
+								<div class="color-sample" style="background-color:silver;"></div>Grey
+							</button>
+						</span>
+						<span>
+							<button id="btn_red" style="color: red">
+								<div class="color-sample" style="background-color:red;"></div>Red
+							</button>
+						</span>
+						<span>
+							<button id="btn_deeppink" style="color: deeppink">
+								<div class="color-sample" style="background-color:deeppink;"></div>Pink
+							</button>
+						</span>
+						<span>
+							<button id="btn_brown" style="color: brown">
+								<div class="color-sample" style="background-color:brown;"></div>Brown
+							</button>
+						</span>
+						<span>
+							<button id="btn_orange" style="color: orange">
+								<div class="color-sample" style="background-color:orange;"></div>Orange
+							</button>
+						</span>
+						<span>
+							<button id="btn_gold" style="color: gold">
+								<div class="color-sample" style="background-color:gold;"></div>Gold
+							</button>
+						</span>
+						<span>
+							<button id="btn_olive" style="color: olive">
+								<div class="color-sample" style="background-color:olive;"></div>Olive
+							</button>
+						</span>
+						<span>
+							<button id="btn_green" style="color: green">
+								<div class="color-sample" style="background-color:green;"></div>Green
+							</button>
+						</span>
+						<span>
+							<button id="btn_teal" style="color: teal">
+								<div class="color-sample" style="background-color:teal;"></div>Teal
+							</button>
+						</span>
+						<span>
+							<button id="btn_blue" style="color: blue">
+								<div class="color-sample" style="background-color:blue;"></div>Blue
+							</button>
+						</span>
+						<span>
+							<button id="btn_magenta" style="color: magenta">
+								<div class="color-sample" style="background-color:magenta;"></div>Magenta
+							</button>
+						</span>
+					</div>
+				</div>
+
+				<div style="display: none;" class="eMenu pluginMenu">
+					<button class="menuButton">Tools</button>
+					<div class="menuContent">
+						<span>
+							<button class="btn_load_plugin" data-plugin-name="optim"><img
+									src="../MultiSimulationAnalyser/icons/optim.svg" />Optim</button>
+						</span>
+						<span>
+							<button class="btn_load_plugin" data-plugin-name="sensi"><img
+									src="../MultiSimulationAnalyser/icons/sensi.svg" />Sensi</button>
+						</span>
+						<span>
+							<button class="btn_load_plugin" data-plugin-name="stocres"><img
+									src="../MultiSimulationAnalyser/icons/statres.svg" />StatRes</button>
+						</span>
+						<span>
+							<button class="btn_load_plugin" data-plugin-name="parmest"><img
+									src="../MultiSimulationAnalyser/icons/parmvar.svg" />ParmVar</button>
+						</span>
+						<span>
+							<button class="btn_load_plugin" data-plugin-name="none">
+								<div style="width: calc(22px + 6px); height: calc(22px); pointer-events: none;"></div>Hide Tool
+							</button>
+						</span>
+					</div>
+				</div>
+
+				<div class="eMenu">
+					<button class="menuButton">Help</button>
+					<div class="menuContent">
+						<span>
+							<button id="btn_about">About StochSD</button>
+						</span>
+						<span>
+							<a target="_blank" href="https://sourceforge.net/p/stochsd/stochsd-forum/"><button>
+									Support forum
+								</button></a>
+						</span>
+						<span>
+							<button id="btn_license">StochSD License</button>
+						</span>
+						<span>
+							<button id="btn_thirdparty">Third-party Licenses</button>
+						</span>
+						<span>
+							<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_User_Manual.pdf"><button
+									id="btn_manual">
+									StochSD User's Manual
+								</button></a>
+							<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_Optim.pdf"><button>
+									Optim Manual
+								</button></a>
+							<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_Sensi.pdf"><button>
+									Sensi Manual
+								</button></a>
+							<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_StatRes.pdf"><button>
+									StatRes Manual
+								</button></a>
+							<a target="_blank" href="https://stochsd.sourceforge.io/manuals/StochSD_ParmVar.pdf"><button>
+									ParmVar Manual
+								</button></a>
+						</span>
+						<span>
+							<button id="btn_preferences">Preferences</button>
+						</span>
+						<span>
+							<button id="btn_fullpotentialcss">What is Full Potential CSS?</button>
+						</span>
+						<span>
+							<button id="btn_debug" style="display: none;">Debug Log</button>
+						</span>
+						<span>
+							<button id="btn_restart">Restart and Clear Model</button>
+						</span>
+
+						<span style=>
+							<button id="btn_preserve_restart">Restart and Keep Model</button>
+						</span>
+					</div>
+
+				</div>
+			</div>
+
+		</div> <!-- End of topPanel -->
+
+		<div class="toolPanel" style="margin-top: 12px"> <!--toolPanel-->
+			<button id="btn_mouse" title="Mouse" class="tool-button" data-tool="mouse">
+				<img src="graphics/mouse.svg" />
+			</button>
+			<button id="btn_delete" title="Delete" class="tool-button" data-tool="delete">
+				<img src="graphics/delete.svg" />
+			</button>
+			<button id="btn_undo" title="Undo" class="tool-button" data-tool="undo" disabled>
+				<img src="graphics/undo.svg" />
+			</button>
+			<button id="btn_redo" title="Redo" class="tool-button" data-tool="redo" disabled>
+				<img src="graphics/redo.svg" />
+			</button>
+			<div class="tool-box-separator">
+			</div>
+			<button id="btn_stock" title="Stock" class="tool-button" data-tool="stock">
+				<img src="graphics/stock.svg" />
+			</button>
+			<button id="btn_variable" title="Auxiliary" class="tool-button" data-tool="variable">
+				<img src="graphics/variable.svg" />
+			</button>
+			<button id="btn_constant" title="Parameter" class="tool-button" data-tool="constant">
+				<img src="graphics/constant.svg" />
+			</button>
+			<button id="btn_converter" title="Converter" class="tool-button" data-tool="converter">
+				<img src="graphics/converter.svg" />
+			</button>
+			<button id="btn_flow" title="Flow" class="tool-button" data-tool="flow">
+				<img src="graphics/flow.svg" />
+			</button>
+			<button id="btn_link" title="Link" class="tool-button" data-tool="link">
+				<img src="graphics/link.svg" />
+			</button>
+			<button id="btn_ghost" title="Ghost" class="tool-button" data-tool="ghost">
+				<img src="graphics/ghost.svg" />
+			</button>
+			<div class="tool-box-separator">
+			</div>
+			<button id="btn_rotatename" title="Rotate Name" class="tool-button" data-tool="rotatename">
+				<img src="graphics/rotate_name.svg" />
+			</button>
+			<button id="btn_movevalve" title="Move Valve" class="tool-button" data-tool="movevalve">
+				<img src="graphics/move_valve.svg">
+			</button>
+			<button id="btn_straighten_link" title="Straighten Link" class="tool-button" data-tool="straightenlink">
+				<img src="graphics/straighten_link.svg">
+			</button>
+			<button id="btn_text" title="Text" class="tool-button" data-tool="text">
+				<img src="graphics/text.svg" />
+			</button>
+			<button id="btn_rectangle" title="Rectangle (shift gives square)" class="tool-button" data-tool="rectangle">
+				<img src="graphics/rectangle.svg" />
+			</button>
+			<button id="btn_ellipse" title="Ellipse (shift gives circle)" class="tool-button" data-tool="ellipse">
+				<img src="graphics/ellipse.svg" />
+			</button>
+			<button id="btn_line" title="Arrow/Line" class="tool-button" data-tool="line">
+				<img src="graphics/arrow.svg" />
+			</button>
+			<div class="tool-box-separator">
+			</div>
+			<button id="btn_numberbox" title="Number Box" class="tool-button" data-tool="numberbox">
+				<img src="graphics/numberbox.svg" />
+			</button>
+			<button id="btn_table" title="Table" class="tool-button" data-tool="table">
+				<img src="graphics/table.svg" />
+			</button>
+			<button id="btn_timeplot" title="Time Plot" class="tool-button" data-tool="timeplot">
+				<img src="graphics/timeplot.svg" />
+			</button>
+			<button id="btn_compareplot" title="Compare Simulations Plot" class="tool-button" data-tool="compareplot">
+				<img src="graphics/compareplot.svg" />
+			</button>
+			<button id="btn_xyplot" title="XY Plot" class="tool-button" data-tool="xyplot">
+				<img src="graphics/xyplot.svg" />
+			</button>
+			<button id="btn_histoplot" title="Histogram Plot" class="tool-button" data-tool="histoplot">
+				<img src="graphics/histoplot.svg" />
+			</button>
+			<div class="tool-box-separator">
+			</div>
+			<div id="runControllerArea" style="display: inline-block;">
+				<button id="btn_run" title="Run/Pause (Ctrl 1)" class="tool-button" data-tool="run">
+					<img id="imgRunPauseTool" src="graphics/run.svg" />
+				</button>
+				<button id="btn_step" title="Step (Ctrl 2)" class="tool-button" data-tool="step">
+					<img src="graphics/step.svg" />
+				</button>
+				<button style="display: none" id="btn_clearrun" title="Clear run" class="tool-button" data-tool="clearrun">
+					<img src="graphics/clearrun.svg" />
+				</button>
+				<button id="btn_reset" title="Reset (Ctrl 3)" class="tool-button" data-tool="reset">
+					<img src="graphics/reset.svg" />
+				</button>
+				<div id="runStatusBarOuter" class="toolSupplement"
+					style="display: inline-block; background: #F0F0F0; min-width: 110px; width: max-content">
+					<div id="runStatusBar" class="toolSupplement"
+						style="position: relative; left: 0px; top: 0px; background: #aaeeaa; height: 30px; width: 0px; margin: 0; padding: 0; border: 0;">
+						<div id="runStatusBarText" title="Start / Current / End &#013;      Method(Step)"
+							style="text-align: center; min-width: 110px; width: max-content; font-size: 12px; padding-top: 0px; height: 30px;">
+
+						</div>
+					</div>
+				</div>
+				<button id="btn_timeunit">
+					<p id="timeUnitParagraph" style="padding:0; margin: 0px 0px;">Time Unit</p>
+				</button>
+			</div> <!-- End of runControllArea -->
+		</div> <!-- End of toolPanel-->
+
+		<div class="info-bar">
+			<div style="display:flex">
+				<div class="info-bar__definition info-box__element center-vertically-container" title="Selection"></div>
+				<!--<div style="border-left:1px solid #ccc; margin: 6px  0px;"></div>--> <!--Divider here-->
+				<div class="info-bar__definition-restricted info-box__element center-vertically-container" title="Restricted">
+				</div>
+				<div class="info-bar__definition-error info-box__element center-vertically-container" title="Definition Error">
+					&nbsp
+				</div>
+			</div>
+			<div class="info-bar__im-link center-vertically-container">
+				<!--
+					Don't remove
+					This link to insight maker is a requirments of using the Insight Maker Public License, used by the Insight Maker engine
+					https://insightmaker.com/impl
+				-->
+				<span>
+					Home pages: <a href="https://stochsd.sourceforge.io" target="_blank">StochSD</a> (based on <a target="_blank"
+						href="http://insightmaker.com">InsightMaker.com</a>)
+				</span>
+			</div>
+		</div>
+
+		<!-- Working area -->
+		<div id="svgplanebackground"
+			style="overflow: scroll; flex-grow: 1; border: 1px solid black; z-index: 3; width: calc(100% - 1em); position: relative; height: 768px; display: inline-block; font-family: Arial, Helvetica, sans-serif">
+			<div id="svgBlockOverlay"
+				style="position: absolute; left: 0px; top: 0px; display: none; z-index: 110; width: 100%; height: 100%; background-color: red; opacity: 0;">
+			</div>
+			<svg draggable="false" id="svgplane" width="6000" height="2000"
+				style="left: 0px; top: 0px; z-index: 2; display: inline-block;	vertical-align: text-top; background-color: white;">
+			</svg>
+		</div>
+		<div class="editor-footer" style="display: none;">
+			<div class="editor-footer-filepath">FilePath/FileName</div>
+			<div style="padding: 0px 16px;">|</div>
+			<div class="editor-footer-date">YYYY-MM-DD</div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -9,5 +9,8 @@
 	},
 	"scripts": {
 		"start": "nw ."
+	},
+	"dependencies": {
+		"typescript": "^5.7.2"
 	}
 }
