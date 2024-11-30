@@ -1,0 +1,13 @@
+{
+  "name": "multisimulationanalyser",
+  "main": "index.html",
+  "author": "stochsdteam",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build; npx static-server . -p 2222",
+    "watch": "watch 'npm run start' ./src"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

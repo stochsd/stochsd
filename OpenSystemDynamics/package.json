@@ -1,6 +1,6 @@
 {
-	"name": "OpenSystemDynamics",
-	"main": "start.html",
+	"name": "opensystemdynamics",
+	"main": "index.html",
 	"author": "stochsdteam",
 	"version": "2019.07.19",
 	"scripts": {

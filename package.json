@@ -1,5 +1,5 @@
 {
-	"name": "StochSD",
+	"name": "stochsd",
 	"version": "2019.09.01",
 	"description": "Stochastic Simulation application",
 	"author": "stochsdteam",
@@ -8,9 +8,15 @@
 		"icon": "icons/stochsd.png"
 	},
 	"scripts": {
-		"start": "nw ."
+		"build": "tsc",
+		"start": "npm run build; static-server . -p 8080",
+		"nw": "nw ."
 	},
 	"dependencies": {
 		"typescript": "^5.7.2"
+	},
+	"devDependencies": {
+		"nw": "^0.93.0",
+		"static-server": "^3.0.0"
 	}
 }

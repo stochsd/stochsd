@@ -165,12 +165,12 @@ input[readonly="readonly"] {
 }
 
 .title_color {
-    background-color: 4c4cf6;
+    background-color: #4c4cf6;
     height: 24px;
 }
 
 .gui_background {
-    background-color: e0e0e0 !important;
+    background-color: #e0e0e0 !important;
 }
 
 #dragborder {

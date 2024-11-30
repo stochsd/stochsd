@@ -6,397 +6,436 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 */
 -->
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>StochSD</title>
-        <meta charset="utf-8">
 
-		<!-- build:css multisimulationanalyser.min.css  -->
-		<link rel="stylesheet" href="normalize.css">
-        <link rel="stylesheet" href="jquery-ui.css">
-        <link rel="stylesheet" type="text/css" href="table.css">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <link rel="stylesheet" type="text/css" href="histogram.css">
-		<!-- endbuild -->
-        
-		<!-- build:js multisimulationanalyser.min.js  -->
-		<script src="libimc.js"></script>
-        <script src="jquery-1.10.2.min.js"></script>
-        <script src="table.js"></script>
-        <script src="optimiser.js"></script>
-        <!--script src="optimise.js"></script-->
-        <script src="jquery-ui.min.js"></script>
-        <script type="text/javascript" src="jqplot/jquery.jqplot.min.js"></script>
-        <script type="text/javascript" src="filemanager/filemanager.js.html"></script>    
-        <script type="text/javascript" src="stocres/stocres.js.html"></script>    
-        <script type="text/javascript" src="parmest/parmest.js.html"></script>
-        <script type="text/javascript" src="optim/optim.js.html"></script>
-        <script type="text/javascript" src="sensi/sensi.js.html"></script>
-        <script type="text/javascript" src="rand.js"></script>
-        <script language="javascript" type="text/javascript" src="jqplot/plugins/jqplot.barRenderer.min.js"></script>
-        <script language="javascript" type="text/javascript" src="jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
-        <script language="javascript" type="text/javascript" src="jqplot/plugins/jqplot.pointLabels.min.js"></script>
-        <script src="util.js"></script>
-        <script src="settings.js"></script>
-        <script src="id_to_var.js"></script>
-        <script src="keyvalidate.js"></script>
-        <script src="panel.js"></script>
-        <script src="varstats.js"></script>
-        <script src="dataset.js"></script>
-        <script src="math.js"></script>
-        <script src="scatterplot.js"></script>
-        <script src="openmodel.js"></script>
-        <script src="histogram.js"></script>
-        <script src="filemanager/filemanager.js"></script>
-        <script src="sensi/sensitable.js"></script>
-        <script src="sensi/sensi.js"></script>
-        <script src="stocres/stocres.js"></script>
-        <script src="parmest/parmest.js"></script>
-        <script src="optim/optim.js"></script>
-        <script src="stocsd.js"></script>
-        <!-- endbuild -->
-        
-        <link rel="shortcut icon" type="image/png" href="../icons/stochsd.png"/>
+<head>
+    <title>StochSD</title>
+    <meta charset="utf-8">
 
-        <link rel="manifest" href="multisimulationanalyser-manifest.json">
+    <!-- build:css multisimulationanalyser.min.css  -->
+    <link rel="stylesheet" type="text/css" href="./style/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./src/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="./style/table.css">
+    <link rel="stylesheet" type="text/css" href="./style/style.css">
+    <link rel="stylesheet" type="text/css" href="./style/histogram.css">
+    <!-- endbuild -->
 
-        <script>
-            navigator.serviceWorker.register('multisimulationanalyser-serviceworker.js').then(function() {
-                console.log('service worker register');
-            });
-        </script>
-    </head>
-    <!--body onload="load()" style="background-color: #CFB897; margin: 0; overflow: none;"-->
-    <body class="gui_background" style="margin: 0; overflow: none;">
+    <!-- build:js multisimulationanalyser.min.js  -->
+    <script src="./dist/libimc.js"></script>
+    <script src="./src/jquery-1.10.2.min.js"></script>
+    <script src="./dist/table.js"></script>
+    <script src="./dist/optimiser.js"></script>
+    <!--script src="optimise.js"></script-->
+    <script src="./src/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="./src/jqplot/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="./src/filemanager/filemanager.js.html"></script>
+    <script type="text/javascript" src="./src/stocres/stocres.js.html"></script>
+    <script type="text/javascript" src="./src/parmest/parmest.js.html"></script>
+    <script type="text/javascript" src="./src/optim/optim.js.html"></script>
+    <script type="text/javascript" src="./src/sensi/sensi.js.html"></script>
+    <script type="text/javascript" src="./dist/rand.js"></script>
+    <script language="javascript" type="text/javascript" src="./src/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+    <script language="javascript" type="text/javascript"
+        src="./src/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+    <script language="javascript" type="text/javascript" src="./src/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+    <script src="./dist/util.js"></script>
+    <script src="./dist/settings.js"></script>
+    <script src="./dist/id_to_var.js"></script>
+    <script src="./dist/keyvalidate.js"></script>
+    <script src="./dist/panel.js"></script>
+    <script src="./dist/varstats.js"></script>
+    <script src="./dist/dataset.js"></script>
+    <script src="./dist/math.js"></script>
+    <script src="./dist/scatterplot.js"></script>
+    <script src="./dist/openmodel.js"></script>
+    <script src="./dist/histogram.js"></script>
+    <script src="./dist/filemanager/filemanager.js"></script>
+    <script src="./dist/sensi/sensitable.js"></script>
+    <script src="./dist/sensi/sensi.js"></script>
+    <script src="./dist/stocres/stocres.js"></script>
+    <script src="./dist/parmest/parmest.js"></script>
+    <script src="./dist/optim/optim.js"></script>
+    <script src="./dist/stocsd.js"></script>
+    <!-- endbuild -->
+
+    <link rel="shortcut icon" type="image/png" href="./icons/stochsd.png" />
+
+    <link rel="manifest" href="./multisimulationanalyser-manifest.json">
+
+    <script>
+        navigator.serviceWorker.register('./dist/multisimulationanalyser-serviceworker.js').then(function () {
+            console.log('service worker register');
+        });
+    </script>
+</head>
+<!--body onload="load()" style="background-color: #CFB897; margin: 0; overflow: none;"-->
+
+<body class="gui_background" style="margin: 0; overflow: none;">
     <div id="frm_stockres_im">
-        <div id="panel" class="panel" style="height: 500px; overflow-y: auto; position: absolute; left: 0px; display: none;">
-        <div style="position: absolute; left: 0px; width: 100%;" class="has_print_mode title_color">
-			<span class="nowrap" id="stocsd_title_panel">
-				<span class="titlefont" style="width: 90px; margin-left: auto; margin-right: auto; white-space: nowrap">
-					<span class="app_header" style="margin-left: 3px; width: 70px">Tools</span>
-				</span>
-				<button data-help-text-id="stocsd_help_content" class="cmd_help">?</button>
-			</span>
-		</div>
-        <div style="overflow: hidden; font-size: 19px; font-weight: bold">
-            <!--
+        <div id="panel" class="panel"
+            style="height: 500px; overflow-y: auto; position: absolute; left: 0px; display: none;">
+            <div style="position: absolute; left: 0px; width: 100%;" class="has_print_mode title_color">
+                <span class="nowrap" id="stocsd_title_panel">
+                    <span class="titlefont"
+                        style="width: 90px; margin-left: auto; margin-right: auto; white-space: nowrap">
+                        <span class="app_header" style="margin-left: 3px; width: 70px">Tools</span>
+                    </span>
+                    <button data-help-text-id="stocsd_help_content" class="cmd_help">?</button>
+                </span>
+            </div>
+            <div style="overflow: hidden; font-size: 19px; font-weight: bold">
+                <!--
             <button id="cmd_unminimize" onclick="cmd_unminimize_click()" style="display: none; position: absolute; left: 5x">Maximize</button>
             -->
-			<div id="panel_header_hidepart">
-                <div id="stockres_panel">
-                    <img id="app_icon" class="small_icon" src="icons/stocres.png">
-                    <span style="position: absolute; left: 28px; top: 0px;">
-                        &nbsp;&nbsp;<span class="app_header" id="app_title">StatRes for Insight Maker</span>&nbsp;&nbsp;<button data-help-text-id="[[app_help]]" class="cmd_help">?</button>
-                    </span>
-                    <button onclick="cmd_minimize_click()" style="position: absolute; right: 10px">&rarr;</button>
+                <div id="panel_header_hidepart">
+                    <div id="stockres_panel">
+                        <img id="app_icon" class="small_icon" src="./icons/stocres.png">
+                        <span style="position: absolute; left: 28px; top: 0px;">
+                            &nbsp;&nbsp;<span class="app_header" id="app_title">StatRes for Insight
+                                Maker</span>&nbsp;&nbsp;<button data-help-text-id="[[app_help]]"
+                                class="cmd_help">?</button>
+                        </span>
+                        <button onclick="cmd_minimize_click()" style="position: absolute; right: 10px">&rarr;</button>
+                    </div>
+                    <br />
                 </div>
-                <br/>
-			</div>
-		</div>
-		<!--div style="margin-top: 0.5em" class="innerpanel"-->
-        <div style="margin-top: 5px" id="iconpanel" class="iconpanel">
-            <br/>                        
-            <img id = "filemanager_icon" data-app="filemanager"  class="icon center hidden" src="icons/filemanager.png">
-            <img data-app="optim"  class="icon center" src="icons/optim.png">
-            
-            <img data-app="stocres" class="icon center" src="icons/stocres.png">
-            
-            <img data-app="parmest" class="icon center" src="icons/parmest.png">
-            <img data-app="sensi"  class="icon center" src="icons/sensi.png">
-        </div>
-        <div style="margin-top: 5px;" id="innerpanel" class="has_print_mode innerpanel">
-        <!--button id="cmd_openmodel" onclick="cmd_openmodel_click()">Select model</button-->
-		
-		<!--
+            </div>
+            <!--div style="margin-top: 0.5em" class="innerpanel"-->
+            <div style="margin-top: 5px" id="iconpanel" class="iconpanel">
+                <br />
+                <img id="filemanager_icon" data-app="filemanager" class="icon center hidden"
+                    src="icons/filemanager.png">
+                <img data-app="optim" class="icon center" src="icons/optim.png">
+
+                <img data-app="stocres" class="icon center" src="icons/stocres.png">
+
+                <img data-app="parmest" class="icon center" src="icons/parmest.png">
+                <img data-app="sensi" class="icon center" src="icons/sensi.png">
+            </div>
+            <div style="margin-top: 5px;" id="innerpanel" class="has_print_mode innerpanel">
+                <!--button id="cmd_openmodel" onclick="cmd_openmodel_click()">Select model</button-->
+
+                <!--
 		        <button id="cmd_openmodel" onclick="cmd_open_im_fileview_click()">Select model</button>
         <input id="txt_model_url" disabled="disabled" class="large" style="background-color: #f2f3ad" type="text" value=""></input>-->
-		<!-- http://stackoverflow.com/questions/1260122/expand-div-to-take-remaining-width table to make the URL input take up the remaining space-->
+                <!-- http://stackoverflow.com/questions/1260122/expand-div-to-take-remaining-width table to make the URL input take up the remaining space-->
 
-            <div id="stocsd_div_filemanager" class="hidden has_print_mode noqueryui_format">
-            <div id="tabs">
-              <ul style="display: none">
-                <li><a href="#tabs-1">Local</a></li>
-                <li><a href="#tabs-2">Internet</a></li>
-              </ul>
-              <div id="tabs-1">
-                <div style="margin: 2px; margin-top: 10px;">
-                <button id="cmd_new_file">New</button>
-                <button id="cmd_import_file">Load</button>
-                <button id="cmd_export_file">Save</button>
-                <!--button id="cmd_import_file">Import file</button-->
-                <input  accept=".imm" type="file" id="fil_upload_file" class="hidden"/>
-                <input class="has_print_mode largesmall" id="txt_model_file" disabled="disabled" type="text" value=""></input>
+                <div id="stocsd_div_filemanager" class="hidden has_print_mode noqueryui_format">
+                    <div id="tabs">
+                        <ul style="display: none">
+                            <li><a href="#tabs-1">Local</a></li>
+                            <li><a href="#tabs-2">Internet</a></li>
+                        </ul>
+                        <div id="tabs-1">
+                            <div style="margin: 2px; margin-top: 10px;">
+                                <button id="cmd_new_file">New</button>
+                                <button id="cmd_import_file">Load</button>
+                                <button id="cmd_export_file">Save</button>
+                                <!--button id="cmd_import_file">Import file</button-->
+                                <input accept=".imm" type="file" id="fil_upload_file" class="hidden" />
+                                <input class="has_print_mode largesmall" id="txt_model_file" disabled="disabled"
+                                    type="text" value=""></input>
+                            </div>
+                        </div>
+                        <div id="tabs-2">
+                            <table WIDTH="100%">
+                                <tr>
+                                    <td><button style="white-space: nowrap" id="cmd_openmodel"
+                                            onclick="cmd_open_im_fileview_click()">Select model</button></td>
+                                    <td WIDTH="100%">
+                                        <input id="txt_model_url" disabled="disabled" class="largesmall"
+                                            style="width: 100%; background-color: #f2f3ad" type="text" value=""></input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <p id="lbl_model_state"></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div id="tabs-2">
-                  		<table WIDTH="100%"><tr>
-                    <td><button style="white-space: nowrap" id="cmd_openmodel" onclick="cmd_open_im_fileview_click()">Select model</button></td>
-                    <td WIDTH="100%">
-                        <input id="txt_model_url" disabled="disabled" class="largesmall" style="width: 100%; background-color: #f2f3ad" type="text" value=""></input>
-                    </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><p id="lbl_model_state"></p></td>
-                    </tr>
-                    </table>
-              </div>
+                <!--br/-->
+                <div class="has_print_mode" id="app_area">
+                    <div id="filemanager_container" class="app_container"></div>
+                    <div id="optim_container" class="app_container"></div>
+                    <div id="parmest_container" class="app_container"></div>
+                    <div id="stocres_container" class="app_container"></div>
+                    <div id="sensi_container" class="app_container"></div>
+                    <!--end of stockres-->
+                </div><!-- End of app area-->
             </div>
-			</div>
-            <!--br/-->
-            <div class="has_print_mode" id="app_area">
-            <div id="filemanager_container" class="app_container"></div>
-            <div id="optim_container" class="app_container"></div>
-            <div id="parmest_container" class="app_container"></div>
-            <div id="stocres_container" class="app_container"></div>
-            <div id="sensi_container" class="app_container"></div>
-            <!--end of stockres-->
-            </div><!-- End of app area-->
         </div>
+        <div id="dragborder" class="dragborder gui_background" draggable="true"
+            style="z-index: 3; background-image:url('img/border.png'); position: absolute; left: 245px; top: 0px; bottom: 0px; cursor: e-resize">
         </div>
-        <div id="dragborder" class="dragborder gui_background" draggable="true" style="z-index: 3; background-image:url('img/border.png'); position: absolute; left: 245px; top: 0px; bottom: 0px; cursor: e-resize"></div>        
-        <div id="iframediv" class="iframediv" style="background-color: white;position: absolute; z-index:2;top: 0px; left: 250px; right: 0px; bottom: 0px;">
-        <iframe style="z-index:2; border: 0px" width="100%" height="100%" id="SimulationIFrame" src="">
-        </iframe>
+        <div id="iframediv" class="iframediv"
+            style="background-color: white;position: absolute; z-index:2;top: 0px; left: 250px; right: 0px; bottom: 0px;">
+            <iframe style="z-index:2; border: 0px" width="100%" height="100%" id="SimulationIFrame" src="">
+            </iframe>
         </div>
-        </div>
+    </div>
 
-        <div style="display: none" class="gui_background" id="frm_histogram" title="StatRes Histogram">
-            <div class="histogram dialog">
-                    <div class="minbox">
-                        <!--min:<br/>-->
-                        <p>Below</p>
-                        <input id="txt_histogram_before_lowest" disabled="disabled" value="0"/>
-                    </div>
-                    <div class="chart" id="chart1" style="margin-top:20px; margin-left:20px; width:300px; height:300px; -moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;">
-                    </div>
-                    <div class="maxbox">
-                        <p>Above</p>
-                        <input id="txt_histogram_after_highest" disabled="disabled" value="0"/>
-                        <!--max:<br/>-->
-                    </div>
-                    <fieldset class="datafields" style="width: 600px">
-                        <p id="lbl_histogram_numbars" class="label">No. bars:&nbsp;<input class="txt_histogram_numbars" type="text" value="10"/></p>
-                        <p id="lbl_histogram_min" class="label">Lowest:&nbsp;<input class="txt_histogram_min medium" size="3" class="min" type="text" value="0"/></p>
-                        <p id="lbl_histogram_max" class="label">Highest:&nbsp;<input class="txt_histogram_max medium" size="3" class="max" type="text" value="10"/></p>
-                    </fieldset>
-                    <button title="Update Histogram" id="cmd_histogram_update" type="button">Update</button>
-                    <button title="Auto set lowest and highest" id="cmd_histogram_auto" type="button">Auto</button>
-                    <button id="cmd_histogram_print" type="button">Print</button>
-                    <button id="cmd_histogram_close" type="button">Close</button>
-                    <p class="label" id="lbl_histogram_stats">CSLUMP<br/>No. data: 3<br/><br/>2014-01-01</p>
-                    <div class="optbox_histogram_mode">
-                        <p title="Normal histogram"><input checked type="radio" name="opt_histogram_mode" value="histogram">Histo.</p>
-                        <p title="Probability density function"><input type="radio" name="opt_histogram_mode" value="pdf">P.d.f.</p>
-                    </p>
+    <div style="display: none" class="gui_background" id="frm_histogram" title="StatRes Histogram">
+        <div class="histogram dialog">
+            <div class="minbox">
+                <!--min:<br/>-->
+                <p>Below</p>
+                <input id="txt_histogram_before_lowest" disabled="disabled" value="0" />
+            </div>
+            <div class="chart" id="chart1"
+                style="margin-top:20px; margin-left:20px; width:300px; height:300px; -moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;">
+            </div>
+            <div class="maxbox">
+                <p>Above</p>
+                <input id="txt_histogram_after_highest" disabled="disabled" value="0" />
+                <!--max:<br/>-->
+            </div>
+            <fieldset class="datafields" style="width: 600px">
+                <p id="lbl_histogram_numbars" class="label">No. bars:&nbsp;<input class="txt_histogram_numbars"
+                        type="text" value="10" /></p>
+                <p id="lbl_histogram_min" class="label">Lowest:&nbsp;<input class="txt_histogram_min medium" size="3"
+                        class="min" type="text" value="0" /></p>
+                <p id="lbl_histogram_max" class="label">Highest:&nbsp;<input class="txt_histogram_max medium" size="3"
+                        class="max" type="text" value="10" /></p>
+            </fieldset>
+            <button title="Update Histogram" id="cmd_histogram_update" type="button">Update</button>
+            <button title="Auto set lowest and highest" id="cmd_histogram_auto" type="button">Auto</button>
+            <button id="cmd_histogram_print" type="button">Print</button>
+            <button id="cmd_histogram_close" type="button">Close</button>
+            <p class="label" id="lbl_histogram_stats">CSLUMP<br />No. data: 3<br /><br />2014-01-01</p>
+            <div class="optbox_histogram_mode">
+                <p title="Normal histogram"><input checked type="radio" name="opt_histogram_mode"
+                        value="histogram">Histo.</p>
+                <p title="Probability density function"><input type="radio" name="opt_histogram_mode" value="pdf">P.d.f.
+                </p>
+                </p>
 
             </div>
         </div>
 
         <div style="display: none" class="gui_background dialog" id="frm_scatterplot" title="StatRes Scatter plot">
             <div class="scatterplot dialog">
-                    <div class="chart" id="scatterplot_chart" style="margin-top:20px; margin-left:20px; width:300px; height:300px; -moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;">
-                    </div>
-                    <p id="lbl_scatterplot_varname1" class="label">Longname for Var1</p>
-                    <p id="lbl_scatterplot_varname2" class="label">Longname for Var2</p>
-                    <fieldset class="datafields" style="width: 600px">
-                    </fieldset>
-                    <button id="cmd_scatterplot_print" type="button">Print</button>
-                    <button id="cmd_scatterplot_close" type="button">Close</button>
-                    <p class="label" id="lbl_scatterplot_stats">2014-01-01</p>
+                <div class="chart" id="scatterplot_chart"
+                    style="margin-top:20px; margin-left:20px; width:300px; height:300px; -moz-user-select: -moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;">
+                </div>
+                <p id="lbl_scatterplot_varname1" class="label">Longname for Var1</p>
+                <p id="lbl_scatterplot_varname2" class="label">Longname for Var2</p>
+                <fieldset class="datafields" style="width: 600px">
+                </fieldset>
+                <button id="cmd_scatterplot_print" type="button">Print</button>
+                <button id="cmd_scatterplot_close" type="button">Close</button>
+                <p class="label" id="lbl_scatterplot_stats">2014-01-01</p>
             </div>
         </div>
 
 
         <div style="display: none" class="gui_background" id="form_help_template" title="StatRes Help">
             <div class="help_content_container" style="overflow-x: visible; overflow-y: auto;width: 550px;">
-            <span class="help_content" style="font-size: 13px">
-                <!--The help content is loaded here-->
-            </span>
+                <span class="help_content" style="font-size: 13px">
+                    <!--The help content is loaded here-->
+                </span>
             </div>
-            <br/>
+            <br />
             <button style="width: 150px; display: block;" class="center help_close_button">Close</button>
         </div>
 
-            
-                
 
-                
+
+
+
         <div style="display: none" class="gui_background" id="frm_openurl" title="StatRes Open URL">
-            <p>Copy and paste a model URL here<br/>e.g. http://insightmaker.com/insight/14157</p>
+            <p>Copy and paste a model URL here<br />e.g. http://insightmaker.com/insight/14157</p>
             <input id="txt_open_url" style="position: static;" class="large" type="text">
-            <button onclick="cmd_open_url_click()" style="position: static;" id="cmd_open_url" type="button">Open</button>
+            <button onclick="cmd_open_url_click()" style="position: static;" id="cmd_open_url"
+                type="button">Open</button>
         </div>
         <div style="display: none" class="gui_background" id="frm_openmodel" title="StatRes Open Model">
             <div style="position: static" class="openmodel">
                 <button class="openbutton" id="cmd_open_form_url" onclick="cmd_open_url_form_click()">Open URL</button>
-                <button class="openbutton" disabled="disabled" id="cmd_open_file">Open file</button><br/>
-                <br/>
-                <button class="openbutton" onclick="cmd_open_im_fileview_click()" id="cmd_open_im_fileview">From Insightmaker.com</button><br/>
+                <button class="openbutton" disabled="disabled" id="cmd_open_file">Open file</button><br />
+                <br />
+                <button class="openbutton" onclick="cmd_open_im_fileview_click()" id="cmd_open_im_fileview">From
+                    Insightmaker.com</button><br />
                 <fieldset>
                     <legend>Recent</legend>
-                    <button title="http://insightmaker.com/insight/14218" class="model_shortcut">SIR</button><br/>
+                    <button title="http://insightmaker.com/insight/14218" class="model_shortcut">SIR</button><br />
                     <button title="http://insightmaker.com/insight/15573" class="model_shortcut">RANDOM</button>
                 </fieldset>
-                <button style="position: absolute; right: 20px; top: 200px;" id="cmd_openmodel_close" type="button">Close</button>
+                <button style="position: absolute; right: 20px; top: 200px;" id="cmd_openmodel_close"
+                    type="button">Close</button>
             </div>
         </div>
         <div style="display: none" id="help_text_container">
-			
-			
-			<p id="stocsd_help_content" style="font-size: 13px">
-				<span class="help_title">About StochSD</span>
-					<span style="font-size: 1.2em">
-					StochSD version: <span class="stochsd_version"></span><br/>
-					using Insight Maker version: <span class="im_version"></span><br/>
-					</span>
-					<br/>
-					StochSD is an extension to Insight Maker for <u>Stoc</u>astic <u>S</u>ystem <u>D</u>ynamics models.
-					StochSD has the following facilities for IM models:<br/><br/>
-					<b>Optim</b> - A simplex optimiser.<br/>
-					<br/>
-					<b>Sensi</b> - A sensitivity analyser.<br/>
-					<br/>
-					<b>StatRes</b> - For running a stochastic IM model N times, performing statistical analysis and presentation.<br/>
-					<br/>
-					<b>Parmest</b> - Parameter estimation for stochastic IM models.<br/>
-			</p>
-			
-			
-			<p style="display: none;" id="stocres_sendseed_help_content" style="font-size: 13px">
-				<span class="help_title">Send Seed Help</span>
-				By the <b>Send Seed</b> device you will make the study (including many simulations) of a stochastic model reproducible.<br/><br/>
-				Checking the <b>Send Seed</b> box opens a sub-frame that contains two text fields. In the first, 
-				named <b>Seed-of-Seeds</b>, you can specify a single integer number (default 123) that will generate a seed (<b>Actual Seed</b>)
-				for each simulation run. The <b>Actual Seed</b> is sent to the model before a new simulation run.<br/>
-				<br/>
-				<img class="center" style="width: 450px;" src="img/Seed_of_Seeds_StocRes.png"/><br/>
-			</p>	
-			
-			
-			<p style="display: none;" id="ci_help_content" style="font-size: 13px">
-				<span class="help_title">Confidence Level Help</span>
-                STATISTICS<br/> <br/>
-                
-                After <i>N</i> simulations statistics can be calculated: <br/> <br/>
-                
-                Avg = M = &sum;(X<sub>1</sub>...X<sub>N</sub>)/N. <br/>
-                StdDev. = s = <span style="font-size: 1.4em">&radic;</span><span style="border-top:1px solid black">&sum;[(X<sub>i</sub>-M)(X<sub>i</sub>-M)]</span> / <span style="font-size: 1.4em">&radic;</span><span style="border-top:1px solid black">(N-1)</span>. <br/> <br/>
-                
-                Choose 1-sided or 2-sided conf intervals. <br/>
-                Confidence limits for the mean are set by 1-&alpha; (e.g. 90%, 95%, etc.) <br/>
-                The corresponding &lambda; (= &lambda;<sub>&alpha;</sub> or &lambda;<sub>&alpha;/2</sub>) is then calculated (see Figure). <br/> <br/>
 
-                Confidence limits around a mean estimate are calculated using <br/>
-                the Normal approximation. (This requires at least N=20 simulations.) <br/> <br/>
-                
-                The Confidence Interval is then: <br/> <br/>
-                
-                1-sided <br/>
-                C.I. = x < M + &lambda;<sub>&alpha;</sub>*s/&radic;N Or x > M - &lambda;<sub>&alpha;</sub>*s/&radic;N <br/> <br/>
-               
-                2-sided <br/>
-                C.I. = (M - &lambda;<sub>&alpha;/2</sub>*s/&radic;N , M + &lambda;<sub>&alpha;/2</sub>*s/&radic;N) <br/> <br/>
-                
-                (Note: You can reduce C.I. by increasing the number of simulations.) <br/>
-                <img class="center" style="width: 450px;" src="img/HelpCI.png"/><br/>
-			</p>
-			
-			
-		
-			
-			<p class="hidden" id="stocres_skiponcondition_help_content">
-				<span class="help_title">SkipOnCondition Help</span>
-				Checking the SkipOnCondition box enables you to use an auxiliary with the name “SkipOnCondition” 
-				that must be included as an auxiliary in the model. If this auxiliary is TRUE at 
-				the end of a simulation run, the whole simulation run will be skipped 
-				and replaced by a new run. This is handy if you for some reason want 
-				to exclude certain simulation runs, e.g. where nothing of interest happens. 
-				The number of skipped runs will also be shown.<br/>
-				<br/>
-				The auxiliary named SkipOnCondition can e.g. have the condition: <br/>
-				<br/>
-				&nbsp;&nbsp;[Quantity] &lt; 0.5 <br/>
-				<br/>
-						
-			</p>
-		
-		
-			<p class="hidden" id="parmest_skiponcondition_help_content">
-				<span class="help_title">SkipOnCondition Help</span>
-				Checking the SkipOnCondition box enables you to use an auxiliary with the name “SkipOnCondition” 
-				that must be included as an auxiliary in the model. If this auxiliary is TRUE at 
-				the end of a simulation run the whole estimation round will be skipped 
-				and replaced by a new esimation round. This is handy if you for some reason want 
-				to exclude certain simulation runs, e.g. where nothing of interest happens. 
-				The number of skipped estimation rounds will also be shown.<br/>
-				<br/>
-				The auxiliary named SkipOnCondition can e.g. have the condition: <br/>
-				<br/>
-				&nbsp;&nbsp;[Quantity] &lt; 0.5 <br/>
-				<br/>
-						
-			</p>	
-			
-			<p class="hidden" id="stocres_help">
-			  StatRes is a tool for collection of end-point results from <i>N</i> simulations <br/>
-			  and for statistical analysis of these results. <br/> <br/>
-			  
-			  Quantities to be studied (e.g. Stocks, Flows, Variables, Differences and <br/>
-			  cumulated quantities) have to be modelled so their <br/>
-			  resulting values can be transferred to StatRes after each run. <br/> <br/>
-			  StatRes will calculate: Average, Standard Deviation, Confidence Interval, <br/>
-			  Min, Max, and Percentiles. <br/>
-			  The Confidence Level for the Conf. Int. can be specified as well as 1 or 2-sided intervals. <br/>
-			  (Default is 95% and 2-sided interval.) <br/>
-			  The Percentile can also be specified. (Default: 50% (Median).)  <br/> <br/>
-			  
-			  To use the StatRes module you have to: <br/>
-				 1. Build or load a StochSD model. <br/>
-				 2. Specify and Add the names of the quantities to be studied. <br/>
-				[3. Specify the Level for the Confidence Interval & 1 or 2-sided.] <br/>
-				[4. Specify the Percentile.] <br/>
-				 5. Specify the number of Requested Simulations (Default=100). <br/>
-				 6. Press the Run button. <br/> <br/>
-			  
-				( NOTE: Only write in Yellow fields.) <br/>
-			</p>
-			
-			<p class="hidden" id="ci_help_seed_of_seeds">
-				During a parameter estimation round, the parameters in the model are tuned
-				during a large number of simulation runs. It is then important that the stochastic
-				model behaves the same during all simulations in this round. This is accomplished by using the
-				same <b>Seed-of-Seeds</b> in the model.<br/>
-				<br/>
-				For the next parameter estimation round a <i>new</i> <b>Actual Seed</b> is required. This means that
-				we for <i>N</i> parameter estimation rounds will need <i>N</i> <b>Actual Seeds</b>. ParmVar therefore has its
-				own random number generator (RNG1) that delivers these <i>N</i> <b>Actual Seeds</b> to the model's
-				RNG2. ParmVar’s generator is initiated by a single <b>Seed-of-Seeds</b> (default value 123).<br/>
-<br/>
-			
 
-			
-                <img class="center" style="width: 450px;" src="img/Seed_of_Seeds_ParmEst.png"/><br/>
-			</p>
-			
-			<div class="hidden" id="optim_help">
-					<b>Optim</b> is a SIMPLEX OPTIMIZER for parameter<br/>
-				  estimation or optimization of StochSD models.<br/><br/>
-                  To use Optim you have to :
-                  <ol>
+            <p id="stocsd_help_content" style="font-size: 13px">
+                <span class="help_title">About StochSD</span>
+                <span style="font-size: 1.2em">
+                    StochSD version: <span class="stochsd_version"></span><br />
+                    using Insight Maker version: <span class="im_version"></span><br />
+                </span>
+                <br />
+                StochSD is an extension to Insight Maker for <u>Stoc</u>astic <u>S</u>ystem <u>D</u>ynamics models.
+                StochSD has the following facilities for IM models:<br /><br />
+                <b>Optim</b> - A simplex optimiser.<br />
+                <br />
+                <b>Sensi</b> - A sensitivity analyser.<br />
+                <br />
+                <b>StatRes</b> - For running a stochastic IM model N times, performing statistical analysis and
+                presentation.<br />
+                <br />
+                <b>Parmest</b> - Parameter estimation for stochastic IM models.<br />
+            </p>
+
+
+            <p style="display: none;" id="stocres_sendseed_help_content" style="font-size: 13px">
+                <span class="help_title">Send Seed Help</span>
+                By the <b>Send Seed</b> device you will make the study (including many simulations) of a stochastic
+                model reproducible.<br /><br />
+                Checking the <b>Send Seed</b> box opens a sub-frame that contains two text fields. In the first,
+                named <b>Seed-of-Seeds</b>, you can specify a single integer number (default 123) that will generate a
+                seed (<b>Actual Seed</b>)
+                for each simulation run. The <b>Actual Seed</b> is sent to the model before a new simulation run.<br />
+                <br />
+                <img class="center" style="width: 450px;" src="img/Seed_of_Seeds_StocRes.png" /><br />
+            </p>
+
+
+            <p style="display: none;" id="ci_help_content" style="font-size: 13px">
+                <span class="help_title">Confidence Level Help</span>
+                STATISTICS<br /> <br />
+
+                After <i>N</i> simulations statistics can be calculated: <br /> <br />
+
+                Avg = M = &sum;(X<sub>1</sub>...X<sub>N</sub>)/N. <br />
+                StdDev. = s = <span style="font-size: 1.4em">&radic;</span><span
+                    style="border-top:1px solid black">&sum;[(X<sub>i</sub>-M)(X<sub>i</sub>-M)]</span> / <span
+                    style="font-size: 1.4em">&radic;</span><span style="border-top:1px solid black">(N-1)</span>. <br />
+                <br />
+
+                Choose 1-sided or 2-sided conf intervals. <br />
+                Confidence limits for the mean are set by 1-&alpha; (e.g. 90%, 95%, etc.) <br />
+                The corresponding &lambda; (= &lambda;<sub>&alpha;</sub> or &lambda;<sub>&alpha;/2</sub>) is then
+                calculated (see Figure). <br /> <br />
+
+                Confidence limits around a mean estimate are calculated using <br />
+                the Normal approximation. (This requires at least N=20 simulations.) <br /> <br />
+
+                The Confidence Interval is then: <br /> <br />
+
+                1-sided <br />
+                C.I. = x < M + &lambda;<sub>&alpha;</sub>*s/&radic;N Or x > M - &lambda;<sub>&alpha;</sub>*s/&radic;N
+                    <br /> <br />
+
+                    2-sided <br />
+                    C.I. = (M - &lambda;<sub>&alpha;/2</sub>*s/&radic;N , M + &lambda;<sub>&alpha;/2</sub>*s/&radic;N)
+                    <br /> <br />
+
+                    (Note: You can reduce C.I. by increasing the number of simulations.) <br />
+                    <img class="center" style="width: 450px;" src="./img/HelpCI.png" /><br />
+            </p>
+
+
+
+
+            <p class="hidden" id="stocres_skiponcondition_help_content">
+                <span class="help_title">SkipOnCondition Help</span>
+                Checking the SkipOnCondition box enables you to use an auxiliary with the name “SkipOnCondition”
+                that must be included as an auxiliary in the model. If this auxiliary is TRUE at
+                the end of a simulation run, the whole simulation run will be skipped
+                and replaced by a new run. This is handy if you for some reason want
+                to exclude certain simulation runs, e.g. where nothing of interest happens.
+                The number of skipped runs will also be shown.<br />
+                <br />
+                The auxiliary named SkipOnCondition can e.g. have the condition: <br />
+                <br />
+                &nbsp;&nbsp;[Quantity] &lt; 0.5 <br />
+                <br />
+
+            </p>
+
+
+            <p class="hidden" id="parmest_skiponcondition_help_content">
+                <span class="help_title">SkipOnCondition Help</span>
+                Checking the SkipOnCondition box enables you to use an auxiliary with the name “SkipOnCondition”
+                that must be included as an auxiliary in the model. If this auxiliary is TRUE at
+                the end of a simulation run the whole estimation round will be skipped
+                and replaced by a new esimation round. This is handy if you for some reason want
+                to exclude certain simulation runs, e.g. where nothing of interest happens.
+                The number of skipped estimation rounds will also be shown.<br />
+                <br />
+                The auxiliary named SkipOnCondition can e.g. have the condition: <br />
+                <br />
+                &nbsp;&nbsp;[Quantity] &lt; 0.5 <br />
+                <br />
+
+            </p>
+
+            <p class="hidden" id="stocres_help">
+                StatRes is a tool for collection of end-point results from <i>N</i> simulations <br />
+                and for statistical analysis of these results. <br /> <br />
+
+                Quantities to be studied (e.g. Stocks, Flows, Variables, Differences and <br />
+                cumulated quantities) have to be modelled so their <br />
+                resulting values can be transferred to StatRes after each run. <br /> <br />
+                StatRes will calculate: Average, Standard Deviation, Confidence Interval, <br />
+                Min, Max, and Percentiles. <br />
+                The Confidence Level for the Conf. Int. can be specified as well as 1 or 2-sided intervals. <br />
+                (Default is 95% and 2-sided interval.) <br />
+                The Percentile can also be specified. (Default: 50% (Median).) <br /> <br />
+
+                To use the StatRes module you have to: <br />
+                1. Build or load a StochSD model. <br />
+                2. Specify and Add the names of the quantities to be studied. <br />
+                [3. Specify the Level for the Confidence Interval & 1 or 2-sided.] <br />
+                [4. Specify the Percentile.] <br />
+                5. Specify the number of Requested Simulations (Default=100). <br />
+                6. Press the Run button. <br /> <br />
+
+                ( NOTE: Only write in Yellow fields.) <br />
+            </p>
+
+            <p class="hidden" id="ci_help_seed_of_seeds">
+                During a parameter estimation round, the parameters in the model are tuned
+                during a large number of simulation runs. It is then important that the stochastic
+                model behaves the same during all simulations in this round. This is accomplished by using the
+                same <b>Seed-of-Seeds</b> in the model.<br />
+                <br />
+                For the next parameter estimation round a <i>new</i> <b>Actual Seed</b> is required. This means that
+                we for <i>N</i> parameter estimation rounds will need <i>N</i> <b>Actual Seeds</b>. ParmVar therefore
+                has its
+                own random number generator (RNG1) that delivers these <i>N</i> <b>Actual Seeds</b> to the model's
+                RNG2. ParmVar’s generator is initiated by a single <b>Seed-of-Seeds</b> (default value 123).<br />
+                <br />
+
+
+
+                <img class="center" style="width: 450px;" src="img/Seed_of_Seeds_ParmEst.png" /><br />
+            </p>
+
+            <div class="hidden" id="optim_help">
+                <b>Optim</b> is a SIMPLEX OPTIMIZER for parameter<br />
+                estimation or optimization of StochSD models.<br /><br />
+                To use Optim you have to :
+                <ol>
                     <li>Build or load a StochSD model.</li>
                     <li>Specify and <b>Add</b> the Parameters:</li>
                     <ol type="a">
                         <li>Name the Parameter.</li>
                         <li>Specify starting values of the parameter.</li>
-				        <li>Specify edge size of the initial simplex in the parameter’s direction.</li>
-				        <li>Press <b>Add</b>.</li>
+                        <li>Specify edge size of the initial simplex in the parameter’s direction.</li>
+                        <li>Press <b>Add</b>.</li>
                     </ol>
                     <li>Enter the Name of the Objective Function.</li>
                     <li>Select <b>Minimize</b> or <b>Maximize</b>. (Default=Minimize)</li>
                     <li>Enter Requested Accuracy. </li>
-                    <p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>| becomes smaller<br/>
-                        than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the<br/> 
+                    <p>(When <i>Actual Accuracy</i> calculated as: |<i>V</i><sub>best</sub> - <i>V</i><sub>worst</sub>|
+                        becomes smaller<br />
+                        than <i>Required Accuracy</i> Optim will terminate. Here <i>V</i> symbolises the<br />
                         Objective Function.)</p>
                     <li>[ Enter Maximum Number of Iterations (Default=200). ]</li>
                     <li>[ <b>Lock Seed</b> is only required for a stochastic model (i.e. a model using</li>
@@ -406,68 +445,74 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
                     <p>change of Max Iterations or Required Accuracy.</p>
                     <p>You may also <b>Halt</b> and/or <b>Reset</b> the optimization. ]</p>
                     <li>The <b>Print</b> button prints the Optim form as shown.</li>
-                  </ol>
-				<p><br />
-				</p>
-			</div>
-			
-			<div class="hidden" id="sensi_help">
-				<b>Sensi</b> is a Sensitivity Analyser of StochSD models.<br/>
-				<br/>
-				You specify a basic value of a parameter p which gives an output: V(p).<br/>
-				Incrementing the parameter value to p+&Delta;p gives an output: V(p+&Delta;p).<br/>
-				The increase in V is then &Delta;V = V(p+&Delta;p) - V(p) because of the increase in p (i.e. &Delta;p). <br/>
-				<br/>
-				To use Sensi you have to:<br/>
-				1. Open your StochSD model. It will be run as specified according to step length, integration method, start and stop times.<br/>
-					 2.   Specify the Name, Base Value, and Increment of each Parameter to be studied <br/>
-						   and Add it.<br/>
-					 3.   Specify and Add the names of the Objective Functions to be studied.<br/>
-					 4.   Press the Run button.<br/>
-				  <br/>
-				The Results are shown in the grid matrix according to Parameter-row and Objective Function column.<br/>
-				 <br/>
-				With the radio-button 'Absolute Sensitivity' (&Delta;V:&Delta;p) and 'Relative Sensitivity' (&Delta;V/V: &Delta;p/p) you may at any time switch between Absolute and Relative Sensitivity without extra simulations required.<br/>
-				<br/>
-				By checking &#8220;E-format&#8221; the results are given in the form: X.XX&plusmn;EXXX instead of maximal information within nine positions.<br/>
-				<br/>
-				Note: You may only write in the Yellow fields.<br/>
-				Note: use decimal point NOT comma.
-			</div>
-			<div class="hidden" id="sensi_sendseed_help_content">
-				During a <i>Deterministic</i> Sensitivity Analysis, the effect on an Objective function, V, 
-				from a studied parameter, P, is studied. For this we 
-				need two simulation runs to obtain V(P) and V(P+&Delta;P). <br/>
-				<br/>
-				During a <i>Stochastic</i> Sensitivity Analysis, it is important to lock 
-				the Actual Seed for the two runs. 
-				However, the sensitivity is dependent on 
-				the chosen seed. Therefore, you should in the stochastic 
-				case do several runs to see how the sensitivity 
-				changes randomly. You can do this by repeatedly press the Run-button. 
-				For each new pair of runs a new Actual Seed is required. 
-				This is provided by Sensi’s own RNG 
-				that delivers a new Actual Seed when you press the Run button – See Figure.<br/>
-				<br/>
-				When the Sensitivity analysis is repeated N times 
-				(for a stochastic model)
-				 Sensi’s random number generator (RNG1) delivers N seeds to the 
-				 models RNG2.
-				 Sensi’s generator is initiated by a <b>‘Seed-of-Seeds’</b> (default value 123).<br/>
-				<br/>
-				<center>
-					<img class="center" style="width: 450px;" src="img/Seed_of_Seeds_Sensi.png"/><br/>
-				</center>
-			</div>
-			<div class="hidden" id="sensitivity_help">
-				Definition of <b>Absolute</b> and <b>Relative Sensitivity</b>
-				(denoting a parameter p, an Objective Function V and
-				the increments &Delta;p and &Delta;V=V(p+&Delta;p)&mdash;V(p):<br/>
-				<br/>
-				<b>Absolute Sensitivity:</b> &Delta;V /&Delta;p<br/>
-				<br/>
-				<b>Relative Sensitivity:</b> (&Delta;V/V)/(&Delta;p/p)<br/>
-			</div>
+                </ol>
+                <p><br />
+                </p>
+            </div>
+
+            <div class="hidden" id="sensi_help">
+                <b>Sensi</b> is a Sensitivity Analyser of StochSD models.<br />
+                <br />
+                You specify a basic value of a parameter p which gives an output: V(p).<br />
+                Incrementing the parameter value to p+&Delta;p gives an output: V(p+&Delta;p).<br />
+                The increase in V is then &Delta;V = V(p+&Delta;p) - V(p) because of the increase in p (i.e. &Delta;p).
+                <br />
+                <br />
+                To use Sensi you have to:<br />
+                1. Open your StochSD model. It will be run as specified according to step length, integration method,
+                start and stop times.<br />
+                2. Specify the Name, Base Value, and Increment of each Parameter to be studied <br />
+                and Add it.<br />
+                3. Specify and Add the names of the Objective Functions to be studied.<br />
+                4. Press the Run button.<br />
+                <br />
+                The Results are shown in the grid matrix according to Parameter-row and Objective Function column.<br />
+                <br />
+                With the radio-button 'Absolute Sensitivity' (&Delta;V:&Delta;p) and 'Relative Sensitivity' (&Delta;V/V:
+                &Delta;p/p) you may at any time switch between Absolute and Relative Sensitivity without extra
+                simulations required.<br />
+                <br />
+                By checking &#8220;E-format&#8221; the results are given in the form: X.XX&plusmn;EXXX instead of
+                maximal information within nine positions.<br />
+                <br />
+                Note: You may only write in the Yellow fields.<br />
+                Note: use decimal point NOT comma.
+            </div>
+            <div class="hidden" id="sensi_sendseed_help_content">
+                During a <i>Deterministic</i> Sensitivity Analysis, the effect on an Objective function, V,
+                from a studied parameter, P, is studied. For this we
+                need two simulation runs to obtain V(P) and V(P+&Delta;P). <br />
+                <br />
+                During a <i>Stochastic</i> Sensitivity Analysis, it is important to lock
+                the Actual Seed for the two runs.
+                However, the sensitivity is dependent on
+                the chosen seed. Therefore, you should in the stochastic
+                case do several runs to see how the sensitivity
+                changes randomly. You can do this by repeatedly press the Run-button.
+                For each new pair of runs a new Actual Seed is required.
+                This is provided by Sensi’s own RNG
+                that delivers a new Actual Seed when you press the Run button – See Figure.<br />
+                <br />
+                When the Sensitivity analysis is repeated N times
+                (for a stochastic model)
+                Sensi’s random number generator (RNG1) delivers N seeds to the
+                models RNG2.
+                Sensi’s generator is initiated by a <b>‘Seed-of-Seeds’</b> (default value 123).<br />
+                <br />
+                <center>
+                    <img class="center" style="width: 450px;" src="img/Seed_of_Seeds_Sensi.png" /><br />
+                </center>
+            </div>
+            <div class="hidden" id="sensitivity_help">
+                Definition of <b>Absolute</b> and <b>Relative Sensitivity</b>
+                (denoting a parameter p, an Objective Function V and
+                the increments &Delta;p and &Delta;V=V(p+&Delta;p)&mdash;V(p):<br />
+                <br />
+                <b>Absolute Sensitivity:</b> &Delta;V /&Delta;p<br />
+                <br />
+                <b>Relative Sensitivity:</b> (&Delta;V/V)/(&Delta;p/p)<br />
+            </div>
         </div>
-    </body>
+</body>
+
 </html>
