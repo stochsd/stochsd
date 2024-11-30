@@ -1,4 +1,11 @@
-var Settings = {
+export const Settings: {
+	fileExtension: string
+	MaxRecentFiles: number
+	nwInitZoom: number
+	primitiveFontSize: number
+	showDebug: boolean
+	limitSimulationSteps: true
+} = {
 	fileExtension: ".ssd",
 	// Maximum recent files to be displayed in menu
 	MaxRecentFiles: 10,
@@ -9,5 +16,8 @@ var Settings = {
 	// Whatever to show debug
 	showDebug: false,
 	// limit how many steps a simulation may take
-	limitSimulationSteps: true    
+	limitSimulationSteps: true
 };
+
+
+(window as any).Settings = Settings;
