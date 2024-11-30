@@ -5160,38 +5160,7 @@ function attach_anchor(anchor) {
 
 var currentTool = MouseTool;
 
-class CoordRect {
-	constructor() {
-		this.x1 = 0;
-		this.y1 = 0;
-		this.x2 = 0;
-		this.y2 = 0;
-		this.element = null; // This is set at page ready
-	}
-	setVisible(new_visible) {
-		this.element.setAttribute("visibility", new_visible ? "visible" : "hidden");
-	}
-	xmin() {
-		return this.x1 < this.x2 ? this.x1 : this.x2;
-	}
-	ymin() {
-		return this.y1 < this.y2 ? this.y1 : this.y2;
-	}
-	width() {
-		return Math.abs(this.x2 - this.x1);
-	}
-	height() {
-		return Math.abs(this.y2 - this.y1);
-	}
-	update() {
-		this.element.setAttribute("x", this.xmin());
-		this.element.setAttribute("y", this.ymin());
-
-		this.element.setAttribute("width", this.width());
-		this.element.setAttribute("height", this.height());
-	}
-}
-var rectselector = new CoordRect();
+var rectselector = new window.CoordRect();
 
 function rectselector_start() {
 	empty_click_down = true;
