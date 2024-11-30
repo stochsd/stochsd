@@ -1209,23 +1209,6 @@ class OrthoAnchorPoint extends AnchorPoint {
 	}
 }
 
-function safeDivision(nominator, denominator) {
-	// Make sure division by Zero does not happen 
-	if (denominator == 0) {
-		return 9999999;
-	} else {
-		return nominator / denominator;
-	}
-}
-
-function sign(value) {
-	if (value < 0) {
-		return -1;
-	} else {
-		return 1;
-	}
-}
-
 class StockVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
