@@ -2,5 +2,11 @@
 	"name": "OpenSystemDynamics",
 	"main": "start.html",
 	"author": "stochsdteam",
-	"version": "2019.07.19"
+	"version": "2019.07.19",
+	"scripts": {
+		"build": "tsc"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.2"
+	}
 }
