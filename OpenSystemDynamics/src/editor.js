@@ -1387,7 +1387,7 @@ class NumberboxVisual extends BasePrimitive {
 				"precision": number_length["usePrecision"] ? number_length["precision"] : undefined,
 				"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
 			};
-			valueString = formatNumber(lastValue, number_options);
+			valueString = window.formatNumber(lastValue, number_options);
 		} else {
 			valueString += "_";
 		}
@@ -2409,7 +2409,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 
 		let time_step_str = `${getTimeStep()}`;
-		let time_decimals = decimalsInValueString(time_step_str);
+		let time_decimals = window.decimalsInValueString(time_step_str);
 
 		// We must get the data in column_index+1 since column 1 is reserved for time
 		let roundToZero = this.primitive.getAttribute("RoundToZero");
@@ -2441,9 +2441,9 @@ class TableVisual extends HtmlTwoPointer {
 				${this.data.results.map((row) => `<tr>
 					${["Time"].concat(this.data.namesToDisplay).map((_, column_index) =>
 			column_index == 0
-				? `<td class="time-value-cell">${formatNumber(row[column_index], { round_to_zero_limit, decimals: time_decimals }
+				? `<td class="time-value-cell">${window.formatNumber(row[column_index], { round_to_zero_limit, decimals: time_decimals }
 				)}</td>`
-				: `<td class="prim-value-cell">${formatNumber(row[column_index], number_options)}</td>`
+				: `<td class="prim-value-cell">${window.formatNumber(row[column_index], number_options)}</td>`
 		).join("")}
 				</tr>`).join("")}
 			</tbody>
@@ -2620,7 +2620,7 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 
 			for (let i = lowerIndex; i <= upperIndex; i++) {
 				let currentTick = tickStep * i;
-				ticks.push([currentTick, formatNumber(currentTick, { decimals })]);
+				ticks.push([currentTick, window.formatNumber(currentTick, { decimals })]);
 			}
 
 			if (tickStep * upperIndex !== max) {
@@ -6875,9 +6875,9 @@ class RunResults {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
 		$("#runStatusBar").width(`${100 * progress}%`);
 		let number_options = { precision: 3 };
-		let currentTime = formatNumber(this.getRunProgress(), number_options);
-		let startTime = formatNumber(this.getRunProgressMin(), number_options);
-		let endTime = formatNumber(this.getRunProgressMax(), number_options);
+		let currentTime = window.formatNumber(this.getRunProgress(), number_options);
+		let startTime = window.formatNumber(this.getRunProgressMin(), number_options);
+		let endTime = window.formatNumber(this.getRunProgressMax(), number_options);
 		let timeStep = this.getTimeStep();
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
 		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
@@ -8782,7 +8782,7 @@ class SimulationSettings extends jqDialog {
 			return false;
 		} else if (Settings.limitSimulationSteps && Number(this.length_field.val()) / Number(this.step_field.val()) > 1e5) {
 			let iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
-			let iters_str = formatNumber(iterations, { use_e_format_upper_limit: 1e5, precision: 3 });
+			let iters_str = window.formatNumber(iterations, { use_e_format_upper_limit: 1e5, precision: 3 });
 			this.warning_div.html(warningHtml(`
 				This Length requires ${iters_str} time steps. <br/>
 				The limit is 10<sup>5</sup> time steps per simulation.
@@ -8791,7 +8791,7 @@ class SimulationSettings extends jqDialog {
 
 		} else if (Settings.limitSimulationSteps && Number(this.length_field.val()) / Number(this.step_field.val()) > 1e4) {
 			let iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
-			let iters_str = formatNumber(iterations, { use_e_format_upper_limit: 1e4, precision: 3 });
+			let iters_str = window.formatNumber(iterations, { use_e_format_upper_limit: 1e4, precision: 3 });
 			this.warning_div.html(noteHtml(`
 				This Length requires ${iters_str} time steps. <br/>
 				More than 10<sup>4</sup> time steps per simulation <br/>

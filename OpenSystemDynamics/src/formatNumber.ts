@@ -138,7 +138,7 @@ type FormatNumberOptions = {
 }
 
 /* replaces format_number */
-function formatNumber(value: number, options: FormatNumberOptions = {}) {
+export function formatNumber(value: number, options: FormatNumberOptions = {}) {
     for (let key of Object.keys(default_options) as (keyof FormatNumberOptions)[]) {
         if (typeof (options)[key] == "undefined") {
             (options as any)[key] = default_options[key] as any;
@@ -221,7 +221,7 @@ function formatNumber(value: number, options: FormatNumberOptions = {}) {
 
 
 /* replaces decimals_in_value_string */
-function decimalsInValueString(value: string) {
+export function decimalsInValueString(value: string) {
     if (isNaN(Number(value))) {
         return null;
     }
@@ -258,3 +258,7 @@ function decimalsInValueString(value: string) {
 
     return decimals - trailing_zeros;
 }
+
+
+(window as any).formatNumber = formatNumber;
+(window as any).decimalsInValueString = decimalsInValueString;

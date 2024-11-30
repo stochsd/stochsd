@@ -4,7 +4,9 @@
 	"author": "stochsdteam",
 	"version": "2019.07.19",
 	"scripts": {
-		"build": "tsc"
+		"build": "tsc",
+		"start": "npm run build; npx static-server . -p 2222",
+		"watch": "watch 'npm run start' ./src"
 	},
 	"devDependencies": {
 		"typescript": "^5.7.2"

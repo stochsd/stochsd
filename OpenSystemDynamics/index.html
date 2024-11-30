@@ -20,6 +20,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript">
 		document.addEventListener('contextmenu', event => event.preventDefault());
 	</script>
+	<script type="module" src="./dist/formatNumber.js"></script>
 	<!-- build:js opensystemdynamics.min.js  -->
 	<script type="text/javascript" src="./dist/libs/idbkeyval.js"></script>
 	<script type="text/javascript" src="./dist/version.js"></script>
@@ -55,7 +56,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="./dist/insightmaker/resources/RedBlackNode.js"></script>
 	<script type="text/javascript" src="./dist/insightmaker/resources/RedBlackTree.js"></script>
 	<script type="text/javascript" src="./dist/insightmaker/resources/graph.js"></script>
-	<script type="text/javascript" src="./dist/insightmaker/resources/jstat.min.js"></script>
+	<script type="text/javascript" src="./src/insightmaker/resources/jstat.min.js"></script>
 	<script type="text/javascript" src="./dist/definition-error.js"></script>
 	<script type="text/javascript" src="./dist/newAPI.js"></script>
 	<script src="./dist/makexml.js"></script>
@@ -89,8 +90,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="./src/jquery/jqplot-1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
 	<script src="./src/jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="./dist/emenu.js"></script>
-	<script type="text/javascript" src="./dist/format_number.js"></script>
-	<script type="text/javascript" src="./dist/editor.js"></script>
+	<script type="text/javascript" defer src="./dist/editor.js"></script>
 	<!-- endbuild -->
 
 	<!-- build:css opensystemdynamics.css  -->
@@ -107,8 +107,8 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<!-- endbuild -->
 
 
-	<link rel="shortcut icon" type="image/png" href="../icons/stochsd.png" />
-	<link rel="icon" type="image/png" href="../icons/stochsd.png" />
+	<link rel="shortcut icon" type="image/png" href="./icons/stochsd.png" />
+	<link rel="icon" type="image/png" href="./icons/stochsd.png" />
 </head>
 
 <body>
