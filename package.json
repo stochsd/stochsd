@@ -1,6 +1,6 @@
 {
 	"name": "stochsd",
-	"version": "2019.09.01",
+	"version": "2024.11.30",
 	"description": "Stochastic Simulation application",
 	"author": "stochsdteam",
 	"main": "start.html",
@@ -8,14 +8,21 @@
 		"icon": "icons/stochsd.png"
 	},
 	"scripts": {
+		"clean": "rm -rf ./node_modules ./OpenSystemDynamics/node_modules ./OpenSystemDynamics/dist MultiSimulationAnalyser/node_modules MultiSimulationAnalyser/dist",
 		"build": "tsc",
-		"start": "npm run build; static-server . -p 8080",
-		"nw": "nw ."
+		"watch:msa": "tsc --build MultiSimulationAnalyser --watch",
+		"watch:osd": "tsc --build OpenSystemDynamics --watch",
+		"watch:all": "concurrently --raw \"npm run watch:msa\" \"npm run watch:osd\"",
+		"start": "static-server . -p 8080",
+		"dev": "concurrently --raw \"npm run watch:all\" \"npm run start\"",
+		"start:nw": "nw .",
+		"dev:nw": "concurrently --raw \"npm watch:all\" \"npm run start:nw\""
 	},
 	"dependencies": {
 		"typescript": "^5.7.2"
 	},
 	"devDependencies": {
+		"concurrently": "^9.1.0",
 		"nw": "^0.93.0",
 		"static-server": "^3.0.0"
 	}

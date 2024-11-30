@@ -13,3 +13,4 @@ package-lock.json
 build/
 dist/
 .DS_Store
+tsconfig.tsbuildinfo
