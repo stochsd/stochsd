@@ -4044,8 +4044,8 @@ class LinkVisual extends BaseConnection {
 		this.arrowHead = SVG.group([this.arrowPath]);
 		SVG.translate(this.arrowHead, x4, y4);
 
-		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
-		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, { "stroke": "black", "stroke-width": "1" });
+		this.click_area = SVG.curve("twoway", x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
+		this.curve = SVG.curve("oneway", x1, y1, x2, y2, x3, y3, x4, y4, { "stroke": "black", "stroke-width": "1" });
 
 		this.click_area.draggable = false;
 		this.curve.draggable = false;
