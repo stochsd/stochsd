@@ -14,6 +14,8 @@ export type Curve = SVGPathElement &
     update: () => void
   }
 
+export type Path = SVGPathElement & { update: () => void, dstring: string }
+
 export class SVG {
   /* replaces svgplane */
   static element: SVGElement = document.getElementById("svgplane") as unknown as SVGElement;
@@ -50,7 +52,6 @@ export class SVG {
   static curve(way: "oneway" | "twoway", x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number, extraAttributes: { [k: string]: string } | null = null): Curve {
 
     const result = document.createElementNS("http://www.w3.org/2000/svg", 'path') as Curve
-    console.log("curve1", result)
     result.way = way
     result.x1 = x1
     result.y1 = y1
@@ -80,8 +81,28 @@ export class SVG {
 
     result.update();
     SVG.element.appendChild(result);
+    return result
+  }
+  static path(dstring: string, stroke: string, fill: string, markclass: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'path') as Path
+    result.dstring = dstring
+    result.setAttribute("class", markclass) //Set path's data
+    result.setAttribute("stroke", "black")
+    result.setAttribute("fill", "transparent")
+    result.setAttribute("fill", fill)
+    result.setAttribute("stroke", stroke)
 
-    console.log("curve result", result)
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]) //Set path's data
+      }
+    }
+    result.update = function () {
+      result.setAttribute("d", result.dstring)
+    }
+
+    result.update()
+    SVG.element.appendChild(result)
     return result
   }
 

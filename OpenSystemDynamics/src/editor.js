@@ -1480,9 +1480,9 @@ class ConstantVisual extends VariableVisual {
 		let r = this.getRadius();
 		let rs = r - 3; // Selector radius 
 		return [
-			svg_path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
+			SVG.path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
-			svg_path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
+			SVG.path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -1519,8 +1519,8 @@ class ConverterVisual extends BasePrimitive {
 	}
 	getImage() {
 		return [
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
-			svg_path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
+			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
+			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
 			svg_icons(defaultStroke, defaultFill, "icons"),
 			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 		];
@@ -2097,7 +2097,7 @@ class FlowVisual extends BaseConnection {
 		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
 		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, { "class": "element" });
 		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
-		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
+		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = SVG.group(
