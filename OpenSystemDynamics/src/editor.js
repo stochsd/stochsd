@@ -185,7 +185,6 @@ class SDHistory {
 				this.undoIndex = this.undoStates.length - 1;
 			}
 		}
-		console.trace("Stored undo state", this.undoStates.length, this.undoIndex);
 	}
 
 	static forceCustomUndoState(newState) {
@@ -996,7 +995,7 @@ class OnePointer extends BaseObject {
 		}
 
 		if (this.is_ghost && this.icons) {
-			this.icons.set("ghost", "visible");
+			this.icons.setVisibility("ghost", "visible");
 		}
 
 
@@ -1035,7 +1034,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
-			this.icons.set_color("white");
+			this.icons.setColor("white");
 		}
 	}
 	unselect() {
@@ -1044,7 +1043,7 @@ class OnePointer extends BaseObject {
 			this.selector_array[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
-			this.icons.set_color(this.color);
+			this.icons.setColor(this.color);
 		}
 	}
 	update() {
@@ -1053,8 +1052,8 @@ class OnePointer extends BaseObject {
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons && prim) {
 			const hasDefError = DefinitionError.has(prim);
-			this.icons.set("questionmark", hasDefError ? "visible" : "hidden");
-			this.icons.set("dice", (!hasDefError && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
+			this.icons.setVisibility("questionmark", hasDefError ? "visible" : "hidden");
+			this.icons.setVisibility("dice", (!hasDefError && hasRandomFunction(getValue(prim))) ? "visible" : "hidden");
 		}
 
 		if (!this.is_ghost) {
@@ -1310,7 +1309,7 @@ class StockVisual extends BasePrimitive {
 			SVG.rect(-w / 2, -h / 2, w, h, this.color, defaultFill, "element"),
 			SVG.rect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, "none", this.color, "highlight"),
 			textElem,
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 }
@@ -1452,7 +1451,7 @@ class VariableVisual extends BasePrimitive {
 			SVG.circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
 			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1483,7 +1482,7 @@ class ConstantVisual extends VariableVisual {
 			SVG.path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
 			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 			SVG.path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
-			svg_icons(defaultStroke, defaultFill, "icons")
+			SVG.icons(defaultStroke, defaultFill, "icons")
 		];
 	}
 
@@ -1521,7 +1520,7 @@ class ConverterVisual extends BasePrimitive {
 		return [
 			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
-			svg_icons(defaultStroke, defaultFill, "icons"),
+			SVG.icons(defaultStroke, defaultFill, "icons"),
 			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 		];
 	}
@@ -1923,7 +1922,7 @@ class FlowVisual extends BaseConnection {
 		// Save middle anchor points to primitive
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
-		for (i = 0; i < this.middleAnchors.length; i++) {
+		for (let i = 0; i < this.middleAnchors.length; i++) {
 			let pos = this.middleAnchors[i].getPos();
 			let x = pos[0];
 			let y = pos[1];
@@ -2099,14 +2098,14 @@ class FlowVisual extends BaseConnection {
 		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
-		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
-		this.variable = SVG.group(
-			[SVG.circle(0, 0, this.getRadius(), this.color, "white", "element"),
+		this.icons = SVG.icons(defaultStroke, defaultFill, "icons");
+		this.variable = SVG.group([
+			SVG.circle(0, 0, this.getRadius(), this.color, "white", "element"),
 			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			this.icons,
-			this.name_element]
-		);
-		this.icons.set_color("white");
+			this.name_element,
+		]);
+		this.icons.setColor("white");
 		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
@@ -2176,11 +2175,11 @@ class FlowVisual extends BaseConnection {
 		if (this.primitive && this.icons) {
 			const hasDefError = DefinitionError.has(this.primitive);
 			if (hasDefError) {
-				this.icons.set("questionmark", "visible");
+				this.icons.setVisibility("questionmark", "visible");
 			} else {
-				this.icons.set("questionmark", "hidden");
+				this.icons.setVisibility("questionmark", "hidden");
 			}
-			this.icons.set("dice", (!hasDefError && hasRandomFunction(getValue(this.primitive))) ? "visible" : "hidden");
+			this.icons.setVisibility("dice", (!hasDefError && hasRandomFunction(getValue(this.primitive))) ? "visible" : "hidden");
 		}
 	}
 
@@ -2218,13 +2217,13 @@ class FlowVisual extends BaseConnection {
 	unselect() {
 		super.unselect();
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "hidden");
-		this.icons.set_color(this.color);
+		this.icons.setColor(this.color);
 	}
 
 	select() {
 		super.select();
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("visibility", "visible");
-		this.icons.set_color("white");
+		this.icons.setColor("white");
 	}
 
 	doubleClick() {

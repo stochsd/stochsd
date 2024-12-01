@@ -63,6 +63,13 @@ export type Cloud = SVGPathElement & {
   update: () => void
   setVisibility: (isVisible: boolean) => void
 }
+export type Icons = SVGGElement & {
+  elements: Record<"ghost" | "questionmark" | "dice", Element>
+  setColor: (color: string) => void
+  setVisibility: (icon: "ghost" | "questionmark" | "dice", visibility: "visible" | "hidden") => void
+}
+
+
 export class SVG {
   /* replaces svgplane */
   static element: SVGElement = document.getElementById("svgplane") as unknown as SVGElement;
@@ -472,7 +479,53 @@ export class SVG {
     }
     return result
   }
-
+  static ghost(stroke: string, fill: string, markclass: string = "") {
+    let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    newElement.setAttribute("stroke", stroke);
+    newElement.setAttribute("fill", fill);
+    newElement.setAttribute("stroke-width", "1");
+    newElement.setAttribute("d", "m 9.9828659,-2.772745 c 0,1.3775907 0.2255841,11.8988413 -0.2819803,13.083087 C 9.1933216,11.50264 7.203349,7.3618143 6.3090708,8.2640961 5.4067353,9.1663779 5.0844728,10.004211 3.8921001,10.511744 2.699728,11.011221 1.3945641,8.1996473 0.01689062,8.1996473 -1.3607825,8.1996473 -2.6659466,11.011221 -3.858319,10.511744 -5.050691,10.004211 -5.2601616,9.6014057 -6.1624971,8.6991239 -7.0648332,7.7968422 -9.2320496,11.542923 -9.7396135,10.350622 -10.239121,9.1583207 -9.9490844,-1.3951543 -9.9490844,-2.772745 c 0,-5.4942523 4.4633386,-9.957325 9.96597502,-9.957325 5.50263598,0 9.96597528,4.4630727 9.96597528,9.957325 z");
+    newElement.setAttribute("class", markclass);
+    return newElement;
+  }
+  static dice(stroke: string, fill: string, markclass: string = "") {
+    let newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    newElement.setAttribute("stroke", stroke);
+    newElement.setAttribute("fill", fill);
+    newElement.setAttribute("stroke-width", "1");
+    newElement.setAttribute("d", "m -3.5463331,-9.2427435 -4.2426784,4.7879684 V 6.5315532 l 12.8085634,0.6925413 2.4411505,-6.1592462 0.052919,-9.52762 z m 0.2231778,0.4831683 10.0499019,0.6626308 -2.1719568,3.7180958 -11.338351,-0.441754 z m 5.8900524,1.0284584 a 1.4725126,0.6828872 0 0 0 -1.4725131,0.683338 1.4725126,0.6828872 0 0 0 1.4725131,0.6810374 1.4725126,0.6828872 0 0 0 1.4725131,-0.6810374 1.4725126,0.6828872 0 0 0 -1.4725131,-0.683338 z m -5.5265258,0.8535974 a 1.4725126,0.72416619 0 0 0 -1.472513,0.7247526 1.4725126,0.72416619 0 0 0 1.472513,0.7247525 1.4725126,0.72416619 0 0 0 1.4725131,-0.7247525 1.4725126,0.72416619 0 0 0 -1.4725131,-0.7247526 z m -4.2288736,2.645922 11.5868376,0.43025 -0.073626,10.491656 -11.4763991,-0.6879398 z m 2.9450262,1.4357003 a 1.472513,1.472513 0 0 0 -1.4725131,1.4725131 1.472513,1.472513 0 0 0 1.4725131,1.47251311 1.472513,1.472513 0 0 0 1.4725132,-1.47251311 1.472513,1.472513 0 0 0 -1.4725132,-1.4725131 z m 5.22742159,0.1840641 a 1.4725131,1.4725131 0 0 0 -1.35747298,0.8973128 1.4725131,1.4725131 0 0 0 -0.0506177,0.1403489 1.4725131,1.4725131 0 0 0 -0.0644225,0.4348514 A 1.4725131,1.4725131 0 0 0 0.98394549,0.33319327 1.4725131,1.4725131 0 0 0 2.4564586,-1.1393199 1.4725131,1.4725131 0 0 0 0.98394549,-2.611833 Z M -4.0225991,1.8425192 a 1.4725126,1.4725126 0 0 0 -1.4725131,1.4725132 1.4725126,1.4725126 0 0 0 1.4725131,1.4725131 1.4725126,1.4725126 0 0 0 1.472513,-1.4725131 1.4725126,1.4725126 0 0 0 -1.472513,-1.4725132 z m 4.93291896,0.2576899 a 1.472513,1.472513 0 0 0 -1.47251311,1.472513 1.472513,1.472513 0 0 0 0.522282,1.1250922 1.472513,1.472513 0 0 0 0.11734089,0.089731 A 1.472513,1.472513 0 0 0 0.91031986,5.0452349 1.472513,1.472513 0 0 0 2.3828329,3.5727221 1.472513,1.472513 0 0 0 0.91031986,2.1002091 Z");
+    newElement.setAttribute("class", markclass);
+    return newElement;
+  }
+  static questionmark(color: string) {
+    return SVG.text(0, 6, "?", "questionmark", { "font-size": "18px", "font-weight": "bold", "stroke": color })
+  }
+  static icons(stroke: string, fill: string, markclass?: string): Icons {
+    const result: Icons = SVG.group(
+      [
+        SVG.ghost(stroke, fill, "ghost"),
+        SVG.questionmark(stroke),
+        SVG.dice(fill, stroke, "dice")
+      ]) as Icons
+    result.setAttribute("class", markclass);
+    result.elements = {
+      "ghost": result.children[0],
+      "questionmark": result.children[1],
+      "dice": result.children[2]
+    }
+    for (let child of result.children) {
+      child.setAttribute("visibility", "hidden");
+    }
+    result.setColor = function (color: string) {
+      result.elements["ghost"].setAttribute("stroke", color);
+      result.elements["questionmark"].setAttribute("style", `fill: ${color}`);
+      result.elements["dice"].setAttribute("style", `fill: ${color}`);
+    }
+    result.setVisibility = function (icon: "ghost" | "questionmark" | "dice", visibility: "visible" | "hidden") {
+      result.elements[icon].setAttribute("visibility", visibility);
+    }
+    return result
+  }
 
 }
 
