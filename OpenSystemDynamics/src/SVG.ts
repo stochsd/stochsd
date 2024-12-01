@@ -1,4 +1,6 @@
 
+declare var Settings: any
+
 export type Curve = SVGPathElement &
   Record<"x1" | "y1" | "x2" | "y2" | "x3" | "y3" | "x4" | "y4", number> & {
     way: "oneway" | "twoway"
@@ -105,7 +107,23 @@ export class SVG {
     SVG.element.appendChild(result)
     return result
   }
+  static text(x: number, y: number, text: string, markclass: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'text')
+    result.setAttribute("class", markclass);
+    result.setAttribute("x", `${x}`);
+    result.setAttribute("y", `${y}`);
+    result.innerHTML = text;
+    result.setAttribute("text-anchor", "middle");
+    result.setAttribute("style", "font-size: " + Settings.primitiveFontSize + "px");
 
+    if (extraAttributes != undefined) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]);
+      }
+    }
+    SVG.element.appendChild(result);
+    return result
+  }
 
 }
 

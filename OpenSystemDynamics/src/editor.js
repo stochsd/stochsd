@@ -1300,8 +1300,8 @@ class StockVisual extends BasePrimitive {
 	}
 
 	getImage() {
-		// let textElem = svg_text(0, 39, "stock", "name_element");
-		let textElem = svg_text(0, 39, this.primitive.getAttribute("name"), "name_element");
+		// let textElem = SVG.text(0, 39, "stock", "name_element");
+		let textElem = SVG.text(0, 39, this.primitive.getAttribute("name"), "name_element");
 		textElem.setAttribute("fill", this.color);
 		let size = this.getSize();
 		let w = size[0];
@@ -1397,7 +1397,7 @@ class NumberboxVisual extends BasePrimitive {
 		return [
 			this.element,
 			svg_rect(-20, -15, 40, 30, "none", this.color, "highlight"),
-			svg_text(0, 0, "", "name_element", { "alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color }),
+			SVG.text(0, 0, "", "name_element", { "alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color }),
 		];
 	}
 	setColor(color) {
@@ -1450,7 +1450,7 @@ class VariableVisual extends BasePrimitive {
 	getImage() {
 		return [
 			svg_circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
@@ -1481,7 +1481,7 @@ class ConstantVisual extends VariableVisual {
 		let rs = r - 3; // Selector radius 
 		return [
 			SVG.path(`M0,${r} ${r},0 0,-${r} -${r},0Z`, this.color, defaultFill, "element"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 			SVG.path(`M0,${rs} ${rs},0 0,-${rs} -${rs},0Z`, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
@@ -1522,7 +1522,7 @@ class ConverterVisual extends BasePrimitive {
 			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", this.color, defaultFill, "element"),
 			SVG.path("M-20 0  L-10 -15  L10 -15  L20 0  L10 15  L-10 15  Z", "none", this.color, "highlight", { "transform": "scale(0.87)" }),
 			svg_icons(defaultStroke, defaultFill, "icons"),
-			svg_text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
+			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
 		];
 	}
 
@@ -2098,7 +2098,7 @@ class FlowVisual extends BaseConnection {
 		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, { "class": "element" });
 		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
-		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
+		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = SVG.group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"),
