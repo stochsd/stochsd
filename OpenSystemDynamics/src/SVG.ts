@@ -47,7 +47,11 @@ export type ArrowHead = SVGPathElement & {
   setPosition: (pos: [number, number], directionVector?: Point) => void
   update: () => void
 }
-
+export type WidePath = SVGPathElement & {
+  points: Point[]
+  setPoints: (points: Point[]) => void
+  update: () => void
+}
 export class SVG {
   /* replaces svgplane */
   static element: SVGElement = document.getElementById("svgplane") as unknown as SVGElement;
@@ -373,6 +377,40 @@ export class SVG {
     }
     return result;
   }
+
+  static widePath(width: number, color: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'path') as WidePath
+    result.points = [];
+    result.setAttribute("stroke", color);
+    result.setAttribute("fill", "transparent");
+    result.setAttribute("stroke-width", width.toString());
+
+    // Is set last so it can override default attributes
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]); //Set path's data
+      }
+    }
+    SVG.element.appendChild(result);
+    result.setPoints = function (points: Point[]) {
+      result.points = points;
+    }
+    result.update = function () {
+      let points = result.points;
+      if (points.length < 1) { return; }
+      let d = "M" + points[0][0] + "," + points[0][1];
+      for (let i = 1; i < result.points.length; i++) {
+        d += "L" + points[i][0] + "," + points[i][1] + " ";
+      }
+      for (let i = result.points.length - 2; 0 < i; i--) { 	// Draw path back upon itself - Reason: remove area in which to click on
+        d += "L" + points[i][0] + "," + points[i][1] + " ";
+      }
+      // d += "Z";
+      result.setAttribute("d", d);
+    }
+    return result
+  }
+
 
 }
 
