@@ -26,6 +26,13 @@ export class SVG {
     SVG.element.appendChild(result)
     return result
   }
+  static translate(element: Element, x: number, y: number) {
+    element.setAttribute("transform", `translate(${x},${y}) rotate(0)`);
+  }
+  static transform(element: Element, x: number, y: number, r: number, s: string | number) {
+    element.setAttribute("transform", `translate(${x},${y}) rotate(${r}) scale(${s})`);
+  }
+
 
 }
 

@@ -2205,8 +2205,8 @@ class FlowVisual extends BaseConnection {
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
 		let [varX, varY] = this.getVariablePos();
-		svg_transform(this.valve, valveX, valveY, valveRot, 1);
-		svg_translate(this.variable, varX, varY);
+		SVG.transform(this.valve, valveX, valveY, valveRot, 1);
+		SVG.translate(this.variable, varX, varY);
 		// Update
 		this.startCloud.update();
 		this.endCloud.update();
@@ -4042,7 +4042,7 @@ class LinkVisual extends BaseConnection {
 
 		this.arrowPath = SVG.fromString(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = SVG.group([this.arrowPath]);
-		svg_translate(this.arrowHead, x4, y4);
+		SVG.translate(this.arrowHead, x4, y4);
 
 		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
 		this.curve = svg_curve_oneway(x1, y1, x2, y2, x3, y3, x4, y4, { "stroke": "black", "stroke-width": "1" });
@@ -4148,7 +4148,7 @@ class LinkVisual extends BaseConnection {
 		let xdiff = this.endX - b2pos[0];
 		let ydiff = this.endY - b2pos[1];
 		let angle = Math.atan2(xdiff, -ydiff) * (180 / Math.PI);
-		svg_transform(this.arrowHead, this.endX, this.endY, angle, 1);
+		SVG.transform(this.arrowHead, this.endX, this.endY, angle, 1);
 
 		// Update end position so that we get the drawing effect when link is created
 		this.curve.x4 = this.endX;
