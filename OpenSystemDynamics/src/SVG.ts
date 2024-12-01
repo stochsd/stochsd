@@ -27,6 +27,14 @@ export type ForeignScrollable = SVGGElement & {
   setWidth: (value: number) => void
   setHeight: (value: number) => void
 }
+export type Foreign = SVGGElement & {
+  cutDiv: HTMLDivElement
+  contentDiv: HTMLDivElement
+  setX: (value: number) => void
+  setY: (value: number) => void
+  setWidth: (value: number) => void
+  setHeight: (value: number) => void
+}
 
 export class SVG {
   /* replaces svgplane */
@@ -177,6 +185,57 @@ export class SVG {
 
     result.setX = function (x: number) {
       this.cutDiv.style.marginLeft = `${x}px`;
+    }
+    result.setY = function (y: number) {
+      this.cutDiv.style.marginTop = `${y}px`;
+    }
+    result.setWidth = function (w: number) {
+      this.cutDiv.style.width = `${w}px`;
+    }
+    result.setHeight = function (h: number) {
+      this.cutDiv.style.height = `${h}px`;
+    }
+    return result
+  }
+
+
+  static foreign(x: number, y: number, width: number, height: number, innerHtml: string, fill = "white") {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'g') as Foreign
+    // covers entire screen - never moves
+    // if foreignObject moves in Chrome then automatic scroll
+    let foreign = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+    foreign.setAttribute("style", `height: 100%; width: 100%; pointer-events: none;`);
+
+    result.cutDiv = document.createElement("div");
+    result.cutDiv.setAttribute("style", `background: ${fill}; overflow: hidden; pointer-events: all;`);
+
+    result.contentDiv = document.createElement("div");
+    result.contentDiv.innerHTML = innerHtml;
+    let padding = 8;
+    result.contentDiv.setAttribute("style", `
+        position: relative; 
+        left: ${padding}px; 
+        top: ${padding}px; 
+        width: calc( 100% - ${2 * padding}px );
+        height: calc( 100% - ${2 * padding}px );
+      `);
+    result.contentDiv.setAttribute("class", "contentDiv");
+
+    result.appendChild(foreign);
+    foreign.appendChild(result.cutDiv);
+    result.cutDiv.appendChild(result.contentDiv);
+
+    result.cutDiv = result.cutDiv;
+    result.contentDiv = result.contentDiv;
+
+    result.setAttribute("x", `${x}`);
+    result.setAttribute("y", `${y}`);
+    result.setAttribute("width", `${width}`);
+    result.setAttribute("height", `${height}`);
+    SVG.element.appendChild(result);
+
+    result.setX = function (x: number) {
+      result.cutDiv.style.marginLeft = `${x}px`;
     }
     result.setY = function (y: number) {
       this.cutDiv.style.marginTop = `${y}px`;
