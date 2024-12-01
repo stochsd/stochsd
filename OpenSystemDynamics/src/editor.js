@@ -2091,8 +2091,8 @@ class FlowVisual extends BaseConnection {
 	}
 
 	makeGraphics() {
-		this.startCloud = svg_cloud(this.color, defaultFill, { "class": "element" });
-		this.endCloud = svg_cloud(this.color, defaultFill, { "class": "element" });
+		this.startCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
+		this.endCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
 		this.outerPath = SVG.widePath(5, this.color, { "class": "element" });
 		this.innerPath = SVG.widePath(3, "white"); // Must have white ohterwise path is black
 		this.arrowHeadPath = SVG.arrowHead(this.color, defaultFill, { "class": "element" });
@@ -2187,16 +2187,16 @@ class FlowVisual extends BaseConnection {
 	updateGraphics() {
 		let points = this.getAnchors().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
-			this.startCloud.set_visibility(true);
-			this.startCloud.set_pos(points[0], points[1]);
+			this.startCloud.setVisibility(true);
+			this.startCloud.setPosition(points[0], points[1]);
 		} else {
-			this.startCloud.set_visibility(false);
+			this.startCloud.setVisibility(false);
 		}
 		if (this.getEndAttach() == null) {
-			this.endCloud.set_visibility(true);
-			this.endCloud.set_pos(points[points.length - 1], points[points.length - 2]);
+			this.endCloud.setVisibility(true);
+			this.endCloud.setPosition(points[points.length - 1], points[points.length - 2]);
 		} else {
-			this.endCloud.set_visibility(false);
+			this.endCloud.setVisibility(false);
 		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));

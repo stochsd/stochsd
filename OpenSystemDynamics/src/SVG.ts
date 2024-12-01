@@ -4,6 +4,8 @@ declare var sin: any
 declare var cos: any
 declare var rotatePoints: any
 declare var translatePoints: any
+declare var neswDirection: any
+declare var translate: any
 type Point = [number, number]
 
 export type Curve = SVGPathElement &
@@ -51,6 +53,15 @@ export type WidePath = SVGPathElement & {
   points: Point[]
   setPoints: (points: Point[]) => void
   update: () => void
+}
+export type Cloud = SVGPathElement & {
+  visible: boolean
+  pos: Point
+  defaultStroke: string
+  defaultFill: string
+  setPosition: (pos: Point, adjacentPos: Point) => void
+  update: () => void
+  setVisibility: (isVisible: boolean) => void
 }
 export class SVG {
   /* replaces svgplane */
@@ -407,6 +418,57 @@ export class SVG {
       }
       // d += "Z";
       result.setAttribute("d", d);
+    }
+    return result
+  }
+  static cloud(stroke: string, fill: string, extraAttributes: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'path') as Cloud
+    result.setAttribute("stroke", stroke);
+    result.setAttribute("stroke-width", "1");
+    result.setAttribute("fill", fill);
+    result.setAttribute("d", "m -0.8447564,-11.14014 c -4.6214865,0.0079 -8.5150638,3.4528784 -9.0815386,8.0394981 -2.433142,0.4797384 -4.187489,2.61298232 -4.188373,5.0929775 -6.93e-4,2.8681392 2.323935,5.1936858 5.1920483,5.1941646 H 7.671332 C 11.368943,7.1872852 14.36665,4.1896043 14.365861,0.49198425 14.223787,-3.916487 10.814437,-6.550028 7.2876342,-6.1810461 5.7167742,-9.2242012 2.5799338,-11.137323 -0.84475524,-11.140887 Z");
+    result.visible = true;
+    result.pos = [0, 0];
+    result.defaultStroke = stroke;
+    result.defaultFill = fill;
+
+    // Is set last so it can override default attributes
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]); //Set path's data
+      }
+    }
+    SVG.element.appendChild(result);
+    result.setPosition = function (pos: Point, adjacentPos: Point) {
+      let offset: Point = [0, 0];
+      switch (neswDirection(adjacentPos, pos)) {
+        case "north":
+          offset = [0, 11];
+          break;
+        case "east":
+          offset = [14, -1];
+          break;
+        case "south":
+          offset = [0, -7];
+          break;
+        default: // west
+          offset = [-14, 0];
+          break;
+      }
+      this.pos = translate(pos, offset);
+    }
+
+    result.update = function () {
+      this.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
+    }
+
+    result.setVisibility = function (isVisible: boolean) {
+      this.visible = isVisible;
+      if (this.visible) {
+        this.setAttribute("visibility", "visible");
+      } else {
+        this.setAttribute("visibility", "hidden");
+      }
     }
     return result
   }
