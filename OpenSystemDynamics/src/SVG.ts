@@ -1,5 +1,10 @@
 
 declare var Settings: any
+declare var sin: any
+declare var cos: any
+declare var rotatePoints: any
+declare var translatePoints: any
+type Point = [number, number]
 
 export type Curve = SVGPathElement &
   Record<"x1" | "y1" | "x2" | "y2" | "x3" | "y3" | "x4" | "y4", number> & {
@@ -34,6 +39,13 @@ export type Foreign = SVGGElement & {
   setY: (value: number) => void
   setWidth: (value: number) => void
   setHeight: (value: number) => void
+}
+export type ArrowHead = SVGPathElement & {
+  templateArrowPoints: Point[]
+  arrowPoints: Point[],
+  setTemplatePoints: (newPoints: Point[]) => void
+  setPosition: (pos: [number, number], directionVector?: Point) => void
+  update: () => void
 }
 
 export class SVG {
@@ -322,6 +334,44 @@ export class SVG {
     }
     SVG.element.appendChild(result);
     return result
+  }
+
+  /* replaces svg_arrow_head */
+  static arrowHead(stroke: string, fill: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'path') as ArrowHead
+    result.setAttribute("stroke", stroke);
+    result.setAttribute("fill", fill);
+    result.templateArrowPoints = [[12, -2], [12, -6], [0, 0], [12, 6], [12, 2]]
+    result.arrowPoints = [];
+
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]);
+      }
+    }
+
+    SVG.element.appendChild(result);
+
+    result.setTemplatePoints = function (newPoints: Point[]) {
+      this.templateArrowPoints = newPoints;
+    }
+
+    result.setPosition = function (pos: [number, number], directionVector: Point = [1, 0]) {
+      let sine = sin([0, 0], directionVector);
+      let cosine = cos([0, 0], directionVector);
+      this.arrowPoints = rotatePoints(this.templateArrowPoints, sine, cosine);
+      this.arrowPoints = translatePoints(this.arrowPoints, pos);
+    };
+
+    result.update = function () {
+      let d = "M" + this.arrowPoints[0][0] + "," + this.arrowPoints[0][1];
+      for (let i = 1; i < this.arrowPoints.length; i++) {
+        d += "L" + this.arrowPoints[i][0] + "," + this.arrowPoints[i][1] + " ";
+      }
+      // d += "Z";
+      this.setAttribute("d", d);
+    }
+    return result;
   }
 
 }

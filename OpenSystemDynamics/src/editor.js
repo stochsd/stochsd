@@ -2095,7 +2095,7 @@ class FlowVisual extends BaseConnection {
 		this.endCloud = svg_cloud(this.color, defaultFill, { "class": "element" });
 		this.outerPath = svg_wide_path(5, this.color, { "class": "element" });
 		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
-		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, { "class": "element" });
+		this.arrowHeadPath = SVG.arrowHead(this.color, defaultFill, { "class": "element" });
 		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
@@ -2200,7 +2200,7 @@ class FlowVisual extends BaseConnection {
 		}
 		this.outerPath.setPoints(this.shortenLastPoint(12));
 		this.innerPath.setPoints(this.shortenLastPoint(8));
-		this.arrowHeadPath.set_pos(points[points.length - 1], this.getDirection());
+		this.arrowHeadPath.setPosition(points[points.length - 1], this.getDirection());
 
 		let [valveX, valveY] = this.getValvePos();
 		let valveRot = this.getValveRotation();
@@ -3792,11 +3792,11 @@ class LineVisual extends TwoPointer {
 	makeGraphics() {
 		this.line = SVG.line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
 		this.clickLine = SVG.line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", { "stroke-width": "10" });
-		this.arrowHeadStart = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
-		this.arrowHeadEnd = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
+		this.arrowHeadStart = SVG.arrowHead(defaultStroke, defaultStroke, { "class": "element" });
+		this.arrowHeadEnd = SVG.arrowHead(defaultStroke, defaultStroke, { "class": "element" });
 		let arrowPathPoints = [[8, 0], [13, -5], [0, 0], [13, 5]];
-		this.arrowHeadStart.set_template_points(arrowPathPoints);
-		this.arrowHeadEnd.set_template_points(arrowPathPoints);
+		this.arrowHeadStart.setTemplatePoints(arrowPathPoints);
+		this.arrowHeadEnd.setTemplatePoints(arrowPathPoints);
 
 		this.group = SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id", this.id);
@@ -3829,12 +3829,12 @@ class LineVisual extends TwoPointer {
 			let endOffset = rotate([shortenAmount, 0], sine, cosine);
 			if (arrowHeadStart) {
 				lineStartPos = translate(neg(endOffset), [this.startX, this.startY]);
-				this.arrowHeadStart.set_pos([this.startX, this.startY], [this.endX - this.startX, this.endY - this.startY]);
+				this.arrowHeadStart.setPosition([this.startX, this.startY], [this.endX - this.startX, this.endY - this.startY]);
 				this.arrowHeadStart.update();
 			}
 			if (arrowHeadEnd) {
 				lineEndPos = translate(endOffset, [this.endX, this.endY]);
-				this.arrowHeadEnd.set_pos([this.endX, this.endY], [this.startX - this.endX, this.startY - this.endY]);
+				this.arrowHeadEnd.setPosition([this.endX, this.endY], [this.startX - this.endX, this.startY - this.endY]);
 				this.arrowHeadEnd.update();
 			}
 		}
