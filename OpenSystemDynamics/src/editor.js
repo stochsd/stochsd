@@ -1162,8 +1162,8 @@ class AnchorPoint extends OnePointer {
 			];
 		} else {
 			return [
-				svg_circle(0, 0, 5, this.color, "white", "element"),
-				svg_circle(0, 0, 5, "none", this.color, "highlight")
+				SVG.circle(0, 0, 5, this.color, "white", "element"),
+				SVG.circle(0, 0, 5, "none", this.color, "highlight")
 			];
 		}
 
@@ -1449,9 +1449,9 @@ class VariableVisual extends BasePrimitive {
 
 	getImage() {
 		return [
-			svg_circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
+			SVG.circle(0, 0, this.getRadius(), this.color, defaultFill, "element"),
 			SVG.text(0, 0, this.primitive.getAttribute("name"), "name_element", { "fill": this.color }),
-			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
+			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
 	}
@@ -2101,8 +2101,8 @@ class FlowVisual extends BaseConnection {
 		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
 		this.variable = SVG.group(
-			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"),
-			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
+			[SVG.circle(0, 0, this.getRadius(), this.color, "white", "element"),
+			SVG.circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			this.icons,
 			this.name_element]
 		);
@@ -2302,8 +2302,8 @@ class EllipseVisual extends TwoPointer {
 		let cy = (this.startY + this.endY) / 2;
 		let rx = Math.max(Math.abs(this.startX - this.endX) / 2, 1);
 		let ry = Math.max(Math.abs(this.startY - this.endY) / 2, 1);
-		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
-		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none", "element", { "stroke-width": "10" });
+		this.element = SVG.ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
+		this.clickEllipse = SVG.ellipse(cx, cy, rx, ry, "transparent", "none", "element", { "stroke-width": "10" });
 		this.selector = SVG.rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", { "stroke-dasharray": "2 2" });
 
 		this.selectorCoordRect = new CoordRect();
@@ -3790,8 +3790,8 @@ class LineVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.line = svg_line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
-		this.clickLine = svg_line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", { "stroke-width": "10" });
+		this.line = SVG.line(this.startX, this.startY, this.endX, this.endY, defaultStroke, defaultFill, "element");
+		this.clickLine = SVG.line(this.startX, this.startY, this.endX, this.endY, "transparent", "none", "element", { "stroke-width": "10" });
 		this.arrowHeadStart = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
 		this.arrowHeadEnd = svg_arrow_head(defaultStroke, defaultStroke, { "class": "element" });
 		let arrowPathPoints = [[8, 0], [13, -5], [0, 0], [13, 5]];
@@ -4055,8 +4055,8 @@ class LinkVisual extends BaseConnection {
 		this.group = SVG.group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id", this.id);
 
-		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" });
-		this.b2_line = svg_line(x4, y4, x3, y3, "black", "black", "", { "stroke-dasharray": "5 5" });
+		this.b1_line = SVG.line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" });
+		this.b2_line = SVG.line(x4, y4, x3, y3, "black", "black", "", { "stroke-dasharray": "5 5" });
 
 		this.showOnlyOnSelect = [this.b1_line, this.b2_line];
 

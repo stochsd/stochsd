@@ -268,6 +268,61 @@ export class SVG {
     SVG.element.appendChild(element);
     return element;
   }
+  static circle(cx: number, cy: number, r: number, stroke: string, fill: string, markclass: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+    result.setAttribute("class", markclass);
+    result.setAttribute("cx", `${cx}`);
+    result.setAttribute("cy", `${cy}`);
+    result.setAttribute("r", `${r}`);
+    result.setAttribute("fill", fill);
+    result.setAttribute("stroke", stroke);
+    result.setAttribute("data-attr", "selected");
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]);
+      }
+    }
+    SVG.element.appendChild(result);
+    return result
+  }
+  static ellipse(cx: number, cy: number, rx: number, ry: number, stroke: string, fill: string, markclass: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'ellipse');
+    result.setAttribute("class", markclass);
+    result.setAttribute("cx", `${cx}`);
+    result.setAttribute("cy", `${cy}`);
+    result.setAttribute("rx", `${rx}`);
+    result.setAttribute("ry", `${ry}`);
+    result.setAttribute("fill", fill);
+    result.setAttribute("stroke", stroke);
+    result.setAttribute("data-attr", "selected");
+    if (extraAttributes) {
+      for (let key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]);
+      }
+    }
+    SVG.element.appendChild(result);
+    return result
+  }
+  static line(x1: number, y1: number, x2: number, y2: number, stroke: string, fill: string, markclass: string, extraAttributes?: Record<string, string>) {
+    const result = document.createElementNS("http://www.w3.org/2000/svg", 'line')
+    result.setAttribute("class", markclass);
+    result.setAttribute("x1", `${x1}`);
+    result.setAttribute("y1", `${y1}`);
+    result.setAttribute("x2", `${x2}`);
+    result.setAttribute("y2", `${y2}`);
+    result.setAttribute("fill", fill);
+    result.setAttribute("stroke", stroke);
+    result.setAttribute("data-attr", "selected");
+    result.setAttribute("stroke-width", "1");
+
+    if (extraAttributes != undefined) {
+      for (var key in extraAttributes) {
+        result.setAttribute(key, extraAttributes[key]);
+      }
+    }
+    SVG.element.appendChild(result);
+    return result
+  }
 
 }
 
