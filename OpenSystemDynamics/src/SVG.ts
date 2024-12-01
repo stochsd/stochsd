@@ -17,6 +17,16 @@ export type Curve = SVGPathElement &
   }
 
 export type Path = SVGPathElement & { update: () => void, dstring: string }
+export type ForeignScrollable = SVGGElement & {
+  cutDiv: HTMLDivElement;
+  contentDiv: HTMLDivElement;
+  scrollDiv: HTMLDivElement;
+  innerDiv: HTMLDivElement;
+  setX: (value: number) => void
+  setY: (value: number) => void
+  setWidth: (value: number) => void
+  setHeight: (value: number) => void
+}
 
 export class SVG {
   /* replaces svgplane */
@@ -122,6 +132,61 @@ export class SVG {
       }
     }
     SVG.element.appendChild(result);
+    return result
+  }
+
+  static foreignScrollable(x: number, y: number, width: number, height: number, innerHTML: string, fill = "white") {
+    let result = document.createElementNS("http://www.w3.org/2000/svg", 'g') as ForeignScrollable
+    // foreignObject tag must be camel case to work which is weird
+    // Using a tag on top might be better http://stackoverflow.com/questions/6538918/can-i-embed-html-into-an-html5-svg-fragment
+    let foreign = document.createElementNS("http://www.w3.org/2000/svg", 'foreignObject');
+    foreign.setAttribute("style", "width: 100%; height: 100%; pointer-events: none;");
+
+    result.cutDiv = document.createElement("div");
+    // This div is nessecary to avoid overflow in some browsers
+    result.cutDiv.setAttribute("style", "overflow: hidden; pointer-events: all;");
+    result.cutDiv.setAttribute("class", "cutDiv");
+
+    // This div holds the scrolling and sets the background color
+    result.scrollDiv = document.createElement("div");
+    result.scrollDiv.setAttribute(`style`, `background-color: ${fill}; overflow: auto;`);
+    result.scrollDiv.setAttribute("class", "scrollDiv");
+
+    // This div is on the inside of the scroll div and reacts to things such as clicks
+    result.innerDiv = document.createElement("div");
+    result.innerDiv.setAttribute(`style`, `width: 100%; height: 100%; overflow: visible; background-color: ${fill}`);
+    result.innerDiv.setAttribute("class", "innerDiv");
+
+    // This div is where we put the content
+    result.contentDiv = document.createElement("div");
+    result.contentDiv.innerHTML = innerHTML;
+    result.contentDiv.setAttribute(`style`, `overflow: visible; background-color: ${fill}`);
+    result.contentDiv.setAttribute("class", "contentDiv");
+
+    result.innerDiv.appendChild(result.contentDiv);
+    result.scrollDiv.appendChild(result.innerDiv);
+    result.cutDiv.appendChild(result.scrollDiv);
+    foreign.appendChild(result.cutDiv);
+    result.appendChild(foreign);
+
+    result.setAttribute("x", `${x}`);
+    result.setAttribute("y", `${y}`);
+    result.setAttribute("width", `${width}`);
+    result.setAttribute("height", `${height}`);
+    SVG.element.appendChild(result);
+
+    result.setX = function (x: number) {
+      this.cutDiv.style.marginLeft = `${x}px`;
+    }
+    result.setY = function (y: number) {
+      this.cutDiv.style.marginTop = `${y}px`;
+    }
+    result.setWidth = function (w: number) {
+      this.cutDiv.style.width = `${w}px`;
+    }
+    result.setHeight = function (h: number) {
+      this.cutDiv.style.height = `${h}px`;
+    }
     return result
   }
 
