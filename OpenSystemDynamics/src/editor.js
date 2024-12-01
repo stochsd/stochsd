@@ -1157,8 +1157,8 @@ class AnchorPoint extends OnePointer {
 	getImage() {
 		if (this.isSquare) {
 			return [
-				svg_rect(-4, -4, 8, 8, this.color, "white", "element"),
-				svg_rect(-4, -4, 8, 8, "none", this.color, "highlight")
+				SVG.rect(-4, -4, 8, 8, this.color, "white", "element"),
+				SVG.rect(-4, -4, 8, 8, "none", this.color, "highlight")
 			];
 		} else {
 			return [
@@ -1307,8 +1307,8 @@ class StockVisual extends BasePrimitive {
 		let w = size[0];
 		let h = size[1];
 		return [
-			svg_rect(-w / 2, -h / 2, w, h, this.color, defaultFill, "element"),
-			svg_rect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, "none", this.color, "highlight"),
+			SVG.rect(-w / 2, -h / 2, w, h, this.color, defaultFill, "element"),
+			SVG.rect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, "none", this.color, "highlight"),
 			textElem,
 			svg_icons(defaultStroke, defaultFill, "icons")
 		];
@@ -1393,10 +1393,10 @@ class NumberboxVisual extends BasePrimitive {
 		this.setSelectionSizeToText();
 	}
 	getImage() {
-		this.element = svg_rect(-20, -15, 40, 30, this.color, defaultFill, "element");
+		this.element = SVG.rect(-20, -15, 40, 30, this.color, defaultFill, "element");
 		return [
 			this.element,
-			svg_rect(-20, -15, 40, 30, "none", this.color, "highlight"),
+			SVG.rect(-20, -15, 40, 30, "none", this.color, "highlight"),
 			SVG.text(0, 0, "", "name_element", { "alignment-baseline": "middle", "style": "font-size: 16px", "fill": this.color }),
 		];
 	}
@@ -2241,10 +2241,10 @@ class RectangleVisual extends TwoPointer {
 		});
 	}
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element");
 
 		// Invisible rect to more easily click
-		this.clickRect = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
+		this.clickRect = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "transparent", "none");
 		this.clickRect.setAttribute("stroke-width", "10");
 
 		this.coordRect = new CoordRect();
@@ -2304,7 +2304,7 @@ class EllipseVisual extends TwoPointer {
 		let ry = Math.max(Math.abs(this.startY - this.endY) / 2, 1);
 		this.element = svg_ellipse(cx, cy, rx, ry, defaultStroke, "none", "element");
 		this.clickEllipse = svg_ellipse(cx, cy, rx, ry, "transparent", "none", "element", { "stroke-width": "10" });
-		this.selector = svg_rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", { "stroke-dasharray": "2 2" });
+		this.selector = SVG.rect(cx, cy, rx, ry, defaultStroke, defaultFill, "highlight", { "stroke-dasharray": "2 2" });
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
@@ -2445,7 +2445,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.dialog.subscribePool.subscribe(() => {
 			this.render();
 		});
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 		this.htmlElement = SVG.foreignScrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not rendered yet", "white");
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
@@ -2523,7 +2523,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 			this.doubleClick(this.id);
 		});
 
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element", "");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "white", "element", "");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -3250,7 +3250,7 @@ class TextAreaVisual extends HtmlTwoPointer {
 		this.coordRect.update();
 	}
 	makeGraphics() {
-		this.element = svg_rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
@@ -5763,7 +5763,7 @@ $(window).load(function () {
 			e.preventDefault();
 		}
 	});
-	rectselector.element = svg_rect(-30, -30, 60, 60, "black", "none", "rect-selector");
+	rectselector.element = SVG.rect(-30, -30, 60, 60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
 

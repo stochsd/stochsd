@@ -248,6 +248,26 @@ export class SVG {
     }
     return result
   }
+  /* replaces svg_rect */
+  static rect(x: number, y: number, width: number, height: number, stroke: string, fill: string, markclass?: string, extraAttributes?: Record<string, string>) {
+    //<rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
+    const element = document.createElementNS("http://www.w3.org/2000/svg", 'rect'); // Create a path in SVG's namespace
+    markclass && element.setAttribute("class", markclass);
+    element.setAttribute("x", `${x}`);
+    element.setAttribute("y", `${y}`);
+    element.setAttribute("width", `${width}`);
+    element.setAttribute("height", `${height}`);
+    element.setAttribute("fill", fill);
+    element.setAttribute("stroke", stroke);
+
+    if (extraAttributes) {
+      for (var key in extraAttributes) {
+        element.setAttribute(key, extraAttributes[key]);
+      }
+    }
+    SVG.element.appendChild(element);
+    return element;
+  }
 
 }
 
