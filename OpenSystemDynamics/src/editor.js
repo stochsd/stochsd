@@ -798,7 +798,7 @@ class BaseObject {
 
 		this.element_array = [];
 		this.selector_array = [];
-		this.icons; 	// svg_group with icons such as ghost and questionmark
+		this.icons; 	// SVG.group with icons such as ghost and questionmark
 		this.group = null;
 
 		this.namePosList = [[0, this.name_radius + 8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
@@ -1010,7 +1010,7 @@ class OnePointer extends BaseObject {
 				});
 			}
 		}
-		this.group = svg_group(this.element_array);
+		this.group = SVG.group(this.element_array);
 		this.group.setAttribute("class", "testgroup");
 		this.group.setAttribute("node_id", this.id);
 
@@ -2096,11 +2096,11 @@ class FlowVisual extends BaseConnection {
 		this.outerPath = svg_wide_path(5, this.color, { "class": "element" });
 		this.innerPath = svg_wide_path(3, "white"); // Must have white ohterwise path is black
 		this.arrowHeadPath = svg_arrow_head(this.color, defaultFill, { "class": "element" });
-		this.flowPathGroup = svg_group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
+		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = svg_path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
 		this.name_element = svg_text(0, -this.getRadius(), "vairable", "name_element");
 		this.icons = svg_icons(defaultStroke, defaultFill, "icons");
-		this.variable = svg_group(
+		this.variable = SVG.group(
 			[svg_circle(0, 0, this.getRadius(), this.color, "white", "element"),
 			svg_circle(0, 0, this.getRadius() - 2, "none", this.color, "highlight"),
 			this.icons,
@@ -2115,7 +2115,7 @@ class FlowVisual extends BaseConnection {
 			this.nameDoubleClick();
 		});
 
-		this.group = svg_group([this.flowPathGroup, this.valve, this.variable]);
+		this.group = SVG.group([this.flowPathGroup, this.valve, this.variable]);
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
@@ -2253,7 +2253,7 @@ class RectangleVisual extends TwoPointer {
 		this.clickCoordRect = new CoordRect();
 		this.clickCoordRect.element = this.clickRect;
 
-		this.group = svg_group([this.element, this.clickRect]);
+		this.group = SVG.group([this.element, this.clickRect]);
 		this.group.setAttribute("node_id", this.id);
 		this.element_array = [this.element];
 		for (let key in this.element_array) {
@@ -2309,7 +2309,7 @@ class EllipseVisual extends TwoPointer {
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.group = svg_group([this.element, this.clickEllipse, this.selector]);
+		this.group = SVG.group([this.element, this.clickEllipse, this.selector]);
 		this.group.setAttribute("node_id", this.id);
 
 		$(this.group).dblclick(() => {
@@ -2462,7 +2462,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -2528,7 +2528,7 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -3273,7 +3273,7 @@ class TextAreaVisual extends HtmlTwoPointer {
 			this.doubleClick();
 		});
 
-		this.group = svg_group([this.element]);
+		this.group = SVG.group([this.element]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
@@ -3798,7 +3798,7 @@ class LineVisual extends TwoPointer {
 		this.arrowHeadStart.set_template_points(arrowPathPoints);
 		this.arrowHeadEnd.set_template_points(arrowPathPoints);
 
-		this.group = svg_group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
+		this.group = SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine]);
 		this.group.setAttribute("node_id", this.id);
 		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
 		for (let key in this.element_array) {
@@ -4040,8 +4040,8 @@ class LinkVisual extends BaseConnection {
 		let [x3, y3] = this.b2_anchor.getPos();
 		let [x4, y4] = this.end_anchor.getPos();
 
-		this.arrowPath = svg_from_string(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
-		this.arrowHead = svg_group([this.arrowPath]);
+		this.arrowPath = SVG.fromString(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
+		this.arrowHead = SVG.group([this.arrowPath]);
 		svg_translate(this.arrowHead, x4, y4);
 
 		this.click_area = svg_curve(x1, y1, x2, y2, x3, y3, x4, y4, { "pointer-events": "all", "stroke": "none", "stroke-width": "10" });
@@ -4052,7 +4052,7 @@ class LinkVisual extends BaseConnection {
 
 		// curve is not included in group since it is one-way and will therefore span an area
 		// The area will be clickable if included in the group 
-		this.group = svg_group([this.click_area, this.arrowHead]);
+		this.group = SVG.group([this.click_area, this.arrowHead]);
 		this.group.setAttribute("node_id", this.id);
 
 		this.b1_line = svg_line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" });
@@ -5532,7 +5532,7 @@ function mouseDownHandler(event) {
 		timeUnitDialog.show();
 		return;
 	}
-	let offset = $(svgplane).offset();
+	let offset = $(SVG.element).offset();
 	let x = event.pageX - offset.left;
 	let y = event.pageY - offset.top;
 	do_global_log("x:" + x + " y:" + y);
@@ -5549,7 +5549,7 @@ function mouseDownHandler(event) {
 	}
 }
 function mouseMoveHandler(event) {
-	let offset = $(svgplane).offset();
+	let offset = $(SVG.element).offset();
 	let x = event.pageX - offset.left;
 	let y = event.pageY - offset.top;
 
@@ -5567,7 +5567,7 @@ function mouseUpHandler(event) {
 		}
 		// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
 		do_global_log("mouseUpHandler");
-		let offset = $(svgplane).offset();
+		let offset = $(SVG.element).offset();
 		let x = event.pageX - offset.left;
 		let y = event.pageY - offset.top;
 
@@ -5766,7 +5766,6 @@ $(window).load(function () {
 	rectselector.element = svg_rect(-30, -30, 60, 60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
-	let svgplane = document.getElementById("svgplane");
 
 	Preferences.setup();
 
@@ -5856,8 +5855,8 @@ $(window).load(function () {
 		environment.keyDown(event);
 	});
 
-	$(svgplane).mousedown(mouseDownHandler);
-	svgplane.addEventListener('contextmenu', function (event) {
+	$(SVG.element).mousedown(mouseDownHandler);
+	SVG.element.addEventListener('contextmenu', function (event) {
 		event.preventDefault();
 		return false;
 	}, false);

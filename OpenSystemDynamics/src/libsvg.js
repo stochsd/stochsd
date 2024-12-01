@@ -11,14 +11,6 @@ function svg_from_string_with_group(instring) {
 	return newElement;
 }
 
-function svg_from_string(instring) {
-	var container = document.createElementNS("http://www.w3.org/2000/svg", 'temp'); //Create a path in SVG's namespace
-	container.innerHTML = instring;
-	newElement = container.children[0];
-	svgplane.appendChild(newElement);
-	return newElement;
-}
-
 function svg_image(x, y, width, height, image_file) {
 	// Does no work because image does not load byt XML object is created
 	var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'image'); //Create a path in SVG's namespace
