@@ -474,117 +474,6 @@ function callAPI(e) {
 	}
 }
 
-function getFunctionHelpData() {
-	let helpData = [
-		["Programming Functions", [
-			["IfThenElse", "IfThenElse(##Test Condition$$, ##Value if True$$, ##Value if False$$)", "Tests a condition and returns one value if the condition is true and another value if the condition is false.", ["IfThenElse(20 > 10, 7, 5)", "7"]],
-			["If-Then-Else", "If ##Condition$$ Then\n  ##Expression$$\nElse If ##Condition$$ Then\n  ##Expression$$\nElse\n  ##Expression$$\nEnd If", "Test one or more conditions and selectively execute code based on these tests."],
-			["Max", "Max(##Values$$)", "Returns the largest of a vector or list of numbers.", ["Max(2, 4, -1)", "4"]],
-			["Min", "Min(##Values$$)", "Returns the smallest of a vector or list of numbers.", ["Min(2, 4, -1, 3)", "-1"]],
-			["StopIf", "StopIf(##Condition$$)", "Terminates the simulation after the current time step if the condition is true.", "StopIf(Rand() < 0.01)"],
-			["Define Function", "Function ##Name$$()\n  ##Expression$$\nEnd Function", "Creates a reusable function.", ['Function Square(x)\n  x^2\nEnd Function\nSquare(5)', "25"]],
-			["Throwing Errors", `Throw "##Message$$"`, "Passes an error message up to the nearest Try-Catch block or aborts the simulation with the error message.", 'If T() > 50 Then\n  Throw "Error: Time exceeded 50"\nElse\n  1\nEnd If'],
-		]],
-		["Mathematical Functions", [
-			["Current Time", "T()", "The current simulation time."],
-			["Time Start", "TS()", "The simulation start time."],
-			["Time Step", "DT()", "The simulation time step."],
-			["Time Length", "TL()", "The total length of the simulation."],
-			["Time End", "TE()", "The time at which the simulation ends."],
-			["Round", "Round(##Value$$)", "Rounds a number to the nearest integer.", ["Round(3.6)", "4"]],
-			["Round Up", "Ceiling(##Value$$)", "Rounds a number up to the nearest integer.", ["Ceiling(3.6)", "4"]],
-			["Round Down", "Floor(##Value$$)", "Rounds a number down to the nearest integer.", ["Floor(3.6)", "3"]],
-			["Pulse", "Pulse(##Time$$, ##Volume=1$$, ##Repeat=0$$)", "Creates a pulse input at the specified time with the specified Volume. Repeat is optional and will create a pulse train with the specified time if positive..", "Pulse(0, 5, 2)"],
-			["Step", "Step(##Start$$, ##Height=1$$)", "Creates an input that is initially set to 0 and after the time of Start is set to Height. Height defaults to 1.", "Step(10, 5)"],
-			["Ramp", "Ramp(##Start$$, ##Finish$$, ##Height=1$$)", "Creates a ramp input which moves linearly from 0 to Height between the Start and Finish times. Before Start, the value is 0; after Finish, the value is Height. Height defaults to 1.", "Ramp(10, 20, 5)"],
-			["Sin", "Sin(##Angle$$)", "Finds the sine of an angle, where the angle is given in radians.", ["Sin(Pi/2)", "1"]],
-			["Cos", "Cos(##Angle$$)", "Finds the cosine of an angle, where the angle is given in radians.", ["Cos(Pi)", "-1"]],
-			["Tan", "Tan(##Angle$$)", "Finds the tangent of an angle, where the angle is given in radians.", ["Tan(Pi/4)", "1"]],
-			["ArcSin", "ArcSin(##Value$$)", "Finds the arc-sine of a value. Return value is given in radians.", ["ArcSin(1)", "Pi/2 = 1.57..."]],
-			["ArcCos", "ArcCos(##Value$$)", "Finds the arc-cosine of a value. Return value is given in radians.", ["ArcCos(0)", "Pi/2 = 1.57..."]],
-			["ArcTan", "ArcTan(##Value$$)", "Finds the arc-tangent of a value. Return value is given in radians.", ["ArcTan(1)", "Pi/4 = 0.785..."]],
-			["Log", "Log(##Value$$)", "Returns the base-10 logarithm of a number.", ["Log(1000)", "3"]],
-			["Ln", "Ln(##Value$$)", "Returns the natural logarithm of a number.", ["Ln(e^2)", "2"]],
-			["Exp", "Exp(##Value$$)", "Returns e taken to a power.", ["Exp(1)", "e"]],
-			["Absolute Value", "Abs(##Value$$)", "Returns the absolute value of a number.", ["Abs(-23)", "23"]],
-			["Mod", "##(Value One)$$ mod ##(Value Two)$$", "Returns the remainder of the division of two numbers.", ["13 mod 5", "3"]],
-			["Square Root", "Sqrt(##Value$$)", "Returns the square root of a number.", ["Sqrt(9)", "3"]],
-			["Sign", "Sign(##Value$$)", "1 if the value is greater than 0, -1 if it is less than 0, and 0 if it is 0.", ["Sign(-12)", "-1"]],
-			["pi", "pi", "The value 3.14159265."],
-			["e", "e", "The value 2.71828183."],
-			["epsilon", "eps", "(Machine Epsilon)<br/> Maximum relative rounding error &asymp;2.220446049250313e-16"],
-		]],
-		["Historical Functions", [
-			["Delay", "Delay(##[Primitive]$$, ##Delay Length$$, ##Default Value$$)", "Returns the value of a primitive for a specified length of time ago. Default Value stands in for the primitive value in the case of negative times.", "Delay([Income], 5)"],
-			["Delay1", "Delay1(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, first-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay1([Income], 5, 10000)"],
-			["Delay3", "Delay3(##[Primitive]$$, ##Delay Length$$, ##Initial Value$$)", "Returns a smoothed, third-order exponential delay of the value of a primitive. The Initial Value is optional.", "Delay3([Income], 20, 10000)"],
-			["Smooth", "Smooth(##[Primitive]$$, ##Length$$, ##Initial Value$$)", "Returns a smoothing of a primitive's past values. Results in an averaged curve fit. Length affects the weight of past values. The Initial Value is optional."],
-			["PastMax", "PastMax(##[Primitive]$$, ##Period = All Time$$)", "Returns the maximum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMax([Income], 10)", "The maximum income in the past 10 time units"]],
-			["PastMin", "PastMin(##[Primitive]$$, ##Period = All Time$$)", "Returns the minimum of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation.", ["PastMin([Income], 10)", "The minimum income in the past 10 units of time"]],
-			["PastMedian", "PastMedian(##[Primitive]$$, ##Period = All Time$$)", "Returns the median of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["PastMean", "PastMean(##[Primitive]$$, ##Period = All Time$$)", "Returns the mean of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["PastStdDev", "PastStdDev(##[Primitive]$$, ##Period = All Time$$)", "Returns the standard deviation of the values a primitive has taken on over the course of the simulation. The second optional argument is a time window to limit the calculation."],
-			["PastCorrelation", "PastCorrelation(##[Primitive]$$, ##[Primitive]$$, ##Period = All Time$$)", "Returns the correlation between the values that two primitives have taken on over the course of the simulation. The third optional argument is an optional time window to limit the calculation.", ["PastCorrelation([Income], [Expenditures], 10)", "The correlation between income and expenditures over the past 10 time units."]],
-			["Fix", "Fix(##Value$$, ##Period=-1$$)", "Takes the dynamic value and forces it to be fixed over the course of the period. If period is -1, the value is held constant over the course of the whole simulation.", ["Fix(Rand(), 5)", "A new random value every five time units"]]
-		]],
-		["Random Number Functions", [
-			["Poisson Flow", "PoFlow(##Lambda$$)", "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span> <br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transfered entities with the expected rate of Lambda entities per time unit."],
-			["Uniform Distribution", "Rand(##Minimum$$, ##Maximum$$)", "Generates a uniformly distributed random number between the minimum and maximum. The minimum and maximum are optional and default to 0 and 1 respectively.", ["Rand()", "0.7481"]],
-			["Normal Distribution", "RandNormal(##Mean$$, ##Standard Deviation$$)", "Generates a normally distributed random number with a mean and a standard deviation. The mean and standard deviation are optional and default to 0 and 1 respectively.", ["RandNormal(10, 1)", "11.23"]],
-			["Lognormal Distribution", "RandLognormal(##Mean$$, ##Standard Deviation$$)", "Generates a log-normally distributed random number with a mean and a standard deviation."],
-			["Bernoulli Distribution", "RandBernoulli(##Probability$$)", "Returns 1 with the specified probability, otherwise 0. The probability is optional and defaults to 0.5: a coin flip.", ["RandBernoulli(0.1)", "0"]],
-			["Binomial Distribution", "RandBinomial(##Count$$, ##Probability$$)", "Generates a binomially distributed random number. The number of successes in Count random events each with Probability of success."],
-			["Negative Binomial", "RandNegativeBinomial(##Successes$$, ##Probability$$)", "Generates a negative binomially distributed random number. The number of random events each with Probability of success required to generate the specified Successes."],
-			["Poisson Distribution", "RandPoisson(##Lambda$$)", "Generates a Poisson distributed random number with the rate Lambda events per time unit."],
-			["Exponential Distribution", "RandExp(##Beta$$)", "Generates an exponentially distributed random number where the parameter Beta is the expected time between events, e.g. time between arrivals."],
-			["Beta Distribution", "RandBeta(##Alpha$$, ##Beta$$)", "Generates a Beta distributed random number."],
-			["Gamma Distribution", "RandGamma(##Alpha$$, ##Beta$$)", "Generates a Gamma distributed random number."],
-			["Triangular Distribution", "RandTriangular(##Minimum$$, ##Maximum$$, ##Peak$$)", "Generates a triangularly distributed random number."],
-			["Custom Distribution", "RandDist(##X$$, ##Y$$)", "Generates a random number according to a custom distribution. Takes two vectors with the x- and y-coordinates respectively of points defining the distribution. Points are interpolated linearly. The distribution does not have to be normalized such that its area is 1, but the points must be sorted from smallest to largest x locations. You may also pass a single vector containing pairs of {x, y} coordinates (e.g. { {1, 0}, {3, 4}, {4, 0} } ).", ["RandDist({0, 1, 2, 3}, {0, 5, 1, 0})", "1.2"]]
-		]],
-		["Statistical Distributions", [
-			["CDFNormal", "CDFNormal(##x$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of x in the CDF of the Normal Distribution.", ["CDFNormal(1.96)", "0.975"]],
-			["PDFNormal", "PDFNormal(##x$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of x in the PDF of the Normal Distribution.", ["PDFNormal(1.5, 0, 1)", "0.12"]],
-			["InvNormal", "InvNormal(##p$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of p in the inverse CDF of the Normal Distribution.", ["InvNormal(0.975)", "1.96"]],
-			["CDFLognormal", "CDFLognormal(##x$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of x in the CDF of the Lognormal Distribution."],
-			["PDFLognormal", "PDFLognormal(##x$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of x in the PDF of the Lognormal Distribution."],
-			["InvLognormal", "InvLognormal(##p$$, ##Mean=0$$, ##StandardDeviation=1$$)", "Returns the value of p in the inverse CDF of the Lognormal Distribution."],
-			["CDFt", "CDFt(##x$$, ##DegreesOfFreedom$$)", "Returns the value of x in the CDF of Student's t Distribution."],
-			["PDFt", "PDFt(##x$$, ##DegreesOfFreedom$$)", "Returns the value of x in the PDF of Student's t Distribution."],
-			["Invt", "Invt(##p$$, ##DegreesOfFreedom$$)", "Returns the value of p in the inverse CDF of Student's t Distribution."],
-			["CDFF", "CDFF(##x$$, ##DegreesOfFreedom1$$, ##DegreesOfFreedom2$$)", "Returns the value of x in the CDF of the F Distribution."],
-			["PDFF", "PDFF(##x$$, ##DegreesOfFreedom1$$, ##DegreesOfFreedom2$$)", "Returns the value of x in the PDF of the F Distribution."],
-			["InvF", "InvF(##p$$, ##DegreesOfFreedom1$$, ##DegreesOfFreedom2$$)", "Returns the value of p in the inverse CDF of the F Distribution."],
-			["CDFChiSquared", "CDFChiSquared(##x$$, ##DegreesOfFreedom$$)", "Returns the value of x in the CDF of the Chi-Squared Distribution."],
-			["PDFChiSquared", "PDFChiSquared(##x$$, ##DegreesOfFreedom$$)", "Returns the value of x in the PDF of the Chi-Squared Distribution."],
-			["InvChiSquared", "InvChiSquared(##p$$, ##DegreesOfFreedom$$)", "Returns the value of p in the inverse CDF of the Chi-Squared Distribution."],
-			["CDFExponential", "CDFExponential(##x$$, ##Rate$$)", "Returns the value of x in the CDF of the Exponential Distribution."],
-			["PDFExponential", "PDFExponential(##x$$, ##Rate$$)", "Returns the value of x in the PDF of the Exponential Distribution."],
-			["InvExponential", "InvExponential(##p$$, ##Rate$$)", "Returns the value of p in the inverse CDF of the Exponential Distribution."],
-			["CDFPoisson", "CDFPoisson(##x$$, ##Lambda$$)", "Returns the value of x in the CDF of the Poisson Distribution."],
-			["PMFPoisson", "PMFPoisson(##x$$, ##Lambda$$)", "Returns the value of x in the PMF of the Poisson Distribution."]
-		]]
-
-	];
-	return helpData;
-}
-
-function hasRandomFunction(value) {
-	let helpData;
-	if (value) {
-		helpData = getFunctionHelpData();
-		let randomFunctions = [];
-		for (let help of helpData) {
-			if (help[0] === "Random Number Functions") {
-				randomFunctions = help[1].map(h => h[1].substring(0, h[1].indexOf("#")).toLowerCase());
-				break;
-			}
-		}
-		return randomFunctions.some(elem => value.toLowerCase().includes(elem));
-	}
-	return false;
-}
-
 // sdsLoadFunctions is and must be called from Functions.js
 function sdsLoadFunctions() {
 	defineFunction("T", { params: [] }, function (x) {
@@ -9683,8 +9572,17 @@ class DefinitionEditor extends jqDialog {
 			this.updateRestrictNoteText();
 		});
 
-		let helpData = getFunctionHelpData();
-
+		/**
+		 * @param functionList: {
+					name: string,
+					replacement: string
+					description: string
+					example?: {
+						definition: string,
+						result?: string
+					}
+				}[]
+		 */
 		let functionListToHtml = function (functionList) {
 			let filterFunctionTemplate = (functionTemplate) => {
 				return functionTemplate.replace(/\$\$/g, "").replace(/##/g, "").replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/ /g, " ");
@@ -9693,22 +9591,20 @@ class DefinitionEditor extends jqDialog {
 			let codeSnippetName = "";
 			let codeTemplate = "";
 			let codeHelp = "";
-			for (let j = 0; j < functionList.length; j++) {
+			for (let i = 0; i < functionList.length; i++) {
+				const func = functionList[i];
 				let example = "";
-				if (functionList[j].length == 4) {
-					if ((functionList[j][3]).constructor === Array) {
-						let codeSample = functionList[j][3][0];
-						let returnValue = functionList[j][3][1];
-						example = `<br/><br/><b>Example</b><pre style="padding:0;margin:0;">${codeSample}</pre><br/><b>Returns:</b><br/> ${returnValue}`;
+				if (func.example) {
+					if (func.example.result) {
+						example = `<br/><br/><b>Example</b><pre style="padding:0;margin:0;">${func.example.definition}</pre><br/><b>Returns:</b><br/> ${func.example.result}`;
 					} else {
-						let codeSample = functionList[j][3];
-						example = `<br/><br/><b>Example</b><br/><pre style="padding:0;margin:0;">${codeSample}</pre>`;
+						example = `<br/><br/><b>Example</b><br/><pre style="padding:0;margin:0;">${func.example.definition}</pre>`;
 					}
 				}
-				codeSnippetName = functionList[j][0];
-				codeTemplate = `${filterFunctionTemplate(functionList[j][1])}`;
+				codeSnippetName = func.name;
+				codeTemplate = `${filterFunctionTemplate(func.replacement)}`;
 				let cmClassName = codeTemplate.includes("(") ? "cm-functioncall" : "";
-				codeHelp = `${functionList[j][2]} ${example}`;
+				codeHelp = `${func.description} ${example}`;
 				codeHelp = codeHelp.replace(/\'/g, "&#39;");
 				codeHelp = codeHelp.replace(/\"/g, "&#34;");
 				result += `<li class = "function-help click-function ${cmClassName}" data-template="${codeTemplate}" title="${codeHelp}">${codeSnippetName}</li>`;
@@ -9717,14 +9613,14 @@ class DefinitionEditor extends jqDialog {
 			return result;
 		};
 
-		for (let i = 0; i < helpData.length; i++) {
+		for (let i = 0; i < FunctionCategories.length; i++) {
 			$(".accordion-cluster").append(`<div>
-			<h3 class="function-category">${helpData[i][0]}</h3>
-			  <div>
-				${functionListToHtml(helpData[i][1])
+				<h3 class="function-category">${FunctionCategories[i].name}</h3>
+					<div>
+					${functionListToHtml(FunctionCategories[i].functions)
 				}
-			  </div>
-			</div>`);
+					</div>
+				</div>`);
 		}
 
 		$(this.dialogContent).find(".click-function").click((event) => this.templateClick(event));
