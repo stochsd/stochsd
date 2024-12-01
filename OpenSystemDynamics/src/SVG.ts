@@ -513,7 +513,7 @@ export class SVG {
       "questionmark": result.children[1],
       "dice": result.children[2]
     }
-    for (let child of result.children) {
+    for (let child of Array.from(result.children)) {
       child.setAttribute("visibility", "hidden");
     }
     result.setColor = function (color: string) {

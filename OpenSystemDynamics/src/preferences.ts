@@ -1,4 +1,4 @@
-var preferencesTemplate = {
+export const preferencesTemplate = <const>{
 	"promptTimeUnitDialogOnStart": {
 		default: true,
 		type: "boolean",
@@ -29,26 +29,30 @@ var preferencesTemplate = {
 	// theme (classic/modern)
 }
 
-class Preferences {
+export class Preferences {
 	static setup() {
-		const prefs = Preferences.get()
+		const pref = Preferences.get()
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
-			if (prefs[key] == undefined)
-				prefs[key] = info.default
+			if (pref[key] == undefined)
+				pref[key] = info.default
 		})
-		Preferences.store(prefs)
+		Preferences.store(pref)
 	}
-	static get(key) {
-		const prefsString = localStorage.getItem("preferences")
-		const prefs = prefsString ? JSON.parse(prefsString) : {}
-		return key ? prefs[key] : prefs
+	static get(key?: string) {
+		const preferencesString = localStorage.getItem("preferences")
+		const preferences = preferencesString ? JSON.parse(preferencesString) : {}
+		return key ? preferences[key] : preferences
 	}
-	static set(key, value) {
-		const prefs = Preferences.get()
-		prefs[key] = value
-		Preferences.store(prefs)
+	static set(key: string, value: any) {
+		const pref = Preferences.get()
+		pref[key] = value
+		Preferences.store(pref)
 	}
-	static store(object) {
+	static store(object: any) {
 		localStorage.setItem("preferences", JSON.stringify(object))
 	}
 }
+
+(window as any).preferencesTemplate = preferencesTemplate;
+(window as any).Preferences = Preferences;
+
