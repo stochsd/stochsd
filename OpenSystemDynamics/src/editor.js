@@ -5642,6 +5642,9 @@ function hashUpdate() {
 // https://stackoverflow.com/questions/7083693/detect-if-page-has-finished-loading
 // Initilzing without everything load = $(document).ready caused bugs. $(window).load solves this
 $(window).load(function () {
+	Menu.init();
+
+
 	$("a").click((e) => {
 		// Important to use "currentTarget" instead of "target", because sometimes
 		// the <a> element is outside a <button>
