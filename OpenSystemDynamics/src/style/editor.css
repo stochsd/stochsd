@@ -61,19 +61,33 @@ svg * {
     -ms-user-select: none;
     user-select: none;
 }
-.tool-box-separator {
-    display: inline-block;
-    width: 12px;
-    /*width: 20px;*/
+
+/* tool panel */
+.toolPanel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0rem 1.25rem;
+    margin-top: 0.5rem;
+    --button-size: 1.875rem;
 }
+.toolPanel > .tool-grouping {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-block: 0.25rem;
+    height: var(--button-size);
+}
+
+
 /* buttons */
 .toolPanel button.tool-button {
     border: unset;
     padding: 2px;
     margin: 0;
     box-sizing: content-box;
-    width: 1.875rem;
-    height: 1.875rem;
+    width: var(--button-size);
+    height: 100%;
     background-color: transparent;
 }
 button.tool-button img {
@@ -133,7 +147,7 @@ button.tool-button img {
 }
 /* time unit button */
 #btn_timeunit {
-    height:30px; 
+    height: 100%; 
     vertical-align: top; 
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block; 
