@@ -101,6 +101,7 @@ svg * {
     flex-wrap: nowrap;
     margin-block: 0.25rem;
     height: var(--button-size);
+    gap: 1px;
 }
 /* buttons title */
 [data-title] {
