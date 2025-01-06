@@ -21,6 +21,8 @@ body {
     /* Force print to show all color, this shows gray color in table at Print Equations */
     /* -webkit-print-color-adjust: exact; */
     color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
 }
 
 text.name_element {
@@ -52,7 +54,15 @@ svg * {
     }
 }
 #coverEverythingDiv {
-    overflow:hidden;
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background-light);
+    display: flex; 
+    flex-direction: column;
+
+    overflow: hidden;
     /* Disable highlighting text */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
