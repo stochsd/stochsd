@@ -62,6 +62,20 @@ svg * {
     user-select: none;
 }
 
+/* menu */
+.fileToolBox {
+    width: calc(100% - 1rem);
+    margin-bottom: 0.25rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#homepage-info {
+    font-size: 0.75rem;
+    margin-left: auto;
+    color: var(--contrast-subtle);
+}
+
 /* tool panel */
 .toolPanel {
     display: flex;
