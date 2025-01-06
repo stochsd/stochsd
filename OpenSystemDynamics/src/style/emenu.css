@@ -5,21 +5,55 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 */
 
+.fileToolBox {
+	margin-bottom: 0.25rem;
+	display: flex;
+  flex-direction: row;
+}
 .eMenu {
 	display: inline-block;
 	position: relative;
 	z-index: 1000;
 }
 
+.eMenu > .menuButton,
+.eMenu .menuContent > span button {
+	padding: 0.25rem 0.75rem;
+	border: unset;
+	background-color: transparent;
+}
+
+
+.eMenu > .menuButton:hover,
+.eMenu > .menuButton:has(~.open) {
+	background-color: var(--highlight-light);
+}
+.eMenu > .menuContent.open {
+	display: block;
+}
+
+.eMenu .menuContent > span  button:hover {
+	background-color: var(--highlight-primary);
+	color: var(--white);
+}
+
 .eMenu .menuContent {
 	position: absolute;
 	display: none;
-	min-width: 100px;
+	min-width: 8rem;
 	z-index: 1001;
+	overflow: hidden;
+	background-color: var(--white);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow);
+	border-radius: var(--menu-border-radius);
 }
 
 .eMenu .menuContent > span {
 	display: block;
+}
+.eMenu .menuContent > span > button {
+	border: unset;
 }
 
 .eMenu .menuContent img {
@@ -42,16 +76,6 @@ div.recent-name {
 	display: inline;
 }
 
-.color-sample {
-	display: inline-block;
-	box-sizing: border-box;
-	width: 14px;
-	height: 14px;
-	border: 2px solid white;
-	border-radius: 100%;
-	margin-right: 4px;
-}
-
 .eMenu .menuContent button {
 	width: 100%;
 	text-align: left;
@@ -64,4 +88,23 @@ div.recent-name {
 .eMenu .menuContent a {
 	/* Dont have any decorations on links (for manuals) */
 	text-decoration: none;
+}
+
+
+.eMenu.colorMenu > .menuContent {
+	overflow: visible;
+}
+.eMenu.colorMenu > .menuContent > span:hover > button {
+	border-radius: 0.25rem;
+	outline: 0.25rem solid currentColor;
+	outline-offset: -0.125rem;
+	background-color: transparent;
+}
+.color-sample {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 100%;
+	margin-right: 0.25rem;
 }
