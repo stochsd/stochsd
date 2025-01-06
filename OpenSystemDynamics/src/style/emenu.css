@@ -16,29 +16,29 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	padding: 0.25rem 0.75rem;
 	border: unset;
 	background-color: transparent;
-	color: var(--contrast);
+	color: var(--color-text-primary);
 }
 .eMenu > .menuContent > span > button > span.shortcut {
-	color: var(--contrast-subtle);
+	color: var(--color-text-secondary);
 	margin-left: auto;
 	padding-left: 1rem;
 }
 .eMenu > .menuContent > span > button:hover > span.shortcut {
-	color: var(--white);
+	color: var(--color-white);
 }
 
 
 .eMenu > .menuButton:hover,
 .eMenu > .menuButton:has(~.open) {
-	background-color: var(--highlight-light);
+	background-color: var(--color-highlight-neutral);
 }
 .eMenu > .menuContent.open {
 	display: block;
 }
 
 .eMenu > .menuContent > span  button:hover {
-	background-color: var(--highlight-primary);
-	color: var(--white);
+	background-color: var(--color-highlight-primary);
+	color: var(--color-white);
 }
 
 .eMenu > .menuContent {
@@ -47,9 +47,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	min-width: 8rem;
 	z-index: 1001;
 	overflow: hidden;
-	background-color: var(--white);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--box-shadow);
+	background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-menu);
 	border-radius: var(--radius-menu);
 }
 
@@ -68,7 +68,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 #recent_title {
 	display: flex;
-	color: var(--menu-option-shade);
+	color: var(--color-divider-muted);
 	align-items: center;
 	padding-block: 0.25rem;
 	padding-inline: 0.5rem;
@@ -90,13 +90,13 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	margin: 0;
   padding-inline: 0.5rem;
   font-size: 0.75rem;
-	background-color: var(--white);
+	background-color: var(--color-white);
 	margin-inline: auto;
 	width: fit-content;
 }
 
 button:not(:hover) span.recent-path {
-	color: var(--contrast-subtle); 
+	color: var(--color-text-secondary); 
 }
 
 button span.recent-path {

@@ -1,15 +1,15 @@
 :root {
     --table-border-color: #ccc;
 
-    --white: #ffffff;
-    --gray3: #f8f8f8; /* for background */
-    --border-color: #c3c3c3; /* border around svg plane */
-    --highlight-light: #e4e4e4;
-    --highlight-primary: #7083c2;
-    --contrast: #1e1e1e; /* text color */
-    --contrast-subtle: #787878; /* e.g. for keyboard shortcut in menu */
-    --menu-option-shade: #a1a1a1; /* for recently Opened divider */
-    --box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
+    --color-white: #ffffff; /* Pure white */
+    --color-background-light: #f8f8f8; /* Background light */
+    --color-border: #c3c3c3; /* Border color for SVG plane */
+    --color-highlight-neutral: #e4e4e4; /* Neutral highlight */
+    --color-highlight-primary: #7083c2; /* Primary highlight */
+    --color-text-primary: #1e1e1e; /* Primary text color */
+    --color-text-secondary: #787878; /* Subtle text color, e.g., for shortcuts */
+    --color-divider-muted: #a1a1a1; /* Divider shade for menu options */
+    --shadow-menu: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
     --color-progress-complete: #aaeeaa;
     --color-progress-pending: #eed0aa;
     --radius-menu: 0.25rem;
@@ -20,7 +20,7 @@ body {
     font-family: Arial,Helvetica,sans-serif;
     /* Force print to show all color, this shows gray color in table at Print Equations */
     /* -webkit-print-color-adjust: exact; */
-    color: var(--contrast);
+    color: var(--color-text-primary);
 }
 
 text.name_element {
@@ -73,7 +73,7 @@ svg * {
 #homepage-info {
     font-size: 0.75rem;
     margin-left: auto;
-    color: var(--contrast-subtle);
+    color: var(--color-text-secondary);
 }
 
 /* tool panel */
@@ -108,8 +108,8 @@ button.tool-button img {
     width: 100%; 
 }
 .toolPanel button.tool-button.pressed {
-    background-color: var(--highlight-light);
-    outline: 2px solid var(--highlight-primary);
+    background-color: var(--color-highlight-neutral);
+    outline: 2px solid var(--color-highlight-primary);
     outline-offset: -2px;
 }
 .toolPanel button {
@@ -118,7 +118,7 @@ button.tool-button img {
     border-width: 1.5px;
 }
 .toolPanel button.tool-button:hover:enabled {
-    background-color: var(--highlight-light);
+    background-color: var(--color-highlight-neutral);
 }
 .toolPanel button.tool-button:disabled {
     opacity: 0.5;
@@ -127,7 +127,7 @@ button.tool-button img {
 /* progress bar */
 #progress-bar {
     position: relative;
-    background-color: var(--highlight-light);
+    background-color: var(--color-highlight-neutral);
     width: max-content;
     display: inline-block; 
     min-width: 110px;
@@ -157,7 +157,7 @@ button.tool-button img {
     min-height: 100%;
     width: max-content;
     font-size: 12px;
-    color: var(--contrast);
+    color: var(--color-text-primary);
 }
 /* time unit button */
 #btn_timeunit {
@@ -169,11 +169,11 @@ button.tool-button img {
     background-color: transparent;
 }
 #btn_timeunit:hover {
-    background-color: var(--highlight-light);
+    background-color: var(--color-highlight-neutral);
 }
 #btn_timeunit > #timeunit-label {
     font-size: 10px;
-    color: var(--contrast-subtle);
+    color: var(--color-text-secondary);
 }
 button svg {
     border-width: 0px;
