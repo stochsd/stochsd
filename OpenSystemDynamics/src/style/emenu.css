@@ -11,48 +11,100 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	z-index: 1000;
 }
 
-.eMenu .menuContent {
-	position: absolute;
-	display: none;
-	min-width: 100px;
-	z-index: 1001;
+.eMenu > .menuButton,
+.eMenu > .menuContent > span button {
+	padding: 0.25rem 0.75rem;
+	border: unset;
+	background-color: transparent;
+	color: var(--color-text-primary);
+}
+.eMenu > .menuContent > span > button > span.shortcut {
+	color: var(--color-text-secondary);
+	margin-left: auto;
+	padding-left: 1rem;
+}
+.eMenu > .menuContent > span > button:hover > span.shortcut {
+	color: var(--color-white);
 }
 
-.eMenu .menuContent > span {
+
+.eMenu > .menuButton:hover,
+.eMenu > .menuButton:has(~.open) {
+	background-color: var(--color-highlight-neutral);
+}
+.eMenu > .menuContent.open {
 	display: block;
 }
 
-.eMenu .menuContent img {
+.eMenu > .menuContent > span  button:hover {
+	background-color: var(--color-highlight-primary);
+	color: var(--color-white);
+}
+
+.eMenu > .menuContent {
+	position: absolute;
+	display: none;
+	min-width: 8rem;
+	z-index: 1001;
+	overflow: hidden;
+	background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-menu);
+	border-radius: var(--radius-menu);
+}
+
+.eMenu > .menuContent > span {
+	display: block;
+}
+.eMenu > .menuContent > span > button {
+	border: unset;
+}
+
+.eMenu > .menuContent img {
 	height: 22px;
 	margin-right: 6px;
 	pointer-events: none;
 }
 
-div.recent-path {
+#recent_title {
+	display: flex;
+	color: var(--color-divider-muted);
+	align-items: center;
+	padding-block: 0.25rem;
+	padding-inline: 0.5rem;
+}
+
+#recent_title::before,
+#recent_title::after {
+	content: "";
+	flex-grow: 1;
+	height: 1px;
+	opacity: 0.7;
+	background-color: currentColor;
+	left: 0.5rem;
+	right: 0.5rem;
+	top: 50%;
+}
+
+#recent_title>p {
+	margin: 0;
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
+	background-color: var(--color-white);
+	margin-inline: auto;
+	width: fit-content;
+}
+
+button:not(:hover) span.recent-path {
+	color: var(--color-text-secondary); 
+}
+
+button span.recent-path {
 	display: inline; 
-	color: dimgray; 
 	font-size: 12px;
 }
 
-button:hover > .recent-path {
-	color: black;
-}
-
-div.recent-name {
-	display: inline;
-}
-
-.color-sample {
-	display: inline-block;
-	box-sizing: border-box;
-	width: 14px;
-	height: 14px;
-	border: 2px solid white;
-	border-radius: 100%;
-	margin-right: 4px;
-}
-
-.eMenu .menuContent button {
+.eMenu > .menuContent button {
 	width: 100%;
 	text-align: left;
 	white-space: nowrap;
@@ -61,7 +113,27 @@ div.recent-name {
 	align-items: center;
 }
 
-.eMenu .menuContent a {
+.eMenu > .menuContent a {
 	/* Dont have any decorations on links (for manuals) */
 	text-decoration: none;
+}
+
+
+.eMenu.colorMenu > .menuContent {
+	overflow: visible;
+}
+.eMenu.colorMenu > .menuContent > span:hover > button {
+	border-radius: 0.25rem;
+	outline: 0.25rem solid currentColor;
+	outline-offset: -0.125rem;
+	background-color: transparent;
+}
+.color-sample {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 100%;
+	margin-right: 0.25rem;
+	background-color: currentColor;
 }

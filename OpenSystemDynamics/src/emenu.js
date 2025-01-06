@@ -7,27 +7,28 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 function makeMenu(menu) {
 	// Toggle the visiblity of the menu
-	$(menu).find(".menuButton").click(function() {
-		if($(menu).find(".menuContent").is(":visible")) {
+	$(menu).find(".menuButton").click(function () {
+		if ($(menu).find(".menuContent").is(".open")) {
 			// Hide all menus
-			$(".menuContent").hide();
+			$(".menuContent").removeClass("open");
+
 		} else {
 			// Hide all menus
-			$(".menuContent").hide();
+			$(".menuContent").removeClass("open");
 			// Show the clicked menu
-			$(menu).find(".menuContent").show();
+			$(menu).find(".menuContent").addClass("open");
 		}
 	});
 }
-$(document).ready(function() {
-	$(".eMenu").each(function() {
+$(document).ready(function () {
+	$(".eMenu").each(function () {
 		makeMenu(this);
 	});
 });
 
 // Hide menu when not clicking on menu button
-$(window).click(function(event) {
-  if (!$(event.target).hasClass('menuButton')) {
-	$(".menuContent").hide();
-  }
+$(window).click(function (event) {
+	if (!$(event.target).hasClass('menuButton')) {
+		$(".menuContent").removeClass("open");
+	}
 });

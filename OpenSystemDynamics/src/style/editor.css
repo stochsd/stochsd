@@ -1,5 +1,18 @@
 :root {
     --table-border-color: #ccc;
+
+    --color-white: #ffffff; /* Pure white */
+    --color-background-light: #f8f8f8; /* Background light */
+    --color-border: #c3c3c3; /* Border color for SVG plane */
+    --color-highlight-neutral: #e4e4e4; /* Neutral highlight */
+    --color-highlight-primary: #7083c2; /* Primary highlight */
+    --color-text-primary: #1e1e1e; /* Primary text color */
+    --color-text-secondary: #787878; /* Subtle text color, e.g., for shortcuts */
+    --color-divider-muted: #a1a1a1; /* Divider shade for menu options */
+    --shadow-menu: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
+    --color-progress-complete: #aaeeaa;
+    --color-progress-pending: #eed0aa;
+    --radius-menu: 0.25rem;
 }
 
 
@@ -7,6 +20,9 @@ body {
     font-family: Arial,Helvetica,sans-serif;
     /* Force print to show all color, this shows gray color in table at Print Equations */
     /* -webkit-print-color-adjust: exact; */
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
 }
 
 text.name_element {
@@ -15,22 +31,6 @@ text.name_element {
 
 .hideUnlessNwjs {
     display: none !important;
-}
-button {
-    cursor: pointer;
-    font-size: 14px;
-    border-width: 1.5px;
-}
-
-button:hover:enabled {
-    background-color: white;
-}
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-#recent_title {
-    background-color: #ddd; 
 }
 svg {
         border-width: 0px;
@@ -54,8 +54,16 @@ svg * {
     }
 }
 #coverEverythingDiv {
-    overflow:hidden;
-    /* Disable heightlighting text */
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background-light);
+    display: flex; 
+    flex-direction: column;
+
+    overflow: hidden;
+    /* Disable highlighting text */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -63,46 +71,139 @@ svg * {
     -ms-user-select: none;
     user-select: none;
 }
-.tool-box-separator {
-    display: inline-block;
-    width: 12px;
-    /*width: 20px;*/
-}
-button.pressed {
-    background-color: #777 !important;
-}
-.tool-button {
-    padding: 0px;
-    margin: 0px;
-    
-    width: 30px;
-    height:  30px;
 
-    /*
-    width: 40px;
-    height:  40px;
-    */
+/* menu */
+.fileToolBox {
+    width: calc(100% - 1rem);
+    margin-bottom: 0.25rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
-.toolSupplement {
-    padding: 0px;
-    margin: 0px;
-    
-    width: 30px;
-    height:  30px;
-    display: inline-block;
+#homepage-info {
+    font-size: 0.75rem;
+    margin-left: auto;
+    color: var(--color-text-secondary);
+}
+
+/* tool panel */
+.toolPanel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0rem 1.25rem;
+    margin-top: 0.5rem;
+    --button-size: 1.875rem;
+}
+.toolPanel > .tool-grouping {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-block: 0.25rem;
+    height: var(--button-size);
+    gap: 1px;
+}
+/* buttons title */
+[data-title] {
+    position: relative;
+}
+[data-title]:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    top: calc(100% + 0.125rem);
+    left: 0;
+    white-space: pre;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-text-primary);
+    color: var(--color-background-light);
+    border-radius: 0.25rem;
+    z-index: 4;
+}
+
+/* buttons */
+.toolPanel button.tool-button {
+    border: unset;
+    padding: 2px;
+    margin: 0;
+    box-sizing: content-box;
+    width: var(--button-size);
+    height: 100%;
+    background-color: transparent;
+}
+button.tool-button img {
+    width: 100%; 
+}
+.toolPanel button.tool-button.pressed {
+    background-color: var(--color-highlight-neutral);
+    outline: 2px solid var(--color-highlight-primary);
+    outline-offset: -2px;
+}
+.toolPanel button {
+    cursor: pointer;
+    font-size: 14px;
+    border-width: 1.5px;
+}
+.toolPanel button.tool-button:hover:enabled {
+    background-color: var(--color-highlight-neutral);
+}
+.toolPanel button.tool-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+/* progress bar */
+#progress-bar {
+    position: relative;
+    background-color: var(--color-highlight-neutral);
+    width: max-content;
+    display: inline-block; 
+    min-width: 110px;
+    height:  100%;
+    padding: 0;
+    margin: 0;
     vertical-align: top;
 }
+#progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--progress);
+    background-color: red;
+    background-color: var(--color-progress-pending);
+}
+#progress-bar[data-done]::before {
+    background-color: var(--color-progress-complete);
+}
+#progress-bar-text {
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    min-width: 100%;
+    min-height: 100%;
+    width: max-content;
+    font-size: 12px;
+    color: var(--color-text-primary);
+}
+/* time unit button */
 #btn_timeunit {
-    height:30px; 
+    height: 100%; 
     vertical-align: top; 
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block; 
+    border: unset;
+    background-color: transparent;
+}
+#btn_timeunit:hover {
+    background-color: var(--color-highlight-neutral);
+}
+#btn_timeunit > #timeunit-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
 }
 button svg {
     border-width: 0px;
-}
-.fileToolBox {
-    margin-bottom: 5px;
 }
 table {
     border-collapse: collapse;
@@ -235,11 +336,6 @@ button.primitive-remove-button {
     font-size: 1.3em !important; 
     font-weight: bold !important; 
     font-family: monospace !important;
-}
-button.tool-button img {
-    width: 100%; 
-    height: 100%; 
-    display: inline;
 }
 
 .name-field, .value-field {
