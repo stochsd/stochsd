@@ -6071,9 +6071,9 @@ $(window).load(function () {
 
 function updateTimeUnitButton() {
 	if (isTimeUnitOk(getTimeUnits())) {
-		$("#timeUnitParagraph").html(`Time Unit: ${getTimeUnits()}`);
+		$("#timeunit-value").html(getTimeUnits());
 	} else {
-		$("#timeUnitParagraph").html(warningHtml("No Time Unit", false));
+		$("#timeunit-value").html(warningHtml("None", false));
 	}
 }
 
@@ -8886,7 +8886,7 @@ class TimeUnitDialog extends jqDialog {
 					let timeUnit = $(this.dialogContent).find(".timeunit-field").val();
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
-					$("#timeUnitParagraph").html(`Time Unit: ${timeUnit}`);
+					$("#timeunit-value").html(`Time Unit: ${timeUnit}`);
 					History.storeUndoState();
 				} else {
 					this.showComplain(this.validName);

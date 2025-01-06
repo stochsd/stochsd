@@ -131,12 +131,21 @@ button.tool-button img {
     font-size: 12px;
     color: var(--contrast);
 }
-
+/* time unit button */
 #btn_timeunit {
     height:30px; 
     vertical-align: top; 
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block; 
+    border: unset;
+    background-color: transparent;
+}
+#btn_timeunit:hover {
+    background-color: var(--highlight-light);
+}
+#btn_timeunit > #timeunit-label {
+    font-size: 10px;
+    color: var(--contrast-subtle);
 }
 button svg {
     border-width: 0px;
