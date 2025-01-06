@@ -42,9 +42,6 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-#recent_title {
-    background-color: #ddd; 
-}
 svg {
         border-width: 0px;
 }

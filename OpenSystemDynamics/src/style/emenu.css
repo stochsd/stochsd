@@ -62,18 +62,42 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	pointer-events: none;
 }
 
-div.recent-path {
+#recent_title {
+	display: flex;
+	color: var(--menu-option-shade);
+	align-items: center;
+	padding-block: 0.25rem;
+	padding-inline: 0.5rem;
+}
+
+#recent_title::before,
+#recent_title::after {
+	content: "";
+	flex-grow: 1;
+	height: 1px;
+	opacity: 0.7;
+	background-color: currentColor;
+	left: 0.5rem;
+	right: 0.5rem;
+	top: 50%;
+}
+
+#recent_title>p {
+	margin: 0;
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
+	background-color: var(--white);
+	margin-inline: auto;
+	width: fit-content;
+}
+
+button:not(:hover) span.recent-path {
+	color: var(--contrast-subtle); 
+}
+
+button span.recent-path {
 	display: inline; 
-	color: dimgray; 
 	font-size: 12px;
-}
-
-button:hover > .recent-path {
-	color: black;
-}
-
-div.recent-name {
-	display: inline;
 }
 
 .eMenu .menuContent button {
