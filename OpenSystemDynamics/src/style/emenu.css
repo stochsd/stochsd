@@ -46,7 +46,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	background-color: var(--white);
   border: 1px solid var(--border-color);
   box-shadow: var(--box-shadow);
-	border-radius: var(--menu-border-radius);
+	border-radius: var(--radius-menu);
 }
 
 .eMenu .menuContent > span {

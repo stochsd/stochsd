@@ -7,12 +7,12 @@
     --highlight-light: #e4e4e4;
     --highlight-primary: #7083c2;
     --contrast: #1e1e1e; /* text color */
-    --contrast-subtle: #787878; /* for keyboard shortcut in menu */
-    --menu-option-shade: #a1a1a1; /* for recently Opened */
+    --contrast-subtle: #787878; /* e.g. for keyboard shortcut in menu */
+    --menu-option-shade: #a1a1a1; /* for recently Opened divider */
     --box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
-    --progress-green: #aaeeaa;
-    --progress-orange: #eed0aa;
-    --menu-border-radius: 0.25rem;
+    --color-progress-green: #aaeeaa;
+    --color-progress-orange: #eed0aa;
+    --radius-menu: 0.25rem;
 }
 
 
