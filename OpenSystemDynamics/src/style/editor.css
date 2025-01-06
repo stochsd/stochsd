@@ -92,7 +92,23 @@ svg * {
     margin-block: 0.25rem;
     height: var(--button-size);
 }
-
+/* buttons title */
+[data-title] {
+    position: relative;
+}
+[data-title]:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    top: calc(100% + 0.125rem);
+    left: 0;
+    white-space: pre;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-text-primary);
+    color: var(--color-background-light);
+    border-radius: 0.25rem;
+    z-index: 4;
+}
 
 /* buttons */
 .toolPanel button.tool-button {
@@ -131,7 +147,7 @@ button.tool-button img {
     width: max-content;
     display: inline-block; 
     min-width: 110px;
-    height:  30px;
+    height:  100%;
     padding: 0;
     margin: 0;
     vertical-align: top;
