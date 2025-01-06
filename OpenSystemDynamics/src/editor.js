@@ -6863,17 +6863,13 @@ class RunResults {
 		});
 	}
 	static setProgressBarGreen(isGreen) {
-		if (isGreen) {
-			// set color to green 
-			$("#runStatusBar").css("background", "#aaeeaa");
-		} else {
-			// set color to orange 
-			$("#runStatusBar").css("background", "#eed0aa");
-		}
+		isGreen
+			? $("#runStatusBarOuter").attr("data-done", "")
+			: $("#runStatusBarOuter").removeAttr("data-done")
 	}
 	static updateProgressBar() {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#runStatusBar").width(`${100 * progress}%`);
+		$("#runStatusBarOuter")[0].style.setProperty("--progress", `${100 * progress}%`)
 		let number_options = { precision: 3 };
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);

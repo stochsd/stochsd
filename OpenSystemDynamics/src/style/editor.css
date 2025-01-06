@@ -10,8 +10,8 @@
     --contrast-subtle: #787878; /* e.g. for keyboard shortcut in menu */
     --menu-option-shade: #a1a1a1; /* for recently Opened divider */
     --box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
-    --color-progress-green: #aaeeaa;
-    --color-progress-orange: #eed0aa;
+    --color-progress-complete: #aaeeaa;
+    --color-progress-pending: #eed0aa;
     --radius-menu: 0.25rem;
 }
 
@@ -103,17 +103,23 @@ button.tool-button img {
     width: max-content;
     display: inline-block; 
     min-width: 110px;
-}
-#runStatusBar {
-    position: absolute;
-    background-color: #aaeeaa;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    margin: 0;
+    height:  30px;
     padding: 0;
-    border: 0;
+    margin: 0;
+    vertical-align: top;
+}
+#runStatusBarOuter::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--progress);
+    background-color: red;
+    background-color: var(--color-progress-pending);
+}
+#runStatusBarOuter[data-done]::before {
+    background-color: var(--color-progress-complete);
 }
 #runStatusBarText {
     position: absolute;
@@ -125,17 +131,6 @@ button.tool-button img {
     font-size: 12px;
 }
 
-
-
-.toolSupplement {
-    padding: 0px;
-    margin: 0px;
-    
-    width: 30px;
-    height:  30px;
-    display: inline-block;
-    vertical-align: top;
-}
 #btn_timeunit {
     height:30px; 
     vertical-align: top; 
