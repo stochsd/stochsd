@@ -98,9 +98,32 @@ button.tool-button img {
 }
 /* progress bar */
 #runStatusBarOuter {
+    position: relative;
     background-color: var(--highlight-light);
+    width: max-content;
+    display: inline-block; 
+    min-width: 110px;
 }
-
+#runStatusBar {
+    position: absolute;
+    background-color: #aaeeaa;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+#runStatusBarText {
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    min-width: 100%;
+    min-height: 100%;
+    width: max-content;
+    font-size: 12px;
+}
 
 
 
