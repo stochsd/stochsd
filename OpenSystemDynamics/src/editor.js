@@ -6781,7 +6781,7 @@ class RunResults {
 				// If still running continue with next cycle
 				if (this.runState == runStateEnum.running) {
 					this.updateProgressBar();
-					this.setProgressBarGreen(false);
+					this.setProgressStatus(false);
 					do_global_log("length " + this.results.length)
 					if (this.simulationController == null) {
 						do_global_log("simulation controller is null")
@@ -6799,7 +6799,7 @@ class RunResults {
 					// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 					this.storeResults(res);
 					this.updateProgressBar();
-					this.setProgressBarGreen(true);
+					this.setProgressStatus(true);
 					this.triggerRunFinished();
 					this.stopSimulation();
 				} else {
@@ -6845,7 +6845,7 @@ class RunResults {
 				this.simulationDone = false;
 				this.storeResults(res);
 				this.updateProgressBar();
-				this.setProgressBarGreen(false);
+				this.setProgressStatus(false);
 				this.triggerRunFinished();
 				this.simulationController = res;
 			},
@@ -6854,7 +6854,7 @@ class RunResults {
 				runOverlay.unblock();
 				this.storeResults(res);
 				this.updateProgressBar();
-				this.setProgressBarGreen(true);
+				this.setProgressStatus(true);
 				this.triggerRunFinished();
 			},
 			onError: (res) => {
@@ -6862,21 +6862,27 @@ class RunResults {
 			}
 		});
 	}
-	static setProgressBarGreen(isGreen) {
-		isGreen
-			? $("#runStatusBarOuter").attr("data-done", "")
-			: $("#runStatusBarOuter").removeAttr("data-done")
+	static setProgressStatus(done) {
+		done
+			? $("#progress-bar").attr("data-done", "")
+			: $("#progress-bar").removeAttr("data-done")
 	}
-	static updateProgressBar() {
+	static updateProgressLength() {
 		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#runStatusBarOuter")[0].style.setProperty("--progress", `${100 * progress}%`)
+		$("#progress-bar")[0].style.setProperty("--progress", `${100 * progress}%`)
+	}
+	static updateProgressText() {
 		let number_options = { precision: 3 };
 		let currentTime = format_number(this.getRunProgress(), number_options);
 		let startTime = format_number(this.getRunProgressMin(), number_options);
 		let endTime = format_number(this.getRunProgressMax(), number_options);
 		let timeStep = this.getTimeStep();
 		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
-		$("#runStatusBarText").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
+		$("#progress-bar-text").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
+	}
+	static updateProgressBar() {
+		this.updateProgressLength()
+		this.updateProgressText()
 	}
 	static pauseSimulation() {
 		this.runState = runStateEnum.paused;

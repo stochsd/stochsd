@@ -20,6 +20,7 @@ body {
     font-family: Arial,Helvetica,sans-serif;
     /* Force print to show all color, this shows gray color in table at Print Equations */
     /* -webkit-print-color-adjust: exact; */
+    color: var(--contrast);
 }
 
 text.name_element {
@@ -67,14 +68,13 @@ svg * {
 }
 /* buttons */
 .toolPanel button.tool-button {
-    padding: 0;
+    border: unset;
+    padding: 2px;
     margin: 0;
     box-sizing: content-box;
     width: 1.875rem;
     height: 1.875rem;
-    border: unset;
     background-color: transparent;
-    padding: 2px;
 }
 button.tool-button img {
     width: 100%; 
@@ -97,7 +97,7 @@ button.tool-button img {
     cursor: not-allowed;
 }
 /* progress bar */
-#runStatusBarOuter {
+#progress-bar {
     position: relative;
     background-color: var(--highlight-light);
     width: max-content;
@@ -108,7 +108,7 @@ button.tool-button img {
     margin: 0;
     vertical-align: top;
 }
-#runStatusBarOuter::before {
+#progress-bar::before {
     content: "";
     position: absolute;
     top: 0;
@@ -118,10 +118,10 @@ button.tool-button img {
     background-color: red;
     background-color: var(--color-progress-pending);
 }
-#runStatusBarOuter[data-done]::before {
+#progress-bar[data-done]::before {
     background-color: var(--color-progress-complete);
 }
-#runStatusBarText {
+#progress-bar-text {
     position: absolute;
     inset: 0;
     text-align: center;
@@ -129,6 +129,7 @@ button.tool-button img {
     min-height: 100%;
     width: max-content;
     font-size: 12px;
+    color: var(--contrast);
 }
 
 #btn_timeunit {
