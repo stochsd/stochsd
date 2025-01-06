@@ -6062,7 +6062,7 @@ $(window).load(function () {
 	environment.ready();
 	fileManager.ready();
 	restoreAfterRestart();
-
+	RunResults.updateProgressBar();
 	updateTimeUnitButton();
 
 	History.unsavedChanges = false;
