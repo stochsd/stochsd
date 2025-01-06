@@ -135,4 +135,5 @@ button span.recent-path {
 	height: 0.75rem;
 	border-radius: 100%;
 	margin-right: 0.25rem;
+	background-color: currentColor;
 }
