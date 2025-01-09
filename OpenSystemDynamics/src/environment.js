@@ -39,7 +39,7 @@ class nwController {
     let params = this.getParams();
     if (params.length >= 1) {
       let parameterFilename = params[0];
-      fileManager.loadFromFile(parameterFilename);
+      fileManager.loadFromFilePath(parameterFilename);
     }
 
     var ngui = this.unsafeGetGui();
@@ -81,12 +81,12 @@ class nwController {
     nwin.show();
     nwin.maximize();
   }
-  static getParams() {}
+  static getParams() { }
   static unsafeGetParams() {
     var nwgui = require("nw.gui");
     return nwgui.App.argv;
   }
-  static openFile() {}
+  static openFile() { }
   static unsafeOpenFile(fileName) {
     nwjsGui.Shell.openItem(fileName);
   }
@@ -247,6 +247,25 @@ class BaseFileManager {
     }
     return filename;
   }
+  /** @param {File} file */
+  async loadFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const contents = event.target.result;
+      this.fileName = file.name;
+      console.log("load event.target", event.target);
+
+      do_global_log("web load file call  back");
+      var fileData = contents;
+      History.forceCustomUndoState(fileData);
+      this.updateTitle();
+      preserveRestart();
+    }
+    reader.onerror = (error) => {
+      console.error(`Error reading file ${file.name}`, error);
+    }
+    reader.readAsText(file);
+  }
 }
 
 class WebFileManagerBasic extends BaseFileManager {
@@ -290,7 +309,7 @@ class WebFileManagerBasic extends BaseFileManager {
   exportFile(dataToSave, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
 
     var fileName = prompt("Filename:", fileExtension);
@@ -312,7 +331,6 @@ class WebFileManagerBasic extends BaseFileManager {
       onCompleted: (model) => {
         this.fileName = model.name;
         //~ this.loadModelData(model.contents);
-        //~ this.updateTitle();
 
         do_global_log("web load file call  back");
         var fileData = model.contents;
@@ -355,8 +373,8 @@ class WebFileManagerModern extends BaseFileManager {
   async getRecentFiles() {
     let recentFiles;
     try {
-       recentFiles = await idbKeyval.get("recentFiles") ?? []
-    } catch { 
+      recentFiles = await idbKeyval.get("recentFiles") ?? []
+    } catch {
       recentFiles = [];
     }
     return recentFiles;
@@ -370,8 +388,8 @@ class WebFileManagerModern extends BaseFileManager {
 
   async removeDuplicatesFromRecent(fileHandle, recentFiles) {
     let newRecentFiles = []
-    for(let i in recentFiles) {
-      if(!await recentFiles[i].isSameEntry(fileHandle))  {
+    for (let i in recentFiles) {
+      if (!await recentFiles[i].isSameEntry(fileHandle)) {
         newRecentFiles.push(recentFiles[i]);
       }
     }
@@ -472,24 +490,24 @@ class WebFileManagerModern extends BaseFileManager {
     if (withWrite) {
       opts.mode = 'readwrite';
     }
-  
+
     // Check if we already have permission, if so, return true.
     if (await fileHandle.queryPermission(opts) === 'granted') {
       return true;
     }
-  
+
     // Request permission to the file, if the user grants permission, return true.
     if (await fileHandle.requestPermission(opts) === 'granted') {
       return true;
     }
-  
+
     // The user did not grant permission, return false.
     return false;
   }
 
   async loadFromFileHandle(fileHandle) {
-    const allowedPermisson = await this.verifyPermission(fileHandle, false);
-    if(!allowedPermisson) {
+    const allowedPermission = await this.verifyPermission(fileHandle, false);
+    if (!allowedPermission) {
       return;
     }
     await idbKeyval.del('fileHandle');
@@ -549,7 +567,7 @@ class ElectronFileManager extends BaseFileManager {
   exportFile(fileData, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
     const { dialog } = require("electron").remote;
     let fileName = dialog.showSaveDialog();
@@ -575,15 +593,16 @@ class ElectronFileManager extends BaseFileManager {
     let filenameArray = dialog.showOpenDialog({ properties: ["openFile"] });
     console.log("filenameArray", filenameArray);
     if (filenameArray.length > 0) {
-      this.loadFromFile(filenameArray[0]);
+      this.loadFromFilePath(filenameArray[0]);
     }
   }
-  loadFromFile(fileName) {
+  /** @param {string} filePath */
+  loadFromFilePath(filePath) {
     var fs = require("fs");
     var resolve = require("path").resolve;
-    var absoluteFileName = resolve(fileName);
+    var absoluteFileName = resolve(filePath);
 
-    fs.readFile(fileName, "utf8", (err, data) => {
+    fs.readFile(filePath, "utf8", (err, data) => {
       if (err) {
         return console.error(err);
       }
@@ -711,7 +730,7 @@ class NwFileManager extends BaseFileManager {
   exportFile(dataToSave, fileExtension, onSuccess) {
     if (onSuccess == undefined) {
       // On success is optoinal, so if it was not set we set it to an empty function
-      onSuccess = () => {};
+      onSuccess = () => { };
     }
     this.fileExportInput.onSuccess = onSuccess;
     do_global_log("NW: export file");
@@ -734,11 +753,11 @@ class NwFileManager extends BaseFileManager {
   }
   async getRecentFiles() {
     let recentTemp = await idbKeyval.get("recentFiles")
-    let recentFiles = typeof recentTemp == "string" 
-      ? JSON.parse(recentTemp) 
+    let recentFiles = typeof recentTemp == "string"
+      ? JSON.parse(recentTemp)
       : Array.isArray(recentTemp)
-      ? recentTemp 
-      : []
+        ? recentTemp
+        : []
     return recentFiles;
   }
   async setRecentFiles(recentFiles) {
@@ -768,7 +787,7 @@ class NwFileManager extends BaseFileManager {
   async loadRecentByIndex(recentFileIndex) {
     const recentFiles = await this.getRecentFiles();
     const filePath = recentFiles[recentFileIndex];
-    this.loadFromFile(filePath);
+    this.loadFromFilePath(filePath);
   }
   async clearRecent() {
     await idbKeyval.set("recentFiles", JSON.stringify([]));
@@ -847,7 +866,8 @@ class NwFileManager extends BaseFileManager {
     // The following line seems to cause a flicky bug
     //~ uploader.parentElement.removeChild(uploader);
   }
-  loadFromFile(fileName) {
+  /** @param {string} fileName */
+  loadFromFilePath(fileName) {
     var fs = require("fs");
     var resolve = require("path").resolve;
     var absoluteFileName = resolve(fileName);
@@ -866,6 +886,10 @@ class NwFileManager extends BaseFileManager {
       this.addToRecent(this.fileName);
       preserveRestart();
     });
+  }
+  /** @param {File} file */
+  loadFromFile(file) {
+    this.loadFromFilePath(file.path)
   }
 }
 
@@ -901,19 +925,19 @@ class WebEnvironment extends BaseEnvironment {
   ready() {
     return null;
     /*
-		window.onbeforeunload = (e) => {
-			if (this.reloadingStarted) {
-				// We never want to complain if we have initialized a reload
-				// We only want to complain when the user is closing the page
-				return null;
-			}
-			if (History.unsavedChanges) {
-				return 'You have unsaved changes. Are you sure you want to quit?';
-			} else {
-				return null;
-			}
-		};
-		*/
+    window.onbeforeunload = (e) => {
+      if (this.reloadingStarted) {
+        // We never want to complain if we have initialized a reload
+        // We only want to complain when the user is closing the page
+        return null;
+      }
+      if (History.unsavedChanges) {
+        return 'You have unsaved changes. Are you sure you want to quit?';
+      } else {
+        return null;
+      }
+    };
+    */
   }
   getFileManager() {
     // To use modern file api we need showSaveFilePicker

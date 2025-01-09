@@ -7,15 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- Drag and Drop functionality for ssd-files.
+- Code-highlighting with CodeMirror for ConverterDialog.
+- Converter plot preview in ConverterDialog.
+- Pasting two columns from spreadsheet application into converter dialog works.
+
+### Fixed
+- UI cleanup and style update for menu and tool-buttons.
+
+
+## 2022.04.15
+
+### Added
 - Code-highlighting and autocomplete suggestions to MacroDialog with CodeMirror.
 - PreferenceDialog
-  - Force TimeUnit pereferences
+  - Force TimeUnit preferences
   - Show Experimental Function Helper
 - Link to official StochSD forum inside StochSD.
 - Better support for PWA StochSD
-- Pasting two columns from speadsheet application into converter dialog works.
-- Code-highlighting with CodeMirror for ConverterDialog.
-- Added converter plot preview in ConverterDialog.
 
 ## Fixed
 - Ghosted Converter Bugs
@@ -43,7 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Update plots more sparingly when resizing them (for performance).
 - Custom tick-setter for TimePlots, ComparePlots and XyPlot. (To remove weird numbers like 0.333...)
 - Histogram no longer include maximum value by default, by setting a max-limit slightly higher than max.
-- `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent accross all text inputs.
+- `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent across all text inputs.
 - Progressbar changes width to accomodate simulation info.
 - HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 
@@ -67,7 +76,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Code highlighting to definition.
 - Clear Recent List button in file-menu.
 - Zooming works with `Ctrl`+`Numpad+`/`Numpad-`.
-- Stock/Flow/Constant/Auxilliary icons in primitive selectors.
+- Stock/Flow/Constant/Auxiliary icons in primitive selectors.
 - StopIf function.
 - `Ctrl`+`R` to run simulation.
 - More purely visual primitives (Line, Arrow, Elipse).

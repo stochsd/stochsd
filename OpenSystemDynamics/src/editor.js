@@ -5811,6 +5811,7 @@ $(window).load(function () {
 			e.preventDefault();
 		}
 	});
+	DragAndDrop.init();
 	rectselector.element = svg_rect(-30, -30, 60, 60, "black", "none", "rect-selector");
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
@@ -8886,7 +8887,7 @@ class TimeUnitDialog extends jqDialog {
 					let timeUnit = $(this.dialogContent).find(".timeunit-field").val();
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
-					$("#timeunit-value").html(`Time Unit: ${timeUnit}`);
+					$("#timeunit-value").html(timeUnit);
 					History.storeUndoState();
 				} else {
 					this.showComplain(this.validName);
