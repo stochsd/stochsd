@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- Dynamically change text color in definition to align with the primitive colors.
 - Drag and Drop functionality for ssd-files.
 - Code-highlighting with CodeMirror for ConverterDialog.
 - Converter plot preview in ConverterDialog.
