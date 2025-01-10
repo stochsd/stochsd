@@ -24,18 +24,20 @@
 .cm-string { color: hsl(300deg, 50%, 40%); }
 .cm-number { color: black; font-weight: normal; }
 .cm-normal {color: black; font-weight: normal; }
-.cm-primitive { color: black; font-weight: bold; }
-.cm-primitive.cm-silver { color: silver; font-weight: bold; }
-.cm-primitive.cm-red { color: red; font-weight: bold; }
-.cm-primitive.cm-deeppink { color: deeppink; font-weight: bold; }
-.cm-primitive.cm-brown { color: brown; font-weight: bold; }
-.cm-primitive.cm-orange { color: orange; font-weight: bold; }
-.cm-primitive.cm-gold { color: gold; font-weight: bold; }
-.cm-primitive.cm-olive { color: olive; font-weight: bold; }
-.cm-primitive.cm-green { color: green; font-weight: bold; }
-.cm-primitive.cm-teal { color: teal; font-weight: bold; }
-.cm-primitive.cm-blue { color: blue; font-weight: bold; }
-.cm-primitive.cm-magenta { color: magenta; font-weight: bold; }
+.cm-primitive { --color: black; color: var(--color); font-weight: bold; }
+.cm-primitive.cm-silver { --color: silver; font-weight: bold; }
+.cm-primitive.cm-red { --color: red; font-weight: bold; }
+.cm-primitive.cm-deeppink { --color: deeppink; font-weight: bold; }
+.cm-primitive.cm-brown { --color: brown; font-weight: bold; }
+.cm-primitive.cm-orange { --color: orange; font-weight: bold; }
+.cm-primitive.cm-gold { --color: gold; font-weight: bold; }
+.cm-primitive.cm-olive { --color: olive; font-weight: bold; }
+.cm-primitive.cm-green { --color: green; font-weight: bold; }
+.cm-primitive.cm-teal { --color: teal; font-weight: bold; }
+.cm-primitive.cm-blue { --color: blue; font-weight: bold; }
+.cm-primitive.cm-magenta { --color: magenta; font-weight: bold; }
+/* For searching for primitives */
+.cm-primitive mark { background-color: var(--color); color: white; }
 
 /* Theme for converters */
 .cm-point { 

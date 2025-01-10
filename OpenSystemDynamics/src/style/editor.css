@@ -308,7 +308,7 @@ div.center-vertically-container {
 }
 
 /* Modern Table start here */
-.modern-table tr:nth-child(even){
+.zebra tr:nth-child(even) {
     background-color: #f4f4f4;
 }
 .modern-table td, .modern-table th {
