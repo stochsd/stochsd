@@ -185,7 +185,6 @@ class History {
 				this.undoIndex = this.undoStates.length - 1;
 			}
 		}
-		console.trace("Stored undo state", this.undoStates.length, this.undoIndex);
 	}
 
 	static forceCustomUndoState(newState) {
@@ -10032,7 +10031,6 @@ function hideAndPrint(elementsToHide) {
 	for (let element of elementsToHide) {
 		$(element).hide();
 	}
-	console.trace();
 	window.print();
 	for (let element of elementsToHide) {
 		$(element).show();
