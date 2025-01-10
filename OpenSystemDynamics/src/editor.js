@@ -4,19 +4,30 @@ This file may distributed and/or modified under the
 terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0.html).
 
 */
-
-// Dialoge window handlers 
+// Dialog window handlers 
+/** @type DefinitionEditor */
 var definitionEditor;
+/** @type ConverterDialog */
 var converterDialog;
+/** @type PreferencesDialog */
 var preferencesDialog;
+/** @type SimulationSettings */
 var simulationSettings;
+/** @type TimeUnitDialog */
 var timeUnitDialog;
+/** @type MacroDialog */
 var macroDialog;
+/** @type EquationListDialog */
 var equationList;
+/** @type DebugDialog */
 var debugDialog;
+/** @type AboutDialog */
 var aboutDialog;
+/** @type FullPotentialCSSDialog */
 var fullpotentialcssDialog;
+/** @type ThirdPartyLicensesDialog */
 var thirdPartyLicensesDialog;
+/** @type LicenseDialog */
 var licenseDialog;
 
 
@@ -52,10 +63,10 @@ const type_basename = {
 	"constant": "Parameter"
 };
 
-last_connection = null;
-
 // Stores Visual objects and connections
+/** @type {{ [id: string]: TwoPointer }} */
 var connection_array = {};
+/** @type {{ [id: string]: OnePointer }} */
 var object_array = {};
 
 // Stores state related to mouse
@@ -185,7 +196,6 @@ class History {
 				this.undoIndex = this.undoStates.length - 1;
 			}
 		}
-		console.trace("Stored undo state", this.undoStates.length, this.undoIndex);
 	}
 
 	static forceCustomUndoState(newState) {
@@ -1606,8 +1616,6 @@ class TwoPointer extends BaseObject {
 		// this is done so anchor is ontop 
 		this.start_anchor.reloadImage();
 		this.end_anchor.reloadImage();
-
-		last_connection = this;
 	}
 
 	createInitialAnchors(pos0, pos1) {
@@ -1696,7 +1704,6 @@ class BaseConnection extends TwoPointer {
 			this.end_anchor.setPos(targetPoint);
 			alert("Position got updated");
 		}
-		last_connection = this;
 	}
 
 	isAcceptableStartAttach(attachVisual) {
@@ -2430,11 +2437,16 @@ class TableVisual extends HtmlTwoPointer {
 			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
 		};
 
-		html = `<table class='sticky-table'>
+		html = `<table class='sticky-table zebra-odd'>
 			<thead>
 				<tr>
-					<th class='time-header-cell'>Time</th>
-					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">${name}</th>`).join("")}
+					<th class='time-header-cell'>
+						<div class="">Time</div>
+						<div class="time-unit">${getTimeUnits()}</div>
+					</th>
+					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">
+						<span class="cm-primitive cm-${findName(name)?.getAttribute("Color")}">${name}</span>
+					</th>`).join("")}
 				</tr>
 			</thead>
 			<tbody>
@@ -5427,6 +5439,7 @@ function update_all_objects() {
 }
 
 function get_all_objects() {
+	/** @type {{[id: string]: BaseObject }} */
 	let result = {}
 	for (let key in object_array) {
 		result[key] = object_array[key];
@@ -5447,6 +5460,7 @@ function get_object(id) {
 	return false;
 }
 
+/** @param {string} id @param {string} new_name */
 function set_name(id, new_name) {
 	let tobject = get_object(id);
 	if (!tobject) {
@@ -5455,7 +5469,7 @@ function set_name(id, new_name) {
 	tobject.setName(new_name);
 	tobject.afterNameChange();
 }
-
+/** @param {string} node_id @param {number} diff_x @param {number} diff_y */
 function rel_move(node_id, diff_x, diff_y) {
 	let primitive = findID(node_id);
 	if (primitive != null) {
@@ -7231,6 +7245,7 @@ function getPrimitiveList() {
 }
 
 class XAlertDialog extends jqDialog {
+	/** @param {string} message @param {() => void} closeHandler */
 	constructor(message, closeHandler = null) {
 		super();
 		this.setTitle("Alert");
@@ -7347,6 +7362,7 @@ function saveChangedAlert(continueHandler) {
 }
 
 class HtmlComponent {
+	/** @param {Primitive} parent */
 	constructor(parent) {
 		this.componentId = "component-" + Math.ceil(Math.random() * (2 ** 32)).toString(16)
 		this.parent = parent;
@@ -8141,10 +8157,10 @@ class HistogramOptionsComponent extends HtmlComponent {
 	}
 }
 
-/**
- * @param {header: string, name: string, attribute, options: [{value, label}]} data 
- */
 class RadioCompontent extends HtmlComponent {
+	/**
+	 * @param {{header: string, name: string, attribute, options: [{value: string, label: string}]}} data 
+	 */
 	constructor(parent, data) {
 		super(parent);
 		this.data = data;
@@ -10008,7 +10024,7 @@ class DefinitionEditor extends jqDialog {
 		}
 	}
 }
-
+/** @param {string} htmlContent */
 function printContentInNewWindow(htmlContent) {
 	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
 	printWindow.document.write('<html><head><title>Equation List</title>');
@@ -10023,11 +10039,11 @@ function printContentInNewWindow(htmlContent) {
 	}, 400);
 }
 
+/** @param {HTMLElement[]} elementsToHide */
 function hideAndPrint(elementsToHide) {
 	for (let element of elementsToHide) {
 		$(element).hide();
 	}
-	console.trace();
 	window.print();
 	for (let element of elementsToHide) {
 		$(element).show();

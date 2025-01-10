@@ -247,7 +247,7 @@ table.sticky-table th {
     /* Make header stay at top */
     position: sticky;
     top: 0;
-    background-color: #f4f4f4;
+    background-color: white;
 }
 table.sticky-table th::after {
     /* Make border-bottom since border does follow element with sticky */
@@ -262,9 +262,6 @@ table.sticky-table th::after {
 table.sticky-table th, table.sticky-table td {
     border: 1px solid var(--table-border-color);
 } 
-table.sticky-table tr:nth-child(even) {
-    background-color: #f4f4f4;
-}
 .time-header-cell::before, .prim-header-cell:not(:last-child)::before {
     /* made up right border */
     content: "";
@@ -284,6 +281,22 @@ table.sticky-table tr:nth-child(even) {
     /* make black line between time column and primitive column */
 	border-right-width: 1px !important;
     border-right-color: black !important;
+}
+table.sticky-table th.time-header-cell:has(div.time-unit:not(:empty)) {
+    padding: 0px 8px;
+    font-size: 0.9rem;
+}
+table.sticky-table th.time-header-cell>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+table.sticky-table th.time-header-cell>div.time-unit {
+    font-weight: normal;
+}
+table.sticky-table th.time-header-cell>div.time-unit:empty {
+    display: none;
 }
 .time-value-cell {
 	text-align: center;
@@ -308,7 +321,9 @@ div.center-vertically-container {
 }
 
 /* Modern Table start here */
-.zebra tr:nth-child(even) {
+.zebra tr:nth-child(even),
+.zebra-even tr:nth-child(even),
+.zebra-odd tr:nth-child(odd) {
     background-color: #f4f4f4;
 }
 .modern-table td, .modern-table th {
