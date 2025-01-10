@@ -302,7 +302,7 @@ class InfoBar {
 		let infoDef = $(".info-bar__definition")[0];
 		this.cmInfoDef = new CodeMirror(infoDef,
 			{
-				mode: "stochsdmode",
+				mode: "stochsd-dynamic-mode",
 				theme: "stochsdtheme oneline",
 				readOnly: "nocursor",
 				lineWrapping: false
@@ -9654,7 +9654,7 @@ class DefinitionEditor extends jqDialog {
 		let value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
 			{
-				mode: "stochsdmode",
+				mode: "stochsd-dynamic-mode",
 				theme: "stochsdtheme oneline",
 				lineWrapping: false,
 				lineNumbers: false,
@@ -9859,8 +9859,9 @@ class DefinitionEditor extends jqDialog {
 		let referenceListToHtml = (referenceList) => {
 			let result = "";
 			for (let linked of referenceList) {
+				const color = linked.getAttribute("Color");
 				let name = "[" + getName(linked) + "]";
-				result += `<span class = "linked-reference click-function cm-primitive" data-template="${name}">${name}</span>&nbsp;</br>`;
+				result += `<span class = "linked-reference click-function cm-primitive ${color ? "cm-" + color : ""}" data-template="${name}">${name}</span>&nbsp;</br>`;
 			}
 			return result;
 		}
@@ -10092,7 +10093,7 @@ class MacroDialog extends jqDialog {
 
 		this.cmMacroField = new CodeMirror.fromTextArea(document.getElementsByClassName("macro-text")[0],
 			{
-				mode: "stochsdmode",
+				mode: "stochsd-dynamic-mode",
 				theme: "stochsdtheme resize",
 				lineWrapping: false,
 				lineNumbers: false,
