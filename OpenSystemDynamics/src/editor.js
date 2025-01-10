@@ -7369,7 +7369,7 @@ class PlotPeriodComponent extends HtmlComponent {
 			plot_per = this.parent.getDefaultPlotPeriod();
 		}
 		return (`
-			<table class="modern-table" title="Distance between points in time units. \n (Should not be less then Time Step)" >
+			<table class="modern-table zebra" title="Distance between points in time units. \n (Should not be less then Time Step)" >
 				<tr>
 					<th>
 						Plot Period: 
@@ -7435,7 +7435,7 @@ class LabelTableComponent extends HtmlComponent {
 	}
 	render() {
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				${this.labels.map(label => {
 			return (`<tr>
 						<th>${label.text}:</th>
@@ -7466,7 +7466,7 @@ class CheckboxTableComponent extends HtmlComponent {
 	}
 	render() {
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				${this.checkboxes.map(checkbox => {
 			return (`<tr>
 						<td>
@@ -7511,7 +7511,9 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
 							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
 							${getName(findID(id))}
+							<span>
 						</div>
 						</td>
 				</tr>
@@ -7545,10 +7547,10 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		let results = this.getSearchPrimitiveResults(searchLowercase);
 		let get_highlight_match = (name, match) => {
 			let index = name.toLowerCase().indexOf(match.toLowerCase());
-			if (index === -1) {
+			if (index === -1 || match === "") {
 				return name;
 			} else {
-				return `${name.slice(0, index)}<b>${name.slice(index, index + match.length)}</b>${name.slice(index + match.length, name.length)}`
+				return `${name.slice(0, index)}<mark>${name.slice(index, index + match.length)}</mark>${name.slice(index + match.length, name.length)}`
 			}
 		}
 		let htmlContent = "";
@@ -7567,7 +7569,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
 							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-							${get_highlight_match(getName(p), searchWord)}
+							<span class="cm-primitive cm-${p?.getAttribute("Color")}">${get_highlight_match(getName(p), searchWord)}<span>
 						</div>
 						</td>
 					</tr>
@@ -7652,7 +7654,7 @@ class LineOptionsComponent extends HtmlComponent {
 	render() {
 		let options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				<tr>
 					<th>Type</th><th>Pattern</th><th>Width</th>
 				</tr>
@@ -7799,7 +7801,7 @@ class AxisLimitsComponent extends HtmlComponent {
 	render() {
 		let axisLimits = JSON.parse(this.primitive.getAttribute("AxisLimits"));
 		return (`
-		<table class="modern-table">
+		<table class="modern-table zebra">
 			<tr>
 				${["Axis", "Min", "Max", "Auto"].map(title => `<th>${title}</th>`).join("")}
 			</tr>
@@ -7902,7 +7904,9 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
 							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
 							${getName(findID(id))}
+							</span>
 						</div>
 						</td>
 						<td style="padding: 0; text-align: center;">
@@ -7997,7 +8001,7 @@ class GenerationsComponent extends HtmlComponent {
 		return result;
 	}
 	renderTable() {
-		const generationsHtml = `<table class="modern-table" style="width: 100%;">
+		const generationsHtml = `<table class="modern-table zebra" style="width: 100%;">
 			<tr>
 				<th>#</th><th>Primitive</th><th>Label</th><th></th>
 			</tr>
@@ -8020,7 +8024,7 @@ class GenerationsComponent extends HtmlComponent {
 				</td>
 			</tr>`).join("")}
 		</table>`
-		const clearButtonHtml = `<table class="modern-table" style="width:100%; text-align:center;"><tr><td>
+		const clearButtonHtml = `<table class="modern-table zebra" style="width:100%; text-align:center;"><tr><td>
 			<button class="clear-button enter-apply">Clear Results</button>
 		</td></tr></table>`
 		return `<div id="${this.componentId}">
@@ -8099,7 +8103,7 @@ class HistogramOptionsComponent extends HtmlComponent {
 		};
 	}
 	render() {
-		return (`<table class="modern-table">
+		return (`<table class="modern-table zebra">
 			<tr>	
 				${this.tableData.headers.map(header => `<th>${header}</th>`).join("")}
 			</tr>
@@ -8146,7 +8150,7 @@ class RadioCompontent extends HtmlComponent {
 		this.data = data;
 	}
 	render() {
-		return (`<table class="modern-table">
+		return (`<table class="modern-table zebra">
 			<tr><th colspan="2" >${this.data.header}</th></tr>
 			${this.data.options.map(option => {
 			let checkString = checkedHtml(this.primitive.getAttribute(this.data.attribute) === option.value);
@@ -8212,7 +8216,9 @@ class XySelectorComponent extends PrimitiveSelectorComponent {
 							<td style="width: 100%;">
 							<div class="center-vertically-container">
 								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+								<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
 								${getName(findID(id))}
+								</span>
 							</div>
 						</td>
 						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
@@ -8304,7 +8310,7 @@ class TableLimitsComponent extends HtmlComponent {
 		let endValue = limits.end.auto ? getTimeStart() + getTimeLength() : limits.end.value;
 		let stepValue = limits.step.auto ? this.parent.getDefaultPlotPeriod() : limits.step.value;
 		return (`
-		<table class="modern-table">
+		<table class="modern-table zebra">
 			${["", "Value", "Auto"].map(header => `<th>${header}</th>`).join("")}
 			<tr>
 				<th>From</th>
@@ -8389,7 +8395,7 @@ class TableLimitsComponent extends HtmlComponent {
 
 class ExportDataComponent extends HtmlComponent {
 	render() {
-		return (`<table class="modern-table">
+		return (`<table class="modern-table zebra">
 			<tr>
 				<td>
 					<button class="export-csv">
@@ -8426,7 +8432,7 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 	render() {
 		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
 		let options = [{ key: "precision", label: "Precision" }, { key: "decimal", label: "Decimal" }];
-		return (`<table class="modern-table">
+		return (`<table class="modern-table zebra">
 			${options.map(option => {
 			let key = option.key;
 			let isChecked = numLength.usePrecision === (option.key === "precision");
@@ -8503,7 +8509,7 @@ class RoundToZeroComponent extends HtmlComponent {
 		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
 		let disabled = roundToZero ? "" : "disabled";
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				<tr>
 					<td>
 						<input class="round-to-zero-checkbox enter-apply" type="checkbox" ${checkedHtml(roundToZero)} /> 
@@ -8619,7 +8625,7 @@ class NewModelDialog extends jqDialog {
 	}
 	beforeShow() {
 		this.setHtml(`
-		<table class="modern-table">
+		<table class="modern-table zebra">
 		<tr>
 			<td>Time units</td>
 			<td style="padding:1px;">
@@ -8721,7 +8727,7 @@ class SimulationSettings extends jqDialog {
 		let step = getTimeStep();
 		let timeUnit = getTimeUnits();
 		this.setHtml(`
-		<table class="modern-table">
+		<table class="modern-table zebra">
 		<tr>
 			<td>Start Time</td>
 			<td style="padding:1px;">
@@ -8903,7 +8909,7 @@ class GeometryDialog extends DisplayDialog {
 		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
 		let primWidth = this.primitive.getAttribute("StrokeWidth");
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				<tr>
 					<td>Line Width: </td>
 					<td>
@@ -8958,7 +8964,7 @@ class LineDialog extends GeometryDialog {
 		let arrowStart = this.primitive.getAttribute("ArrowHeadStart") === "true";
 		let arrowEnd = this.primitive.getAttribute("ArrowHeadEnd") === "true";
 		return (`
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				<tr>
 					<td>Arrow head at start point:</td>
 					<td><input class="arrow-start-checkbox enter-apply" type="checkbox" ${checkedHtml(arrowStart)} /></td>
@@ -9341,7 +9347,7 @@ class FullPotentialCSSDialog extends CloseDialog {
 		this.setHtml(`
 		<div style="min-width: 300px; max-width: 1300px; overflow-y: auto;">
 		<p>A real SYSTEM can be <i>described</i> as a well-defined CONCEPTUAL MODEL in text, figure and values. This conceptual model can then be <i>realised</i> as an executable <b>Micro Model</b> where each object is represented as an entity, or as an executable <b>Macro Model</b> where a 'Population' of entities are aggregated into a few stages. For example:</p>
-		<table class="modern-table center-horizontally">
+		<table class="modern-table zebra center-horizontally">
 			<tr><th></th><th>Micro approach</th><th>Macro approach</th></tr>
 			<tr><td>Flowing water</td><td>H<sub>2</sub>O molecules</td><td>A river</td></tr>
 			<tr><td>A disease process</td><td>Individual level (Medicine)</td><td>Population level (Epidemiology)</td></tr>
@@ -10039,7 +10045,7 @@ class MacroDialog extends jqDialog {
 			</div>
 			<div style="padding:0; margin-left: 1em;">
 				${this.renderHelpButtonHtml("macro-help")}
-				<table class="modern-table" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
+				<table class="modern-table zebra" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
 					<tr>	
 						<td style="padding:1px;">
 							Seed = <input class="seed-field" type="number" />
@@ -10156,7 +10162,7 @@ class TextAreaDialog extends DisplayDialog {
 			</div>
 			<textarea class="text enter-apply" style="resize: none;"></textarea>
 			<div class="vertical-space"></div>
-			<table class="modern-table"><tr title="Only hides when there is any text.">
+			<table class="modern-table zebra"><tr title="Only hides when there is any text.">
 				<td>Hide frame when there is text:</td>
 				<td><input type="checkbox" class="hide-frame-checkbox enter-apply" /></td>
 			</tr></table>
@@ -10265,7 +10271,7 @@ class EquationListDialog extends jqDialog {
 		return (`
 			<h3 class="equation-list-header">${fileName}</h3>${fullDate}</br>
 			<h3 class="equation-list-header	">Specifications</h3>
-			<table class="modern-table">
+			<table class="modern-table zebra">
 				${specs.map(spec =>
 			`<tr>
 						<td>${spec[0]}</td>
@@ -10278,7 +10284,7 @@ class EquationListDialog extends jqDialog {
 	renderPrimitiveListHtml(info) {
 		return (`
 		<h3 class="equation-list-header">${info.title}</h3>
-		<table class="modern-table">
+		<table class="modern-table zebra">
 			<tr>${info.tableColumns.map(col => (`<th>${col.header}</th>`)).join('')}</tr>
 				${info.primitives.map(p => `<tr>
 					${info.tableColumns.map(col => `<td style="${col.style ? col.style : ""}"">
