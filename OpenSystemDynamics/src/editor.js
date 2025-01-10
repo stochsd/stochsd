@@ -2430,11 +2430,16 @@ class TableVisual extends HtmlTwoPointer {
 			"decimals": number_length["usePrecision"] ? undefined : number_length["decimal"]
 		};
 
-		html = `<table class='sticky-table'>
+		html = `<table class='sticky-table zebra-odd'>
 			<thead>
 				<tr>
-					<th class='time-header-cell'>Time</th>
-					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">${name}</th>`).join("")}
+					<th class='time-header-cell'>
+						<div class="">Time</div>
+						<div class="time-unit">${getTimeUnits()}</div>
+					</th>
+					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">
+						<span class="cm-primitive cm-${findName(name)?.getAttribute("Color")}">${name}</span>
+					</th>`).join("")}
 				</tr>
 			</thead>
 			<tbody>
