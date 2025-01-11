@@ -2,7 +2,7 @@ CodeMirror.defineMode("stochsd-dynamic-mode", () => {
 
   function getColorFromPrimitive(primitiveName) {
     const primitives = findName(primitiveName)
-    const primitive = Array.isArray(primitives) ? primitives[0] : primitives
+    const primitive = Array.isArray(primitives) ? primitives.find(p => !isPrimitiveGhost(p)) : primitives
     return primitive?.getAttribute("Color")
   }
 
