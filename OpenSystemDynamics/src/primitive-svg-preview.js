@@ -52,9 +52,41 @@ class PrimitiveSvgPreview {
       viewBox="0 0 20 20"
       version="1.1">
          <g>
-
+            <circle cx="10" cy="10" r="7" stroke-width="1" fill="none" stroke="currentColor" />
+            <g class="svg-preview-icons">
+               ICONS_PLACEHOLDER
+            </g>
          </g>
       </svg>`,
+      constant: `<svg 
+         style="color: COLOR_PLACEHOLDER;"
+         width="100%"
+         viewBox="0 0 20 20"
+         version="1.1">
+            <g transform="translate(10, 10)">
+               <path fill="none" stroke="currentColor" d="M0,8 8,0 0,-8 -8,0Z" />
+            </g>
+            <g class="svg-preview-icons">
+                 ICONS_PLACEHOLDER
+            </g>
+         </svg>`,
+      flow: `<svg 
+         style="color: COLOR_PLACEHOLDER;"
+         width="100%"
+         viewBox="0 0 20 20"
+         version="1.1"></svg>`,
+      converter: `<svg 
+         style="color: COLOR_PLACEHOLDER;"
+         width="100%"
+         viewBox="0 0 20 20"
+         version="1.1">
+            <g transform="translate(10, 10)">
+               <path fill="none" stroke="currentColor" d="M-8 0  L-4 -6  L4 -6  L8 0  L4 6  L-4 6  Z" />
+            </g>
+             <g class="svg-preview-icons">
+                 ICONS_PLACEHOLDER
+            </g>
+         </svg>`,
    }
    static icons = {
       ghost: `<g transform="translate(10, 10) scale(0.4)">
