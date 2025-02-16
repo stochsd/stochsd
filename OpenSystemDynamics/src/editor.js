@@ -2333,9 +2333,13 @@ class TableVisual extends HtmlTwoPointer {
 						<div class="">Time</div>
 						<div class="time-unit">${getTimeUnits()}</div>
 					</th>
-					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">
-						<span class="cm-primitive cm-${findName(name)?.getAttribute("Color")}">${name}</span>
-					</th>`).join("")}
+					${this.data.namesToDisplay.map(name => {
+						const primitives = findName(name)
+						const primitive = Array.isArray(primitives) ? primitives.find(primitive => !isPrimitiveGhost(primitive)) : primitives
+						const color = primitive?.getAttribute("Color")
+						return `<th class="prim-header-cell">
+						<span class="cm-primitive cm-${color}">${name}</span>
+					</th>`}).join("")}
 				</tr>
 			</thead>
 			<tbody>
