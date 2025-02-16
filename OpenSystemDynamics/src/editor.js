@@ -2333,9 +2333,13 @@ class TableVisual extends HtmlTwoPointer {
 						<div class="">Time</div>
 						<div class="time-unit">${getTimeUnits()}</div>
 					</th>
-					${this.data.namesToDisplay.map(name => `<th class="prim-header-cell">
-						<span class="cm-primitive cm-${findName(name)?.getAttribute("Color")}">${name}</span>
-					</th>`).join("")}
+					${this.data.namesToDisplay.map(name => {
+						const primitives = findName(name)
+						const primitive = Array.isArray(primitives) ? primitives.find(primitive => !isPrimitiveGhost(primitive)) : primitives
+						const color = primitive?.getAttribute("Color")
+						return `<th class="prim-header-cell">
+						<span class="cm-primitive cm-${color}">${name}</span>
+					</th>`}).join("")}
 				</tr>
 			</thead>
 			<tbody>
@@ -7399,13 +7403,17 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.displayLimit = displayLimit;
 	}
 	renderIncludedList() {
-		return (`<table id=${this.componentId} class="modern-table">
+		return (`<table id=${this.componentId} class="primitive-selector">
 			<tr>
 				<th></th>
 				<th>Added Primitives</td>
 			</tr>
-			${this.displayIds.map(id => `
-				<tr>
+			${this.displayIds.map(id => {
+			const primitive = findID(id)
+			const type = getTypeNew(primitive).toLowerCase()
+			const color = primitive?.getAttribute("Color")
+			const isRandom = hasRandomFunction(getValue(primitive))
+			return `<tr>
 					<td style="padding: 0;">
 						<button 
 							class="primitive-remove-button enter-apply" 
@@ -7415,14 +7423,16 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
-							${getName(findID(id))}
+							<div style="width: 1.75rem; padding-right: 0.25rem;">
+								${PrimitiveSvgPreview.create(type, { color, dice: isRandom })}
+							</div>
+							<span class="cm-primitive cm-${color}">
+							${getName(primitive)}
 							<span>
 						</div>
 						</td>
 				</tr>
-			`).join("")}
+			`}).join("")}
 		</table>`);
 	}
 	updateIncludedList() {
@@ -7461,9 +7471,12 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		let htmlContent = "";
 		if (results.length > 0) {
 			let limitReached = this.displayLimit && this.displayIds.length >= this.displayLimit;
-			htmlContent = (`<table class="modern-table"> 
-				${results.map(p => `
-					<tr>
+			htmlContent = (`<table class="primitive-selector"> 
+				${results.map(p => {
+				const type = getTypeNew(p).toLowerCase()
+				const color = p?.getAttribute("Color")
+				const isRandom = hasRandomFunction(getValue(p));
+				return `<tr>
 						<td style="padding: 0;">
 							<button class="primitive-add-button enter-apply" data-id="${getID(p)}" 
 								${limitReached ? "disabled" : ""} 
@@ -7473,12 +7486,14 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(p).toLowerCase()}.svg">
-							<span class="cm-primitive cm-${p?.getAttribute("Color")}">${get_highlight_match(getName(p), searchWord)}<span>
+							<div style="width: 1.75rem; padding-right: 0.25rem;">
+								${PrimitiveSvgPreview.create(type.toLowerCase(), { color, dice: isRandom })}
+							</div>
+							<span class="cm-primitive cm-${color}">${get_highlight_match(getName(p), searchWord)}<span>
 						</div>
 						</td>
 					</tr>
-				`).join("")}
+				`}).join("")}
 			</table>`);
 		} else if (searchLowercase === "") {
 			htmlContent = (`<div>No more primitives to add.</div>`);
@@ -7792,12 +7807,16 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 		this.sides = [];
 	}
 	renderIncludedList() {
-		return (`<table id="${this.componentId}" class="modern-table">
+		return (`<table id="${this.componentId}" class="primitive-selector">
 			<tr>
 				${["", "Added Primitives", "Left", "Right"].map(title => `<th>${title}</th>`).join("")}
 			</tr>
 			${this.displayIds.map((id, index) => {
-			let selectedSide = this.sides[index];
+			const selectedSide = this.sides[index];
+			const primitive = findID(id);
+			const type = getTypeNew(primitive);
+			const color = primitive?.getAttribute("Color")
+			const isRandom = hasRandomFunction(getValue(primitive));
 			return (`<tr>
 					<td style="padding: 0;">
 						<button 
@@ -7808,9 +7827,11 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
-							${getName(findID(id))}
+							<div style="width: 1.75rem; padding-right: 0.25rem;">
+								${PrimitiveSvgPreview.create(type.toLowerCase(), { color, dice: isRandom })}
+							</div>
+							<span class="cm-primitive cm-${color}">
+								${getName(primitive)}
 							</span>
 						</div>
 						</td>
@@ -8103,14 +8124,18 @@ class HistoPlotDialog extends DisplayDialog {
 class XySelectorComponent extends PrimitiveSelectorComponent {
 	renderIncludedList() {
 		let axies = ["X", "Y"];
-		return (`<table id="${this.componentId}" class="modern-table">
+		return (`<table id="${this.componentId}" class="primitive-selector">
 				<tr>
 					<th></th>
 					<th>Added Primitives</td>
 					<th>Axis</th>
 				</tr>
-				${this.displayIds.map((id, index) => `
-					<tr>
+				${this.displayIds.map((id, index) => {
+					const primitive = findID(id)
+					const type = getTypeNew(primitive).toLowerCase()
+					const color = primitive?.getAttribute("Color")
+					const isRandom = hasRandomFunction(getValue(primitive))
+					return `<tr>
 						<td style="padding: 0;">
 							<button 
 								class="primitive-remove-button enter-apply" 
@@ -8120,15 +8145,17 @@ class XySelectorComponent extends PrimitiveSelectorComponent {
 							</td>
 							<td style="width: 100%;">
 							<div class="center-vertically-container">
-								<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
-								<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
-								${getName(findID(id))}
+								<div style="width: 1.75rem; padding-right: 0.25rem;">
+									${PrimitiveSvgPreview.create(type, { color, dice: isRandom })}
+								</div>
+								<span class="cm-primitive cm-${color}">
+								${getName(primitive)}
 								</span>
 							</div>
 						</td>
 						<td style="font-size: 20px; text-align: center;">${axies[index]}</td>
 					</tr>
-				`).join("")}
+				`}).join("")}
 			</table>`);
 	}
 }

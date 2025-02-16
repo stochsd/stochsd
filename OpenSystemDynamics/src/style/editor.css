@@ -329,8 +329,22 @@ div.center-vertically-container {
 .modern-table td, .modern-table th {
     border: 1px solid var(--table-border-color);
     padding: 1px 8px;
-    vertical-align: text-top;
+    vertical-align: middle;
 }
+/* primitive-selector table */
+table.primitive-selector th,
+table.primitive-selector td {
+    padding-block: 0;
+    border: 1px solid var(--table-border-color);
+    padding-inline: 0.5rem;
+    vertical-align: middle;
+}
+table.primitive-selector button {
+    height: 100%;
+}
+
+
+
 .invisible-table table,tr,th, .invisible-table td {
     border: 0px;
     vertical-align: top;

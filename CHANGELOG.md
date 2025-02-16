@@ -7,12 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
-- Color text in primitive selectors for table- and plot-dialogs.
-- Dynamically change text color in definition to align with the primitive colors.
-- Drag and Drop functionality for ssd-files.
-- Code-highlighting with CodeMirror for ConverterDialog.
+- Color matching for primitive selectors in table and plot dialogs, ensuring the primitive icon and name have the same color.
+- Text color in definitions dynamically changes to match primitive colors.
+- Drag-and-drop functionality for SSD files.
+- Code highlighting using CodeMirror in ConverterDialog.
 - Converter plot preview in ConverterDialog.
-- Pasting two columns from spreadsheet application into converter dialog works.
+- Support for pasting two columns from a spreadsheet application into ConverterDialog.
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.
@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Generations list in Dialog ComparePlot, with editable labels.
 - Autocomplete to DefinitionDialog, suggests functions and linked primitives (`Ctrl`+`Space` to show).
 - CHANGELOG.
-- Progresive Web App with Chromium based browsers.
+- Progressive Web App with Chromium based browsers.
 - **Show/hide-option** data in plots when hovering.
 - **Help-button** in ConverterDialog, TextAreaDialog and MacroDialog.
 - **Hide-frame-option** in Numberbox.
@@ -55,7 +55,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Custom tick-setter for TimePlots, ComparePlots and XyPlot. (To remove weird numbers like 0.333...)
 - Histogram no longer include maximum value by default, by setting a max-limit slightly higher than max.
 - `Enter` -> Apply and `Shift`+`Enter`-> New Line, consistent across all text inputs.
-- Progressbar changes width to accomodate simulation info.
+- Progressbar changes width to accommodate simulation info.
 - HelpButton is no longer focusable for easier navigation with *tab* and *shift+tab*.
 
 ### Fixed 
