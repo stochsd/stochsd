@@ -331,6 +331,9 @@ div.center-vertically-container {
     padding: 1px 8px;
     vertical-align: text-top;
 }
+.modern-table.compact td {
+    padding-block: 0;
+}
 .invisible-table table,tr,th, .invisible-table td {
     border: 0px;
     vertical-align: top;

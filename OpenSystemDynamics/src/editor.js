@@ -7792,12 +7792,16 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 		this.sides = [];
 	}
 	renderIncludedList() {
-		return (`<table id="${this.componentId}" class="modern-table">
+		return (`<table id="${this.componentId}" class="modern-table compact">
 			<tr>
 				${["", "Added Primitives", "Left", "Right"].map(title => `<th>${title}</th>`).join("")}
 			</tr>
 			${this.displayIds.map((id, index) => {
-			let selectedSide = this.sides[index];
+			const selectedSide = this.sides[index];
+			const primitive = findID(id);
+			const type = getTypeNew(primitive);
+			const color = primitive?.getAttribute("Color")
+			const isRandom = hasRandomFunction(getValue(primitive));
 			return (`<tr>
 					<td style="padding: 0;">
 						<button 
@@ -7808,12 +7812,11 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<!-- <img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg"> -->
 							<div style="width: 2rem; padding-right: 0.25rem;">
-								${PrimitiveSvgPreview.create(getTypeNew(findID(id)).toLowerCase(), { color: findID(id)?.getAttribute("Color"), dice: true })}
+								${PrimitiveSvgPreview.create(type.toLowerCase(), { color, dice: isRandom })}
 							</div>
-							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
-							${getName(findID(id))}
+							<span class="cm-primitive cm-${color}">
+								${getName(primitive)}
 							</span>
 						</div>
 						</td>

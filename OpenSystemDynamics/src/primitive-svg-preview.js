@@ -1,8 +1,4 @@
 
-// TODO: Add size somehow?
-
-
-
 class PrimitiveSvgPreview {
    /**
     * Create a SVG preview of a primitive
@@ -70,11 +66,22 @@ class PrimitiveSvgPreview {
                  ICONS_PLACEHOLDER
             </g>
          </svg>`,
-      flow: `<svg 
-         style="color: COLOR_PLACEHOLDER;"
-         width="100%"
-         viewBox="0 0 20 20"
-         version="1.1"></svg>`,
+      flow: `<svg
+      style="color: COLOR_PLACEHOLDER;"
+      width="100%"
+      viewBox="0 0 20 20"
+      version="1.1">
+         <g>
+            <path class="svg-preview-flow-valve" stroke-width="1" fill="none" stroke="currentColor" 
+               d="M 10,5 6,1 14,1 Z" />
+            <circle cx="10" cy="12" r="7" stroke-width="1" fill="none" stroke="currentColor" />
+                     <path class="svg-preview-flow-arrow" stroke-width="1" fill="white" stroke="currentColor" 
+                     d="M 1,6 V 4 H 16 V 2 L 19,5 L 16,8 V 6 Z" />
+            <g transform="translate(0, 2)" class="svg-preview-icons">
+               ICONS_PLACEHOLDER
+            </g>
+         </g>
+      </svg>`,
       converter: `<svg 
          style="color: COLOR_PLACEHOLDER;"
          width="100%"
