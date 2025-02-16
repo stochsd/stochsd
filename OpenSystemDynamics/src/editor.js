@@ -7808,7 +7808,10 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg">
+							<!-- <img style="height: 20px; padding-right: 4px;" src="graphics/${getTypeNew(findID(id)).toLowerCase()}.svg"> -->
+							<div style="width: 2rem; padding-right: 0.25rem;">
+								${PrimitiveSvgPreview.create("stock", { color: findID(id)?.getAttribute("Color"), dice: true })}
+							</div>
 							<span class="cm-primitive cm-${findID(id)?.getAttribute("Color")}">
 							${getName(findID(id))}
 							</span>
