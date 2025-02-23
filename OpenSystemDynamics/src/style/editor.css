@@ -107,21 +107,20 @@ svg * {
 }
 
 /* tool panel */
-.toolPanel {
+.tool-panel {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 0rem 1.25rem;
+    gap: 0rem 1.5rem;
     margin-top: 0.5rem;
-    --button-size: 1.875rem;
+    --button-size: 2.25rem;
 }
-.toolPanel > .tool-grouping {
+.tool-panel > .tool-grouping {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    margin-block: 0.25rem;
     height: var(--button-size);
-    gap: 1px;
+    gap: 0.125rem;
 }
 /* buttons title */
 [data-title] {
@@ -133,7 +132,7 @@ svg * {
     top: calc(100% + 0.125rem);
     left: 0;
     white-space: pre;
-    font-size: 0.75rem;
+    font-size: 1rem;
     padding: 0.25rem 0.5rem;
     background-color: var(--color-text-primary);
     color: var(--color-background-light);
@@ -142,32 +141,43 @@ svg * {
 }
 
 /* buttons */
-.toolPanel button.tool-button {
+.tool-panel button.tool-button {
     border: unset;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-border);
+    background-color: var(--color-highlight-neutral);
     padding: 2px;
     margin: 0;
-    box-sizing: content-box;
+    box-sizing: border-box;
     width: var(--button-size);
     height: 100%;
-    background-color: transparent;
+    border-radius: 0.25rem;
 }
 button.tool-button img {
     width: 100%; 
+    pointer-events: none;
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
-.toolPanel button.tool-button.pressed {
+.tool-panel button.tool-button.pressed {
     background-color: var(--color-highlight-neutral);
-    outline: 2px solid var(--color-highlight-primary);
-    outline-offset: -2px;
+    outline: 3px solid var(--color-highlight-primary);
+    outline-offset: -3px;
 }
-.toolPanel button {
+.tool-panel button {
     cursor: pointer;
     font-size: 14px;
     border-width: 1.5px;
 }
-.toolPanel button.tool-button:hover:enabled {
-    background-color: var(--color-highlight-neutral);
+.tool-panel button.tool-button:hover:enabled {
+    border-color: black;
 }
-.toolPanel button.tool-button:disabled {
+.tool-panel button.tool-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -177,7 +187,7 @@ button.tool-button img {
     background-color: var(--color-highlight-neutral);
     width: max-content;
     display: inline-block; 
-    min-width: 110px;
+    min-width: 120px;
     height:  100%;
     padding: 0;
     margin: 0;
@@ -203,8 +213,9 @@ button.tool-button img {
     min-width: 100%;
     min-height: 100%;
     width: max-content;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--color-text-primary);
+    align-content: center;
 }
 /* time unit button */
 #btn_timeunit {
@@ -512,10 +523,6 @@ kbd {
 .info-bar__value-error {
     color: red;
     float: right;
-}
-.info-bar__im-link {
-    white-space: nowrap;
-    margin: 0px 24px;
 }
 
 /* Add style to jqplot elements */
