@@ -5881,6 +5881,9 @@ $(window).load(function () {
 	$("#btn_simulation_settings").click(function () {
 		simulationSettings.show();
 	});
+	$("#progress-bar").dblclick(function () {
+		simulationSettings.show();
+	})
 	$("#btn_equation_list").click(function () {
 		equationList.show();
 	});
