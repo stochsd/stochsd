@@ -2392,7 +2392,9 @@ class TableVisual extends HtmlTwoPointer {
 			this.render();
 		});
 		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
-		this.htmlElement = SVG.foreignScrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not rendered yet", "white")
+		this.htmlElement = SVG.append(SVG.plotLayer,
+			SVG.foreignScrollable(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "table not rendered yet", "white")
+		);
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
@@ -3194,12 +3196,12 @@ class TextAreaVisual extends HtmlTwoPointer {
 		this.coordRect.update();
 	}
 	makeGraphics() {
-		this.element = SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", "");
+		this.element = SVG.append(SVG.plotLayer, SVG.rect(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), defaultStroke, "none", "element", ""));
 
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.htmlElement = SVG.foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white");
+		this.htmlElement = SVG.append(SVG.plotLayer, SVG.foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white"));
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
