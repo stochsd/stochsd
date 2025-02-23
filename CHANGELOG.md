@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- Added SVG layers, to primitives are added to specific layers and not in the creating order.
 - Color matching for primitive selectors in table and plot dialogs, ensuring the primitive icon and name have the same color.
 - Text color in definitions dynamically changes to match primitive colors.
 - Drag-and-drop functionality for SSD files.

@@ -61,7 +61,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script src="makexml.js"></script>
 	<script type="text/javascript" src="imc.js"></script>
 	<script src="transform.js"></script>
-	<script src="libsvg.js"></script>
+	<script src="SVG.js"></script>
 	<script type="text/javascript" src="./codemirror/lib/codemirror.js"></script>
 	<script type="text/javascript" src="./codemirror/addon/hint/show-hint.js"></script>
 	<script type="text/javascript" src="./codemirror/addon/mode/simple.js"></script>
@@ -489,6 +489,14 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 				style="position: absolute; left: 0px; top: 0px; display: none; z-index: 110; width: 100%; height: 100%; background-color: red; opacity: 0;">
 			</div>
 			<svg draggable="false" id="svgplane" width="6000" height="2000" style="background-color: white;">
+				<g class="layer stock"></g>
+				<g class="layer variable"></g>
+				<g class="layer constant"></g>
+				<g class="layer converter"></g>
+				<g class="layer flow"></g>
+				<g class="layer link"></g>
+				<g class="layer plot"></g>
+				<g class="layer anchor"></g>
 			</svg>
 		</div>
 		<div class="editor-footer" style="display: none;">

@@ -97,7 +97,7 @@ defaultPrimitiveBeforeDestroyHandler
 *Menu library for dropdown menus*
 
 
-**stochsd\OpenSystemDynamics\opensystemdynamics\libsvg.js**
+**stochsd\OpenSystemDynamics\opensystemdynamics\SVG.js**
 
 *Drawing functions for drawing svg.*
 

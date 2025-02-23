@@ -12,7 +12,7 @@ function translate(point, translation) {
 	return [point[0]+translation[0], point[1]+translation[1]];
 }
 
-function tranlatePoints(points, translation) {
+function translatePoints(points, translation) {
 	var newPoints = []
 	for (i = 0; i < points.length; i++) {
 		let newx = points[i][0]+translation[0];
