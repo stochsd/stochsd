@@ -180,9 +180,10 @@ class SVG {
 		result.setAttribute("class", markclass);
 		result.setAttribute("x", `${x}`);
 		result.setAttribute("y", `${y}`);
+		result.setAttribute("stroke", `none`);
 		result.innerHTML = text;
 		result.setAttribute("text-anchor", "middle");
-		result.setAttribute("style", "font-size: " + Settings.primitiveFontSize + "px");
+		result.setAttribute("font-size", Settings.primitiveFontSize + "px");
 
 		if (extraAttributes != undefined) {
 			for (var key in extraAttributes) {
@@ -575,7 +576,7 @@ class SVG {
 		return newElement;
 	}
 	static questionmark(color) {
-		return SVG.text(0, 6, "?", "questionmark", { "font-size": "18px", "font-weight": "bold", "stroke": color })
+		return SVG.text(0, 6, "?", "questionmark", { "font-size": "18px", "font-weight": "bold", "fill": color })
 	}
   /**
    * @typedef {SVGGElement & {
@@ -602,8 +603,8 @@ class SVG {
 
 		result.setColor = (color) => {
 			result.elements["ghost"].setAttribute("stroke", color);
-			result.elements["questionmark"].setAttribute("style", `fill: ${color}`);
-			result.elements["dice"].setAttribute("style", `fill: ${color}`);
+			result.elements["questionmark"].setAttribute("fill", color);
+			result.elements["dice"].setAttribute("fill", color);
 		}
     /**
      * @param {"ghost" | "questionmark" | "dice"}
