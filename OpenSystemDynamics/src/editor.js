@@ -8996,14 +8996,14 @@ class ConverterDialog extends jqDialog {
 		// [number,number][]
 		this.currentValues = [];
 		this.setHtml(`
-			<div style="display: grid; grid-template-columns: 25rem auto; grid-gap: 1rem;">
+			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 1rem; max-height: 80vh;">
 				<div class="primitive-settings" style="padding: 1rem 0;">
 						<b>Name:</b><br/>
 						<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
 						<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 							<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
 						</div>
-						<textarea class="value-field" style="width: 300px; height: 80px;"></textarea>
+						<textarea class="value-field" style="width: 300px; height: 200px;"></textarea>
 						<p class="in-link" style="font-weight:bold; margin:5px 0px">Ingoing Link </p>
 					</div>
 					<div id="converter-plot-div" style="">
@@ -9060,6 +9060,13 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 		);
+		this.cmValueField.setSize($(this.valueField).width(), $(this.valueField).height());
+		// $(this.dialogContent).find(".CodeMirror").css("max-height", "50vh");
+		// $(this.dialogContent).find(".CodeMirror").resizable({
+		// 	resize: function() {
+		// 		this.cmValueField.setSize(null, $(this).height());
+		// 	}
+		// });
 		this.cmValueField.on("keyup", (cm) => {
 			this.updateValues(cm.getValue())
 			this.updatePlot()
