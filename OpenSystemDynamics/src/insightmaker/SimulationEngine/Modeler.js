@@ -1202,12 +1202,14 @@ function linkPrimitive(primitive, dna) {
 			var alpha = null,
 				omega = null;
 
-			if (myNeighborhood["alpha"]) {
-				alpha = myNeighborhood["alpha"];
+			// CHANGED FROM "alpha" to "insightmaker_alpha" by Magnus to not have conflicts with the alpha value in the equation
+			// Also for omega
+			if (myNeighborhood["insightmaker_alpha"]) { 
+				alpha = myNeighborhood["insightmaker_alpha"];
 			}
 
-			if (myNeighborhood["omega"]) {
-				omega = myNeighborhood["omega"];
+			if (myNeighborhood["insightmaker_omega"]) {
+				omega = myNeighborhood["insightmaker_omega"];
 			}
 
 			primitive.setEnds(alpha, omega);
@@ -1535,9 +1537,9 @@ function getPrimitiveNeighborhood(primitive, dna) {
 
 				if (hood[hoodName]) {
 					if (dna.targetId == hood[hoodName].id) {
-						hood["omega"] = hood[hoodName];
+						hood["insightmaker_omega"] = hood[hoodName];
 					} else if (dna.sourceId == hood[hoodName].id) {
-						hood["alpha"] = hood[hoodName];
+						hood["insightmaker_alpha"] = hood[hoodName];
 					}
 				}
 			}

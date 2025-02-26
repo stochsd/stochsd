@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.
+- Fix bug where you can't use names "alpha" and "omega".
 
 
 ## 2022.04.15
