@@ -30,7 +30,10 @@ class DragAndDrop {
       this.#hideOverlay();
 
       const file = e.dataTransfer.files[0]
-      fileManager.loadFromFile(file);
+
+      saveChangedAlert(() => {
+        fileManager.loadFromFile(file);
+      })
     });
   }
   static #showOverlay() {
