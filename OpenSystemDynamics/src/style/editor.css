@@ -111,7 +111,7 @@ svg * {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 0rem 1.5rem;
+    column-gap: 1.25rem;
     margin-top: 0.5rem;
     --button-size: 2.25rem;
 }
