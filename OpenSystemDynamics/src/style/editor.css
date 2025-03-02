@@ -113,7 +113,7 @@ svg * {
     flex-wrap: wrap;
     column-gap: 1.25rem;
     margin-top: 0.5rem;
-    --button-size: 2.25rem;
+    --button-size: 2rem;
 }
 .tool-panel > .tool-grouping {
     display: flex;
