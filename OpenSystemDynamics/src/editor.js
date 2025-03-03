@@ -684,6 +684,11 @@ function openPrimitiveDialog(id, field = "value") {
 }
 
 class BaseObject {
+		/**
+	 * @param {string} id 
+	 * @param {string} type 
+	 * @param {[number, number]} pos 
+	 */
 	constructor(id, type, pos) {
 		this.id = id;
 		this.type = type;
@@ -714,10 +719,8 @@ class BaseObject {
 				element.setAttribute("fill", this.color);
 			}
 		}
-		if (this.primitive) {
-			// AnchorPoint has no primitve
-			this.primitive.setAttribute("Color", this.color);
-		}
+		// AnchorPoint has no primitive
+		this.primitive?.setAttribute("Color", this.color);
 	}
 
 	updateDefinitionError() {
@@ -818,6 +821,11 @@ class BaseObject {
 }
 
 class OnePointer extends BaseObject {
+		/**
+	 * @param {string} id 
+	 * @param {string} type 
+	 * @param {[number, number]} pos 
+	 */
 	constructor(id, type, pos, extras = false) {
 		super(id, type, pos);
 		// Add object to global 
@@ -868,6 +876,7 @@ class OnePointer extends BaseObject {
 		this.pos = [pos[0], pos[1]];
 	}
 
+	/** @returns {[number, number]} */
 	getPos() {
 		// This must be done by splitting up the array and joining it again to avoid sending a reference
 		// Earlier we had a bug that was caused by getPos was sent as reference and we got unwanted updates of the values
@@ -991,15 +1000,14 @@ class BasePrimitive extends OnePointer {
 	}
 }
 
-const anchorTypeEnum = {
-	invalid: 1,
-	start: 2,
-	end: 3,
-	bezier1: 4,
-	bezier2: 5,
-	orthoMiddle: 6
-}
+/** @typedef {"invalid" | "start" | "end" | "bezier1" | "bezier2" | "orthoMiddle"} AnchorType */
 class AnchorPoint extends OnePointer {
+	/**
+	 * @param {string} id 
+	 * @param {string} type 
+	 * @param {[number, number]} pos 
+	 * @param {AnchorType} anchorType 
+	 */
 	constructor(id, type, pos, anchorType) {
 		super(id, type, pos);
 		this.anchorType = anchorType;
@@ -1011,20 +1019,10 @@ class AnchorPoint extends OnePointer {
 			return;
 		}
 		switch (this.anchorType) {
-			case anchorTypeEnum.start:
-				if (parent.getStartAttach()) {
-					return true;
-				} else {
-					return false;
-				}
-				break;
-			case anchorTypeEnum.end:
-				if (parent.getEndAttach()) {
-					return true;
-				} else {
-					return false;
-				}
-				break;
+			case "start":
+				return !!parent.getStartAttach();
+			case "end":
+				return !!parent.getEndAttach()
 			default:
 				// It's not a start or end anchor so it cannot be attached
 				return false;
@@ -1085,23 +1083,23 @@ class AnchorPoint extends OnePointer {
 		this.loadImage();
 	}
 	afterMove(diff_x, diff_y) {
-		// This is an attempt to make beizer points move with the anchors points but id does not work well with undo
-		// commeted out until fixed
+		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
+		// commented out until fixed
 		let parentId = get_parent_id(this.id);
 		let parent = get_object(parentId);
 
 		if (parent.type == "link") {
 			switch (this.anchorType) {
-				case anchorTypeEnum.start:
+				case "start":
 					{
-						let oldPos = parent.b1_anchor.getPos();
-						parent.b1_anchor.setPos([oldPos[0] + diff_x, oldPos[1] + diff_y]);
+						const [x, y] = parent.b1_anchor.getPos();
+						parent.b1_anchor.setPos([x + diff_x, y + diff_y]);
 					}
 					break;
-				case anchorTypeEnum.end:
+				case "end":
 					{
-						let oldPos = parent.b2_anchor.getPos();
-						parent.b2_anchor.setPos([oldPos[0] + diff_x, oldPos[1] + diff_y]);
+						const [x, y] = parent.b2_anchor.getPos();
+						parent.b2_anchor.setPos([x + diff_x, y + diff_y]);
 					}
 					break;
 			}
@@ -1119,19 +1117,11 @@ class OrthoAnchorPoint extends AnchorPoint {
 
 function safeDivision(nominator, denominator) {
 	// Make sure division by Zero does not happen 
-	if (denominator == 0) {
-		return 9999999;
-	} else {
-		return nominator / denominator;
-	}
+	return denominator == 0 ? 9999999 : (nominator / denominator);
 }
 
 function sign(value) {
-	if (value < 0) {
-		return -1;
-	} else {
-		return 1;
-	}
+	return (value < 0) ? -1 : 1;
 }
 
 class StockVisual extends BasePrimitive {
@@ -1532,8 +1522,8 @@ class TwoPointer extends BaseObject {
 	}
 
 	createInitialAnchors(pos0, pos1) {
-		this.start_anchor = new AnchorPoint(this.id + ".start_anchor", "dummy_anchor", pos0, anchorTypeEnum.start);
-		this.end_anchor = new AnchorPoint(this.id + ".end_anchor", "dummy_anchor", pos1, anchorTypeEnum.end);
+		this.start_anchor = new AnchorPoint(this.id + ".start_anchor", "dummy_anchor", pos0, "start");
+		this.end_anchor = new AnchorPoint(this.id + ".end_anchor", "dummy_anchor", pos1, "end");
 	}
 
 	getAnchors() {
@@ -1589,15 +1579,16 @@ class TwoPointer extends BaseObject {
 	updateGraphics() {
 
 	}
+	/** @param {AnchorType} anchorType */
 	syncAnchorToPrimitive(anchorType) {
 		// This function should sync anchor position to primitive 
 		let primitive = findID(this.id);
 		if (!primitive) return;
 		switch (anchorType) {
-			case anchorTypeEnum.start:
+			case "start":
 				setSourcePosition(primitive, this.start_anchor.getPos());
 				break;
-			case anchorTypeEnum.end:
+			case "end":
 				setTargetPosition(primitive, this.end_anchor.getPos());
 				break;
 		}
@@ -1607,7 +1598,9 @@ class TwoPointer extends BaseObject {
 class BaseConnection extends TwoPointer {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
+		/** @type {BaseObject} */
 		this._start_attach = null;
+		/** @type {BaseObject} */
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
 			let primitive = findID(this.id);
@@ -1701,6 +1694,10 @@ function getStackTrace() {
 
 
 class FlowVisual extends BaseConnection {
+	/** @type {StockVisual} */
+	_start_attach;
+	/** @type {StockVisual} */
+	_end_attach;
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.updateDefinitionError();
@@ -1759,97 +1756,99 @@ class FlowVisual extends BaseConnection {
 		}
 	}
 
-	requestNewAnchorDim(reqValue, anchor_id, dimIndex) {
+	/**
+	 * @param {number} requestedValue 
+	 * @param {string} anchorId 
+	 * @param {number} dimensionIndex 
+	 * @returns {number}
+	 */
+	requestNewAnchorDimension(requestedValue, anchorId, dimensionIndex) {
 		// reqValue is x or y 
-		let anchor = object_array[anchor_id];
-		let anchorAttach = false;
-		let newValue = reqValue;
-		if (anchor.getAnchorType() === anchorTypeEnum.start) {
-			anchorAttach = this._start_attach;
-		} else if (anchor.getAnchorType() === anchorTypeEnum.end) {
-			anchorAttach = this._end_attach;
-		}
+		/** @type {AnchorPoint} */
+		const anchor = object_array[anchorId];
+		let newValue = requestedValue;
+		const anchorAttach = anchor.getAnchorType() === "start" 
+			? this._start_attach 
+			: anchor.getAnchorType() == "end" 
+			? this._end_attach 
+			: undefined;
 		// if anchor is attached limit movement 
 		if (anchorAttach) {
 			// stockX or stockY
-			let stockDim = anchorAttach.getPos()[dimIndex];
+			const stockDimension = anchorAttach.getPos()[dimensionIndex];
 			// stockWidth or stockHeight
-			let stockSpanSize = anchorAttach.getSize()[dimIndex];
-			newValue = clampValue(reqValue, stockDim - stockSpanSize / 2, stockDim + stockSpanSize / 2);
+			const stockSpanSize = anchorAttach.getSize()[dimensionIndex];
+			newValue = clampValue(requestedValue, stockDimension - stockSpanSize / 2, stockDimension + stockSpanSize / 2);
 		} else {
 			// dont allow being closer than minDistance units to a neightbour node 
-			let minDistance = 10;
-			let prevAnchor = this.getPreviousAnchor(anchor_id);
-			let nextAnchor = this.getNextAnchor(anchor_id);
+			const minDistance = 10;
+			const prevAnchor = this.getPreviousAnchor(anchorId);
+			const nextAnchor = this.getNextAnchor(anchorId);
 
 			let requestPos = anchor.getPos();
-			requestPos[dimIndex] = reqValue;
+			requestPos[dimensionIndex] = requestedValue;
 			if ((prevAnchor && distance(requestPos, prevAnchor.getPos()) < minDistance) ||
 				(nextAnchor && distance(requestPos, nextAnchor.getPos()) < minDistance)) {
 				// set old value of anchor 
-				newValue = anchor.getPos()[dimIndex];
+				newValue = anchor.getPos()[dimensionIndex];
 			} else {
 				// set requested value 
-				newValue = reqValue;
+				newValue = requestedValue;
 			}
 		}
 
-		let pos = anchor.getPos();
-		pos[dimIndex] = newValue;
+		const pos = anchor.getPos();
+		pos[dimensionIndex] = newValue;
 		anchor.setPos(pos);
 		return newValue;
 	}
 
-	requestNewAnchorX(x, anchor_id) {
-		return this.requestNewAnchorDim(x, anchor_id, 0);
-	}
+	/**
+	 * @param {[number, number]} newPosition 
+	 * @param {string} anchorId 
+	 */
+	requestNewAnchorPos(newPosition, anchorId) {
+		let [x, y] = newPosition;
+		let mainAnchor = object_array[anchorId];
 
-	requestNewAnchorY(y, anchor_id) {
-		return this.requestNewAnchorDim(y, anchor_id, 1);
-	}
+		let prevAnchor = this.getPreviousAnchor(anchorId);
+		let nextAnchor = this.getNextAnchor(anchorId);
 
-	requestNewAnchorPos(newPos, anchor_id) {
-		let [x, y] = newPos;
-		let mainAnchor = object_array[anchor_id];
-
-		let prevAnchor = this.getPreviousAnchor(anchor_id);
-		let nextAnchor = this.getNextAnchor(anchor_id);
-
-		let prev_moveInX = true;
-		let next_moveInX = true;
+		let isPreviousAlongX = true;
+		let isNextAlongX = true;
 
 		if (prevAnchor && this.middleAnchors.length === 0) {
-			let prevAnchorPos = prevAnchor.getPos();
-			prev_moveInX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
-			next_moveInX = !prev_moveInX;
+			const prevAnchorPos = prevAnchor.getPos();
+			isPreviousAlongX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
+			isNextAlongX = !isPreviousAlongX;
 		} else if (nextAnchor && this.middleAnchors.length === 0) {
-			let nextAnchorPos = nextAnchor.getPos();
-			next_moveInX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
-			prev_moveInX = !next_moveInX;
+			const nextAnchorPos = nextAnchor.getPos();
+			isNextAlongX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
+			isPreviousAlongX = !isNextAlongX;
 		} else {
 			// if more than two anchor 
 			let anchors = this.getAnchors();
-			let [x1, y1] = anchors[0].getPos();
-			let [x2, y2] = anchors[1].getPos();
-			let flow_start_direction_x = Math.abs(x1 - x2) < Math.abs(y1 - y2);
-			let index = anchors.map(anchor => anchor.id).indexOf(anchor_id);
-			prev_moveInX = ((index % 2) === 1) === flow_start_direction_x;
-			next_moveInX = !prev_moveInX;
+			const [x1, y1] = anchors[0].getPos();
+			const [x2, y2] = anchors[1].getPos();
+			const isStartAlongX = Math.abs(x1 - x2) < Math.abs(y1 - y2);
+			const index = anchors.map(anchor => anchor.id).indexOf(anchorId);
+			isPreviousAlongX = ((index % 2) === 1) === isStartAlongX;
+			isNextAlongX = !isPreviousAlongX;
 		}
 
 		if (prevAnchor) {
 			// Get direction of movement or direction of previous anchor 
-			if (prev_moveInX) {
-				x = this.requestNewAnchorX(x, prevAnchor.id);
+			if (isPreviousAlongX) {
+				x = this.requestNewAnchorDimension(x, prevAnchor.id, 0);
 			} else {
-				y = this.requestNewAnchorY(y, prevAnchor.id);
+				y = this.requestNewAnchorDimension(y, prevAnchor.id, 1);
 			}
 		}
 		if (nextAnchor) {
-			if (next_moveInX) {
-				x = this.requestNewAnchorX(x, nextAnchor.id);
+			if (isNextAlongX) {
+				x = this.requestNewAnchorDimension(x, nextAnchor.id, 0);
 			} else {
-				y = this.requestNewAnchorY(y, nextAnchor.id);
+				y = this.requestNewAnchorDimension(y, nextAnchor.id, 1);
 			}
 		}
 		mainAnchor.setPos([x, y]);
@@ -1901,7 +1900,7 @@ class FlowVisual extends BaseConnection {
 			this.id + ".point" + index,
 			"dummy_anchor",
 			[x, y],
-			anchorTypeEnum.orthoMiddle,
+			"orthoMiddle",
 			index
 		);
 		this.middleAnchors.push(newAnchor);
@@ -1927,37 +1926,40 @@ class FlowVisual extends BaseConnection {
 		delete_object(removedAnchor.id);
 	}
 
+
+	/**
+	 * 
+	 * @param {string} middlePointsString 
+	 * @returns {[number, number][]}
+	 */
 	parseMiddlePoints(middlePointsString) {
-		if (middlePointsString == "") {
+		if (!middlePointsString) {
 			return [];
 		}
 		// example input: "15,17 19,12 "
 
 		// example ["15,17", "19,12"]
-		let stringPoints = middlePointsString.trim().split(" ");
+		const stringPoints = middlePointsString.trim().split(" ");
 
 		// example [["15", "17"], ["19", "12"]]
-		let stringDimension = stringPoints.map(stringPos => stringPos.split(","));
+		const stringDimension = stringPoints.map(stringPos => stringPos.split(","));
 
 		// example [[15,17], [19,12]]
-		let points = stringDimension.map(dim => [parseInt(dim[0]), parseInt(dim[1])]);
+		const points = stringDimension.map(dim => [parseInt(dim[0]), parseInt(dim[1])]);
 
 		return points;
 	}
 
 	loadMiddlePoints() {
-		let middlePointsString = this.primitive.getAttribute("MiddlePoints");
-		if (!middlePointsString) {
-			return [];
-		}
-		let points = this.parseMiddlePoints(middlePointsString);
+		const middlePointsString = this.primitive.getAttribute("MiddlePoints");
+		const points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
 			let index = this.middleAnchors.length;
 			let newAnchor = new OrthoAnchorPoint(
 				this.id + ".point" + index,
 				"dummy_anchor",
 				point,
-				anchorTypeEnum.orthoMiddle,
+				"orthoMiddle",
 				index
 			);
 			this.middleAnchors.push(newAnchor);
@@ -1992,6 +1994,7 @@ class FlowVisual extends BaseConnection {
 		return valveRot;
 	}
 
+	/** @returns {[number, number]} */
 	getVariablePos() {
 		let points = this.getAnchors().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex + 1]);
@@ -2112,11 +2115,7 @@ class FlowVisual extends BaseConnection {
 
 		if (this.primitive && this.icons) {
 			const hasDefError = DefinitionError.has(this.primitive);
-			if (hasDefError) {
-				this.icons.set("questionmark", "visible");
-			} else {
-				this.icons.set("questionmark", "hidden");
-			}
+			this.icons.set("questionmark", hasDefError ? "visible" : "hidden");
 			this.icons.set("dice", (!hasDefError && hasRandomFunction(getValue(this.primitive))) ? "visible" : "hidden");
 		}
 	}
@@ -3818,8 +3817,8 @@ class LinkVisual extends BaseConnection {
 		this.b1Local = [0.3, 0.0];
 		this.b2Local = [0.7, 0.0];
 		super.createInitialAnchors(pos0, pos1);
-		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", [0, 0], anchorTypeEnum.bezier1);
-		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", [0, 0], anchorTypeEnum.bezier2);
+		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", [0, 0], "bezier1");
+		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", [0, 0], "bezier2");
 		this.keepRelativeHandlePositions();
 		this.b1_anchor.makeSquare();
 		this.b2_anchor.makeSquare();
@@ -4046,7 +4045,7 @@ class LinkVisual extends BaseConnection {
 		let b2pos = this.b2_anchor.getPos();
 
 		switch (anchorType) {
-			case anchorTypeEnum.start:
+			case "start":
 				this.curve.x1 = startpos[0];
 				this.curve.y1 = startpos[1];
 				this.curve.update();
@@ -4054,7 +4053,7 @@ class LinkVisual extends BaseConnection {
 				this.b1_line.setAttribute("x1", startpos[0]);
 				this.b1_line.setAttribute("y1", startpos[1]);
 				break;
-			case anchorTypeEnum.end:
+			case "end":
 				this.curve.x4 = endpos[0];
 				this.curve.y4 = endpos[1];
 				this.curve.update();
@@ -4063,8 +4062,7 @@ class LinkVisual extends BaseConnection {
 				this.b2_line.setAttribute("x1", endpos[0]);
 				this.b2_line.setAttribute("y1", endpos[1]);
 				break;
-			case anchorTypeEnum.bezier1:
-				{
+			case "bezier1":
 					this.curve.x2 = b1pos[0];
 					this.curve.y2 = b1pos[1];
 					this.curve.update();
@@ -4074,10 +4072,8 @@ class LinkVisual extends BaseConnection {
 
 					this.primitive.setAttribute("b1x", b1pos[0]);
 					this.primitive.setAttribute("b1y", b1pos[1]);
-				}
 				break;
-			case anchorTypeEnum.bezier2:
-				{
+			case "bezier2":
 					this.curve.x3 = b2pos[0];
 					this.curve.y3 = b2pos[1];
 					this.curve.update();
@@ -4087,7 +4083,6 @@ class LinkVisual extends BaseConnection {
 
 					this.primitive.setAttribute("b2x", b2pos[0]);
 					this.primitive.setAttribute("b2y", b2pos[1]);
-				}
 				break;
 		}
 		this.updateClickArea();
@@ -4531,10 +4526,10 @@ class MouseTool extends BaseTool {
 			let parent = connection_array[selected_anchor.parent_id];
 			// Detach anchor 
 			switch (object_array[selected_anchor.child_id].getAnchorType()) {
-				case anchorTypeEnum.start:
+				case "start":
 					parent.setStartAttach(null);
 					break;
-				case anchorTypeEnum.end:
+				case "end":
 					parent.setEndAttach(null);
 					break;
 			}
@@ -4620,7 +4615,7 @@ class MouseTool extends BaseTool {
 		let only_selected_anchor = get_only_selected_anchor_id();
 		if (only_selected_anchor &&
 			connection_array[only_selected_anchor["parent_id"]].getType() === "flow" &&
-			object_array[only_selected_anchor["child_id"]].getAnchorType() === anchorTypeEnum.end) {
+			object_array[only_selected_anchor["child_id"]].getAnchorType() === "end") {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}
@@ -4662,7 +4657,7 @@ class TwoPointerTool extends BaseTool {
 		this.current_connection.setName(primitive_name);
 
 		// make sure start anchor is synced with primitive 
-		this.current_connection.syncAnchorToPrimitive(anchorTypeEnum.start);
+		this.current_connection.syncAnchorToPrimitive("start");
 	}
 	static mouseMove(x, y, shiftKey) {
 		// Function used during creation of twopointer
@@ -4758,7 +4753,7 @@ class FlowTool extends TwoPointerTool {
 			if (only_selected_anchor) {
 				let parent = connection_array[only_selected_anchor["parent_id"]];
 				let child = object_array[only_selected_anchor["child_id"]];
-				if (parent.getType() === "flow" && child.getAnchorType() === anchorTypeEnum.end) {
+				if (parent.getType() === "flow" && child.getAnchorType() === "end") {
 					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x, y]) < 10) {
 						if (parent.middleAnchors.length > 0) {
@@ -5029,14 +5024,14 @@ class LinkTool extends TwoPointerTool {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
 		let anchor = object_array[node_id];
 		let parent = get_parent(anchor);
-		if (anchor.getAnchorType() === anchorTypeEnum.start || anchor.getAnchorType() === anchorTypeEnum.end) {
+		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
 			attach_anchor(anchor);
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
 				delete_selected_objects();
 			}
-		} else if (anchor.getAnchorType() === anchorTypeEnum.bezier1 || anchor.getAnchorType() === anchorTypeEnum.bezier2) {
+		} else if (anchor.getAnchorType() === "bezier1" || anchor.getAnchorType() === "bezier2") {
 			parent.update();
 		}
 	}
@@ -5080,10 +5075,10 @@ function attach_anchor(anchor) {
 	}
 
 	switch (anchor.getAnchorType()) {
-		case anchorTypeEnum.start:
+		case "start":
 			parentConnection.setStartAttach(attach_to);
 			break;
-		case anchorTypeEnum.end:
+		case "end":
 			parentConnection.setEndAttach(attach_to);
 			break;
 	}
