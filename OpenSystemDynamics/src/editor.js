@@ -5504,6 +5504,24 @@ function update_name_pos(node_id) {
 	}
 }
 
+class MousePan {
+	/** @type {{x: number, y: number}} */
+	static downAt;
+	static middleIsDown;
+	static start(x, y) {
+		this.downAt = {x, y};
+		this.middleIsDown = true;
+		SVG.svgElement.classList.add("panning")
+	}
+	static move(x, y) {
+		SVG.svgElement.parentElement.scrollBy(this.downAt.x - x, this.downAt.y - y);
+	}
+	static end() {
+		SVG.svgElement.classList.remove("panning")
+		this.middleIsDown = false;
+	}
+ }
+
 function mouseDownHandler(event) {
 	do_global_log("mouseDownHandler");
 	if (!isTimeUnitOk(getTimeUnits()) && Preferences.get("forceTimeUnit")) {
@@ -5520,6 +5538,9 @@ function mouseDownHandler(event) {
 			// if left mouse button down
 			leftmouseisdown = true;
 			currentTool.leftMouseDown(x, y);
+			break;
+		case mouse.middle: 
+			MousePan.start(x, y);
 			break;
 		case mouse.right:
 			// if right mouse button down
@@ -5538,6 +5559,10 @@ function mouseMoveHandler(event) {
 	if (leftmouseisdown) {
 		currentTool.mouseMove(x, y, event.shiftKey);
 	}
+	if (MousePan.middleIsDown) {
+		MousePan.move(x, y)
+	}
+	
 }
 function mouseUpHandler(event) {
 	if (event.which === mouse.left) {
@@ -5553,7 +5578,9 @@ function mouseUpHandler(event) {
 		currentTool.leftMouseUp(x, y, event.shiftKey);
 		leftmouseisdown = false;
 		InfoBar.update();
-		History.storeUndoState();
+		History.storeUndoState();		
+	} else if (event.which == mouse.middle) {
+		MousePan.end();
 	}
 }
 

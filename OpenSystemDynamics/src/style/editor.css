@@ -52,14 +52,17 @@ text.name_element {
 .hideUnlessNwjs {
     display: none !important;
 }
-svg {
-        border-width: 0px;
+#svgplane {
+    border-width: 0px;
 }
-svg * {
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-  user-select: none;          /* Likely future */
+#svgplane * {
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */
+}
+#svgplane.panning {
+    cursor: grabbing;
 }
 
 .tooltip {
