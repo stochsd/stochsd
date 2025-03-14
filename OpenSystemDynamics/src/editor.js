@@ -5508,6 +5508,9 @@ class MousePan {
 	/** @type {{x: number, y: number}} */
 	static downAt;
 	static middleIsDown;
+	static init() {
+		document.body.addEventListener("mouseleave", () => MousePan.end())
+	}
 	static start(x, y) {
 		this.downAt = {x, y};
 		this.middleIsDown = true;
@@ -5771,6 +5774,7 @@ $(window).load(function () {
 	});
 	DragAndDrop.init();
 	SVG.init()
+	MousePan.init()
 	rectselector.element = SVG.append(SVG.svgElement, SVG.rect(-30, -30, 60, 60, "black", "none", "rect-selector"));
 	rectselector.element.setAttribute("stroke-dasharray", "4 4");
 	rectselector.setVisible(false);
