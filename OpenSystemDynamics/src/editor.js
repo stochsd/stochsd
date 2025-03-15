@@ -5543,7 +5543,8 @@ function mouseDownHandler(event) {
 			currentTool.leftMouseDown(x, y);
 			break;
 		case mouse.middle: 
-			MousePan.start(x, y);
+			event.preventDefault()
+			MousePan.start(x, y)
 			break;
 		case mouse.right:
 			// if right mouse button down
@@ -5563,6 +5564,7 @@ function mouseMoveHandler(event) {
 		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 	if (MousePan.middleIsDown) {
+		event.preventDefault()
 		MousePan.move(x, y)
 	}
 	
@@ -5583,7 +5585,8 @@ function mouseUpHandler(event) {
 		InfoBar.update();
 		History.storeUndoState();		
 	} else if (event.which == mouse.middle) {
-		MousePan.end();
+		event.preventDefault()
+		MousePan.end()
 	}
 }
 
