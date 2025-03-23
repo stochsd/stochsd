@@ -3298,7 +3298,7 @@ class HistoPlotVisual extends PlotVisual {
 		histogram.below_data = [];
 		histogram.above_data = [];
 
-		for (i = 0; i < histogram.numBars; i++) {
+		for (let i = 0; i < histogram.numBars; i++) {
 			histogram.bars.push({
 				lowerLimit: histogram.min + i * histogram.intervalWidth,
 				upperLimit: histogram.min + (i + 1) * histogram.intervalWidth,
