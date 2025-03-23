@@ -10236,34 +10236,34 @@ class EquationListDialog extends jqDialog {
 		/** Set filename */
 		let fileName = fileManager.fileName;
 		if (fileName) {
-			let winSplit = fileName.split("\\");
+			const winSplit = fileName.split("\\");
 			fileName = winSplit[winSplit.length - 1];
-			let unixSplit = fileName.split("/");
+			const unixSplit = fileName.split("/");
 			fileName = unixSplit[unixSplit.length - 1];
 		} else {
 			fileName = "Unnamed file";
 		}
 
 		/** Get Date */
-		let d = new Date();
-		let month = d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth() + 1;
-		let day = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
-		let fullDate = `${d.getFullYear().toString().substring(2, 4)}-${month}-${day} (yy-mm-dd)`;
+		const date = new Date();
+		const month = (date.getMonth() + 1).toString().padStart(2, "0");
+		const day = date.getDate().toString().padStart(2, "0");
+		const fullDate = `${date.getFullYear().toString().substring(2, 4)}-${month}-${day} (yy-mm-dd)`;
 
 		/** Find seed */
 		let isSeedSet = false;
 		let seed = "";
-		let macro = getMacros();
-		let index = macro.lastIndexOf("SetRandSeed");
+		const macro = getMacros();
+		const index = macro.lastIndexOf("SetRandSeed");
 		if (index !== -1) {
 			isSeedSet = true;
-			let c = macro.substring(index, macro.length);
-			let regExp = /\(([^)]+)\)/;
-			let matches = regExp.exec(c);
+			const c = macro.substring(index, macro.length);
+			const regExp = /\(([^)]+)\)/;
+			const matches = regExp.exec(c);
 			seed = matches[1];
 		}
 
-		let specs = [
+		const specs = [
 			["Time Unit", getTimeUnits()],
 			["Start", getTimeStart()],
 			["Length", getTimeLength()],
@@ -10301,7 +10301,7 @@ class EquationListDialog extends jqDialog {
 		`);
 	}
 	beforeShow() {
-		let Stocks = primitives("Stock");
+		const Stocks = primitives("Stock");
 		let stockHtml = "";
 		if (Stocks.length > 0) {
 			stockHtml = this.renderPrimitiveListHtml({
@@ -10313,12 +10313,12 @@ class EquationListDialog extends jqDialog {
 					{
 						header: "Recalculated as",
 						cellFunc: (prim) => {
-							let flows = primitives("Flow");
-							let input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
-							let output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
-							let input_str = input.map(f => ` +Δt*${makePrimitiveName(getName(f))}`).join("");
-							let output_str = output.map(f => ` -Δt*${makePrimitiveName(getName(f))}`).join("");
-							return makePrimitiveName(getName(prim)) + input_str + output_str;
+							const flows = primitives("Flow");
+							const input = flows.filter(f => f.target).filter(f => f.target.id == getID(prim));
+							const output = flows.filter(f => f.source).filter(f => f.source.id == getID(prim));
+							const inputStr = input.map(f => ` +Δt*${makePrimitiveName(getName(f))}`).join("");
+							const outputStr = output.map(f => ` -Δt*${makePrimitiveName(getName(f))}`).join("");
+							return makePrimitiveName(getName(prim)) + inputStr + outputStr;
 						}
 					},
 					{
@@ -10330,7 +10330,7 @@ class EquationListDialog extends jqDialog {
 			});
 		}
 
-		let Flows = primitives("Flow");
+		const Flows = primitives("Flow");
 		let flowHtml = "";
 		if (Flows.length > 0) {
 			flowHtml = this.renderPrimitiveListHtml({
@@ -10348,7 +10348,7 @@ class EquationListDialog extends jqDialog {
 			});
 		}
 
-		let Variables = primitives("Variable");
+		const Variables = primitives("Variable");
 		let variableHtml = "";
 		if (Variables.length > 0) {
 			variableHtml = this.renderPrimitiveListHtml({
@@ -10361,7 +10361,7 @@ class EquationListDialog extends jqDialog {
 			});
 		}
 
-		let Converters = primitives("Converter");
+		const Converters = primitives("Converter");
 		let converterHtml = "";
 		if (Converters.length > 0) {
 			converterHtml = this.renderPrimitiveListHtml({
@@ -10374,14 +10374,14 @@ class EquationListDialog extends jqDialog {
 				]
 			});
 		}
-		let numberOfPrimitives = Stocks.length + Flows.length + Variables.length + Converters.length;
+		const numberOfPrimitives = Stocks.length + Flows.length + Variables.length + Converters.length;
 
 		if (numberOfPrimitives == 0) {
 			this.setHtml("This model is empty. Build a model to show equation list");
 			return;
 		}
 
-		let htmlOut = `
+		const htmlOut = `
 			<h1>Equation List</h1>
 			<div style="display:flex;">
 				<div>
