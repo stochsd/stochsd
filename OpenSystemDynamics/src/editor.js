@@ -1757,13 +1757,12 @@ class FlowVisual extends BaseConnection {
 	}
 
 	/**
-	 * @param {number} requestedValue 
+	 * @param {number} requestedValue x-> or 1->y
 	 * @param {string} anchorId 
 	 * @param {number} dimensionIndex 
 	 * @returns {number}
 	 */
 	requestNewAnchorDimension(requestedValue, anchorId, dimensionIndex) {
-		// reqValue is x or y 
 		/** @type {AnchorPoint} */
 		const anchor = object_array[anchorId];
 		let newValue = requestedValue;
@@ -4517,7 +4516,8 @@ class MouseTool extends BaseTool {
 		mousedown_y = y;
 		do_global_log("last_click_object_clicked " + last_click_object_clicked);
 		if (!last_click_object_clicked) {
-			rectselector_start();
+			empty_click_down = true;
+			RectSelector.start(mousedown_x, mousedown_y);
 		}
 
 		let selected_anchor = get_only_selected_anchor_id();
@@ -4545,7 +4545,7 @@ class MouseTool extends BaseTool {
 		mousedown_y = y;
 
 		if (empty_click_down) {
-			rectselector_move();
+			RectSelector.move(mousedown_x, mousedown_y);
 			return;
 		}
 		// We only come here if some object is being dragged
@@ -4607,7 +4607,7 @@ class MouseTool extends BaseTool {
 		}
 
 		if (empty_click_down) {
-			rectselector_stop();
+			RectSelector.stop();
 			empty_click_down = false;
 		}
 	}
@@ -5120,58 +5120,70 @@ class CoordRect {
 		this.element.setAttribute("height", this.height());
 	}
 }
-var rectselector = new CoordRect();
 
-function rectselector_start() {
-	empty_click_down = true;
-	unselect_all();
-	rectselector.setVisible(true);
-	rectselector.x1 = mousedown_x;
-	rectselector.y1 = mousedown_y;
-	rectselector.x2 = mousedown_x;
-	rectselector.y2 = mousedown_y;
-	rectselector.update();
-}
-
-function rectselector_move() {
-	// select with rectseletor
-	rectselector.x2 = mousedown_x;
-	rectselector.y2 = mousedown_y;
-	rectselector.update();
-	unselect_all();
-	let select_array = get_objects_in_rectselect();
-	for (let key in select_array) {
-		let parent = get_parent(select_array[key]);
-		parent.select(false); // We also select the parent but not all of its anchors
-		select_array[key].select();
+class RectSelector {
+	/** @type {CoordRect} coordRect */
+	static coordRect;
+	static init() {
+		RectSelector.coordRect = new CoordRect();
+		RectSelector.coordRect.element = SVG.append(SVG.svgElement, SVG.rect(-30, -30, 60, 60, "black", "none", "rect-selector"));
+		RectSelector.coordRect.element.setAttribute("stroke-dasharray", "4 4");
+		RectSelector.coordRect.setVisible(false);
 	}
-}
-
-function rectselector_stop() {
-	rectselector.setVisible(false);
-	let select_array = get_objects_in_rectselect();
-	for (let key in select_array) {
-		select_array[key].select();
+	/** 
+	 * @param {number} x  
+	 * @param {number} y 
+	*/
+	static start(x, y) {
+		unselect_all();
+		RectSelector.coordRect.setVisible(true);
+		RectSelector.coordRect.x1 = x;
+		RectSelector.coordRect.y1 = y;
+		RectSelector.coordRect.x2 = x;
+		RectSelector.coordRect.y2 = y;
+		RectSelector.coordRect.update();
 	}
-}
-
-function is_in_rectselecor(node_id) {
-	return (
-		object_array[node_id].pos[0] >= rectselector.xmin() &&
-		object_array[node_id].pos[1] >= rectselector.ymin() &&
-		object_array[node_id].pos[0] <= rectselector.xmin() + rectselector.width() &&
-		object_array[node_id].pos[1] <= rectselector.ymin() + rectselector.height()
-	);
-}
-
-function get_objects_in_rectselect() {
-	let return_array = {};
-	for (let key in object_array) {
-		if (is_in_rectselecor(key)) {
-			return_array[key] = object_array[key];
+	/** 
+	 * @param {number} x  
+	 * @param {number} y 
+	*/
+	static move(x, y) {
+		RectSelector.coordRect.x2 = x;
+		RectSelector.coordRect.y2 = y;
+		RectSelector.coordRect.update();
+		unselect_all();
+		let select_array = RectSelector.getObjectsWithin();
+		for (let key in select_array) {
+			let parent = get_parent(select_array[key]);
+			parent.select(false); // We also select the parent but not all of its anchors
+			select_array[key].select();
 		}
 	}
-	return return_array;
+	static stop() {
+		RectSelector.coordRect.setVisible(false);
+		let select_array = RectSelector.getObjectsWithin();
+		for (let key in select_array) {
+			select_array[key].select();
+		}
+	}
+	static getObjectsWithin() {
+		let return_array = {};
+		for (let key in object_array) {
+			if (RectSelector.isWithin(key)) {
+				return_array[key] = object_array[key];
+			}
+		}
+		return return_array;
+	}
+	/** @param {string} nodeId  */
+	static isWithin(nodeId) {
+		return (
+			object_array[nodeId].pos[0] >= this.coordRect.xmin() &&
+			object_array[nodeId].pos[1] >= this.coordRect.ymin() &&
+			object_array[nodeId].pos[0] <= this.coordRect.xmin() + this.coordRect.width() &&
+			object_array[nodeId].pos[1] <= this.coordRect.ymin() + this.coordRect.height()
+		);
+	}
 }
 
 function tool_deletePrimitive(id) {
@@ -5778,10 +5790,7 @@ $(window).load(function () {
 	DragAndDrop.init();
 	SVG.init()
 	MousePan.init()
-	rectselector.element = SVG.append(SVG.svgElement, SVG.rect(-30, -30, 60, 60, "black", "none", "rect-selector"));
-	rectselector.element.setAttribute("stroke-dasharray", "4 4");
-	rectselector.setVisible(false);
-
+	RectSelector.init();
 	Preferences.setup();
 
 	$(".tool-button").mousedown(function (event) {
