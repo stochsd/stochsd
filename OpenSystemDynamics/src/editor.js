@@ -2823,6 +2823,7 @@ class DataGenerations {
 		this.idGen = [];
 		this.labelSuffixId = "";
 		this.labelGen = [];
+		this.isRandom = [];
 		this.primitiveTypeGen = [];
 		this.nameGen = [];
 		this.colorGen = [];
@@ -2842,6 +2843,7 @@ class DataGenerations {
 			this.idGen[genIndex].splice(index, 1)
 			this.labelGen[genIndex].splice(index, 1)
 			this.nameGen[genIndex].splice(index, 1)
+			this.isRandom[genIndex].splice(index, 1)
 			this.primitiveTypeGen[genIndex].splice(index, 1)
 			this.colorGen[genIndex].splice(index, 1)
 			this.patternGen[genIndex].splice(index, 1)
@@ -2854,6 +2856,7 @@ class DataGenerations {
 			this.idGen.splice(genIndex, 1);
 			this.labelGen.splice(genIndex, 1)
 			this.nameGen.splice(genIndex, 1)
+			this.isRandom.splice(genIndex, 1)
 			this.primitiveTypeGen.splice(genIndex, 1)
 			this.colorGen.splice(genIndex, 1)
 			this.patternGen.splice(genIndex, 1)
@@ -2869,7 +2872,8 @@ class DataGenerations {
 		this.idGen.push(ids);
 		let suffixPrim = findID(this.labelSuffixId)
 		let suffix = suffixPrim ? `, ${getName(suffixPrim)} = ${getValue(suffixPrim)}` : ""
-		this.labelGen.push(ids.map(findID).map(id => getName(id) + suffix));
+		this.labelGen.push(ids.map(findID).map(p => getName(p) + suffix));
+		this.isRandom.push(ids.map(findID).map(p => hasRandomFunction(getValue(p))));
 		this.nameGen.push(ids.map(findID).map(getName));
 		this.primitiveTypeGen.push(ids.map(id => getTypeNew(findID(id))));
 		this.colorGen.push(ids.map(findID).map(
@@ -2893,6 +2897,7 @@ class DataGenerations {
 			this.labelGen.pop();
 			this.nameGen.pop();
 			this.primitiveTypeGen.pop();
+			this.isRandom.pop();
 			this.colorGen.pop();
 			this.patternGen.pop();
 			this.lineWidthGen.pop();
@@ -2921,6 +2926,7 @@ class DataGenerations {
 							id: this.idGen[genIndex][index],
 							name: this.nameGen[genIndex][index],
 							label: this.labelGen[genIndex][index],
+							isRandom: this.isRandom[genIndex][index],
 							type: this.primitiveTypeGen[genIndex][index],
 							color: this.colorGen[genIndex][index],
 							patern: this.patternGen[genIndex][index],
@@ -2946,6 +2952,23 @@ class DataGenerations {
 			counter++;
 		}
 	}
+	/**
+ 	* @param {(
+	*   value: {
+	*     genIndex: number;
+	*     index: number;
+	*     id: string;
+	*     name: string;
+	*     label: string;
+	*     isRandom: boolean;
+	*     type: any;
+	*     color: string;
+	*     patern: any;
+	*     lineWidth: any;
+	*   }, 
+	*   index: number
+	* ) => any} fn
+	*/
 	map(fn) {
 		const list = []
 		let counter = 0;
@@ -3019,6 +3042,8 @@ class DataGenerations {
 }
 
 class ComparePlotVisual extends PlotVisual {
+	/** @type {DataGenerations} */
+	gens;
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.runHandler = () => {
@@ -3089,9 +3114,7 @@ class ComparePlotVisual extends PlotVisual {
 		do_global_log(JSON.stringify(this.serieSettingsArray));
 
 		// We need to ad a delay and respond to events first to make this work in firefox
-		setTimeout(() => {
-			this.updateChart();
-		}, 200);
+		setTimeout(() => this.updateChart(), 200);
 	}
 	updateChart() {
 		// Dont update chart if primitive has been deleted
@@ -7986,6 +8009,11 @@ class TimePlotDialog extends DisplayDialog {
 }
 
 class GenerationsComponent extends HtmlComponent {
+	/** @type {DataGenerations} */
+	gens;
+	/**
+	 * @param {DataGenerations} gens 
+	 */
 	constructor(parent, gens) {
 		super(parent)
 		this.gens = gens
@@ -7997,7 +8025,7 @@ class GenerationsComponent extends HtmlComponent {
 		return result;
 	}
 	renderTable() {
-		const generationsHtml = `<table class="modern-table zebra" style="width: 100%;">
+		const generationsHtml = `<table class="modern-table" style="width: 100%;">
 			<tr>
 				<th>#</th><th>Primitive</th><th>Label</th><th></th>
 			</tr>
@@ -8007,9 +8035,10 @@ class GenerationsComponent extends HtmlComponent {
 				<td>${index + 1}</td>
 				<td>
 					<div class="center-vertically-container">
-						<span class="color-sample" style="background: ${value.color};"></span>
-						<img style="height: 20px; padding-right: 4px;" src="graphics/${value.type.toLowerCase()}.svg" />
-						<span>${value.name}</span>
+						<div style="width: 1.75rem; padding-right: 0.25rem;">
+							${PrimitiveSvgPreview.create(value.type.toLowerCase(), { color: value.color, dice: value.isRandom })}
+						</div>
+						<span class="cm-primitive cm-${value.color}">${value.name}</span>
 					</div>
 				</td>
 				<td>
