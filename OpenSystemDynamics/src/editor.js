@@ -623,16 +623,6 @@ function get_parent(child) {
 	return get_object(get_parent_id(child.id));
 }
 
-function is_family(id1, id2) {
-	let parent_id1 = id1.toString().split(".")[0];
-	let parent_id2 = id2.toString().split(".")[0];
-	if (parent_id1 == parent_id2) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 // Get a list of all children for a parent
 function getChildren(parentId) {
 	let result = {}
@@ -5460,19 +5450,6 @@ function unselect_all_but(dont_unselect_id) {
 	}
 	for (let key in connection_array) {
 		if (key != dont_unselect_id) {
-			connection_array[key].unselect();
-		}
-	}
-}
-
-function unselect_all_but_family(id) {
-	for (let key in object_array) {
-		if (!is_family(id, key)) {
-			object_array[key].unselect();
-		}
-	}
-	for (let key in connection_array) {
-		if (!is_family(id, key)) {
 			connection_array[key].unselect();
 		}
 	}
