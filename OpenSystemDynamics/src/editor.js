@@ -5,29 +5,29 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 */
 // Dialog window handlers 
-/** @type DefinitionEditor */
+/** @type {DefinitionEditor} */
 var definitionEditor;
-/** @type ConverterDialog */
+/** @type {ConverterDialog} */
 var converterDialog;
-/** @type PreferencesDialog */
+/** @type {PreferencesDialog} */
 var preferencesDialog;
-/** @type SimulationSettings */
+/** @type {SimulationSettings} */
 var simulationSettings;
-/** @type TimeUnitDialog */
+/** @type {TimeUnitDialog} */
 var timeUnitDialog;
-/** @type MacroDialog */
+/** @type {MacroDialog} */
 var macroDialog;
-/** @type EquationListDialog */
+/** @type {EquationListDialog} */
 var equationList;
-/** @type DebugDialog */
+/** @type {DebugDialog} */
 var debugDialog;
-/** @type AboutDialog */
+/** @type {AboutDialog} */
 var aboutDialog;
-/** @type FullPotentialCSSDialog */
+/** @type {FullPotentialCSSDialog} */
 var fullpotentialcssDialog;
-/** @type ThirdPartyLicensesDialog */
+/** @type {ThirdPartyLicensesDialog} */
 var thirdPartyLicensesDialog;
-/** @type LicenseDialog */
+/** @type {LicenseDialog} */
 var licenseDialog;
 
 
