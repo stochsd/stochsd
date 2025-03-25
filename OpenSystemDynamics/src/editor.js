@@ -4195,14 +4195,6 @@ class BaseTool {
 }
 BaseTool.init();
 
-function findVisualByID(id) {
-	let visual = object_array[id];
-	if (visual === undefined) {
-		visual = connection_array[id];
-	}
-	return visual;
-}
-
 class RunTool extends BaseTool {
 	static enterTool() {
 		/* Check that all primitives are defined */
@@ -4220,10 +4212,7 @@ class RunTool extends BaseTool {
 			alert.setTitle("Unable to Simulate");
 			alert.show();
 			unselect_all();
-			let vis = findVisualByID(prim.id);
-			if (vis) {
-				vis.select();
-			}
+			(object_array[prim.id] ?? connection_array[prim.id]).select();
 			InfoBar.update();
 		} else {
 			RunResults.runPauseSimulation();
