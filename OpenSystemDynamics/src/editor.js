@@ -24,7 +24,7 @@ var debugDialog;
 /** @type {AboutDialog} */
 var aboutDialog;
 /** @type {FullPotentialCSSDialog} */
-var fullpotentialcssDialog;
+var fullPotentialCssDialog;
 /** @type {ThirdPartyLicensesDialog} */
 var thirdPartyLicensesDialog;
 /** @type {LicenseDialog} */
@@ -5969,7 +5969,7 @@ $(window).load(function () {
 		preferencesDialog.show();
 	});
 	$("#btn_fullpotentialcss").click(function () {
-		fullpotentialcssDialog.show();
+		fullPotentialCssDialog.show();
 	});
 	$("#btn_license").click(function () {
 		licenseDialog.show();
@@ -6018,7 +6018,7 @@ $(window).load(function () {
 	equationList = new EquationListDialog();
 	debugDialog = new DebugDialog();
 	aboutDialog = new AboutDialog();
-	fullpotentialcssDialog = new FullPotentialCSSDialog();
+	fullPotentialCssDialog = new FullPotentialCSSDialog();
 	thirdPartyLicensesDialog = new ThirdPartyLicensesDialog();
 	licenseDialog = new LicenseDialog();
 
