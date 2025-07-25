@@ -102,7 +102,7 @@ function preserveRestart() {
 
 function restoreAfterRestart() {
 	do_global_log("restoring");
-	let reloadPending = localStorage.getItem("reloadPending");
+	const reloadPending = localStorage.getItem("reloadPending");
 
 	if (reloadPending == null) {
 		// No reload is pending
@@ -177,9 +177,9 @@ class History {
 
 	static storeUndoState() {
 		// Create new XML for state
-		let InsightMakerDocumentWriter = new InsightMakerDocument();
+		const InsightMakerDocumentWriter = new InsightMakerDocument();
 		InsightMakerDocumentWriter.appendPrimitives();
-		let undoState = InsightMakerDocumentWriter.getXmlString();
+		const undoState = InsightMakerDocumentWriter.getXmlString();
 
 		// Add to undo history if it is different then previous state
 		if (this.lastUndoState != undoState) {
@@ -248,7 +248,7 @@ class History {
 		localStorage.setItem("undoState_length", this.undoStates.length);
 
 		for (let i in this.undoStates) {
-			let state = this.undoStates[i];
+			const state = this.undoStates[i];
 			localStorage.setItem("undoState_" + i, state);
 		}
 
@@ -257,9 +257,9 @@ class History {
 
 	static fromLocalStorage() {
 		this.clearUndoHistory();
-		let undoState_length = localStorage.getItem("undoState_length");
+		const undoState_length = localStorage.getItem("undoState_length");
 		for (let i = 0; i < undoState_length; i++) {
-			let state = localStorage.getItem("undoState_" + i);
+			const state = localStorage.getItem("undoState_" + i);
 			this.undoStates.push(state);
 		}
 		this.undoIndex = localStorage.getItem("undoIndex");
@@ -309,7 +309,7 @@ const mouse = { "left": 1, "middle": 2, "right": 3 };
 
 class InfoBar {
 	static init() {
-		let infoDef = $(".info-bar__definition")[0];
+		const infoDef = $(".info-bar__definition")[0];
 		this.cmInfoDef = new CodeMirror(infoDef,
 			{
 				mode: "stochsd-dynamic-mode",
@@ -327,8 +327,8 @@ class InfoBar {
 		this.infoRestricted.html(isRestricted ? `(Restricted)` : "");
 	}
 	static update() {
-		let selected_hash = get_selected_root_objects();
-		let selected_array = [];
+		const selected_hash = get_selected_root_objects();
+		const selected_array = [];
 		for (let key in selected_hash) {
 			selected_array.push(selected_hash[key]);
 		}
@@ -338,30 +338,30 @@ class InfoBar {
 			this.infoDE.html("");
 			this.setRestricted(false);
 		} else if (selected_array.length == 1) {
-			let selected = selected_array[0];
-			let primitive = selected_array[0].primitive;
+			const selected = selected_array[0];
+			const primitive = selected_array[0].primitive;
 			if (selected.is_ghost) {
 				primitive = findID(primitive.getAttribute("Source"));
 			}
-			let name = primitive.getAttribute("name");
-			let definition = getValue(primitive);
+			const name = primitive.getAttribute("name");
+			const definition = getValue(primitive);
 			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
 
-			let isRestricted = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true";
+			const isRestricted = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true";
 			this.setRestricted(isRestricted, name);
 
-			let definitionLines = definition.split("\n");
+			const definitionLines = definition.split("\n");
 			if (definitionLines[0] !== "") {
 				this.cmInfoDef.setValue(`[${name}] = ${definitionLines[0]}`);
 			} else {
-				let type = selected.type;
+				const type = selected.type;
 
 				// Make first letter uppercase
-				// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
-				let Type = type_basename[type];
+				// const Type = type.charAt(0).toUpperCase() + type.slice(1); 
+				const Type = type_basename[type];
 				switch (type) {
 					case ("numberbox"):
-						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
+						const targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
 						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
 						break;
 					case ("timeplot"):
@@ -369,12 +369,12 @@ class InfoBar {
 					case ("table"):
 					case ("xyplot"):
 					case ("histoplot"):
-						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
+						const names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
 						break;
 					case ("link"):
-						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
-						let target = selected.getEndAttach() ? `[${getName(selected.getEndAttach().primitive)}]` : "NONE";
+						const source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
+						const target = selected.getEndAttach() ? `[${getName(selected.getEndAttach().primitive)}]` : "NONE";
 						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
 						break;
 					default:
@@ -390,9 +390,9 @@ class InfoBar {
 }
 
 defaultAttributeChangeHandler = function (primitive, attributeName, value) {
-	let id = getID(primitive);
-	let type = getType(primitive);
-	let visualObject = get_object(id);
+	const id = getID(primitive);
+	const type = getType(primitive);
+	const visualObject = get_object(id);
 	if (visualObject) {
 		visualObject.attributeChangeHandler(attributeName, value);
 	}
@@ -404,7 +404,7 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 	}
 	//~ do_global_log("tjohej "+type+" "+attributeName);
 	if (type == "Numberbox" && attributeName == "Target") {
-		let visualObject = get_object(id);
+		const visualObject = get_object(id);
 		// render() can only be done when the numberbox is fully loaded
 		// Therefor we have to check that visualObject is not null
 		if (visualObject) {
@@ -414,8 +414,8 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 }
 
 defaultPositionChangeHandler = function (primitive) {
-	let newPosition = getCenterPosition(primitive)
-	let visualObject = object_array[getID(primitive)];
+	const newPosition = getCenterPosition(primitive)
+	const visualObject = object_array[getID(primitive)];
 	if (visualObject) {
 		visualObject.setPos(newPosition);
 	}
@@ -442,7 +442,7 @@ PulseFcn(Start, Volume, Repeat) <- Pulse(Start, Volume/DT(), 0, Repeat)
 
 // Add the StocSD macro-script to the beggning of the Macro
 function appendStochSDMacros() {
-	let macros = getMacros();
+	const macros = getMacros();
 	if (macros === undefined) {
 		macros = "";
 	}
@@ -454,17 +454,17 @@ function appendStochSDMacros() {
 
 // Replace macro with the StochSD macro-script
 function setStochSDMacros() {
-	let macros = sdsMacros + "\n\n\n";
+	const macros = sdsMacros + "\n\n\n";
 	setMacros(macros);
 }
 
-let showMacros = function () {
+const showMacros = function () {
 	macroDialog.show();
 };
 
 function getLinkedPrimitives(primitive) {
-	let result = [];
-	let allLinks = primitives("Link");
+	const result = [];
+	const allLinks = primitives("Link");
 	for (let link of allLinks) {
 		if (link.target == primitive) {
 			if (link.source != null) {
@@ -503,7 +503,7 @@ function sdsLoadFunctions() {
 		return new Material(simulate.timeEnd.toNum().value);
 	});
 	defineFunction("PoFlow", { params: [{ name: "Rate", noUnits: true, noVector: true }] }, function (x) {
-		let dt = simulate.timeStep.toNum().value;
+		const dt = simulate.timeStep.toNum().value;
 
 		return new Material(RandPoisson(dt * x[0].toNum().value) / dt);
 	});
@@ -511,8 +511,8 @@ function sdsLoadFunctions() {
 }
 
 function getVisibleNeighborhoodIds(id) {
-	let neighbors = neighborhood(findID(id));
-	let visibleNeighbors = neighbors.filter((neighbor) => { return (!neighbor.linkHidden) });
+	const neighbors = neighborhood(findID(id));
+	const visibleNeighbors = neighbors.filter((neighbor) => { return (!neighbor.linkHidden) });
 	return visibleNeighbors.map((neighbor) => { return neighbor.item.getAttribute("id"); });
 }
 
@@ -521,8 +521,8 @@ function makePrimitiveName(primitiveName) {
 }
 
 function stripBrackets(primitiveName) {
-	let cutFrom = primitiveName.lastIndexOf("[") + 1;
-	let cutTo = primitiveName.indexOf("]");
+	const cutFrom = primitiveName.lastIndexOf("[") + 1;
+	const cutTo = primitiveName.indexOf("]");
 	if (cutFrom == -1) {
 		cutFrom = 0;
 	}
@@ -537,8 +537,7 @@ function formatFunction(functionName) {
 }
 
 function warningHtml(message, specNotOk = false) {
-	let noChanges = "";
-	if (specNotOk) noChanges = "<br/><b>Your specification is not accepted!</b>";
+	const noChanges = specNotOk ? "<br/><b>Your specification is not accepted!</b>" : "";
 	return (`<span class="warning">${message} ${noChanges}</span>`);
 }
 
@@ -563,7 +562,7 @@ function checkedHtml(value) {
 
 class EditorControll {
 	static showEditor(primitive, annotations) {
-		let primitiveId = getID(primitive);
+		const primitiveId = getID(primitive);
 		get_object(primitiveId).doubleClick();
 	}
 }
@@ -596,7 +595,7 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	}
 
 	// Else format it as a regular number, and remove ending zeros
-	let stringified = number.toFixed(tdecimals);
+	const stringified = number.toFixed(tdecimals);
 
 	// Find the length of stringified, where the ending zeros have been removed
 	let i = stringified.length;
@@ -609,7 +608,7 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 		}
 	}
 	// Creates a stripped string without ending zeros
-	let stripped = stringified.substring(0, i);
+	const stripped = stringified.substring(0, i);
 	return stripped;
 }
 
@@ -674,7 +673,10 @@ function openPrimitiveDialog(id, field = "value") {
 }
 
 class BaseObject {
-		/**
+	/** @type {Primitive} */
+	primitive;
+
+	/**
 	 * @param {string} id 
 	 * @param {string} type 
 	 * @param {[number, number]} pos 
@@ -714,7 +716,7 @@ class BaseObject {
 	}
 
 	updateDefinitionError() {
-		let definitionErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
+		const definitionErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
 		if (definitionErrorTypes.includes(this.type)) {
 			DefinitionError.check(this.primitive);
 			DefinitionError.has(this.primitive);
@@ -792,7 +794,7 @@ class BaseObject {
 			errorPopUp("You must rename a ghost by renaming the original.");
 			return;
 		}
-		let id = get_parent_id(this.id)
+		const id = get_parent_id(this.id)
 		definitionEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
@@ -954,7 +956,7 @@ class OnePointer extends BaseObject {
 	update() {
 		this.group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
 
-		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
+		const prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons && prim) {
 			const hasDefError = DefinitionError.has(prim);
 			this.icons.set("questionmark", hasDefError ? "visible" : "hidden");
@@ -966,7 +968,7 @@ class OnePointer extends BaseObject {
 		}
 	}
 	updateGhosts() {
-		let ghostIds = findGhostsOfID(this.id);
+		const ghostIds = findGhostsOfID(this.id);
 		ghostIds.map(gId => {
 			if (object_array[gId]) {
 				object_array[gId].update();
@@ -1004,7 +1006,7 @@ class AnchorPoint extends OnePointer {
 		this.isSquare = false;
 	}
 	isAttached() {
-		let parent = get_parent(this);
+		const parent = get_parent(this);
 		if (!parent.getStartAttach) {
 			return;
 		}
@@ -1042,7 +1044,7 @@ class AnchorPoint extends OnePointer {
 	}
 	updatePosition() {
 		this.update();
-		let parent = get_parent(this);
+		const parent = get_parent(this);
 		if (parent.start_anchor && parent.end_anchor) {
 			parent.syncAnchorToPrimitive(this.anchorType);
 		}
@@ -1075,8 +1077,8 @@ class AnchorPoint extends OnePointer {
 	afterMove(diff_x, diff_y) {
 		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
 		// commented out until fixed
-		let parentId = get_parent_id(this.id);
-		let parent = get_object(parentId);
+		const parentId = get_parent_id(this.id);
+		const parent = get_object(parentId);
 
 		if (parent.type == "link") {
 			switch (this.anchorType) {
@@ -2620,16 +2622,16 @@ class TimePlotVisual extends PlotVisual {
 	render() {
 		this.fetchData();
 
-		let idsToDisplay = getDisplayIds(this.primitive);
-		let sides = getDisplaySides(this.primitive);
+		const idsToDisplay = getDisplayIds(this.primitive);
+		const sides = getDisplaySides(this.primitive);
 
 		this.namesToDisplay = idsToDisplay.map(findID).map(getName);
 		this.colorsToDisplay = idsToDisplay.map(findID).map(
 			(node) => node.getAttribute("Color")
 		);
 
-		let types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
-		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		const types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
+		const line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
 		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);
 
@@ -2638,16 +2640,16 @@ class TimePlotVisual extends PlotVisual {
 			return;
 		}
 
-		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
+		const hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 
-		let makeSerie = (resultColumn, lineCount) => {
-			let serie = [];
-			let plotPerIdx = Math.floor(this.data.results.length / 4);
+		const makeSerie = (resultColumn, lineCount) => {
+			const serie = [];
+			const plotPerIdx = Math.floor(this.data.results.length / 4);
 			for (let i = 0; i < this.data.results.length; i++) {
-				let row = this.data.results[i];
-				let time = Number(row[0]);
-				let value = Number(row[resultColumn]);
-				let showNumHere = i % plotPerIdx === Math.floor((plotPerIdx / 2 + (plotPerIdx * lineCount) / 8) % plotPerIdx);
+				const row = this.data.results[i];
+				const time = Number(row[0]);
+				const value = Number(row[resultColumn]);
+				const showNumHere = i % plotPerIdx === Math.floor((plotPerIdx / 2 + (plotPerIdx * lineCount) / 8) % plotPerIdx);
 				if (showNumHere && hasNumberedLines) {
 					serie.push([time, value, Math.floor(lineCount).toString()]);
 				} else {
@@ -2860,8 +2862,8 @@ class DataGenerations {
 		this.numGenerations++;
 		this.numLines += ids.length;
 		this.idGen.push(ids);
-		let suffixPrim = findID(this.labelSuffixId)
-		let suffix = suffixPrim ? `, ${getName(suffixPrim)} = ${getValue(suffixPrim)}` : ""
+		const suffixPrim = findID(this.labelSuffixId)
+		const suffix = suffixPrim ? `, ${getName(suffixPrim)} = ${getValue(suffixPrim)}` : ""
 		this.labelGen.push(ids.map(findID).map(p => getName(p) + suffix));
 		this.isRandom.push(ids.map(findID).map(p => hasRandomFunction(getValue(p))));
 		this.nameGen.push(ids.map(findID).map(getName));
@@ -2869,7 +2871,7 @@ class DataGenerations {
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke
 		));
-		let types = ids.map(findID).map(node => get_object(node.id).type);
+		const types = ids.map(findID).map(node => get_object(node.id).type);
 		this.patternGen.push(
 			types.map(type => lineOptions[type]["pattern"])
 		);
@@ -2880,8 +2882,8 @@ class DataGenerations {
 	setCurrent(ids, results, lineOptions) {
 		// Remove last
 		if (this.idGen.length !== 0) {
-			let removedIds = this.idGen.pop();
-			let numRemoved = removedIds.length;
+			const removedIds = this.idGen.pop();
+			const numRemoved = removedIds.length;
 			this.numLines -= numRemoved;
 			this.numGenerations--;
 			this.labelGen.pop();
@@ -3886,9 +3888,9 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	select(selectChildren = true) {
-		let children = getChildren(this.id);
+		const children = getChildren(this.id);
 		for (let id in children) {
-			let object = get_object(id);
+			const object = get_object(id);
 			if ('setVisible' in object) {
 				object.setVisible(true);
 			}
@@ -4364,8 +4366,8 @@ class MoveValveTool extends BaseTool {
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
 		for (let node_id in get_selected_objects()) {
-			let key = get_parent_id(node_id);
-			let obj = get_object(key);
+			const key = get_parent_id(node_id);
+			const obj = get_object(key);
 			if (obj.type == "link") {
 				obj.resetBezierPoints();
 			}
@@ -4385,7 +4387,7 @@ class GhostTool extends OnePointCreateTool {
 		let ghost = makeGhost(source, [x, y]);
 		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
-		let DIM_ghost = get_object(ghost.getAttribute("id"));
+		const DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	static enterTool() {
@@ -4645,10 +4647,10 @@ class TwoPointerTool extends BaseTool {
 		unselect_all();
 
 		// Looks for element under mouse. 
-		let start_element = find_element_under(x, y);
+		const start_element = find_element_under(x, y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		let primitive_name = findFreeName(type_basename[this.getType()]);
+		const primitive_name = findFreeName(type_basename[this.getType()]);
 		this.createTwoPointer(x, y, primitive_name);
 
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
@@ -4672,18 +4674,18 @@ class TwoPointerTool extends BaseTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
-		let moveObject = get_object(node_id);
-		let parent = get_parent(moveObject);
+		const moveObject = get_object(node_id);
+		const parent = get_parent(moveObject);
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.start_anchor.id === node_id) {
 				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
-			let sideX = x - oppositeX;
-			let sideY = y - oppositeY;
-			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
-			let signX = Math.sign(sideX);
-			let signY = Math.sign(sideY);
+			const sideX = x - oppositeX;
+			const sideY = y - oppositeY;
+			const shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			const signX = Math.sign(sideX);
+			const signY = Math.sign(sideY);
 			moveObject.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
 		} else {
 			moveObject.setPos([x, y]);
@@ -4731,8 +4733,8 @@ class FlowTool extends TwoPointerTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, anchor_id) {
 		// Function used both during creation and later moving of anchor point 
-		let mainAnchor = get_object(anchor_id);
-		let parent = get_parent(mainAnchor);
+		const mainAnchor = get_object(anchor_id);
+		const parent = get_parent(mainAnchor);
 
 		parent.requestNewAnchorPos([x, y], anchor_id);
 		parent.update();
@@ -4856,17 +4858,17 @@ class LineTool extends TwoPointerTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
-		let moveObject = get_object(node_id);
-		let parent = get_parent(moveObject);
+		const moveObject = get_object(node_id);
+		const parent = get_parent(moveObject);
 		if (shiftKey) {
-			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			const [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.start_anchor.id === node_id) {
 				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
-			let sideX = x - oppositeX;
-			let sideY = y - oppositeY;
-			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
-			let longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
+			const sideX = x - oppositeX;
+			const sideY = y - oppositeY;
+			const shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			const longSideLength = Math.max(Math.abs(sideX), Math.abs(sideY));
 			if (3 * shortSideLength < longSideLength) {
 				// Place Horizontal or vertical
 				if (Math.abs(sideX) < Math.abs(sideY)) {
@@ -5019,13 +5021,14 @@ class LinkTool extends TwoPointerTool {
 		}
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
-		let start_pos = get_object(move_node_id).getPos();
+		const start_pos = get_object(move_node_id).getPos();
 		this.mouseMoveSingleAnchor(start_pos[0] + diff_x, start_pos[1] + diff_y, shiftKey, move_node_id);
 	}
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
-		let anchor = object_array[node_id];
-		let parent = get_parent(anchor);
+		/** @type {AnchorPoint} */
+		const anchor = object_array[node_id];
+		const parent = get_parent(anchor);
 		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
 			attach_anchor(anchor);
 			parent.update();
@@ -5054,19 +5057,19 @@ LinkTool.init();
 
 function attach_anchor(anchor) {
 	[x, y] = anchor.getPos();
-	let parentConnection = get_parent(anchor);
+	const parentConnection = get_parent(anchor);
 
-	let elements_under = find_elements_under(x, y);
-	let anchor_element = null;
-	let attach_to = null;
+	const elements_under = find_elements_under(x, y);
+	const anchor_element = null;
+	const attach_to = null;
 
 
 	// Find unselected stock element
 	for (let i = 0; i < elements_under.length; i++) {
-		let element = elements_under[i];
+		const element = elements_under[i];
 
-		let elemIsNotSelected = !element.isSelected();
-		let elemIsNotParentOfAnchor = element[i] != parentConnection;
+		const elemIsNotSelected = !element.isSelected();
+		const elemIsNotParentOfAnchor = element[i] != parentConnection;
 		if (elemIsNotSelected && elemIsNotParentOfAnchor) {
 			attach_to = element;
 			break;
@@ -5154,28 +5157,28 @@ class RectSelector {
 		RectSelector.coordRect.y2 = y;
 		RectSelector.coordRect.update();
 		unselect_all();
-		let select_array = RectSelector.getObjectsWithin();
+		const select_array = RectSelector.getObjectsWithin();
 		for (let key in select_array) {
-			let parent = get_parent(select_array[key]);
+			const parent = get_parent(select_array[key]);
 			parent.select(false); // We also select the parent but not all of its anchors
 			select_array[key].select();
 		}
 	}
 	static stop() {
 		RectSelector.coordRect.setVisible(false);
-		let select_array = RectSelector.getObjectsWithin();
+		const select_array = RectSelector.getObjectsWithin();
 		for (let key in select_array) {
 			select_array[key].select();
 		}
 	}
 	static getObjectsWithin() {
-		let return_array = {};
+		const result = {};
 		for (let key in object_array) {
 			if (RectSelector.isWithin(key)) {
-				return_array[key] = object_array[key];
+				result[key] = object_array[key];
 			}
 		}
-		return return_array;
+		return result;
 	}
 	/** @param {string} nodeId  */
 	static isWithin(nodeId) {
@@ -5220,10 +5223,10 @@ function detachFlows(id) {
 }
 
 function get_selected_root_objects() {
-	let result = {};
-	let all_objects = get_all_objects();
+	const result = {};
+	const all_objects = get_all_objects();
 	for (let key in all_objects) {
-		let parent = get_parent(all_objects[key]);
+		const parent = get_parent(all_objects[key]);
 
 		// If any element is selected we add its parent
 		if (all_objects[key].isSelected()) {
@@ -5234,8 +5237,8 @@ function get_selected_root_objects() {
 }
 
 function get_root_objects() {
-	let result = {};
-	let all_objects = get_all_objects();
+	const result = {};
+	const all_objects = get_all_objects();
 	for (let key in all_objects) {
 		if (key.indexOf(".") == -1) {
 			result[key] = all_objects[key];
@@ -5720,10 +5723,10 @@ class Clipboard {
 
 		// Create clipboard items
 		for (let i in parentIdArray) {
-			let clipboardItem = new ClipboardItem(parentIdArray[i]);
-			let tmp_object = get_object(parentIdArray[i]);
+			const clipboardItem = new ClipboardItem(parentIdArray[i]);
+			const tmp_object = get_object(parentIdArray[i]);
 
-			let absolutePosition = tmp_object.getPos();
+			const absolutePosition = tmp_object.getPos();
 			clipboardItem.absolutePosition = absolutePosition;
 
 			this.copiedItems.push(clipboardItem);
@@ -6176,7 +6179,7 @@ function addMissingPrimitiveAttributes(prim) {
 
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
-	let stochsd_object = get_object(tprimitive.id);
+	const stochsd_object = get_object(tprimitive.id);
 	if (stochsd_object != false) {
 		return false;
 	}
@@ -6517,19 +6520,11 @@ class runOverlay {
 }
 runOverlay.init();
 
-const runStateEnum = {
-	none: "none",
-	running: "running",
-	stopped: "stopped",
-	stepping: "stepping",
-	paused: "paused"
-}
-
 // Not yet implemented
 function setColorToSelection(color) {
-	let objects = get_selected_objects();
+	const objects = get_selected_objects();
 	for (let id in objects) {
-		let obj = get_object(id);
+		const obj = get_object(id);
 		get_parent(obj).setColor(color);
 	}
 	History.storeUndoState();
@@ -6604,9 +6599,14 @@ async function updateRecentsMenu() {
 	}
 }
 
+/** @typedef {"none" | "running" | "stopped" | "stepping" | "paused"} RunState */
+
 class RunResults {
+	/** @type {RunState} */
+	static runState;
+
 	static init() {
-		this.runState = runStateEnum.none;
+		this.runState = "none";
 		// Is always null if simulation is not running
 		// Is a data structure returned from runModel if simulation is running it
 		this.simulationController = null;
@@ -6620,13 +6620,13 @@ class RunResults {
 	}
 	static createHeader() {
 		// Get list of primitives that we want to observe from the model
-		let primitive_array = getPrimitiveList();
+		const primitives = getPrimitiveList();
 
 		// Create list of ids, id0 is reserved for time 
-		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
+		this.varIdList = [0].concat(getID(primitives)).map(Number);
 
 		// Create list of names
-		this.varnameList = ["Time"].concat(getName(primitive_array));
+		this.varnameList = ["Time"].concat(getName(primitives));
 
 		// Reset results
 		this.results = [];
@@ -6702,10 +6702,10 @@ class RunResults {
 	}
 	static runPauseSimulation() {
 		switch (this.runState) {
-			case runStateEnum.running:
+			case "running":
 				this.pauseSimulation();
 				break;
-			case runStateEnum.paused:
+			case "paused":
 				this.resumeSimulation();
 				break;
 			default:
@@ -6714,7 +6714,7 @@ class RunResults {
 	}
 	static resumeSimulation() {
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
-		this.runState = runStateEnum.running;
+		this.runState = "running";
 		// Simulation controller can only be null if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
 		if (this.simulationController != null) {
@@ -6736,7 +6736,7 @@ class RunResults {
 			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
 			setPauseInterval(getTimeStep() * 1000);
 		}
-		this.runState = runStateEnum.running;
+		this.runState = "running";
 		runOverlay.block();
 		this.simulationController = runModel({
 			rate: -1,
@@ -6746,7 +6746,7 @@ class RunResults {
 				this.simulationController = res;
 
 				// If still running continue with next cycle
-				if (this.runState == runStateEnum.running) {
+				if (this.runState == "running") {
 					this.updateProgressBar();
 					this.setProgressStatus(false);
 					do_global_log("length " + this.results.length)
@@ -6852,7 +6852,7 @@ class RunResults {
 		this.updateProgressText()
 	}
 	static pauseSimulation() {
-		this.runState = runStateEnum.paused;
+		this.runState = "paused";
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 	}
 	static resetSimulation() {
@@ -6864,7 +6864,7 @@ class RunResults {
 	static stopSimulation() {
 		runOverlay.unblock();
 		endRunningSimulation();
-		this.runState = runStateEnum.stopped;
+		this.runState = "stopped";
 		this.simulationController = null;
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
@@ -7191,8 +7191,21 @@ class jqDialog {
 // Needed for the static init of this class
 jqDialog.init();
 
+/** 
+ * @typedef {Object} Primitive
+ * @property {string} type - Type of primitive, e.g. "Stock", "Flow", "Variable", "Converter", "Ghost", "Link"
+ * @property {string} id - Unique identifier for the primitive
+ * @property {string} @nodeName - Name of the XML node representing the primitive
+ * @property {Element} value - The XML Element representing the primitive
+ * @property {(name: string) => any} getAttribute - Function to get an attribute value by name
+ * @property {(name: string, value: any) => void} setAttribute - Function to set an attribute value by name
+ * */
+
+/** 
+ * @returns {Primitive[]} 
+ * */
 function getPrimitiveList() {
-	let primitiveList = primitives("Stock").concat(primitives("Flow")).concat(primitives("Variable")).concat(primitives("Converter"));
+	const primitiveList = primitives("Stock").concat(primitives("Flow")).concat(primitives("Variable")).concat(primitives("Converter"));
 	return primitiveList;
 }
 
@@ -7314,7 +7327,7 @@ function saveChangedAlert(continueHandler) {
 }
 
 class HtmlComponent {
-	/** @param {Primitive} parent */
+	/** @param {BaseObject} parent */
 	constructor(parent) {
 		this.componentId = "component-" + Math.ceil(Math.random() * (2 ** 32)).toString(16)
 		this.parent = parent;
@@ -7508,17 +7521,17 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		});
 	}
 	removeButtonHandler(event) {
-		let removeId = $(event.target).attr("data-id");
-		let removeIndex = this.displayIds.indexOf(removeId);
+		const removeId = $(event.target).attr("data-id");
+		const removeIndex = this.displayIds.indexOf(removeId);
 		if (removeIndex !== -1) {
 			this.displayIds.splice(removeIndex, 1);
 		}
 	}
 	updateExcludedList() {
-		let searchWord = this.find(".primitive-filter-input").val();
+		const searchWord = this.find(".primitive-filter-input").val();
 
-		let searchLowercase = searchWord.toLowerCase();
-		let results = this.getSearchPrimitiveResults(searchLowercase);
+		const searchLowercase = searchWord.toLowerCase();
+		const results = this.getSearchPrimitiveResults(searchLowercase);
 		let get_highlight_match = (name, match) => {
 			let index = name.toLowerCase().indexOf(match.toLowerCase());
 			if (index === -1 || match === "") {
@@ -7593,11 +7606,11 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 		this.updateExcludedList();
 	}
 	getSearchPrimitiveResults(searchLowercase) {
-		let prims = this.parent.getAcceptedPrimitiveList();
-		let results = [];
+		const prims = this.parent.getAcceptedPrimitiveList();
+		const results = [];
 
-		let compareByTypeAndName = (a, b) => { // sort by type and by alphabetical 
-			let orderDiff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
+		const compareByTypeAndName = (a, b) => { // sort by type and by alphabetical 
+			const orderDiff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
 			if (orderDiff !== 0) {
 				return orderDiff;
 			} else { // else sort alphabetically
@@ -7605,7 +7618,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			}
 		}
 
-		let compareBySearchWord = (a, b) => { // sort by what search word appears first 
+		const compareBySearchWord = (a, b) => { // sort by what search word appears first 
 			let charMatch = getName(a).toLowerCase().indexOf(searchLowercase) - getName(b).toLowerCase().indexOf(searchLowercase);
 			if (charMatch !== 0) {
 				return charMatch;
@@ -7614,7 +7627,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 			}
 		}
 
-		let order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
+		const order = ["Stock", "Flow", "Variable", "Constant", "Converter"];
 		results = prims.filter(p => // filter already added primitives 
 			this.displayIds.includes(getID(p)) === false
 		).filter(p => // filter search
@@ -8302,10 +8315,10 @@ class TableData {
 
 class TableLimitsComponent extends HtmlComponent {
 	render() {
-		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
-		let startValue = limits.start.auto ? getTimeStart() : limits.start.value;
-		let endValue = limits.end.auto ? getTimeStart() + getTimeLength() : limits.end.value;
-		let stepValue = limits.step.auto ? this.parent.getDefaultPlotPeriod() : limits.step.value;
+		const limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		const startValue = limits.start.auto ? getTimeStart() : limits.start.value;
+		const endValue = limits.end.auto ? getTimeStart() + getTimeLength() : limits.end.value;
+		const stepValue = limits.step.auto ? this.parent.getDefaultPlotPeriod() : limits.step.value;
 		return (`
 		<table class="modern-table zebra">
 			${["", "Value", "Auto"].map(header => `<th>${header}</th>`).join("")}
@@ -8333,19 +8346,19 @@ class TableLimitsComponent extends HtmlComponent {
 		<div class="limits-warning-div warning"></div>`);
 	}
 	bindEvents() {
-		let limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
+		const limits = JSON.parse(this.primitive.getAttribute("TableLimits"));
 		this.find(".start-auto-checkbox").change(event => {
-			let startAuto = $(event.target).prop("checked");
+			const startAuto = $(event.target).prop("checked");
 			this.find(".start-field").prop("disabled", startAuto);
 			this.find(".start-field").val(startAuto ? getTimeStart() : limits.start.value);
 		});
 		this.find(".end-auto-checkbox").change(event => {
-			let endAuto = $(event.target).prop("checked");
+			const endAuto = $(event.target).prop("checked");
 			this.find(".end-field").prop("disabled", endAuto);
 			this.find(".end-field").val(endAuto ? getTimeStart() + getTimeLength() : limits.end.value);
 		});
 		this.find(".step-auto-checkbox").change(event => {
-			let stepAuto = $(event.target).prop("checked");
+			const stepAuto = $(event.target).prop("checked");
 			this.find(".step-field").prop("disabled", stepAuto);
 			this.find(".step-field").val(stepAuto ? getTimeStep() : limits.step.value);
 		});
@@ -8354,10 +8367,10 @@ class TableLimitsComponent extends HtmlComponent {
 		});
 	}
 	checkValidTableLimits() {
-		let warningDiv = this.find(".limits-warning-div");
-		let startStr = this.find(".start-field").val();
-		let endStr = this.find(".end-field").val();
-		let stepStr = this.find(".step-field").val();
+		const warningDiv = this.find(".limits-warning-div");
+		const startStr = this.find(".start-field").val();
+		const endStr = this.find(".end-field").val();
+		const stepStr = this.find(".step-field").val();
 		if (isNaN(startStr) || startStr === "") {
 			warningDiv.html(warningHtml(`"From" must be a decimal number`, true));
 			return false;
@@ -8427,13 +8440,13 @@ class ExportDataComponent extends HtmlComponent {
 
 class ArithmeticPrecisionComponent extends HtmlComponent {
 	render() {
-		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
-		let options = [{ key: "precision", label: "Precision" }, { key: "decimal", label: "Decimal" }];
+		const numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		const options = [{ key: "precision", label: "Precision" }, { key: "decimal", label: "Decimal" }];
 		return (`<table class="modern-table zebra">
 			${options.map(option => {
-			let key = option.key;
-			let isChecked = numLength.usePrecision === (option.key === "precision");
-			let disabled = isChecked ? "" : "disabled";
+			const key = option.key;
+			const isChecked = numLength.usePrecision === (option.key === "precision");
+			const disabled = isChecked ? "" : "disabled";
 			return (`<tr>
 					<td>
 						<input class="num-len-radio enter-apply" type="radio" id="${key}" name="num-len" value="${key}" ${checkedHtml(isChecked)}>
@@ -8452,11 +8465,11 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 	}
 	bindEvents() {
 		this.find(".num-len-radio[name='num-len']").change(event => {
-			let selectedKey = event.target.value;
-			let otherKey = (selectedKey === "precision") ? "decimal" : "precision";
+			const selectedKey = event.target.value;
+			const otherKey = (selectedKey === "precision") ? "decimal" : "precision";
 
-			let selectedField = this.find(`.${selectedKey}-field`);
-			let otherField = this.find(`.${otherKey}-field`);
+			const selectedField = this.find(`.${selectedKey}-field`);
+			const otherField = this.find(`.${otherKey}-field`);
 
 			selectedField.prop("disabled", false);
 			otherField.prop("disabled", true);
@@ -8487,11 +8500,11 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 		}
 	}
 	applyChange() {
-		let numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
-		let selected = this.find("input[name='num-len']:checked").val();
-		let usePrecision = selected === "precision";
+		const numLength = JSON.parse(this.primitive.getAttribute("NumberLength"));
+		const selected = this.find("input[name='num-len']:checked").val();
+		const usePrecision = selected === "precision";
 
-		let value = this.find(`.${selected}-field`).val();
+		const value = this.find(`.${selected}-field`).val();
 		if (this.checkValidNumberLength(value)) {
 			numLength[selected] = parseInt(value);
 			numLength.usePrecision = usePrecision;
@@ -8502,9 +8515,9 @@ class ArithmeticPrecisionComponent extends HtmlComponent {
 
 class RoundToZeroComponent extends HtmlComponent {
 	render() {
-		let roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
-		let roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
-		let disabled = roundToZero ? "" : "disabled";
+		const roundToZero = this.primitive.getAttribute("RoundToZero") === "true";
+		const roundToZeroAtValue = this.primitive.getAttribute("RoundToZeroAtValue");
+		const disabled = roundToZero ? "" : "disabled";
 		return (`
 			<table class="modern-table zebra">
 				<tr>
@@ -8524,8 +8537,8 @@ class RoundToZeroComponent extends HtmlComponent {
 		`);
 	}
 	bindEvents() {
-		let roundToZeroCheckbox = this.find(".round-to-zero-checkbox");
-		let roundToZeroField = this.find(".round-to-zero-field");
+		const roundToZeroCheckbox = this.find(".round-to-zero-checkbox");
+		const roundToZeroField = this.find(".round-to-zero-field");
 
 		// set default button listener
 		this.find(".default-round-to-zero-button").click(() => {
@@ -8551,7 +8564,7 @@ class RoundToZeroComponent extends HtmlComponent {
 	}
 
 	checkValidRoundAtZeroAtField() {
-		let roundToZeroFieldValue = this.find(".round-to-zero-field").val();
+		const roundToZeroFieldValue = this.find(".round-to-zero-field").val();
 		if (this.find(".round-to-zero-checkbox").prop("checked")) {
 			if (isNaN(roundToZeroFieldValue)) {
 				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
@@ -8576,19 +8589,19 @@ class RoundToZeroComponent extends HtmlComponent {
 	}
 
 	setNumberboxWarning(isVisible, htmlMessage) {
-		let message = isVisible ? warningHtml(htmlMessage, true) : "";
-		let visibility = isVisible ? "visible" : "hidden";
+		const message = isVisible ? warningHtml(htmlMessage, true) : "";
+		const visibility = isVisible ? "visible" : "hidden";
 		this.find(".round-to-zero-warning-div").html(message);
 		this.find(".round-to-zero-warning-div").css("visibility", visibility);
 	}
 
 	applyChange() {
 		if (this.primitive) {
-			let roundToZero = this.find(".round-to-zero-checkbox").prop("checked");
+			const roundToZero = this.find(".round-to-zero-checkbox").prop("checked");
 			this.primitive.setAttribute("RoundToZero", roundToZero);
 
 			if (this.checkValidRoundAtZeroAtField()) {
-				let roundToZeroAtValue = this.find(".round-to-zero-field").val();
+				const roundToZeroAtValue = this.find(".round-to-zero-field").val();
 				this.primitive.setAttribute("RoundToZeroAtValue", roundToZeroAtValue);
 			}
 		}
@@ -8638,7 +8651,7 @@ class NewModelDialog extends jqDialog {
 		this.bindEnterApplyEvents();
 
 		$(this.dialogContent).find(".input-timeunits-default-value").click((event) => {
-			let selectedUnit = $(event.target).data("default-value");
+			const selectedUnit = $(event.target).data("default-value");
 			$(this.dialogContent).find(".input-timeunits").val(selectedUnit);
 			this.makeApply();
 		});
@@ -8659,7 +8672,7 @@ class NewModelDialog extends jqDialog {
 		//}
 	}
 	makeApply() {
-		let timeUnits = $(this.dialogContent).find(".input-timeunits").val();
+		const timeUnits = $(this.dialogContent).find(".input-timeunits").val();
 		if (!isTimeUnitOk(timeUnits.trim())) {
 			xAlert("You have to enter a time unit for the model, e.g. Years or Minutes");
 			return;
@@ -8719,10 +8732,10 @@ class SimulationSettings extends jqDialog {
 		this.setTitle("Simulation Settings");
 	}
 	beforeShow() {
-		let start = getTimeStart();
-		let length = getTimeLength();
-		let step = getTimeStep();
-		let timeUnit = getTimeUnits();
+		const start = getTimeStart();
+		const length = getTimeLength();
+		const step = getTimeStep();
+		const timeUnit = getTimeUnits();
 		this.setHtml(`
 		<table class="modern-table zebra">
 		<tr>
@@ -8787,8 +8800,8 @@ class SimulationSettings extends jqDialog {
 			this.warning_div.html(warningHtml(`Step must be &gt;0`, true));
 			return false;
 		} else if (Settings.limitSimulationSteps && Number(this.length_field.val()) / Number(this.step_field.val()) > 1e5) {
-			let iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
-			let iters_str = format_number(iterations, { use_e_format_upper_limit: 1e5, precision: 3 });
+			const iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
+			const iters_str = format_number(iterations, { use_e_format_upper_limit: 1e5, precision: 3 });
 			this.warning_div.html(warningHtml(`
 				This Length requires ${iters_str} time steps. <br/>
 				The limit is 10<sup>5</sup> time steps per simulation.
@@ -8796,8 +8809,8 @@ class SimulationSettings extends jqDialog {
 			return false;
 
 		} else if (Settings.limitSimulationSteps && Number(this.length_field.val()) / Number(this.step_field.val()) > 1e4) {
-			let iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
-			let iters_str = format_number(iterations, { use_e_format_upper_limit: 1e4, precision: 3 });
+			const iterations = Math.ceil(Number(this.length_field.val()) / Number(this.step_field.val()));
+			const iters_str = format_number(iterations, { use_e_format_upper_limit: 1e4, precision: 3 });
 			this.warning_div.html(noteHtml(`
 				This Length requires ${iters_str} time steps. <br/>
 				More than 10<sup>4</sup> time steps per simulation <br/>
@@ -8818,12 +8831,12 @@ class SimulationSettings extends jqDialog {
 	}
 
 	makeApply() {
-		let validSettings = this.checkValidTimeSettings();
+		const validSettings = this.checkValidTimeSettings();
 		if (validSettings) {
 			setTimeStart(this.start_field.val());
 			setTimeLength(this.length_field.val());
 			setTimeStep(this.step_field.val());
-			let method = $(".input-method :selected").val();
+			const method = $(".input-method :selected").val();
 			setAlgorithm(method);
 		}
 	}
@@ -8872,11 +8885,11 @@ class TimeUnitDialog extends jqDialog {
 		$(this.dialog).find(".timeunit-field").get(0).focus();
 	}
 	checkValid() {
-		let value = $(this.dialogContent).find(".timeunit-field").val();
+		const value = $(this.dialogContent).find(".timeunit-field").val();
 		return isTimeUnitOk(value);
 	}
 	showComplain(ok) {
-		let complainDiv = $(this.dialogContent).find(".complain-div");
+		const complainDiv = $(this.dialogContent).find(".complain-div");
 		if (ok) {
 			complainDiv.html("");
 		} else {
@@ -8903,8 +8916,8 @@ class TimeUnitDialog extends jqDialog {
 
 class GeometryDialog extends DisplayDialog {
 	renderStrokeHtml() {
-		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
-		let primWidth = this.primitive.getAttribute("StrokeWidth");
+		const strokeWidths = ["1", "2", "3", "4", "5", "6"];
+		const primWidth = this.primitive.getAttribute("StrokeWidth");
 		return (`
 			<table class="modern-table zebra">
 				<tr>
@@ -9106,7 +9119,7 @@ class ConverterDialog extends jqDialog {
 		})
 		this.cmValueField.on("inputRead", (cm, event) => {
 			if (event.origin == "paste") {
-				let data = event.text.map(row => row.split("\t"))
+				const data = event.text.map(row => row.split("\t"))
 				data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
 				if (data.length >= 1) {
 					cm.setValue(data.map(d => d.join(",\t")).join(";\n"))
@@ -9135,7 +9148,7 @@ class ConverterDialog extends jqDialog {
 			return;
 		}
 		this.show();
-		let linkedIn = findLinkedInPrimitives(id);
+		const linkedIn = findLinkedInPrimitives(id);
 		if (linkedIn.length === 1) {
 			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
 		} else if (linkedIn.length === 0) {
@@ -9146,13 +9159,13 @@ class ConverterDialog extends jqDialog {
 
 		this.defaultFocusSelector = defaultFocusSelector;
 
-		let oldValue = getValue(this.primitive);
+		const oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 		this.updateValues(oldValue)
 		this.updatePlot()
 
-		let oldName = getName(this.primitive);
-		let oldNameBrackets = makePrimitiveName(oldName);
+		const oldName = getName(this.primitive);
+		const oldNameBrackets = makePrimitiveName(oldName);
 
 		this.setTitle(`${oldNameBrackets} properties`);
 
@@ -9160,7 +9173,7 @@ class ConverterDialog extends jqDialog {
 		this.cmValueField.setValue(oldValue);
 
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+			const valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
 		}
 	}
@@ -9170,7 +9183,7 @@ class ConverterDialog extends jqDialog {
 	updatePlot() {
 		$(this.dialogContent).find("#converter-plot-div").empty()
 		if (!Preferences.get("showConverterPlotPreview")) return;
-		let serieArray = [];
+		const serieArray = [];
 		for (let row of this.currentValues) {
 			if (row[0] !== undefined && row[1] !== undefined)
 				serieArray.push([Number(row[0]), Number(row[1])]);
@@ -9500,8 +9513,8 @@ class FunctionHelper {
 	}
 	static updateFunctionHelp(cm) {
 		let func = undefined
-		let cursor = cm.getCursor()
-		let line = cm.getLine(cursor.line)
+		const cursor = cm.getCursor()
+		const line = cm.getLine(cursor.line)
 		const prevStr = line.substring(0, cursor.ch)
 		const bracketStack = []
 		let argIndex = 0
@@ -9538,10 +9551,10 @@ class FunctionHelper {
 
 class Autocomplete {
 	static getCompletions(cm, options, prim) {
-		let cursor = cm.getCursor()
-		let line = cm.getLine(cursor.line)
-		let start = cursor.ch
-		let end = cursor.ch
+		const cursor = cm.getCursor()
+		const line = cm.getLine(cursor.line)
+		const start = cursor.ch
+		const end = cursor.ch
 		while (start && /\w/.test(line.charAt(start - 1))) --start
 		while (end < line.length && /\w/.test(line.charAt(end))) ++end
 		const prevStr = line.substring(0, cursor.ch)
@@ -9606,10 +9619,10 @@ class Autocomplete {
 		elem.style.width = "100%"
 		elem.style.justifyContent = "space-between"
 		elem.style.boxSizing = "border-box"
-		let preview = document.createElement("span")
+		const preview = document.createElement("span")
 		cur.className && preview.classList.add(cur.className)
 		preview.innerText = cur.displayText
-		let note = document.createElement("i")
+		const note = document.createElement("i")
 		note.innerText = cur.note ?? ""
 		note.style.paddingLeft = "1em"
 		note.style.fontWeight = "normal"
@@ -9620,6 +9633,9 @@ class Autocomplete {
 }
 
 class DefinitionEditor extends jqDialog {
+	/** @type {Primitive} */
+	primitive;
+
 	constructor() {
 		super();
 		this.accordionBuilt = false;
@@ -9661,7 +9677,7 @@ class DefinitionEditor extends jqDialog {
 			</div>
 		`);
 
-		let value_field = document.getElementsByClassName("value-field")[0];
+		const value_field = document.getElementsByClassName("value-field")[0];
 		this.cmValueField = new CodeMirror.fromTextArea(value_field,
 			{
 				mode: "stochsd-dynamic-mode",
@@ -9697,12 +9713,12 @@ class DefinitionEditor extends jqDialog {
 		});
 
 		$(this.dialogContent).find(".name-field").keyup((event) => {
-			let newName = stripBrackets($(event.target).val());
-			let nameFree = isNameFree(newName, this.primitive.id);
+			const newName = stripBrackets($(event.target).val());
+			const nameFree = isNameFree(newName, this.primitive.id);
 			// valid according to insight maker
-			let validName = validPrimitiveName(newName, this.primitive);
+			const validName = validPrimitiveName(newName, this.primitive);
 			// valid for tools StatRes etc.
-			let validToolVarName = isValidToolName(newName);
+			const validToolVarName = isValidToolName(newName);
 			if (nameFree && validName && validToolVarName) {
 				$(event.target).css("background-color", "white");
 				$(this.dialogContent).find(".name-warning-div").html("");
@@ -9803,9 +9819,9 @@ class DefinitionEditor extends jqDialog {
 
 
 		if (this.defaultFocusSelector) {
-			let valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
+			const valueFieldDom = $(this.dialogContent).find(this.defaultFocusSelector).get(0);
 			valueFieldDom.focus();
-			let inputLength = valueFieldDom.value.length;
+			const inputLength = valueFieldDom.value.length;
 			valueFieldDom.setSelectionRange(0, inputLength);
 		}
 
@@ -9827,11 +9843,11 @@ class DefinitionEditor extends jqDialog {
 
 		this.updateHelpText();
 
-		let oldValue = getValue(this.primitive);
+		const oldValue = getValue(this.primitive);
 		oldValue = oldValue.replace(/\\n/g, "\n");
 
-		let oldName = getName(this.primitive);
-		let oldNameBrackets = makePrimitiveName(oldName);
+		const oldName = getName(this.primitive);
+		const oldNameBrackets = makePrimitiveName(oldName);
 
 		this.setTitle(oldNameBrackets + " properties");
 
@@ -9982,11 +9998,11 @@ class DefinitionEditor extends jqDialog {
 	makeApply() {
 		if (this.primitive) {
 			// Handle value
-			let value = this.cmValueField.getValue();
+			const value = this.cmValueField.getValue();
 			setValue2(this.primitive, value);
 			// handle name
-			let oldName = getName(this.primitive);
-			let newName = stripBrackets($(this.dialogContent).find(".name-field").val());
+			const oldName = getName(this.primitive);
+			const newName = stripBrackets($(this.dialogContent).find(".name-field").val());
 			if (oldName != newName) {
 				if (isNameFree(newName) && validPrimitiveName(newName, this.primitive) && isValidToolName(newName)) {
 					setName(this.primitive, newName);
@@ -10222,7 +10238,7 @@ class EquationListDialog extends jqDialog {
 				$(this.dialog).dialog('close');
 			},
 			"Print Equations": () => {
-				let contentHTML = $(this.dialogContent).html();
+				const contentHTML = $(this.dialogContent).html();
 				printContentInNewWindow(contentHTML);
 			}
 		};
