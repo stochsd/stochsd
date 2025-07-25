@@ -44,23 +44,23 @@ const type_size = {
 // the keys are what the visuals have as type
 // The values what new names should be based on when creating new visuals 
 const type_basename = {
-	"timeplot": "TimePlot",
-	"compareplot": "ComparePlot",
-	"xyplot": "XyPlot",
-	"histoplot": "HistoPlot",
-	"table": "Table",
-	"rectangle": "Rectangle",
-	"ellipse": "Ellipse",
-	"line": "Line",
-	"numberbox": "Numberbox",
-	"text": "Text",
-	"stock": "Stock",
-	"variable": "Auxiliary",
-	"flow": "Flow",
-	"link": "Link",
-	"converter": "Converter",
-	"text": "Text",
-	"constant": "Parameter"
+	timeplot: "TimePlot",
+	compareplot: "ComparePlot",
+	xyplot: "XyPlot",
+	histoplot: "HistoPlot",
+	table: "Table",
+	rectangle: "Rectangle",
+	ellipse: "Ellipse",
+	line: "Line",
+	numberbox: "Numberbox",
+	text: "Text",
+	stock: "Stock",
+	variable: "Auxiliary",
+	flow: "Flow",
+	link: "Link",
+	converter: "Converter",
+	text: "Text",
+	constant: "Parameter"
 };
 
 // Stores Visual objects and connections
