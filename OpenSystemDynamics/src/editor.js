@@ -5920,45 +5920,9 @@ $(window).load(function () {
 	$("#btn_print_model").click(function () {
 		printDiagram();
 	});
-	$("#btn_black").click(function () {
-		setColorToSelection("black");
-	});
-	$("#btn_grey").click(function () {
-		setColorToSelection("silver");
-	});
-	$("#btn_red").click(function () {
-		setColorToSelection("red");
-	});
-	$("#btn_deeppink").click(function () {
-		setColorToSelection("deeppink");
-	});
-	$("#btn_brown").click(function () {
-		setColorToSelection("brown");
-	});
-	$("#btn_orange").click(function () {
-		setColorToSelection("orange");
-	});
-	$("#btn_gold").click(function () {
-		setColorToSelection("gold");
-	});
-	$("#btn_olive").click(function () {
-		setColorToSelection("olive");
-	});
-	$("#btn_green").click(function () {
-		setColorToSelection("green");
-	});
-	$("#btn_teal").click(function () {
-		setColorToSelection("teal");
-	});
-	$("#btn_blue").click(function () {
-		setColorToSelection("blue");
-	});
-	$("#btn_purple").click(function () {
-		setColorToSelection("purple");
-	});
-	$("#btn_magenta").click(function () {
-		setColorToSelection("magenta");
-	});
+	["black","grey","red","deeppink","brown","orange","gold","olive","green","teal","blue","purple","magenta"].map(
+		(color) => $("#btn_"+color).click(() => setColorToSelection(color))
+	);
 	$("#btn_macro").click(function () {
 		macroDialog.show();
 	});
