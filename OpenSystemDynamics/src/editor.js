@@ -7571,7 +7571,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 	}
 	getSearchPrimitiveResults(searchLowercase) {
 		const prims = this.parent.getAcceptedPrimitiveList();
-		const results = [];
+		let results = [];
 
 		const compareByTypeAndName = (a, b) => { // sort by type and by alphabetical 
 			const orderDiff = order.indexOf(getTypeNew(a)) - order.indexOf(getTypeNew(b))
