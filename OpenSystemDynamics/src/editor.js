@@ -6517,14 +6517,6 @@ class runOverlay {
 }
 runOverlay.init();
 
-const runStateEnum = {
-	none: "none",
-	running: "running",
-	stopped: "stopped",
-	stepping: "stepping",
-	paused: "paused"
-}
-
 // Not yet implemented
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
@@ -6605,8 +6597,11 @@ async function updateRecentsMenu() {
 }
 
 class RunResults {
+	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
+	static runState;
+
 	static init() {
-		this.runState = runStateEnum.none;
+		this.runState = "none";
 		// Is always null if simulation is not running
 		// Is a data structure returned from runModel if simulation is running it
 		this.simulationController = null;
@@ -6702,10 +6697,10 @@ class RunResults {
 	}
 	static runPauseSimulation() {
 		switch (this.runState) {
-			case runStateEnum.running:
+			case "running":
 				this.pauseSimulation();
 				break;
-			case runStateEnum.paused:
+			case "paused":
 				this.resumeSimulation();
 				break;
 			default:
@@ -6714,7 +6709,7 @@ class RunResults {
 	}
 	static resumeSimulation() {
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
-		this.runState = runStateEnum.running;
+		this.runState = "running";
 		// Simulation controller can only be null if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
 		if (this.simulationController != null) {
@@ -6736,7 +6731,7 @@ class RunResults {
 			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
 			setPauseInterval(getTimeStep() * 1000);
 		}
-		this.runState = runStateEnum.running;
+		this.runState = "running";
 		runOverlay.block();
 		this.simulationController = runModel({
 			rate: -1,
@@ -6746,7 +6741,7 @@ class RunResults {
 				this.simulationController = res;
 
 				// If still running continue with next cycle
-				if (this.runState == runStateEnum.running) {
+				if (this.runState == "running") {
 					this.updateProgressBar();
 					this.setProgressStatus(false);
 					do_global_log("length " + this.results.length)
@@ -6789,10 +6784,10 @@ class RunResults {
 	}
 	static stepSimulation() {
 		/* experiment
-		if (this.runState == runStateEnum.running) {
+		if (this.runState == "running") {
 			this.resetSimulation();
 			this.simulationController = null;
-			this.runState = runStateEnum.stepping;
+			this.runState = "stepping";
 			return;
 		}
 		*/
@@ -6852,7 +6847,7 @@ class RunResults {
 		this.updateProgressText()
 	}
 	static pauseSimulation() {
-		this.runState = runStateEnum.paused;
+		this.runState = "paused";
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 	}
 	static resetSimulation() {
@@ -6864,7 +6859,7 @@ class RunResults {
 	static stopSimulation() {
 		runOverlay.unblock();
 		endRunningSimulation();
-		this.runState = runStateEnum.stopped;
+		this.runState = "stopped";
 		this.simulationController = null;
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
