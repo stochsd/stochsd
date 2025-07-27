@@ -5024,8 +5024,10 @@ class LinkTool extends TwoPointerTool {
 	}
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
-		let anchor = object_array[node_id];
-		let parent = get_parent(anchor);
+		/** @type {AnchorPoint} */
+		const anchor = object_array[node_id];
+		/** @type {BaseConnection} */
+		const parent = get_parent(anchor);
 		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
 			attach_anchor(anchor);
 			parent.update();
