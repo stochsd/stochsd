@@ -10011,12 +10011,14 @@ class DefinitionEditor extends jqDialog {
 }
 /** @param {string} htmlContent */
 function printContentInNewWindow(htmlContent) {
-	let printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
-	printWindow.document.write('<html><head><title>Equation List</title>');
-	printWindow.document.write('<link rel="stylesheet" type="text/css" href="editor.css">');
-	printWindow.document.write('</head><body >');
-	printWindow.document.write(htmlContent);
-	printWindow.document.write('</body></html>');
+	const printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
+	printWindow.document.title = "Equation List";
+	const link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.type = "text/css";
+	link.href = "editor.css";
+	printWindow.document.head.appendChild(link);
+	printWindow.document.body.innerHTML = htmlContent;
 
 	setTimeout(() => {
 		printWindow.print();
