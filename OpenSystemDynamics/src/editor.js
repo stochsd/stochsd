@@ -9827,11 +9827,10 @@ class DefinitionEditor extends jqDialog {
 
 		this.updateHelpText();
 
-		let oldValue = getValue(this.primitive);
-		oldValue = oldValue.replace(/\\n/g, "\n");
+		const oldValue = getValue(this.primitive).replace(/\\n/g, "\n");
 
-		let oldName = getName(this.primitive);
-		let oldNameBrackets = makePrimitiveName(oldName);
+		const oldName = getName(this.primitive);
+		const oldNameBrackets = makePrimitiveName(oldName);
 
 		this.setTitle(oldNameBrackets + " properties");
 
