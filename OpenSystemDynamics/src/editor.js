@@ -7186,8 +7186,23 @@ class jqDialog {
 // Needed for the static init of this class
 jqDialog.init();
 
+
+
+
+/** 
+ * @typedef {Object} Primitive
+ * @property {string} type - Type of primitive, e.g. "Stock", "Flow", "Variable", "Converter", "Ghost", "Link"
+ * @property {string} id - Unique identifier for the primitive
+ * @property {Element} value - The XML Element representing the primitive
+ * @property {(name: string) => any} getAttribute - Function to get an attribute value by name
+ * @property {(name: string, value: any) => void} setAttribute - Function to set an attribute value by name
+ * */
+
+/**
+ * @returns {Primitive[]} - Returns a list of all primitives of type "Stock", "Flow", "Variable", and "Converter"
+ */
 function getPrimitiveList() {
-	let primitiveList = primitives("Stock").concat(primitives("Flow")).concat(primitives("Variable")).concat(primitives("Converter"));
+	const primitiveList = primitives("Stock").concat(primitives("Flow")).concat(primitives("Variable")).concat(primitives("Converter"));
 	return primitiveList;
 }
 
@@ -7309,7 +7324,7 @@ function saveChangedAlert(continueHandler) {
 }
 
 class HtmlComponent {
-	/** @param {Primitive} parent */
+	/** @param {DisplayDialog} parent */
 	constructor(parent) {
 		this.componentId = "component-" + Math.ceil(Math.random() * (2 ** 32)).toString(16)
 		this.parent = parent;
@@ -9615,6 +9630,9 @@ class Autocomplete {
 }
 
 class DefinitionEditor extends jqDialog {
+	/** @type {Primitive} */
+	primitive;
+
 	constructor() {
 		super();
 		this.accordionBuilt = false;
