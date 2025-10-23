@@ -9118,10 +9118,17 @@ class ConverterDialog extends jqDialog {
 		})
 		this.cmValueField.on("inputRead", (cm, event) => {
 			if (event.origin == "paste") {
-				let data = event.text.map(row => row.split("\t"))
-				data = data.filter(row => row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1]));
+				let columnWidth = 1
+				/** @type {[string, string][]} */
+				const data = event.text.map(row => row.split("\t"))
+					.filter(row => {
+						const isValidRow = row.length === 2 && this.isValidCellValue(row[0]) && this.isValidCellValue(row[1])
+						if (isValidRow && columnWidth < row[0].length)
+							columnWidth = row[0].length
+						return isValidRow
+					});
 				if (data.length >= 1) {
-					cm.setValue(data.map(d => d.join(",\t")).join(";\n"))
+					cm.setValue(data.map(d => `${d[0]},`.padEnd(columnWidth+2, " ")+d[1]).join(";\n"))
 					this.updatePlot()
 				}
 			}
