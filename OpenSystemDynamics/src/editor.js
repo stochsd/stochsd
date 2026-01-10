@@ -5808,7 +5808,7 @@ $(window).load(function () {
 		if (event.shiftKey) {
 			moveSize = 16;
 		}
-		if (event.key == "ArrowRight") {
+		if (event.key == "ArrowLeft") {
 			MouseTool.mouseMove(mousedown_x - moveSize, mousedown_y, false);
 			event.preventDefault();
 		}
@@ -5816,7 +5816,7 @@ $(window).load(function () {
 			MouseTool.mouseMove(mousedown_x, mousedown_y - moveSize, false);
 			event.preventDefault();
 		}
-		if (event.key == "ArrowLeft") {
+		if (event.key == "ArrowRight") {
 			MouseTool.mouseMove(mousedown_x + moveSize, mousedown_y, false);
 			event.preventDefault();
 		}
