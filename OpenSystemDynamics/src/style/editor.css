@@ -475,8 +475,8 @@ h3.equation-list-header {
     color: var(--color-warning-foreground);
 }
 .note {
-    /* Used when there is somthing to note but still allowed */
-    color: #ff8c00;
+    /* Used when there is something to note but still allowed */
+    color: #ea580c;
 }
 kbd {
     background-color: #eee;
