@@ -12,6 +12,8 @@
     --shadow-menu: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
     --color-progress-complete: #aaeeaa;
     --color-progress-pending: #eed0aa;
+    --color-warning-background: #f0dbdb;
+    --color-warning-foreground: #c01818;
     --radius-menu: 0.25rem;
 }
 
@@ -99,7 +101,6 @@ text.name_element {
 .fileToolBox {
     background-color: var(--color-highlight-neutral);
 	border-bottom: 1px solid var(--table-border-color);
-    margin-bottom: 0.5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -112,18 +113,31 @@ text.name_element {
 
 /* tool panel */
 .tool-panel {
+    margin-block: 0.25rem;
+    margin-inline: 0.5rem;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    column-gap: 1.25rem;
+    column-gap: 1rem;
     --button-size: 2rem;
 }
 .tool-panel > .tool-grouping {
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: var(--button-size);
     gap: 0.125rem;
+}
+.tool-panel > .tool-grouping:not(:last-of-type)::after {
+    content: "";
+    position: absolute;
+    right: -0.5rem;
+    width: 1px;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    background-color: var(--table-border-color);
+    background-color: var(--color-border);
 }
 /* buttons title */
 [data-title] {
@@ -131,6 +145,7 @@ text.name_element {
 }
 [data-title]:hover::after {
     content: attr(data-title);
+    font-weight: normal;
     position: absolute;
     top: calc(100% + 0.125rem);
     left: 0;
@@ -203,7 +218,6 @@ button.tool-button img {
     left: 0;
     bottom: 0;
     width: var(--progress);
-    background-color: red;
     background-color: var(--color-progress-pending);
 }
 #progress-bar[data-done]::before {
@@ -329,7 +343,7 @@ div.vertical-space {
 }
 div.center-vertically-container {
     display: flex; 
-    flex-direction: row; 
+    flex-direction: row;
     align-items: center;
 }
 
@@ -458,7 +472,7 @@ h3.equation-list-header {
 /* for warning or note texts when changing settings and properties */
 .warning {
     /* Used when there is a warning and changes wont be applied */
-    color: red;
+    color: var(--color-warning-foreground);
 }
 .note {
     /* Used when there is somthing to note but still allowed */
@@ -509,16 +523,20 @@ kbd {
 }
 /*  Info bar start here */
 .info-bar {
-    display:flex; 
-    justify-content: space-between;
-    margin: 0px; 
+    padding-left: 0.5rem;
+    border-top: 1px solid var(--table-border-color);
+    display: flex;
+    column-gap: 1.5rem;
+    margin: 0;
     font-size: 14px; 
-    height: 3rem;
+    min-height: 3rem;
     font-family: Arial, Helvetica, sans-serif;
+    min-height: 1.75rem;
 }
 .info-box__element {
-    white-space:nowrap; 
-    margin: 0px 24px;
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center;
 }
 .info-bar__definition {
     font-family: monospace;
@@ -526,9 +544,14 @@ kbd {
     text-overflow:ellipsis; 
     max-width: 50vw;
 }
-.info-bar__value-error {
-    color: red;
-    float: right;
+.info-bar__definition-error:empty {
+    display: none;
+}
+.info-bar__definition-error {
+    font-weight: bold;
+    padding-inline: 1rem;
+    background-color: var(--color-warning-background);
+    color: var(--color-warning-foreground);
 }
 
 /* Add style to jqplot elements */

@@ -20,7 +20,7 @@
 
 /* .cm-s-stochsdtheme .CodeMirror-gutters { color: #282a36; } */
 .cm-functioncall { color: hsl(30deg, 50%, 40%); font-weight: bold; }
-.cm-comment { color: hsl(0deg, 0%, 50%); font-style: italic; }
+.cm-comment { color: hsl(0deg, 0%, 50%) !important; font-style: italic; }
 .cm-string { color: hsl(300deg, 50%, 40%); }
 .cm-number { color: black; font-weight: normal; }
 .cm-normal {color: black; font-weight: normal; }

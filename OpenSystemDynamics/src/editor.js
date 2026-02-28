@@ -308,9 +308,10 @@ function quitQuestion() {
 const mouse = { "left": 1, "middle": 2, "right": 3 };
 
 class InfoBar {
+
 	static init() {
-		let infoDef = $(".info-bar__definition")[0];
-		this.cmInfoDef = new CodeMirror(infoDef,
+		this.infoDefinitionElement = $(".info-bar__definition")[0];
+		this.cmInfoDef = new CodeMirror(this.infoDefinitionElement,
 			{
 				mode: "stochsd-dynamic-mode",
 				theme: "stochsdtheme oneline",
@@ -320,7 +321,8 @@ class InfoBar {
 		);
 		this.infoRestricted = $(".info-bar__definition-restricted");
 		this.infoDE = $(".info-bar__definition-error");
-		$(infoDef).find(".CodeMirror").css("border", "none");
+		$(this.infoDefinitionElement).find(".CodeMirror").css("border", "none");
+		InfoBar.update()
 	}
 	static setRestricted(isRestricted, primName) {
 		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
@@ -333,11 +335,13 @@ class InfoBar {
 			selected_array.push(selected_hash[key]);
 		}
 
-		if (selected_array == 0) {
-			this.cmInfoDef.setValue("Nothing selected");
+		if (selected_array.length == 0) {
+			$(this.infoDefinitionElement).find(".CodeMirror").addClass("cm-comment")
+			this.cmInfoDef.setValue("Nothing selected")
 			this.infoDE.html("");
 			this.setRestricted(false);
 		} else if (selected_array.length == 1) {
+			$(this.infoDefinitionElement).find(".CodeMirror").removeClass("cm-comment")
 			let selected = selected_array[0];
 			let primitive = selected_array[0].primitive;
 			if (selected.is_ghost) {
@@ -345,7 +349,7 @@ class InfoBar {
 			}
 			let name = primitive.getAttribute("name");
 			let definition = getValue(primitive);
-			this.infoDE.html(`<span class="warning">${DefinitionError.getMessage(primitive)}</span>`);
+			this.infoDE.html(`${DefinitionError.getMessage(primitive)}`);
 
 			let isRestricted = primitive.getAttribute("NonNegative") === "true" || primitive.getAttribute("OnlyPositive") === "true";
 			this.setRestricted(isRestricted, name);
@@ -360,19 +364,19 @@ class InfoBar {
 				// let Type = type.charAt(0).toUpperCase() + type.slice(1); 
 				let Type = type_basename[type];
 				switch (type) {
-					case ("numberbox"):
+					case "numberbox":
 						let targetName = `${getName(findID(selected.primitive.getAttribute("Target")))}`
 						this.cmInfoDef.setValue(`Numberbox: Value of [${targetName}]`);
 						break;
-					case ("timeplot"):
-					case ("compareplot"):
-					case ("table"):
-					case ("xyplot"):
-					case ("histoplot"):
+					case "timeplot":
+					case "compareplot":
+					case "table":
+					case "xyplot":
+					case "histoplot":
 						let names = selected.dialog.displayIdList.map(findID).filter(exist => exist).map(getName);
 						this.cmInfoDef.setValue(`${Type}: ${names.map(name => ` [${name}]`)}`);
 						break;
-					case ("link"):
+					case "link":
 						let source = selected.getStartAttach() ? `[${getName(selected.getStartAttach().primitive)}]` : "NONE";
 						let target = selected.getEndAttach() ? `[${getName(selected.getEndAttach().primitive)}]` : "NONE";
 						this.cmInfoDef.setValue(`Link: ${source} -> ${target}`);
@@ -382,6 +386,7 @@ class InfoBar {
 				}
 			}
 		} else {
+			$(this.infoDefinitionElement).find(".CodeMirror").removeClass("cm-comment")
 			this.cmInfoDef.setValue(`${selected_array.length} objects selected`);
 			this.infoDE.html("");
 			this.setRestricted(false);
