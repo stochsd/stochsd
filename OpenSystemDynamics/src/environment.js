@@ -628,7 +628,7 @@ class NwFileManager extends BaseFileManager {
     this.modelLoaderInput = document.body.appendChild(
       document.createElement("input")
     );
-    this.modelLoaderInput.className = "modelLoaderInput";
+    this.modelLoaderInput.className = "modelLoaderInput invisible-file-input";
     this.modelLoaderInput.addEventListener(
       "change",
       (event) => {
@@ -661,7 +661,7 @@ class NwFileManager extends BaseFileManager {
     this.modelSaverInput = document.body.appendChild(
       document.createElement("input")
     );
-    this.modelSaverInput.className = "modelSaverInput";
+    this.modelSaverInput.className = "modelSaverInput invisible-file-input";
     this.modelSaverInput.addEventListener(
       "change",
       (event) => {
@@ -694,7 +694,7 @@ class NwFileManager extends BaseFileManager {
     this.fileExportInput = document.body.appendChild(
       document.createElement("input")
     );
-    this.fileExportInput.className = "fileExportInput";
+    this.fileExportInput.className = "fileExportInput invisible-file-input";
     this.fileExportInput.onSuccess = function () {
       alert("On success");
     };

@@ -569,3 +569,8 @@ b[data-arg]::before {
 .preferences > .preference .title {
     font-weight: bold;
 }
+
+.invisible-file-input {
+    position: absolute;
+    width: 0;
+}
