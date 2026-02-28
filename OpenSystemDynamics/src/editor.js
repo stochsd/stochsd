@@ -5307,7 +5307,6 @@ function delete_object(node_id) {
 		object_to_delete.element_array[key].remove();
 	}
 	object_to_delete.group.remove();
-	delete object_to_delete;
 	delete object_array[node_id];
 }
 function primitive_mousedown(node_id, event, new_primitive) {
