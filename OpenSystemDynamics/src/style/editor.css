@@ -97,15 +97,16 @@ text.name_element {
 
 /* menu */
 .fileToolBox {
-    width: calc(100% - 1rem);
-    margin-bottom: 0.25rem;
+    background-color: var(--color-highlight-neutral);
+	border-bottom: 1px solid var(--table-border-color);
+    margin-bottom: 0.5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 #homepage-info {
     font-size: 0.75rem;
-    margin-left: auto;
+    margin-inline: auto 1rem;
     color: var(--color-text-secondary);
 }
 
@@ -115,7 +116,6 @@ text.name_element {
     flex-direction: row;
     flex-wrap: wrap;
     column-gap: 1.25rem;
-    margin-top: 0.5rem;
     --button-size: 2rem;
 }
 .tool-panel > .tool-grouping {
@@ -227,10 +227,14 @@ button.tool-button img {
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block; 
     border: unset;
-    background-color: transparent;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-highlight-neutral);
+    padding-inline: 0.5rem;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
 }
 #btn_timeunit:hover {
-    background-color: var(--color-highlight-neutral);
+    border-color: black;
 }
 #btn_timeunit > #timeunit-label {
     font-size: 10px;
@@ -509,13 +513,12 @@ kbd {
     justify-content: space-between;
     margin: 0px; 
     font-size: 14px; 
-    height: 32px; 
+    height: 3rem;
     font-family: Arial, Helvetica, sans-serif;
 }
 .info-box__element {
     white-space:nowrap; 
     margin: 0px 24px;
-    /* min-width: 140px; */
 }
 .info-bar__definition {
     font-family: monospace;

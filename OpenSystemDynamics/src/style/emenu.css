@@ -30,7 +30,7 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 
 .eMenu > .menuButton:hover,
 .eMenu > .menuButton:has(~.open) {
-	background-color: var(--color-highlight-neutral);
+	background-color: var(--color-background-light);
 }
 .eMenu > .menuContent.open {
 	display: block;
