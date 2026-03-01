@@ -69,15 +69,23 @@ var connection_array = {};
 /** @type {{ [id: string]: OnePointer }} */
 var object_array = {};
 
-// Stores state related to mouse
-var last_click_object_clicked = false;
-var last_clicked_element = null; // Points to the object we last clicked
-var leftmouseisdown = false;
-var mousedown_x = 0;
-var mousedown_y = 0;
-var lastMouseX = 0;
-var lastMouseY = 0;
-var empty_click_down = false;
+const mouse = { 
+	// Stores state related to mouse
+	clickedOnObject: false,
+	lastClickedPrimitive: null, // Points to the object we last clicked
+	isLeftDown: false,
+	downX: 0,
+	downY: 0,
+	x: 0,
+	y: 0,
+	emptyClickDown: false,
+	// NOTE: values for event.which should be used
+	// event.button will give incorrect results 
+	left: 1, 
+	middle: 2, 
+	right: 3 
+};
+
 
 // Stores log for the global log
 var global_log = "";
@@ -302,10 +310,6 @@ function quitQuestion() {
 		environment.closeWindow()
 	});
 }
-
-// NOTE: values for event.which should be used
-// event.button will give incorrect results 
-const mouse = { "left": 1, "middle": 2, "right": 3 };
 
 class InfoBar {
 
@@ -4519,12 +4523,12 @@ function get_only_link_selected() {
 
 class MouseTool extends BaseTool {
 	static leftMouseDown(x, y) {
-		mousedown_x = x;
-		mousedown_y = y;
-		do_global_log("last_click_object_clicked " + last_click_object_clicked);
-		if (!last_click_object_clicked) {
-			empty_click_down = true;
-			RectSelector.start(mousedown_x, mousedown_y);
+		mouse.downX = x;
+		mouse.downY = y;
+		do_global_log("mouse.clickedOnObject " + mouse.clickedOnObject);
+		if (!mouse.clickedOnObject) {
+			mouse.emptyClickDown = true;
+			RectSelector.start(mouse.downX, mouse.downY);
 		}
 
 		let selected_anchor = get_only_selected_anchor_id();
@@ -4543,20 +4547,20 @@ class MouseTool extends BaseTool {
 		}
 
 		// Reset it for use next time
-		last_click_object_clicked = false;
+		mouse.clickedOnObject = false
 	}
 	static mouseMove(x, y, shiftKey) {
-		let diff_x = x - mousedown_x;
-		let diff_y = y - mousedown_y;
-		mousedown_x = x;
-		mousedown_y = y;
+		let diff_x = x - mouse.downX;
+		let diff_y = y - mouse.downY;
+		mouse.downX = x;
+		mouse.downY = y;
 
-		if (empty_click_down) {
-			RectSelector.move(mousedown_x, mousedown_y);
+		if (mouse.emptyClickDown) {
+			RectSelector.move(mouse.downX, mouse.downY);
 			return;
 		}
 		// We only come here if some object is being dragged
-		// Otherwise we will trigger empty_click_down
+		// Otherwise we will trigger mouse.emptyClickDown
 		let only_selected_anchor = get_only_selected_anchor_id();
 		let only_selected_link = get_only_link_selected();
 		if (only_selected_anchor) {
@@ -4613,9 +4617,9 @@ class MouseTool extends BaseTool {
 			tool.mouseUpSingleAnchor(x, y, false, selected_anchor.child_id);
 		}
 
-		if (empty_click_down) {
+		if (mouse.emptyClickDown) {
 			RectSelector.stop();
-			empty_click_down = false;
+			mouse.emptyClickDown = false;
 		}
 	}
 	static rightMouseDown(x, y) {
@@ -4699,7 +4703,7 @@ class TwoPointerTool extends BaseTool {
 	static leftMouseUp(x, y, shiftKey) {
 		this.current_connection.update();
 		this.current_connection = null;
-		last_clicked_element = null;
+		mouse.lastClickedPrimitive = null;
 		if (this.rightClickMode === false) {
 			ToolBox.setTool("mouse");
 		}
@@ -4708,7 +4712,7 @@ class TwoPointerTool extends BaseTool {
 		ToolBox.setTool("mouse");
 	}
 	static leaveTool() {
-		last_clicked_element = null;
+		mouse.lastClickedPrimitive = null;
 	}
 }
 
@@ -4755,7 +4759,7 @@ class FlowTool extends TwoPointerTool {
 		update_name_pos(this.primitive.id);
 	}
 	static rightMouseDown(x, y) {
-		if (leftmouseisdown) {
+		if (mouse.isLeftDown) {
 			let only_selected_anchor = get_only_selected_anchor_id();
 			if (only_selected_anchor) {
 				let parent = connection_array[only_selected_anchor["parent_id"]];
@@ -4784,7 +4788,7 @@ class FlowTool extends TwoPointerTool {
 		if (this.current_connection) {
 			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
 			this.current_connection = null;
-			last_clicked_element = null;
+			mouse.lastClickedPrimitive = null;
 
 			if (this.rightClickMode === false) {
 				// bugfix: unselect to not unattach on next empty click
@@ -5048,7 +5052,7 @@ class LinkTool extends TwoPointerTool {
 		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
 
 		this.current_connection = null;
-		last_clicked_element = null;
+		mouse.lastClickedPrimitive = null;
 		if (this.rightClickMode === false) {
 			ToolBox.setTool("mouse");
 		}
@@ -5315,18 +5319,18 @@ function delete_object(node_id) {
 	delete object_array[node_id];
 }
 function primitive_mousedown(node_id, event, new_primitive) {
-	last_clicked_element = get_object(node_id);
+	mouse.lastClickedPrimitive = get_object(node_id);
 	// If we left click directly on the anchors we dont want anything but them selected
 	if (event.which === mouse.left) {
-		if (last_clicked_element.type == "dummy_anchor") {
-			let elementId = get_parent_id(last_clicked_element.id);
+		if (mouse.lastClickedPrimitive.type == "dummy_anchor") {
+			let elementId = get_parent_id(mouse.lastClickedPrimitive.id);
 			unselect_all_but(elementId);
 		} else if (get_only_selected_anchor_id()) {
 			unselect_all();
 		}
-		if (last_clicked_element.isSelected()) {
+		if (mouse.lastClickedPrimitive.isSelected()) {
 			if (event.shiftKey) {
-				last_clicked_element.unselect();
+				mouse.lastClickedPrimitive.unselect();
 			}
 		} else {
 			if (!event.shiftKey) {
@@ -5335,9 +5339,9 @@ function primitive_mousedown(node_id, event, new_primitive) {
 				let parent_id = get_parent_id(node_id);
 				unselect_all_but(parent_id);
 			}
-			last_clicked_element.select();
+			mouse.lastClickedPrimitive.select();
 		}
-		last_click_object_clicked = true;
+		mouse.clickedOnObject = true
 	}
 }
 
@@ -5546,7 +5550,7 @@ function mouseDownHandler(event) {
 	switch (event.which) {
 		case mouse.left:
 			// if left mouse button down
-			leftmouseisdown = true;
+			mouse.isLeftDown = true;
 			currentTool.leftMouseDown(x, y);
 			break;
 		case mouse.middle: 
@@ -5564,10 +5568,10 @@ function mouseMoveHandler(event) {
 	let x = event.pageX - offset.left;
 	let y = event.pageY - offset.top;
 
-	lastMouseX = x;
-	lastMouseY = y;
+	mouse.x = x;
+	mouse.y = y;
 
-	if (leftmouseisdown) {
+	if (mouse.isLeftDown) {
 		currentTool.mouseMove(x, y, event.shiftKey);
 	}
 	if (MousePan.middleIsDown) {
@@ -5578,7 +5582,7 @@ function mouseMoveHandler(event) {
 }
 function mouseUpHandler(event) {
 	if (event.which === mouse.left) {
-		if (!leftmouseisdown) {
+		if (!mouse.isLeftDown) {
 			return;
 		}
 		// does not work to store UndoState here, because mouseUpHandler happens even when we are outside the svg (click buttons etc)
@@ -5588,7 +5592,7 @@ function mouseUpHandler(event) {
 		let y = event.pageY - offset.top;
 
 		currentTool.leftMouseUp(x, y, event.shiftKey);
-		leftmouseisdown = false;
+		mouse.isLeftDown = false;
 		InfoBar.update();
 		History.storeUndoState();		
 	} else if (event.which == mouse.middle) {
@@ -5706,7 +5710,7 @@ class Clipboard {
 		let parent = graph.children[0].children[0];
 		let vertex = simpleCloneNode2(findID(clipboardItem.id), parent);
 		let relativePosition = clipboardItem.relativePosition;
-		setCenterPosition(vertex, [lastMouseX + relativePosition[0], lastMouseY + relativePosition[1]]);
+		setCenterPosition(vertex, [mouse.x + relativePosition[0], mouse.y + relativePosition[1]]);
 		let oldName = getName(vertex);
 		setName(vertex, findFreeName(oldName + "_"));
 		syncAllVisuals();
@@ -5813,19 +5817,19 @@ $(window).load(function () {
 			moveSize = 16;
 		}
 		if (event.key == "ArrowLeft") {
-			MouseTool.mouseMove(mousedown_x - moveSize, mousedown_y, false);
+			MouseTool.mouseMove(mouse.downX - moveSize, mouse.downY, false);
 			event.preventDefault();
 		}
 		if (event.key == "ArrowUp") {
-			MouseTool.mouseMove(mousedown_x, mousedown_y - moveSize, false);
+			MouseTool.mouseMove(mouse.downX, mouse.downY - moveSize, false);
 			event.preventDefault();
 		}
 		if (event.key == "ArrowRight") {
-			MouseTool.mouseMove(mousedown_x + moveSize, mousedown_y, false);
+			MouseTool.mouseMove(mouse.downX + moveSize, mouse.downY, false);
 			event.preventDefault();
 		}
 		if (event.key == "ArrowDown") {
-			MouseTool.mouseMove(mousedown_x, mousedown_y + moveSize, false);
+			MouseTool.mouseMove(mouse.downX, mouse.downY + moveSize, false);
 			event.preventDefault();
 		}
 		if (event.ctrlKey) {
