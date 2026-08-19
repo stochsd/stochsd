@@ -5057,7 +5057,7 @@ class LinkTool extends TwoPointerTool {
 		/** @type {BaseConnection} */
 		const parent = get_parent(anchor);
 		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
-			attach_anchor(anchor);
+			attach_anchor(anchor, (attachTo) => !(anchor.getAnchorType() == "end" && attachTo.is_ghost));
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
@@ -5082,7 +5082,12 @@ class LinkTool extends TwoPointerTool {
 }
 LinkTool.init();
 
-function attach_anchor(anchor) {
+
+/** 
+ * @param {AnchorPoint} anchor
+ * @param {(attachTo: BaseObject) => boolean} [shouldAttach=(attachTo) => true]
+ */
+function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 	[x, y] = anchor.getPos();
 	let parentConnection = get_parent(anchor);
 
@@ -5104,7 +5109,10 @@ function attach_anchor(anchor) {
 	}
 	if (attach_to == null) {
 		return false;
+	} else if (!shouldAttach(attach_to)) {
+		return false
 	}
+
 
 	switch (anchor.getAnchorType()) {
 		case "start":
