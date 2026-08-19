@@ -327,6 +327,7 @@ class InfoBar {
 		this.infoDE = $(".info-bar__definition-error");
 		$(this.infoDefinitionElement).find(".CodeMirror").css("border", "none");
 		InfoBar.update()
+		ToolBox.updateButtons()
 	}
 	static setRestricted(isRestricted, primName) {
 		// this.infoRestricted.html(isRestricted ? `<b>(${primName} ≥ 0)<b>` : "" );
@@ -4213,6 +4214,7 @@ class RunTool extends BaseTool {
 			unselect_all();
 			(object_array[prim.id] ?? connection_array[prim.id]).select();
 			InfoBar.update();
+			ToolBox.update();
 		} else {
 			RunResults.runPauseSimulation();
 		}
@@ -4281,6 +4283,7 @@ class OnePointCreateTool extends BaseTool {
 		this.create(x, y);
 		update_relevant_objects([]);
 		InfoBar.update();
+		ToolBox.updateButtons();
 	}
 	static leftMouseUp(x, y) {
 		if (!this.rightClickMode) {
@@ -4291,6 +4294,7 @@ class OnePointCreateTool extends BaseTool {
 		unselect_all();
 		ToolBox.setTool("mouse");
 		InfoBar.update();
+		ToolBox.updateButtons();
 	}
 }
 
@@ -4307,24 +4311,31 @@ class NumberboxTool extends OnePointCreateTool {
 		this.primitive = createPrimitive(name, "Numberbox", [x, y], [0, 0]);
 		this.primitive.setAttribute("Target", this.targetPrimitive);
 	}
-	static enterTool() {
+	/** @returns { string | undefined } */
+	static getSelectionError() {
 		let selected_ids = Object.keys(get_selected_root_objects());
 		if (selected_ids.length != 1) {
 			if (selected_ids.length == 0) {
-				xAlert("You must first select a primitive for the Number Box.");
+				return "You must first select a primitive for the Number Box.";
 			} else {
-				xAlert("You must first select exactly one primitive for the Number Box.");
+				return "You must first select exactly one primitive for the Number Box.";
 			}
-			ToolBox.setTool("mouse");
-			return;
+		} else {
+			let selected_object = get_object(selected_ids[0]);
+			if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
+				return "This primitive can not have a Number Box";
+			}
 		}
-
-		let selected_object = get_object(selected_ids[0]);
-		if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
-			xAlert("This primitive can not have a Number Box");
+		return undefined
+	}
+	static enterTool() {
+		const error = NumberboxTool.getSelectionError()
+		if (error) {
+			xAlert(error)
 			ToolBox.setTool("mouse");
-			return;
+			return
 		}
+		let selected_ids = Object.keys(get_selected_root_objects());
 		if (isPrimitiveGhost(findID(selected_ids[0]))) {
 			this.targetPrimitive = findID(selected_ids[0]).getAttribute("Source");
 		} else {
@@ -4620,6 +4631,7 @@ class MouseTool extends BaseTool {
 		if (mouse.emptyClickDown) {
 			RectSelector.stop();
 			mouse.emptyClickDown = false;
+			ToolBox.updateButtons()			
 		}
 	}
 	static rightMouseDown(x, y) {
@@ -5594,7 +5606,8 @@ function mouseUpHandler(event) {
 		currentTool.leftMouseUp(x, y, event.shiftKey);
 		mouse.isLeftDown = false;
 		InfoBar.update();
-		History.storeUndoState();		
+		History.storeUndoState();
+		ToolBox.updateButtons();
 	} else if (event.which == mouse.middle) {
 		event.preventDefault()
 		MousePan.end()
@@ -5684,12 +5697,25 @@ class ToolBox {
 			currentTool.leaveTool();
 			currentTool = this.tools[toolName];
 			currentTool.enterTool(whichMouseButton);
+			ToolBox.updateButtons()
 		} else {
 			errorPopUp("The tool " + toolName + " does not exist");
 		}
 	}
 	static getTool() {
 
+	}
+	static updateButtons() {
+		const selection = get_selected_objects();
+		const hasRotatableName = !!Object.values(selection).find(s => ["stock", "variable", "contant", "converter", "flow"].includes(s.type))
+		const hasFlow = !!Object.values(selection).find(s => s.type == "flow")
+		const hasLink = !!Object.values(selection).find(s => get_parent(s).type == "link")
+		const error = NumberboxTool.getSelectionError()
+		console.log({error, hasFlow, hasRotatableName, hasLink, selection})
+		$("#btn_rotatename").prop("disabled", !hasRotatableName)
+		$("#btn_movevalve").prop("disabled", !hasFlow)
+		$("#btn_straighten_link").prop("disabled", !hasLink)
+		$("#btn_numberbox").prop("disabled", !!error)
 	}
 }
 ToolBox.init();
@@ -6014,6 +6040,7 @@ $(window).load(function () {
 					setTimeout(() => {
 						updateTimeUnitButton();
 						InfoBar.update();
+						ToolBox.updateButtons();
 					}, 200);
 				});
 			});
@@ -6527,7 +6554,6 @@ class runOverlay {
 }
 runOverlay.init();
 
-// Not yet implemented
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
 	for (let id in objects) {
@@ -6540,6 +6566,7 @@ function setColorToSelection(color) {
 function printDiagram() {
 	unselect_all();
 	InfoBar.update();
+	ToolBox.updateButtons();
 	// Write filename and date into editor-footer 
 	let fileName = fileManager.fileName;
 
@@ -7138,6 +7165,7 @@ class jqDialog {
 		setTimeout(() => {
 			History.storeUndoState();
 			InfoBar.update();
+			ToolBox.updateButtons();
 		}, 200);
 	}
 	makeApply() {

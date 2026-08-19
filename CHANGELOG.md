@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Code highlighting using CodeMirror in ConverterDialog.
 - Converter plot preview in ConverterDialog.
 - Support for pasting two columns from a spreadsheet application into ConverterDialog.
+- Keep only useful tool-buttons enabled.
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.
