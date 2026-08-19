@@ -4214,7 +4214,7 @@ class RunTool extends BaseTool {
 			unselect_all();
 			(object_array[prim.id] ?? connection_array[prim.id]).select();
 			InfoBar.update();
-			ToolBox.update();
+			ToolBox.updateButtons();
 		} else {
 			RunResults.runPauseSimulation();
 		}
