@@ -4408,26 +4408,33 @@ class GhostTool extends OnePointCreateTool {
 		let DIM_ghost = get_object(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
-	static enterTool() {
+	/** @returns {string | undefined} */
+	static getSelectionError() {
 		let selectedIds = get_selected_ids();
 		// filter out non root object, e.g. anchors 
 		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(get_object);
 		if (selectedObjects.length != 1) {
-			xAlert("You must first select exactly one primitive to ghost");
-			ToolBox.setTool("mouse");
-			return;
+			return "You must first select exactly one primitive to ghost"
 		}
 		let selectedObject = selectedObjects[0];
 		if (selectedObject.is_ghost) {
-			xAlert("You cannot ghost a ghost");
-			ToolBox.setTool("mouse");
-			return;
+			return "You cannot ghost a ghost"
 		}
 		if (this.ghostable_primitives.indexOf(selectedObject.type) == -1) {
-			xAlert(`This primitive is not ghostable`);
+			return `This primitive is not ghostable`
+		}
+	}
+	static enterTool() {
+		// filter out non root object, e.g. anchors 
+		const error = GhostTool.getSelectionError()
+		if (error) {
+			xAlert(error);
 			ToolBox.setTool("mouse");
 			return;
 		}
+		let selectedIds = get_selected_ids();
+		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(get_object);
+		let selectedObject = selectedObjects[0];
 		this.id_to_ghost = selectedObjects[0].id;
 	}
 }
@@ -5710,12 +5717,13 @@ class ToolBox {
 		const hasRotatableName = !!Object.values(selection).find(s => ["stock", "variable", "contant", "converter", "flow"].includes(s.type))
 		const hasFlow = !!Object.values(selection).find(s => s.type == "flow")
 		const hasLink = !!Object.values(selection).find(s => get_parent(s).type == "link")
-		const error = NumberboxTool.getSelectionError()
-		console.log({error, hasFlow, hasRotatableName, hasLink, selection})
+		const numberboxError = NumberboxTool.getSelectionError()
+		const ghostError = GhostTool.getSelectionError()
 		$("#btn_rotatename").prop("disabled", !hasRotatableName)
 		$("#btn_movevalve").prop("disabled", !hasFlow)
 		$("#btn_straighten_link").prop("disabled", !hasLink)
-		$("#btn_numberbox").prop("disabled", !!error)
+		$("#btn_numberbox").prop("disabled", !!numberboxError)
+		$("#btn_ghost").prop("disabled", !!ghostError)
 	}
 }
 ToolBox.init();
