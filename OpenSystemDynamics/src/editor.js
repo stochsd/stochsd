@@ -7225,7 +7225,7 @@ class jqDialog {
 	}
 	setTitle(newTitle) {
 		this.title = newTitle;
-		this.dialog.dialog("option", "title", this.title);
+		this.dialog.dialog("widget").find(".ui-dialog-title").html(newTitle);
 	}
 	getTitle() {
 		return this.title;
@@ -9230,8 +9230,8 @@ class ConverterDialog extends jqDialog {
 
 		let oldName = getName(this.primitive);
 		let oldNameBrackets = makePrimitiveName(oldName);
-
-		this.setTitle(`${oldNameBrackets} properties`);
+		const color = this.primitive.getAttribute("Color")
+		this.setTitle(`<span style="${color ? `color: ${color};`: ""}">${oldNameBrackets}</span> properties`);
 
 		$(this.nameField).val(oldNameBrackets);
 		this.cmValueField.setValue(oldValue);
@@ -9908,11 +9908,10 @@ class DefinitionEditor extends jqDialog {
 		this.updateHelpText();
 
 		const oldValue = getValue(this.primitive).replace(/\\n/g, "\n");
-
 		const oldName = getName(this.primitive);
 		const oldNameBrackets = makePrimitiveName(oldName);
-
-		this.setTitle(oldNameBrackets + " properties");
+		const color = this.primitive.getAttribute("Color")
+		this.setTitle(`<span style="${color ? `color: ${color};`: ""}">${oldNameBrackets}</span> properties`);
 
 		$(this.nameField).val(oldNameBrackets);
 		this.cmValueField.setValue(oldValue);
