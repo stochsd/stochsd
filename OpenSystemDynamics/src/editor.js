@@ -721,6 +721,9 @@ class BaseObject {
 		}
 		// AnchorPoint has no primitive
 		this.primitive?.setAttribute("Color", this.color);
+		Object.values(connection_array ?? {})
+			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
+			.map(p => p.render())
 	}
 
 	updateDefinitionError() {
