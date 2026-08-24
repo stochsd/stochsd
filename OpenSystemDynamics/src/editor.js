@@ -2801,7 +2801,11 @@ class TimePlotVisual extends PlotVisual {
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+				${idsToDisplay.map(id => `<li>
+					<span style="font-weight:bold; color: ${findID(id)?.getAttribute("Color") ?? "black"};">
+						[${getName(findID(id))}]
+					</span>
+				</li>`).join("")}
 			</ul>`);
 		}
 		this.chartDiv.innerHTML = (`
@@ -3181,7 +3185,11 @@ class ComparePlotVisual extends PlotVisual {
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+				${idsToDisplay.map(id => `<li>
+					<span style="font-weight:bold; color: ${findID(id)?.getAttribute("Color") ?? "black"};">
+						[${getName(findID(id))}]
+					</span>
+				</li>`).join("")}
 			</ul>`);
 		}
 		this.chartDiv.innerHTML = (`
@@ -3508,7 +3516,12 @@ class HistoPlotVisual extends PlotVisual {
 		let selected_str = "None selected";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+				${idsToDisplay.map(id => `<li>
+					<span style="font-weight:bold; color: ${findID(id)?.getAttribute("Color") ?? "black"};">
+						[${getName(findID(id))}]
+						</span>
+					</li>`).join("")}
+				</li>
 			</ul>`);
 		}
 		if (idsToDisplay.length > 1) {
@@ -3716,8 +3729,8 @@ class XyPlotVisual extends PlotVisual {
 				formatString: (`
 					<table class="jqplot-highlighter" style="color: black;">
 						<tr><td>Time </td><td> = </td><td>%3$.3p</td></tr>
-        				<tr><td>${this.serieXName} </td><td> = </td><td>%1$.3p</td></tr>
-						<tr><td>${this.serieYName} </td><td> = </td><td>%2$.3p</td></tr>
+        				<tr><td style="font-weight: bold; color: ${this.colorXLabel};">${this.serieXName} </td><td> = </td><td>%1$.3p</td></tr>
+						<tr><td style="font-weight: bold; color: ${this.colorYLabel};">${this.serieYName} </td><td> = </td><td>%2$.3p</td></tr>
 					</table>
 				`),
 				useAxesFormatters: false
@@ -3739,7 +3752,11 @@ class XyPlotVisual extends PlotVisual {
 		let selected_str = "None selected<br/>";
 		if (idsToDisplay.length !== 0) {
 			selected_str = (`<ul style="margin: 4px;">
-				${idsToDisplay.map(id => `<li>${getName(findID(id))}</li>`).join("")}
+				${idsToDisplay.map(id => `<li>
+					<span style="font-weight:bold; color: ${findID(id)?.getAttribute("Color") ?? "black"};">
+						[${getName(findID(id))}]
+					</span>
+				</li>`).join("")}
 			</ul>`);
 		}
 		if (idsToDisplay.length !== 2) {
