@@ -816,6 +816,9 @@ class BaseObject {
 			return;
 		}
 		this.name_element.innerHTML = new_name;
+		Object.values(connection_array ?? {})
+			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
+			.map(p => p.render())
 	}
 
 	attributeChangeHandler(attributeName, value) {
