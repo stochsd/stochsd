@@ -3587,6 +3587,8 @@ class XyPlotVisual extends PlotVisual {
 			let serie = [];
 			this.serieXName = this.namesToDisplay[0];
 			this.serieYName = this.namesToDisplay[1];
+			this.colorXLabel = findName(this.serieXName)?.getAttribute("Color");
+			this.colorYLabel = findName(this.serieYName)?.getAttribute("Color");
 
 			for (let row of results) {
 				let x = Number(row[1]);
@@ -3689,14 +3691,16 @@ class XyPlotVisual extends PlotVisual {
 			},
 			axes: {
 				xaxis: {
-					label: this.serieXName,
+					label: `[${this.serieXName}]`,
+					labelOptions: { textColor: this.colorXLabel },
 					renderer: (this.primitive.getAttribute("XLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					min: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.min,
 					max: axisLimits.xaxis.auto ? undefined : axisLimits.xaxis.max,
 					ticks: axisLimits.xaxis.auto ? undefined : this.getTicks(Number(axisLimits.xaxis.min), Number(axisLimits.xaxis.max)),
 				},
 				yaxis: {
-					label: this.serieYName,
+					label: `[${this.serieYName}]`,
+					labelOptions: { textColor: this.colorYLabel },
 					renderer: (this.primitive.getAttribute("YLogScale") === "true") ? $.jqplot.LogAxisRenderer : $.jqplot.LinearAxisRenderer,
 					min: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.min,
 					max: axisLimits.yaxis.auto ? undefined : axisLimits.yaxis.max,
