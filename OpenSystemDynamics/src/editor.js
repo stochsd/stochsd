@@ -10509,7 +10509,6 @@ class EquationListDialog extends jqDialog {
 if (typeof mxUtils == "undefined") {
 	window.mxUtils = {};
 	window.mxUtils.alert = function (message, closeHandler) {
-		
 		xAlert("Message from engine:  " + colorizeMessage(message), closeHandler);
 	}
 }
