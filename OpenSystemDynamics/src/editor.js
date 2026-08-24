@@ -9211,7 +9211,10 @@ class ConverterDialog extends jqDialog {
 		this.show();
 		let linkedIn = findLinkedInPrimitives(id);
 		if (linkedIn.length === 1) {
-			this.inLinkParagraph.innerHTML = `Ingoing Link: ${getName(linkedIn[0])}`;
+			const prim = linkedIn[0]
+			const name = getName(prim)
+			const color = prim?.getAttribute("Color") ?? "black"
+			this.inLinkParagraph.innerHTML = `Ingoing Link: <span style="color: ${color}; font-weight: bold;">[${name}]</span>`;
 		} else if (linkedIn.length === 0) {
 			this.inLinkParagraph.innerHTML = warningHtml("No Ingoing Link", false);
 		} else {
