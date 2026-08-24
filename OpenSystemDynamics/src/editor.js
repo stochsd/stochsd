@@ -9099,7 +9099,7 @@ class ConverterDialog extends jqDialog {
 			<div style="display: grid; grid-template-columns: auto auto; grid-gap: 1rem; max-height: 80vh;">
 				<div class="primitive-settings" style="padding: 1rem 0;">
 						<b>Name:</b><br/>
-						<input class="name-field" style="width: 100%;" type="text" value=""><br/><br/>
+						<input class="name-field cm-primitive" style="width: 100%;" type="text" value=""><br/><br/>
 						<div style="display: flex; justify-content: space-between; width: 100%; align-items: baseline;">
 							<b>Definition:</b><span>${this.renderHelpButtonHtml("converter-help")}</span>
 						</div>
@@ -9234,6 +9234,7 @@ class ConverterDialog extends jqDialog {
 		this.setTitle(`<span style="${color ? `color: ${color};`: ""}">${oldNameBrackets}</span> properties`);
 
 		$(this.nameField).val(oldNameBrackets);
+		$(this.nameField).css("color", color);
 		this.cmValueField.setValue(oldValue);
 
 		if (this.defaultFocusSelector) {
@@ -9914,6 +9915,7 @@ class DefinitionEditor extends jqDialog {
 		this.setTitle(`<span style="${color ? `color: ${color};`: ""}">${oldNameBrackets}</span> properties`);
 
 		$(this.nameField).val(oldNameBrackets);
+		$(this.nameField).css("color", color);
 		this.cmValueField.setValue(oldValue);
 
 		// Handle restrict to non-negative
