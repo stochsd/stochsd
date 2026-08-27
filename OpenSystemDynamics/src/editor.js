@@ -720,10 +720,14 @@ class BaseObject {
 			}
 		}
 		// AnchorPoint has no primitive
+		// TODO: this should be replaced with a subscribe pattern instead - where plots can subscribe to primitives
 		this.primitive?.setAttribute("Color", this.color);
-		Object.values(connection_array ?? {})
-			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
-			.map(p => p.render())
+		if (this.color) {
+			Object.values(connection_array ?? {})
+				.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
+				.filter(p => getDisplayIds(p.primitive).includes(this.id))
+				.map(p => p.render())
+		}
 	}
 
 	updateDefinitionError() {
@@ -818,7 +822,7 @@ class BaseObject {
 		this.name_element.innerHTML = new_name;
 		Object.values(connection_array ?? {})
 			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
-			.map(p => p.render())
+			.map(p => p.updateChart())
 	}
 
 	attributeChangeHandler(attributeName, value) {
