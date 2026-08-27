@@ -7577,7 +7577,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<div style="width: 1.75rem; padding-right: 0.25rem;">
+							<div style="display: flex; width: 1.75rem; padding-right: 0.25rem;">
 								${PrimitiveSvgPreview.create(type, { color, dice: isRandom })}
 							</div>
 							<span class="cm-primitive cm-${color}">
@@ -7640,7 +7640,7 @@ class PrimitiveSelectorComponent extends HtmlComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<div style="width: 1.75rem; padding-right: 0.25rem;">
+							<div style="display: flex; display: flex; width: 1.75rem; padding-right: 0.25rem;">
 								${PrimitiveSvgPreview.create(type.toLowerCase(), { color, dice: isRandom })}
 							</div>
 							<span class="cm-primitive cm-${color}">${get_highlight_match(getName(p), searchWord)}<span>
@@ -7981,7 +7981,7 @@ class TimePlotSelectorComponent extends PrimitiveSelectorComponent {
 						</td>
 						<td style="width: 100%;">
 						<div class="center-vertically-container">
-							<div style="width: 1.75rem; padding-right: 0.25rem;">
+							<div style="display: flex; width: 1.75rem; padding-right: 0.25rem;">
 								${PrimitiveSvgPreview.create(type.toLowerCase(), { color, dice: isRandom })}
 							</div>
 							<span class="cm-primitive cm-${color}">
@@ -8096,7 +8096,7 @@ class GenerationsComponent extends HtmlComponent {
 				<td>${index + 1}</td>
 				<td>
 					<div class="center-vertically-container">
-						<div style="width: 1.75rem; padding-right: 0.25rem;">
+						<div style="display: flex; width: 1.75rem; padding-right: 0.25rem;">
 							${PrimitiveSvgPreview.create(value.type.toLowerCase(), { color: value.color, dice: value.isRandom })}
 						</div>
 						<span class="cm-primitive cm-${value.color}">${value.name}</span>
@@ -8305,7 +8305,7 @@ class XySelectorComponent extends PrimitiveSelectorComponent {
 							</td>
 							<td style="width: 100%;">
 							<div class="center-vertically-container">
-								<div style="width: 1.75rem; padding-right: 0.25rem;">
+								<div style="display: flex; width: 1.75rem; padding-right: 0.25rem;">
 									${PrimitiveSvgPreview.create(type, { color, dice: isRandom })}
 								</div>
 								<span class="cm-primitive cm-${color}">
