@@ -7281,15 +7281,22 @@ class CrashRecoveryDialog extends jqDialog { // CURRENT
 		super();
 		this.setTitle("⚠️ Crash Recovery");
 		this.setHtml(`<div class="">
-			<p>StochSD unexpectedly crashed. Select a saved state to restore your work:
-			</p>
-			${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
-				const step = index - History.undoIndex
-				return `<div style="font-weight: ${index == History.undoIndex ? "bold" : "normal"};">
-					${this.stepMessage(step)}
-					<button class="undo-state" data-index="${index}">Select</button>
-				</div>`}
-			)}
+			<p font-size="1.5rem;">StochSD unexpectedly crashed.</p>
+			<button id="attempt-restore">Attempt Restore (Recommended)</button>
+			<br/>
+			<details>
+				<summary>Advanced</summary>
+				<div>
+				<p>Select a saved state to restore your work (usually work on the second time)</p>
+				${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
+					const step = index - History.undoIndex
+					return `<div style="font-weight: ${index == History.undoIndex ? "bold" : "normal"};">
+						${this.stepMessage(step)}
+						<button class="undo-state" data-index="${index}">Select</button>
+					</div>`}
+				).join("")}
+				</div>
+			</details>
 		</div>`);
 		this.bindEvents()
 	}
@@ -7306,6 +7313,11 @@ class CrashRecoveryDialog extends jqDialog { // CURRENT
 		}
 	}
 	bindEvents() {
+		const restoreButton = $(this.dialogContent).find("#attempt-restore")[0]
+		console.log("resoreButton", restoreButton)
+		restoreButton.addEventListener("click", () => {
+			preserveRestart();
+		})
 		const undostatesButtons = $(this.dialogContent).find(".undo-state")
 		console.log("undostatesButtons", undostatesButtons)
 		undostatesButtons.map(i => {
