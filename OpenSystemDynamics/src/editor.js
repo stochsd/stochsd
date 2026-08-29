@@ -7286,7 +7286,7 @@ class CrashRecoveryDialog extends jqDialog {
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
-			"Attempt Restore": () => {
+			"Reload & Restore": () => {
 				preserveRestart();
 			},
 		};
