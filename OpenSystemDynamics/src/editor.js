@@ -7282,13 +7282,60 @@ class CrashRecoveryDialog extends jqDialog {
 		this.setTitle("⚠️ Crash Recovery");
 		this.setHtml(`<div class="">
 			<p font-size="1.5rem;">StochSD unexpectedly crashed.</p>
+			<button id="attempt-restore">Restore & Reload (Recommended)</button>
+			<br/>
+			<br/>
+			<hr/>
+			<details>
+				<summary style="cursor: default;">Recover from an older state</summary>
+				<div>
+				<p>Select a saved state to restore from.</p>
+				${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
+					const step = index - History.undoIndex
+					return `<div>
+						<button class="undo-state" data-index="${index}">Restore</button>
+						${this.stepMessage(step)}
+					</div>`}
+				).join("")}
+				</div>
+			</details>
 		</div>`);
+		this.bindEvents()
+	}
+	bindEvents() {
+		const restoreButton = $(this.dialogContent).find("#attempt-restore")[0]
+		restoreButton.addEventListener("click", () => {
+			preserveRestart();
+		})
+		const undostatesButtons = $(this.dialogContent).find(".undo-state")
+		undostatesButtons.map(i => {
+			const button = undostatesButtons[i];
+			const index = $(button).data("index")
+			button.addEventListener("click", () => {
+				console.log("click restore", index)
+				History.undoIndex = index;
+				History.restoreUndoState();
+				preserveRestart();
+			})
+		})
+	}
+	/** @param {number} step */
+	stepMessage(step) {
+		console.log(typeof step)
+		const absoluteSteps = Math.abs(step)
+		const stepString = absoluteSteps > 1 ? "Steps" : "Step"
+		const direction = step < 0 ? "Back" : "Forward"
+		if (step == 0) {
+			return `Current`
+		} else {
+			return `${absoluteSteps} ${stepString} ${direction}`
+		}
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
-			"Reload & Restore": () => {
-				preserveRestart();
-			},
+			// "Reload & Restore": () => {
+			// 	preserveRestart();
+			// },
 		};
 	}
 }
