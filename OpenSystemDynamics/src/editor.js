@@ -149,6 +149,8 @@ function restoreAfterRestart() {
 
 class History {
 	/** @type {string[]} */
+	static undoImages = []
+	/** @type {string[]} */
 	static #undoStates = []
 	static get undoStates() {
 		return this.#undoStates
@@ -168,6 +170,15 @@ class History {
 	static #updateUndoRedoButtons() {
 		$("#btn_undo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == 0)
 		$("#btn_redo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == this.undoStates.length - 1)
+	}
+	static addUndoImage() {
+		const divBackground = $("#svgplanebackground")[0]
+		const width = divBackground.clientWidth
+		const height = divBackground.clientHeight
+		const svgElement = $("#svgplane")[0]
+		console.log(svgElement)
+		const image = convertSvgToBase64(svgElement, 0, 0, width, height);
+		this.undoImages.push(image)
 	}
 
 	static init() {
@@ -194,14 +205,17 @@ class History {
 		if (this.lastUndoState != undoState) {
 			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex + 1);
+			this.undoImages.splice(this.undoIndex + 1);
 
 			this.undoStates.push(undoState);
+			this.addUndoImage()
 			this.undoIndex = this.undoStates.length - 1;
 			this.lastUndoState = undoState;
 			this.unsavedChanges = true;
 
 			if (this.undoLimit < this.undoStates.length) {
 				this.undoStates = this.undoStates.slice(this.undoStates.length - this.undoLimit);
+				this.undoImages = this.undoImages.slice(this.undoImages.length - this.undoLimit);
 				this.undoIndex = this.undoStates.length - 1;
 			}
 		}
@@ -210,6 +224,7 @@ class History {
 	static forceCustomUndoState(newState) {
 		this.undoStates = [];
 		this.undoStates.push(newState);
+		this.addUndoImage()
 		this.undoIndex = 0;
 		this.lastUndoState = newState;
 		this.unsavedChanges = false;
@@ -274,6 +289,7 @@ class History {
 		for (let i = 0; i < undoState_length; i++) {
 			let state = localStorage.getItem("undoState_" + i);
 			this.undoStates.push(state);
+			this.addUndoImage()
 		}
 		this.undoIndex = localStorage.getItem("undoIndex");
 		this.restoreUndoState();
@@ -7288,15 +7304,22 @@ class CrashRecoveryDialog extends jqDialog {
 			<hr/>
 			<details>
 				<summary style="cursor: default;">Recover from an older state</summary>
-				<div>
 				<p>Select a saved state to restore from.</p>
-				${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
-					const step = index - History.undoIndex
-					return `<div>
-						<button class="undo-state" data-index="${index}">Restore</button>
-						${this.stepMessage(step)}
-					</div>`}
-				).join("")}
+				<div style="display: flex; gap: 1rem;">
+					<div style="display: flex; flex-direction: column; gap:0.5rem">
+						<div><b>STATES</b></div>
+						${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
+							const step = index - History.undoIndex
+							return `<div class="undo-state" data-index="${index}">
+								<button class="undo-state-btn" data-index="${index}">Restore</button>
+								${this.stepMessage(step)}
+							</div>`}
+						).join("")}
+					</div>
+					<div>
+						<div><b>PREVIEW</b> (Simplified layout - might be inaccurate or missing)</div>
+						<img class="state-preview" height="300px" style="border: 1px solid black;" />
+					</div>
 				</div>
 			</details>
 		</div>`);
@@ -7307,7 +7330,7 @@ class CrashRecoveryDialog extends jqDialog {
 		restoreButton.addEventListener("click", () => {
 			preserveRestart();
 		})
-		const undostatesButtons = $(this.dialogContent).find(".undo-state")
+		const undostatesButtons = $(this.dialogContent).find(".undo-state-btn")
 		undostatesButtons.map(i => {
 			const button = undostatesButtons[i];
 			const index = $(button).data("index")
@@ -7316,6 +7339,16 @@ class CrashRecoveryDialog extends jqDialog {
 				History.undoIndex = index;
 				History.restoreUndoState();
 				preserveRestart();
+			})
+		})
+		const undoDivs = $(this.dialogContent).find(".undo-state")
+		const previewImage = $(this.dialogContent).find(".state-preview")[0]
+		undoDivs.map(i => {
+			const divElement = undoDivs[i];
+			const index = $(divElement).data("index")
+			divElement.addEventListener("mouseover", () => {
+				console.log("hover restore", index)
+				previewImage.src = History.undoImages[index]
 			})
 		})
 	}
