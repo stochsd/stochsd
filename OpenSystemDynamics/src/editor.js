@@ -148,6 +148,7 @@ function restoreAfterRestart() {
 }
 
 class History {
+	/** @type {string[]} */
 	static #undoStates = []
 	static get undoStates() {
 		return this.#undoStates
@@ -242,9 +243,13 @@ class History {
 		console.error(this.undoStates);
 	}
 
-	static restoreUndoState() {
-		this.lastUndoState = this.undoStates[this.undoIndex];
-		loadModelFromXml(this.lastUndoState);
+	static restoreUndoState() { // CURRENT
+		try {
+			this.lastUndoState = this.undoStates[this.undoIndex];
+			loadModelFromXml(this.lastUndoState);
+		} catch (err) {
+			handleCrash()
+		}
 	}
 
 	static clearUndoHistory() {
@@ -1593,7 +1598,7 @@ class TwoPointer extends BaseObject {
 	syncAnchorToPrimitive(anchorType) {
 		// This function should sync anchor position to primitive 
 		let primitive = findID(this.id);
-		if (!primitive) return;
+		// if (!primitive) return; // CURRENT ⚠️⚠️⚠️ TEMP add back - just testing recover from crash!! ⚠️⚠️⚠️
 		switch (anchorType) {
 			case "start":
 				setSourcePosition(primitive, this.start_anchor.getPos());
@@ -5877,7 +5882,7 @@ $(window).load(function () {
 		showDebug();
 	}
 
-	$(document).keydown(function (event) {
+	$(document).keydown(function (event) { // Event starter
 		// Only works if no dialog is open
 		if (jqDialog.blockingDialogOpen) {
 			return;
@@ -7271,7 +7276,61 @@ class jqDialog {
 // Needed for the static init of this class
 jqDialog.init();
 
-
+class CrashRecoveryDialog extends jqDialog { // CURRENT
+ 	constructor() {
+		super();
+		this.setTitle("⚠️ Crash Recovery");
+		this.setHtml(`<div class="">
+			<p>StochSD unexpectedly crashed. Select a saved state to restore your work:
+			</p>
+			${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
+				const step = index - History.undoIndex
+				return `<div style="font-weight: ${index == History.undoIndex ? "bold" : "normal"};">
+					${this.stepMessage(step)}
+					<button class="undo-state" data-index="${index}">Select</button>
+				</div>`}
+			)}
+		</div>`);
+		this.bindEvents()
+	}
+	/** @param {number} step */
+	stepMessage(step) {
+		console.log(typeof step)
+		const absoluteSteps = Math.abs(step)
+		const stepString = absoluteSteps > 1 ? "steps" : "step"
+		const direction = step < 0 ? "back" : "forward"
+		if (step == 0) {
+			return `Crash State`
+		} else {
+			return `${absoluteSteps} ${stepString} ${direction}`
+		}
+	}
+	bindEvents() {
+		const undostatesButtons = $(this.dialogContent).find(".undo-state")
+		console.log("undostatesButtons", undostatesButtons)
+		undostatesButtons.map(i => {
+			const button = undostatesButtons[i];
+			const index = $(button).data("index")
+			button.addEventListener("click", () => {
+				History.undoIndex = index;
+				History.restoreUndoState();
+				$(this.dialog).dialog('close');
+				
+			})
+		})
+	}
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			// "Apply": () => {
+			// 	$(this.dialog).dialog('close');
+			// },
+		};
+	}
+}
+function handleCrash() {
+	const dialog = new CrashRecoveryDialog()
+	dialog.show()
+}
 
 
 /** 
