@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Converter plot preview in ConverterDialog.
 - Support for pasting two columns from a spreadsheet application into ConverterDialog.
 - Keep only useful tool-buttons enabled.
+- Crash Recover Dialog on undo/redo crash.
 
 
 ### Fixed
