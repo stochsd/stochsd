@@ -5882,7 +5882,7 @@ $(window).load(function () {
 		showDebug();
 	}
 
-	$(document).keydown(function (event) { // Event starter
+	$(document).keydown(function (event) {
 		// Only works if no dialog is open
 		if (jqDialog.blockingDialogOpen) {
 			return;
