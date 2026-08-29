@@ -243,7 +243,7 @@ class History {
 		console.error(this.undoStates);
 	}
 
-	static restoreUndoState() { // CURRENT
+	static restoreUndoState() { 
 		try {
 			this.lastUndoState = this.undoStates[this.undoIndex];
 			loadModelFromXml(this.lastUndoState);
@@ -1598,7 +1598,7 @@ class TwoPointer extends BaseObject {
 	syncAnchorToPrimitive(anchorType) {
 		// This function should sync anchor position to primitive 
 		let primitive = findID(this.id);
-		// if (!primitive) return; // CURRENT ⚠️⚠️⚠️ TEMP add back - just testing recover from crash!! ⚠️⚠️⚠️
+		if (!primitive) return;
 		switch (anchorType) {
 			case "start":
 				setSourcePosition(primitive, this.start_anchor.getPos());
@@ -7276,7 +7276,7 @@ class jqDialog {
 // Needed for the static init of this class
 jqDialog.init();
 
-class CrashRecoveryDialog extends jqDialog { // CURRENT
+class CrashRecoveryDialog extends jqDialog {
  	constructor() {
 		super();
 		this.setTitle("⚠️ Crash Recovery");
