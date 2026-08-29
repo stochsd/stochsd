@@ -148,6 +148,7 @@ function restoreAfterRestart() {
 }
 
 class History {
+	/** @type {string[]} */
 	static #undoStates = []
 	static get undoStates() {
 		return this.#undoStates
@@ -242,9 +243,13 @@ class History {
 		console.error(this.undoStates);
 	}
 
-	static restoreUndoState() {
-		this.lastUndoState = this.undoStates[this.undoIndex];
-		loadModelFromXml(this.lastUndoState);
+	static restoreUndoState() { 
+		try {
+			this.lastUndoState = this.undoStates[this.undoIndex];
+			loadModelFromXml(this.lastUndoState);
+		} catch (err) {
+			handleCrash()
+		}
 	}
 
 	static clearUndoHistory() {
@@ -7271,7 +7276,26 @@ class jqDialog {
 // Needed for the static init of this class
 jqDialog.init();
 
-
+class CrashRecoveryDialog extends jqDialog {
+ 	constructor() {
+		super();
+		this.setTitle("⚠️ Crash Recovery");
+		this.setHtml(`<div class="">
+			<p font-size="1.5rem;">StochSD unexpectedly crashed.</p>
+		</div>`);
+	}
+	beforeCreateDialog() {
+		this.dialogParameters.buttons = {
+			"Reload & Restore": () => {
+				preserveRestart();
+			},
+		};
+	}
+}
+function handleCrash() {
+	const dialog = new CrashRecoveryDialog()
+	dialog.show()
+}
 
 
 /** 
