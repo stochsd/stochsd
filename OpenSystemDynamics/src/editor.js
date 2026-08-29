@@ -7282,60 +7282,13 @@ class CrashRecoveryDialog extends jqDialog { // CURRENT
 		this.setTitle("⚠️ Crash Recovery");
 		this.setHtml(`<div class="">
 			<p font-size="1.5rem;">StochSD unexpectedly crashed.</p>
-			<button id="attempt-restore">Attempt Restore (Recommended)</button>
-			<br/>
-			<details>
-				<summary>Advanced</summary>
-				<div>
-				<p>Select a saved state to restore your work (usually work on the second time)</p>
-				${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
-					const step = index - History.undoIndex
-					return `<div style="font-weight: ${index == History.undoIndex ? "bold" : "normal"};">
-						${this.stepMessage(step)}
-						<button class="undo-state" data-index="${index}">Select</button>
-					</div>`}
-				).join("")}
-				</div>
-			</details>
 		</div>`);
-		this.bindEvents()
-	}
-	/** @param {number} step */
-	stepMessage(step) {
-		console.log(typeof step)
-		const absoluteSteps = Math.abs(step)
-		const stepString = absoluteSteps > 1 ? "steps" : "step"
-		const direction = step < 0 ? "back" : "forward"
-		if (step == 0) {
-			return `Crash State`
-		} else {
-			return `${absoluteSteps} ${stepString} ${direction}`
-		}
-	}
-	bindEvents() {
-		const restoreButton = $(this.dialogContent).find("#attempt-restore")[0]
-		console.log("resoreButton", restoreButton)
-		restoreButton.addEventListener("click", () => {
-			preserveRestart();
-		})
-		const undostatesButtons = $(this.dialogContent).find(".undo-state")
-		console.log("undostatesButtons", undostatesButtons)
-		undostatesButtons.map(i => {
-			const button = undostatesButtons[i];
-			const index = $(button).data("index")
-			button.addEventListener("click", () => {
-				History.undoIndex = index;
-				History.restoreUndoState();
-				$(this.dialog).dialog('close');
-				
-			})
-		})
 	}
 	beforeCreateDialog() {
 		this.dialogParameters.buttons = {
-			// "Apply": () => {
-			// 	$(this.dialog).dialog('close');
-			// },
+			"Attempt Restore": () => {
+				preserveRestart();
+			},
 		};
 	}
 }
