@@ -23,7 +23,7 @@ class StockVisual extends BasePrimitive {
 	setPos(pos) {
 		let diff = translate(neg(this.pos), pos);
 		super.setPos(pos);
-		let startConn = find_start_connections(this);
+		let startConn = Visuals.connectionsFrom(this);
 		for (let conn of startConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldConnPos = conn.start_anchor.getPos();
@@ -31,7 +31,7 @@ class StockVisual extends BasePrimitive {
 				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
 			}
 		}
-		let endConn = find_end_connections(this);
+		let endConn = Visuals.connectionsTo(this);
 		for (let conn of endConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldAnchorPos = conn.end_anchor.getPos();

@@ -112,7 +112,7 @@ class FlowTool extends TwoPointerTool {
 		parent.requestNewAnchorPos([x, y], anchor_id);
 		parent.update();
 		// update connecting links 
-		find_connections(parent).map(conn => conn.update());
+		Visuals.connectionsAttachedTo(parent).forEach(conn => conn.update());
 	}
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Flow", null, null);

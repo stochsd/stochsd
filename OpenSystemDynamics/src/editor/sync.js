@@ -6,29 +6,6 @@ function updateTimeUnitButton() {
 	}
 }
 
-function find_connections(visual) {
-	return find_start_connections(visual).concat(find_end_connections(visual));
-}
-
-function find_start_connections(visual) {
-	let connections_array = Array(0);
-	for (let connection of Visuals.twoPointers()) {
-		if (connection.getStartAttach && connection.getStartAttach() == visual) {
-			connections_array.push(connection);
-		}
-	}
-	return connections_array;
-}
-
-function find_end_connections(visual) {
-	let connections_array = Array(0);
-	for (let connection of Visuals.twoPointers()) {
-		if (connection.getEndAttach && connection.getEndAttach() == visual) {
-			connections_array.push(connection);
-		}
-	}
-	return connections_array;
-}
 
 
 function removePlotReferences(id) {

@@ -111,6 +111,35 @@ class Visuals {
 		return this.displays().filter(display => getDisplayIds(display.primitive).includes(id));
 	}
 
+	/**
+	 * Flows and links whose start is attached to visual
+	 * @returns {BaseConnection[]}
+	 */
+	static connectionsFrom(visual) {
+		return this.#connections().filter(connection => connection.getStartAttach() == visual);
+	}
+
+	/**
+	 * Flows and links whose end is attached to visual
+	 * @returns {BaseConnection[]}
+	 */
+	static connectionsTo(visual) {
+		return this.#connections().filter(connection => connection.getEndAttach() == visual);
+	}
+
+	/**
+	 * Flows and links attached to visual in either end
+	 * @returns {BaseConnection[]}
+	 */
+	static connectionsAttachedTo(visual) {
+		return this.connectionsFrom(visual).concat(this.connectionsTo(visual));
+	}
+
+	/** @returns {BaseConnection[]} */
+	static #connections() {
+		return this.twoPointers().filter(visual => visual instanceof BaseConnection);
+	}
+
 	static updateAll() {
 		for (let visual of this.onePointers()) {
 			visual.update();
