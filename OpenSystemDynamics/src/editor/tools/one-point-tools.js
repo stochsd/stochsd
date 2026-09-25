@@ -51,8 +51,8 @@ class NumberboxTool extends OnePointCreateTool {
 				return "You must first select exactly one primitive for the Number Box.";
 			}
 		} else {
-			let selected_object = Visuals.get(selectedIds[0]);
-			if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
+			let selectedVisual = Visuals.get(selectedIds[0]);
+			if (this.numberboxable_primitives.indexOf(selectedVisual.type) == -1) {
 				return "This primitive can not have a Number Box";
 			}
 		}

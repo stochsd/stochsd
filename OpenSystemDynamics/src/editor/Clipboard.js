@@ -34,10 +34,9 @@ class Clipboard {
 
 		// Create clipboard items
 		for (let i in parentIdArray) {
-			let clipboardItem = new ClipboardItem(parentIdArray[i]);
-			let tmp_object = Visuals.get(parentIdArray[i]);
-
-			let absolutePosition = tmp_object.getPos();
+			const clipboardItem = new ClipboardItem(parentIdArray[i]);
+			const tempVisual = Visuals.get(parentIdArray[i]);
+			const absolutePosition = tempVisual.getPos();
 			clipboardItem.absolutePosition = absolutePosition;
 
 			this.copiedItems.push(clipboardItem);

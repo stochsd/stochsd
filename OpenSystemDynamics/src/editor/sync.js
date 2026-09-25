@@ -35,9 +35,9 @@ function stochsd_delete_primitive_and_references(id) {
 }
 
 function stochsd_delete_primitive(id) {
-	let stochsd_object = Visuals.get(id);
-	if (stochsd_object) {
-		stochsd_object.clean();
+	let visual = Visuals.get(id);
+	if (visual) {
+		visual.clean();
 	}
 
 	if (Visuals.get(id)) {
