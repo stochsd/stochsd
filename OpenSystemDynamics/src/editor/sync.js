@@ -1,11 +1,3 @@
-function updateTimeUnitButton() {
-	if (isTimeUnitOk(getTimeUnits())) {
-		$("#timeunit-value").html(getTimeUnits());
-	} else {
-		$("#timeunit-value").html(warningHtml("None", false));
-	}
-}
-
 function isLocal() {
 	return true; // Expose additional debugging and error messages
 }

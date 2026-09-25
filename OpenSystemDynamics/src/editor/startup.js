@@ -247,7 +247,7 @@ $(window).load(function () {
 					let recentIndex = parseInt(event.currentTarget.getAttribute("data-recent-index"));
 					await fileManager.loadRecentByIndex(recentIndex);
 					setTimeout(() => {
-						updateTimeUnitButton();
+						ToolBox.updateTimeUnitButton();
 						InfoBar.update();
 						ToolBox.updateButtons();
 					}, 200);
@@ -276,7 +276,7 @@ $(window).load(function () {
 	fileManager.ready();
 	restoreAfterRestart();
 	RunResults.updateProgressBar();
-	updateTimeUnitButton();
+	ToolBox.updateTimeUnitButton();
 
 	History.unsavedChanges = false;
 	InfoBar.init();

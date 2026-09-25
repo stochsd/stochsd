@@ -59,6 +59,13 @@ class ToolBox {
 		$("#btn_numberbox").prop("disabled", !!numberboxError)
 		$("#btn_ghost").prop("disabled", !!ghostError)
 	}
+	static updateTimeUnitButton() {
+		if (isTimeUnitOk(getTimeUnits())) {
+			$("#timeunit-value").html(getTimeUnits());
+		} else {
+			$("#timeunit-value").html(warningHtml("None", false));
+		}
+	}
 }
 ToolBox.init();
 

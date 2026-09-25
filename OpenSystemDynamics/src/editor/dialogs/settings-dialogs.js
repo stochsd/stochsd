@@ -40,7 +40,7 @@ class NewModelDialog extends jqDialog {
 		// We currently does not use default values for this
 		// if($(this.dialogContent).find(".input-timeunits").val().trim()=="") {
 		// 	setTimeUnits("tu");
-		//	updateTimeUnitButton();
+		//	ToolBox.updateTimeUnitButton();
 		//}
 	}
 	makeApply() {
@@ -50,7 +50,7 @@ class NewModelDialog extends jqDialog {
 			return;
 		}
 		setTimeUnits(timeUnits);
-		updateTimeUnitButton();
+		ToolBox.updateTimeUnitButton();
 
 		$(this.dialog).dialog('close');
 	}
@@ -278,7 +278,7 @@ class TimeUnitDialog extends jqDialog {
 					let timeUnit = $(this.dialogContent).find(".timeunit-field").val();
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
-					$("#timeunit-value").html(timeUnit);
+					ToolBox.updateTimeUnitButton();
 					History.storeUndoState();
 				} else {
 					this.showComplain(this.validName);
