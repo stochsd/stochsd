@@ -28,14 +28,3 @@ function detachFlows(id) {
 	}
 }
 
-function delete_selected_objects() {
-	// Delete all objects that are selected
-	for (let parent of Visuals.selectedParents()) {
-		// check if object not already deleted
-		// e.i. link gets deleted automatically if any of it's attachments gets deleted
-		if (Visuals.get(parent.id)) {
-			tool_deletePrimitive(parent.id);
-		}
-	}
-}
-

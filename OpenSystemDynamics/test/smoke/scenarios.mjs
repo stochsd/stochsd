@@ -370,6 +370,31 @@ export const scenarios = [
 		},
 	},
 	{
+		// A link that is not attached in both ends is deleted when the mouse is released
+		name: "unattached-link",
+		async run(page) {
+			await page.run(`
+				${clickTool("stock", 200, 200)}
+				${clickTool("variable", 400, 200)}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const at = (x, y) => [x + offsetX, y + offsetY];
+			const count = () => page.run(`return { links: primitives("Link").length, visuals: Visuals.all().map(visual => visual.id).sort() }`);
+			const steps = {};
+
+			await page.run(`ToolBox.setTool("link", mouse.left);`);
+			await page.drag(at(200, 200), at(300, 350));
+			steps.linkToNothing = await count();
+
+			await page.run(`ToolBox.setTool("link", mouse.left);`);
+			await page.drag(at(200, 200), at(400, 200));
+			steps.linkToVariable = await count();
+			return steps;
+		},
+	},
+	{
 		// Renaming updates the plots and tables showing the renamed primitive
 		name: "rename",
 		async run(page) {

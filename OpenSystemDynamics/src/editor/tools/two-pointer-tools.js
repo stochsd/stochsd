@@ -409,7 +409,7 @@ class LinkTool extends TwoPointerTool {
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
-				delete_selected_objects();
+				Visuals.deleteSelected();
 			}
 		} else if (anchor.getAnchorType() === "bezier1" || anchor.getAnchorType() === "bezier2") {
 			parent.update();

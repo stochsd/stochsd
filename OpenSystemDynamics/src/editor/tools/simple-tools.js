@@ -75,7 +75,7 @@ class DeleteTool extends BaseTool {
 			ToolBox.setTool("mouse");
 			return;
 		}
-		delete_selected_objects();
+		Visuals.deleteSelected();
 		History.storeUndoState();
 		InfoBar.update();
 		ToolBox.setTool("mouse");

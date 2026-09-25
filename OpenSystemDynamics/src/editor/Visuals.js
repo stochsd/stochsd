@@ -209,6 +209,17 @@ class Visuals {
 		}
 	}
 
+	/** Deletes the primitives of the selected visuals from the model, which also removes their visuals */
+	static deleteSelected() {
+		for (let parent of this.selectedParents()) {
+			// check if object not already deleted
+			// e.i. link gets deleted automatically if any of it's attachments gets deleted
+			if (this.get(parent.id)) {
+				tool_deletePrimitive(parent.id);
+			}
+		}
+	}
+
 	static unselectAll() {
 		this.unselectAllExcept(null);
 	}
