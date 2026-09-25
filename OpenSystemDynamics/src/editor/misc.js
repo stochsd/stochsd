@@ -1,0 +1,35 @@
+function loadModelFromXml(XmlString) {
+	clearModel();
+	stochsd_clear_sync();
+	loadXML(XmlString);
+	replaceDiagamsWithTimePlots();
+	syncAllVisuals();
+}
+
+function showPluginMenu() {
+	$(".pluginMenu").show();
+}
+
+function sendToParentFrame(returnobj, target) {
+	results = {};
+	results.target = target;
+	results.returnobj = returnobj;
+	parent.postMessage(JSON.stringify(results), "*");
+}
+
+function loadPlugin(pluginName) {
+	sendToParentFrame({ "app_name": pluginName }, "load_app");
+}
+
+function setParentTitle(newTitle) {
+	sendToParentFrame({ "title": newTitle }, "update_title");
+}
+
+function quitQuestion() {
+	// How close event works
+	// https://github.com/nwjs/nw.js/wiki/window
+	saveChangedAlert(function () {
+		environment.closeWindow()
+	});
+}
+

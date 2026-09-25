@@ -61,7 +61,7 @@ defaultPositionChangeHandler
 defaultPrimitiveCreatedHandler
 defaultPrimitiveBeforeDestroyHandler
 
-*OpenSystemDynamics overrides these functions editor.js*
+*OpenSystemDynamics overrides these functions in editor/engine-hooks.js*
 
 
 **stochsd\OpenSystemDynamics\opensystemdynamics\settings.js**
