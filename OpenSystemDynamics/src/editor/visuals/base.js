@@ -38,7 +38,7 @@ class BaseObject {
 		// TODO: this should be replaced with a subscribe pattern instead - where plots can subscribe to primitives
 		this.primitive?.setAttribute("Color", this.color);
 		if (this.color) {
-			Object.values(connection_array ?? {})
+			Visuals.twoPointers()
 				.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
 				.filter(p => getDisplayIds(p.primitive).includes(this.id))
 				.map(p => p.render())
@@ -72,7 +72,7 @@ class BaseObject {
 		let children = getChildren(this.id);
 		for (let id in children) {
 			children[id].clean();
-			delete object_array[id];
+			Visuals.remove(id);
 		}
 
 		this.clearImage();
@@ -135,7 +135,7 @@ class BaseObject {
 			return;
 		}
 		this.name_element.innerHTML = new_name;
-		Object.values(connection_array ?? {})
+		Visuals.twoPointers()
 			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
 			.map(p => p.updateChart())
 	}
@@ -153,8 +153,7 @@ class OnePointer extends BaseObject {
 	 */
 	constructor(id, type, pos, extras = false) {
 		super(id, type, pos);
-		// Add object to global 
-		object_array[id] = this;
+		Visuals.addOnePointer(this);
 		this.id = id;
 		this.type = type;
 		this.element_array = [];
@@ -303,9 +302,7 @@ class OnePointer extends BaseObject {
 	updateGhosts() {
 		let ghostIds = findGhostsOfID(this.id);
 		ghostIds.map(gId => {
-			if (object_array[gId]) {
-				object_array[gId].update();
-			}
+			Visuals.getOnePointer(gId)?.update();
 		});
 	}
 	updatePosition() {

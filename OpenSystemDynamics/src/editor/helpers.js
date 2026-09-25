@@ -114,14 +114,9 @@ function get_parent(child) {
 // Get a list of all children for a parent
 function getChildren(parentId) {
 	let result = {}
-	for (let key in object_array) {
-		if (get_parent_id(key) == parentId && key != parentId) {
-			result[key] = object_array[key];
-		}
-	}
-	for (let key in connection_array) {
-		if (get_parent_id(key) == parentId && key != parentId) {
-			result[key] = connection_array[key];
+	for (let visual of Visuals.all()) {
+		if (get_parent_id(visual.id) == parentId && visual.id != parentId) {
+			result[visual.id] = visual;
 		}
 	}
 	return result;

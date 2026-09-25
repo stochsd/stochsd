@@ -128,7 +128,7 @@ class TimePlotVisual extends PlotVisual {
 	updateChart() {
 		// Dont update chart if primitive has been deleted
 		// This check needs to be here since updateChart is updated with a timeout 
-		if (!(this.id in connection_array)) return;
+		if (!Visuals.getTwoPointer(this.id)) return;
 
 		if (this.serieArray == null || this.serieArray.length == 0) {
 			this.setEmptyPlot();

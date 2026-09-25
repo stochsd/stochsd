@@ -4,7 +4,7 @@
   "afterTwoRedos": 47,
   "afterDeletingStock2": 46,
   "visualsAfterDelete": {
-    "objects": [
+    "onePointers": [
       "44:stock",
       "46:variable",
       "47:constant",
@@ -40,7 +40,7 @@
       "62.end_anchor:dummy_anchor",
       "62.start_anchor:dummy_anchor"
     ],
-    "connections": [
+    "twoPointers": [
       "49:flow",
       "50:link",
       "51:link",

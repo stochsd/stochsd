@@ -77,20 +77,21 @@ class RectSelector {
 	}
 	static getObjectsWithin() {
 		let return_array = {};
-		for (let key in object_array) {
-			if (RectSelector.isWithin(key)) {
-				return_array[key] = object_array[key];
+		for (let visual of Visuals.onePointers()) {
+			if (RectSelector.isWithin(visual.id)) {
+				return_array[visual.id] = visual;
 			}
 		}
 		return return_array;
 	}
 	/** @param {string} nodeId  */
 	static isWithin(nodeId) {
+		let [x, y] = Visuals.getOnePointer(nodeId).pos;
 		return (
-			object_array[nodeId].pos[0] >= this.coordRect.xmin() &&
-			object_array[nodeId].pos[1] >= this.coordRect.ymin() &&
-			object_array[nodeId].pos[0] <= this.coordRect.xmin() + this.coordRect.width() &&
-			object_array[nodeId].pos[1] <= this.coordRect.ymin() + this.coordRect.height()
+			x >= this.coordRect.xmin() &&
+			y >= this.coordRect.ymin() &&
+			x <= this.coordRect.xmin() + this.coordRect.width() &&
+			y <= this.coordRect.ymin() + this.coordRect.height()
 		);
 	}
 }

@@ -1,6 +1,6 @@
 {
   "visuals": {
-    "objects": [
+    "onePointers": [
       "44:stock",
       "45.end_anchor:dummy_anchor",
       "45.start_anchor:dummy_anchor",
@@ -36,7 +36,7 @@
       "57.end_anchor:dummy_anchor",
       "57.start_anchor:dummy_anchor"
     ],
-    "connections": [
+    "twoPointers": [
       "45:flow",
       "46:flow",
       "50:link",

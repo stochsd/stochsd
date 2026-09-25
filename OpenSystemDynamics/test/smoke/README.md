@@ -28,6 +28,7 @@ The scenarios are in `scenarios.mjs`. Every scenario starts from a freshly loade
 - **startup**: state of an empty model after loading.
 - **build-and-simulate**: creates every primitive type with the tools (the same calls as the mouse handlers make), sets definitions and runs a simulation.
 - **undo-redo-delete**: undo, redo, and delete.
+- **mouse-and-keyboard**: real mouse and key events: clicking, dragging, rubber band selection, dragging a flow anchor, Shift+Arrow, Ctrl+A and Delete.
 - **dialogs**: opens the dialog of every primitive, plot and the global dialogs.
 - **model-&lt;file&gt;**: every file in `models/` is opened the same way as the app opens a file (including the page reload), saved again and simulated.
 

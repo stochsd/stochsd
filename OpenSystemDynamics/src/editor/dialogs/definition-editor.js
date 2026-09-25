@@ -574,14 +574,7 @@ class DefinitionEditor extends jqDialog {
 			let restrictNonNegative = $(this.restrictNonNegativeCheckbox).prop("checked");
 			setNonNegative(this.primitive, restrictNonNegative);
 
-			let visualObject = object_array[this.primitive.id];
-			if (visualObject) {
-				visualObject.update();
-			}
-			visualObject = connection_array[this.primitive.id];
-			if (visualObject) {
-				visualObject.update();
-			}
+			Visuals.get(this.primitive.id)?.update();
 		}
 	}
 }

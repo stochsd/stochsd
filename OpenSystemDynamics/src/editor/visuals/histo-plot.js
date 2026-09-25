@@ -140,7 +140,7 @@ class HistoPlotVisual extends PlotVisual {
 	updateChart() {
 		// Dont update chart if primitive has been deleted
 		// This check needs to be here since updateChart is updated with a timeout 
-		if (!(this.id in connection_array)) return;
+		if (!Visuals.getTwoPointer(this.id)) return;
 
 		if (this.serieArray == null) {
 			// The series are not initialized yet

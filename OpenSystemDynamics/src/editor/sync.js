@@ -12,9 +12,9 @@ function find_connections(visual) {
 
 function find_start_connections(visual) {
 	let connections_array = Array(0);
-	for (key in connection_array) {
-		if (connection_array[key].getStartAttach && connection_array[key].getStartAttach() == visual) {
-			connections_array.push(connection_array[key]);
+	for (let connection of Visuals.twoPointers()) {
+		if (connection.getStartAttach && connection.getStartAttach() == visual) {
+			connections_array.push(connection);
 		}
 	}
 	return connections_array;
@@ -22,9 +22,9 @@ function find_start_connections(visual) {
 
 function find_end_connections(visual) {
 	let connections_array = Array(0);
-	for (key in connection_array) {
-		if (connection_array[key].getEndAttach && connection_array[key].getEndAttach() == visual) {
-			connections_array.push(connection_array[key]);
+	for (let connection of Visuals.twoPointers()) {
+		if (connection.getEndAttach && connection.getEndAttach() == visual) {
+			connections_array.push(connection);
 		}
 	}
 	return connections_array;
@@ -32,8 +32,7 @@ function find_end_connections(visual) {
 
 
 function removePlotReferences(id) {
-	for (let plotId in connection_array) {
-		let visual = connection_array[plotId];
+	for (let visual of Visuals.twoPointers()) {
 		let type = visual.type
 		switch (type) {
 			case ("timeplot"):
@@ -64,10 +63,8 @@ function stochsd_delete_primitive(id) {
 		stochsd_object.clean();
 	}
 
-	if (object_array[id]) {
-		delete object_array[id];
-	} else if (connection_array[id]) {
-		delete connection_array[id];
+	if (Visuals.get(id)) {
+		Visuals.remove(id);
 	} else {
 		do_global_log("primitive with id " + id + " does not exist");
 	}

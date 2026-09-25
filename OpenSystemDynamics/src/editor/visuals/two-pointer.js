@@ -5,7 +5,7 @@ class TwoPointer extends BaseObject {
 		this.type = type;
 		this.selected = false;
 		this.superClass = "TwoPointer";
-		connection_array[this.id] = this;
+		Visuals.addTwoPointer(this);
 
 		// anchors must exist before make graphics 
 		this.createInitialAnchors(pos0, pos1);

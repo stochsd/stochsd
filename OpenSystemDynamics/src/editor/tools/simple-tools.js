@@ -43,7 +43,7 @@ class RunTool extends BaseTool {
 			alert.setTitle("Unable to Simulate");
 			alert.show();
 			unselect_all();
-			(object_array[prim.id] ?? connection_array[prim.id]).select();
+			Visuals.get(prim.id).select();
 			InfoBar.update();
 			ToolBox.updateButtons();
 		} else {

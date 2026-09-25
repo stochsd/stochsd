@@ -93,8 +93,8 @@ $(window).load(function () {
 				$("#btn_print_model").click();
 			}
 			if (event.key.toLowerCase() == "a") {
-				for (let id in object_array) { object_array[id].select(); }
-				for (let id in connection_array) { connection_array[id].select(); }
+				for (let visual of Visuals.onePointers()) { visual.select(); }
+				for (let visual of Visuals.twoPointers()) { visual.select(); }
 			}
 			if (event.key.toLowerCase() == "z") {
 				History.doUndo();

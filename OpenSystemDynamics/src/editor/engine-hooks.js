@@ -24,7 +24,7 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 
 defaultPositionChangeHandler = function (primitive) {
 	let newPosition = getCenterPosition(primitive)
-	let visualObject = object_array[getID(primitive)];
+	let visualObject = Visuals.getOnePointer(getID(primitive));
 	if (visualObject) {
 		visualObject.setPos(newPosition);
 	}

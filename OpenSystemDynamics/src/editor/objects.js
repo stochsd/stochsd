@@ -14,8 +14,7 @@ function tool_deletePrimitive(id) {
 }
 
 function detachFlows(id) {
-	for (let key in connection_array) {
-		let connection = connection_array[key];
+	for (let connection of Visuals.twoPointers()) {
 		if (connection.type == "flow") {
 			if (connection.getStartAttach() && connection.getStartAttach().id == id) {
 				connection.setStartAttach(null);
@@ -68,14 +67,9 @@ function delete_selected_objects() {
 
 function get_selected_objects() {
 	let return_array = {};
-	for (let key in object_array) {
-		if (object_array[key].isSelected()) {
-			return_array[key] = object_array[key];
-		}
-	}
-	for (let key in connection_array) {
-		if (connection_array[key].isSelected()) {
-			return_array[key] = connection_array[key];
+	for (let visual of Visuals.all()) {
+		if (visual.isSelected()) {
+			return_array[visual.id] = visual;
 		}
 	}
 	return return_array;
@@ -86,14 +80,15 @@ function get_selected_ids() {
 }
 
 function delete_connection(key) {
-	if (!(key in connection_array)) {
+	let connection = Visuals.getTwoPointer(key);
+	if (!connection) {
 		return;
 	}
-	let start_anchor = connection_array[key].start_anchor;
-	let end_anchor = connection_array[key].end_anchor;
-	let auxiliary = connection_array[key].auxiliary;
-	connection_array[key].group.remove();
-	delete connection_array[key];
+	let start_anchor = connection.start_anchor;
+	let end_anchor = connection.end_anchor;
+	let auxiliary = connection.auxiliary;
+	connection.group.remove();
+	Visuals.remove(key);
 
 	// Must be done last otherwise the anchors will respawn	
 	delete_object(start_anchor.id);
@@ -101,7 +96,7 @@ function delete_connection(key) {
 	delete_object(auxiliary.id);
 }
 function delete_object(node_id) {
-	let object_to_delete = object_array[node_id];
+	let object_to_delete = Visuals.getOnePointer(node_id);
 
 	// Delete all references to the object in the connections
 	if (object_to_delete.hasOwnProperty("parent_id")) {
@@ -115,7 +110,7 @@ function delete_object(node_id) {
 		object_to_delete.element_array[key].remove();
 	}
 	object_to_delete.group.remove();
-	delete object_array[node_id];
+	Visuals.remove(node_id);
 }
 function primitive_mousedown(node_id, event, new_primitive) {
 	mouse.lastClickedPrimitive = get_object(node_id);
@@ -146,10 +141,10 @@ function primitive_mousedown(node_id, event, new_primitive) {
 
 // only updates diagrams, tables, and XyPlots if needed 
 function update_relevant_objects(ids) {
-	for (let key in object_array) {
+	for (let visual of Visuals.onePointers()) {
 		// dont update dummy_anchors, the twopointer parent of the dummy anchor has responsibility of the dummy_anchors 
-		if (object_array[key].type !== "dummy_anchor") {
-			object_array[key].update();
+		if (visual.type !== "dummy_anchor") {
+			visual.update();
 		}
 	}
 	update_twopointer_objects(ids);
@@ -157,47 +152,38 @@ function update_relevant_objects(ids) {
 
 // only updates diagrams, tables, and XyPlots if needed 
 function update_twopointer_objects(ids) {
-	for (let key in connection_array) {
+	for (let visual of Visuals.twoPointers()) {
 		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
-		if (onlyIfRelevant.includes(connection_array[key].type)) {
-			if (ids.includes(key)) {
-				connection_array[key].update();
+		if (onlyIfRelevant.includes(visual.type)) {
+			if (ids.includes(visual.id)) {
+				visual.update();
 			}
 		} else {
-			connection_array[key].update();
+			visual.update();
 		}
 	}
 }
 
 function update_all_objects() {
-	for (let key in object_array) {
-		object_array[key].update();
+	for (let visual of Visuals.onePointers()) {
+		visual.update();
 	}
-	for (let key in connection_array) {
-		connection_array[key].update();
+	for (let visual of Visuals.twoPointers()) {
+		visual.update();
 	}
 }
 
 function get_all_objects() {
 	/** @type {{[id: string]: BaseObject }} */
 	let result = {}
-	for (let key in object_array) {
-		result[key] = object_array[key];
-	}
-	for (let key in connection_array) {
-		result[key] = connection_array[key];
+	for (let visual of Visuals.all()) {
+		result[visual.id] = visual;
 	}
 	return result;
 }
 
 function get_object(id) {
-	if (typeof object_array[id] != "undefined") {
-		return object_array[id];
-	}
-	if (typeof connection_array[id] != "undefined") {
-		return connection_array[id];
-	}
-	return false;
+	return Visuals.get(id) ?? false;
 }
 
 /** @param {string} id @param {string} new_name */
@@ -212,6 +198,7 @@ function set_name(id, new_name) {
 /** @param {string} node_id @param {number} diff_x @param {number} diff_y */
 function rel_move(node_id, diff_x, diff_y) {
 	let primitive = findID(node_id);
+	let visual = Visuals.getOnePointer(node_id);
 	if (primitive != null) {
 		// If its a real primitive (stoch, variable etc) update it in the engine
 		let oldPos = getCenterPosition(primitive);
@@ -219,11 +206,11 @@ function rel_move(node_id, diff_x, diff_y) {
 		setCenterPosition(primitive, newPos);
 	} else {
 		// If its not a real primtiive but rather an anchor point updated the position only graphically
-		object_array[node_id].pos[0] += diff_x;
-		object_array[node_id].pos[1] += diff_y;
+		visual.pos[0] += diff_x;
+		visual.pos[1] += diff_y;
 	}
-	object_array[node_id].updatePosition();
-	object_array[node_id].afterMove(diff_x, diff_y);
+	visual.updatePosition();
+	visual.afterMove(diff_x, diff_y);
 }
 
 function positionToModel() {
@@ -233,7 +220,7 @@ function positionToModel() {
 
 function unselect_all_other_anchors(parent_id, child_id_to_select) {
 	unselect_all();
-	let parent = connection_array[parent_id];
+	let parent = Visuals.getTwoPointer(parent_id);
 	parent.select();
 	for (let anchor of parent.getAnchors()) {
 		if (anchor.id !== child_id_to_select) {
@@ -243,23 +230,23 @@ function unselect_all_other_anchors(parent_id, child_id_to_select) {
 }
 
 function unselect_all() {
-	for (let key in object_array) {
-		object_array[key].unselect();
+	for (let visual of Visuals.onePointers()) {
+		visual.unselect();
 	}
-	for (let key in connection_array) {
-		connection_array[key].unselect();
+	for (let visual of Visuals.twoPointers()) {
+		visual.unselect();
 	}
 }
 
 function unselect_all_but(dont_unselect_id) {
-	for (let key in object_array) {
-		if (key != dont_unselect_id) {
-			object_array[key].unselect();
+	for (let visual of Visuals.onePointers()) {
+		if (visual.id != dont_unselect_id) {
+			visual.unselect();
 		}
 	}
-	for (let key in connection_array) {
-		if (key != dont_unselect_id) {
-			connection_array[key].unselect();
+	for (let visual of Visuals.twoPointers()) {
+		if (visual.id != dont_unselect_id) {
+			visual.unselect();
 		}
 	}
 }

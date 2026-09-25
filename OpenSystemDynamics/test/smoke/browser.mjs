@@ -141,6 +141,42 @@ export async function launchBrowser() {
 			await sleep(300);
 		},
 
+		// Real mouse input, at page coordinates. type is "mousePressed", "mouseMoved" or "mouseReleased"
+		async mouse(type, x, y, { button = "left", modifiers = 0 } = {}) {
+			const pressed = type === "mousePressed" || (type === "mouseMoved" && this.mouseIsDown);
+			if (type === "mousePressed") this.mouseIsDown = true;
+			if (type === "mouseReleased") this.mouseIsDown = false;
+			await send("Input.dispatchMouseEvent", {
+				type, x, y, modifiers,
+				button: type === "mouseMoved" && !pressed ? "none" : button,
+				buttons: pressed ? 1 : 0,
+				clickCount: type === "mouseMoved" ? 0 : 1,
+			});
+		},
+
+		// Presses and drags the mouse from one page coordinate to another, in a few steps
+		async drag([x1, y1], [x2, y2], { steps = 5, modifiers = 0 } = {}) {
+			await this.mouse("mouseMoved", x1, y1, { modifiers });
+			await this.mouse("mousePressed", x1, y1, { modifiers });
+			for (let i = 1; i <= steps; i++) {
+				await this.mouse("mouseMoved", x1 + (x2 - x1) * i / steps, y1 + (y2 - y1) * i / steps, { modifiers });
+			}
+			await this.mouse("mouseReleased", x2, y2, { modifiers });
+			await sleep(50);
+		},
+
+		async click(x, y, { modifiers = 0 } = {}) {
+			await this.drag([x, y], [x, y], { steps: 0, modifiers });
+		},
+
+		// Real key press. modifiers: 2 = Ctrl, 8 = Shift
+		async key(key, { code, keyCode, modifiers = 0 } = {}) {
+			const params = { key, code, windowsVirtualKeyCode: keyCode, modifiers };
+			await send("Input.dispatchKeyEvent", { type: "keyDown", ...params });
+			await send("Input.dispatchKeyEvent", { type: "keyUp", ...params });
+			await sleep(50);
+		},
+
 		async close() {
 			ws.close();
 			chrome.kill();

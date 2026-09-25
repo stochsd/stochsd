@@ -69,7 +69,7 @@ class FlowVisual extends BaseConnection {
 	 */
 	requestNewAnchorDimension(requestedValue, anchorId, dimensionIndex) {
 		/** @type {AnchorPoint} */
-		const anchor = object_array[anchorId];
+		const anchor = Visuals.getOnePointer(anchorId);
 		let newValue = requestedValue;
 		const anchorAttach = anchor.getAnchorType() === "start" 
 			? this._start_attach 
@@ -113,7 +113,7 @@ class FlowVisual extends BaseConnection {
 	 */
 	requestNewAnchorPos(newPosition, anchorId) {
 		let [x, y] = newPosition;
-		let mainAnchor = object_array[anchorId];
+		let mainAnchor = Visuals.getOnePointer(anchorId);
 
 		let prevAnchor = this.getPreviousAnchor(anchorId);
 		let nextAnchor = this.getNextAnchor(anchorId);

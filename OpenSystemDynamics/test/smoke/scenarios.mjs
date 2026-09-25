@@ -70,8 +70,8 @@ export const buildModel = `
 
 const visuals = `
 	return {
-		objects: Object.values(object_array).map(o => o.id + ":" + o.type).sort(),
-		connections: Object.values(connection_array).map(o => o.id + ":" + o.type).sort(),
+		onePointers: Visuals.onePointers().map(o => o.id + ":" + o.type).sort(),
+		twoPointers: Visuals.twoPointers().map(o => o.id + ":" + o.type).sort(),
 	};
 `;
 
@@ -136,7 +136,7 @@ export const scenarios = [
 		name: "undo-redo-delete",
 		async run(page) {
 			await page.run(buildModel);
-			const count = `return Object.keys(object_array).length + Object.keys(connection_array).length`;
+			const count = `return Visuals.all().length`;
 			const steps = { built: await page.run(count) };
 			await page.run(`ToolBox.setTool("undo", mouse.left); ToolBox.setTool("undo", mouse.left);`);
 			steps.afterTwoUndos = await page.run(count);
@@ -152,6 +152,64 @@ export const scenarios = [
 		},
 	},
 	{
+		// Uses real mouse and keyboard events, so it goes through the same event handlers as a user
+		name: "mouse-and-keyboard",
+		async run(page) {
+			await page.run(`
+				${buildModel}
+				// Without a time unit, clicking in the diagram opens the time unit dialog instead
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
+			const selection = () => page.run(`return Object.keys(get_selected_objects()).sort()`);
+			const positionOf = id => page.run(`return get_object("${id}").getPos()`);
+			const flowId = await page.run(`return primitives("Flow")[0].id`);
+			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
+			const steps = {};
+
+			await page.click(...toPage([500, 200]));
+			steps.clickStock2 = await selection();
+
+			await page.drag(toPage([500, 200]), toPage([520, 260]));
+			steps.dragStock2 = { position: await positionOf(stock2Id), flowEnd: await positionOf(`${flowId}.end_anchor`) };
+
+			await page.click(...toPage([650, 100]));
+			steps.clickEmpty = await selection();
+
+			await page.drag(toPage([150, 150]), toPage([560, 450]));
+			steps.rubberBandSelect = await selection();
+
+			await page.click(...toPage([650, 100]));
+			await page.click(...toPage([350, 220]));
+			steps.clickFlowValve = await selection();
+
+			const flowEnd = await positionOf(`${flowId}.end_anchor`);
+			await page.drag(toPage(flowEnd), toPage([600, 350]));
+			steps.dragFlowEndAnchor = {
+				selection: await selection(),
+				flowEnd: await positionOf(`${flowId}.end_anchor`),
+				endAttach: await page.run(`return get_object("${flowId}").getEndAttach()?.id ?? null`),
+			};
+
+			await page.click(...toPage([200, 200]));
+			await page.key("ArrowRight", { code: "ArrowRight", keyCode: 39, modifiers: 8 });
+			steps.shiftArrowRight = await page.run(`return primitives("Stock").map(s => get_object(s.id).getPos())`);
+
+			await page.key("a", { code: "KeyA", keyCode: 65, modifiers: 2 });
+			steps.ctrlA = (await selection()).length;
+
+			await page.click(...toPage([650, 100]));
+			await page.click(...toPage([200, 400]));
+			await page.key("Delete", { code: "Delete", keyCode: 46 });
+			steps.deleteAuxiliary = await page.run(`return primitives().map(getName)`);
+
+			steps.xml = await page.run(modelXml);
+			return steps;
+		},
+	},
+	{
 		name: "dialogs",
 		async run(page) {
 			await page.run(buildModel);
@@ -162,7 +220,7 @@ export const scenarios = [
 				const opened = [];
 				const visibleTitle = () => $(".ui-dialog:visible .ui-dialog-title").map((i, e) => e.textContent).get().join(", ");
 
-				for (const visual of Object.values(object_array).concat(Object.values(connection_array))) {
+				for (const visual of Visuals.onePointers().concat(Visuals.twoPointers())) {
 					if (visual.dialog?.show) {
 						visual.dialog.show();
 						opened.push(visual.type + " -> " + visibleTitle());

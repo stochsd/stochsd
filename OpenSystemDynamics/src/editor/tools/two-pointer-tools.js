@@ -64,7 +64,7 @@ class TwoPointerTool extends BaseTool {
 			moveObject.setPos([x, y]);
 		}
 		parent.update();
-		object_array[node_id].updatePosition();
+		Visuals.getOnePointer(node_id).updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.current_connection.update();
@@ -128,8 +128,8 @@ class FlowTool extends TwoPointerTool {
 		if (mouse.isLeftDown) {
 			let only_selected_anchor = get_only_selected_anchor_id();
 			if (only_selected_anchor) {
-				let parent = connection_array[only_selected_anchor["parent_id"]];
-				let child = object_array[only_selected_anchor["child_id"]];
+				let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
+				let child = Visuals.getOnePointer(only_selected_anchor["child_id"]);
 				if (parent.getType() === "flow" && child.getAnchorType() === "end") {
 					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x, y]) < 10) {
@@ -164,7 +164,7 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
-		attach_anchor(object_array[node_id]);
+		attach_anchor(Visuals.getOnePointer(node_id));
 	}
 	static getType() {
 		return "flow";
@@ -261,7 +261,7 @@ class LineTool extends TwoPointerTool {
 			moveObject.setPos([x, y]);
 		}
 		parent.update();
-		object_array[node_id].updatePosition();
+		Visuals.getOnePointer(node_id).updatePosition();
 	}
 }
 LineTool.init();
@@ -384,11 +384,11 @@ class LinkTool extends TwoPointerTool {
 			moveObject.setPos([x, y]);
 			parent.update();
 		} else if (anchor_type === "b1_anchor") {
-			let parent = connection_array[get_parent_id(node_id)];
+			let parent = Visuals.getTwoPointer(get_parent_id(node_id));
 			parent.setHandle1Pos([x, y]);
 			parent.update();
 		} else if (anchor_type === "b2_anchor") {
-			let parent = connection_array[get_parent_id(node_id)];
+			let parent = Visuals.getTwoPointer(get_parent_id(node_id));
 			parent.setHandle2Pos([x, y]);
 			parent.update();
 		}
@@ -400,7 +400,7 @@ class LinkTool extends TwoPointerTool {
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
 		/** @type {AnchorPoint} */
-		const anchor = object_array[node_id];
+		const anchor = Visuals.getOnePointer(node_id);
 		/** @type {BaseConnection} */
 		const parent = get_parent(anchor);
 		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {

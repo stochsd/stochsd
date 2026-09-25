@@ -10,10 +10,10 @@ class MouseTool extends BaseTool {
 
 		let selected_anchor = get_only_selected_anchor_id();
 		// Only one anchor is selected AND that that anchor has attaching capabilities 
-		if (selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
-			let parent = connection_array[selected_anchor.parent_id];
+		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
+			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
 			// Detach anchor 
-			switch (object_array[selected_anchor.child_id].getAnchorType()) {
+			switch (Visuals.getOnePointer(selected_anchor.child_id).getAnchorType()) {
 				case "start":
 					parent.setStartAttach(null);
 					break;
@@ -44,7 +44,7 @@ class MouseTool extends BaseTool {
 			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
-			let parent = connection_array[only_selected_anchor["parent_id"]];
+			let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
 			let tool = ToolBox.tools[parent.type];
 			tool.mouseMoveSingleAnchor(x, y, shiftKey, only_selected_anchor["child_id"]);
 			parent.update();
@@ -52,7 +52,7 @@ class MouseTool extends BaseTool {
 			// special exeption for links of links is being draged directly 
 			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"] + ".b1_anchor");
 			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"] + ".b2_anchor");
-			let parent = connection_array[only_selected_link["parent_id"]];
+			let parent = Visuals.getTwoPointer(only_selected_link["parent_id"]);
 			parent.update();
 		} else {
 			let move_array = get_selected_objects();
@@ -88,8 +88,8 @@ class MouseTool extends BaseTool {
 		// Check if we selected only 1 anchor element and in that case detach it;
 		let selected_anchor = get_only_selected_anchor_id();
 
-		if (selected_anchor && connection_array[selected_anchor.parent_id].getStartAttach) {
-			let parent = connection_array[selected_anchor.parent_id];
+		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
+			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
 			let tool = ToolBox.tools[parent.getType()];
 			tool.mouseUpSingleAnchor(x, y, false, selected_anchor.child_id);
 		}
@@ -103,8 +103,8 @@ class MouseTool extends BaseTool {
 	static rightMouseDown(x, y) {
 		let only_selected_anchor = get_only_selected_anchor_id();
 		if (only_selected_anchor &&
-			connection_array[only_selected_anchor["parent_id"]].getType() === "flow" &&
-			object_array[only_selected_anchor["child_id"]].getAnchorType() === "end") {
+			Visuals.getTwoPointer(only_selected_anchor["parent_id"]).getType() === "flow" &&
+			Visuals.getOnePointer(only_selected_anchor["child_id"]).getAnchorType() === "end") {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}

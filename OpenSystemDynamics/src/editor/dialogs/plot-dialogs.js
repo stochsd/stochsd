@@ -182,7 +182,7 @@ class GenerationsComponent extends HtmlComponent {
 		this.find(".clear-button").click((event) => {
 			$(event.currentTarget).prop("disabled", true);
 			let id = getID(this.primitive);
-			let parentVisual = connection_array[id];
+			let parentVisual = Visuals.getTwoPointer(id);
 			parentVisual.clearGenerations();
 			this.find(`#${this.componentId}`).html(this.renderTable());
 			this.bindEvents();
@@ -214,7 +214,7 @@ class ComparePlotDialog extends DisplayDialog {
 					{ text: "Show Data when hovering", attribute: "ShowHighlighter" },
 				])
 			],
-			[new GenerationsComponent(this, connection_array[this.primitive.id].gens)]
+			[new GenerationsComponent(this, Visuals.getTwoPointer(this.primitive.id).gens)]
 		];
 	}
 }

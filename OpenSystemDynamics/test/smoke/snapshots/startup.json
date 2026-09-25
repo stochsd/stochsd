@@ -1,7 +1,7 @@
 {
   "visuals": {
-    "objects": [],
-    "connections": []
+    "onePointers": [],
+    "twoPointers": []
   },
   "tool": "MouseTool",
   "undo": [

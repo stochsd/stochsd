@@ -63,12 +63,6 @@ const type_basename = {
 	constant: "Parameter"
 };
 
-// Stores Visual objects and connections
-/** @type {{ [id: string]: TwoPointer }} */
-var connection_array = {};
-/** @type {{ [id: string]: OnePointer }} */
-var object_array = {};
-
 const mouse = { 
 	// Stores state related to mouse
 	clickedOnObject: false,

@@ -252,7 +252,7 @@ class ConverterDialog extends jqDialog {
 				}
 			}
 			// Update visual object to add/remove "?" icon 
-			let visualObject = object_array[this.primitive.id];
+			let visualObject = Visuals.getOnePointer(this.primitive.id);
 			if (visualObject) {
 				visualObject.update();
 			}
