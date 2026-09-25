@@ -1,0 +1,26 @@
+{
+	// Makes VS Code treat all scripts as one project, like the browser does when index.html loads them.
+	// This gives go to definition, find all references, rename and hover info across files.
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022", "DOM"],
+		"checkJs": false
+	},
+	"include": [
+		"*.js",
+		"editor/**/*.js",
+		"insightmaker/**/*.js",
+		"libs/*.js",
+		"codemirror/lib/codemirror.js"
+	],
+	"exclude": [
+		// Minified or generated, only slows down the editor
+		"insightmaker/SimulationEngine/calc/antlr3-all-min.js",
+		"insightmaker/SimulationEngine/calc/output/**",
+		"insightmaker/resources/jstat.min.js"
+	],
+	"typeAcquisition": {
+		// jQuery is loaded from a minified file, so let VS Code download its type definitions instead
+		"include": ["jquery"]
+	}
+}
