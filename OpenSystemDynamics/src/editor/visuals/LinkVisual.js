@@ -50,16 +50,14 @@ class LinkVisual extends BaseConnection {
 	}
 	unselect() {
 		this.selected = false;
-		if (hasSelectedChildren(this.id)) {
+		if (this.getChildren().some(child => child.isSelected())) {
 			for (let i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}
 		} else {
-			let children = getChildren(this.id);
-			for (let id in children) {
-				let visual = Visuals.get(id);
-				if ('setVisible' in visual) {
-					visual.setVisible(false);
+			for (let child of this.getChildren()) {
+				if ('setVisible' in child) {
+					child.setVisible(false);
 				}
 			}
 		}
@@ -70,11 +68,9 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	select(selectChildren = true) {
-		const children = getChildren(this.id);
-		for (let id in children) {
-			const visual = Visuals.get(id);
-			if ('setVisible' in visual) {
-				visual.setVisible(true);
+		for (let child of this.getChildren()) {
+			if ('setVisible' in child) {
+				child.setVisible(true);
 			}
 		}
 		for (let i in this.highlight_on_select) {

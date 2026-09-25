@@ -101,31 +101,6 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	return stripped;
 }
 
-// Get a list of all children for a parent
-function getChildren(parentId) {
-	let result = {}
-	for (let visual of Visuals.all()) {
-		if (Visuals.getParentId(visual.id) == parentId && visual.id != parentId) {
-			result[visual.id] = visual;
-		}
-	}
-	return result;
-}
-
-// Return true if parent has any selected children
-function hasSelectedChildren(parentId) {
-	// Make sure we actually work on parent element
-	parentId = Visuals.getParentId(parentId);
-
-	// Find the children
-	let children = getChildren(parentId);
-	for (let id in children) {
-		if (children[id].isSelected()) {
-			return true;
-		}
-	}
-	return false;
-}
 /**
  * 
  * @param {*} id

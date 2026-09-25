@@ -95,17 +95,19 @@ class BaseObject {
 		return Visuals.get(Visuals.getParentId(this.id));
 	}
 
+	/** The visuals that belong to this, e.g. the anchors of a flow */
+	getChildren() {
+		return Visuals.all().filter(visual => Visuals.getParentId(visual.id) == this.id && visual.id != this.id);
+	}
+
 	/** Removes this visual and its children from the diagram. The primitive in the model is not affected */
 	remove() {
 		this.clean();
 		Visuals.remove(this.id);
 	}
 	clean() {
-		// Clean all children
-		let children = getChildren(this.id);
-		for (let id in children) {
-			children[id].clean();
-			Visuals.remove(id);
+		for (let child of this.getChildren()) {
+			child.remove();
 		}
 		this.clearImage();
 	}
