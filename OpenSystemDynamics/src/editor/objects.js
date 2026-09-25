@@ -30,12 +30,10 @@ function detachFlows(id) {
 
 function get_selected_root_objects() {
 	let result = {};
-	let all_objects = get_all_objects();
-	for (let key in all_objects) {
-		let parent = get_parent(all_objects[key]);
-
+	for (let visual of Visuals.all()) {
+		let parent = get_parent(visual);
 		// If any element is selected we add its parent
-		if (all_objects[key].isSelected()) {
+		if (visual.isSelected()) {
 			result[parent.id] = parent;
 		}
 	}
@@ -44,10 +42,9 @@ function get_selected_root_objects() {
 
 function get_root_objects() {
 	let result = {};
-	let all_objects = get_all_objects();
-	for (let key in all_objects) {
-		if (key.indexOf(".") == -1) {
-			result[key] = all_objects[key];
+	for (let visual of Visuals.all()) {
+		if (visual.id.indexOf(".") == -1) {
+			result[visual.id] = visual;
 		}
 	}
 	return result;
@@ -171,15 +168,6 @@ function update_all_objects() {
 	for (let visual of Visuals.twoPointers()) {
 		visual.update();
 	}
-}
-
-function get_all_objects() {
-	/** @type {{[id: string]: BaseObject }} */
-	let result = {}
-	for (let visual of Visuals.all()) {
-		result[visual.id] = visual;
-	}
-	return result;
 }
 
 /** @param {string} id @param {string} new_name */

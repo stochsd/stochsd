@@ -87,22 +87,21 @@ function mouseUpHandler(event) {
 
 function find_elements_under(x, y) {
 	let found_array = [];
-	let objects = get_all_objects();
 	// Having "flow" in this list causes a bug with flows that does not place properly
 	//~ let attachable_object_types = ["flow", "stock", "variable"];
 	let attachable_object_types = ["flow", "stock", "constant", "variable", "converter"];
-	for (key in objects) {
-		if (objects[key].type == "dummy_anchor") {
+	for (let visual of Visuals.all()) {
+		if (visual.type == "dummy_anchor") {
 			// We are only intressted in primitive-objects. not dummy_anchors
 			continue;
 		}
-		if (attachable_object_types.indexOf(objects[key].type) == -1) {
+		if (attachable_object_types.indexOf(visual.type) == -1) {
 			// We skip if the object is not attachable
 			continue;
 		}
-		let rect = objects[key].getBoundRect();
+		let rect = visual.getBoundRect();
 		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
-			found_array.push(objects[key]);
+			found_array.push(visual);
 		}
 	}
 	do_global_log("found array(" + found_array.length + ") " + found_array.map((x) => x.id).join(","));
