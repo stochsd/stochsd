@@ -38,10 +38,7 @@ class BaseObject {
 		// TODO: this should be replaced with a subscribe pattern instead - where plots can subscribe to primitives
 		this.primitive?.setAttribute("Color", this.color);
 		if (this.color) {
-			Visuals.twoPointers()
-				.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
-				.filter(p => getDisplayIds(p.primitive).includes(this.id))
-				.map(p => p.render())
+			Visuals.displaysShowing(this.id).forEach(display => display.render());
 		}
 	}
 
@@ -140,9 +137,7 @@ class BaseObject {
 			return;
 		}
 		this.name_element.innerHTML = new_name;
-		Visuals.twoPointers()
-			.filter(twoP => ["table", "timeplot", "xyplot", "compareplot", "histoplot"].includes(twoP.type))
-			.map(p => p.updateChart())
+		Visuals.displays().forEach(display => display.updateChart());
 	}
 
 	attributeChangeHandler(attributeName, value) {

@@ -9,6 +9,8 @@ class Visuals {
 	static #onePointers = {};
 	/** @type {{ [id: string]: TwoPointer }} */
 	static #twoPointers = {};
+	// Displays are the plots and tables, i.e. the TwoPointers that show values of primitives
+	static #displayTypes = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
 
 	/** @param {OnePointer} visual */
 	static addOnePointer(visual) {
@@ -95,6 +97,20 @@ class Visuals {
 		return Object.values(parents);
 	}
 
+	/** @returns {TwoPointer[]} */
+	static displays() {
+		return this.twoPointers().filter(visual => this.#displayTypes.includes(visual.type));
+	}
+
+	/**
+	 * Displays that show the primitive with this id
+	 * @param {string} id
+	 * @returns {TwoPointer[]}
+	 */
+	static displaysShowing(id) {
+		return this.displays().filter(display => getDisplayIds(display.primitive).includes(id));
+	}
+
 	static updateAll() {
 		for (let visual of this.onePointers()) {
 			visual.update();
@@ -110,9 +126,8 @@ class Visuals {
 	 * @param {string[]} displayIds
 	 */
 	static updateTwoPointers(displayIds = []) {
-		let displayTypes = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
 		for (let visual of this.twoPointers()) {
-			if (!displayTypes.includes(visual.type) || displayIds.includes(visual.id)) {
+			if (!this.#displayTypes.includes(visual.type) || displayIds.includes(visual.id)) {
 				visual.update();
 			}
 		}
