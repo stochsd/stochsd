@@ -1,4 +1,4 @@
-class StockVisual extends BasePrimitive {
+class StockVisual extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateDefinitionError();
@@ -104,9 +104,12 @@ class StockVisual extends BasePrimitive {
 	getLayer() {
 		return SVG.stockLayer;
 	}
+	doubleClick() {
+		openPrimitiveDialog(this.id);
+	}
 }
 
-class NumberboxVisual extends BasePrimitive {
+class NumberboxVisual extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.setSelectionSizeToText();
@@ -221,7 +224,7 @@ class NumberboxVisual extends BasePrimitive {
 	}
 }
 
-class VariableVisual extends BasePrimitive {
+class VariableVisual extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateDefinitionError();
@@ -267,6 +270,9 @@ class VariableVisual extends BasePrimitive {
 		const xEdge = dXEdge + xCenter;
 		const yEdge = dYEdge + yCenter;
 		return [xEdge, yEdge];
+	}
+	doubleClick() {
+		openPrimitiveDialog(this.id);
 	}
 }
 
@@ -314,7 +320,7 @@ class ConstantVisual extends VariableVisual {
 	}
 }
 
-class ConverterVisual extends BasePrimitive {
+class ConverterVisual extends OnePointer {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.updateDefinitionError();

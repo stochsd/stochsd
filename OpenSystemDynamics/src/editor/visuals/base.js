@@ -375,15 +375,6 @@ class OnePointer extends BaseObject {
 	}
 }
 
-class BasePrimitive extends OnePointer {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
-	}
-	doubleClick() {
-		openPrimitiveDialog(Visuals.getParentId(this.id));
-	}
-}
-
 /** @typedef {"invalid" | "start" | "end" | "bezier1" | "bezier2" | "orthoMiddle"} AnchorType */
 class AnchorPoint extends OnePointer {
 	/**
