@@ -1,9 +1,3 @@
-function getVisibleNeighborhoodIds(id) {
-	let neighbors = neighborhood(findID(id));
-	let visibleNeighbors = neighbors.filter((neighbor) => { return (!neighbor.linkHidden) });
-	return visibleNeighbors.map((neighbor) => { return neighbor.item.getAttribute("id"); });
-}
-
 function makePrimitiveName(primitiveName) {
 	return "[" + primitiveName + "]";
 }
@@ -18,10 +12,6 @@ function stripBrackets(primitiveName) {
 		cutTo = primitiveName.length;
 	}
 	return primitiveName.slice(cutFrom, cutTo);
-}
-
-function formatFunction(functionName) {
-	return functionName + "()";
 }
 
 function warningHtml(message, specNotOk = false) {
