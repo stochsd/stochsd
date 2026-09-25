@@ -39,13 +39,6 @@ function checkedHtml(value) {
 	}
 };
 
-class EditorControll {
-	static showEditor(primitive, annotations) {
-		let primitiveId = getID(primitive);
-		Visuals.get(primitiveId).doubleClick();
-	}
-}
-
 /**
  * 
  * @param {*} id

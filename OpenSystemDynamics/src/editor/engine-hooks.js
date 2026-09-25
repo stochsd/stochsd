@@ -130,3 +130,11 @@ function sdsLoadFunctions() {
 
 }
 
+// The engine's showEditor() in API.js calls EditorControll.showEditor() if it exists, e.g. to show where a simulation error is.
+// The engine looks for this exact name, so it can't be renamed.
+class EditorControll {
+	static showEditor(primitive, annotations) {
+		let primitiveId = getID(primitive);
+		Visuals.get(primitiveId).doubleClick();
+	}
+}
