@@ -140,15 +140,3 @@ function rel_move(node_id, diff_x, diff_y) {
 function positionToModel() {
 
 }
-
-
-function unselect_all_other_anchors(parent_id, child_id_to_select) {
-	Visuals.unselectAll();
-	let parent = Visuals.getTwoPointer(parent_id);
-	parent.select();
-	for (let anchor of parent.getAnchors()) {
-		if (anchor.id !== child_id_to_select) {
-			anchor.unselect();
-		}
-	}
-}

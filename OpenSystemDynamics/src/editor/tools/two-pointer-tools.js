@@ -1,6 +1,7 @@
 class TwoPointerTool extends BaseTool {
 	static init() {
 		this.primitive = null; // The primitive in Insight Maker engine we are creating
+		/** @type {TwoPointer} */
 		this.current_connection = null; // The visual we are working on right now
 		this.type = "flow";
 		this.rightClickMode = false;
@@ -121,7 +122,7 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
-		unselect_all_other_anchors(this.current_connection.id, this.current_connection.end_anchor.id);
+		this.current_connection.selectWithOnlyAnchor(this.current_connection.end_anchor);
 		this.current_connection.updateNamePosition();
 	}
 	static rightMouseDown(x, y) {
@@ -140,7 +141,7 @@ class FlowTool extends TwoPointerTool {
 					} else {
 						// Add middle anchor 
 						parent.createMiddleAnchorPoint(x, y);
-						unselect_all_other_anchors(parent.id, child.id);
+						parent.selectWithOnlyAnchor(child);
 					}
 				}
 			}

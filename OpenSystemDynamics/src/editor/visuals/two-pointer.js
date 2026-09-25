@@ -30,6 +30,20 @@ class TwoPointer extends BaseObject {
 		return [this.start_anchor, this.end_anchor];
 	}
 
+	/**
+	 * Selects this and only one of its anchors, e.g. the anchor being dragged. Everything else is unselected.
+	 * @param {AnchorPoint} anchorToSelect
+	 */
+	selectWithOnlyAnchor(anchorToSelect) {
+		Visuals.unselectAll();
+		this.select();
+		for (let anchor of this.getAnchors()) {
+			if (anchor.id !== anchorToSelect.id) {
+				anchor.unselect();
+			}
+		}
+	}
+
 	getBoundRect() {
 		return {
 			"minX": this.getMinX(),

@@ -256,6 +256,48 @@ export const scenarios = [
 		},
 	},
 	{
+		// Drawing a flow with the mouse, right clicking while dragging to add bends
+		name: "flow-with-bends",
+		async run(page) {
+			await page.run(`
+				${clickTool("stock", 200, 200)}
+				${clickTool("stock", 500, 400)}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+				ToolBox.setTool("flow", mouse.left);
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const at = (x, y) => [x + offsetX, y + offsetY];
+			const move = (x, y) => page.mouse("mouseMoved", ...at(x, y));
+			const rightClick = async (x, y) => {
+				await page.mouse("mousePressed", ...at(x, y), { button: "right" });
+				await page.mouse("mouseReleased", ...at(x, y), { button: "right" });
+			};
+
+			await move(220, 200);
+			await page.mouse("mousePressed", ...at(220, 200));
+			await move(215, 200);
+			await move(300, 200);
+			await move(350, 200);
+			await rightClick(350, 200);
+			await move(350, 300);
+			await move(350, 400);
+			await rightClick(350, 400);
+			await move(420, 400);
+			await move(480, 400);
+			await page.mouse("mouseReleased", ...at(480, 400));
+
+			return await page.run(`
+				const flow = Visuals.get(primitives("Flow")[0].id);
+				return {
+					anchors: flow.getAnchors().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round)),
+					attached: [flow.getStartAttach()?.id ?? null, flow.getEndAttach()?.id ?? null],
+					selected: Visuals.all().filter(visual => visual.isSelected()).map(visual => visual.id).sort(),
+				};
+			`);
+		},
+	},
+	{
 		// Renaming updates the plots and tables showing the renamed primitive
 		name: "rename",
 		async run(page) {
