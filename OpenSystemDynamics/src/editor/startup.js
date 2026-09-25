@@ -1,3 +1,40 @@
+function separateFolderAndFilename(file_path) {
+	let separator = "\\";
+	if (file_path.includes("/")) {
+		separator = "/";
+	}
+	let segments = file_path.split(separator);
+	let path = "";
+	for (let i = 0; i < segments.length - 1; i++) {
+		path += segments[i] + separator;
+	}
+	return { "path": path, "name": segments[segments.length - 1] };
+}
+
+async function updateRecentsMenu() {
+	if (!fileManager.hasRecentFiles()) {
+		return;
+	}
+	let recent = await fileManager.getRecentDisplayList();
+	if (recent.length > 0) {
+		$('#recent_title').show();
+		$('#btn_recent_clear').show();
+	} else {
+		$('#recent_title').hide();
+		$('#btn_recent_clear').hide();
+	}
+	for (let i = 0; i < Settings.MaxRecentFiles; i++) {
+		if (i < recent.length) {
+			$(`#btn_recent_${i}`).show();
+			let file = separateFolderAndFilename(recent[i]);
+			$(`#btn_recent_${i}`).html(`<span class="recent-path">${file.path}</span><span class="recent-name">${file.name}</span>`);
+			$(`#btn_recent_${i}`).attr("data-recent-index", i.toString());
+		} else {
+			$(`#btn_recent_${i}`).hide();
+		}
+	}
+}
+
 function showDebug() {
 	$("#btn_debug").show();
 }

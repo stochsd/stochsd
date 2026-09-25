@@ -11,13 +11,13 @@ class TableData {
 		let string = this.getAsString("\t");
 		fileManager.exportFile(string, ".tsv");
 	}
-	getAsString(seperator) {
-		let str = "Time" + seperator;
+	getAsString(separator) {
+		let str = "Time" + separator;
 		for (let i = 0; i < this.namesToDisplay.length; i++) {
 			let name = this.namesToDisplay[i];
 			str += `${name}`;
 			if (i != this.namesToDisplay.length - 1) {
-				str += seperator;
+				str += separator;
 			}
 		}
 		str += "\n";
@@ -28,7 +28,7 @@ class TableData {
 					str += value.toString();
 				}
 				if (i != row.length - 1) {
-					str += seperator;
+					str += separator;
 				}
 			}
 			str += "\n";
