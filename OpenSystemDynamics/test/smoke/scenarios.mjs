@@ -163,7 +163,7 @@ export const scenarios = [
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
-			const selection = () => page.run(`return Object.keys(get_selected_objects()).sort()`);
+			const selection = () => page.run(`return Visuals.selected().map(visual => visual.id).sort()`);
 			const positionOf = id => page.run(`return Visuals.get("${id}").getPos()`);
 			const flowId = await page.run(`return primitives("Flow")[0].id`);
 			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
@@ -205,6 +205,52 @@ export const scenarios = [
 			await page.key("Delete", { code: "Delete", keyCode: 46 });
 			steps.deleteAuxiliary = await page.run(`return primitives().map(getName)`);
 
+			steps.xml = await page.run(modelXml);
+			return steps;
+		},
+	},
+	{
+		// Tools and actions that work on the current selection
+		name: "selection-tools",
+		async run(page) {
+			await page.run(buildModel);
+			const select = primitiveExpression => page.run(`
+				Visuals.unselectAll();
+				Visuals.get(${primitiveExpression}.id).select();
+			`);
+			const steps = {};
+
+			await select(`primitives("Stock")[0]`);
+			await page.run(`ToolBox.setTool("rotatename", mouse.left); ToolBox.setTool("rotatename", mouse.left);`);
+			steps.rotateName = await page.run(`return Visuals.get(primitives("Stock")[0].id).name_pos`);
+
+			await select(`primitives("Flow")[0]`);
+			await page.run(`ToolBox.setTool("movevalve", mouse.left);`);
+			steps.moveValve = await page.run(`const flow = Visuals.get(primitives("Flow")[0].id); return [flow.valveIndex, flow.variableSide]`);
+
+			await select(`primitives("Link")[0]`);
+			await page.run(`
+				const link = Visuals.get(primitives("Link")[0].id);
+				link.b1_anchor.setPos([300, 500]);
+				link.update();
+				ToolBox.setTool("straightenlink", mouse.left);
+			`);
+			steps.straightenLink = await page.run(`const link = Visuals.get(primitives("Link")[0].id); return [link.b1_anchor.getPos(), link.b2_anchor.getPos()]`);
+
+			await page.run(`
+				Visuals.unselectAll();
+				Visuals.get(primitives("Stock")[1].id).select();
+				Visuals.get(primitives("Variable")[0].id).select();
+				setColorToSelection("#ff0000");
+			`);
+			steps.setColor = await page.run(`return primitives().map(p => getName(p) + ": " + p.getAttribute("Color"))`);
+
+			steps.buttonsWithStockSelected = await page.run(`
+				Visuals.unselectAll();
+				Visuals.get(primitives("Stock")[0].id).select();
+				ToolBox.updateButtons();
+				return $(".tool-button:disabled").map((i, e) => e.id).get().sort();
+			`);
 			steps.xml = await page.run(modelXml);
 			return steps;
 		},

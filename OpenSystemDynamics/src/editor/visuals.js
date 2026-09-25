@@ -58,6 +58,11 @@ class Visuals {
 		return Object.values({ ...this.#onePointers, ...this.#twoPointers });
 	}
 
+	/** @returns {(OnePointer | TwoPointer)[]} */
+	static selected() {
+		return this.all().filter(visual => visual.isSelected());
+	}
+
 	static unselectAll() {
 		this.unselectAllExcept(null);
 	}

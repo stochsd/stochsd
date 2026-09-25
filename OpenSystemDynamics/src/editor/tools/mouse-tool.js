@@ -55,33 +55,29 @@ class MouseTool extends BaseTool {
 			let parent = Visuals.getTwoPointer(only_selected_link["parent_id"]);
 			parent.update();
 		} else {
-			let move_array = get_selected_objects();
-			this.defaultRelativeMove(move_array, diff_x, diff_y);
+			this.defaultRelativeMove(Visuals.selected(), diff_x, diff_y);
 		}
 	}
+	/** @param {(OnePointer | TwoPointer)[]} move_objects */
 	static defaultRelativeMove(move_objects, diff_x, diff_y) {
 		let objectMoved = false;
-		for (let key in move_objects) {
-			if (move_objects[key].draggable == undefined) {
+		for (let visual of move_objects) {
+			if (visual.draggable == undefined) {
 				continue;
 			}
-			if (move_objects[key].draggable == false) {
+			if (visual.draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
 			}
 
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-			rel_move(key, diff_x, diff_y);
+			rel_move(visual.id, diff_x, diff_y);
 		}
 		if (objectMoved) {
 			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
-			let ids = [];
-			for (let key in move_objects) {
-				ids.push(move_objects[key].id);
-			}
-			update_relevant_objects(ids);
+			update_relevant_objects(move_objects.map(visual => visual.id));
 		}
 	}
 	static leftMouseUp(x, y) {

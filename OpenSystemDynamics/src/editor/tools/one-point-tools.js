@@ -87,9 +87,8 @@ class StockTool extends OnePointCreateTool {
 
 class RotateNameTool extends BaseTool {
 	static enterTool() {
-		let selection = get_selected_objects();
-		for (let node_id in selection) {
-			rotate_name(node_id);
+		for (let visual of Visuals.selected()) {
+			rotate_name(visual.id);
 		}
 		ToolBox.setTool("mouse");
 	}
@@ -100,11 +99,9 @@ class RotateNameTool extends BaseTool {
 
 class MoveValveTool extends BaseTool {
 	static enterTool() {
-		let selection = get_selected_objects();
-		for (let node_id in selection) {
-			let obj = Visuals.get(node_id);
-			if (obj.type == "flow") {
-				obj.moveValve();
+		for (let visual of Visuals.selected()) {
+			if (visual.type == "flow") {
+				visual.moveValve();
 			}
 		}
 		ToolBox.setTool("mouse");
@@ -113,11 +110,10 @@ class MoveValveTool extends BaseTool {
 
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
-		for (let node_id in get_selected_objects()) {
-			let key = get_parent_id(node_id);
-			let obj = Visuals.get(key);
-			if (obj.type == "link") {
-				obj.resetBezierPoints();
+		for (let visual of Visuals.selected()) {
+			let parent = get_parent(visual);
+			if (parent.type == "link") {
+				parent.resetBezierPoints();
 			}
 		}
 		ToolBox.setTool("mouse");
@@ -140,9 +136,8 @@ class GhostTool extends OnePointCreateTool {
 	}
 	/** @returns {string | undefined} */
 	static getSelectionError() {
-		let selectedIds = get_selected_ids();
 		// filter out non root object, e.g. anchors 
-		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(id => Visuals.get(id));
+		let selectedObjects = Visuals.selected().filter(visual => !visual.id.includes("."));
 		if (selectedObjects.length != 1) {
 			return "You must first select exactly one primitive to ghost"
 		}
@@ -162,8 +157,7 @@ class GhostTool extends OnePointCreateTool {
 			ToolBox.setTool("mouse");
 			return;
 		}
-		let selectedIds = get_selected_ids();
-		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(id => Visuals.get(id));
+		let selectedObjects = Visuals.selected().filter(visual => !visual.id.includes("."));
 		let selectedObject = selectedObjects[0];
 		this.id_to_ghost = selectedObjects[0].id;
 	}
@@ -210,12 +204,9 @@ class ConstantTool extends OnePointCreateTool {
 
 function get_only_selected_anchor_id() {
 	// returns null if more is selected than one anchor is selected, else returns object {parent_id: ... , child_id: ... }
-	let selection = get_selected_objects();
-	let keys = [];
-	for (let key in selection) {
-		keys.push(key);
-	}
-	if (keys.length === 1 && selection[keys[0]].getType() === "dummy_anchor") {
+	let selection = Visuals.selected();
+	let keys = selection.map(visual => visual.id);
+	if (keys.length === 1 && selection[0].getType() === "dummy_anchor") {
 		// only one anchor in selection
 		return { "parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
 	} else if (keys.length === 2) {
@@ -241,11 +232,7 @@ function get_only_selected_anchor_id() {
 
 function get_single_primitive_id_selected() {
 	// will give object { "parent_id": ..., "children_ids": [...] } or null if more objects selected 
-	let selection = get_selected_objects();
-	let keys = [];
-	for (let key in selection) {
-		keys.push(key);
-	}
+	let keys = Visuals.selected().map(visual => visual.id);
 	let object_ids = { "children_ids": [] };
 	if (keys.length > 0) {
 		object_ids["parent_id"] = get_parent_id(keys[0]);

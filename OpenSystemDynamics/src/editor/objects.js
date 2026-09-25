@@ -62,20 +62,6 @@ function delete_selected_objects() {
 	}
 }
 
-function get_selected_objects() {
-	let return_array = {};
-	for (let visual of Visuals.all()) {
-		if (visual.isSelected()) {
-			return_array[visual.id] = visual;
-		}
-	}
-	return return_array;
-}
-
-function get_selected_ids() {
-	return Object.keys(get_selected_objects());
-}
-
 function delete_connection(key) {
 	let connection = Visuals.getTwoPointer(key);
 	if (!connection) {

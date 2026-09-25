@@ -21,7 +21,7 @@ class Clipboard {
 	}
 	static copy() {
 		this.copiedItems = [];
-		let rawSelectedIdArray = get_selected_ids();
+		let rawSelectedIdArray = Visuals.selected().map(visual => visual.id);
 
 		// Create parentIdArray as we are only intressted in copying parent nodes
 		let parentIdArray = [];
