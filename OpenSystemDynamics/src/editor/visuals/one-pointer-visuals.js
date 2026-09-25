@@ -109,7 +109,6 @@ class StockVisual extends BasePrimitive {
 class NumberboxVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
-		this.updateNamePosition();
 		this.setSelectionSizeToText();
 
 		this.runHandler = () => {
@@ -122,11 +121,8 @@ class NumberboxVisual extends BasePrimitive {
 			this.render();
 		});
 	}
-	// The numberbox shows its value centered in the box, instead of a name next to it
+	// The numberbox shows its value centered in the box instead of a name, so it stays where it is
 	updateNamePosition() {
-		this.name_element.setAttribute("x", 0);
-		this.name_element.setAttribute("y", 0);
-		this.name_element.setAttribute("text-anchor", "middle");
 	}
 	setSelectionSizeToText() {
 		const boundingRect = this.name_element.getBoundingClientRect();
