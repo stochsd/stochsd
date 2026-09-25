@@ -1,3 +1,9 @@
+// Overrides isLocal() in the engine's formula.js, which only returns true when running on Insight Maker's development hosts.
+// Returning true makes the engine expose additional debugging and error messages.
+function isLocal() {
+	return true;
+}
+
 defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 	let id = getID(primitive);
 	let type = getType(primitive);

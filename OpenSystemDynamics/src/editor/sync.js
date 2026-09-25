@@ -1,7 +1,3 @@
-function isLocal() {
-	return true; // Expose additional debugging and error messages
-}
-
 function export_txt(fileName, data) {
 	// Create Blob and attach it to ObjectURL
 	let blob = new Blob([data], { type: "octet/stream" }),
