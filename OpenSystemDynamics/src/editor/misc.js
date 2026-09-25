@@ -17,11 +17,3 @@ function setParentTitle(newTitle) {
 	sendToParentFrame({ "title": newTitle }, "update_title");
 }
 
-function quitQuestion() {
-	// How close event works
-	// https://github.com/nwjs/nw.js/wiki/window
-	saveChangedAlert(function () {
-		environment.closeWindow()
-	});
-}
-
