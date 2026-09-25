@@ -358,15 +358,5 @@ function syncAllVisuals() {
 	Visuals.unselectAll();
 }
 
-function findFreeName(basename) {
-	let counter = 0;
-	let testname;
-	do {
-		counter++;
-		testname = basename + counter.toString();
-	} while (findName(testname) != null)
-	return testname;
-}
-
 syncAllVisuals();
 

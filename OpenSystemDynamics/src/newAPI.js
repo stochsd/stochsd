@@ -124,6 +124,17 @@ function findGhostsOfID(id) {
 	return results;
 }
 
+// The first name not used in the model, e.g. "Stock3" for basename "Stock" if "Stock1" and "Stock2" exist
+function findFreeName(basename) {
+	let counter = 0;
+	let testname;
+	do {
+		counter++;
+		testname = basename + counter.toString();
+	} while (findName(testname) != null)
+	return testname;
+}
+
 function propogateGhosts(cell) {
 	var ghosts = primitives("Ghost");
 	for (var i = 0; i < ghosts.length; i++) {
