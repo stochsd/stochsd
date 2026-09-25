@@ -130,13 +130,6 @@ class BaseObject {
 		if (this.name_element == null) {
 			return;
 		}
-		// For fixed names (used only by text element)
-		if (this.name_centered) {
-			this.name_element.setAttribute("x", 0);
-			this.name_element.setAttribute("y", 0);
-			this.name_element.setAttribute("text-anchor", "middle");
-			return;
-		}
 		let [x, y] = this.namePosList[this.name_pos];
 		// Text anchor for each name position: below, right, above, left
 		let textAnchors = ["middle", "start", "middle", "end"];
@@ -188,7 +181,6 @@ class OnePointer extends BaseObject {
 		this.group = null;
 		this.superClass = "OnePointer";
 		this.draggable = true; // Default value, change it afterwords if you want
-		this.name_centered = false;
 		this.pos = pos;
 		this.is_ghost = false; // Default value
 		if (extras != false) {
