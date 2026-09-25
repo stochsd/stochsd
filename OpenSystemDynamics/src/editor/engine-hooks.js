@@ -37,7 +37,8 @@ defaultPrimitiveCreatedHandler = function (primitive) {
 defaultPrimitiveBeforeDestroyHandler = function (primitive) {
 	let id = getID(primitive);
 	let numberboxes = primitives("Numberbox").filter(numberbox => numberbox.getAttribute("Target") == id);
-	removePlotReferences(id);
+	// Histograms don't implement removePlotReference, so they keep showing deleted primitives
+	Visuals.displays().forEach(display => display.removePlotReference?.(id));
 	Visuals.get(id)?.remove();
 	numberboxes.forEach(removePrimitive);
 }

@@ -6,24 +6,6 @@ function updateTimeUnitButton() {
 	}
 }
 
-
-
-function removePlotReferences(id) {
-	for (let visual of Visuals.twoPointers()) {
-		let type = visual.type
-		switch (type) {
-			case ("timeplot"):
-			case ("xyplot"):
-			case ("table"):
-			case ("compareplot"):
-				visual.removePlotReference(id);
-				break;
-			default:
-			/** Do nothing */
-		}
-	}
-}
-
 function isLocal() {
 	return true; // Expose additional debugging and error messages
 }
