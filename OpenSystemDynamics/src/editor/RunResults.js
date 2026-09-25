@@ -28,6 +28,53 @@ class RunResults {
 		// Reset results
 		this.results = [];
 	}
+	/**
+	 * Formats a number with at most tdecimals decimals and without trailing zeros.
+	 * Numbers too small or too large for that are written in e-format.
+	 */
+	static #formatNumber(number, tdecimals, roundToZeroAt) {
+		// tdecimals is optional and sets the number of decimals. It is rarly used (only in some tables)
+		// Since the numbers automaticly goes to e-format when low enought
+
+		// Used when e.g. the actuall error is reseted to null
+		if (number == null) {
+			return "";
+		}
+
+		// since its not written as E-format by default even as its <1E-7
+		// Zero is a special case also or Round to zero when close 
+		if (number == 0 || (roundToZeroAt && Math.abs(number) < roundToZeroAt)) {
+			return "0";
+		}
+
+		// Check if number is to small to be viewed in field
+		// If so, force e-format
+
+		if (Math.abs(number) < Math.pow(10, (-tdecimals))) {
+			return number.toExponential(2);
+		}
+		//Check if the number is to big to be view ed in the field
+		if (Math.abs(number) > Math.pow(10, tdecimals)) {
+			return number.toExponential(2);
+		}
+
+		// Else format it as a regular number, and remove ending zeros
+		let stringified = number.toFixed(tdecimals);
+
+		// Find the length of stringified, where the ending zeros have been removed
+		let i = stringified.length;
+		while (stringified.charAt(i - 1) == '0') {
+			i = i - 1;
+			// If we find a dot. Stop removing decimals
+			if (stringified.charAt(i - 1) == '.') {
+				i = i - 1;
+				break;
+			}
+		}
+		// Creates a stripped string without ending zeros
+		let stripped = stringified.substring(0, i);
+		return stripped;
+	}
 	static toCsv() {
 		// Under development
 		let out = "";
@@ -48,10 +95,10 @@ class RunResults {
 			first = true;
 			for (let column_index in this.varIdList) {
 				if (first) {
-					out += stocsd_format(this.results[row_index][column_index], 6);
+					out += this.#formatNumber(this.results[row_index][column_index], 6);
 					first = false;
 				} else {
-					out += "," + stocsd_format(this.results[row_index][column_index], 6);
+					out += "," + this.#formatNumber(this.results[row_index][column_index], 6);
 				}
 			}
 			out += "\n";
