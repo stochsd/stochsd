@@ -1,4 +1,4 @@
-class HtmlOverlayTwoPointer extends TwoPointer {
+class PlotVisual extends TwoPointer {
 	updateHTML(html) {
 		this.targetElement.innerHTML = html;
 	}
@@ -44,6 +44,11 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 		for (let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id", this.id);
 		}
+
+		this.chartId = this.id + "_chart";
+		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
+		this.updateHTML(html);
+		this.chartDiv = document.getElementById(this.chartId);
 	}
 
 	updateGraphics() {
@@ -59,6 +64,23 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 
 		this.targetElement.style.width = (this.getWidth() - (2 * this.targetBorder)) + "px";
 		this.targetElement.style.height = (this.getHeight() - (2 * this.targetBorder)) + "px";
+
+		let newWidth = `${$(this.targetElement).width() - 10}px`;
+		let newHeight = `${$(this.targetElement).height() - 10}px`;
+		let oldWidth = this.chartDiv.style.width;
+		let oldHeight = this.chartDiv.style.height;
+		if (oldWidth !== newWidth || oldHeight !== newHeight) {
+			this.chartDiv.style.width = newWidth;
+			this.chartDiv.style.height = newHeight;
+
+			// Clear updating chart so only the last updateGraphics updates chart
+			// This limits the number of times updateCharts runs (updateChart is an expensive call)
+			if (this.updateChartTimeOut) {
+				clearTimeout(this.updateChartTimeOut);
+				this.updateChartTimeOut = null;
+			}
+			this.updateChartTimeOut = setTimeout(this.updateChart.bind(this), 10);
+		}
 	}
 
 	clean() {
@@ -68,9 +90,6 @@ class HtmlOverlayTwoPointer extends TwoPointer {
 	doubleClick() {
 		this.dialog.show();
 	}
-}
-
-class PlotVisual extends HtmlOverlayTwoPointer {
 	getTicks(min, max, dimention = "width") {
 		let length = max - min;
 
@@ -119,35 +138,4 @@ class PlotVisual extends HtmlOverlayTwoPointer {
 
 		return ticks;
 	}
-	updateGraphics() {
-		super.updateGraphics();
-		let newWidth = `${$(this.targetElement).width() - 10}px`;
-		let newHeight = `${$(this.targetElement).height() - 10}px`;
-		let oldWidth = this.chartDiv.style.width;
-		let oldHeight = this.chartDiv.style.height;
-		if (oldWidth !== newWidth || oldHeight !== newHeight) {
-			this.chartDiv.style.width = newWidth;
-			this.chartDiv.style.height = newHeight;
-
-			// Clear updating chart so only the last updateGraphics updates chart
-			// This limits the number of times updateCharts runs (updateChart is an expensive call)
-			if (this.updateChartTimeOut) {
-				clearTimeout(this.updateChartTimeOut);
-				this.updateChartTimeOut = null;
-			}
-			this.updateChartTimeOut = setTimeout(this.updateChart.bind(this), 10);
-		}
-	}
-	makeGraphics() {
-		super.makeGraphics();
-
-		this.chartId = this.id + "_chart";
-		let html = `<div id="${this.chartId}" style="width:0px; height:0px; z-index: 100;"></div>`;
-		this.updateHTML(html);
-		this.chartDiv = document.getElementById(this.chartId);
-	}
-	doubleClick() {
-		this.dialog.show();
-	}
 }
-
