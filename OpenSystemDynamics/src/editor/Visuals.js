@@ -95,6 +95,29 @@ class Visuals {
 		return Object.values(parents);
 	}
 
+	static updateAll() {
+		for (let visual of this.onePointers()) {
+			visual.update();
+		}
+		for (let visual of this.twoPointers()) {
+			visual.update();
+		}
+	}
+
+	/**
+	 * Updates all TwoPointers, e.g. after something they are attached to has moved.
+	 * Displays (plots and tables) are slow to redraw, so only the displays in displayIds are updated.
+	 * @param {string[]} displayIds
+	 */
+	static updateTwoPointers(displayIds = []) {
+		let displayTypes = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
+		for (let visual of this.twoPointers()) {
+			if (!displayTypes.includes(visual.type) || displayIds.includes(visual.id)) {
+				visual.update();
+			}
+		}
+	}
+
 	static unselectAll() {
 		this.unselectAllExcept(null);
 	}

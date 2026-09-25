@@ -107,30 +107,7 @@ function update_relevant_objects(ids) {
 			visual.update();
 		}
 	}
-	update_twopointer_objects(ids);
-}
-
-// only updates diagrams, tables, and XyPlots if needed 
-function update_twopointer_objects(ids) {
-	for (let visual of Visuals.twoPointers()) {
-		let onlyIfRelevant = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
-		if (onlyIfRelevant.includes(visual.type)) {
-			if (ids.includes(visual.id)) {
-				visual.update();
-			}
-		} else {
-			visual.update();
-		}
-	}
-}
-
-function update_all_objects() {
-	for (let visual of Visuals.onePointers()) {
-		visual.update();
-	}
-	for (let visual of Visuals.twoPointers()) {
-		visual.update();
-	}
+	Visuals.updateTwoPointers(ids);
 }
 
 /** @param {string} id @param {string} new_name */

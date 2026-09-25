@@ -430,7 +430,7 @@ function syncAllVisuals() {
 			}
 		}
 	}
-	update_all_objects();
+	Visuals.updateAll();
 	Visuals.unselectAll();
 }
 

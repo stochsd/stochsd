@@ -194,7 +194,6 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("ValveIndex", this.valveIndex);
 		this.primitive.setAttribute("VariableSide", this.variableSide);
 
-		// update_all_objects();
 		update_relevant_objects("");
 	}
 
@@ -213,12 +212,12 @@ class FlowVisual extends BaseConnection {
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach);
 		// needs to update Links a few times to follow along
-		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 
 	setEndAttach(new_end_attach) {
 		super.setEndAttach(new_end_attach);
-		for (let i = 0; i < 4; i++) update_twopointer_objects([]);
+		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 
 	removeLastMiddleAnchorPoint() {
