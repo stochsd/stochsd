@@ -59,11 +59,20 @@ class Visuals {
 	}
 
 	static unselectAll() {
+		this.unselectAllExcept(null);
+	}
+
+	/** @param {string | null} id */
+	static unselectAllExcept(id) {
 		for (let visual of this.onePointers()) {
-			visual.unselect();
+			if (visual.id != id) {
+				visual.unselect();
+			}
 		}
 		for (let visual of this.twoPointers()) {
-			visual.unselect();
+			if (visual.id != id) {
+				visual.unselect();
+			}
 		}
 	}
 }

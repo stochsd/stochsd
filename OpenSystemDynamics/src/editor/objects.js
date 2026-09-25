@@ -115,7 +115,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 	if (event.which === mouse.left) {
 		if (mouse.lastClickedPrimitive.type == "dummy_anchor") {
 			let elementId = get_parent_id(mouse.lastClickedPrimitive.id);
-			unselect_all_but(elementId);
+			Visuals.unselectAllExcept(elementId);
 		} else if (get_only_selected_anchor_id()) {
 			Visuals.unselectAll();
 		}
@@ -128,7 +128,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 				// We don't want to unselect an eventual parent
 				// As that will hide other anchors
 				let parent_id = get_parent_id(node_id);
-				unselect_all_but(parent_id);
+				Visuals.unselectAllExcept(parent_id);
 			}
 			mouse.lastClickedPrimitive.select();
 		}
@@ -209,19 +209,6 @@ function unselect_all_other_anchors(parent_id, child_id_to_select) {
 	for (let anchor of parent.getAnchors()) {
 		if (anchor.id !== child_id_to_select) {
 			anchor.unselect();
-		}
-	}
-}
-
-function unselect_all_but(dont_unselect_id) {
-	for (let visual of Visuals.onePointers()) {
-		if (visual.id != dont_unselect_id) {
-			visual.unselect();
-		}
-	}
-	for (let visual of Visuals.twoPointers()) {
-		if (visual.id != dont_unselect_id) {
-			visual.unselect();
 		}
 	}
 }
