@@ -85,39 +85,6 @@ function mouseUpHandler(event) {
 	}
 }
 
-function find_elements_under(x, y) {
-	let found_array = [];
-	// Having "flow" in this list causes a bug with flows that does not place properly
-	//~ let attachable_object_types = ["flow", "stock", "variable"];
-	let attachable_object_types = ["flow", "stock", "constant", "variable", "converter"];
-	for (let visual of Visuals.all()) {
-		if (visual.type == "dummy_anchor") {
-			// We are only intressted in primitive-objects. not dummy_anchors
-			continue;
-		}
-		if (attachable_object_types.indexOf(visual.type) == -1) {
-			// We skip if the object is not attachable
-			continue;
-		}
-		let rect = visual.getBoundRect();
-		if (isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY)) {
-			found_array.push(visual);
-		}
-	}
-	do_global_log("found array(" + found_array.length + ") " + found_array.map((x) => x.id).join(","));
-	return found_array;
-}
-
-function find_element_under(x, y) {
-	elements_under = find_elements_under(x, y);
-	if (elements_under.length > 0) {
-		do_global_log("find_element_under choose " + elements_under[0].id);
-		return elements_under[0];
-	} else {
-		return null;
-	}
-}
-
 function stochsd_clear_sync() {
 	for (let parent of Visuals.parents()) {
 		if (findID(parent.id) == null) {

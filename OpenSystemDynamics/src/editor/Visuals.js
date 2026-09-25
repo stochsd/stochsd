@@ -11,6 +11,8 @@ class Visuals {
 	static #twoPointers = {};
 	// Displays are the plots and tables, i.e. the TwoPointers that show values of primitives
 	static #displayTypes = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
+	// The visuals a link can attach to. Flows only attach to stocks, which FlowVisual checks itself
+	static #attachableTypes = ["flow", "stock", "constant", "variable", "converter"];
 
 	/** @param {OnePointer} visual */
 	static addOnePointer(visual) {
@@ -133,6 +135,36 @@ class Visuals {
 	 */
 	static connectionsAttachedTo(visual) {
 		return this.connectionsFrom(visual).concat(this.connectionsTo(visual));
+	}
+
+	/**
+	 * Visuals that links can attach to, at position (x, y).
+	 * Also used for flows, which then check themselves that it is a stock.
+	 * @param {number} x @param {number} y
+	 */
+	static attachablesAt(x, y) {
+		let found = this.all().filter(visual => {
+			if (!this.#attachableTypes.includes(visual.type)) {
+				return false;
+			}
+			let rect = visual.getBoundRect();
+			return isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY);
+		});
+		do_global_log("found array(" + found.length + ") " + found.map(visual => visual.id).join(","));
+		return found;
+	}
+
+	/**
+	 * The first visual that links can attach to at position (x, y), or null if there is none.
+	 * Also used for flows, which then check themselves that it is a stock.
+	 * @param {number} x @param {number} y
+	 */
+	static firstAttachableAt(x, y) {
+		let found = this.attachablesAt(x, y)[0] ?? null;
+		if (found) {
+			do_global_log("firstAttachableAt choose " + found.id);
+		}
+		return found;
 	}
 
 	/** @returns {BaseConnection[]} */

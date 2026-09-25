@@ -20,7 +20,7 @@ class TwoPointerTool extends BaseTool {
 		Visuals.unselectAll();
 
 		// Looks for element under mouse. 
-		let start_element = find_element_under(x, y);
+		let start_element = Visuals.firstAttachableAt(x, y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
 		let primitive_name = findFreeName(type_basename[this.getType()]);
@@ -438,7 +438,7 @@ function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 	[x, y] = anchor.getPos();
 	let parentConnection = anchor.getParent();
 
-	let elements_under = find_elements_under(x, y);
+	let elements_under = Visuals.attachablesAt(x, y);
 	let anchor_element = null;
 	let attach_to = null;
 
