@@ -490,14 +490,6 @@ class AnchorPoint extends OnePointer {
 	}
 }
 
-class OrthoAnchorPoint extends AnchorPoint {
-	constructor(id, type, pos, anchorType, index) {
-		super(id, type, pos, anchorType);
-		this.changed = true;
-		this.index = index;
-	}
-}
-
 function safeDivision(nominator, denominator) {
 	// Make sure division by Zero does not happen 
 	return denominator == 0 ? 9999999 : (nominator / denominator);

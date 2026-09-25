@@ -199,12 +199,11 @@ class FlowVisual extends BaseConnection {
 
 	createMiddleAnchorPoint(x, y) {
 		let index = this.middleAnchors.length;
-		let newAnchor = new OrthoAnchorPoint(
+		let newAnchor = new AnchorPoint(
 			this.id + ".point" + index,
 			"dummy_anchor",
 			[x, y],
-			"orthoMiddle",
-			index
+			"orthoMiddle"
 		);
 		this.middleAnchors.push(newAnchor);
 	}
@@ -258,12 +257,11 @@ class FlowVisual extends BaseConnection {
 		const points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
 			let index = this.middleAnchors.length;
-			let newAnchor = new OrthoAnchorPoint(
+			let newAnchor = new AnchorPoint(
 				this.id + ".point" + index,
 				"dummy_anchor",
 				point,
-				"orthoMiddle",
-				index
+				"orthoMiddle"
 			);
 			this.middleAnchors.push(newAnchor);
 		}
