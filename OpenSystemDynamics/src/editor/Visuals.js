@@ -182,6 +182,21 @@ class Visuals {
 	}
 
 	/**
+	 * Updates all visuals, except displays (plots and tables) that are slow to redraw.
+	 * Only the displays in displayIds are updated.
+	 * @param {string[]} displayIds
+	 */
+	static updateAllExceptDisplays(displayIds = []) {
+		for (let visual of this.onePointers()) {
+			// dont update dummy_anchors, the twopointer parent of the dummy anchor has responsibility of the dummy_anchors 
+			if (visual.type !== "dummy_anchor") {
+				visual.update();
+			}
+		}
+		this.updateTwoPointers(displayIds);
+	}
+
+	/**
 	 * Updates all TwoPointers, e.g. after something they are attached to has moved.
 	 * Displays (plots and tables) are slow to redraw, so only the displays in displayIds are updated.
 	 * @param {string[]} displayIds

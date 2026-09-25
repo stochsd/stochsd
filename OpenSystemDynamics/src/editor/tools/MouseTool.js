@@ -77,7 +77,7 @@ class MouseTool extends BaseTool {
 		if (objectMoved) {
 			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
-			update_relevant_objects(move_objects.map(visual => visual.id));
+			Visuals.updateAllExceptDisplays(move_objects.map(visual => visual.id));
 		}
 	}
 	static leftMouseUp(x, y) {

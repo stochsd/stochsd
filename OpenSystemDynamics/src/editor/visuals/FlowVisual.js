@@ -194,7 +194,7 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("ValveIndex", this.valveIndex);
 		this.primitive.setAttribute("VariableSide", this.variableSide);
 
-		update_relevant_objects("");
+		Visuals.updateAllExceptDisplays();
 	}
 
 	createMiddleAnchorPoint(x, y) {

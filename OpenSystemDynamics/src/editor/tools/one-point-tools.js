@@ -11,7 +11,7 @@ class OnePointCreateTool extends BaseTool {
 	static leftMouseDown(x, y) {
 		Visuals.unselectAll();
 		this.create(x, y);
-		update_relevant_objects([]);
+		Visuals.updateAllExceptDisplays();
 		InfoBar.update();
 		ToolBox.updateButtons();
 	}
