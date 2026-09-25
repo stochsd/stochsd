@@ -8,6 +8,7 @@
 		"icon": "icons/stochsd.png"
 	},
 	"scripts": {
-		"start": "nw ."
+		"start": "nw .",
+		"test": "node OpenSystemDynamics/test/smoke/run.mjs"
 	}
 }
