@@ -127,7 +127,3 @@ function rel_move(node_id, diff_x, diff_y) {
 	visual.updatePosition();
 	visual.afterMove(diff_x, diff_y);
 }
-
-function positionToModel() {
-
-}
