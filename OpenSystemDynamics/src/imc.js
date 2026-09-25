@@ -106,6 +106,17 @@ function returnresult(returnobj,target) {
     results.returnobj=returnobj;
     parent.postMessage(JSON.stringify(results), "*");
 }
+// Called by the MultiSimulationAnalyser to show the Tools menu with its plugins
+function showPluginMenu() {
+    $(".pluginMenu").show();
+}
+// Asks the MultiSimulationAnalyser to open one of its plugins, e.g. "optim"
+function loadPlugin(pluginName) {
+    returnresult({ "app_name": pluginName }, "load_app");
+}
+function setParentTitle(newTitle) {
+    returnresult({ "title": newTitle }, "update_title");
+}
 function imc_gettimestep(target) {
     returnobj={};
     returnobj.timestep=getTimeStep();
