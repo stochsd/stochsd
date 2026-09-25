@@ -1,10 +1,3 @@
-function setColorToSelection(color) {
-	for (let visual of Visuals.selected()) {
-		visual.getParent().setColor(color);
-	}
-	History.storeUndoState();
-}
-
 function printDiagram() {
 	Visuals.unselectAll();
 	InfoBar.update();

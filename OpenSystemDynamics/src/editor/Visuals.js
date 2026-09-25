@@ -209,6 +209,13 @@ class Visuals {
 		}
 	}
 
+	/** @param {string} color */
+	static setSelectionColor(color) {
+		for (let visual of this.selected()) {
+			visual.getParent().setColor(color);
+		}
+	}
+
 	/** Deletes the primitives of the selected visuals from the model, which also removes their visuals */
 	static deleteSelected() {
 		for (let parent of this.selectedParents()) {

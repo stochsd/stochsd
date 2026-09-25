@@ -241,7 +241,8 @@ export const scenarios = [
 				Visuals.unselectAll();
 				Visuals.get(primitives("Stock")[1].id).select();
 				Visuals.get(primitives("Variable")[0].id).select();
-				setColorToSelection("#ff0000");
+				Visuals.setSelectionColor("#ff0000");
+				History.storeUndoState();
 			`);
 			steps.setColor = await page.run(`return primitives().map(p => getName(p) + ": " + p.getAttribute("Color"))`);
 
