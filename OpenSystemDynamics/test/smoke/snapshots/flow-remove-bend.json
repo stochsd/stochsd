@@ -1,0 +1,21 @@
+{
+  "afterBend": [
+    "46.start_anchor:225,200",
+    "46.point0:350,200",
+    "46.end_anchor:350,300"
+  ],
+  "afterRemovingBend": [
+    "46.start_anchor:225,200",
+    "46.end_anchor:350,205"
+  ],
+  "anchorVisualsLeft": [
+    "46.end_anchor",
+    "46.start_anchor"
+  ],
+  "anchorElementsLeft": 2,
+  "final": [
+    "46.start_anchor:225,219",
+    "46.end_anchor:480,219"
+  ],
+  "errors": []
+}

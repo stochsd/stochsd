@@ -226,7 +226,7 @@ class FlowVisual extends BaseConnection {
 			this.valveIndex = this.middleAnchors.length - 1;
 		}
 		let removedAnchor = this.middleAnchors.pop();
-		delete_object(removedAnchor.id);
+		removedAnchor.remove();
 	}
 
 

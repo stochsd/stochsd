@@ -329,6 +329,47 @@ export const scenarios = [
 		},
 	},
 	{
+		// Right clicking close to the last bend while drawing a flow removes the bend again
+		name: "flow-remove-bend",
+		async run(page) {
+			await page.run(`
+				${clickTool("stock", 200, 200)}
+				${clickTool("stock", 500, 400)}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+				ToolBox.setTool("flow", mouse.left);
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const at = (x, y) => [x + offsetX, y + offsetY];
+			const move = (x, y) => page.mouse("mouseMoved", ...at(x, y));
+			const rightClick = async (x, y) => {
+				await page.mouse("mousePressed", ...at(x, y), { button: "right" });
+				await page.mouse("mouseReleased", ...at(x, y), { button: "right" });
+			};
+			const anchors = () => page.run(`
+				return Visuals.get(primitives("Flow")[0].id).getAnchors().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round));
+			`);
+			const steps = {};
+
+			await move(220, 200);
+			await page.mouse("mousePressed", ...at(220, 200));
+			await move(215, 200);
+			await move(350, 200);
+			await rightClick(350, 200);
+			await move(350, 300);
+			steps.afterBend = await anchors();
+			await move(350, 205);
+			await rightClick(350, 205);
+			steps.afterRemovingBend = await anchors();
+			steps.anchorVisualsLeft = await page.run(`return Visuals.onePointers().map(visual => visual.id).filter(id => id.startsWith(primitives("Flow")[0].id + ".")).sort()`);
+			steps.anchorElementsLeft = await page.run(`return $("#svgplane [node_id^='" + primitives("Flow")[0].id + ".']").length`);
+			await move(480, 400);
+			await page.mouse("mouseReleased", ...at(480, 400));
+			steps.final = await anchors();
+			return steps;
+		},
+	},
+	{
 		// Renaming updates the plots and tables showing the renamed primitive
 		name: "rename",
 		async run(page) {

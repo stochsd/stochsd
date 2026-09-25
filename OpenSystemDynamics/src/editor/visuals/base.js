@@ -95,6 +95,11 @@ class BaseObject {
 		return Visuals.get(Visuals.getParentId(this.id));
 	}
 
+	/** Removes this visual and its children from the diagram. The primitive in the model is not affected */
+	remove() {
+		this.clean();
+		Visuals.remove(this.id);
+	}
 	clean() {
 		// Clean all children
 		let children = getChildren(this.id);
@@ -102,7 +107,6 @@ class BaseObject {
 			children[id].clean();
 			Visuals.remove(id);
 		}
-
 		this.clearImage();
 	}
 	clearImage() {
