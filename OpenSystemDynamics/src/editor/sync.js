@@ -337,6 +337,14 @@ function syncVisual(tprimitive) {
 	}
 }
 
+function loadModelFromXml(XmlString) {
+	clearModel();
+	stochsd_clear_sync();
+	loadXML(XmlString);
+	replaceDiagamsWithTimePlots();
+	syncAllVisuals();
+}
+
 // This function is important. It takes all the relevant primitives from the engine
 // And make visual objects from them
 // This is executed after loading a file or loading a whole new state such as after undo

@@ -1,11 +1,3 @@
-function loadModelFromXml(XmlString) {
-	clearModel();
-	stochsd_clear_sync();
-	loadXML(XmlString);
-	replaceDiagamsWithTimePlots();
-	syncAllVisuals();
-}
-
 function showPluginMenu() {
 	$(".pluginMenu").show();
 }
