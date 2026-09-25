@@ -102,7 +102,7 @@ class TableVisual extends HtmlTwoPointer {
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group
-			primitive_mousedown(this.id, event)
+			this.onMouseDown(event)
 			mouseDownHandler(event);
 			event.stopPropagation();
 		});

@@ -30,6 +30,7 @@ The scenarios are in `scenarios.mjs`. Every scenario starts from a freshly loade
 - **undo-redo-delete**: undo, redo, and delete.
 - **mouse-and-keyboard**: real mouse and key events: clicking, dragging, rubber band selection, dragging a flow anchor, Shift+Arrow, Ctrl+A and Delete.
 - **selection-tools**: tools that act on the selection: rotate name, move valve, straighten link, set color, and which toolbar buttons are enabled.
+- **click-select**: selecting by clicking tables, plots, text, shapes, links and stocks, with and without Shift.
 - **flow-with-bends**: draws a flow between two stocks with the mouse, right clicking while dragging to add two bends.
 - **rename**: renaming a primitive shown in a table and a time plot.
 - **dialogs**: opens the dialog of every primitive, plot and the global dialogs.

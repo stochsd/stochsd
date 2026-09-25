@@ -256,6 +256,37 @@ export const scenarios = [
 		},
 	},
 	{
+		// Selecting by clicking different kinds of visuals with the mouse, with and without shift
+		name: "click-select",
+		async run(page) {
+			await page.run(`
+				${buildModel}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const click = (x, y, modifiers = 0) => page.click(x + offsetX, y + offsetY, { modifiers });
+			const selection = () => page.run(`return Visuals.all().filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
+			const shift = 8;
+			const steps = {};
+
+			for (const [name, x, y] of [["table", 950, 150], ["timePlot", 950, 400], ["text", 125, 625], ["rectangle", 250, 650], ["link", 200, 300]]) {
+				await click(650, 100);
+				await click(x, y);
+				steps[name] = await selection();
+			}
+			await click(650, 100);
+			await click(200, 200);
+			await click(500, 200, shift);
+			steps.shiftClickSecondStock = await selection();
+			await click(200, 200, shift);
+			steps.shiftClickFirstStockAgain = await selection();
+			await click(650, 100);
+			steps.clickEmpty = await selection();
+			return steps;
+		},
+	},
+	{
 		// Drawing a flow with the mouse, right clicking while dragging to add bends
 		name: "flow-with-bends",
 		async run(page) {

@@ -64,6 +64,32 @@ class BaseObject {
 		return this.selected;
 	}
 
+	/** Updates the selection when this visual is clicked */
+	onMouseDown(event) {
+		mouse.lastClickedPrimitive = this;
+		// If we left click directly on the anchors we dont want anything but them selected
+		if (event.which === mouse.left) {
+			if (this.type == "dummy_anchor") {
+				Visuals.unselectAllExcept(Visuals.getParentId(this.id));
+			} else if (get_only_selected_anchor_id()) {
+				Visuals.unselectAll();
+			}
+			if (this.isSelected()) {
+				if (event.shiftKey) {
+					this.unselect();
+				}
+			} else {
+				if (!event.shiftKey) {
+					// We don't want to unselect an eventual parent
+					// As that will hide other anchors
+					Visuals.unselectAllExcept(Visuals.getParentId(this.id));
+				}
+				this.select();
+			}
+			mouse.clickedOnObject = true
+		}
+	}
+
 	/** The top level visual this belongs to, e.g. the flow of an anchor. A top level visual is its own parent. */
 	getParent() {
 		return Visuals.get(Visuals.getParentId(this.id));
@@ -270,7 +296,7 @@ class OnePointer extends BaseObject {
 		for (let key in this.element_array) {
 			let element = this.element_array[key];
 			$(element).on("mousedown", (event) => {
-				primitive_mousedown(this.id, event);
+				this.onMouseDown(event);
 			});
 		}
 		$(this.group).dblclick((event) => {

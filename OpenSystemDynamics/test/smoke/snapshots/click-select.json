@@ -1,0 +1,37 @@
+{
+  "table": [
+    "58",
+    "58.end_anchor",
+    "58.start_anchor"
+  ],
+  "timePlot": [
+    "59",
+    "59.end_anchor",
+    "59.start_anchor"
+  ],
+  "text": [
+    "54",
+    "54.end_anchor",
+    "54.start_anchor"
+  ],
+  "rectangle": [
+    "55",
+    "55.end_anchor",
+    "55.start_anchor"
+  ],
+  "link": [
+    "50.b1_anchor",
+    "50.b2_anchor",
+    "50.end_anchor",
+    "50.start_anchor"
+  ],
+  "shiftClickSecondStock": [
+    "44",
+    "45"
+  ],
+  "shiftClickFirstStockAgain": [
+    "45"
+  ],
+  "clickEmpty": [],
+  "errors": []
+}

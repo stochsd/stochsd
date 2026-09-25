@@ -11,9 +11,8 @@ class TwoPointer extends BaseObject {
 		this.createInitialAnchors(pos0, pos1);
 
 		this.makeGraphics();
-		$(this.group).on("mousedown", function (event) {
-			let node_id = this.getAttribute("node_id");
-			primitive_mousedown(node_id, event);
+		$(this.group).on("mousedown", (event) => {
+			this.onMouseDown(event);
 		});
 
 		// this is done so anchor is ontop 
