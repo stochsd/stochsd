@@ -25,12 +25,6 @@ function printDiagram() {
 	$(".editor-footer").css("display", "none");
 }
 
-function removeNewLines(string) {
-	let newString = string;
-	newString = newString.replace(/\\n/g, " ");
-	return newString;
-}
-
 function seperateFolderAndFilename(file_path) {
 	let seperator = "\\";
 	if (file_path.includes("/")) {
