@@ -370,6 +370,24 @@ export const scenarios = [
 		},
 	},
 	{
+		// Deleting a stock that has a ghost, a flow starting in it, a link and a numberbox showing it
+		name: "delete-stock-with-ghost",
+		async run(page) {
+			await page.run(buildModel);
+			const flowId = await page.run(`return primitives("Flow")[0].id`);
+			await page.run(`
+				${selectOnly(`primitives("Stock")[0]`)}
+				ToolBox.setTool("delete", mouse.left);
+			`);
+			return {
+				primitives: await page.run(primitiveSummary),
+				visuals: await page.run(visuals),
+				flowAttached: await page.run(`const flow = Visuals.get("${flowId}"); return [flow.getStartAttach()?.id ?? null, flow.getEndAttach()?.id ?? null]`),
+				xml: await page.run(modelXml),
+			};
+		},
+	},
+	{
 		// A link that is not attached in both ends is deleted when the mouse is released
 		name: "unattached-link",
 		async run(page) {

@@ -215,7 +215,31 @@ class Visuals {
 			// check if object not already deleted
 			// e.i. link gets deleted automatically if any of it's attachments gets deleted
 			if (this.get(parent.id)) {
-				tool_deletePrimitive(parent.id);
+				this.#deletePrimitive(parent.id);
+			}
+		}
+	}
+
+	/** Deletes a primitive and its ghosts from the model, and detaches flows from it */
+	static #deletePrimitive(id) {
+		removePrimitive(findID(id));
+		for (let ghostId of findGhostsOfID(id)) {
+			this.#deletePrimitive(ghostId);
+		}
+		cleanUnconnectedLinks();
+		this.#detachFlowsFrom(id);
+		RunResults.removeResultsForId(id);
+	}
+
+	static #detachFlowsFrom(id) {
+		for (let flow of this.twoPointers().filter(visual => visual.type == "flow")) {
+			if (flow.getStartAttach()?.id == id) {
+				flow.setStartAttach(null);
+				flow.update();
+			}
+			if (flow.getEndAttach()?.id == id) {
+				flow.setEndAttach(null);
+				flow.update();
 			}
 		}
 	}
