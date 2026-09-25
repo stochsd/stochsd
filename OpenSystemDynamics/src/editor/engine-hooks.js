@@ -8,7 +8,7 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 
 	switch (attributeName) {
 		case "name":
-			set_name(id, value);
+			visualObject?.setName(value);
 			break;
 	}
 	//~ do_global_log("tjohej "+type+" "+attributeName);

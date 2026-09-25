@@ -94,9 +94,6 @@ class BaseObject {
 	doubleClick() {
 		// This function has to be overriden
 	}
-	afterNameChange() {
-		// Do nothing. this method is supposed to be overriden by subclasses
-	}
 	afterMove(diff_x, diff_y) {
 		// Override this		
 	}

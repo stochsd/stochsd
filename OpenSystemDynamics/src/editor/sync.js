@@ -251,7 +251,7 @@ function syncVisual(tprimitive) {
 			{
 				let position = getCenterPosition(tprimitive);
 				let visualObject = new StockVisual(tprimitive.id, "stock", position);
-				set_name(tprimitive.id, tprimitive.getAttribute("name"));
+				visualObject.setName(tprimitive.getAttribute("name"));
 
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
@@ -263,7 +263,7 @@ function syncVisual(tprimitive) {
 			{
 				let position = getCenterPosition(tprimitive);
 				let visualObject = new ConverterVisual(tprimitive.id, "converter", position);
-				set_name(tprimitive.id, tprimitive.getAttribute("name"));
+				visualObject.setName(tprimitive.getAttribute("name"));
 
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
@@ -293,7 +293,7 @@ function syncVisual(tprimitive) {
 						visualObject = new StockVisual(tprimitive.id, "stock", position, { "is_ghost": true });
 						break;
 				}
-				set_name(tprimitive.id, tprimitive.getAttribute("name"));
+				visualObject.setName(tprimitive.getAttribute("name"));
 
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
@@ -311,7 +311,7 @@ function syncVisual(tprimitive) {
 				} else {
 					visualObject = new ConstantVisual(tprimitive.id, "constant", position);
 				}
-				set_name(tprimitive.id, tprimitive.getAttribute("name"));
+				visualObject.setName(tprimitive.getAttribute("name"));
 
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
@@ -345,7 +345,7 @@ function syncVisual(tprimitive) {
 			}
 			connection.update();
 
-			set_name(tprimitive.id, getName(tprimitive));
+			connection.setName(getName(tprimitive));
 			break;
 		case "Link":
 			{

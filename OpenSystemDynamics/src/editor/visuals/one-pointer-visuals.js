@@ -181,7 +181,8 @@ class NumberboxVisual extends BasePrimitive {
 		this.primitive.setAttribute("Target", newTargetID);
 		this.render();
 	}
-	afterNameChange() {
+	setName(new_name) {
+		super.setName(new_name);
 		this.setSelectionSizeToText();
 	}
 	getImage() {

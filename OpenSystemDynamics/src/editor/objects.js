@@ -110,15 +110,6 @@ function update_relevant_objects(ids) {
 	Visuals.updateTwoPointers(ids);
 }
 
-/** @param {string} id @param {string} new_name */
-function set_name(id, new_name) {
-	let vis = Visuals.get(id);
-	if (!vis) {
-		return;
-	}
-	vis.setName(new_name);
-	vis.afterNameChange();
-}
 /** @param {string} node_id @param {number} diff_x @param {number} diff_y */
 function rel_move(node_id, diff_x, diff_y) {
 	let primitive = findID(node_id);
