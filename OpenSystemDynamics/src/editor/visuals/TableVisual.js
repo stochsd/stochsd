@@ -13,6 +13,10 @@ class TableVisual extends HtmlTwoPointer {
 			this.render();
 		}
 	}
+	// Tables have no chart, but like the plots they redraw here, e.g. to show new primitive names
+	updateChart() {
+		this.render();
+	}
 	render() {
 		let IdsToDisplay = getDisplayIds(this.primitive);
 		this.primitive.setAttribute("Primitives", IdsToDisplay.join(","));

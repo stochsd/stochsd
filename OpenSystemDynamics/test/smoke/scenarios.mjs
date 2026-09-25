@@ -256,6 +256,27 @@ export const scenarios = [
 		},
 	},
 	{
+		// Renaming updates the plots and tables showing the renamed primitive
+		name: "rename",
+		async run(page) {
+			await page.run(buildModel);
+			await page.run(`
+				const stock = primitives("Stock")[0];
+				for (const display of primitives().filter(p => ["Table", "TimePlot"].includes(getType(p)))) {
+					display.setAttribute("Primitives", stock.id);
+					Visuals.get(display.id).render();
+				}
+				setName(stock, "Population");
+			`);
+			await new Promise(resolve => setTimeout(resolve, 500));
+			return {
+				primitives: await page.run(primitiveSummary),
+				tableHeader: await page.run(`return $(Visuals.get(primitives("Table")[0].id).htmlElement).find("th").map((i, e) => e.textContent.trim()).get()`),
+				xml: await page.run(modelXml),
+			};
+		},
+	},
+	{
 		name: "dialogs",
 		async run(page) {
 			await page.run(buildModel);
