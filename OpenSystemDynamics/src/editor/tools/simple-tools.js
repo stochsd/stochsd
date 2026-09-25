@@ -69,8 +69,8 @@ class ResetTool extends BaseTool {
 
 class DeleteTool extends BaseTool {
 	static enterTool() {
-		let selected_ids = Object.keys(get_selected_root_objects());
-		if (selected_ids.length == 0) {
+		let selectedIds = Visuals.selectedParents().map(visual => visual.id);
+		if (selectedIds.length == 0) {
 			xAlert("You must select at least one primitive to delete");
 			ToolBox.setTool("mouse");
 			return;

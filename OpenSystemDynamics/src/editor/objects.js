@@ -28,36 +28,13 @@ function detachFlows(id) {
 	}
 }
 
-function get_selected_root_objects() {
-	let result = {};
-	for (let visual of Visuals.all()) {
-		let parent = get_parent(visual);
-		// If any element is selected we add its parent
-		if (visual.isSelected()) {
-			result[parent.id] = parent;
-		}
-	}
-	return result;
-}
-
-function get_root_objects() {
-	let result = {};
-	for (let visual of Visuals.all()) {
-		if (visual.id.indexOf(".") == -1) {
-			result[visual.id] = visual;
-		}
-	}
-	return result;
-}
-
 function delete_selected_objects() {
 	// Delete all objects that are selected
-	let selection = get_selected_root_objects();
-	for (let key in selection) {
+	for (let parent of Visuals.selectedParents()) {
 		// check if object not already deleted
 		// e.i. link gets deleted automatically if any of it's attachments gets deleted
-		if (Visuals.get(key)) {
-			tool_deletePrimitive(key);
+		if (Visuals.get(parent.id)) {
+			tool_deletePrimitive(parent.id);
 		}
 	}
 }

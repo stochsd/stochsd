@@ -43,15 +43,15 @@ class NumberboxTool extends OnePointCreateTool {
 	}
 	/** @returns { string | undefined } */
 	static getSelectionError() {
-		let selected_ids = Object.keys(get_selected_root_objects());
-		if (selected_ids.length != 1) {
-			if (selected_ids.length == 0) {
+		let selectedIds = Visuals.selectedParents().map(visual => visual.id);
+		if (selectedIds.length != 1) {
+			if (selectedIds.length == 0) {
 				return "You must first select a primitive for the Number Box.";
 			} else {
 				return "You must first select exactly one primitive for the Number Box.";
 			}
 		} else {
-			let selected_object = Visuals.get(selected_ids[0]);
+			let selected_object = Visuals.get(selectedIds[0]);
 			if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
 				return "This primitive can not have a Number Box";
 			}
@@ -65,7 +65,7 @@ class NumberboxTool extends OnePointCreateTool {
 			ToolBox.setTool("mouse");
 			return
 		}
-		let selected_ids = Object.keys(get_selected_root_objects());
+		let selected_ids = Visuals.selectedParents().map(visual => visual.id);
 		if (isPrimitiveGhost(findID(selected_ids[0]))) {
 			this.targetPrimitive = findID(selected_ids[0]).getAttribute("Source");
 		} else {
@@ -136,7 +136,7 @@ class GhostTool extends OnePointCreateTool {
 	}
 	/** @returns {string | undefined} */
 	static getSelectionError() {
-		// filter out non root object, e.g. anchors 
+		// filter out children, e.g. anchors
 		let selectedObjects = Visuals.selected().filter(visual => !visual.id.includes("."));
 		if (selectedObjects.length != 1) {
 			return "You must first select exactly one primitive to ghost"
@@ -150,7 +150,7 @@ class GhostTool extends OnePointCreateTool {
 		}
 	}
 	static enterTool() {
-		// filter out non root object, e.g. anchors 
+		// filter out children, e.g. anchors
 		const error = GhostTool.getSelectionError()
 		if (error) {
 			xAlert(error);

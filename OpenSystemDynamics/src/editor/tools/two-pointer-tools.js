@@ -276,7 +276,7 @@ class TableTool extends TwoPointerTool {
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -297,7 +297,7 @@ class TimePlotTool extends TwoPointerTool {
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
 		let sides = this.initialSelectedIds.map(() => "L");
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds, sides);
@@ -318,7 +318,7 @@ class ComparePlotTool extends TwoPointerTool {
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
 		super.leftMouseDown(x, y)
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -339,7 +339,7 @@ class XyPlotTool extends TwoPointerTool {
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
 		super.leftMouseDown(x, y)
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -361,7 +361,7 @@ class HistoPlotTool extends TwoPointerTool {
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Object.keys(get_selected_root_objects());
+		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();

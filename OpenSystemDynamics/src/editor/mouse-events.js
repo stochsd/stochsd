@@ -119,10 +119,9 @@ function find_element_under(x, y) {
 }
 
 function stochsd_clear_sync() {
-	let root_object_array = get_root_objects();
-	for (let id in root_object_array) {
-		if (findID(id) == null) {
-			stochsd_delete_primitive(id);
+	for (let parent of Visuals.parents()) {
+		if (findID(parent.id) == null) {
+			stochsd_delete_primitive(parent.id);
 		}
 	}
 }

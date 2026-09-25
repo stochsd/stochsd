@@ -1,6 +1,8 @@
 // Stores all visual objects in the diagram, by id.
 // OnePointers are visuals with a single position, e.g. stocks, variables and the anchor points of TwoPointers.
 // TwoPointers are visuals spanning two points, e.g. flows, links, plots, tables and shapes.
+// A visual's parent is the top level visual it belongs to, e.g. the flow an anchor belongs to.
+// A top level visual is its own parent. Children have ids like "<parent id>.start_anchor".
 // Nothing outside this class should touch the maps directly.
 class Visuals {
 	/** @type {{ [id: string]: OnePointer }} */
@@ -61,6 +63,28 @@ class Visuals {
 	/** @returns {(OnePointer | TwoPointer)[]} */
 	static selected() {
 		return this.all().filter(visual => visual.isSelected());
+	}
+
+	/**
+	 * All top level visuals, i.e. everything except children such as anchors
+	 * @returns {(OnePointer | TwoPointer)[]}
+	 */
+	static parents() {
+		return this.all().filter(visual => get_parent_id(visual.id) == visual.id);
+	}
+
+	/**
+	 * The parents of all selected visuals, each included once.
+	 * Selecting an anchor therefore counts as selecting its flow, link or plot.
+	 * @returns {(OnePointer | TwoPointer)[]}
+	 */
+	static selectedParents() {
+		let parents = {};
+		for (let visual of this.selected()) {
+			let parent = get_parent(visual);
+			parents[parent.id] = parent;
+		}
+		return Object.values(parents);
 	}
 
 	static unselectAll() {
