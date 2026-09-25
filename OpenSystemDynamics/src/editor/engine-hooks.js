@@ -35,7 +35,11 @@ defaultPrimitiveCreatedHandler = function (primitive) {
 }
 
 defaultPrimitiveBeforeDestroyHandler = function (primitive) {
-	stochsd_delete_primitive_and_references(getID(primitive));
+	let id = getID(primitive);
+	let numberboxes = primitives("Numberbox").filter(numberbox => numberbox.getAttribute("Target") == id);
+	removePlotReferences(id);
+	Visuals.get(id)?.remove();
+	numberboxes.forEach(removePrimitive);
 }
 
 var sdsMacros = `### Imported Macros from StochSD ###

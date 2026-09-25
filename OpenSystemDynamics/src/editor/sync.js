@@ -24,29 +24,6 @@ function removePlotReferences(id) {
 	}
 }
 
-function stochsd_delete_primitive_and_references(id) {
-	let numboxes = primitives("Numberbox").filter(n => n.getAttribute("Target") == id);
-	removePlotReferences(id);
-
-	/** Deleting visual object */
-	stochsd_delete_primitive(id);
-
-	numboxes.map(removePrimitive);
-}
-
-function stochsd_delete_primitive(id) {
-	let visual = Visuals.get(id);
-	if (visual) {
-		visual.clean();
-	}
-
-	if (Visuals.get(id)) {
-		Visuals.remove(id);
-	} else {
-		do_global_log("primitive with id " + id + " does not exist");
-	}
-}
-
 function isLocal() {
 	return true; // Expose additional debugging and error messages
 }
