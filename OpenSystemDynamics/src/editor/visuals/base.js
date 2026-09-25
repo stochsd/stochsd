@@ -324,6 +324,22 @@ class OnePointer extends BaseObject {
 	updatePosition() {
 		this.update();
 	}
+	/** @param {number} diff_x @param {number} diff_y */
+	moveBy(diff_x, diff_y) {
+		let primitive = findID(this.id);
+		if (primitive != null) {
+			// If its a real primitive (stoch, variable etc) update it in the engine
+			let oldPos = getCenterPosition(primitive);
+			let newPos = [oldPos[0] + diff_x, oldPos[1] + diff_y];
+			setCenterPosition(primitive, newPos);
+		} else {
+			// If its not a real primtiive but rather an anchor point updated the position only graphically
+			this.pos[0] += diff_x;
+			this.pos[1] += diff_y;
+		}
+		this.updatePosition();
+		this.afterMove(diff_x, diff_y);
+	}
 	getImage() {
 		return false;
 	}

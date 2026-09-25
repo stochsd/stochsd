@@ -110,20 +110,3 @@ function update_relevant_objects(ids) {
 	Visuals.updateTwoPointers(ids);
 }
 
-/** @param {string} node_id @param {number} diff_x @param {number} diff_y */
-function rel_move(node_id, diff_x, diff_y) {
-	let primitive = findID(node_id);
-	let visual = Visuals.getOnePointer(node_id);
-	if (primitive != null) {
-		// If its a real primitive (stoch, variable etc) update it in the engine
-		let oldPos = getCenterPosition(primitive);
-		let newPos = [oldPos[0] + diff_x, oldPos[1] + diff_y];
-		setCenterPosition(primitive, newPos);
-	} else {
-		// If its not a real primtiive but rather an anchor point updated the position only graphically
-		visual.pos[0] += diff_x;
-		visual.pos[1] += diff_y;
-	}
-	visual.updatePosition();
-	visual.afterMove(diff_x, diff_y);
-}

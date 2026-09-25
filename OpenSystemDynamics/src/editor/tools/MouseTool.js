@@ -72,7 +72,7 @@ class MouseTool extends BaseTool {
 
 			objectMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-			rel_move(visual.id, diff_x, diff_y);
+			visual.moveBy(diff_x, diff_y);
 		}
 		if (objectMoved) {
 			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
