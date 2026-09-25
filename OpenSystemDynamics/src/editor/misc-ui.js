@@ -8,7 +8,7 @@ function setColorToSelection(color) {
 }
 
 function printDiagram() {
-	unselect_all();
+	Visuals.unselectAll();
 	InfoBar.update();
 	ToolBox.updateButtons();
 	// Write filename and date into editor-footer 

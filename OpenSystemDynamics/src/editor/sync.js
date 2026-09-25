@@ -431,7 +431,7 @@ function syncAllVisuals() {
 		}
 	}
 	update_all_objects();
-	unselect_all();
+	Visuals.unselectAll();
 }
 
 function findFreeName(basename) {

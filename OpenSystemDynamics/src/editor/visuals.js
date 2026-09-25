@@ -57,4 +57,13 @@ class Visuals {
 	static all() {
 		return Object.values({ ...this.#onePointers, ...this.#twoPointers });
 	}
+
+	static unselectAll() {
+		for (let visual of this.onePointers()) {
+			visual.unselect();
+		}
+		for (let visual of this.twoPointers()) {
+			visual.unselect();
+		}
+	}
 }

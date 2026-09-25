@@ -28,7 +28,7 @@ class runOverlay {
 		});
 	}
 	static block() {
-		unselect_all();
+		Visuals.unselectAll();
 		$("#svgBlockOverlay").show();
 	}
 	static unblock() {

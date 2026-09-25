@@ -9,7 +9,7 @@ class OnePointCreateTool extends BaseTool {
 		// This function should be over written
 	}
 	static leftMouseDown(x, y) {
-		unselect_all();
+		Visuals.unselectAll();
 		this.create(x, y);
 		update_relevant_objects([]);
 		InfoBar.update();
@@ -21,7 +21,7 @@ class OnePointCreateTool extends BaseTool {
 		}
 	}
 	static rightMouseDown(x, y) {
-		unselect_all();
+		Visuals.unselectAll();
 		ToolBox.setTool("mouse");
 		InfoBar.update();
 		ToolBox.updateButtons();

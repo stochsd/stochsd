@@ -17,7 +17,7 @@ class TwoPointerTool extends BaseTool {
 		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
 	}
 	static leftMouseDown(x, y) {
-		unselect_all();
+		Visuals.unselectAll();
 
 		// Looks for element under mouse. 
 		let start_element = find_element_under(x, y);
@@ -146,7 +146,7 @@ class FlowTool extends TwoPointerTool {
 			}
 		} else {
 			// bugfix: unselect to not unattach on next empty click
-			unselect_all();
+			Visuals.unselectAll();
 			ToolBox.setTool("mouse");
 		}
 	}
@@ -158,7 +158,7 @@ class FlowTool extends TwoPointerTool {
 
 			if (this.rightClickMode === false) {
 				// bugfix: unselect to not unattach on next empty click
-				unselect_all();
+				Visuals.unselectAll();
 				ToolBox.setTool("mouse");
 			}
 		}

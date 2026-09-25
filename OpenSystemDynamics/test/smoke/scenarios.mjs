@@ -27,7 +27,7 @@ const dragTool = (tool, [x1, y1], [x2, y2]) => `
 `;
 
 const selectOnly = primitiveExpression => `
-	unselect_all();
+	Visuals.unselectAll();
 	Visuals.get(${primitiveExpression}.id).select();
 `;
 
@@ -65,7 +65,7 @@ export const buildModel = `
 	setValue2(primitives("Converter")[0], "0,0;10,20");
 	syncAllVisuals();
 	History.storeUndoState();
-	unselect_all();
+	Visuals.unselectAll();
 `;
 
 const visuals = `

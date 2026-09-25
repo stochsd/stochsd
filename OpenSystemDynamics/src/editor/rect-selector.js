@@ -44,7 +44,7 @@ class RectSelector {
 	 * @param {number} y 
 	*/
 	static start(x, y) {
-		unselect_all();
+		Visuals.unselectAll();
 		RectSelector.coordRect.setVisible(true);
 		RectSelector.coordRect.x1 = x;
 		RectSelector.coordRect.y1 = y;
@@ -60,7 +60,7 @@ class RectSelector {
 		RectSelector.coordRect.x2 = x;
 		RectSelector.coordRect.y2 = y;
 		RectSelector.coordRect.update();
-		unselect_all();
+		Visuals.unselectAll();
 		let select_array = RectSelector.getObjectsWithin();
 		for (let key in select_array) {
 			let parent = get_parent(select_array[key]);

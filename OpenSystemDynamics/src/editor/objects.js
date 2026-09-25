@@ -117,7 +117,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 			let elementId = get_parent_id(mouse.lastClickedPrimitive.id);
 			unselect_all_but(elementId);
 		} else if (get_only_selected_anchor_id()) {
-			unselect_all();
+			Visuals.unselectAll();
 		}
 		if (mouse.lastClickedPrimitive.isSelected()) {
 			if (event.shiftKey) {
@@ -203,22 +203,13 @@ function positionToModel() {
 
 
 function unselect_all_other_anchors(parent_id, child_id_to_select) {
-	unselect_all();
+	Visuals.unselectAll();
 	let parent = Visuals.getTwoPointer(parent_id);
 	parent.select();
 	for (let anchor of parent.getAnchors()) {
 		if (anchor.id !== child_id_to_select) {
 			anchor.unselect();
 		}
-	}
-}
-
-function unselect_all() {
-	for (let visual of Visuals.onePointers()) {
-		visual.unselect();
-	}
-	for (let visual of Visuals.twoPointers()) {
-		visual.unselect();
 	}
 }
 
