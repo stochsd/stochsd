@@ -52,7 +52,7 @@ function checkedHtml(value) {
 class EditorControll {
 	static showEditor(primitive, annotations) {
 		let primitiveId = getID(primitive);
-		get_object(primitiveId).doubleClick();
+		Visuals.get(primitiveId).doubleClick();
 	}
 }
 
@@ -108,7 +108,7 @@ function get_parent_id(id) {
 }
 
 function get_parent(child) {
-	return get_object(get_parent_id(child.id));
+	return Visuals.get(get_parent_id(child.id));
 }
 
 // Get a list of all children for a parent

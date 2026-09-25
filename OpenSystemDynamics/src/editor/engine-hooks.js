@@ -1,7 +1,7 @@
 defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 	let id = getID(primitive);
 	let type = getType(primitive);
-	let visualObject = get_object(id);
+	let visualObject = Visuals.get(id);
 	if (visualObject) {
 		visualObject.attributeChangeHandler(attributeName, value);
 	}
@@ -13,7 +13,7 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 	}
 	//~ do_global_log("tjohej "+type+" "+attributeName);
 	if (type == "Numberbox" && attributeName == "Target") {
-		let visualObject = get_object(id);
+		let visualObject = Visuals.get(id);
 		// render() can only be done when the numberbox is fully loaded
 		// Therefor we have to check that visualObject is not null
 		if (visualObject) {

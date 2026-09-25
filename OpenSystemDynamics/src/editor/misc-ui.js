@@ -1,7 +1,7 @@
 function setColorToSelection(color) {
 	let objects = get_selected_objects();
 	for (let id in objects) {
-		let obj = get_object(id);
+		let obj = Visuals.get(id);
 		get_parent(obj).setColor(color);
 	}
 	History.storeUndoState();

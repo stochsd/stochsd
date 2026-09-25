@@ -47,7 +47,7 @@ class TimePlotVisual extends PlotVisual {
 			(node) => node.getAttribute("Color")
 		);
 
-		let types_to_display = idsToDisplay.map(findID).map(node => get_object(node.id).type);
+		let types_to_display = idsToDisplay.map(findID).map(node => Visuals.get(node.id).type);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
 		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);

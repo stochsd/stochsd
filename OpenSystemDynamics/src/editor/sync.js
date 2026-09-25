@@ -58,7 +58,7 @@ function stochsd_delete_primitive_and_references(id) {
 }
 
 function stochsd_delete_primitive(id) {
-	let stochsd_object = get_object(id);
+	let stochsd_object = Visuals.get(id);
 	if (stochsd_object) {
 		stochsd_object.clean();
 	}
@@ -133,10 +133,19 @@ function addMissingPrimitiveAttributes(prim) {
 	}
 }
 
+// The visual that a flow or link is attached to.
+// A missing visual means the file is corrupt. Throwing lets syncAllVisuals remove the primitive and tell the user.
+function getAttachedVisual(primitive) {
+	let visual = Visuals.get(getID(primitive));
+	if (!visual) {
+		throw new Error(`Attached to ${getType(primitive)} ${getID(primitive)}, which has no visual`);
+	}
+	return visual;
+}
+
 // Take a primitive from the engine(tprimitve) and makes a visual object from it
 function syncVisual(tprimitive) {
-	let stochsd_object = get_object(tprimitive.id);
-	if (stochsd_object != false) {
+	if (Visuals.get(tprimitive.id)) {
 		return false;
 	}
 
@@ -351,11 +360,11 @@ function syncVisual(tprimitive) {
 
 			if (tprimitive.source != null) {
 				// Attach to object
-				connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
+				connection.setStartAttach(getAttachedVisual(tprimitive.source));
 			}
 			if (tprimitive.target != null) {
 				// Attach to object
-				connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
+				connection.setEndAttach(getAttachedVisual(tprimitive.target));
 			}
 			connection.update();
 
@@ -372,11 +381,11 @@ function syncVisual(tprimitive) {
 
 				if (tprimitive.source != null) {
 					// Attach to object
-					connection.setStartAttach(get_object(tprimitive.source.getAttribute("id")));
+					connection.setStartAttach(getAttachedVisual(tprimitive.source));
 				}
 				if (tprimitive.target != null) {
 					// Attach to object
-					connection.setEndAttach(get_object(tprimitive.target.getAttribute("id")));
+					connection.setEndAttach(getAttachedVisual(tprimitive.target));
 				}
 				let bezierPoints = [
 					tprimitive.getAttribute("b1x"),

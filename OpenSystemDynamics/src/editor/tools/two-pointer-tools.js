@@ -47,7 +47,7 @@ class TwoPointerTool extends BaseTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
-		let moveObject = get_object(node_id);
+		let moveObject = Visuals.get(node_id);
 		let parent = get_parent(moveObject);
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
@@ -106,7 +106,7 @@ class FlowTool extends TwoPointerTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, anchor_id) {
 		// Function used both during creation and later moving of anchor point 
-		let mainAnchor = get_object(anchor_id);
+		let mainAnchor = Visuals.get(anchor_id);
 		let parent = get_parent(mainAnchor);
 
 		parent.requestNewAnchorPos([x, y], anchor_id);
@@ -231,7 +231,7 @@ class LineTool extends TwoPointerTool {
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
-		let moveObject = get_object(node_id);
+		let moveObject = Visuals.get(node_id);
 		let parent = get_parent(moveObject);
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
@@ -379,7 +379,7 @@ class LinkTool extends TwoPointerTool {
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		let anchor_type = node_id.split(".")[1];
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
-			let moveObject = get_object(node_id);
+			let moveObject = Visuals.get(node_id);
 			let parent = get_parent(moveObject);
 			moveObject.setPos([x, y]);
 			parent.update();
@@ -394,7 +394,7 @@ class LinkTool extends TwoPointerTool {
 		}
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
-		let start_pos = get_object(move_node_id).getPos();
+		let start_pos = Visuals.get(move_node_id).getPos();
 		this.mouseMoveSingleAnchor(start_pos[0] + diff_x, start_pos[1] + diff_y, shiftKey, move_node_id);
 	}
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {

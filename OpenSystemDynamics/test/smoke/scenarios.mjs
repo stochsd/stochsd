@@ -28,7 +28,7 @@ const dragTool = (tool, [x1, y1], [x2, y2]) => `
 
 const selectOnly = primitiveExpression => `
 	unselect_all();
-	get_object(${primitiveExpression}.id).select();
+	Visuals.get(${primitiveExpression}.id).select();
 `;
 
 // Builds a model containing every kind of primitive, using the tools the same way the mouse does
@@ -164,7 +164,7 @@ export const scenarios = [
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
 			const selection = () => page.run(`return Object.keys(get_selected_objects()).sort()`);
-			const positionOf = id => page.run(`return get_object("${id}").getPos()`);
+			const positionOf = id => page.run(`return Visuals.get("${id}").getPos()`);
 			const flowId = await page.run(`return primitives("Flow")[0].id`);
 			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
 			const steps = {};
@@ -190,12 +190,12 @@ export const scenarios = [
 			steps.dragFlowEndAnchor = {
 				selection: await selection(),
 				flowEnd: await positionOf(`${flowId}.end_anchor`),
-				endAttach: await page.run(`return get_object("${flowId}").getEndAttach()?.id ?? null`),
+				endAttach: await page.run(`return Visuals.get("${flowId}").getEndAttach()?.id ?? null`),
 			};
 
 			await page.click(...toPage([200, 200]));
 			await page.key("ArrowRight", { code: "ArrowRight", keyCode: 39, modifiers: 8 });
-			steps.shiftArrowRight = await page.run(`return primitives("Stock").map(s => get_object(s.id).getPos())`);
+			steps.shiftArrowRight = await page.run(`return primitives("Stock").map(s => Visuals.get(s.id).getPos())`);
 
 			await page.key("a", { code: "KeyA", keyCode: 65, modifiers: 2 });
 			steps.ctrlA = (await selection()).length;

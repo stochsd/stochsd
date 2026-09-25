@@ -59,7 +59,7 @@ function delete_selected_objects() {
 	for (let key in selection) {
 		// check if object not already deleted
 		// e.i. link gets deleted automatically if any of it's attachments gets deleted
-		if (get_object(key)) {
+		if (Visuals.get(key)) {
 			tool_deletePrimitive(key);
 		}
 	}
@@ -113,7 +113,7 @@ function delete_object(node_id) {
 	Visuals.remove(node_id);
 }
 function primitive_mousedown(node_id, event, new_primitive) {
-	mouse.lastClickedPrimitive = get_object(node_id);
+	mouse.lastClickedPrimitive = Visuals.get(node_id);
 	// If we left click directly on the anchors we dont want anything but them selected
 	if (event.which === mouse.left) {
 		if (mouse.lastClickedPrimitive.type == "dummy_anchor") {
@@ -182,18 +182,14 @@ function get_all_objects() {
 	return result;
 }
 
-function get_object(id) {
-	return Visuals.get(id) ?? false;
-}
-
 /** @param {string} id @param {string} new_name */
 function set_name(id, new_name) {
-	let tobject = get_object(id);
-	if (!tobject) {
+	let vis = Visuals.get(id);
+	if (!vis) {
 		return;
 	}
-	tobject.setName(new_name);
-	tobject.afterNameChange();
+	vis.setName(new_name);
+	vis.afterNameChange();
 }
 /** @param {string} node_id @param {number} diff_x @param {number} diff_y */
 function rel_move(node_id, diff_x, diff_y) {
@@ -251,18 +247,19 @@ function unselect_all_but(dont_unselect_id) {
 	}
 }
 
+/** @param {string} node_id  */
 function rotate_name(node_id) {
-	let object = get_object(node_id);
-	if (object.name_pos < 3) {
-		object.name_pos++;
+	const vis = Visuals.get(node_id);
+	if (vis.name_pos < 3) {
+		vis.name_pos++;
 	} else {
-		object.name_pos = 0;
+		vis.name_pos = 0;
 	}
 	update_name_pos(node_id);
 }
 
 function update_name_pos(node_id) {
-	let object = get_object(node_id);
+	let object = Visuals.get(node_id);
 	let name_element = object.name_element;
 	// Some objects does not have name element
 	if (name_element == null) {
@@ -276,12 +273,12 @@ function update_name_pos(node_id) {
 		return;
 	}
 
-	let visualObject = get_object(node_id);
+	let visualObject = Visuals.get(node_id);
 	let pos = visualObject.namePosList[visualObject.name_pos];
 	name_element.setAttribute("x", pos[0]); //Set path's data
 	name_element.setAttribute("y", pos[1]); //Set path's data
 
-	switch (get_object(node_id).name_pos) {
+	switch (Visuals.get(node_id).name_pos) {
 		case 0:
 			// Below
 			name_element.setAttribute("text-anchor", "middle");

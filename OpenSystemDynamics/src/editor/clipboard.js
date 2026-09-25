@@ -35,7 +35,7 @@ class Clipboard {
 		// Create clipboard items
 		for (let i in parentIdArray) {
 			let clipboardItem = new ClipboardItem(parentIdArray[i]);
-			let tmp_object = get_object(parentIdArray[i]);
+			let tmp_object = Visuals.get(parentIdArray[i]);
 
 			let absolutePosition = tmp_object.getPos();
 			clipboardItem.absolutePosition = absolutePosition;

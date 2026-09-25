@@ -408,7 +408,7 @@ class AnchorPoint extends OnePointer {
 		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
 		// commented out until fixed
 		let parentId = get_parent_id(this.id);
-		let parent = get_object(parentId);
+		let parent = Visuals.get(parentId);
 
 		if (parent.type == "link") {
 			switch (this.anchorType) {

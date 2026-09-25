@@ -38,7 +38,7 @@ class RunTool extends BaseTool {
 				Definition Error in <b style="color:${color};">${name}</b>: <br/><br/>
 				&nbsp &nbsp ${DefinitionError.getMessage(prim)}
 			`, () => {
-				get_object(getID(prim)).doubleClick();
+				Visuals.get(getID(prim)).doubleClick();
 			});
 			alert.setTitle("Unable to Simulate");
 			alert.show();

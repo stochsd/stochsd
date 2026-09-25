@@ -65,7 +65,7 @@ class DataGenerations {
 		this.colorGen.push(ids.map(findID).map(
 			node => node.getAttribute('Color') ? node.getAttribute('Color') : defaultStroke
 		));
-		let types = ids.map(findID).map(node => get_object(node.id).type);
+		let types = ids.map(findID).map(node => Visuals.get(node.id).type);
 		this.patternGen.push(
 			types.map(type => lineOptions[type]["pattern"])
 		);

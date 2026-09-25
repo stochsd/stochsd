@@ -51,7 +51,7 @@ class NumberboxTool extends OnePointCreateTool {
 				return "You must first select exactly one primitive for the Number Box.";
 			}
 		} else {
-			let selected_object = get_object(selected_ids[0]);
+			let selected_object = Visuals.get(selected_ids[0]);
 			if (this.numberboxable_primitives.indexOf(selected_object.type) == -1) {
 				return "This primitive can not have a Number Box";
 			}
@@ -102,7 +102,7 @@ class MoveValveTool extends BaseTool {
 	static enterTool() {
 		let selection = get_selected_objects();
 		for (let node_id in selection) {
-			let obj = get_object(node_id);
+			let obj = Visuals.get(node_id);
 			if (obj.type == "flow") {
 				obj.moveValve();
 			}
@@ -115,7 +115,7 @@ class StraightenLinkTool extends BaseTool {
 	static enterTool() {
 		for (let node_id in get_selected_objects()) {
 			let key = get_parent_id(node_id);
-			let obj = get_object(key);
+			let obj = Visuals.get(key);
 			if (obj.type == "link") {
 				obj.resetBezierPoints();
 			}
@@ -135,14 +135,14 @@ class GhostTool extends OnePointCreateTool {
 		let ghost = makeGhost(source, [x, y]);
 		ghost.setAttribute("RotateName", "0");
 		syncVisual(ghost);
-		let DIM_ghost = get_object(ghost.getAttribute("id"));
+		let DIM_ghost = Visuals.get(ghost.getAttribute("id"));
 		source.subscribeAttribute(DIM_ghost.changeAttributeHandler);
 	}
 	/** @returns {string | undefined} */
 	static getSelectionError() {
 		let selectedIds = get_selected_ids();
 		// filter out non root object, e.g. anchors 
-		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(get_object);
+		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(id => Visuals.get(id));
 		if (selectedObjects.length != 1) {
 			return "You must first select exactly one primitive to ghost"
 		}
@@ -163,7 +163,7 @@ class GhostTool extends OnePointCreateTool {
 			return;
 		}
 		let selectedIds = get_selected_ids();
-		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(get_object);
+		let selectedObjects = selectedIds.filter(id => !id.includes(".")).map(id => Visuals.get(id));
 		let selectedObject = selectedObjects[0];
 		this.id_to_ghost = selectedObjects[0].id;
 	}
@@ -219,7 +219,7 @@ function get_only_selected_anchor_id() {
 		// only one anchor in selection
 		return { "parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
 	} else if (keys.length === 2) {
-		if (get_object(keys[0]).getType() === "dummy_anchor" && get_object(keys[1]).getType() === "dummy_anchor") {
+		if (Visuals.get(keys[0]).getType() === "dummy_anchor" && Visuals.get(keys[1]).getType() === "dummy_anchor") {
 			// both anchors are dummies 
 			return null;
 		} else if (get_parent_id(keys[0]) === get_parent_id(keys[1])) {
@@ -263,7 +263,7 @@ function get_single_primitive_id_selected() {
 
 function get_only_link_selected() {
 	let object_ids = get_single_primitive_id_selected();
-	if (object_ids !== null && get_object(object_ids["parent_id"]).getType() === "link") {
+	if (object_ids !== null && Visuals.get(object_ids["parent_id"]).getType() === "link") {
 		return object_ids;
 	}
 	return null;

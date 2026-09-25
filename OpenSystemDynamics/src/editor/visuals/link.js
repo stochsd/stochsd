@@ -57,7 +57,7 @@ class LinkVisual extends BaseConnection {
 		} else {
 			let children = getChildren(this.id);
 			for (let id in children) {
-				let object = get_object(id);
+				let object = Visuals.get(id);
 				if ('setVisible' in object) {
 					object.setVisible(false);
 				}
@@ -72,7 +72,7 @@ class LinkVisual extends BaseConnection {
 	select(selectChildren = true) {
 		let children = getChildren(this.id);
 		for (let id in children) {
-			let object = get_object(id);
+			let object = Visuals.get(id);
 			if ('setVisible' in object) {
 				object.setVisible(true);
 			}
