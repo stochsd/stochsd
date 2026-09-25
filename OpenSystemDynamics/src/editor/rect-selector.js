@@ -63,7 +63,7 @@ class RectSelector {
 		Visuals.unselectAll();
 		let select_array = RectSelector.getObjectsWithin();
 		for (let key in select_array) {
-			let parent = get_parent(select_array[key]);
+			let parent = select_array[key].getParent();
 			parent.select(false); // We also select the parent but not all of its anchors
 			select_array[key].select();
 		}

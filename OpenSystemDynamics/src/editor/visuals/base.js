@@ -67,6 +67,11 @@ class BaseObject {
 		return this.selected;
 	}
 
+	/** The top level visual this belongs to, e.g. the flow of an anchor. A top level visual is its own parent. */
+	getParent() {
+		return Visuals.get(Visuals.getParentId(this.id));
+	}
+
 	clean() {
 		// Clean all children
 		let children = getChildren(this.id);
@@ -124,7 +129,7 @@ class BaseObject {
 			errorPopUp("You must rename a ghost by renaming the original.");
 			return;
 		}
-		let id = get_parent_id(this.id)
+		let id = Visuals.getParentId(this.id)
 		definitionEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
@@ -318,7 +323,7 @@ class BasePrimitive extends OnePointer {
 		super(id, type, pos, extras);
 	}
 	doubleClick() {
-		openPrimitiveDialog(get_parent_id(this.id));
+		openPrimitiveDialog(Visuals.getParentId(this.id));
 	}
 }
 
@@ -336,7 +341,7 @@ class AnchorPoint extends OnePointer {
 		this.isSquare = false;
 	}
 	isAttached() {
-		let parent = get_parent(this);
+		let parent = this.getParent();
 		if (!parent.getStartAttach) {
 			return;
 		}
@@ -374,7 +379,7 @@ class AnchorPoint extends OnePointer {
 	}
 	updatePosition() {
 		this.update();
-		let parent = get_parent(this);
+		let parent = this.getParent();
 		if (parent.start_anchor && parent.end_anchor) {
 			parent.syncAnchorToPrimitive(this.anchorType);
 		}
@@ -407,8 +412,7 @@ class AnchorPoint extends OnePointer {
 	afterMove(diff_x, diff_y) {
 		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
 		// commented out until fixed
-		let parentId = get_parent_id(this.id);
-		let parent = Visuals.get(parentId);
+		let parent = this.getParent();
 
 		if (parent.type == "link") {
 			switch (this.anchorType) {

@@ -111,7 +111,7 @@ class MoveValveTool extends BaseTool {
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
 		for (let visual of Visuals.selected()) {
-			let parent = get_parent(visual);
+			let parent = visual.getParent();
 			if (parent.type == "link") {
 				parent.resetBezierPoints();
 			}
@@ -208,16 +208,16 @@ function get_only_selected_anchor_id() {
 	let keys = selection.map(visual => visual.id);
 	if (keys.length === 1 && selection[0].getType() === "dummy_anchor") {
 		// only one anchor in selection
-		return { "parent_id": get_parent_id(keys[0]), "child_id": keys[0] };
+		return { "parent_id": Visuals.getParentId(keys[0]), "child_id": keys[0] };
 	} else if (keys.length === 2) {
 		if (Visuals.get(keys[0]).getType() === "dummy_anchor" && Visuals.get(keys[1]).getType() === "dummy_anchor") {
 			// both anchors are dummies 
 			return null;
-		} else if (get_parent_id(keys[0]) === get_parent_id(keys[1])) {
+		} else if (Visuals.getParentId(keys[0]) === Visuals.getParentId(keys[1])) {
 			// one anchor and parent object selected 
 			let parent_id = null;
 			let child_id = null;
-			if (get_parent_id(keys[0]) === keys[0]) {
+			if (Visuals.getParentId(keys[0]) === keys[0]) {
 				child_id = keys[1];
 				parent_id = keys[0];
 			} else {
@@ -235,11 +235,11 @@ function get_single_primitive_id_selected() {
 	let keys = Visuals.selected().map(visual => visual.id);
 	let object_ids = { "children_ids": [] };
 	if (keys.length > 0) {
-		object_ids["parent_id"] = get_parent_id(keys[0]);
+		object_ids["parent_id"] = Visuals.getParentId(keys[0]);
 		for (let key of keys) {
-			if (get_parent_id(key) !== object_ids["parent_id"]) {
+			if (Visuals.getParentId(key) !== object_ids["parent_id"]) {
 				return null;
-			} else if (get_parent_id(key) !== key) {
+			} else if (Visuals.getParentId(key) !== key) {
 				object_ids["children_ids"].push(key);
 			}
 		}

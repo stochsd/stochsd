@@ -21,17 +21,17 @@ class InfoBar {
 		this.infoRestricted.html(isRestricted ? `(Restricted)` : "");
 	}
 	static update() {
-		let selected = Visuals.selectedParents();
+		let selection = Visuals.selectedParents();
 
-		if (selected.length == 0) {
+		if (selection.length == 0) {
 			$(this.infoDefinitionElement).find(".CodeMirror").addClass("cm-comment")
 			this.cmInfoDef.setValue("Nothing selected")
 			this.infoDE.html("");
 			this.setRestricted(false);
-		} else if (selected.length == 1) {
+		} else if (selection.length == 1) {
 			$(this.infoDefinitionElement).find(".CodeMirror").removeClass("cm-comment")
-			let selected = selected[0];
-			let primitive = selected[0].primitive;
+			let selected = selection[0];
+			let primitive = selected.primitive;
 			if (selected.is_ghost) {
 				primitive = findID(primitive.getAttribute("Source"));
 			}
@@ -75,7 +75,7 @@ class InfoBar {
 			}
 		} else {
 			$(this.infoDefinitionElement).find(".CodeMirror").removeClass("cm-comment")
-			this.cmInfoDef.setValue(`${selected.length} objects selected`);
+			this.cmInfoDef.setValue(`${selection.length} objects selected`);
 			this.infoDE.html("");
 			this.setRestricted(false);
 		}

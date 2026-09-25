@@ -1,6 +1,6 @@
 function setColorToSelection(color) {
 	for (let visual of Visuals.selected()) {
-		get_parent(visual).setColor(color);
+		visual.getParent().setColor(color);
 	}
 	History.storeUndoState();
 }

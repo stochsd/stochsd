@@ -29,7 +29,7 @@ class TwoPointerTool extends BaseTool {
 		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
 		if (start_element != null && this.current_connection.getStartAttach) {
-			this.current_connection.setStartAttach(get_parent(start_element));
+			this.current_connection.setStartAttach(start_element.getParent());
 		}
 		this.current_connection.setName(primitive_name);
 
@@ -48,7 +48,7 @@ class TwoPointerTool extends BaseTool {
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = Visuals.get(node_id);
-		let parent = get_parent(moveObject);
+		let parent = moveObject.getParent();
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.start_anchor.id === node_id) {
@@ -107,7 +107,7 @@ class FlowTool extends TwoPointerTool {
 	static mouseMoveSingleAnchor(x, y, shiftKey, anchor_id) {
 		// Function used both during creation and later moving of anchor point 
 		let mainAnchor = Visuals.get(anchor_id);
-		let parent = get_parent(mainAnchor);
+		let parent = mainAnchor.getParent();
 
 		parent.requestNewAnchorPos([x, y], anchor_id);
 		parent.update();
@@ -232,7 +232,7 @@ class LineTool extends TwoPointerTool {
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = Visuals.get(node_id);
-		let parent = get_parent(moveObject);
+		let parent = moveObject.getParent();
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.start_anchor.id === node_id) {
@@ -380,15 +380,15 @@ class LinkTool extends TwoPointerTool {
 		let anchor_type = node_id.split(".")[1];
 		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
 			let moveObject = Visuals.get(node_id);
-			let parent = get_parent(moveObject);
+			let parent = moveObject.getParent();
 			moveObject.setPos([x, y]);
 			parent.update();
 		} else if (anchor_type === "b1_anchor") {
-			let parent = Visuals.getTwoPointer(get_parent_id(node_id));
+			let parent = Visuals.getTwoPointer(Visuals.getParentId(node_id));
 			parent.setHandle1Pos([x, y]);
 			parent.update();
 		} else if (anchor_type === "b2_anchor") {
-			let parent = Visuals.getTwoPointer(get_parent_id(node_id));
+			let parent = Visuals.getTwoPointer(Visuals.getParentId(node_id));
 			parent.setHandle2Pos([x, y]);
 			parent.update();
 		}
@@ -402,7 +402,7 @@ class LinkTool extends TwoPointerTool {
 		/** @type {AnchorPoint} */
 		const anchor = Visuals.getOnePointer(node_id);
 		/** @type {BaseConnection} */
-		const parent = get_parent(anchor);
+		const parent = anchor.getParent();
 		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
 			attach_anchor(anchor, (attachTo) => !(anchor.getAnchorType() == "end" && attachTo.is_ghost));
 			parent.update();
@@ -436,7 +436,7 @@ LinkTool.init();
  */
 function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 	[x, y] = anchor.getPos();
-	let parentConnection = get_parent(anchor);
+	let parentConnection = anchor.getParent();
 
 	let elements_under = find_elements_under(x, y);
 	let anchor_element = null;

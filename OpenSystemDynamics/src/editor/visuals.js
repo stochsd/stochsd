@@ -26,6 +26,14 @@ class Visuals {
 		delete this.#twoPointers[id];
 	}
 
+	/**
+	 * The id of the parent, e.g. "12" for "12.start_anchor". A top level visual is its own parent.
+	 * @param {string} id
+	 */
+	static getParentId(id) {
+		return id.toString().split(".")[0];
+	}
+
 	/** @param {string} id @returns {OnePointer | TwoPointer | undefined} */
 	static get(id) {
 		return this.#onePointers[id] ?? this.#twoPointers[id];
@@ -70,7 +78,7 @@ class Visuals {
 	 * @returns {(OnePointer | TwoPointer)[]}
 	 */
 	static parents() {
-		return this.all().filter(visual => get_parent_id(visual.id) == visual.id);
+		return this.all().filter(visual => Visuals.getParentId(visual.id) == visual.id);
 	}
 
 	/**
@@ -81,7 +89,7 @@ class Visuals {
 	static selectedParents() {
 		let parents = {};
 		for (let visual of this.selected()) {
-			let parent = get_parent(visual);
+			let parent = visual.getParent();
 			parents[parent.id] = parent;
 		}
 		return Object.values(parents);

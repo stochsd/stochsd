@@ -26,7 +26,7 @@ class Clipboard {
 		// Create parentIdArray as we are only intressted in copying parent nodes
 		let parentIdArray = [];
 		for (let i in rawSelectedIdArray) {
-			let parentId = get_parent_id(rawSelectedIdArray[i]);
+			let parentId = Visuals.getParentId(rawSelectedIdArray[i]);
 			if (parentIdArray.indexOf(parentId) == -1) {
 				parentIdArray.push(parentId);
 			}

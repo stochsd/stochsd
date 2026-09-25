@@ -101,21 +101,11 @@ function stocsd_format(number, tdecimals, roundToZeroAt) {
 	return stripped;
 }
 
-function get_parent_id(id) {
-	let parent_id = id.toString().split(".")[0];
-	//~ do_global_log("x flowa "+parent_id);
-	return parent_id;
-}
-
-function get_parent(child) {
-	return Visuals.get(get_parent_id(child.id));
-}
-
 // Get a list of all children for a parent
 function getChildren(parentId) {
 	let result = {}
 	for (let visual of Visuals.all()) {
-		if (get_parent_id(visual.id) == parentId && visual.id != parentId) {
+		if (Visuals.getParentId(visual.id) == parentId && visual.id != parentId) {
 			result[visual.id] = visual;
 		}
 	}
@@ -125,7 +115,7 @@ function getChildren(parentId) {
 // Return true if parent has any selected children
 function hasSelectedChildren(parentId) {
 	// Make sure we actually work on parent element
-	parentId = get_parent_id(parentId);
+	parentId = Visuals.getParentId(parentId);
 
 	// Find the children
 	let children = getChildren(parentId);

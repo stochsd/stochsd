@@ -50,7 +50,7 @@ class ToolBox {
 		const selection = Visuals.selected();
 		const hasRotatableName = selection.some(s => ["stock", "variable", "contant", "converter", "flow"].includes(s.type))
 		const hasFlow = selection.some(s => s.type == "flow")
-		const hasLink = selection.some(s => get_parent(s).type == "link")
+		const hasLink = selection.some(s => s.getParent().type == "link")
 		const numberboxError = NumberboxTool.getSelectionError()
 		const ghostError = GhostTool.getSelectionError()
 		$("#btn_rotatename").prop("disabled", !hasRotatableName)

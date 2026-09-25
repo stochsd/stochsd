@@ -77,7 +77,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 	// If we left click directly on the anchors we dont want anything but them selected
 	if (event.which === mouse.left) {
 		if (mouse.lastClickedPrimitive.type == "dummy_anchor") {
-			let elementId = get_parent_id(mouse.lastClickedPrimitive.id);
+			let elementId = Visuals.getParentId(mouse.lastClickedPrimitive.id);
 			Visuals.unselectAllExcept(elementId);
 		} else if (get_only_selected_anchor_id()) {
 			Visuals.unselectAll();
@@ -90,7 +90,7 @@ function primitive_mousedown(node_id, event, new_primitive) {
 			if (!event.shiftKey) {
 				// We don't want to unselect an eventual parent
 				// As that will hide other anchors
-				let parent_id = get_parent_id(node_id);
+				let parent_id = Visuals.getParentId(node_id);
 				Visuals.unselectAllExcept(parent_id);
 			}
 			mouse.lastClickedPrimitive.select();
