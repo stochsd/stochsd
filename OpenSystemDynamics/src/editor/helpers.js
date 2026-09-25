@@ -38,24 +38,3 @@ function checkedHtml(value) {
 		return ' ';
 	}
 };
-
-/**
- * 
- * @param {*} id
- * @param {"value" | "field"} field 
- */
-function openPrimitiveDialog(id, field = "value") {
-	let primitive = findID(id)
-	if (getType(primitive) == "Ghost") {
-		// If we click on a ghost change id to point to source
-		id = findID(id).getAttribute("Source");
-		primitive = findID(id)
-	}
-	primitiveType = getType(primitive)
-	if (primitiveType == "Converter") {
-		converterDialog.open(id, `.${field}-field`);
-	} else {
-		definitionEditor.open(id, `.${field}-field`);
-	}
-}
-
