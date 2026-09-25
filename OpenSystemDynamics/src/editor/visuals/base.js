@@ -117,6 +117,33 @@ class BaseObject {
 			this.primitive.setAttribute("RotateName", value.toString());
 		}
 	}
+
+	/** Moves the name to the next position: below, right, above, left */
+	rotateName() {
+		this.name_pos = (this.name_pos + 1) % this.namePosList.length || 0;
+		this.updateNamePosition();
+	}
+
+	/** Places the name element according to name_pos */
+	updateNamePosition() {
+		// Some objects does not have name element
+		if (this.name_element == null) {
+			return;
+		}
+		// For fixed names (used only by text element)
+		if (this.name_centered) {
+			this.name_element.setAttribute("x", 0);
+			this.name_element.setAttribute("y", 0);
+			this.name_element.setAttribute("text-anchor", "middle");
+			return;
+		}
+		let [x, y] = this.namePosList[this.name_pos];
+		// Text anchor for each name position: below, right, above, left
+		let textAnchors = ["middle", "start", "middle", "end"];
+		this.name_element.setAttribute("x", x);
+		this.name_element.setAttribute("y", y);
+		this.name_element.setAttribute("text-anchor", textAnchors[this.name_pos]);
+	}
 	getType() {
 		return this.type;
 	}

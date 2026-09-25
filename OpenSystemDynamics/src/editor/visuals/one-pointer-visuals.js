@@ -110,7 +110,7 @@ class NumberboxVisual extends BasePrimitive {
 	constructor(id, type, pos, extras) {
 		super(id, type, pos, extras);
 		this.name_centered = true;
-		update_name_pos(id);
+		this.updateNamePosition();
 		this.setSelectionSizeToText();
 
 		this.runHandler = () => {

@@ -88,7 +88,7 @@ class StockTool extends OnePointCreateTool {
 class RotateNameTool extends BaseTool {
 	static enterTool() {
 		for (let visual of Visuals.selected()) {
-			rotate_name(visual.id);
+			visual.rotateName();
 		}
 		ToolBox.setTool("mouse");
 	}

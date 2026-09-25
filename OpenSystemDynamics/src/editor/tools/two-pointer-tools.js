@@ -122,7 +122,7 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
 		unselect_all_other_anchors(this.current_connection.id, this.current_connection.end_anchor.id);
-		update_name_pos(this.primitive.id);
+		this.current_connection.updateNamePosition();
 	}
 	static rightMouseDown(x, y) {
 		if (mouse.isLeftDown) {

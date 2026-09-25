@@ -256,7 +256,7 @@ function syncVisual(tprimitive) {
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
 				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				update_name_pos(tprimitive.id);
+				visualObject.updateNamePosition();
 			}
 			break;
 		case "Converter":
@@ -268,7 +268,7 @@ function syncVisual(tprimitive) {
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
 				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				update_name_pos(tprimitive.id);
+				visualObject.updateNamePosition();
 			}
 			break;
 		case "Ghost":
@@ -298,7 +298,7 @@ function syncVisual(tprimitive) {
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
 				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				update_name_pos(tprimitive.id);
+				visualObject.updateNamePosition();
 			}
 			break;
 		case "Variable":
@@ -316,7 +316,7 @@ function syncVisual(tprimitive) {
 				visualObject.setColor(tprimitive.getAttribute("Color"));
 
 				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				update_name_pos(tprimitive.id);
+				visualObject.updateNamePosition();
 			}
 			break;
 		case "Flow":
@@ -327,7 +327,7 @@ function syncVisual(tprimitive) {
 			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
 
 			connection.name_pos = Number(tprimitive.getAttribute("RotateName"));
-			update_name_pos(tprimitive.id);
+			connection.updateNamePosition();
 
 			connection.loadMiddlePoints();
 
