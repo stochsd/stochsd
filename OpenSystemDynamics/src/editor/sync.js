@@ -113,7 +113,7 @@ function syncVisual(primitive) {
 }
 
 // The visual class and visual type for a stock, variable, constant or converter primitive
-/** @returns {[BaseVisual, string]} */
+/** @returns {[typeof BaseVisual, string]} */
 function namedVisualFor(primitive) {
 	switch (primitive.value.nodeName) {
 		case "Stock":
