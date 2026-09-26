@@ -53,8 +53,8 @@ function buildForDesktop(destFolder) {
 	gulp.src('package.json')
 	.pipe(gulp.dest(destFolder));
 
-	// OpenSystemDynamics
-	gulp.src('OpenSystemDynamics/**')
+	// OpenSystemDynamics, without the type definitions that are only used by VS Code
+	gulp.src(['OpenSystemDynamics/**', '!OpenSystemDynamics/src/types/**'])
 	.pipe(gulp.dest(destFolder+'/OpenSystemDynamics'));
 
 	// icons 

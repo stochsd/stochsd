@@ -7,14 +7,18 @@
 		// Files are only type checked if they start with // @ts-check
 		"checkJs": false,
 		// Without types, strict mode mostly gives noise in plain JavaScript
-		"strict": false
+		"strict": false,
+		// Type definitions for the libraries, copied from @types/jquery and @types/jqueryui
+		"typeRoots": ["./types"],
+		"types": ["jquery", "jqueryui"]
 	},
 	"include": [
 		"*.js",
 		"editor/**/*.js",
 		"insightmaker/**/*.js",
 		"libs/*.js",
-		"codemirror/lib/codemirror.js"
+		"codemirror/lib/codemirror.js",
+		"types/*.d.ts"
 	],
 	"exclude": [
 		// Minified or generated, only slows down the editor
@@ -23,7 +27,7 @@
 		"insightmaker/resources/jstat.min.js"
 	],
 	"typeAcquisition": {
-		// jQuery is loaded from a minified file, so let VS Code download its type definitions instead
-		"include": ["jquery"]
+		// The library type definitions are in types/ instead
+		"enable": false
 	}
 }
