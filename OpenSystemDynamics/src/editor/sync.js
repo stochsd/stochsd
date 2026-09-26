@@ -1,3 +1,4 @@
+// @ts-check
 function export_txt(fileName, data) {
 	// Create Blob and attach it to ObjectURL
 	let blob = new Blob([data], { type: "octet/stream" }),
@@ -113,7 +114,7 @@ function syncVisual(primitive) {
 }
 
 // The visual class and visual type for a stock, variable, constant or converter primitive
-/** @returns {[typeof BaseVisual, string]} */
+/** @returns {[typeof BaseVisual, VisualType]} */
 function namedVisualFor(primitive) {
 	switch (primitive.value.nodeName) {
 		case "Stock":
@@ -238,7 +239,7 @@ function loadModelFromXml(XmlString) {
 function syncAllVisuals() {
 	for (let type of saveblePrimitiveTypes) {
 		let primitive_list = primitives(type);
-		for (key in primitive_list) {
+		for (let key in primitive_list) {
 			try {
 				syncVisual(primitive_list[key]);
 			} catch (exception) {

@@ -4,7 +4,10 @@
 	"compilerOptions": {
 		"target": "ES2022",
 		"lib": ["ES2022", "DOM"],
-		"checkJs": false
+		// Files are only type checked if they start with // @ts-check
+		"checkJs": false,
+		// Without types, strict mode mostly gives noise in plain JavaScript
+		"strict": false
 	},
 	"include": [
 		"*.js",

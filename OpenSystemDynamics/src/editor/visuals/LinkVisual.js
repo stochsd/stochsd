@@ -103,11 +103,13 @@ class LinkVisual extends BaseConnection {
 	}
 
 	isAcceptableStartAttach(attachVisual) {
+		/** @type {VisualType[]} */
 		let okAttachTypes = ["stock", "variable", "constant", "converter", "flow"];
 		return okAttachTypes.includes(attachVisual.getType());
 	}
 
 	isAcceptableEndAttach(attachVisual) {
+		/** @type {VisualType[]} */
 		let okAttachTypes = ["stock", "variable", "converter", "flow"];
 		if (attachVisual.getType() === "converter") {
 			let linkedPrims = getLinkedPrimitives(findID(attachVisual.id)).filter((prim) => {

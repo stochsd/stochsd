@@ -31,6 +31,7 @@ class OnePointCreateTool extends BaseTool {
 class NumberboxTool extends OnePointCreateTool {
 	static init() {
 		this.targetPrimitive = null;
+		/** @type {VisualType[]} */
 		this.numberboxable_primitives = ["stock", "variable", "constant", "converter", "flow"];
 	}
 	static create(x, y) {
@@ -124,6 +125,7 @@ class StraightenLinkTool extends BaseTool {
 class GhostTool extends OnePointCreateTool {
 	static init() {
 		this.id_to_ghost = null;
+		/** @type {VisualType[]} */
 		this.ghostable_primitives = ["stock", "variable", "constant", "converter"];
 	}
 	static create(x, y) {

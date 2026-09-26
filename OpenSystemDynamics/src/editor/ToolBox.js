@@ -1,3 +1,4 @@
+// @ts-check
 class ToolBox {
 	static init() {
 		this.tools = {
@@ -48,7 +49,9 @@ class ToolBox {
 	}
 	static updateButtons() {
 		const selection = Visuals.selected();
-		const hasRotatableName = selection.some(s => ["stock", "variable", "constant", "converter", "flow"].includes(s.type))
+		/** @type {VisualType[]} */
+		const rotatableNameTypes = ["stock", "variable", "constant", "converter", "flow"];
+		const hasRotatableName = selection.some(s => rotatableNameTypes.includes(s.type))
 		const hasFlow = selection.some(s => s.type == "flow")
 		const hasLink = selection.some(s => s.getParent().type == "link")
 		const numberboxError = NumberboxTool.getSelectionError()

@@ -1,7 +1,7 @@
 class BaseVisual {
 		/**
 	 * @param {string} id 
-	 * @param {string} type 
+	 * @param {VisualType} type 
 	 * @param {[number, number]} pos 
 	 */
 	constructor(id, type, pos) {
@@ -43,6 +43,7 @@ class BaseVisual {
 	}
 
 	updateDefinitionError() {
+		/** @type {VisualType[]} */
 		let definitionErrorTypes = ["stock", "variable", "constant", "flow", "converter"];
 		if (definitionErrorTypes.includes(this.type)) {
 			DefinitionError.check(this.primitive);
@@ -197,7 +198,7 @@ class BaseVisual {
 class OnePointer extends BaseVisual {
 		/**
 	 * @param {string} id 
-	 * @param {string} type 
+	 * @param {VisualType} type 
 	 * @param {[number, number]} pos 
 	 */
 	constructor(id, type, pos, extras = false) {

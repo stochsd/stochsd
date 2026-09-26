@@ -1,3 +1,4 @@
+// @ts-check
 // Stores all visual objects in the diagram, by id.
 // OnePointers are visuals with a single position, e.g. stocks, variables and the anchor points of TwoPointers.
 // TwoPointers are visuals spanning two points, e.g. flows, links, plots, tables and shapes.
@@ -10,8 +11,10 @@ class Visuals {
 	/** @type {{ [id: string]: TwoPointer }} */
 	static #twoPointers = {};
 	// Displays are the plots and tables, i.e. the TwoPointers that show values of primitives
+	/** @type {VisualType[]} */
 	static #displayTypes = ["timeplot", "xyplot", "compareplot", "histoplot", "table"];
 	// The visuals a link can attach to. Flows only attach to stocks, which FlowVisual checks itself
+	/** @type {VisualType[]} */
 	static #attachableTypes = ["flow", "stock", "constant", "variable", "converter"];
 
 	/** @param {OnePointer} visual */
@@ -239,7 +242,7 @@ class Visuals {
 	}
 
 	static #detachFlowsFrom(id) {
-		for (let flow of this.twoPointers().filter(visual => visual.type == "flow")) {
+		for (let flow of this.twoPointers().filter(visual => visual instanceof FlowVisual)) {
 			if (flow.getStartAttach()?.id == id) {
 				flow.setStartAttach(null);
 				flow.update();

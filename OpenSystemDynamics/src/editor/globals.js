@@ -40,6 +40,14 @@ const type_size = {
 	"text": [120, 60]
 }
 
+/**
+ * The type of a visual, i.e. visual.type
+ * @typedef {"stock" | "variable" | "constant" | "converter" | "flow" | "link" | "numberbox"
+ * 	| "text" | "rectangle" | "ellipse" | "line"
+ * 	| "table" | "timeplot" | "compareplot" | "xyplot" | "histoplot" | "diagram"
+ * 	| "dummy_anchor"} VisualType
+ */
+
 // Name type translations
 // the keys are what the visuals have as type
 // The values what new names should be based on when creating new visuals 
