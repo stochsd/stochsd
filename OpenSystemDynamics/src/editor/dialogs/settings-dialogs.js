@@ -66,7 +66,7 @@ class PreferencesDialog extends jqDialog {
 		const preferences = Preferences.get()
 		this.setHtml(`<div class="preferences">${Object.entries(preferencesTemplate).map(([key, info]) => {
 			const id = "preference-" + key
-			return `<div class="preference">
+			return `<div class="preference" style="max-height: calc(80vh - 10rem); overflow-y: auto;">
 				<div style="display: flex; justify-content: space-between;">
 					<span class="title">${info.title}</span>
 					<button class="btn_reset" id="reset-${key}" >Reset</button>
