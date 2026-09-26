@@ -108,26 +108,6 @@ function loadXML(modelString) {
 	return graph;
 }
 
-function simpleCloneNode2(node, parent){
-	var obj = new SimpleNode();
-	//http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
-	obj.value = node.value.cloneNode(true);
-	obj.parent = parent;
-	obj.parentNode= parent;
-
-	// Generate new id for object. This must be done after attributes are set to not override it
-	var currId = [1].concat(primitives().map(function(x){return x.id}).filter(function(x){return x}));
-	var newId = Math.max.apply(null, currId) + 1;
-	obj.id=newId;
-	obj.setAttribute("id",newId);
-	
-	
-	var parent = graph.children[0].children[0];
-	parent.children.push(obj);	
-	
-	return obj;
-}
-
 function simpleCloneNode(node, parent){
 	var obj = new SimpleNode();
 	obj.value = node.cloneNode(true);

@@ -36,6 +36,7 @@ The scenarios are in `scenarios.mjs`. Every scenario starts from a freshly loade
 - **delete-stock-with-ghost**: deleting a stock that has a ghost, a flow, a link and a numberbox.
 - **unattached-link**: a link drawn to empty space is deleted, one drawn to a variable is kept.
 - **rename**: renaming a primitive shown in a table and a time plot.
+- **copy-paste**: Ctrl+C and Ctrl+V of stocks, a flow, variables, a link, a ghost, a numberbox and a time plot, undo and redo of the paste, pasting twice, and Ctrl+V in a text field.
 - **dialogs**: opens the dialog of every primitive, plot and the global dialogs.
 - **model-&lt;file&gt;**: every file in `models/` is opened the same way as the app opens a file (including the page reload), saved again and simulated.
 

@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Support for pasting two columns from a spreadsheet application into ConverterDialog.
 - Keep only useful tool-buttons enabled.
 - Crash Recover Dialog on undo/redo crash.
-
+- Working copy-paste.
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.

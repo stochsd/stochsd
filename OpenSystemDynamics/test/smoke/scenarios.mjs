@@ -462,6 +462,71 @@ export const scenarios = [
 		},
 	},
 	{
+		// Copying and pasting with Ctrl+C and Ctrl+V. The pasted primitives refer to each other instead of the copied ones,
+		// and the model is the same after undo and redo, which reloads it from XML
+		name: "copy-paste",
+		async run(page) {
+			await page.run(`
+				${buildModel}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+				const timePlot = primitives("TimePlot")[0];
+				setDisplayIdsForTimePlot(timePlot, [stock1.id, stock2.id], ["L", "R"]);
+				// Recreates the visual so it shows the stocks
+				Visuals.get(timePlot.id).remove();
+				syncAllVisuals();
+				History.storeUndoState();
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const ctrl = key => page.key(key, { code: "Key" + key.toUpperCase(), keyCode: key.toUpperCase().charCodeAt(0), modifiers: 2 });
+			const newPrimitives = `
+				return primitives().filter(p => Number(p.id) > 62).map(p => {
+					const parts = [p.id, getType(p), getName(p)];
+					if (["Flow", "Link"].includes(getType(p))) parts.push((p.source?.id ?? "-") + "->" + (p.target?.id ?? "-"));
+					for (const attribute of ["Source", "Target", "Primitives", "Sides", "FlowRate", "Equation"]) {
+						if (p.getAttribute(attribute)) parts.push(attribute + "=" + p.getAttribute(attribute));
+					}
+					return parts.join(" | ");
+				});
+			`;
+			const steps = {};
+
+			// Stock1, Stock2, Flow1, Auxiliary1, Link1, the ghost, the numberbox and the time plot
+			await page.run(`
+				Visuals.unselectAll();
+				for (const type of ["Stock", "Flow", "Variable", "Link", "Ghost", "Numberbox", "TimePlot"]) {
+					primitives(type).forEach(p => Visuals.get(p.id).select());
+				}
+			`);
+			await ctrl("c");
+			await page.mouse("mouseMoved", 450 + offsetX, 500 + offsetY);
+			await ctrl("v");
+			steps.pasted = await page.run(newPrimitives);
+			steps.selected = await page.run(`return Visuals.selectedParents().map(visual => visual.id).sort()`);
+			steps.positions = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
+
+			const details = await page.run(visualDetails);
+			await page.run(`History.doUndo()`);
+			steps.afterUndo = await page.run(newPrimitives);
+			await page.run(`History.doRedo()`);
+			steps.sameAfterRedo = JSON.stringify(await page.run(visualDetails)) == JSON.stringify(details);
+
+			// Pasting again without moving the mouse puts the copies a bit further down
+			await ctrl("v");
+			steps.pastedAgain = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
+
+			// In a text field Ctrl+V pastes text, not primitives
+			await page.run(`$("body").append('<input id="copy-paste-input">'); $("#copy-paste-input").focus();`);
+			const count = await page.run(`return primitives().length`);
+			await ctrl("v");
+			steps.pastedInTextField = await page.run(`return primitives().length`) - count;
+			await page.run(`$("#copy-paste-input").remove()`);
+
+			steps.simulation = await page.run(simulate);
+			return steps;
+		},
+	},
+	{
 		name: "dialogs",
 		async run(page) {
 			await page.run(buildModel);

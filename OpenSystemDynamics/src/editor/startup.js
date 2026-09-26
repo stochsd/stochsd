@@ -166,12 +166,14 @@ $(window).on("load", function () {
 			if (event.key.toLowerCase() == "y") {
 				History.doRedo();
 			}
-			if (event.key.toLowerCase() == "c") {
-				// Clipboard.copy();
+			// Ctrl+C and Ctrl+V in a text field copies and pastes text, not primitives
+			let inTextField = $(event.target).is(":input, [contenteditable]");
+			if (event.key.toLowerCase() == "c" && !inTextField) {
+				Clipboard.copy();
 			}
-			if (event.key.toLowerCase() == "v") {
-				// Clipboard.paste();
-				// History.storeUndoState();
+			if (event.key.toLowerCase() == "v" && !inTextField) {
+				Clipboard.paste();
+				History.storeUndoState();
 			}
 		}
 		environment.keyDown(event);
