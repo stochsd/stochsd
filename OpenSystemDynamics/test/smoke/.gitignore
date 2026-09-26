@@ -1,0 +1,2 @@
+# Written when a scenario fails, to compare against the stored snapshot
+snapshots/*.actual.json

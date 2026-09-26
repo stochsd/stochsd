@@ -1,0 +1,111 @@
+<InsightMakerModel>
+<root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<Table Primitives="" TableLimits="{&quot;start&quot;:{&quot;value&quot;:0,&quot;auto&quot;:true},&quot;end&quot;:{&quot;value&quot;:50,&quot;auto&quot;:true},&quot;step&quot;:{&quot;value&quot;:0.5,&quot;auto&quot;:true}}" RoundToZero="false" RoundToZeroAtValue="1e-12" NumberLength="{&quot;usePrecision&quot;:true,&quot;precision&quot;:4,&quot;decimal&quot;:2}" Color="black" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="57" name="Table1">
+<mxCell parent="1" visible="0" edge="1" style="table">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="720" y="450"/>
+<mxPoint as="targetPoint" x="950" y="650"/>
+</mxGeometry>
+</mxCell>
+</Table>
+<HistoPlot Primitives="" NumberOfBars="10" NumberOfBarsAuto="true" LowerBound="0" LowerBoundAuto="true" UpperBound="1" UpperBoundAuto="true" ScaleType="Histogram" Color="black" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="56" name="HistoPlot1">
+<mxCell parent="1" visible="0" edge="1" style="histoplot">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="420" y="450"/>
+<mxPoint as="targetPoint" x="700" y="650"/>
+</mxGeometry>
+</mxCell>
+</HistoPlot>
+<TimePlot Primitives="" Sides="" AxisLimits="{&quot;timeaxis&quot;:{&quot;min&quot;:0,&quot;max&quot;:100,&quot;auto&quot;:true},&quot;leftaxis&quot;:{&quot;min&quot;:0,&quot;max&quot;:1,&quot;auto&quot;:true},&quot;rightaxis&quot;:{&quot;min&quot;:0,&quot;max&quot;:1,&quot;auto&quot;:true}}" PlotPer="0.5" AutoPlotPer="true" LineOptions="{&quot;stock&quot;:{&quot;pattern&quot;:[1],&quot;width&quot;:2},&quot;flow&quot;:{&quot;pattern&quot;:[10,5],&quot;width&quot;:2},&quot;variable&quot;:{&quot;pattern&quot;:[1],&quot;width&quot;:1},&quot;constant&quot;:{&quot;pattern&quot;:[1],&quot;width&quot;:1},&quot;converter&quot;:{&quot;pattern&quot;:[1],&quot;width&quot;:1}}" TitleLabel="" LeftAxisLabel="" RightAxisLabel="" HasNumberedLines="true" ColorFromPrimitive="true" ShowHighlighter="false" Color="black" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="55" name="TimePlot1">
+<mxCell parent="1" visible="0" edge="1" style="timeplot">
+<mxGeometry x="0" y="0" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="100" y="450"/>
+<mxPoint as="targetPoint" x="400" y="650"/>
+</mxGeometry>
+</mxCell>
+</TimePlot>
+<Link name="Link5" Note="" BiDirectional="false" Color="black" id="54" b1x="579.0846234974807" b1y="326.5310868404782" b2x="559.4611232304209" b2y="276.3088675581499">
+<mxCell parent="1" target="46" source="49" edge="1" style="link">
+<mxGeometry x="593.8022486977756" y="391.6928505632648" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="593.8022486977756" y="364.1977513022245"/>
+<mxPoint as="targetPoint" x="544.743498030126" y="238.64220309640362"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link4" Note="" BiDirectional="false" Color="black" id="53" b1x="452.7961262762629" b1y="208.12391819268674" b2x="489.8576279779467" b2y="213.495860493629">
+<mxCell parent="1" target="46" source="44" edge="1" style="link">
+<mxGeometry x="471.3268771271048" y="210.80988934315786" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="425" y="204.09496146698007"/>
+<mxPoint as="targetPoint" x="517.6537542542096" y="217.5248172193357"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link3" Note="" BiDirectional="false" Color="black" id="52" b1x="347.20376394360954" b1y="208.1199567883696" b2x="310.14211586842225" b2y="213.4924871335443">
+<mxCell parent="1" target="45" source="44" edge="1" style="link">
+<mxGeometry x="375" y="243.21821942076016" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="375" y="204.0905590294886"/>
+<mxPoint as="targetPoint" x="282.34587981203174" y="217.5218848924253"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link2" Note="" BiDirectional="false" Color="black" id="51" b1x="353.5014498799414" b1y="325.9622388388108" b2x="308.92758233097" b2y="274.0987276876706">
+<mxCell parent="1" target="45" source="47" edge="1" style="link">
+<mxGeometry x="386.9318505416699" y="255.34913799677844" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="386.9318505416699" y="364.85987220216595"/>
+<mxPoint as="targetPoint" x="275.49718166924146" y="235.2010943243154"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Link name="Link1" Note="" BiDirectional="false" Color="black" id="50" b1x="220.92925787506323" b1y="326.5423936038503" b2x="240.55284061307174" b2y="276.3168239802417">
+<mxCell parent="1" target="45" source="48" edge="1" style="link">
+<mxGeometry x="230.74104924406748" y="301.429608792046" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="206.21157082155685" y="364.21157082155685"/>
+<mxPoint as="targetPoint" x="255.27052766657812" y="238.64764676253515"/>
+</mxGeometry>
+</mxCell>
+</Link>
+<Variable name="DeathRate" Note="" Equation="0.08" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" isConstant="true" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" Color="black" id="49" DefinitionError="{}" RotateName="0">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="570" y="350" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Variable name="BirthRate" Note="" Equation="0.1" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" isConstant="true" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" Color="black" id="48" DefinitionError="{}" RotateName="0">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="170" y="350" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Variable name="Noise" Note="" Equation="RandNormal(0, 2)" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" isConstant="false" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" Color="black" id="47" DefinitionError="{}" RotateName="0">
+<mxCell parent="1" vertex="1" style="variable">
+<mxGeometry x="370" y="350" width="60" height="60" as="geometry"/>
+</mxCell>
+</Variable>
+<Flow name="Deaths" Note="" MiddlePoints="" RotateName="0" ValveIndex="0" VariableSide="false" FlowRate="PoFlow([DeathRate]*[Population])" OnlyPositive="false" TimeIndependent="false" Color="black" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="46" DefinitionError="{}">
+<mxCell parent="1" source="44" edge="1" style="flow">
+<mxGeometry x="537.5" y="200" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="425" y="200"/>
+<mxPoint as="targetPoint" x="650" y="200"/>
+</mxGeometry>
+</mxCell>
+</Flow>
+<Flow name="Births" Note="" MiddlePoints="" RotateName="0" ValveIndex="0" VariableSide="false" FlowRate="PoFlow(Max(0, [BirthRate]*[Population] + [Noise]))" OnlyPositive="false" TimeIndependent="false" Color="black" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" id="45" DefinitionError="{}">
+<mxCell parent="1" target="44" edge="1" style="flow">
+<mxGeometry x="262.5" y="200" width="100" height="100" as="geometry">
+<mxPoint as="sourcePoint" x="150" y="200"/>
+<mxPoint as="targetPoint" x="375" y="200"/>
+</mxGeometry>
+</mxCell>
+</Flow>
+<Stock name="Population" Note="" InitialValue="100" StockMode="Store" Delay="10" Volume="100" NonNegative="false" Units="Unitless" MaxConstraintUsed="false" MinConstraintUsed="false" MaxConstraint="100" MinConstraint="0" ShowSlider="false" SliderMax="100" SliderMin="0" SliderStep="" Image="None" FlipHorizontal="false" FlipVertical="false" LabelPosition="Middle" Color="black" id="44" DefinitionError="{}" RotateName="0">
+<mxCell parent="1" vertex="1" style="stock">
+<mxGeometry x="360" y="170" width="80" height="60" as="geometry"/>
+</mxCell>
+</Stock>
+<Setting Note="" Version="36" TimeLength="50" TimeStart="0" TimeStep="0.5" TimeUnits="Year" StrictUnits="true" Units="" HiddenUIGroups="Validation,User Interface" SolutionAlgorithm="RK1" BackgroundColor="white" Throttle="-1" Macros="" SensitivityPrimitives="" SensitivityRuns="50" SensitivityBounds="50, 80, 95, 100" SensitivityShowRuns="false" article="{&quot;comments&quot;:true, &quot;facebookUID&quot;: &quot;&quot;}" StyleSheet="{}" id="2" StrictLinks="true" StrictAgentResolution="true" TimePause="5">
+<mxCell parent="1" vertex="1" visible="0" style="setting">
+<mxGeometry x="20" y="20" width="80" height="40" as="geometry"/>
+</mxCell>
+</Setting>
+</root>
+</InsightMakerModel>

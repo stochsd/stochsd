@@ -1,0 +1,22 @@
+{
+  "linkToNothing": {
+    "links": 0,
+    "visuals": [
+      "44",
+      "45"
+    ]
+  },
+  "linkToVariable": {
+    "links": 1,
+    "visuals": [
+      "44",
+      "45",
+      "46",
+      "46.b1_anchor",
+      "46.b2_anchor",
+      "46.end_anchor",
+      "46.start_anchor"
+    ]
+  },
+  "errors": []
+}

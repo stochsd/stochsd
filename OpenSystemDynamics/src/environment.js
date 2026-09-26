@@ -52,7 +52,7 @@ class nwController {
     // This save before closing handler only works when we run without plugin tools.
     // Otherwise it makes it impossible to quit
     nwin.on("close", function (event) {
-      quitQuestion();
+      environment.quitQuestion();
     });
   }
   static getWindow() {
@@ -916,6 +916,14 @@ class BaseEnvironment {
     // Default: false
     return false;
   }
+  // Asks to save unsaved changes before closing the window. Only used by environments that have closeWindow()
+  quitQuestion() {
+    // How close event works
+    // https://github.com/nwjs/nw.js/wiki/window
+    saveChangedAlert(() => {
+      this.closeWindow();
+    });
+  }
 }
 
 class WebEnvironment extends BaseEnvironment {
@@ -959,7 +967,7 @@ class ElectronEnvironment extends BaseEnvironment {
   ready() {
     const { ipcRenderer } = require("electron");
     ipcRenderer.on("try-to-close-message", (event, arg) => {
-      quitQuestion();
+      this.quitQuestion();
     });
   }
   getFileManager() {

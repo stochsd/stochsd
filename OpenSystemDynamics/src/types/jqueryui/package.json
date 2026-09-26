@@ -1,0 +1,38 @@
+{
+    "name": "@types/jqueryui",
+    "version": "1.12.24",
+    "description": "TypeScript definitions for jqueryui",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/jqueryui",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Boris Yankov",
+            "githubUsername": "borisyankov",
+            "url": "https://github.com/borisyankov"
+        },
+        {
+            "name": "John Reilly",
+            "githubUsername": "johnnyreilly",
+            "url": "https://github.com/johnnyreilly"
+        },
+        {
+            "name": "Dieter Oberkofler",
+            "githubUsername": "doberkofler",
+            "url": "https://github.com/doberkofler"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/jqueryui"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/jquery": "*"
+    },
+    "peerDependencies": {},
+    "typesPublisherContentHash": "6a64268171a23750c883a79b8f5cd4314ed96f38710265e5b19f7dfbcfc946bd",
+    "typeScriptVersion": "5.0"
+}

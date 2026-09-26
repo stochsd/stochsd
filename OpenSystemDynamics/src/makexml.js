@@ -67,7 +67,7 @@ function XmlAttributesHashMap(xmlAttributes) {
 
 function xmlPrimitive(primitive) {
 	var type = getType(primitive);
-	var superClass = get_object(getID(primitive)).superClass;
+	var superClass = Visuals.get(getID(primitive))?.superClass;
 	// Settings and other non visible primtives does not have any superClass
 	if(superClass == undefined) {
 		superClass = "";
