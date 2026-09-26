@@ -64,8 +64,9 @@ class XyPlotVisual extends PlotVisual {
 			let serie = [];
 			this.serieXName = this.namesToDisplay[0];
 			this.serieYName = this.namesToDisplay[1];
-			this.colorXLabel = findName(this.serieXName)?.getAttribute("Color");
-			this.colorYLabel = findName(this.serieYName)?.getAttribute("Color");
+			// By id, since a primitive with ghosts shares its name with them
+			this.colorXLabel = findID(IdsToDisplay[0])?.getAttribute("Color");
+			this.colorYLabel = findID(IdsToDisplay[1])?.getAttribute("Color");
 
 			for (let row of results) {
 				let x = Number(row[1]);
