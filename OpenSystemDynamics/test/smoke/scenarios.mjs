@@ -106,6 +106,7 @@ const modelXml = `
 
 const simulate = `
 	RunResults.resetSimulation();
+	Math.resetTestSeed();
 	ToolBox.setTool("run", mouse.left);
 	const started = Date.now();
 	while (RunResults.runState !== "stopped" && Date.now() - started < 20000) {

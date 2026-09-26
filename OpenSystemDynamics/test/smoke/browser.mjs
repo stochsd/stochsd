@@ -26,10 +26,12 @@ function findChrome() {
 	throw new Error("Could not find Chrome. Set the CHROME environment variable to its path.");
 }
 
-// Replaces Math.random with a seeded generator (mulberry32), so stochastic models give the same results every run
+// Replaces Math.random with a seeded generator (mulberry32), so stochastic models give the same results every run.
+// Math.resetTestSeed() starts the sequence over, so results don't depend on how many random numbers the libraries used before.
 const seedRandomScript = `
 	(() => {
 		let seed = 12345;
+		Math.resetTestSeed = () => { seed = 12345; };
 		Math.random = function () {
 			seed = (seed + 0x6D2B79F5) | 0;
 			let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
@@ -39,7 +41,7 @@ const seedRandomScript = `
 	})();
 `;
 
-export async function launchBrowser() {
+export async function launchBrowser({ windowSize = [1400, 900] } = {}) {
 	const port = 9300 + Math.floor(Math.random() * 600);
 	const profileDir = mkdtempSync(join(tmpdir(), "stochsd-smoke-"));
 	const chrome = spawn(findChrome(), [
@@ -49,7 +51,7 @@ export async function launchBrowser() {
 		`--remote-debugging-port=${port}`,
 		`--user-data-dir=${profileDir}`,
 		"--allow-file-access-from-files",
-		"--window-size=1400,900",
+		`--window-size=${windowSize.join(",")}`,
 		"about:blank",
 	], { stdio: "ignore" });
 
@@ -175,6 +177,13 @@ export async function launchBrowser() {
 			await send("Input.dispatchKeyEvent", { type: "keyDown", ...params });
 			await send("Input.dispatchKeyEvent", { type: "keyUp", ...params });
 			await sleep(50);
+		},
+
+		// Saves a PNG of the page, useful for checking how things look
+		async screenshot(path) {
+			const { result } = await send("Page.captureScreenshot", { format: "png" });
+			const { writeFileSync } = await import("node:fs");
+			writeFileSync(path, Buffer.from(result.data, "base64"));
 		},
 
 		async close() {

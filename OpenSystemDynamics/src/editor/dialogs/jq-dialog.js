@@ -108,7 +108,7 @@ class jqDialog {
 	}
 
 	setHelpButtonInfo(helpId, title, contentHTML) {
-		$(this.dialogContent).find(`#${helpId}`).unbind();
+		$(this.dialogContent).find(`#${helpId}`).off();
 		$(this.dialogContent).find(`.enter-apply#${helpId}`).keydown(event => {
 			if (!event.shiftKey) {
 				if (event.key === "Enter") {

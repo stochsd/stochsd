@@ -28,7 +28,7 @@ class PlotVisual extends TwoPointer {
 		});
 
 		// Emergency solution since double clicking a ComparePlot or XyPlot does not always work.
-		$(this.targetElement).bind("contextmenu", (event) => {
+		$(this.targetElement).on("contextmenu", (event) => {
 			this.doubleClick(this.id);
 		});
 
