@@ -154,8 +154,9 @@ class ConverterDialog extends jqDialog {
 		this.currentValues = str.split("#")[0].split(";").map(row => row.split(",").map(Number))
 	}
 	updatePlot() {
-		$(this.dialogContent).find("#converter-plot-div").empty()
-		if (!Preferences.get("showConverterPlotPreview")) return;
+		const showPlot = Preferences.get("showConverterPlotPreview");
+		$(this.dialogContent).find("#converter-plot-div").empty().toggle(showPlot)
+		if (!showPlot) return;
 		let serieArray = [];
 		for (let row of this.currentValues) {
 			if (row[0] !== undefined && row[1] !== undefined)
