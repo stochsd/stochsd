@@ -23,6 +23,22 @@ function export_txt(fileName, data) {
 function export_model() {
 	export_txt("a.txt", blankGraphTemplate);
 }
+// Primitive type: [visual class, visual type]
+const displayVisuals = {
+	Table: [TableVisual, "table"],
+	XyPlot: [XyPlotVisual, "xyplot"],
+	HistoPlot: [HistoPlotVisual, "histoplot"],
+	TimePlot: [TimePlotVisual, "timeplot"],
+	ComparePlot: [ComparePlotVisual, "compareplot"],
+	Diagram: [TimePlotVisual, "diagram"], // Old name for TimePlot
+};
+const shapeVisuals = {
+	TextArea: [TextAreaVisual, "text"],
+	Rectangle: [RectangleVisual, "rectangle"],
+	Ellipse: [EllipseVisual, "ellipse"],
+	Line: [LineVisual, "line"],
+};
+
 var blankGraphTemplate = `<mxGraphModel>
 <root>
 <mxCell id="0"/>
@@ -67,273 +83,144 @@ function getAttachedVisual(primitive) {
 	return visual;
 }
 
-// Take a primitive from the engine(tprimitve) and makes a visual object from it
-function syncVisual(tprimitive) {
-	if (Visuals.get(tprimitive.id)) {
-		return false;
+// Take a primitive from the engine and make a visual object from it
+function syncVisual(primitive) {
+	if (Visuals.get(primitive.id)) {
+		return;
 	}
 
-	addMissingPrimitiveAttributes(tprimitive);
+	addMissingPrimitiveAttributes(primitive);
 
-	let nodeType = tprimitive.value.nodeName;
-	switch (nodeType) {
-		case "Numberbox":
-			{
-				let position = getCenterPosition(tprimitive);
-				let visualObject = new NumberboxVisual(tprimitive.id, "numberbox", position);
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-				visualObject.render();
-			}
-			break;
-		case "Table":
-		case "XyPlot":
-		case "HistoPlot":
-			{
-				dimClass = null;
-				switch (nodeType) {
-					case "Table":
-						dimClass = TableVisual;
-						break;
-					case "XyPlot":
-						dimClass = XyPlotVisual;
-						break;
-					case "HistoPlot":
-						dimClass = HistoPlotVisual;
-						break;
-				}
-				let source_pos = getSourcePosition(tprimitive);
-				let target_pos = getTargetPosition(tprimitive);
+	let primitiveType = primitive.value.nodeName;
+	if (primitiveType == "Ghost") {
+		let [VisualClass, type] = namedVisualFor(findID(primitive.getAttribute("Source")));
+		syncNamedVisual(primitive, VisualClass, type, { is_ghost: true });
+	} else if (namedVisualFor(primitive)) {
+		syncNamedVisual(primitive, ...namedVisualFor(primitive));
+	} else if (primitiveType in displayVisuals) {
+		syncDisplay(primitive, ...displayVisuals[primitiveType]);
+	} else if (primitiveType in shapeVisuals) {
+		syncShape(primitive, ...shapeVisuals[primitiveType]);
+	} else if (primitiveType == "Numberbox") {
+		let visual = new NumberboxVisual(primitive.id, "numberbox", getCenterPosition(primitive));
+		visual.setColor(primitive.getAttribute("Color"));
+		visual.render();
+	} else if (primitiveType == "Flow") {
+		syncFlow(primitive);
+	} else if (primitiveType == "Link") {
+		syncLink(primitive);
+	}
+}
 
-				let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
-
-				connection.setColor(tprimitive.getAttribute("Color"));
-
-				// Insert correct primtives
-				let primitivesString = tprimitive.getAttribute("Primitives");
-				if (primitivesString !== "") {
-					let idsToDisplay = primitivesString.split(",");
-					connection.dialog.setIdsToDisplay(idsToDisplay);
-				}
-
-				connection.update();
-				connection.render();
-			}
-			break;
-		case "Diagram":
-		case "TimePlot":
-		case "ComparePlot":
-			{
-				dimClass = null;
-				switch (nodeType) {
-					case "Diagram":
-					case "TimePlot":
-						dimClass = TimePlotVisual;
-						break;
-					case "ComparePlot":
-						dimClass = ComparePlotVisual;
-						break;
-				}
-				let source_pos = getSourcePosition(tprimitive);
-				let target_pos = getTargetPosition(tprimitive);
-
-				let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
-
-				connection.setColor(tprimitive.getAttribute("Color"));
-
-				// Insert correct primtives
-				let primitivesString = tprimitive.getAttribute("Primitives");
-				let idsToDisplay = primitivesString.split(",");
-				let sidesString = tprimitive.getAttribute("Sides");
-				if (primitivesString) {
-					if (sidesString) {
-						connection.dialog.setIdsToDisplay(idsToDisplay, sidesString.split(","));
-					} else {
-						connection.dialog.setIdsToDisplay(idsToDisplay);
-					}
-				}
-
-				connection.update();
-				connection.render();
-			}
-			break;
-		case "Line":
-		case "Rectangle":
-		case "Ellipse":
-			{
-				dimClass = null;
-				switch (nodeType) {
-					case "Line":
-						dimClass = LineVisual;
-						break;
-					case "Rectangle":
-						dimClass = RectangleVisual;
-						break;
-					case "Ellipse":
-						dimClass = EllipseVisual;
-						break;
-				}
-				let source_pos = getSourcePosition(tprimitive);
-				let target_pos = getTargetPosition(tprimitive);
-
-				let connection = new dimClass(tprimitive.id, nodeType.toLowerCase(), source_pos, target_pos);
-
-				connection.setColor(tprimitive.getAttribute("Color"));
-
-				connection.update();
-			}
-			break;
-		case "TextArea":
-			{
-				let source_pos = getSourcePosition(tprimitive);
-				let target_pos = getTargetPosition(tprimitive);
-
-				let connection = new TextAreaVisual(tprimitive.id, "text", source_pos, target_pos);
-
-				connection.setColor(tprimitive.getAttribute("Color"));
-
-				connection.update();
-			}
-			break;
+// The visual class and visual type for a stock, variable, constant or converter primitive
+/** @returns {[BaseVisual, string]} */
+function namedVisualFor(primitive) {
+	switch (primitive.value.nodeName) {
 		case "Stock":
-			{
-				let position = getCenterPosition(tprimitive);
-				let visualObject = new StockVisual(tprimitive.id, "stock", position);
-				visualObject.setName(tprimitive.getAttribute("name"));
-
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-
-				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				visualObject.updateNamePosition();
-			}
-			break;
+			return [StockVisual, "stock"];
 		case "Converter":
-			{
-				let position = getCenterPosition(tprimitive);
-				let visualObject = new ConverterVisual(tprimitive.id, "converter", position);
-				visualObject.setName(tprimitive.getAttribute("name"));
-
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-
-				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				visualObject.updateNamePosition();
-			}
-			break;
-		case "Ghost":
-			{
-				let source_primitive = findID(tprimitive.getAttribute("Source"));
-				let source_type = source_primitive.value.nodeName;
-				//~ do_global_log("id is "+tprimitive.id);
-				let position = getCenterPosition(tprimitive);
-				let visualObject = null;
-				switch (source_type) {
-					case "Converter":
-						visualObject = new ConverterVisual(tprimitive.id, "converter", position, { "is_ghost": true });
-						break;
-					case "Variable":
-						if (source_primitive.getAttribute("isConstant") == "true") {
-							visualObject = new ConstantVisual(tprimitive.id, "variable", position, { "is_ghost": true });
-						} else {
-							visualObject = new VariableVisual(tprimitive.id, "variable", position, { "is_ghost": true });
-						}
-						break;
-					case "Stock":
-						visualObject = new StockVisual(tprimitive.id, "stock", position, { "is_ghost": true });
-						break;
-				}
-				visualObject.setName(tprimitive.getAttribute("name"));
-
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-
-				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				visualObject.updateNamePosition();
-			}
-			break;
+			return [ConverterVisual, "converter"];
 		case "Variable":
-			{
-				//~ do_global_log("VARIABLE id is "+tprimitive.id);
-				let position = getCenterPosition(tprimitive);
-				let visualObject;
-				if (tprimitive.getAttribute("isConstant") == "false") {
-					visualObject = new VariableVisual(tprimitive.id, "variable", position);
-				} else {
-					visualObject = new ConstantVisual(tprimitive.id, "constant", position);
-				}
-				visualObject.setName(tprimitive.getAttribute("name"));
-
-				visualObject.setColor(tprimitive.getAttribute("Color"));
-
-				visualObject.name_pos = Number(tprimitive.getAttribute("RotateName"));
-				visualObject.updateNamePosition();
+			if (primitive.getAttribute("isConstant") == "true") {
+				return [ConstantVisual, "constant"];
 			}
-			break;
-		case "Flow":
+			return [VariableVisual, "variable"];
+	}
+}
 
-			let source_pos = getSourcePosition(tprimitive);
-			let target_pos = getTargetPosition(tprimitive);
+// Stocks, variables, constants and converters, and ghosts of them
+function syncNamedVisual(primitive, VisualClass, type, extras) {
+	let visual = new VisualClass(primitive.id, type, getCenterPosition(primitive), extras);
+	visual.setName(primitive.getAttribute("name"));
+	visual.setColor(primitive.getAttribute("Color"));
+	visual.name_pos = Number(primitive.getAttribute("RotateName"));
+	visual.updateNamePosition();
+}
 
-			let connection = new FlowVisual(tprimitive.id, "flow", source_pos, target_pos);
+// Plots and tables
+function syncDisplay(primitive, VisualClass, type) {
+	let visual = new VisualClass(primitive.id, type, getSourcePosition(primitive), getTargetPosition(primitive));
+	visual.setColor(primitive.getAttribute("Color"));
+	let primitivesString = primitive.getAttribute("Primitives");
+	let idsToDisplay = primitivesString.split(",");
+	if (primitivesString !== "") {
+		visual.dialog.setIdsToDisplay(idsToDisplay);
+	}
+	visual.update();
+	visual.render();
+}
 
-			connection.name_pos = Number(tprimitive.getAttribute("RotateName"));
-			connection.updateNamePosition();
+// Text, rectangles, ellipses and lines
+function syncShape(primitive, VisualClass, type) {
+	let visual = new VisualClass(primitive.id, type, getSourcePosition(primitive), getTargetPosition(primitive));
+	visual.setColor(primitive.getAttribute("Color"));
+	visual.update();
+}
 
-			connection.loadMiddlePoints();
+function syncFlow(primitive) {
+	let source_pos = getSourcePosition(primitive);
+	let target_pos = getTargetPosition(primitive);
 
-			connection.setColor(tprimitive.getAttribute("Color"));
-			connection.valveIndex = parseInt(tprimitive.getAttribute("ValveIndex"));
-			connection.variableSide = (tprimitive.getAttribute("VariableSide") === "true");
+	let connection = new FlowVisual(primitive.id, "flow", source_pos, target_pos);
 
-			if (tprimitive.source != null) {
-				// Attach to object
-				connection.setStartAttach(getAttachedVisual(tprimitive.source));
-			}
-			if (tprimitive.target != null) {
-				// Attach to object
-				connection.setEndAttach(getAttachedVisual(tprimitive.target));
-			}
-			connection.update();
+	connection.name_pos = Number(primitive.getAttribute("RotateName"));
+	connection.updateNamePosition();
 
-			connection.setName(getName(tprimitive));
-			break;
-		case "Link":
-			{
-				let source_pos = getSourcePosition(tprimitive);
-				let target_pos = getTargetPosition(tprimitive);
+	connection.loadMiddlePoints();
 
-				let connection = new LinkVisual(tprimitive.id, "link", source_pos, target_pos);
+	connection.setColor(primitive.getAttribute("Color"));
+	connection.valveIndex = parseInt(primitive.getAttribute("ValveIndex"));
+	connection.variableSide = (primitive.getAttribute("VariableSide") === "true");
 
-				connection.setColor(tprimitive.getAttribute("Color"));
+	if (primitive.source != null) {
+		// Attach to object
+		connection.setStartAttach(getAttachedVisual(primitive.source));
+	}
+	if (primitive.target != null) {
+		// Attach to object
+		connection.setEndAttach(getAttachedVisual(primitive.target));
+	}
+	connection.update();
 
-				if (tprimitive.source != null) {
-					// Attach to object
-					connection.setStartAttach(getAttachedVisual(tprimitive.source));
-				}
-				if (tprimitive.target != null) {
-					// Attach to object
-					connection.setEndAttach(getAttachedVisual(tprimitive.target));
-				}
-				let bezierPoints = [
-					tprimitive.getAttribute("b1x"),
-					tprimitive.getAttribute("b1y"),
-					tprimitive.getAttribute("b2x"),
-					tprimitive.getAttribute("b2y")
-				];
+	connection.setName(getName(primitive));
+}
 
-				if (bezierPoints.indexOf(null) == -1) {
-					connection.setHandle1Pos([Number(bezierPoints[0]), Number(bezierPoints[1])]);
-					connection.setHandle2Pos([Number(bezierPoints[2]), Number(bezierPoints[3])]);
-				} else {
-					// bezierPoints does not exist. Create them
-					connection.resetBezierPoints();
-				}
-				for (let i = 0; i < 8; i++) {
-					// the anchor and the handle are co-dependent 
-					// This means that moving the handle moves the anchor which moves the handle ... etc.
-					// this continues until a stable position is reached.
-					// To get around this the Link gets calculated a few times to reach a stable position.
-					connection.update();
-				}
-			}
-			break;
+function syncLink(primitive) {
+	let source_pos = getSourcePosition(primitive);
+	let target_pos = getTargetPosition(primitive);
+
+	let connection = new LinkVisual(primitive.id, "link", source_pos, target_pos);
+
+	connection.setColor(primitive.getAttribute("Color"));
+
+	if (primitive.source != null) {
+		// Attach to object
+		connection.setStartAttach(getAttachedVisual(primitive.source));
+	}
+	if (primitive.target != null) {
+		// Attach to object
+		connection.setEndAttach(getAttachedVisual(primitive.target));
+	}
+	let bezierPoints = [
+		primitive.getAttribute("b1x"),
+		primitive.getAttribute("b1y"),
+		primitive.getAttribute("b2x"),
+		primitive.getAttribute("b2y")
+	];
+
+	if (bezierPoints.indexOf(null) == -1) {
+		connection.setHandle1Pos([Number(bezierPoints[0]), Number(bezierPoints[1])]);
+		connection.setHandle2Pos([Number(bezierPoints[2]), Number(bezierPoints[3])]);
+	} else {
+		// bezierPoints does not exist. Create them
+		connection.resetBezierPoints();
+	}
+	for (let i = 0; i < 8; i++) {
+		// the anchor and the handle are co-dependent 
+		// This means that moving the handle moves the anchor which moves the handle ... etc.
+		// this continues until a stable position is reached.
+		// To get around this the Link gets calculated a few times to reach a stable position.
+		connection.update();
 	}
 }
 

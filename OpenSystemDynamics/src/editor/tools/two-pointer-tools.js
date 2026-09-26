@@ -433,7 +433,7 @@ LinkTool.init();
 
 /** 
  * @param {AnchorPoint} anchor
- * @param {(attachTo: BaseObject) => boolean} [shouldAttach=(attachTo) => true]
+ * @param {(attachTo: BaseVisual) => boolean} [shouldAttach=(attachTo) => true]
  */
 function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 	[x, y] = anchor.getPos();

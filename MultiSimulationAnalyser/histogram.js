@@ -364,7 +364,6 @@ function mystacktrace() {
             tbar.bar_min=min+i*histogram.bar_width;
             tbar.bar_limit=min+(i+1)*histogram.bar_width;
             tbar.bar_limit=Number(tbar.bar_limit);
-            console.log(tbar.bar_min+"-"+tbar.bar_limit);
             tbar.data=[];
             histogram.bars.push(tbar);
         }

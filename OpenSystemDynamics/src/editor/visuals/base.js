@@ -1,4 +1,4 @@
-class BaseObject {
+class BaseVisual {
 		/**
 	 * @param {string} id 
 	 * @param {string} type 
@@ -194,7 +194,7 @@ class BaseObject {
 	}
 }
 
-class OnePointer extends BaseObject {
+class OnePointer extends BaseVisual {
 		/**
 	 * @param {string} id 
 	 * @param {string} type 

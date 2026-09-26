@@ -75,6 +75,26 @@ const visuals = `
 	};
 `;
 
+// Everything about each visual that loading a model sets up, one line per visual
+const visualDetails = `
+	const round = values => values.map(value => Math.round(value * 10) / 10);
+	return Visuals.all().map(visual => {
+		const parts = [visual.id, visual.constructor.name, visual.type, "color=" + visual.color];
+		if (visual.is_ghost) parts.push("ghost");
+		if (visual.name_element) parts.push("name=" + visual.name_element.textContent, "name_pos=" + visual.name_pos,
+			"name_at=" + ["x", "y", "text-anchor"].map(a => visual.name_element.getAttribute(a)).join(","));
+		if (visual instanceof TwoPointer) {
+			parts.push("from=" + round([visual.startX, visual.startY]), "to=" + round([visual.endX, visual.endY]));
+		} else {
+			parts.push("pos=" + round(visual.getPos()));
+		}
+		if (visual.dialog?.displayIdList) parts.push("shows=" + visual.dialog.displayIdList.join(","));
+		if (visual.getStartAttach) parts.push("attached=" + (visual.getStartAttach()?.id ?? "-") + "," + (visual.getEndAttach()?.id ?? "-"));
+		if (visual.type == "flow") parts.push("valve=" + visual.valveIndex + "," + visual.variableSide);
+		return parts.join(" | ");
+	}).sort();
+`;
+
 const primitiveSummary = `
 	return primitives().map(p => [getType(p), getName(p), getValue(p), DefinitionError.getMessage(p)].join(" | "));
 `;
@@ -249,6 +269,12 @@ export const scenarios = [
 			steps.buttonsWithStockSelected = await page.run(`
 				Visuals.unselectAll();
 				Visuals.get(primitives("Stock")[0].id).select();
+				ToolBox.updateButtons();
+				return $(".tool-button:disabled").map((i, e) => e.id).get().sort();
+			`);
+			steps.buttonsWithConstantSelected = await page.run(`
+				Visuals.unselectAll();
+				Visuals.get(primitives("Variable").find(p => p.getAttribute("isConstant") == "true").id).select();
 				ToolBox.updateButtons();
 				return $(".tool-button:disabled").map((i, e) => e.id).get().sort();
 			`);
@@ -478,7 +504,7 @@ for (const fileName of readdirSync(modelsDir).filter(f => !f.startsWith(".")).so
 			const xml = readFileSync(join(modelsDir, fileName), "utf8");
 			await page.runAndWaitForReload(openModel(fileName, xml));
 			return {
-				visuals: await page.run(visuals),
+				visuals: await page.run(visualDetails),
 				primitives: await page.run(primitiveSummary),
 				resavedXml: await page.run(modelXml),
 				simulation: await page.run(simulate),

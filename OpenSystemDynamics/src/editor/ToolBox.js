@@ -48,7 +48,7 @@ class ToolBox {
 	}
 	static updateButtons() {
 		const selection = Visuals.selected();
-		const hasRotatableName = selection.some(s => ["stock", "variable", "contant", "converter", "flow"].includes(s.type))
+		const hasRotatableName = selection.some(s => ["stock", "variable", "constant", "converter", "flow"].includes(s.type))
 		const hasFlow = selection.some(s => s.type == "flow")
 		const hasLink = selection.some(s => s.getParent().type == "link")
 		const numberboxError = NumberboxTool.getSelectionError()

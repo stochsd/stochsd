@@ -27,7 +27,6 @@ class History {
 		const width = divBackground.clientWidth
 		const height = divBackground.clientHeight
 		const svgElement = $("#svgplane")[0]
-		console.log(svgElement)
 		const image = convertSvgToBase64(svgElement, 0, 0, width, height);
 		this.undoImages.push(image)
 	}

@@ -1,4 +1,4 @@
-class TwoPointer extends BaseObject {
+class TwoPointer extends BaseVisual {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
 		this.id = id;
@@ -111,9 +111,9 @@ class TwoPointer extends BaseObject {
 class BaseConnection extends TwoPointer {
 	constructor(id, type, pos0, pos1) {
 		super(id, type, pos0, pos1);
-		/** @type {BaseObject} */
+		/** @type {BaseVisual} */
 		this._start_attach = null;
-		/** @type {BaseObject} */
+		/** @type {BaseVisual} */
 		this._end_attach = null;
 		this.positionUpdateHandler = () => {
 			let primitive = findID(this.id);

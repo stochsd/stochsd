@@ -42,6 +42,11 @@
     "btn_redo",
     "btn_straighten_link"
   ],
+  "buttonsWithConstantSelected": [
+    "btn_movevalve",
+    "btn_redo",
+    "btn_straighten_link"
+  ],
   "xml": [
     "<InsightMakerModel>",
     "<root>",
