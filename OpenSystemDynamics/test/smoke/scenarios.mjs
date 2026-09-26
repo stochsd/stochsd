@@ -462,6 +462,29 @@ export const scenarios = [
 		},
 	},
 	{
+		// A link into a flow that was drawn after the flow. Undo and delete used to crash,
+		// since removing the link updated the flow after the flow had been removed
+		name: "link-to-flow",
+		async run(page) {
+			await page.run(`
+				${buildModel}
+				${dragTool("link", [350, 400], [350, 205])}
+			`);
+			const steps = {};
+			steps.linkEnds = await page.run(`const link = primitives("Link").at(-1); return [getName(link.source), getName(link.target)]`);
+			await page.run(`History.restoreUndoState()`);
+			steps.afterUndoReload = await page.run(visuals);
+			await page.run(`
+				Visuals.unselectAll();
+				Visuals.get(primitives("Flow")[0].id).select();
+				ToolBox.setTool("delete", mouse.left);
+			`);
+			steps.afterDeletingFlow = await page.run(primitiveSummary);
+			steps.crashDialogs = await page.run(`return $(".ui-dialog-title:visible").filter((i, e) => e.textContent.includes("Crash")).length`);
+			return steps;
+		},
+	},
+	{
 		// Copying and pasting with Ctrl+C and Ctrl+V. The pasted primitives refer to each other instead of the copied ones,
 		// and the model is the same after undo and redo, which reloads it from XML
 		name: "copy-paste",

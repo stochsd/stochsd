@@ -128,7 +128,7 @@ class LinkVisual extends BaseConnection {
 
 	setStartAttach(new_start_attach) {
 		super.setStartAttach(new_start_attach)
-		if (this._end_attach) {
+		if (this._end_attach && !this._end_attach.isRemoved()) {
 			this._end_attach.updateDefinitionError();
 			this._end_attach.update();
 		}
@@ -141,7 +141,8 @@ class LinkVisual extends BaseConnection {
 		} else {
 			this.undashLine();
 		}
-		if (old_end_attach) {
+		// The old end is already removed if it is being deleted, e.g. a flow deleted together with links to it
+		if (old_end_attach && !old_end_attach.isRemoved()) {
 			old_end_attach.updateDefinitionError();
 			old_end_attach.update();
 		}
