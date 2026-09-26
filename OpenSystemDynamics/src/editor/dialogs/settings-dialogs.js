@@ -61,6 +61,8 @@ class PreferencesDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("Preferences");
+		/** @type {PreferenceCategory} */
+		this.selectedCategory = undefined
 	}
 	beforeShow() {
 		const categories = Preferences.getCategories()
@@ -94,6 +96,7 @@ class PreferencesDialog extends jqDialog {
 			})
 		})
 	}
+	/** @param {PreferenceKey} key */
 	renderPreferenceHtml(key) {
 		const info = preferencesTemplate[key]
 		const value = Preferences.get(key)
@@ -112,19 +115,25 @@ class PreferencesDialog extends jqDialog {
 			${info.image ? `<img id="image-${key}" src="${this.imageSrc(info, value)}"/>` : ""}
 		</div>`
 	}
+	/** @param {PreferenceCategory} category */
 	selectCategory(category) {
 		this.selectedCategory = category
 		const isSelected = (_, element) => $(element).data("category") == category
 		$(this.dialogContent).find(".preference-category").removeClass("selected").filter(isSelected).addClass("selected")
 		$(this.dialogContent).find(".preference-group").hide().filter(isSelected).show()
 	}
+	/**
+	 * @param {PreferenceInfo} info
+	 * @param {boolean} value
+	 * @returns {string}
+	 */
 	imageSrc(info, value) {
 		if (typeof info.image == "string")
 			return info.image
 		return value ? info.image.on : info.image.off
 	}
 	makeApply() {
-		const preferences = Preferences.get()
+		const preferences = Preferences.getAll()
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
 			const element = $(this.dialogContent).find("#preference-" + key)
 			const value = info.type == "boolean" ? element.is(":checked") : undefined
