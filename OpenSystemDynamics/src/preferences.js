@@ -1,17 +1,20 @@
 var preferencesTemplate = {
 	"promptTimeUnitDialogOnStart": {
+		category: "TimeUnit",
 		default: true,
 		type: "boolean",
 		title: "Prompt TimeUnitDialog on Startup",
 		description: "Controls if the TimeUnitDialog is shown on startup."
 	},
 	"forceTimeUnit": {
+		category: "TimeUnit",
 		default: true,
 		type: "boolean",
 		title: "Force TimeUnit",
 		description: "Controls if a TimeUnit must be set in order to edit."
 	},
 	"showFunctionHelper": {
+		category: "DefinitionEditor",
 		default: false,
 		type: "boolean",
 		title: "Show Function Helper",
@@ -19,6 +22,7 @@ var preferencesTemplate = {
 		image: "./graphics/showArgumentHelper.png",
 	},
 	"showConverterPlotPreview": {
+		category: "ConverterEditor",
 		default: true,
 		type: "boolean",
 		title: "Show Converter Plot Preview",
@@ -54,5 +58,11 @@ class Preferences {
 	}
 	static store(object) {
 		localStorage.setItem("preferences", JSON.stringify(object))
+	}
+	static getCategories() {
+		return [...new Set(Object.values(preferencesTemplate).map(info => info.category))]
+	}
+	static getKeysInCategory(category) {
+		return Object.keys(preferencesTemplate).filter(key => preferencesTemplate[key].category == category)
 	}
 }

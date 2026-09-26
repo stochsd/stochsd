@@ -63,23 +63,23 @@ class PreferencesDialog extends jqDialog {
 		this.setTitle("Preferences");
 	}
 	beforeShow() {
-		const preferences = Preferences.get()
-		this.setHtml(`<div class="preferences">${Object.entries(preferencesTemplate).map(([key, info]) => {
-			const id = "preference-" + key
-			return `<div class="preference" style="max-height: calc(80vh - 10rem); overflow-y: auto;">
-				<div style="display: flex; justify-content: space-between;">
-					<span class="title">${info.title}</span>
-					<button class="btn_reset" id="reset-${key}" >Reset</button>
-				</div>
-				${info.type == "boolean"
-					? `<div>
-					<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(preferences[key])}>
-					<label for="${id}">${info.description}<label/>
-				</div>`
-					: ""}
-				${info.image ? `<img id="image-${key}" src="${this.imageSrc(info, preferences[key])}"/>` : ""}
-			</div>`
-		}).join("")}`)
+		const categories = Preferences.getCategories()
+		if (!categories.includes(this.selectedCategory))
+			this.selectedCategory = categories[0]
+		this.setHtml(`<div class="preferences-layout">
+			<div class="preference-categories">
+				${categories.map(category => `<div class="preference-category" data-category="${category}">${category}</div>`).join("")}
+			</div>
+			<div class="preferences">
+				${categories.map(category => `<div class="preference-group" data-category="${category}">
+					${Preferences.getKeysInCategory(category).map(key => this.renderPreferenceHtml(key)).join("")}
+				</div>`).join("")}
+			</div>
+		</div>`)
+		$(this.dialogContent).find(".preference-category").on("click", event => {
+			this.selectCategory($(event.currentTarget).data("category"))
+		})
+		this.selectCategory(this.selectedCategory)
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
 			const input = $(this.dialogContent).find("#preference-" + key)
 			const updateImage = () => {
@@ -93,6 +93,30 @@ class PreferencesDialog extends jqDialog {
 				updateImage()
 			})
 		})
+	}
+	renderPreferenceHtml(key) {
+		const info = preferencesTemplate[key]
+		const value = Preferences.get(key)
+		const id = "preference-" + key
+		return `<div class="preference">
+			<div style="display: flex; justify-content: space-between;">
+				<span class="title">${info.title}</span>
+				<button class="btn_reset" id="reset-${key}" >Reset</button>
+			</div>
+			${info.type == "boolean"
+				? `<div>
+				<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(value)}>
+				<label for="${id}">${info.description}<label/>
+			</div>`
+				: ""}
+			${info.image ? `<img id="image-${key}" src="${this.imageSrc(info, value)}"/>` : ""}
+		</div>`
+	}
+	selectCategory(category) {
+		this.selectedCategory = category
+		const isSelected = (_, element) => $(element).data("category") == category
+		$(this.dialogContent).find(".preference-category").removeClass("selected").filter(isSelected).addClass("selected")
+		$(this.dialogContent).find(".preference-group").hide().filter(isSelected).show()
 	}
 	imageSrc(info, value) {
 		if (typeof info.image == "string")
