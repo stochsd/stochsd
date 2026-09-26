@@ -23,7 +23,14 @@ function convertSvgToBase64(svgElement, cropX=0, cropY=0, cropWidth=800, cropHei
   }
 
   const utf8Bytes = new TextEncoder().encode(svgString);
-  const base64 = btoa(String.fromCharCode(...utf8Bytes));
+  // Converted in chunks, since passing all bytes as arguments at once
+  // exceeds the engine's argument limit for large diagrams ("too many function arguments")
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...utf8Bytes.subarray(i, i + chunkSize));
+  }
+  const base64 = btoa(binary);
 
   return `data:image/svg+xml;base64,${base64}`;
 }

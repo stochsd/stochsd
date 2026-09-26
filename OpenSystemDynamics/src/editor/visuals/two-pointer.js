@@ -180,10 +180,10 @@ class BaseConnection extends TwoPointer {
 	}
 	triggerAttachEvents() {
 		// We must always trigger both start and end, since a change in the start might affect the logics of the primitive attach at the end of a link or flow
-		if (this.getStartAttach() != null) {
+		if (this.getStartAttach() != null && !this.getStartAttach().isRemoved()) {
 			this.getStartAttach().attachEvent();
 		}
-		if (this.getEndAttach() != null) {
+		if (this.getEndAttach() != null && !this.getEndAttach().isRemoved()) {
 			this.getEndAttach().attachEvent();
 		}
 	}

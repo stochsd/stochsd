@@ -113,7 +113,7 @@ class History {
 			this.lastUndoState = this.undoStates[this.undoIndex];
 			loadModelFromXml(this.lastUndoState);
 		} catch (err) {
-			handleCrash()
+			handleCrash(err)
 		}
 	}
 

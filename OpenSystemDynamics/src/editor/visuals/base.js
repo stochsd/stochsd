@@ -101,6 +101,14 @@ class BaseVisual {
 		return Visuals.all().filter(visual => Visuals.getParentId(visual.id) == this.id && visual.id != this.id);
 	}
 
+	/**
+	 * True once this visual has been removed from the diagram.
+	 * Connections can still refer to a removed visual while they are being removed themselves, e.g. during undo.
+	 */
+	isRemoved() {
+		return Visuals.get(this.id) !== this;
+	}
+
 	/** Removes this visual and its children from the diagram. The primitive in the model is not affected */
 	remove() {
 		this.clean();
