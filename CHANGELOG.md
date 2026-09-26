@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Keep only useful tool-buttons enabled.
 - Crash Recover Dialog on undo/redo crash.
 - Working copy-paste.
+- Group Preferences into Categories.
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.

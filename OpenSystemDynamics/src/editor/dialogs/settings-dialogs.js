@@ -61,35 +61,82 @@ class PreferencesDialog extends jqDialog {
 	constructor() {
 		super();
 		this.setTitle("Preferences");
+		/** @type {PreferenceCategory} */
+		this.selectedCategory = undefined
 	}
 	beforeShow() {
-		const preferences = Preferences.get()
-		this.setHtml(`<div class="preferences">${Object.entries(preferencesTemplate).map(([key, info]) => {
-			const id = "preference-" + key
-			return `<div class="preference">
-				<div style="display: flex; justify-content: space-between;">
-					<span class="title">${info.title}</span>
-					<button class="btn_reset" id="reset-${key}" >Reset</button>
-				</div>
-				${info.type == "boolean"
-					? `<div>
-					<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(preferences[key])}>
-					<label for="${id}">${info.description}<label/>
-				</div>`
-					: ""}
-				${info.image ? `<img src="${info.image}"/>` : ""}
-			</div>`
-		}).join("")}`)
-		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+		const categories = Preferences.getCategories()
+		if (!categories.includes(this.selectedCategory))
+			this.selectedCategory = categories[0]
+		this.setHtml(`<div class="preferences-layout">
+			<div class="preference-categories">
+				${categories.map(category => `<div class="preference-category" data-category="${category}">${category}</div>`).join("")}
+			</div>
+			<div class="preferences">
+				${categories.map(category => `<div class="preference-group" data-category="${category}">
+					${Preferences.getKeysInCategory(category).map(key => this.renderPreferenceHtml(key)).join("")}
+				</div>`).join("")}
+			</div>
+		</div>`)
+		$(this.dialogContent).find(".preference-category").on("click", event => {
+			this.selectCategory($(event.currentTarget).data("category"))
+		})
+		this.selectCategory(this.selectedCategory)
+		Preferences.getKeys().forEach(key => {
+			const info = Preferences.getInfo(key)
+			const input = $(this.dialogContent).find("#preference-" + key)
+			const updateImage = () => {
+				if (info.image)
+					$(this.dialogContent).find(`#image-${key}`).attr("src", this.imageSrc(info, input.is(":checked")))
+			}
+			input.on("change", updateImage)
 			$(this.dialogContent).find(`#reset-${key}`).on("click", () => {
 				if (info.type == "boolean")
-					$(this.dialogContent).find("#preference-" + key).prop("checked", info.default)
+					input.prop("checked", info.default)
+				updateImage()
 			})
 		})
 	}
+	/** @param {PreferenceKey} key */
+	renderPreferenceHtml(key) {
+		const info = Preferences.getInfo(key)
+		const value = Preferences.get(key)
+		const id = "preference-" + key
+		return `<div class="preference">
+			<div style="display: flex; justify-content: space-between;">
+				<span class="title">${info.title}</span>
+				<button class="btn_reset" id="reset-${key}" >Reset</button>
+			</div>
+			${info.type == "boolean"
+				? `<div>
+				<input id="${id}" name="${key}" type="checkbox" ${checkedHtml(value)}>
+				<label for="${id}">${info.description}<label/>
+			</div>`
+				: ""}
+			${info.image ? `<img id="image-${key}" src="${this.imageSrc(info, value)}"/>` : ""}
+		</div>`
+	}
+	/** @param {PreferenceCategory} category */
+	selectCategory(category) {
+		this.selectedCategory = category
+		const isSelected = (_, element) => $(element).data("category") == category
+		$(this.dialogContent).find(".preference-category").removeClass("selected").filter(isSelected).addClass("selected")
+		$(this.dialogContent).find(".preference-group").hide().filter(isSelected).show()
+	}
+	/**
+	 * @param {PreferenceInfo} info
+	 * @param {boolean} value
+	 * @returns {string}
+	 */
+	imageSrc(info, value) {
+		if (typeof info.image == "string")
+			return info.image
+		return value ? info.image.on : info.image.off
+	}
 	makeApply() {
-		const preferences = Preferences.get()
-		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+		const preferences = Preferences.getAll()
+		Preferences.getKeys().forEach(key => {
+			const info = Preferences.getInfo(key)
 			const element = $(this.dialogContent).find("#preference-" + key)
 			const value = info.type == "boolean" ? element.is(":checked") : undefined
 			preferences[key] = value
