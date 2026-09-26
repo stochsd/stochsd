@@ -22,7 +22,11 @@ var preferencesTemplate = {
 		default: true,
 		type: "boolean",
 		title: "Show Converter Plot Preview",
-		description: "Show Converter Plot Preview while editing converter values."
+		description: "Show Converter Plot Preview while editing converter values.",
+		image: {
+			on: "./graphics/showConverterPlotPreviewOn.png",
+			off: "./graphics/showConverterPlotPreviewOff.png"
+		}
 	}
 	// primitiveFontSize
 	// showArgumentHelper

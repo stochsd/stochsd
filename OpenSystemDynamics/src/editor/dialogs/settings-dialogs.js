@@ -77,15 +77,27 @@ class PreferencesDialog extends jqDialog {
 					<label for="${id}">${info.description}<label/>
 				</div>`
 					: ""}
-				${info.image ? `<img src="${info.image}"/>` : ""}
+				${info.image ? `<img id="image-${key}" src="${this.imageSrc(info, preferences[key])}"/>` : ""}
 			</div>`
 		}).join("")}`)
 		Object.entries(preferencesTemplate).forEach(([key, info]) => {
+			const input = $(this.dialogContent).find("#preference-" + key)
+			const updateImage = () => {
+				if (info.image)
+					$(this.dialogContent).find(`#image-${key}`).attr("src", this.imageSrc(info, input.is(":checked")))
+			}
+			input.on("change", updateImage)
 			$(this.dialogContent).find(`#reset-${key}`).on("click", () => {
 				if (info.type == "boolean")
-					$(this.dialogContent).find("#preference-" + key).prop("checked", info.default)
+					input.prop("checked", info.default)
+				updateImage()
 			})
 		})
+	}
+	imageSrc(info, value) {
+		if (typeof info.image == "string")
+			return info.image
+		return value ? info.image.on : info.image.off
 	}
 	makeApply() {
 		const preferences = Preferences.get()
