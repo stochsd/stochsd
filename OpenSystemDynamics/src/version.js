@@ -1,3 +1,3 @@
 var stochsd = {
-	version: "2026.08.29"
+	version: "2026.09.28"
 };
