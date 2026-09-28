@@ -1,0 +1,69 @@
+/* Sticky table */
+table.sticky-table {
+    width: 100%;
+}
+table.sticky-table th {
+    padding: 8px 8px;
+}
+table.sticky-table th {
+    /* Make header stay at top */
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+table.sticky-table th::after {
+    /* Make border-bottom since border does follow element with sticky */
+    content: "";
+    position: absolute;
+    background: black;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+table.sticky-table th, table.sticky-table td {
+    border: 1px solid var(--table-border-color);
+}
+.time-header-cell::before, .prim-header-cell:not(:last-child)::before {
+    /* made up right border */
+    content: "";
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    right: -1px;
+    width: 1px;
+}
+.time-header-cell::before {
+    background: black;
+}
+.prim-header-cell::before {
+    background: #aaa;
+}
+.time-header-cell, .time-value-cell {
+    /* make black line between time column and primitive column */
+	border-right-width: 1px !important;
+    border-right-color: black !important;
+}
+table.sticky-table th.time-header-cell:has(div.time-unit:not(:empty)) {
+    padding: 0px 8px;
+    font-size: 0.9rem;
+}
+table.sticky-table th.time-header-cell>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+table.sticky-table th.time-header-cell>div.time-unit {
+    font-weight: normal;
+}
+table.sticky-table th.time-header-cell>div.time-unit:empty {
+    display: none;
+}
+.time-value-cell {
+	text-align: center;
+}
+.prim-value-cell {
+    text-align: right;
+    padding: 2px 8px !important;
+}

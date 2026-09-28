@@ -1,0 +1,92 @@
+/* Element defaults and small shared elements used across the whole app */
+
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    /* Force print to show all color, this shows gray color in table at Print Equations */
+    /* -webkit-print-color-adjust: exact; */
+    color: var(--color-text-primary);
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+/* All tables are laid out with these. They used to leak from a broken ".invisible-table" selector */
+tr, th {
+    vertical-align: top;
+}
+th {
+    padding: 0px 10px;
+}
+
+input[type="number"] {
+    width: 70px;
+    text-align: right;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+input[type=text] {
+    width: 100%;
+    text-align: left;
+}
+
+button svg {
+    border-width: 0px;
+}
+
+kbd {
+    background-color: #eee;
+    border-radius: 3px;
+    border: 1px solid #b4b4b4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+    color: #333;
+    display: inline-block;
+    font-size: .85em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 4px;
+    white-space: nowrap;
+}
+
+/* buttons title */
+[data-title] {
+    position: relative;
+}
+[data-title]:hover::after {
+    content: attr(data-title);
+    font-weight: normal;
+    position: absolute;
+    top: calc(100% + 0.125rem);
+    left: 0;
+    white-space: pre;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-text-primary);
+    color: var(--color-background-light);
+    border-radius: 0.25rem;
+    z-index: 4;
+}
+
+/* for warning or note texts when changing settings and properties */
+.warning {
+    /* Used when there is a warning and changes wont be applied */
+    color: var(--color-warning-foreground);
+}
+.note {
+    /* Used when there is something to note but still allowed */
+    color: #ea580c;
+}
+
+.example-code {
+    font-family: monospace;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background-color: #f0f0f0;
+}

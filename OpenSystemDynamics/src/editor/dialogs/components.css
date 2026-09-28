@@ -1,0 +1,26 @@
+/* primitive-selector table */
+table.primitive-selector th,
+table.primitive-selector td {
+    padding-block: 0;
+    border: 1px solid var(--table-border-color);
+    padding-inline: 0.5rem;
+    vertical-align: middle;
+}
+table.primitive-selector button {
+    height: 100%;
+}
+button.primitive-add-button {
+    color: #00aa00 !important;
+    font-size: 1.3em !important;
+    font-weight: bold !important;
+    font-family: monospace !important;
+}
+button.primitive-add-button[disabled]{
+    color: grey !important;
+}
+button.primitive-remove-button {
+    color: #aa0000 !important;
+    font-size: 1.3em !important;
+    font-weight: bold !important;
+    font-family: monospace !important;
+}

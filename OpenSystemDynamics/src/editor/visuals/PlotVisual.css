@@ -1,0 +1,7 @@
+/* for empty plot, also used by TableVisual */
+.empty-plot-header {
+    font-size: 25px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}

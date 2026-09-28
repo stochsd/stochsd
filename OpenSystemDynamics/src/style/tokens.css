@@ -1,0 +1,18 @@
+:root {
+    --table-border-color: #ccc;
+
+    --color-white: #ffffff; /* Pure white */
+    --color-background-light: #f8f8f8; /* Background light */
+    --color-border: #c3c3c3; /* Border color for SVG plane */
+    --color-highlight-neutral: #e4e4e4; /* Neutral highlight */
+    --color-highlight-primary: #7083c2; /* Primary highlight */
+    --color-text-primary: #1e1e1e; /* Primary text color */
+    --color-text-secondary: #787878; /* Subtle text color, e.g., for shortcuts */
+    --color-divider-muted: #a1a1a1; /* Divider shade for menu options */
+    --shadow-menu: 0 0 4px 0 rgba(0, 0, 0, 0.25); /* box shadow for menu */
+    --color-progress-complete: #aaeeaa;
+    --color-progress-pending: #eed0aa;
+    --color-warning-background: #f0dbdb;
+    --color-warning-foreground: #c01818;
+    --radius-menu: 0.25rem;
+}

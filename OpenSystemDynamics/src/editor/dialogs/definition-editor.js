@@ -582,11 +582,13 @@ class DefinitionEditor extends jqDialog {
 function printContentInNewWindow(htmlContent) {
 	const printWindow = window.open('', '', 'height=1000,width=1000,screenX=50,screenY=50');
 	printWindow.document.title = "Equation List";
-	const link = document.createElement("link");
-	link.rel = "stylesheet";
-	link.type = "text/css";
-	link.href = "editor.css";
-	printWindow.document.head.appendChild(link);
+	// Copy the stylesheets, their href is absolute so it resolves from the blank window
+	for (const sheet of document.querySelectorAll("link[rel=stylesheet]")) {
+		const link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = /** @type {HTMLLinkElement} */ (sheet).href;
+		printWindow.document.head.appendChild(link);
+	}
 	printWindow.document.body.innerHTML = htmlContent;
 
 	setTimeout(() => {

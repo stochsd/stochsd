@@ -1,0 +1,90 @@
+/* The page shell in index.html: panels, canvas, overlays and footer */
+
+body>#overlay {
+    position: absolute;
+    display: flex;
+    inset: 0;
+    background-color: rgb(255, 255, 255, 0.7);
+    color: var(--color-highlight-primary);
+    opacity: 1;
+    outline: 0.5rem dashed var(--color-highlight-primary);
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    z-index: 2000;
+    outline-offset: -1rem;
+    font-weight: bold;
+}
+body>#overlay.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.hideUnlessNwjs {
+    display: none !important;
+}
+.invisible-file-input {
+    position: absolute;
+    width: 0;
+}
+
+@media print
+{
+    #topPanel
+    {
+        display: none !important;
+    }
+}
+#coverEverythingDiv {
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background-light);
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+    /* Disable highlighting text */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* menu */
+.fileToolBox {
+    background-color: var(--color-highlight-neutral);
+	border-bottom: 1px solid var(--table-border-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#homepage-info {
+    font-size: 0.75rem;
+    margin-inline: auto 1rem;
+    color: var(--color-text-secondary);
+}
+
+/* canvas */
+#svgplane {
+    border-width: 0px;
+}
+#svgplane * {
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */
+}
+#svgplane.panning {
+    cursor: grabbing;
+}
+text.name_element {
+    font-family: monospace;
+}
+
+.editor-footer div {
+    display: inline;
+}

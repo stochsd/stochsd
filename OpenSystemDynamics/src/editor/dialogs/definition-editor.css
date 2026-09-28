@@ -1,0 +1,39 @@
+/* Name and value fields, also used by ConverterDialog */
+.name-field, .value-field {
+    font-family: monospace !important;
+}
+.primitive-settings .name-field,
+.primitive-settings .value-field {
+    width: 200px;
+}
+.primitive-settings > * {
+    box-sizing: border-box;
+}
+
+/* Function list */
+.accordion-cluster ul {
+    padding: 0px;
+    margin: 0px;
+}
+.tooltip {
+    width: 400px;
+}
+.function-help:hover {
+    background-color: hsl(0, 0%, 90%);
+}
+.click-function {
+    cursor: pointer;
+}
+.linked-reference {
+    font-family: monospace;
+}
+.linked-reference:hover {
+    background-color: hsl(0, 0%, 90%);
+}
+b[data-arg]::before {
+    content: attr(data-arg);
+    position: absolute;
+    top: 1.3em;
+    font-weight: normal;
+    white-space: pre;
+}

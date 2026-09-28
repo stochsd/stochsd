@@ -1,0 +1,30 @@
+.info-bar {
+    padding-left: 0.5rem;
+    border-top: 1px solid var(--table-border-color);
+    display: flex;
+    column-gap: 1.5rem;
+    margin: 0;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 1.75rem;
+}
+.info-box__element {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+.info-bar__definition {
+    font-family: monospace;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 50vw;
+}
+.info-bar__definition-error:empty {
+    display: none;
+}
+.info-bar__definition-error {
+    font-weight: bold;
+    padding-inline: 1rem;
+    background-color: var(--color-warning-background);
+    color: var(--color-warning-foreground);
+}

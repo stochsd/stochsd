@@ -1,0 +1,21 @@
+/* Tweaks to jQuery UI and jqPlot. Loaded after their stylesheets so equal specificity is enough */
+
+.ui-widget-overlay {
+    opacity: 0.3;
+}
+.ui-accordion .ui-accordion-content {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.ui-tooltip {
+    min-width: 22em;
+}
+
+.jqplot-highlighter-tooltip {
+    z-index: 2;
+    background: white;
+}
+td.jqplot-table-legend {
+    /* Avoid line break in plot legend */
+    white-space: nowrap;
+}

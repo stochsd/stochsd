@@ -1,0 +1,40 @@
+/* Layout helpers and table styles shared by many dialogs */
+
+div.vertical-space {
+    height: 12px;
+}
+div.center-vertically-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.center-horizontally {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* div based table layout */
+.table{
+  display: table;
+  width:100%;
+}
+.table-row{
+  display: table-row;
+}
+.table-cell {
+  display: table-cell;
+  padding: 6px;
+  /*border: black 1px solid;*/ /*Turn on for debuggning */
+}
+
+/* Modern Table start here */
+.zebra tr:nth-child(even),
+.zebra-even tr:nth-child(even),
+.zebra-odd tr:nth-child(odd) {
+    background-color: #f4f4f4;
+}
+.modern-table td, .modern-table th {
+    border: 1px solid var(--table-border-color);
+    padding: 1px 8px;
+    vertical-align: middle;
+}

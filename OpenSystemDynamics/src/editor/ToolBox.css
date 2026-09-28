@@ -1,0 +1,125 @@
+/* tool panel */
+.tool-panel {
+    margin-block: 0.25rem;
+    margin-inline: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+    --button-size: 2rem;
+}
+.tool-panel > .tool-grouping {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: var(--button-size);
+    gap: 0.125rem;
+}
+.tool-panel > .tool-grouping:not(:last-of-type)::after {
+    content: "";
+    position: absolute;
+    right: -0.5rem;
+    width: 1px;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    background-color: var(--color-border);
+}
+
+/* buttons */
+.tool-panel button.tool-button {
+    border: unset;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-border);
+    background-color: var(--color-highlight-neutral);
+    padding: 2px;
+    margin: 0;
+    box-sizing: border-box;
+    width: var(--button-size);
+    height: 100%;
+    border-radius: 0.25rem;
+}
+button.tool-button img {
+    width: 100%;
+    pointer-events: none;
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.tool-panel button.tool-button.pressed {
+    background-color: var(--color-highlight-neutral);
+    outline: 3px solid var(--color-highlight-primary);
+    outline-offset: -3px;
+}
+.tool-panel button {
+    cursor: pointer;
+    font-size: 14px;
+    border-width: 1.5px;
+}
+.tool-panel button.tool-button:hover:enabled {
+    border-color: black;
+}
+.tool-panel button.tool-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* progress bar */
+#progress-bar {
+    position: relative;
+    background-color: var(--color-highlight-neutral);
+    width: max-content;
+    display: inline-block;
+    min-width: 120px;
+    height:  100%;
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+}
+#progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--progress);
+    background-color: var(--color-progress-pending);
+}
+#progress-bar[data-done]::before {
+    background-color: var(--color-progress-complete);
+}
+#progress-bar-text {
+    position: absolute;
+    inset: 0;
+    text-align: center;
+    min-width: 100%;
+    min-height: 100%;
+    width: max-content;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    align-content: center;
+}
+
+/* time unit button */
+#btn_timeunit {
+    height: 100%;
+    vertical-align: top;
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-highlight-neutral);
+    padding-inline: 0.5rem;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+}
+#btn_timeunit:hover {
+    border-color: black;
+}
+#btn_timeunit > #timeunit-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+}
