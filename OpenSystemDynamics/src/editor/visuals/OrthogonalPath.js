@@ -21,20 +21,6 @@ class OrthogonalPath {
     }
 
     /**
-	 * @param {string} middlePointsString 
-	 * @returns {[number, number][]}
-	 */
-	#parseMiddlePoints(middlePointsString) {
-		if (!middlePointsString) {
-			return [];
-		}
-		return middlePointsString.trim()                  // input: "15,17 19,12 "
-            .split(" ")                                         // ["15,17", "19,12"]
-            .map(stringPos => stringPos.split(","))             // [["15", "17"], ["19", "12"]]
-		    .map(dim => [parseInt(dim[0]), parseInt(dim[1])]);  // [[15,17], [19,12]]
-	}
-    
-    /**
      * Segment i goes from points[i] to points[i + 1]. Axes alternate, starting with firstAxis.
      * @param {number} segmentIndex
      * @returns {"horizontal" | "vertical"}
