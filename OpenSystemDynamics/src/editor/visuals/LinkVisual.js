@@ -5,6 +5,8 @@ class LinkVisual extends BaseConnection {
 		// reload image of anchor to make sure anchor is ontop
 		this.b1_anchor.reloadImage();
 		this.b2_anchor.reloadImage();
+		/** @type {BezierPath} */
+		this.path = new BezierPath(pos0, pos1);
 	}
 
 	createInitialAnchors(pos0, pos1) {
@@ -214,13 +216,13 @@ class LinkVisual extends BaseConnection {
 		this.curve.setAttribute("stroke-dasharray", "");
 	}
 	resetBezierPoints() {
-		let obj1 = this.getStartAttach();
-		let obj2 = this.getEndAttach();
-		if (!obj1 || !obj2) {
+		let startVisual = this.getStartAttach();
+		let endVisual = this.getEndAttach();
+		if (!startVisual || !endVisual) {
 			return;
 		}
-		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.getPos()));
-		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.getPos()));
+		this.start_anchor.setPos(startVisual.getLinkMountPos(endVisual.getPos()));
+		this.end_anchor.setPos(endVisual.getLinkMountPos(startVisual.getPos()));
 		this.resetBezier1();
 		this.resetBezier2();
 		this.update();
@@ -303,34 +305,34 @@ class LinkVisual extends BaseConnection {
 		// _start_anchor is null if we are currently creating the connection
 		// _start_attach is null if we are not attached to anything
 
-		if (this.getStartAttach() != null && this.start_anchor != null) {
+		if (this.getStartAttach() != null) {
 			if (this.getStartAttach().getPos) {
 				let oldPos = this.start_anchor.getPos();
 				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.getPos());
-				// If start point have moved reset b1
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.setPos(newPos);
-				}
 			}
 		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
+		if (this.getEndAttach() != null) {
 			if (this.getEndAttach().getPos) {
 				let oldPos = this.end_anchor.getPos();
 				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.getPos());
-				// If end point have moved reset b2
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.setPos(newPos);
-				}
 			}
 		}
-		this.keepRelativeHandlePositions();
+		this.path.updateControlPoints();
+		this.#syncHandles()
 		// update anchors 
 		this.getAnchors().map(anchor => anchor.updatePosition());
 		this.updateGraphics();
 	}
-	keepRelativeHandlePositions() {
+	keepRelativeHandlePositions() { // TODO remove
 		this.b1_anchor.setPos(this.localToWorld(this.b1Local));
 		this.b2_anchor.setPos(this.localToWorld(this.b2Local));
+	}
+	#syncHandles() {
+		const [start, control1, control2, end] = this.path.points
+		this.start_anchor.setPos(start)
+		this.b1_anchor.setPos(control1)
+		this.b2_anchor.setPos(control2)
+		this.end_anchor.setPos(end)
 	}
 	setHandle1Pos(newPos) {
 		this.b1Local = this.worldToLocal(newPos);
