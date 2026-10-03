@@ -73,4 +73,12 @@ class OrthogonalPath {
         this.points.splice(-2, 1)
     }
 
+    /**
+     * @param {number} diffX
+     * @param {number} diffY
+     */
+    translate(diffX, diffY) {
+        this.points = this.points.map(([x, y]) => [x + diffX, y + diffY]);
+    }
+
 }

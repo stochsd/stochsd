@@ -59,6 +59,26 @@ class FlowVisual extends BaseConnection {
 		this.#syncHandles()
 	}
 
+	/**
+	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
+	 * @param {AnchorPoint[]} handles
+	 * @param {number} diffX
+	 * @param {number} diffY
+	 */
+	moveHandlesBy(handles, diffX, diffY) {
+		if (handles.length === this.handles.length) {
+			this.path.translate(diffX, diffY);
+			this.#syncHandles();
+			return;
+		}
+		// Targets are taken before moving, since moving one handle slides its neighbors
+		const targets = handles.map(handle => {
+			const [x, y] = handle.getPos();
+			return [x + diffX, y + diffY];
+		});
+		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
+	}
+
 	syncAnchorToPrimitive(anchorType) {
 		// Save middle anchor points to primitive
 		super.syncAnchorToPrimitive(anchorType);

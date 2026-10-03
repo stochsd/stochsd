@@ -62,6 +62,8 @@ class MouseTool extends BaseTool {
 	/** @param {(OnePointer | TwoPointer)[]} move_objects */
 	static defaultRelativeMove(move_objects, diff_x, diff_y) {
 		let objectMoved = false;
+		/** @type {Map<FlowVisual, AnchorPoint[]>} */
+		let flowHandles = new Map();
 		for (let visual of move_objects) {
 			if (visual.draggable == undefined) {
 				continue;
@@ -72,8 +74,17 @@ class MouseTool extends BaseTool {
 			}
 
 			objectMoved = true;
+			// Flow handles are moved through their flow, which keeps the path orthogonal
+			let parent = visual.getParent();
+			if (visual instanceof AnchorPoint && parent instanceof FlowVisual) {
+				flowHandles.set(parent, [...(flowHandles.get(parent) ?? []), visual]);
+				continue;
+			}
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
 			visual.moveBy(diff_x, diff_y);
+		}
+		for (let [flow, handles] of flowHandles) {
+			flow.moveHandlesBy(handles, diff_x, diff_y);
 		}
 		if (objectMoved) {
 			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
