@@ -387,17 +387,17 @@ class OnePointer extends BaseVisual {
 	}
 }
 
-/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} AnchorType */
+/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} HandleType */
 class Handle extends OnePointer {
 	/**
 	 * @param {string} id 
 	 * @param {string} type 
 	 * @param {[number, number]} pos 
-	 * @param {AnchorType} anchorType 
+	 * @param {HandleType} handleType 
 	 */
-	constructor(id, type, pos, anchorType) {
+	constructor(id, type, pos, handleType) {
 		super(id, type, pos);
-		this.anchorType = anchorType;
+		this.handleType = handleType;
 		this.isSquare = false;
 	}
 	isAttached() {
@@ -405,7 +405,7 @@ class Handle extends OnePointer {
 		if (!parent.getStartAttach) {
 			return;
 		}
-		switch (this.anchorType) {
+		switch (this.handleType) {
 			case "start":
 				return !!parent.getStartAttach();
 			case "end":
@@ -415,11 +415,13 @@ class Handle extends OnePointer {
 				return false;
 		}
 	}
-	setAnchorType(anchorType) {
-		this.anchorType = anchorType;
+	/** @param {HandleType} handleType  */
+	setAnchorType(handleType) {
+		this.handleType = handleType;
 	}
-	getAnchorType() {
-		return this.anchorType;
+	/** @returns {HandleType} */
+	getHandleType() {
+		return this.handleType;
 	}
 	setVisible(newVisible) {
 		if (newVisible) {
@@ -441,7 +443,7 @@ class Handle extends OnePointer {
 		this.update();
 		let parent = this.getParent();
 		if (parent.startHandle && parent.endHandle) {
-			parent.syncAnchorToPrimitive(this.anchorType);
+			parent.syncHandleToPrimitive(this.handleType);
 		}
 	}
 	getImage() {

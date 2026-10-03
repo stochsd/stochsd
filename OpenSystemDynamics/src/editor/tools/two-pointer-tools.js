@@ -35,7 +35,7 @@ class TwoPointerTool extends BaseTool {
 		this.current_connection.setName(primitive_name);
 
 		// make sure start anchor is synced with primitive 
-		this.current_connection.syncAnchorToPrimitive("start");
+		this.current_connection.syncHandleToPrimitive("start");
 	}
 	static mouseMove(x, y, shiftKey) {
 		// Function used during creation of twopointer
@@ -44,9 +44,9 @@ class TwoPointerTool extends BaseTool {
 		}
 		this.current_connection.select();
 		let move_node_id = this.current_connection.endHandle.id;
-		this.mouseMoveSingleAnchor(x, y, shiftKey, move_node_id);
+		this.mouseMoveSingleHandle(x, y, shiftKey, move_node_id);
 	}
-	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = Visuals.get(node_id);
 		let parent = moveObject.getParent();
@@ -95,7 +95,7 @@ class FlowTool extends TwoPointerTool {
 	}
 	static mouseMove(x, y) {
 		if (this.current_connection) {
-			this.mouseMoveSingleAnchor(x, y, false, this.current_connection.endHandle.id);
+			this.mouseMoveSingleHandle(x, y, false, this.current_connection.endHandle.id);
 		} else {
 			// First time moving mouse 
 			this.firstLeftMouseMove(x, y);
@@ -111,7 +111,7 @@ class FlowTool extends TwoPointerTool {
 	 * @param {boolean} shiftKey 
 	 * @param {string} anchor_id 
 	 * */
-	static mouseMoveSingleAnchor(x, y, shiftKey, anchor_id) {
+	static mouseMoveSingleHandle(x, y, shiftKey, anchor_id) {
 		// Function used both during creation and later moving of anchor point 
 		let mainAnchor = Visuals.get(anchor_id);
 		/** @type {FlowVisual} */
@@ -139,7 +139,7 @@ class FlowTool extends TwoPointerTool {
 				/** @type {FlowVisual} */
 				let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
 				let child = Visuals.getOnePointer(only_selected_anchor["child_id"]);
-				if (parent.getType() === "flow" && child.getAnchorType() === "end") {
+				if (parent.getType() === "flow" && child.getHandleType() === "end") {
 					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x, y]) < 10) {
 						if (parent.handles.length > 2) {
@@ -161,7 +161,7 @@ class FlowTool extends TwoPointerTool {
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		if (this.current_connection) {
-			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.endHandle.id);
+			this.mouseUpSingleHandle(x, y, shiftKey, this.current_connection.endHandle.id);
 			this.current_connection = null;
 			mouse.lastClickedPrimitive = null;
 
@@ -172,7 +172,7 @@ class FlowTool extends TwoPointerTool {
 			}
 		}
 	}
-	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
+	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
 		attach_anchor(Visuals.getOnePointer(node_id));
 	}
 	static getType() {
@@ -238,7 +238,7 @@ class LineTool extends TwoPointerTool {
 	static getType() {
 		return "line";
 	}
-	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of anchor point 
 		let moveObject = Visuals.get(node_id);
 		let parent = moveObject.getParent();
@@ -385,36 +385,36 @@ class LinkTool extends TwoPointerTool {
 		this.primitive = createConnector(name, "Link", null, null);
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 	}
-	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
+	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		let anchor = Visuals.getOnePointer(node_id);
 		/** @type {LinkVisual} */
 		let parent = anchor.getParent();
 		parent.dragHandleTo(anchor, [x, y]);
 		parent.update();
 	}
-	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
+	static mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = Visuals.get(move_node_id).getPos();
-		this.mouseMoveSingleAnchor(start_pos[0] + diff_x, start_pos[1] + diff_y, shiftKey, move_node_id);
+		this.mouseMoveSingleHandle(start_pos[0] + diff_x, start_pos[1] + diff_y, shiftKey, move_node_id);
 	}
-	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
-		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
+	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
+		this.mouseMoveSingleHandle(x, y, shiftKey, node_id);
 		/** @type {Handle} */
 		const anchor = Visuals.getOnePointer(node_id);
 		/** @type {BaseConnection} */
 		const parent = anchor.getParent();
-		if (anchor.getAnchorType() === "start" || anchor.getAnchorType() === "end") {
-			attach_anchor(anchor, (attachTo) => !(anchor.getAnchorType() == "end" && attachTo.is_ghost));
+		if (anchor.getHandleType() === "start" || anchor.getHandleType() === "end") {
+			attach_anchor(anchor, (attachTo) => !(anchor.getHandleType() == "end" && attachTo.is_ghost));
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
 				Visuals.deleteSelected();
 			}
-		} else if (anchor.getAnchorType() === "control1" || anchor.getAnchorType() === "control2") {
+		} else if (anchor.getHandleType() === "control1" || anchor.getHandleType() === "control2") {
 			parent.update();
 		}
 	}
 	static leftMouseUp(x, y, shiftKey) {
-		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.endHandle.id);
+		this.mouseUpSingleHandle(x, y, shiftKey, this.current_connection.endHandle.id);
 
 		this.current_connection = null;
 		mouse.lastClickedPrimitive = null;
@@ -460,7 +460,7 @@ function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 	}
 
 
-	switch (anchor.getAnchorType()) {
+	switch (anchor.getHandleType()) {
 		case "start":
 			parentConnection.setStartAttach(attach_to);
 			break;

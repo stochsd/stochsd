@@ -13,7 +13,7 @@ class MouseTool extends BaseTool {
 		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
 			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
 			// Detach anchor 
-			switch (Visuals.getOnePointer(selected_anchor.child_id).getAnchorType()) {
+			switch (Visuals.getOnePointer(selected_anchor.child_id).getHandleType()) {
 				case "start":
 					parent.setStartAttach(null);
 					break;
@@ -47,14 +47,14 @@ class MouseTool extends BaseTool {
 			let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
 			/** @type {typeof TwoPointerTool} */
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveSingleAnchor(x, y, shiftKey, only_selected_anchor["child_id"]);
+			tool.mouseMoveSingleHandle(x, y, shiftKey, only_selected_anchor["child_id"]);
 			parent.update();
 		} else if (only_selected_link) {
 			// special exeption for links of links is being draged directly 
 			/** @type {LinkVisual} */
 			let link = Visuals.getTwoPointer(only_selected_link["parent_id"]);
-			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, link.control1Handle.id);
-			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, link.control2Handle.id);
+			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control1Handle.id);
+			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control2Handle.id);
 			link.update();
 		} else {
 			this.defaultRelativeMove(Visuals.selected(), diff_x, diff_y);
@@ -100,7 +100,7 @@ class MouseTool extends BaseTool {
 		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
 			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
 			let tool = ToolBox.tools[parent.getType()];
-			tool.mouseUpSingleAnchor(x, y, false, selected_anchor.child_id);
+			tool.mouseUpSingleHandle(x, y, false, selected_anchor.child_id);
 		}
 
 		if (mouse.emptyClickDown) {
@@ -113,7 +113,7 @@ class MouseTool extends BaseTool {
 		let only_selected_anchor = get_only_selected_anchor_id();
 		if (only_selected_anchor &&
 			Visuals.getTwoPointer(only_selected_anchor["parent_id"]).getType() === "flow" &&
-			Visuals.getOnePointer(only_selected_anchor["child_id"]).getAnchorType() === "end") {
+			Visuals.getOnePointer(only_selected_anchor["child_id"]).getHandleType() === "end") {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}

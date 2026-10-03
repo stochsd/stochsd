@@ -79,9 +79,9 @@ class FlowVisual extends BaseConnection {
 		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
 	}
 
-	syncAnchorToPrimitive(anchorType) {
-		// Save middle anchor points to primitive
-		super.syncAnchorToPrimitive(anchorType);
+	syncHandleToPrimitive(handleType) {
+		// Save bend points to primitive
+		super.syncHandleToPrimitive(handleType);
 		let middlePoints = "";
 		for (let i = 1; i < this.handles.length-1; i++) {
 			let pos = this.handles[i].getPos();

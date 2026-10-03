@@ -199,31 +199,31 @@ class LinkVisual extends BaseConnection {
 		this.path.resetControls();
 		this.update();
 	}
-	syncAnchorToPrimitive(anchorType) {
-		super.syncAnchorToPrimitive(anchorType);
+	syncHandleToPrimitive(handleType) {
+		super.syncHandleToPrimitive(handleType);
 
-		let startpos = this.startHandle.getPos();
-		let endpos = this.endHandle.getPos();
+		let startPos = this.startHandle.getPos();
+		let endPos = this.endHandle.getPos();
 		let control1Pos = this.control1Handle.getPos();
 		let control2Pos = this.control2Handle.getPos();
 
-		switch (anchorType) {
+		switch (handleType) {
 			case "start":
-				this.curve.x1 = startpos[0];
-				this.curve.y1 = startpos[1];
+				this.curve.x1 = startPos[0];
+				this.curve.y1 = startPos[1];
 				this.curve.update();
 
-				this.b1_line.setAttribute("x1", startpos[0]);
-				this.b1_line.setAttribute("y1", startpos[1]);
+				this.b1_line.setAttribute("x1", startPos[0]);
+				this.b1_line.setAttribute("y1", startPos[1]);
 				break;
 			case "end":
-				this.curve.x4 = endpos[0];
-				this.curve.y4 = endpos[1];
+				this.curve.x4 = endPos[0];
+				this.curve.y4 = endPos[1];
 				this.curve.update();
 
 
-				this.b2_line.setAttribute("x1", endpos[0]);
-				this.b2_line.setAttribute("y1", endpos[1]);
+				this.b2_line.setAttribute("x1", endPos[0]);
+				this.b2_line.setAttribute("y1", endPos[1]);
 				break;
 			case "control1":
 					this.curve.x2 = control1Pos[0];

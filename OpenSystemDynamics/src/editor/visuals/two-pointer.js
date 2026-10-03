@@ -92,12 +92,12 @@ class TwoPointer extends BaseVisual {
 	updateGraphics() {
 
 	}
-	/** @param {AnchorType} anchorType */
-	syncAnchorToPrimitive(anchorType) {
-		// This function should sync anchor position to primitive 
+	/** @param {HandleType} handleType */
+	syncHandleToPrimitive(handleType) {
+		// This function should sync handle position to primitive 
 		let primitive = findID(this.id);
 		if (!primitive) return;
-		switch (anchorType) {
+		switch (handleType) {
 			case "start":
 				setSourcePosition(primitive, this.startHandle.getPos());
 				break;
