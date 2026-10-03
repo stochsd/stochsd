@@ -210,8 +210,8 @@ function syncLink(primitive) {
 	];
 
 	if (bezierPoints.indexOf(null) == -1) {
-		connection.setHandle1Pos([Number(bezierPoints[0]), Number(bezierPoints[1])]);
-		connection.setHandle2Pos([Number(bezierPoints[2]), Number(bezierPoints[3])]);
+		connection.path.movePoint(1, [Number(bezierPoints[0]), Number(bezierPoints[1])]);
+		connection.path.movePoint(2, [Number(bezierPoints[2]), Number(bezierPoints[3])]);
 	} else {
 		// bezierPoints does not exist. Create them
 		connection.resetBezierPoints();

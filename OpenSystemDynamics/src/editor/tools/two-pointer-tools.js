@@ -386,21 +386,11 @@ class LinkTool extends TwoPointerTool {
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
-		let anchor_type = node_id.split(".")[1];
-		if (anchor_type === "start_anchor" || anchor_type === "end_anchor") {
-			let moveObject = Visuals.get(node_id);
-			let parent = moveObject.getParent();
-			moveObject.setPos([x, y]);
-			parent.update();
-		} else if (anchor_type === "b1_anchor") {
-			let parent = Visuals.getTwoPointer(Visuals.getParentId(node_id));
-			parent.setHandle1Pos([x, y]);
-			parent.update();
-		} else if (anchor_type === "b2_anchor") {
-			let parent = Visuals.getTwoPointer(Visuals.getParentId(node_id));
-			parent.setHandle2Pos([x, y]);
-			parent.update();
-		}
+		let anchor = Visuals.getOnePointer(node_id);
+		/** @type {LinkVisual} */
+		let parent = anchor.getParent();
+		parent.dragHandleTo(anchor, [x, y]);
+		parent.update();
 	}
 	static mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = Visuals.get(move_node_id).getPos();

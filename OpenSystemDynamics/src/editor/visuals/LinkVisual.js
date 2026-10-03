@@ -5,19 +5,16 @@ class LinkVisual extends BaseConnection {
 		// reload image of anchor to make sure anchor is ontop
 		this.b1_anchor.reloadImage();
 		this.b2_anchor.reloadImage();
-		/** @type {BezierPath} */
-		this.path = new BezierPath(pos0, pos1);
 	}
 
 	createInitialAnchors(pos0, pos1) {
-		// Used to keep a local coordinate system between start- and endAnchor
-		// startLocal = [0,0], endLocal = [1,0]
-		this.b1Local = [0.3, 0.0];
-		this.b2Local = [0.7, 0.0];
+		// Created here rather than in the constructor, since the anchors are created during super()
+		/** @type {BezierPath} */
+		this.path = new BezierPath(pos0, pos1);
 		super.createInitialAnchors(pos0, pos1);
-		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", [0, 0], "bezier1");
-		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", [0, 0], "bezier2");
-		this.keepRelativeHandlePositions();
+		const [, control1, control2] = this.path.points;
+		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", control1, "bezier1");
+		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", control2, "bezier2");
 		this.b1_anchor.makeSquare();
 		this.b2_anchor.makeSquare();
 	}
@@ -26,30 +23,6 @@ class LinkVisual extends BaseConnection {
 		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
 	}
 
-	worldToLocal(worldPos) {
-		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
-		let origoWorld = this.start_anchor.getPos();
-		let oneZeroWorld = this.end_anchor.getPos();
-		let scaleFactor = distance(origoWorld, oneZeroWorld);
-		let sine = sin(origoWorld, oneZeroWorld);
-		let cosine = cos(origoWorld, oneZeroWorld);
-		let S_pWorld = translate(worldPos, neg(origoWorld));
-		let RS_pWorld = rotate(S_pWorld, -sine, cosine);
-		let posWorld = scale(RS_pWorld, [0, 0], 1 / scaleFactor);
-		return posWorld;
-	}
-	localToWorld(localPos) {
-		// worldPos(localPos) = T*R*S*localPos
-		let origoWorld = this.start_anchor.getPos();
-		let oneZeroWorld = this.end_anchor.getPos();
-		let scaleFactor = distance(origoWorld, oneZeroWorld);
-		let sine = sin(origoWorld, oneZeroWorld);
-		let cosine = cos(origoWorld, oneZeroWorld);
-		let S_pLocal = scale(localPos, [0, 0], scaleFactor);
-		let RS_pLocal = rotate(S_pLocal, sine, cosine);
-		let posWorld = translate(RS_pLocal, origoWorld);
-		return posWorld;
-	}
 	unselect() {
 		this.selected = false;
 		if (this.getChildren().some(child => child.isSelected())) {
@@ -221,17 +194,10 @@ class LinkVisual extends BaseConnection {
 		if (!startVisual || !endVisual) {
 			return;
 		}
-		this.start_anchor.setPos(startVisual.getLinkMountPos(endVisual.getPos()));
-		this.end_anchor.setPos(endVisual.getLinkMountPos(startVisual.getPos()));
-		this.resetBezier1();
-		this.resetBezier2();
+		this.path.movePoint(0, startVisual.getLinkMountPos(endVisual.getPos()));
+		this.path.movePoint(3, endVisual.getLinkMountPos(startVisual.getPos()));
+		this.path.resetControls();
 		this.update();
-	}
-	resetBezier1() {
-		this.b1Local = [0.3, 0];
-	}
-	resetBezier2() {
-		this.b2Local = [0.7, 0];
 	}
 	syncAnchorToPrimitive(anchorType) {
 		super.syncAnchorToPrimitive(anchorType);
@@ -298,34 +264,54 @@ class LinkVisual extends BaseConnection {
 		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
+	/** Places each attached end on the edge of what it's attached to, facing its nearest control point. */
+	#mountEndsOnAttachments() {
+		const [, control1, control2] = this.path.points;
+		const startAttach = this.getStartAttach();
+		if (startAttach) {
+			this.path.movePoint(0, startAttach.getLinkMountPos(control1));
+		}
+		const endAttach = this.getEndAttach();
+		if (endAttach) {
+			this.path.movePoint(3, endAttach.getLinkMountPos(control2));
+		}
+	}
 	update() {
-		// This function is similar to TwoPointer::update but it takes attachments into account
-
-		// Get start position from attach
-		// _start_anchor is null if we are currently creating the connection
-		// _start_attach is null if we are not attached to anything
-
-		if (this.getStartAttach() != null) {
-			if (this.getStartAttach().getPos) {
-				let oldPos = this.start_anchor.getPos();
-				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.getPos());
-			}
-		}
-		if (this.getEndAttach() != null) {
-			if (this.getEndAttach().getPos) {
-				let oldPos = this.end_anchor.getPos();
-				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.getPos());
-			}
-		}
-		this.path.updateControlPoints();
-		this.#syncHandles()
+		this.#mountEndsOnAttachments();
+		this.#syncHandles();
 		// update anchors 
 		this.getAnchors().map(anchor => anchor.updatePosition());
 		this.updateGraphics();
 	}
-	keepRelativeHandlePositions() { // TODO remove
-		this.b1_anchor.setPos(this.localToWorld(this.b1Local));
-		this.b2_anchor.setPos(this.localToWorld(this.b2Local));
+	/**
+	 * @param {AnchorPoint} handle
+	 * @param {[number, number]} position
+	 */
+	dragHandleTo(handle, position) {
+		const index = this.getAnchors().indexOf(handle);
+		if (index == -1) return;
+
+		this.path.movePoint(index, position);
+		this.#syncHandles();
+	}
+	/**
+	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
+	 * @param {AnchorPoint[]} handles
+	 * @param {number} diffX
+	 * @param {number} diffY
+	 */
+	moveHandlesBy(handles, diffX, diffY) {
+		if (handles.length === this.getAnchors().length) {
+			this.path.translate(diffX, diffY);
+			this.#syncHandles();
+			return;
+		}
+		// Targets are taken before moving, since moving an end also moves the control points
+		const targets = handles.map(handle => {
+			const [x, y] = handle.getPos();
+			return [x + diffX, y + diffY];
+		});
+		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
 	}
 	#syncHandles() {
 		const [start, control1, control2, end] = this.path.points
@@ -333,12 +319,6 @@ class LinkVisual extends BaseConnection {
 		this.b1_anchor.setPos(control1)
 		this.b2_anchor.setPos(control2)
 		this.end_anchor.setPos(end)
-	}
-	setHandle1Pos(newPos) {
-		this.b1Local = this.worldToLocal(newPos);
-	}
-	setHandle2Pos(newPos) {
-		this.b2Local = this.worldToLocal(newPos);
 	}
 }
 

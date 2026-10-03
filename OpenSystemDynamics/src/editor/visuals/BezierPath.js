@@ -12,9 +12,7 @@ class BezierPath {
         this.start = start
         /** @type {Point} */
         this.end = end
-        this.resetBezier1()
-        this.resetBezier2()
-        this.updateControlPoints()
+        this.resetControls()
     }
     get points() {
         return [
@@ -24,14 +22,14 @@ class BezierPath {
             [this.end[0], this.end[1]],
         ]
     }
-    resetBezier1() {
+    /** Places the control points back on the straight line between the ends. */
+    resetControls() {
         /** @type {Point} */
-		this.control1Local = [0.3, 0];
-	}
-	resetBezier2() {
+        this.control1Local = [0.3, 0];
         /** @type {Point} */
-		this.control2Local = [0.7, 0];
-	}
+        this.control2Local = [0.7, 0];
+        this.updateControlPoints();
+    }
     updateControlPoints() {
         /** @type {Point} */
 		this.control1 = this.#localToWorld(this.control1Local)
@@ -85,6 +83,17 @@ class BezierPath {
                 this.end = pos;
                 break;
         }
+        this.updateControlPoints();
+    }
+
+    /**
+     * Moves the whole curve. The control points follow since they are stored relative to the ends.
+     * @param {number} diffX
+     * @param {number} diffY
+     */
+    translate(diffX, diffY) {
+        this.start = [this.start[0] + diffX, this.start[1] + diffY];
+        this.end = [this.end[0] + diffX, this.end[1] + diffY];
         this.updateControlPoints();
     }
 

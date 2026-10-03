@@ -469,28 +469,6 @@ class AnchorPoint extends OnePointer {
 		this.clearImage();
 		this.loadImage();
 	}
-	afterMove(diff_x, diff_y) {
-		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
-		// commented out until fixed
-		let parent = this.getParent();
-
-		if (parent.type == "link") {
-			switch (this.anchorType) {
-				case "start":
-					{
-						const [x, y] = parent.b1_anchor.getPos();
-						parent.b1_anchor.setPos([x + diff_x, y + diff_y]);
-					}
-					break;
-				case "end":
-					{
-						const [x, y] = parent.b2_anchor.getPos();
-						parent.b2_anchor.setPos([x + diff_x, y + diff_y]);
-					}
-					break;
-			}
-		}
-	}
 }
 
 function safeDivision(nominator, denominator) {
