@@ -46,62 +46,6 @@ class FlowVisual extends BaseConnection {
 		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
 		return prev_index >= 0 ? anchors[prev_index] : null;
 	}
-	getNextAnchor(anchor_id) {
-		let anchors = this.getAnchors();
-		let anchor_ids = anchors.map(anchor => anchor.id);
-		let index = anchor_ids.indexOf(anchor_id);
-		if (index === -1 && index === anchors.length - 1) {
-			return null;
-		} else {
-			return anchors[index + 1];
-		}
-	}
-
-	/**
-	 * @param {number} requestedValue x-> or 1->y
-	 * @param {string} anchorId 
-	 * @param {number} dimensionIndex 
-	 * @returns {number}
-	 */
-	requestNewAnchorDimension(requestedValue, anchorId, dimensionIndex) {
-		/** @type {AnchorPoint} */
-		const anchor = Visuals.getOnePointer(anchorId);
-		let newValue = requestedValue;
-		const anchorAttach = anchor.getAnchorType() === "start" 
-			? this._start_attach 
-			: anchor.getAnchorType() == "end" 
-			? this._end_attach 
-			: undefined;
-		// if anchor is attached limit movement 
-		if (anchorAttach) {
-			// stockX or stockY
-			const stockDimension = anchorAttach.getPos()[dimensionIndex];
-			// stockWidth or stockHeight
-			const stockSpanSize = anchorAttach.getSize()[dimensionIndex];
-			newValue = clampValue(requestedValue, stockDimension - stockSpanSize / 2, stockDimension + stockSpanSize / 2);
-		} else {
-			// dont allow being closer than minDistance units to a neightbour node 
-			const minDistance = 10;
-			const prevAnchor = this.getPreviousAnchor(anchorId);
-			const nextAnchor = this.getNextAnchor(anchorId);
-
-			let requestPos = anchor.getPos();
-			requestPos[dimensionIndex] = requestedValue;
-			if ((prevAnchor && distance(requestPos, prevAnchor.getPos()) < minDistance) ||
-				(nextAnchor && distance(requestPos, nextAnchor.getPos()) < minDistance)) {
-				// set old value of anchor 
-				newValue = anchor.getPos()[dimensionIndex];
-			} else {
-				// set requested value 
-				newValue = requestedValue;
-			}
-		}
-
-		const pos = anchor.getPos();
-		pos[dimensionIndex] = newValue;
-		anchor.setPos(pos);
-		return newValue;
-	}
 
 	/**
 	 * @param {AnchorPoint} handle
@@ -112,62 +56,8 @@ class FlowVisual extends BaseConnection {
 		if (index == -1) return;
 		
 		this.path.movePoint(index, position)
-		this.handles.map((handle, index) => {
-			const pos = this.path.points[index]
-			handle.setPos(pos)
-		})
+		this.#syncHandles()
 	}
-	/**
-	 * @param {[number, number]} newPosition 
-	 * @param {string} anchorId 
-	 */
-	requestNewAnchorPos(newPosition, anchorId) {
-		let [x, y] = newPosition;
-		let mainAnchor = Visuals.getOnePointer(anchorId);
-
-		let prevAnchor = this.getPreviousAnchor(anchorId);
-		let nextAnchor = this.getNextAnchor(anchorId);
-
-		let isPreviousAlongX = true;
-		let isNextAlongX = true;
-
-		if (prevAnchor && this.handles.length === 2) {
-			const prevAnchorPos = prevAnchor.getPos();
-			isPreviousAlongX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
-			isNextAlongX = !isPreviousAlongX;
-		} else if (nextAnchor && this.handles.length === 2) {
-			const nextAnchorPos = nextAnchor.getPos();
-			isNextAlongX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
-			isPreviousAlongX = !isNextAlongX;
-		} else {
-			// if more than two anchor 
-			let anchors = this.getAnchors();
-			const [x1, y1] = anchors[0].getPos();
-			const [x2, y2] = anchors[1].getPos();
-			const isStartAlongX = Math.abs(x1 - x2) < Math.abs(y1 - y2);
-			const index = anchors.map(anchor => anchor.id).indexOf(anchorId);
-			isPreviousAlongX = ((index % 2) === 1) === isStartAlongX;
-			isNextAlongX = !isPreviousAlongX;
-		}
-
-		if (prevAnchor) {
-			// Get direction of movement or direction of previous anchor 
-			if (isPreviousAlongX) {
-				x = this.requestNewAnchorDimension(x, prevAnchor.id, 0);
-			} else {
-				y = this.requestNewAnchorDimension(y, prevAnchor.id, 1);
-			}
-		}
-		if (nextAnchor) {
-			if (isNextAlongX) {
-				x = this.requestNewAnchorDimension(x, nextAnchor.id, 0);
-			} else {
-				y = this.requestNewAnchorDimension(y, nextAnchor.id, 1);
-			}
-		}
-		mainAnchor.setPos([x, y]);
-	}
-
 
 	syncAnchorToPrimitive(anchorType) {
 		// Save middle anchor points to primitive
@@ -404,14 +294,14 @@ class FlowVisual extends BaseConnection {
 			let oldPos = this.start_anchor.getPos();
 			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.requestNewAnchorPos(newPos, this.start_anchor.id);
+				this.dragHandleTo(this.start_anchor, newPos);
 			}
 		}
 		if (this.getEndAttach() != null && this.end_anchor != null) {
 			let oldPos = this.end_anchor.getPos();
 			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.requestNewAnchorPos(newPos, this.end_anchor.id);
+				this.dragHandleTo(this.end_anchor, newPos);
 			}
 		}
 		super.update();

@@ -117,7 +117,6 @@ class FlowTool extends TwoPointerTool {
 		/** @type {FlowVisual} */
 		let parent = mainAnchor.getParent();
 
-		// parent.requestNewAnchorPos([x, y], anchor_id); // TODO remove
 		parent.dragHandleTo(mainAnchor, [x, y])
 		parent.update();
 		// update connecting links 
