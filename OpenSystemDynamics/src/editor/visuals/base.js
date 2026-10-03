@@ -34,7 +34,7 @@ class BaseVisual {
 				element.setAttribute("fill", this.color);
 			}
 		}
-		// AnchorPoint has no primitive
+		// Handle has no primitive
 		// TODO: this should be replaced with a subscribe pattern instead - where plots can subscribe to primitives
 		this.primitive?.setAttribute("Color", this.color);
 		if (this.color) {
@@ -388,7 +388,7 @@ class OnePointer extends BaseVisual {
 }
 
 /** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} AnchorType */
-class AnchorPoint extends OnePointer {
+class Handle extends OnePointer {
 	/**
 	 * @param {string} id 
 	 * @param {string} type 

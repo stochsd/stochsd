@@ -25,7 +25,7 @@ class FlowVisual extends BaseConnection {
 	}
 	createInitialAnchors(pos0, pos1) {
 		super.createInitialAnchors(pos0, pos1)
-		/** @type {AnchorPoint[]} - start and end as first and last anchor */
+		/** @type {Handle[]} - start and end as first and last anchor */
 		this.handles = [this.startHandle, this.endHandle]
 	}
 	isAcceptableStartAttach(attachVisual) {
@@ -48,7 +48,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	/**
-	 * @param {AnchorPoint} handle
+	 * @param {Handle} handle
 	 * @param {[number, number]} position
 	 */
 	dragHandleTo(handle, position) {
@@ -61,7 +61,7 @@ class FlowVisual extends BaseConnection {
 
 	/**
 	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
-	 * @param {AnchorPoint[]} handles
+	 * @param {Handle[]} handles
 	 * @param {number} diffX
 	 * @param {number} diffY
 	 */
@@ -128,7 +128,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new AnchorPoint(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
+		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
 	}
 	#syncHandles() {
 		const points = this.path.points

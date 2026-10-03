@@ -21,8 +21,8 @@ class TwoPointer extends BaseVisual {
 	}
 
 	createInitialAnchors(pos0, pos1) {
-		this.startHandle = new AnchorPoint(this.id + ".startHandle", "dummy_anchor", pos0, "start");
-		this.endHandle = new AnchorPoint(this.id + ".endHandle", "dummy_anchor", pos1, "end");
+		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start");
+		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end");
 	}
 
 	getAnchors() {
@@ -31,7 +31,7 @@ class TwoPointer extends BaseVisual {
 
 	/**
 	 * Selects this and only one of its anchors, e.g. the anchor being dragged. Everything else is unselected.
-	 * @param {AnchorPoint} anchorToSelect
+	 * @param {Handle} anchorToSelect
 	 */
 	selectWithOnlyAnchor(anchorToSelect) {
 		Visuals.unselectAll();

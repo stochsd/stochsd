@@ -398,7 +398,7 @@ class LinkTool extends TwoPointerTool {
 	}
 	static mouseUpSingleAnchor(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleAnchor(x, y, shiftKey, node_id);
-		/** @type {AnchorPoint} */
+		/** @type {Handle} */
 		const anchor = Visuals.getOnePointer(node_id);
 		/** @type {BaseConnection} */
 		const parent = anchor.getParent();
@@ -430,7 +430,7 @@ LinkTool.init();
 
 
 /** 
- * @param {AnchorPoint} anchor
+ * @param {Handle} anchor
  * @param {(attachTo: BaseVisual) => boolean} [shouldAttach=(attachTo) => true]
  */
 function attach_anchor(anchor, shouldAttach = (attachTo) => true) {

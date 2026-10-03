@@ -63,7 +63,7 @@ class MouseTool extends BaseTool {
 	/** @param {(OnePointer | TwoPointer)[]} move_objects */
 	static defaultRelativeMove(move_objects, diff_x, diff_y) {
 		let objectMoved = false;
-		/** @type {Map<FlowVisual | LinkVisual, AnchorPoint[]>} */
+		/** @type {Map<FlowVisual | LinkVisual, Handle[]>} */
 		let connectionHandles = new Map();
 		for (let visual of move_objects) {
 			if (visual.draggable == undefined) {
@@ -77,7 +77,7 @@ class MouseTool extends BaseTool {
 			objectMoved = true;
 			// Flow and link handles are moved through their connection, which keeps the shape of its path
 			let parent = visual.getParent();
-			if (visual instanceof AnchorPoint && (parent instanceof FlowVisual || parent instanceof LinkVisual)) {
+			if (visual instanceof Handle && (parent instanceof FlowVisual || parent instanceof LinkVisual)) {
 				connectionHandles.set(parent, [...(connectionHandles.get(parent) ?? []), visual]);
 				continue;
 			}
@@ -88,7 +88,7 @@ class MouseTool extends BaseTool {
 			connection.moveHandlesBy(handles, diff_x, diff_y);
 		}
 		if (objectMoved) {
-			// TwoPointer objects depent on OnePointer object (e.g. AnchorPoint, Stock, Auxiliary etc.)
+			// TwoPointer depend on OnePointer object (e.g. Handle, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
 			Visuals.updateAllExceptDisplays(move_objects.map(visual => visual.id));
 		}

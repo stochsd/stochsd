@@ -13,8 +13,8 @@ class LinkVisual extends BaseConnection {
 		this.path = new BezierPath(pos0, pos1);
 		super.createInitialAnchors(pos0, pos1);
 		const [, control1, control2] = this.path.points;
-		this.control1Handle = new AnchorPoint(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
-		this.control2Handle = new AnchorPoint(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
+		this.control1Handle = new Handle(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
+		this.control2Handle = new Handle(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
 		this.control1Handle.makeSquare();
 		this.control2Handle.makeSquare();
 	}
@@ -284,7 +284,7 @@ class LinkVisual extends BaseConnection {
 		this.updateGraphics();
 	}
 	/**
-	 * @param {AnchorPoint} handle
+	 * @param {Handle} handle
 	 * @param {[number, number]} position
 	 */
 	dragHandleTo(handle, position) {
@@ -296,7 +296,7 @@ class LinkVisual extends BaseConnection {
 	}
 	/**
 	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
-	 * @param {AnchorPoint[]} handles
+	 * @param {Handle[]} handles
 	 * @param {number} diffX
 	 * @param {number} diffY
 	 */
