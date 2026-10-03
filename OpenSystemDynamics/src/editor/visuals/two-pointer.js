@@ -8,7 +8,7 @@ class TwoPointer extends BaseVisual {
 		Visuals.addTwoPointer(this);
 
 		// anchors must exist before make graphics 
-		this.createInitialAnchors(pos0, pos1);
+		this.createInitialHandles(pos0, pos1);
 
 		this.makeGraphics();
 		$(this.group).on("mousedown", (event) => {
@@ -20,25 +20,25 @@ class TwoPointer extends BaseVisual {
 		this.endHandle.reloadImage();
 	}
 
-	createInitialAnchors(pos0, pos1) {
+	createInitialHandles(pos0, pos1) {
 		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start");
 		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end");
 	}
 
-	getAnchors() {
+	getHandles() {
 		return [this.startHandle, this.endHandle];
 	}
 
 	/**
 	 * Selects this and only one of its anchors, e.g. the anchor being dragged. Everything else is unselected.
-	 * @param {Handle} anchorToSelect
+	 * @param {Handle} handleToSelect
 	 */
-	selectWithOnlyAnchor(anchorToSelect) {
+	selectWithOnlyHandle(handleToSelect) {
 		Visuals.unselectAll();
 		this.select();
-		for (let anchor of this.getAnchors()) {
-			if (anchor.id !== anchorToSelect.id) {
-				anchor.unselect();
+		for (let handle of this.getHandles()) {
+			if (handle.id !== handleToSelect.id) {
+				handle.unselect();
 			}
 		}
 	}
@@ -71,13 +71,13 @@ class TwoPointer extends BaseVisual {
 
 	unselect() {
 		this.selected = false;
-		for (let anchor of this.getAnchors()) {
+		for (let anchor of this.getHandles()) {
 			anchor.setVisible(false);
 		}
 	}
 	select() {
 		this.selected = true;
-		for (let anchor of this.getAnchors()) {
+		for (let anchor of this.getHandles()) {
 			anchor.select();
 			anchor.setVisible(true);
 		}

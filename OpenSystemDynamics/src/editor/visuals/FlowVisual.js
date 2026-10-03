@@ -23,8 +23,8 @@ class FlowVisual extends BaseConnection {
 		this.valve;
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
-	createInitialAnchors(pos0, pos1) {
-		super.createInitialAnchors(pos0, pos1)
+	createInitialHandles(pos0, pos1) {
+		super.createInitialHandles(pos0, pos1)
 		/** @type {Handle[]} - start and end as first and last anchor */
 		this.handles = [this.startHandle, this.endHandle]
 	}
@@ -37,11 +37,11 @@ class FlowVisual extends BaseConnection {
 	getRadius() {
 		return 20;
 	}
-	getAnchors() {
+	getHandles() {
 		return this.handles;
 	}
-	getPreviousAnchor(anchor_id) {
-		let anchors = this.getAnchors();
+	getPreviousHandle(anchor_id) {
+		let anchors = this.getHandles();
 		let anchor_ids = anchors.map(anchor => anchor.id);
 		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
 		return prev_index >= 0 ? anchors[prev_index] : null;
@@ -183,14 +183,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let valveX = (points[this.valveIndex][0] + points[this.valveIndex + 1][0]) / 2;
 		let valveY = (points[this.valveIndex][1] + points[this.valveIndex + 1][1]) / 2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex + 1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -201,7 +201,7 @@ class FlowVisual extends BaseConnection {
 
 	/** @returns {[number, number]} */
 	getVariablePos() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex + 1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -232,7 +232,7 @@ class FlowVisual extends BaseConnection {
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
-		this.getAnchors().map(anchor => anchor.setColor(color));
+		this.getHandles().map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
@@ -270,7 +270,7 @@ class FlowVisual extends BaseConnection {
 
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let len = points.length;
 		let p1 = points[len - 1];
 		let p2 = points[len - 2];
@@ -278,7 +278,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let last = points[points.length - 1];
 		let secondLast = points[points.length - 2];
 		let sine = sin(last, secondLast);
@@ -295,7 +295,7 @@ class FlowVisual extends BaseConnection {
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length - 2];
 
@@ -315,7 +315,7 @@ class FlowVisual extends BaseConnection {
 		}
 		super.update();
 		// update anchors 
-		this.getAnchors().map(anchor => anchor.updatePosition());
+		this.getHandles().map(anchor => anchor.updatePosition());
 
 		if (this.primitive && this.icons) {
 			const hasDefError = DefinitionError.has(this.primitive);
@@ -325,7 +325,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	updateGraphics() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPosition(points[0], points[1]);

@@ -72,7 +72,7 @@ class BaseVisual {
 		if (event.which === mouse.left) {
 			if (this.type == "dummy_anchor") {
 				Visuals.unselectAllExcept(Visuals.getParentId(this.id));
-			} else if (get_only_selected_anchor_id()) {
+			} else if (getOnlySelectedHandleId()) {
 				Visuals.unselectAll();
 			}
 			if (this.isSelected()) {

@@ -349,7 +349,7 @@ export const scenarios = [
 			return await page.run(`
 				const flow = Visuals.get(primitives("Flow")[0].id);
 				return {
-					anchors: flow.getAnchors().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round)),
+					anchors: flow.getHandles().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round)),
 					attached: [flow.getStartAttach()?.id ?? null, flow.getEndAttach()?.id ?? null],
 					selected: Visuals.all().filter(visual => visual.isSelected()).map(visual => visual.id).sort(),
 				};
@@ -375,7 +375,7 @@ export const scenarios = [
 				await page.mouse("mouseReleased", ...at(x, y), { button: "right" });
 			};
 			const anchors = () => page.run(`
-				return Visuals.get(primitives("Flow")[0].id).getAnchors().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round));
+				return Visuals.get(primitives("Flow")[0].id).getHandles().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round));
 			`);
 			const steps = {};
 

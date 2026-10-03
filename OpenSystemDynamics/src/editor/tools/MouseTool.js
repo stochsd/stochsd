@@ -8,12 +8,12 @@ class MouseTool extends BaseTool {
 			RectSelector.start(mouse.downX, mouse.downY);
 		}
 
-		let selected_anchor = get_only_selected_anchor_id();
+		let selectedHandle = getOnlySelectedHandleId();
 		// Only one anchor is selected AND that that anchor has attaching capabilities 
-		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
-			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
-			// Detach anchor 
-			switch (Visuals.getOnePointer(selected_anchor.child_id).getHandleType()) {
+		if (selectedHandle && Visuals.getTwoPointer(selectedHandle.parent_id).getStartAttach) {
+			let parent = Visuals.getTwoPointer(selectedHandle.parent_id);
+			// Detach handle 
+			switch (Visuals.getOnePointer(selectedHandle.child_id).getHandleType()) {
 				case "start":
 					parent.setStartAttach(null);
 					break;
@@ -38,21 +38,21 @@ class MouseTool extends BaseTool {
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger mouse.emptyClickDown
-		let only_selected_anchor = get_only_selected_anchor_id();
-		let only_selected_link = get_only_link_selected();
-		if (only_selected_anchor) {
+		const onlySelectedHandle = getOnlySelectedHandleId();
+		const onlySelectedLink = get_only_link_selected();
+		if (onlySelectedHandle) {
 			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
-			let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
+			let parent = Visuals.getTwoPointer(onlySelectedHandle["parent_id"]);
 			/** @type {typeof TwoPointerTool} */
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveSingleHandle(x, y, shiftKey, only_selected_anchor["child_id"]);
+			tool.mouseMoveSingleHandle(x, y, shiftKey, onlySelectedHandle["child_id"]);
 			parent.update();
-		} else if (only_selected_link) {
+		} else if (onlySelectedLink) {
 			// special exeption for links of links is being draged directly 
 			/** @type {LinkVisual} */
-			let link = Visuals.getTwoPointer(only_selected_link["parent_id"]);
+			let link = Visuals.getTwoPointer(onlySelectedLink["parent_id"]);
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control1Handle.id);
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control2Handle.id);
 			link.update();
@@ -94,13 +94,13 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static leftMouseUp(x, y) {
-		// Check if we selected only 1 anchor element and in that case detach it;
-		let selected_anchor = get_only_selected_anchor_id();
+		// Check if we selected only 1 handle element and in that case detach it;
+		const selectedHandle = getOnlySelectedHandleId();
 
-		if (selected_anchor && Visuals.getTwoPointer(selected_anchor.parent_id).getStartAttach) {
-			let parent = Visuals.getTwoPointer(selected_anchor.parent_id);
-			let tool = ToolBox.tools[parent.getType()];
-			tool.mouseUpSingleHandle(x, y, false, selected_anchor.child_id);
+		if (selectedHandle && Visuals.getTwoPointer(selectedHandle.parent_id).getStartAttach) {
+			const parent = Visuals.getTwoPointer(selectedHandle.parent_id);
+			const tool = ToolBox.tools[parent.getType()];
+			tool.mouseUpSingleHandle(x, y, false, selectedHandle.child_id);
 		}
 
 		if (mouse.emptyClickDown) {
@@ -110,10 +110,10 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static rightMouseDown(x, y) {
-		let only_selected_anchor = get_only_selected_anchor_id();
-		if (only_selected_anchor &&
-			Visuals.getTwoPointer(only_selected_anchor["parent_id"]).getType() === "flow" &&
-			Visuals.getOnePointer(only_selected_anchor["child_id"]).getHandleType() === "end") {
+		let onlySelectedHandle = getOnlySelectedHandleId();
+		if (onlySelectedHandle &&
+			Visuals.getTwoPointer(onlySelectedHandle["parent_id"]).getType() === "flow" &&
+			Visuals.getOnePointer(onlySelectedHandle["child_id"]).getHandleType() === "end") {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}

@@ -47,22 +47,22 @@ class TwoPointerTool extends BaseTool {
 		this.mouseMoveSingleHandle(x, y, shiftKey, move_node_id);
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
-		// Function used both during creation and later moving of anchor point 
-		let moveObject = Visuals.get(node_id);
-		let parent = moveObject.getParent();
+		// Function used both during creation and later moving of handle 
+		const visualToMove = Visuals.get(node_id);
+		let parent = visualToMove.getParent();
 		if (shiftKey) {
-			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
+			const [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.startHandle.id === node_id) {
 				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
-			let sideX = x - oppositeX;
-			let sideY = y - oppositeY;
-			let shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
-			let signX = Math.sign(sideX);
-			let signY = Math.sign(sideY);
-			moveObject.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
+			const sideX = x - oppositeX;
+			const sideY = y - oppositeY;
+			const shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
+			const signX = Math.sign(sideX);
+			const signY = Math.sign(sideY);
+			visualToMove.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
 		} else {
-			moveObject.setPos([x, y]);
+			visualToMove.setPos([x, y]);
 		}
 		parent.update();
 		Visuals.getOnePointer(node_id).updatePosition();
@@ -109,15 +109,15 @@ class FlowTool extends TwoPointerTool {
 	 * @param {number} x 
 	 * @param {number} y 
 	 * @param {boolean} shiftKey 
-	 * @param {string} anchor_id 
+	 * @param {string} handleId 
 	 * */
-	static mouseMoveSingleHandle(x, y, shiftKey, anchor_id) {
-		// Function used both during creation and later moving of anchor point 
-		let mainAnchor = Visuals.get(anchor_id);
+	static mouseMoveSingleHandle(x, y, shiftKey, handleId) {
+		// Function used both during creation and later moving of handle
+		const mainHandle = Visuals.get(handleId);
 		/** @type {FlowVisual} */
-		let parent = mainAnchor.getParent();
+		const parent = mainHandle.getParent();
 
-		parent.dragHandleTo(mainAnchor, [x, y])
+		parent.dragHandleTo(mainHandle, [x, y])
 		parent.update();
 		// update connecting links 
 		Visuals.connectionsAttachedTo(parent).forEach(conn => conn.update());
@@ -129,19 +129,19 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
-		this.current_connection.selectWithOnlyAnchor(this.current_connection.endHandle);
+		this.current_connection.selectWithOnlyHandle(this.current_connection.endHandle);
 		this.current_connection.updateNamePosition();
 	}
 	static rightMouseDown(x, y) {
 		if (mouse.isLeftDown) {
-			let only_selected_anchor = get_only_selected_anchor_id();
-			if (only_selected_anchor) {
+			let onlySelectedHandle = getOnlySelectedHandleId();
+			if (onlySelectedHandle) {
 				/** @type {FlowVisual} */
-				let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
-				let child = Visuals.getOnePointer(only_selected_anchor["child_id"]);
+				let parent = Visuals.getTwoPointer(onlySelectedHandle["parent_id"]);
+				let child = Visuals.getOnePointer(onlySelectedHandle["child_id"]);
 				if (parent.getType() === "flow" && child.getHandleType() === "end") {
-					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
-					if (distance(prevAnchorPos, [x, y]) < 10) {
+					let prevHandlePos = parent.getPreviousHandle(child.id).getPos();
+					if (distance(prevHandlePos, [x, y]) < 10) {
 						if (parent.handles.length > 2) {
 							// remove last middle anchor
 							parent.removeLastBend();
@@ -149,7 +149,7 @@ class FlowTool extends TwoPointerTool {
 					} else {
 						// Add middle anchor 
 						parent.addBend([x, y]);
-						parent.selectWithOnlyAnchor(child);
+						parent.selectWithOnlyHandle(child);
 					}
 				}
 			}
@@ -173,7 +173,7 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
-		attach_anchor(Visuals.getOnePointer(node_id));
+		attachHandle(Visuals.getOnePointer(node_id));
 	}
 	static getType() {
 		return "flow";
@@ -239,7 +239,7 @@ class LineTool extends TwoPointerTool {
 		return "line";
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
-		// Function used both during creation and later moving of anchor point 
+		// Function used both during creation and later moving of handle
 		let moveObject = Visuals.get(node_id);
 		let parent = moveObject.getParent();
 		if (shiftKey) {
@@ -403,7 +403,7 @@ class LinkTool extends TwoPointerTool {
 		/** @type {BaseConnection} */
 		const parent = anchor.getParent();
 		if (anchor.getHandleType() === "start" || anchor.getHandleType() === "end") {
-			attach_anchor(anchor, (attachTo) => !(anchor.getHandleType() == "end" && attachTo.is_ghost));
+			attachHandle(anchor, (attachTo) => !(anchor.getHandleType() == "end" && attachTo.is_ghost));
 			parent.update();
 			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
 				// delete link is not attached at both ends 
@@ -430,16 +430,16 @@ LinkTool.init();
 
 
 /** 
- * @param {Handle} anchor
+ * @param {Handle} handle
  * @param {(attachTo: BaseVisual) => boolean} [shouldAttach=(attachTo) => true]
  */
-function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
-	[x, y] = anchor.getPos();
-	let parentConnection = anchor.getParent();
+function attachHandle(handle, shouldAttach = (attachTo) => true) {
+	[x, y] = handle.getPos();
+	let parentConnection = handle.getParent();
 
 	let elements_under = Visuals.attachablesAt(x, y);
-	let anchor_element = null;
-	let attach_to = null;
+	let handleElement = null;
+	let attachTo = null;
 
 
 	// Find unselected stock element
@@ -449,23 +449,23 @@ function attach_anchor(anchor, shouldAttach = (attachTo) => true) {
 		let elemIsNotSelected = !element.isSelected();
 		let elemIsNotParentOfAnchor = element[i] != parentConnection;
 		if (elemIsNotSelected && elemIsNotParentOfAnchor) {
-			attach_to = element;
+			attachTo = element;
 			break;
 		}
 	}
-	if (attach_to == null) {
+	if (attachTo == null) {
 		return false;
-	} else if (!shouldAttach(attach_to)) {
+	} else if (!shouldAttach(attachTo)) {
 		return false
 	}
 
 
-	switch (anchor.getHandleType()) {
+	switch (handle.getHandleType()) {
 		case "start":
-			parentConnection.setStartAttach(attach_to);
+			parentConnection.setStartAttach(attachTo);
 			break;
 		case "end":
-			parentConnection.setEndAttach(attach_to);
+			parentConnection.setEndAttach(attachTo);
 			break;
 	}
 

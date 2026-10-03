@@ -7,11 +7,11 @@ class LinkVisual extends BaseConnection {
 		this.control2Handle.reloadImage();
 	}
 
-	createInitialAnchors(pos0, pos1) {
+	createInitialHandles(pos0, pos1) {
 		// Created here rather than in the constructor, since the anchors are created during super()
 		/** @type {BezierPath} */
 		this.path = new BezierPath(pos0, pos1);
-		super.createInitialAnchors(pos0, pos1);
+		super.createInitialHandles(pos0, pos1);
 		const [, control1, control2] = this.path.points;
 		this.control1Handle = new Handle(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
 		this.control2Handle = new Handle(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
@@ -19,7 +19,7 @@ class LinkVisual extends BaseConnection {
 		this.control2Handle.makeSquare();
 	}
 
-	getAnchors() {
+	getHandles() {
 		return [this.startHandle, this.control1Handle, this.control2Handle, this.endHandle];
 	}
 
@@ -54,7 +54,7 @@ class LinkVisual extends BaseConnection {
 
 		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
-			for (let anchor of this.getAnchors()) {
+			for (let anchor of this.getHandles()) {
 				anchor.select();
 				anchor.setVisible(true);
 			}
@@ -280,7 +280,7 @@ class LinkVisual extends BaseConnection {
 		this.#mountEndsOnAttachments();
 		this.#syncHandles();
 		// update anchors 
-		this.getAnchors().map(anchor => anchor.updatePosition());
+		this.getHandles().map(anchor => anchor.updatePosition());
 		this.updateGraphics();
 	}
 	/**
@@ -288,7 +288,7 @@ class LinkVisual extends BaseConnection {
 	 * @param {[number, number]} position
 	 */
 	dragHandleTo(handle, position) {
-		const index = this.getAnchors().indexOf(handle);
+		const index = this.getHandles().indexOf(handle);
 		if (index == -1) return;
 
 		this.path.movePoint(index, position);
@@ -301,7 +301,7 @@ class LinkVisual extends BaseConnection {
 	 * @param {number} diffY
 	 */
 	moveHandlesBy(handles, diffX, diffY) {
-		if (handles.length === this.getAnchors().length) {
+		if (handles.length === this.getHandles().length) {
 			this.path.translate(diffX, diffY);
 			this.#syncHandles();
 			return;
