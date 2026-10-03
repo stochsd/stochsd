@@ -16,17 +16,17 @@ class SVG {
   /** @type {SVGGElement} @static  */
   static plotLayer;
   /** @type {SVGGElement} @static  */
-  static anchorLayer;
+  static handleLayer;
   static init() {
     SVG.svgElement = document.getElementById("svgplane");
-    SVG.stockLayer = SVG.svgElement.querySelector("g.layer.stock");
-    SVG.variableLayer = SVG.svgElement.querySelector("g.layer.variable");
-		SVG.constantLayer = SVG.svgElement.querySelector("g.layer.constant");
-		SVG.converterLayer = SVG.svgElement.querySelector("g.layer.converter");
-		SVG.flowLayer = SVG.svgElement.querySelector("g.layer.flow");
-		SVG.linkLayer = SVG.svgElement.querySelector("g.layer.link");
-		SVG.plotLayer = SVG.svgElement.querySelector("g.layer.plot");
-    SVG.anchorLayer = SVG.svgElement.querySelector("g.layer.anchor");
+    SVG.stockLayer = SVG.svgElement.querySelector("g.layer.stocks");
+    SVG.variableLayer = SVG.svgElement.querySelector("g.layer.variables");
+	SVG.constantLayer = SVG.svgElement.querySelector("g.layer.constants");
+	SVG.converterLayer = SVG.svgElement.querySelector("g.layer.converters");
+	SVG.flowLayer = SVG.svgElement.querySelector("g.layer.flows");
+	SVG.linkLayer = SVG.svgElement.querySelector("g.layer.links");
+	SVG.plotLayer = SVG.svgElement.querySelector("g.layer.plots");
+    SVG.handleLayer = SVG.svgElement.querySelector("g.layer.handles");
   }
 
   /**

@@ -461,7 +461,7 @@ class Handle extends OnePointer {
 
 	}
 	getLayer() {
-		return SVG.anchorLayer;
+		return SVG.handleLayer;
 	}
 	makeSquare() {
 		this.isSquare = true;
