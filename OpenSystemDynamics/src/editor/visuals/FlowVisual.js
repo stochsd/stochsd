@@ -63,7 +63,7 @@ class FlowVisual extends BaseConnection {
 		// Save middle anchor points to primitive
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
-		for (i = 1; i < this.handles.length-1; i++) {
+		for (let i = 1; i < this.handles.length-1; i++) {
 			let pos = this.handles[i].getPos();
 			let x = pos[0];
 			let y = pos[1];
@@ -131,7 +131,6 @@ class FlowVisual extends BaseConnection {
 	}
 
 	/**
-	 * 
 	 * @param {string} middlePointsString 
 	 * @returns {[number, number][]}
 	 */
