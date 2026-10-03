@@ -16,17 +16,17 @@ class TwoPointer extends BaseVisual {
 		});
 
 		// this is done so anchor is ontop 
-		this.start_anchor.reloadImage();
-		this.end_anchor.reloadImage();
+		this.startHandle.reloadImage();
+		this.endHandle.reloadImage();
 	}
 
 	createInitialAnchors(pos0, pos1) {
-		this.start_anchor = new AnchorPoint(this.id + ".start_anchor", "dummy_anchor", pos0, "start");
-		this.end_anchor = new AnchorPoint(this.id + ".end_anchor", "dummy_anchor", pos1, "end");
+		this.startHandle = new AnchorPoint(this.id + ".startHandle", "dummy_anchor", pos0, "start");
+		this.endHandle = new AnchorPoint(this.id + ".endHandle", "dummy_anchor", pos1, "end");
 	}
 
 	getAnchors() {
-		return [this.start_anchor, this.end_anchor];
+		return [this.startHandle, this.endHandle];
 	}
 
 	/**
@@ -54,14 +54,14 @@ class TwoPointer extends BaseVisual {
 
 	setColor(color) {
 		super.setColor(color);
-		this.start_anchor.setColor(color);
-		this.end_anchor.setColor(color);
+		this.startHandle.setColor(color);
+		this.endHandle.setColor(color);
 	}
 
-	get startX() { return this.start_anchor.getPos()[0]; }
-	get startY() { return this.start_anchor.getPos()[1]; }
-	get endX() { return this.end_anchor.getPos()[0]; }
-	get endY() { return this.end_anchor.getPos()[1]; }
+	get startX() { return this.startHandle.getPos()[0]; }
+	get startY() { return this.startHandle.getPos()[1]; }
+	get endX() { return this.endHandle.getPos()[0]; }
+	get endY() { return this.endHandle.getPos()[1]; }
 
 	getPos() { return [(this.startX + this.endX) / 2, (this.startY + this.endY) / 2]; }
 	getMinX() { return Math.min(this.startX, this.endX); }
@@ -99,10 +99,10 @@ class TwoPointer extends BaseVisual {
 		if (!primitive) return;
 		switch (anchorType) {
 			case "start":
-				setSourcePosition(primitive, this.start_anchor.getPos());
+				setSourcePosition(primitive, this.startHandle.getPos());
 				break;
 			case "end":
-				setTargetPosition(primitive, this.end_anchor.getPos());
+				setTargetPosition(primitive, this.endHandle.getPos());
 				break;
 		}
 	}
@@ -119,8 +119,8 @@ class BaseConnection extends TwoPointer {
 			let primitive = findID(this.id);
 			let sourcePoint = getSourcePosition(primitive);
 			let targetPoint = getTargetPosition(primitive);
-			this.start_anchor.setPos(sourcePoint);
-			this.end_anchor.setPos(targetPoint);
+			this.startHandle.setPos(sourcePoint);
+			this.endHandle.setPos(targetPoint);
 			alert("Position got updated");
 		}
 	}

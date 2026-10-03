@@ -3,7 +3,7 @@
 // OnePointers are visuals with a single position, e.g. stocks, variables and the anchor points of TwoPointers.
 // TwoPointers are visuals spanning two points, e.g. flows, links, plots, tables and shapes.
 // A visual's parent is the top level visual it belongs to, e.g. the flow an anchor belongs to.
-// A top level visual is its own parent. Children have ids like "<parent id>.start_anchor".
+// A top level visual is its own parent. Children have ids like "<parent id>.startHandle".
 // Nothing outside this class should touch the maps directly.
 class Visuals {
 	/** @type {{ [id: string]: OnePointer }} */
@@ -34,7 +34,7 @@ class Visuals {
 	}
 
 	/**
-	 * The id of the parent, e.g. "12" for "12.start_anchor". A top level visual is its own parent.
+	 * The id of the parent, e.g. "12" for "12.startHandle". A top level visual is its own parent.
 	 * @param {string} id
 	 */
 	static getParentId(id) {

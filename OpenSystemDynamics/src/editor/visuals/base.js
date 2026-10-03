@@ -387,7 +387,7 @@ class OnePointer extends BaseVisual {
 	}
 }
 
-/** @typedef {"invalid" | "start" | "end" | "bezier1" | "bezier2" | "orthoMiddle"} AnchorType */
+/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} AnchorType */
 class AnchorPoint extends OnePointer {
 	/**
 	 * @param {string} id 
@@ -440,7 +440,7 @@ class AnchorPoint extends OnePointer {
 	updatePosition() {
 		this.update();
 		let parent = this.getParent();
-		if (parent.start_anchor && parent.end_anchor) {
+		if (parent.startHandle && parent.endHandle) {
 			parent.syncAnchorToPrimitive(this.anchorType);
 		}
 	}

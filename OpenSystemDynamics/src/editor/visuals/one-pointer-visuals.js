@@ -26,17 +26,17 @@ class StockVisual extends OnePointer {
 		let startConn = Visuals.connectionsFrom(this);
 		for (let conn of startConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
-				let oldConnPos = conn.start_anchor.getPos();
+				let oldConnPos = conn.startHandle.getPos();
 				let newConnPos = translate(oldConnPos, diff);
-				conn.dragHandleTo(conn.start_anchor, newConnPos);
+				conn.dragHandleTo(conn.startHandle, newConnPos);
 			}
 		}
 		let endConn = Visuals.connectionsTo(this);
 		for (let conn of endConn) {
 			if (conn.type === "flow" && conn.isSelected() === false) {
-				let oldAnchorPos = conn.end_anchor.getPos();
+				let oldAnchorPos = conn.endHandle.getPos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
-				conn.dragHandleTo(conn.end_anchor, newAnchorPos);
+				conn.dragHandleTo(conn.endHandle, newAnchorPos);
 			}
 		}
 	}

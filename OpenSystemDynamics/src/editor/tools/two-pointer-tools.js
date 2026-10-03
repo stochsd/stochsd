@@ -43,7 +43,7 @@ class TwoPointerTool extends BaseTool {
 			return;
 		}
 		this.current_connection.select();
-		let move_node_id = `${this.current_connection.id}.end_anchor`;
+		let move_node_id = this.current_connection.endHandle.id;
 		this.mouseMoveSingleAnchor(x, y, shiftKey, move_node_id);
 	}
 	static mouseMoveSingleAnchor(x, y, shiftKey, node_id) {
@@ -52,7 +52,7 @@ class TwoPointerTool extends BaseTool {
 		let parent = moveObject.getParent();
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
-			if (parent.start_anchor.id === node_id) {
+			if (parent.startHandle.id === node_id) {
 				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
 			let sideX = x - oppositeX;
@@ -95,7 +95,7 @@ class FlowTool extends TwoPointerTool {
 	}
 	static mouseMove(x, y) {
 		if (this.current_connection) {
-			this.mouseMoveSingleAnchor(x, y, false, this.current_connection.end_anchor.id);
+			this.mouseMoveSingleAnchor(x, y, false, this.current_connection.endHandle.id);
 		} else {
 			// First time moving mouse 
 			this.firstLeftMouseMove(x, y);
@@ -129,7 +129,7 @@ class FlowTool extends TwoPointerTool {
 		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
-		this.current_connection.selectWithOnlyAnchor(this.current_connection.end_anchor);
+		this.current_connection.selectWithOnlyAnchor(this.current_connection.endHandle);
 		this.current_connection.updateNamePosition();
 	}
 	static rightMouseDown(x, y) {
@@ -161,7 +161,7 @@ class FlowTool extends TwoPointerTool {
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		if (this.current_connection) {
-			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+			this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.endHandle.id);
 			this.current_connection = null;
 			mouse.lastClickedPrimitive = null;
 
@@ -244,7 +244,7 @@ class LineTool extends TwoPointerTool {
 		let parent = moveObject.getParent();
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
-			if (parent.start_anchor.id === node_id) {
+			if (parent.startHandle.id === node_id) {
 				[oppositeX, oppositeY] = [parent.endX, parent.endY];
 			}
 			let sideX = x - oppositeX;
@@ -409,12 +409,12 @@ class LinkTool extends TwoPointerTool {
 				// delete link is not attached at both ends 
 				Visuals.deleteSelected();
 			}
-		} else if (anchor.getAnchorType() === "bezier1" || anchor.getAnchorType() === "bezier2") {
+		} else if (anchor.getAnchorType() === "control1" || anchor.getAnchorType() === "control2") {
 			parent.update();
 		}
 	}
 	static leftMouseUp(x, y, shiftKey) {
-		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.end_anchor.id);
+		this.mouseUpSingleAnchor(x, y, shiftKey, this.current_connection.endHandle.id);
 
 		this.current_connection = null;
 		mouse.lastClickedPrimitive = null;

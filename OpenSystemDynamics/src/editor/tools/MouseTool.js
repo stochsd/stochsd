@@ -51,10 +51,11 @@ class MouseTool extends BaseTool {
 			parent.update();
 		} else if (only_selected_link) {
 			// special exeption for links of links is being draged directly 
-			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"] + ".b1_anchor");
-			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, only_selected_link["parent_id"] + ".b2_anchor");
-			let parent = Visuals.getTwoPointer(only_selected_link["parent_id"]);
-			parent.update();
+			/** @type {LinkVisual} */
+			let link = Visuals.getTwoPointer(only_selected_link["parent_id"]);
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, link.control1Handle.id);
+			LinkTool.mouseRelativeMoveSingleAnchor(diff_x, diff_y, shiftKey, link.control2Handle.id);
+			link.update();
 		} else {
 			this.defaultRelativeMove(Visuals.selected(), diff_x, diff_y);
 		}

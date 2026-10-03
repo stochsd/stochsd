@@ -3,8 +3,8 @@ class LinkVisual extends BaseConnection {
 		super(id, type, pos0, pos1);
 
 		// reload image of anchor to make sure anchor is ontop
-		this.b1_anchor.reloadImage();
-		this.b2_anchor.reloadImage();
+		this.control1Handle.reloadImage();
+		this.control2Handle.reloadImage();
 	}
 
 	createInitialAnchors(pos0, pos1) {
@@ -13,14 +13,14 @@ class LinkVisual extends BaseConnection {
 		this.path = new BezierPath(pos0, pos1);
 		super.createInitialAnchors(pos0, pos1);
 		const [, control1, control2] = this.path.points;
-		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", control1, "bezier1");
-		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", control2, "bezier2");
-		this.b1_anchor.makeSquare();
-		this.b2_anchor.makeSquare();
+		this.control1Handle = new AnchorPoint(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
+		this.control2Handle = new AnchorPoint(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
+		this.control1Handle.makeSquare();
+		this.control2Handle.makeSquare();
 	}
 
 	getAnchors() {
-		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
+		return [this.startHandle, this.control1Handle, this.control2Handle, this.endHandle];
 	}
 
 	unselect() {
@@ -143,19 +143,19 @@ class LinkVisual extends BaseConnection {
 		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
-		this.start_anchor.setColor(color);
-		this.end_anchor.setColor(color);
-		this.b1_anchor.setColor(color);
-		this.b2_anchor.setColor(color);
+		this.startHandle.setColor(color);
+		this.endHandle.setColor(color);
+		this.control1Handle.setColor(color);
+		this.control2Handle.setColor(color);
 		this.b1_line.setAttribute("stroke", color);
 		this.b2_line.setAttribute("stroke", color);
 	}
 
 	makeGraphics() {
-		let [x1, y1] = this.start_anchor.getPos();
-		let [x2, y2] = this.b1_anchor.getPos();
-		let [x3, y3] = this.b2_anchor.getPos();
-		let [x4, y4] = this.end_anchor.getPos();
+		let [x1, y1] = this.startHandle.getPos();
+		let [x2, y2] = this.control1Handle.getPos();
+		let [x3, y3] = this.control2Handle.getPos();
+		let [x4, y4] = this.endHandle.getPos();
 
 		this.arrowPath = SVG.fromString(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = SVG.group([this.arrowPath]);
@@ -202,10 +202,10 @@ class LinkVisual extends BaseConnection {
 	syncAnchorToPrimitive(anchorType) {
 		super.syncAnchorToPrimitive(anchorType);
 
-		let startpos = this.start_anchor.getPos();
-		let endpos = this.end_anchor.getPos();
-		let b1pos = this.b1_anchor.getPos();
-		let b2pos = this.b2_anchor.getPos();
+		let startpos = this.startHandle.getPos();
+		let endpos = this.endHandle.getPos();
+		let control1Pos = this.control1Handle.getPos();
+		let control2Pos = this.control2Handle.getPos();
 
 		switch (anchorType) {
 			case "start":
@@ -225,37 +225,37 @@ class LinkVisual extends BaseConnection {
 				this.b2_line.setAttribute("x1", endpos[0]);
 				this.b2_line.setAttribute("y1", endpos[1]);
 				break;
-			case "bezier1":
-					this.curve.x2 = b1pos[0];
-					this.curve.y2 = b1pos[1];
+			case "control1":
+					this.curve.x2 = control1Pos[0];
+					this.curve.y2 = control1Pos[1];
 					this.curve.update();
 
-					this.b1_line.setAttribute("x2", b1pos[0]);
-					this.b1_line.setAttribute("y2", b1pos[1]);
+					this.b1_line.setAttribute("x2", control1Pos[0]);
+					this.b1_line.setAttribute("y2", control1Pos[1]);
 
-					this.primitive.setAttribute("b1x", b1pos[0]);
-					this.primitive.setAttribute("b1y", b1pos[1]);
+					this.primitive.setAttribute("b1x", control1Pos[0]);
+					this.primitive.setAttribute("b1y", control1Pos[1]);
 				break;
-			case "bezier2":
-					this.curve.x3 = b2pos[0];
-					this.curve.y3 = b2pos[1];
+			case "control2":
+					this.curve.x3 = control2Pos[0];
+					this.curve.y3 = control2Pos[1];
 					this.curve.update();
 
-					this.b2_line.setAttribute("x2", b2pos[0]);
-					this.b2_line.setAttribute("y2", b2pos[1]);
+					this.b2_line.setAttribute("x2", control2Pos[0]);
+					this.b2_line.setAttribute("y2", control2Pos[1]);
 
-					this.primitive.setAttribute("b2x", b2pos[0]);
-					this.primitive.setAttribute("b2y", b2pos[1]);
+					this.primitive.setAttribute("b2x", control2Pos[0]);
+					this.primitive.setAttribute("b2y", control2Pos[1]);
 				break;
 		}
 		this.updateClickArea();
 	}
 	updateGraphics() {
 		// The arrow is pointed from the second bezier point to the end
-		let b2pos = this.b2_anchor.getPos();
+		let control2Pos = this.control2Handle.getPos();
 
-		let xdiff = this.endX - b2pos[0];
-		let ydiff = this.endY - b2pos[1];
+		let xdiff = this.endX - control2Pos[0];
+		let ydiff = this.endY - control2Pos[1];
 		let angle = Math.atan2(xdiff, -ydiff) * (180 / Math.PI);
 		SVG.transform(this.arrowHead, this.endX, this.endY, angle, 1);
 
@@ -315,10 +315,10 @@ class LinkVisual extends BaseConnection {
 	}
 	#syncHandles() {
 		const [start, control1, control2, end] = this.path.points
-		this.start_anchor.setPos(start)
-		this.b1_anchor.setPos(control1)
-		this.b2_anchor.setPos(control2)
-		this.end_anchor.setPos(end)
+		this.startHandle.setPos(start)
+		this.control1Handle.setPos(control1)
+		this.control2Handle.setPos(control2)
+		this.endHandle.setPos(end)
 	}
 }
 

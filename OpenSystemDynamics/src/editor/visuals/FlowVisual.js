@@ -26,7 +26,7 @@ class FlowVisual extends BaseConnection {
 	createInitialAnchors(pos0, pos1) {
 		super.createInitialAnchors(pos0, pos1)
 		/** @type {AnchorPoint[]} - start and end as first and last anchor */
-		this.handles = [this.start_anchor, this.end_anchor]
+		this.handles = [this.startHandle, this.endHandle]
 	}
 	isAcceptableStartAttach(attachVisual) {
 		return attachVisual.getType() === "stock";
@@ -128,7 +128,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new AnchorPoint(this.id + ".point" + index, "dummy_anchor", [0,0], "orthoMiddle")
+		return new AnchorPoint(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
 	}
 	#syncHandles() {
 		const points = this.path.points
@@ -299,18 +299,18 @@ class FlowVisual extends BaseConnection {
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length - 2];
 
-		if (this.getStartAttach() != null && this.start_anchor != null) {
-			let oldPos = this.start_anchor.getPos();
+		if (this.getStartAttach() != null && this.startHandle != null) {
+			let oldPos = this.startHandle.getPos();
 			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.dragHandleTo(this.start_anchor, newPos);
+				this.dragHandleTo(this.startHandle, newPos);
 			}
 		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
-			let oldPos = this.end_anchor.getPos();
+		if (this.getEndAttach() != null && this.endHandle != null) {
+			let oldPos = this.endHandle.getPos();
 			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.dragHandleTo(this.end_anchor, newPos);
+				this.dragHandleTo(this.endHandle, newPos);
 			}
 		}
 		super.update();
