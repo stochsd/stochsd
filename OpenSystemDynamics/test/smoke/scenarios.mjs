@@ -194,7 +194,7 @@ export const scenarios = [
 			steps.clickStock2 = await selection();
 
 			await page.drag(toPage([500, 200]), toPage([520, 260]));
-			steps.dragStock2 = { position: await positionOf(stock2Id), flowEnd: await positionOf(`${flowId}.end_anchor`) };
+			steps.dragStock2 = { position: await positionOf(stock2Id), flowEnd: await positionOf(`${flowId}.endHandle`) };
 
 			await page.click(...toPage([650, 100]));
 			steps.clickEmpty = await selection();
@@ -206,11 +206,11 @@ export const scenarios = [
 			await page.click(...toPage([350, 220]));
 			steps.clickFlowValve = await selection();
 
-			const flowEnd = await positionOf(`${flowId}.end_anchor`);
+			const flowEnd = await positionOf(`${flowId}.endHandle`);
 			await page.drag(toPage(flowEnd), toPage([600, 350]));
 			steps.dragFlowEndAnchor = {
 				selection: await selection(),
-				flowEnd: await positionOf(`${flowId}.end_anchor`),
+				flowEnd: await positionOf(`${flowId}.endHandle`),
 				endAttach: await page.run(`return Visuals.get("${flowId}").getEndAttach()?.id ?? null`),
 			};
 
@@ -252,11 +252,11 @@ export const scenarios = [
 			await select(`primitives("Link")[0]`);
 			await page.run(`
 				const link = Visuals.get(primitives("Link")[0].id);
-				link.b1_anchor.setPos([300, 500]);
+				link.dragHandleTo(link.control1Handle, [300, 500]);
 				link.update();
 				ToolBox.setTool("straightenlink", mouse.left);
 			`);
-			steps.straightenLink = await page.run(`const link = Visuals.get(primitives("Link")[0].id); return [link.b1_anchor.getPos(), link.b2_anchor.getPos()]`);
+			steps.straightenLink = await page.run(`const link = Visuals.get(primitives("Link")[0].id); return [link.control1Handle.getPos(), link.control2Handle.getPos()]`);
 
 			await page.run(`
 				Visuals.unselectAll();

@@ -9,7 +9,7 @@
     ],
     "flowEnd": [
       495,
-      219
+      260
     ]
   },
   "clickEmpty": [],
@@ -20,32 +20,29 @@
     "47",
     "48",
     "49",
-    "49.end_anchor",
-    "49.start_anchor",
-    "50.b1_anchor",
-    "50.b2_anchor",
-    "50.end_anchor",
-    "50.start_anchor",
-    "51.b1_anchor",
-    "51.b2_anchor",
-    "51.end_anchor",
-    "51.start_anchor"
+    "49.endHandle",
+    "49.startHandle",
+    "50.control1Handle",
+    "50.control2Handle",
+    "50.endHandle",
+    "50.startHandle",
+    "51.control1Handle",
+    "51.control2Handle",
+    "51.endHandle",
+    "51.startHandle"
   ],
-  "clickFlowValve": [
-    "49",
-    "49.end_anchor",
-    "49.start_anchor"
-  ],
+  "clickFlowValve": [],
   "dragFlowEndAnchor": {
     "selection": [
       "49",
-      "49.end_anchor"
+      "49.endHandle",
+      "49.startHandle"
     ],
     "flowEnd": [
-      600,
-      219
+      495,
+      279
     ],
-    "endAttach": null
+    "endAttach": "45"
   },
   "shiftArrowRight": [
     [
@@ -166,19 +163,19 @@
     "<mxGeometry x=\"660\" y=\"370\" width=\"80\" height=\"60\" as=\"geometry\"/>",
     "</mxCell>",
     "</Ghost>",
-    "<Link name=\"Link2\" Note=\"\" BiDirectional=\"false\" Color=\"black\" id=\"51\" b1x=\"404.39999973197746\" b1y=\"400.0000005027905\" b2x=\"447.60000006400395\" b2y=\"400.00000048378786\">",
+    "<Link name=\"Link2\" Note=\"\" BiDirectional=\"false\" Color=\"black\" id=\"51\" b1x=\"404.39999994601624\" b1y=\"400.00000010126956\" b2x=\"447.6000000128914\" b2y=\"400.0000000974421\">",
     "<mxCell parent=\"1\" target=\"48\" source=\"47\" edge=\"1\" style=\"link\">",
-    "<mxGeometry x=\"425.99999989799073\" y=\"400.0000004932891\" width=\"100\" height=\"100\" as=\"geometry\">",
-    "<mxPoint as=\"sourcePoint\" x=\"371.99999948295755\" y=\"400.00000051704245\"/>",
-    "<mxPoint as=\"targetPoint\" x=\"480.00000031302386\" y=\"400.00000046953585\"/>",
+    "<mxGeometry x=\"425.99999997945383\" y=\"400.0000000993558\" width=\"100\" height=\"100\" as=\"geometry\">",
+    "<mxPoint as=\"sourcePoint\" x=\"371.9999998958599\" y=\"400.0000001041401\"/>",
+    "<mxPoint as=\"targetPoint\" x=\"480.00000006304776\" y=\"400.0000000945716\"/>",
     "</mxGeometry>",
     "</mxCell>",
     "</Link>",
     "<Flow name=\"Flow1\" Note=\"\" MiddlePoints=\"\" RotateName=\"0\" ValveIndex=\"0\" VariableSide=\"false\" FlowRate=\"5\" OnlyPositive=\"false\" TimeIndependent=\"false\" Color=\"black\" Units=\"Unitless\" MaxConstraintUsed=\"false\" MinConstraintUsed=\"false\" MaxConstraint=\"100\" MinConstraint=\"0\" ShowSlider=\"false\" SliderMax=\"100\" SliderMin=\"0\" SliderStep=\"\" id=\"49\" DefinitionError=\"{}\">",
-    "<mxCell parent=\"1\" source=\"44\" edge=\"1\" style=\"flow\">",
-    "<mxGeometry x=\"420.5\" y=\"219\" width=\"100\" height=\"100\" as=\"geometry\">",
-    "<mxPoint as=\"sourcePoint\" x=\"241\" y=\"219\"/>",
-    "<mxPoint as=\"targetPoint\" x=\"600\" y=\"219\"/>",
+    "<mxCell parent=\"1\" target=\"45\" source=\"44\" edge=\"1\" style=\"flow\">",
+    "<mxGeometry x=\"368\" y=\"279\" width=\"100\" height=\"100\" as=\"geometry\">",
+    "<mxPoint as=\"sourcePoint\" x=\"241\" y=\"279\"/>",
+    "<mxPoint as=\"targetPoint\" x=\"495\" y=\"279\"/>",
     "</mxGeometry>",
     "</mxCell>",
     "</Flow>",

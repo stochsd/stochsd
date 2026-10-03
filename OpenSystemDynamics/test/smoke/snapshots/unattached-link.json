@@ -12,10 +12,10 @@
       "44",
       "45",
       "46",
-      "46.b1_anchor",
-      "46.b2_anchor",
-      "46.end_anchor",
-      "46.start_anchor"
+      "46.control1Handle",
+      "46.control2Handle",
+      "46.endHandle",
+      "46.startHandle"
     ]
   },
   "errors": []
