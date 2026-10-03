@@ -28,7 +28,7 @@ class StockVisual extends OnePointer {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldConnPos = conn.start_anchor.getPos();
 				let newConnPos = translate(oldConnPos, diff);
-				conn.requestNewAnchorPos(newConnPos, conn.start_anchor.id);
+				conn.dragHandleTo(conn.start_anchor, newConnPos);
 			}
 		}
 		let endConn = Visuals.connectionsTo(this);
@@ -36,7 +36,7 @@ class StockVisual extends OnePointer {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldAnchorPos = conn.end_anchor.getPos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
-				conn.requestNewAnchorPos(newAnchorPos, conn.end_anchor.id);
+				conn.dragHandleTo(conn.end_anchor, newAnchorPos);
 			}
 		}
 	}
