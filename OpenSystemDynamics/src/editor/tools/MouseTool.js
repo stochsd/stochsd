@@ -45,6 +45,7 @@ class MouseTool extends BaseTool {
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
 			let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
+			/** @type {typeof TwoPointerTool} */
 			let tool = ToolBox.tools[parent.type];
 			tool.mouseMoveSingleAnchor(x, y, shiftKey, only_selected_anchor["child_id"]);
 			parent.update();

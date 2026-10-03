@@ -105,12 +105,20 @@ class FlowTool extends TwoPointerTool {
 		// does not create anything until the first leftMouseMove have been triggered 
 		super.leftMouseDown(x, y);
 	}
+	/** 
+	 * @param {number} x 
+	 * @param {number} y 
+	 * @param {boolean} shiftKey 
+	 * @param {string} anchor_id 
+	 * */
 	static mouseMoveSingleAnchor(x, y, shiftKey, anchor_id) {
 		// Function used both during creation and later moving of anchor point 
 		let mainAnchor = Visuals.get(anchor_id);
+		/** @type {FlowVisual} */
 		let parent = mainAnchor.getParent();
 
-		parent.requestNewAnchorPos([x, y], anchor_id);
+		// parent.requestNewAnchorPos([x, y], anchor_id); // TODO remove
+		parent.dragHandleTo(mainAnchor, [x, y])
 		parent.update();
 		// update connecting links 
 		Visuals.connectionsAttachedTo(parent).forEach(conn => conn.update());
@@ -129,18 +137,19 @@ class FlowTool extends TwoPointerTool {
 		if (mouse.isLeftDown) {
 			let only_selected_anchor = get_only_selected_anchor_id();
 			if (only_selected_anchor) {
+				/** @type {FlowVisual} */
 				let parent = Visuals.getTwoPointer(only_selected_anchor["parent_id"]);
 				let child = Visuals.getOnePointer(only_selected_anchor["child_id"]);
 				if (parent.getType() === "flow" && child.getAnchorType() === "end") {
 					let prevAnchorPos = parent.getPreviousAnchor(child.id).getPos();
 					if (distance(prevAnchorPos, [x, y]) < 10) {
-						if (parent.middleAnchors.length > 0) {
+						if (parent.handles.length > 2) {
 							// remove last middle anchor
-							parent.removeLastMiddleAnchorPoint();
+							parent.removeLastBend();
 						}
 					} else {
 						// Add middle anchor 
-						parent.createMiddleAnchorPoint(x, y);
+						parent.addBend([x, y]);
 						parent.selectWithOnlyAnchor(child);
 					}
 				}

@@ -7,9 +7,9 @@ class FlowVisual extends BaseConnection {
 		super(id, type, pos0, pos1);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 40], [31, 5], [0, -33], [-31, 5]]; 	// Textplacement when rotating text
-
-		// List of anchors. Not start- and end-anchor. TYPE: [AnchorPoint]
-		this.middleAnchors = [];
+		
+		/** @type {OrthogonalPath} */
+		this.path = new OrthogonalPath(this.handles.map(h => h.getPos()));
 
 		this.valveIndex; 	// index to indicate what inbetween path valve is placed
 		this.variableSide;	// bool to indicate what side of path variable is placed
@@ -23,33 +23,29 @@ class FlowVisual extends BaseConnection {
 		this.valve;
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
-
+	createInitialAnchors(pos0, pos1) {
+		super.createInitialAnchors(pos0, pos1)
+		/** @type {AnchorPoint[]} - start and end as first and last anchor */
+		this.handles = [this.start_anchor, this.end_anchor]
+	}
 	isAcceptableStartAttach(attachVisual) {
 		return attachVisual.getType() === "stock";
 	}
-
 	isAcceptableEndAttach(attachVisual) {
 		return attachVisual.getType() === "stock";
 	}
-
 	getRadius() {
 		return 20;
 	}
-
 	getAnchors() {
-		let anchors = [this.start_anchor];
-		anchors = anchors.concat(this.middleAnchors);
-		anchors = anchors.concat([this.end_anchor]);
-		return anchors;
+		return this.handles;
 	}
-
 	getPreviousAnchor(anchor_id) {
 		let anchors = this.getAnchors();
 		let anchor_ids = anchors.map(anchor => anchor.id);
 		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
 		return prev_index >= 0 ? anchors[prev_index] : null;
 	}
-
 	getNextAnchor(anchor_id) {
 		let anchors = this.getAnchors();
 		let anchor_ids = anchors.map(anchor => anchor.id);
@@ -108,6 +104,20 @@ class FlowVisual extends BaseConnection {
 	}
 
 	/**
+	 * @param {AnchorPoint} handle
+	 * @param {[number, number]} position
+	 */
+	dragHandleTo(handle, position) {
+		const index = this.handles.findIndex(h => h == handle)
+		if (index == -1) return;
+		
+		this.path.movePoint(index, position)
+		this.handles.map((handle, index) => {
+			const pos = this.path.points[index]
+			handle.setPos(pos)
+		})
+	}
+	/**
 	 * @param {[number, number]} newPosition 
 	 * @param {string} anchorId 
 	 */
@@ -121,11 +131,11 @@ class FlowVisual extends BaseConnection {
 		let isPreviousAlongX = true;
 		let isNextAlongX = true;
 
-		if (prevAnchor && this.middleAnchors.length === 0) {
+		if (prevAnchor && this.handles.length === 2) {
 			const prevAnchorPos = prevAnchor.getPos();
 			isPreviousAlongX = Math.abs(prevAnchorPos[0] - x) < Math.abs(prevAnchorPos[1] - y);
 			isNextAlongX = !isPreviousAlongX;
-		} else if (nextAnchor && this.middleAnchors.length === 0) {
+		} else if (nextAnchor && this.handles.length === 2) {
 			const nextAnchorPos = nextAnchor.getPos();
 			isNextAlongX = Math.abs(nextAnchorPos[0] - x) < Math.abs(nextAnchorPos[1] - y);
 			isPreviousAlongX = !isNextAlongX;
@@ -163,8 +173,8 @@ class FlowVisual extends BaseConnection {
 		// Save middle anchor points to primitive
 		super.syncAnchorToPrimitive(anchorType);
 		let middlePoints = "";
-		for (i = 0; i < this.middleAnchors.length; i++) {
-			let pos = this.middleAnchors[i].getPos();
+		for (i = 1; i < this.handles.length-1; i++) {
+			let pos = this.handles[i].getPos();
 			let x = pos[0];
 			let y = pos[1];
 			middlePoints += `${x},${y} `;
@@ -187,7 +197,7 @@ class FlowVisual extends BaseConnection {
 
 	moveValve() {
 		if (this.variableSide) {
-			this.valveIndex = (this.valveIndex + 1) % (this.middleAnchors.length + 1);
+			this.valveIndex = (this.valveIndex + 1) % (this.handles.length - 1);
 		}
 		this.variableSide = !this.variableSide;
 
@@ -195,17 +205,6 @@ class FlowVisual extends BaseConnection {
 		this.primitive.setAttribute("VariableSide", this.variableSide);
 
 		Visuals.updateAllExceptDisplays();
-	}
-
-	createMiddleAnchorPoint(x, y) {
-		let index = this.middleAnchors.length;
-		let newAnchor = new AnchorPoint(
-			this.id + ".point" + index,
-			"dummy_anchor",
-			[x, y],
-			"orthoMiddle"
-		);
-		this.middleAnchors.push(newAnchor);
 	}
 
 	setStartAttach(new_start_attach) {
@@ -218,16 +217,28 @@ class FlowVisual extends BaseConnection {
 		super.setEndAttach(new_end_attach);
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
-
-	removeLastMiddleAnchorPoint() {
-		// set valveIndex to 0 to avoid valveplacement bug 
-		if (this.valveIndex === this.middleAnchors.length) {
-			this.valveIndex = this.middleAnchors.length - 1;
-		}
-		let removedAnchor = this.middleAnchors.pop();
-		removedAnchor.remove();
+	#createBendHandle(index) {
+		return new AnchorPoint(this.id + ".point" + index, "dummy_anchor", [0,0], "orthoMiddle")
 	}
-
+	#syncHandles() {
+		const points = this.path.points
+		while (this.handles.length < points.length) {
+			this.handles.splice(-1, 0, this.#createBendHandle(this.handles.length-2))
+		}
+		while (this.handles.length > points.length) {
+			this.handles.splice(-2, 1)[0].remove()
+		}
+		points.forEach((point, i) => this.handles[i].setPos(point))
+	}
+	addBend(pos) {
+		this.path.addBend(pos)
+		this.#syncHandles()
+	}
+	removeLastBend() {
+		if (this.handles.length <= 2) return;
+		this.path.removeBend(this.path.points.length - 2);
+		this.#syncHandles();
+	}
 
 	/**
 	 * 
@@ -256,14 +267,7 @@ class FlowVisual extends BaseConnection {
 		const middlePointsString = this.primitive.getAttribute("MiddlePoints");
 		const points = this.parseMiddlePoints(middlePointsString);
 		for (let point of points) {
-			let index = this.middleAnchors.length;
-			let newAnchor = new AnchorPoint(
-				this.id + ".point" + index,
-				"dummy_anchor",
-				point,
-				"orthoMiddle"
-			);
-			this.middleAnchors.push(newAnchor);
+			this.addBend(point)
 		}
 	}
 
@@ -348,7 +352,6 @@ class FlowVisual extends BaseConnection {
 			this.name_element
 		]);
 		this.icons.setColor("white");
-		this.middleAnchors = [];
 		this.valveIndex = 0;
 		this.variableSide = false;
 

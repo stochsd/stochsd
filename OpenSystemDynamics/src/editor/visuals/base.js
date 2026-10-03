@@ -92,6 +92,7 @@ class BaseVisual {
 	}
 
 	/** The top level visual this belongs to, e.g. the flow of an anchor. A top level visual is its own parent. */
+	/** @returns {TwoPointer} */
 	getParent() {
 		return Visuals.get(Visuals.getParentId(this.id));
 	}
@@ -245,7 +246,7 @@ class OnePointer extends BaseVisual {
 		let [x, y] = this.getPos();
 		return { "minX": x - 10, "maxX": x + 10, "minY": y - 10, "maxY": y + 10 };
 	}
-
+	/** @param {[number, number]} pos */
 	setPos(pos) {
 		if (pos[0] == this.pos[0] && pos[1] == this.pos[1]) {
 			// If the position has not changed we should not update it
