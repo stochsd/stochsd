@@ -72,11 +72,7 @@ class Clipboard {
 			if (!(item.sourceId in idMap)) {
 				link.resetBezierPoints();
 			}
-			// The anchors and handles of a link depend on each other, so it takes a few updates
-			// for them to settle after the move, the same way as in syncLink
-			for (let j = 0; j < 8; j++) {
-				link.update();
-			}
+			link.update();
 		}
 		InfoBar.update();
 	}
