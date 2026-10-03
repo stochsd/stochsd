@@ -269,6 +269,7 @@ class FlowVisual extends BaseConnection {
 		for (let point of points) {
 			this.addBend(point)
 		}
+		this.path.fitFirstAxisToPoints();
 	}
 
 	getBoundRect() {

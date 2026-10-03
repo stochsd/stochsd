@@ -11,6 +11,13 @@ class OrthogonalPath {
         this.points = points
         /** @type {"horizontal" | "vertical"} */
         this.firstAxis
+        this.fitFirstAxisToPoints()
+    }
+
+    /** Sets firstAxis from the direction of the first segment, e.g. after loading saved points. */
+    fitFirstAxisToPoints() {
+        const [[x0, y0], [x1, y1]] = this.points;
+        this.firstAxis = Math.abs(x1 - x0) >= Math.abs(y1 - y0) ? "horizontal" : "vertical";
     }
 
     /**
