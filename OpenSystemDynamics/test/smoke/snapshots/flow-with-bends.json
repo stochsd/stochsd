@@ -1,9 +1,9 @@
 {
   "anchors": [
-    "46.start_anchor:225,200",
-    "46.point0:350,200",
-    "46.point1:350,400",
-    "46.end_anchor:475,400"
+    "46.startHandle:225,200",
+    "46.bend0:350,200",
+    "46.bend1:350,400",
+    "46.endHandle:475,400"
   ],
   "attached": [
     "44",

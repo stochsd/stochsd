@@ -23,10 +23,10 @@ class FlowVisual extends BaseConnection {
 		this.valve;
 		this.variable; 		// variable (only svg group-element with circle and text)
 	}
-	createInitialAnchors(pos0, pos1) {
-		super.createInitialAnchors(pos0, pos1)
-		/** @type {AnchorPoint[]} - start and end as first and last anchor */
-		this.handles = [this.start_anchor, this.end_anchor]
+	createInitialHandles(pos0, pos1) {
+		super.createInitialHandles(pos0, pos1)
+		/** @type {Handle[]} - start and end as first and last anchor */
+		this.handles = [this.startHandle, this.endHandle]
 	}
 	isAcceptableStartAttach(attachVisual) {
 		return attachVisual.getType() === "stock";
@@ -37,18 +37,18 @@ class FlowVisual extends BaseConnection {
 	getRadius() {
 		return 20;
 	}
-	getAnchors() {
+	getHandles() {
 		return this.handles;
 	}
-	getPreviousAnchor(anchor_id) {
-		let anchors = this.getAnchors();
+	getPreviousHandle(anchor_id) {
+		let anchors = this.getHandles();
 		let anchor_ids = anchors.map(anchor => anchor.id);
 		let prev_index = anchor_ids.indexOf(anchor_id) - 1;
 		return prev_index >= 0 ? anchors[prev_index] : null;
 	}
 
 	/**
-	 * @param {AnchorPoint} handle
+	 * @param {Handle} handle
 	 * @param {[number, number]} position
 	 */
 	dragHandleTo(handle, position) {
@@ -61,7 +61,7 @@ class FlowVisual extends BaseConnection {
 
 	/**
 	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
-	 * @param {AnchorPoint[]} handles
+	 * @param {Handle[]} handles
 	 * @param {number} diffX
 	 * @param {number} diffY
 	 */
@@ -79,9 +79,9 @@ class FlowVisual extends BaseConnection {
 		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
 	}
 
-	syncAnchorToPrimitive(anchorType) {
-		// Save middle anchor points to primitive
-		super.syncAnchorToPrimitive(anchorType);
+	syncHandleToPrimitive(handleType) {
+		// Save bend points to primitive
+		super.syncHandleToPrimitive(handleType);
 		let middlePoints = "";
 		for (let i = 1; i < this.handles.length-1; i++) {
 			let pos = this.handles[i].getPos();
@@ -128,7 +128,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new AnchorPoint(this.id + ".point" + index, "dummy_anchor", [0,0], "orthoMiddle")
+		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
 	}
 	#syncHandles() {
 		const points = this.path.points
@@ -183,14 +183,14 @@ class FlowVisual extends BaseConnection {
 	}
 
 	getValvePos() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let valveX = (points[this.valveIndex][0] + points[this.valveIndex + 1][0]) / 2;
 		let valveY = (points[this.valveIndex][1] + points[this.valveIndex + 1][1]) / 2;
 		return [valveX, valveY];
 	}
 
 	getValveRotation() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex + 1]);
 		let valveRot = 0;
 		if (dir == "north" || dir == "south") {
@@ -201,7 +201,7 @@ class FlowVisual extends BaseConnection {
 
 	/** @returns {[number, number]} */
 	getVariablePos() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let dir = neswDirection(points[this.valveIndex], points[this.valveIndex + 1]);
 		let variableOffset = [0, 0];
 		if (dir == "north" || dir == "south") {
@@ -232,7 +232,7 @@ class FlowVisual extends BaseConnection {
 		this.variable.getElementsByClassName("element")[0].setAttribute("stroke", color);
 		this.variable.getElementsByClassName("highlight")[0].setAttribute("fill", color);
 		this.name_element.setAttribute("fill", color);
-		this.getAnchors().map(anchor => anchor.setColor(color));
+		this.getHandles().map(anchor => anchor.setColor(color));
 	}
 
 	makeGraphics() {
@@ -270,7 +270,7 @@ class FlowVisual extends BaseConnection {
 
 	getDirection() {
 		// This function is used to determine which way the arrowHead should aim 
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let len = points.length;
 		let p1 = points[len - 1];
 		let p2 = points[len - 2];
@@ -278,7 +278,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	shortenLastPoint(shortenAmount) {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let last = points[points.length - 1];
 		let secondLast = points[points.length - 2];
 		let sine = sin(last, secondLast);
@@ -295,27 +295,27 @@ class FlowVisual extends BaseConnection {
 		// Get start position from attach
 		// _start_attach is null if we are not attached to anything
 
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		let connectionStartPos = points[1];
 		let connectionEndPos = points[points.length - 2];
 
-		if (this.getStartAttach() != null && this.start_anchor != null) {
-			let oldPos = this.start_anchor.getPos();
+		if (this.getStartAttach() != null && this.startHandle != null) {
+			let oldPos = this.startHandle.getPos();
 			let newPos = this.getStartAttach().getFlowMountPos(connectionStartPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.dragHandleTo(this.start_anchor, newPos);
+				this.dragHandleTo(this.startHandle, newPos);
 			}
 		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
-			let oldPos = this.end_anchor.getPos();
+		if (this.getEndAttach() != null && this.endHandle != null) {
+			let oldPos = this.endHandle.getPos();
 			let newPos = this.getEndAttach().getFlowMountPos(connectionEndPos);
 			if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-				this.dragHandleTo(this.end_anchor, newPos);
+				this.dragHandleTo(this.endHandle, newPos);
 			}
 		}
 		super.update();
 		// update anchors 
-		this.getAnchors().map(anchor => anchor.updatePosition());
+		this.getHandles().map(anchor => anchor.updatePosition());
 
 		if (this.primitive && this.icons) {
 			const hasDefError = DefinitionError.has(this.primitive);
@@ -325,7 +325,7 @@ class FlowVisual extends BaseConnection {
 	}
 
 	updateGraphics() {
-		let points = this.getAnchors().map(anchor => anchor.getPos());
+		let points = this.getHandles().map(anchor => anchor.getPos());
 		if (this.getStartAttach() == null) {
 			this.startCloud.setVisibility(true);
 			this.startCloud.setPosition(points[0], points[1]);

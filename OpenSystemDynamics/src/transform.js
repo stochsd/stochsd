@@ -34,6 +34,10 @@ function scale(point, pivot, scaleFactor) {
 	return translate(b, pivot); 
 } 
 
+/**
+ * @param {[number,number]} point1 
+ * @param {[number,number]} point2 
+ */
 function cos(point1 ,point2){
 	const dist = distance(point1, point2)
 	if (dist == 0) {
@@ -42,7 +46,10 @@ function cos(point1 ,point2){
 		return  (point2[0]-point1[0])/(dist)
 	}
 }
-
+/**
+ * @param {[number,number]} point1 
+ * @param {[number,number]} point2 
+ */
 function sin(point1 ,point2){
 	const dist = distance(point1, point2)
 	if (dist == 0) {
@@ -51,7 +58,12 @@ function sin(point1 ,point2){
 		return  (point2[1]-point1[1])/(dist)
 	}
 }
-
+/**
+ * @param {[number, number]} point 
+ * @param {number} sine 
+ * @param {number} cosine 
+ * @returns {[number,number]}
+ */
 function rotate(point, sine, cosine) {
 	var x = point[0]*cosine - point[1]*sine;
 	var y = point[0]*sine + point[1]*cosine;

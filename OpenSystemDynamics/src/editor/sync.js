@@ -210,19 +210,13 @@ function syncLink(primitive) {
 	];
 
 	if (bezierPoints.indexOf(null) == -1) {
-		connection.setHandle1Pos([Number(bezierPoints[0]), Number(bezierPoints[1])]);
-		connection.setHandle2Pos([Number(bezierPoints[2]), Number(bezierPoints[3])]);
+		connection.path.movePoint(1, [Number(bezierPoints[0]), Number(bezierPoints[1])]);
+		connection.path.movePoint(2, [Number(bezierPoints[2]), Number(bezierPoints[3])]);
 	} else {
 		// bezierPoints does not exist. Create them
 		connection.resetBezierPoints();
 	}
-	for (let i = 0; i < 8; i++) {
-		// the anchor and the handle are co-dependent 
-		// This means that moving the handle moves the anchor which moves the handle ... etc.
-		// this continues until a stable position is reached.
-		// To get around this the Link gets calculated a few times to reach a stable position.
-		connection.update();
-	}
+	connection.update();
 }
 
 function loadModelFromXml(XmlString) {

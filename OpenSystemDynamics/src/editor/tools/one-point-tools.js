@@ -204,7 +204,7 @@ class ConstantTool extends OnePointCreateTool {
 	}
 }
 
-function get_only_selected_anchor_id() {
+function getOnlySelectedHandleId() {
 	// returns null if more is selected than one anchor is selected, else returns object {parent_id: ... , child_id: ... }
 	let selection = Visuals.selected();
 	let keys = selection.map(visual => visual.id);

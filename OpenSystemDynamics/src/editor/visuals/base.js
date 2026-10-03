@@ -34,7 +34,7 @@ class BaseVisual {
 				element.setAttribute("fill", this.color);
 			}
 		}
-		// AnchorPoint has no primitive
+		// Handle has no primitive
 		// TODO: this should be replaced with a subscribe pattern instead - where plots can subscribe to primitives
 		this.primitive?.setAttribute("Color", this.color);
 		if (this.color) {
@@ -72,7 +72,7 @@ class BaseVisual {
 		if (event.which === mouse.left) {
 			if (this.type == "dummy_anchor") {
 				Visuals.unselectAllExcept(Visuals.getParentId(this.id));
-			} else if (get_only_selected_anchor_id()) {
+			} else if (getOnlySelectedHandleId()) {
 				Visuals.unselectAll();
 			}
 			if (this.isSelected()) {
@@ -387,17 +387,17 @@ class OnePointer extends BaseVisual {
 	}
 }
 
-/** @typedef {"invalid" | "start" | "end" | "bezier1" | "bezier2" | "orthoMiddle"} AnchorType */
-class AnchorPoint extends OnePointer {
+/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} HandleType */
+class Handle extends OnePointer {
 	/**
 	 * @param {string} id 
 	 * @param {string} type 
 	 * @param {[number, number]} pos 
-	 * @param {AnchorType} anchorType 
+	 * @param {HandleType} handleType 
 	 */
-	constructor(id, type, pos, anchorType) {
+	constructor(id, type, pos, handleType) {
 		super(id, type, pos);
-		this.anchorType = anchorType;
+		this.handleType = handleType;
 		this.isSquare = false;
 	}
 	isAttached() {
@@ -405,7 +405,7 @@ class AnchorPoint extends OnePointer {
 		if (!parent.getStartAttach) {
 			return;
 		}
-		switch (this.anchorType) {
+		switch (this.handleType) {
 			case "start":
 				return !!parent.getStartAttach();
 			case "end":
@@ -415,11 +415,13 @@ class AnchorPoint extends OnePointer {
 				return false;
 		}
 	}
-	setAnchorType(anchorType) {
-		this.anchorType = anchorType;
+	/** @param {HandleType} handleType  */
+	setAnchorType(handleType) {
+		this.handleType = handleType;
 	}
-	getAnchorType() {
-		return this.anchorType;
+	/** @returns {HandleType} */
+	getHandleType() {
+		return this.handleType;
 	}
 	setVisible(newVisible) {
 		if (newVisible) {
@@ -440,8 +442,8 @@ class AnchorPoint extends OnePointer {
 	updatePosition() {
 		this.update();
 		let parent = this.getParent();
-		if (parent.start_anchor && parent.end_anchor) {
-			parent.syncAnchorToPrimitive(this.anchorType);
+		if (parent.startHandle && parent.endHandle) {
+			parent.syncHandleToPrimitive(this.handleType);
 		}
 	}
 	getImage() {
@@ -459,7 +461,7 @@ class AnchorPoint extends OnePointer {
 
 	}
 	getLayer() {
-		return SVG.anchorLayer;
+		return SVG.handleLayer;
 	}
 	makeSquare() {
 		this.isSquare = true;
@@ -468,28 +470,6 @@ class AnchorPoint extends OnePointer {
 	reloadImage() {
 		this.clearImage();
 		this.loadImage();
-	}
-	afterMove(diff_x, diff_y) {
-		// This is an attempt to make bezier points move with the anchors points but id does not work well with undo
-		// commented out until fixed
-		let parent = this.getParent();
-
-		if (parent.type == "link") {
-			switch (this.anchorType) {
-				case "start":
-					{
-						const [x, y] = parent.b1_anchor.getPos();
-						parent.b1_anchor.setPos([x + diff_x, y + diff_y]);
-					}
-					break;
-				case "end":
-					{
-						const [x, y] = parent.b2_anchor.getPos();
-						parent.b2_anchor.setPos([x + diff_x, y + diff_y]);
-					}
-					break;
-			}
-		}
 	}
 }
 

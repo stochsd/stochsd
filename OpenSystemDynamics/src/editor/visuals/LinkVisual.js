@@ -3,51 +3,26 @@ class LinkVisual extends BaseConnection {
 		super(id, type, pos0, pos1);
 
 		// reload image of anchor to make sure anchor is ontop
-		this.b1_anchor.reloadImage();
-		this.b2_anchor.reloadImage();
+		this.control1Handle.reloadImage();
+		this.control2Handle.reloadImage();
 	}
 
-	createInitialAnchors(pos0, pos1) {
-		// Used to keep a local coordinate system between start- and endAnchor
-		// startLocal = [0,0], endLocal = [1,0]
-		this.b1Local = [0.3, 0.0];
-		this.b2Local = [0.7, 0.0];
-		super.createInitialAnchors(pos0, pos1);
-		this.b1_anchor = new AnchorPoint(this.id + ".b1_anchor", "dummy_anchor", [0, 0], "bezier1");
-		this.b2_anchor = new AnchorPoint(this.id + ".b2_anchor", "dummy_anchor", [0, 0], "bezier2");
-		this.keepRelativeHandlePositions();
-		this.b1_anchor.makeSquare();
-		this.b2_anchor.makeSquare();
+	createInitialHandles(pos0, pos1) {
+		// Created here rather than in the constructor, since the anchors are created during super()
+		/** @type {BezierPath} */
+		this.path = new BezierPath(pos0, pos1);
+		super.createInitialHandles(pos0, pos1);
+		const [, control1, control2] = this.path.points;
+		this.control1Handle = new Handle(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
+		this.control2Handle = new Handle(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
+		this.control1Handle.makeSquare();
+		this.control2Handle.makeSquare();
 	}
 
-	getAnchors() {
-		return [this.start_anchor, this.b1_anchor, this.b2_anchor, this.end_anchor];
+	getHandles() {
+		return [this.startHandle, this.control1Handle, this.control2Handle, this.endHandle];
 	}
 
-	worldToLocal(worldPos) {
-		// localPos(worldPos) = inv(S)*inv(R)*inv(T)*worldPos
-		let origoWorld = this.start_anchor.getPos();
-		let oneZeroWorld = this.end_anchor.getPos();
-		let scaleFactor = distance(origoWorld, oneZeroWorld);
-		let sine = sin(origoWorld, oneZeroWorld);
-		let cosine = cos(origoWorld, oneZeroWorld);
-		let S_pWorld = translate(worldPos, neg(origoWorld));
-		let RS_pWorld = rotate(S_pWorld, -sine, cosine);
-		let posWorld = scale(RS_pWorld, [0, 0], 1 / scaleFactor);
-		return posWorld;
-	}
-	localToWorld(localPos) {
-		// worldPos(localPos) = T*R*S*localPos
-		let origoWorld = this.start_anchor.getPos();
-		let oneZeroWorld = this.end_anchor.getPos();
-		let scaleFactor = distance(origoWorld, oneZeroWorld);
-		let sine = sin(origoWorld, oneZeroWorld);
-		let cosine = cos(origoWorld, oneZeroWorld);
-		let S_pLocal = scale(localPos, [0, 0], scaleFactor);
-		let RS_pLocal = rotate(S_pLocal, sine, cosine);
-		let posWorld = translate(RS_pLocal, origoWorld);
-		return posWorld;
-	}
 	unselect() {
 		this.selected = false;
 		if (this.getChildren().some(child => child.isSelected())) {
@@ -79,7 +54,7 @@ class LinkVisual extends BaseConnection {
 
 		if (selectChildren) {
 			// This for loop is partly redundant and should be integrated in later code
-			for (let anchor of this.getAnchors()) {
+			for (let anchor of this.getHandles()) {
 				anchor.select();
 				anchor.setVisible(true);
 			}
@@ -168,19 +143,19 @@ class LinkVisual extends BaseConnection {
 		this.primitive.setAttribute("Color", this.color);
 		this.curve.setAttribute("stroke", color);
 		this.arrowPath.setAttribute("stroke", color);
-		this.start_anchor.setColor(color);
-		this.end_anchor.setColor(color);
-		this.b1_anchor.setColor(color);
-		this.b2_anchor.setColor(color);
+		this.startHandle.setColor(color);
+		this.endHandle.setColor(color);
+		this.control1Handle.setColor(color);
+		this.control2Handle.setColor(color);
 		this.b1_line.setAttribute("stroke", color);
 		this.b2_line.setAttribute("stroke", color);
 	}
 
 	makeGraphics() {
-		let [x1, y1] = this.start_anchor.getPos();
-		let [x2, y2] = this.b1_anchor.getPos();
-		let [x3, y3] = this.b2_anchor.getPos();
-		let [x4, y4] = this.end_anchor.getPos();
+		let [x1, y1] = this.startHandle.getPos();
+		let [x2, y2] = this.control1Handle.getPos();
+		let [x3, y3] = this.control2Handle.getPos();
+		let [x4, y4] = this.endHandle.getPos();
 
 		this.arrowPath = SVG.fromString(`<path d="M0,0 -4,12 4,12 Z" stroke="black" fill="white"/>`);
 		this.arrowHead = SVG.group([this.arrowPath]);
@@ -214,80 +189,73 @@ class LinkVisual extends BaseConnection {
 		this.curve.setAttribute("stroke-dasharray", "");
 	}
 	resetBezierPoints() {
-		let obj1 = this.getStartAttach();
-		let obj2 = this.getEndAttach();
-		if (!obj1 || !obj2) {
+		let startVisual = this.getStartAttach();
+		let endVisual = this.getEndAttach();
+		if (!startVisual || !endVisual) {
 			return;
 		}
-		this.start_anchor.setPos(obj1.getLinkMountPos(obj2.getPos()));
-		this.end_anchor.setPos(obj2.getLinkMountPos(obj1.getPos()));
-		this.resetBezier1();
-		this.resetBezier2();
+		this.path.movePoint(0, startVisual.getLinkMountPos(endVisual.getPos()));
+		this.path.movePoint(3, endVisual.getLinkMountPos(startVisual.getPos()));
+		this.path.resetControls();
 		this.update();
 	}
-	resetBezier1() {
-		this.b1Local = [0.3, 0];
-	}
-	resetBezier2() {
-		this.b2Local = [0.7, 0];
-	}
-	syncAnchorToPrimitive(anchorType) {
-		super.syncAnchorToPrimitive(anchorType);
+	syncHandleToPrimitive(handleType) {
+		super.syncHandleToPrimitive(handleType);
 
-		let startpos = this.start_anchor.getPos();
-		let endpos = this.end_anchor.getPos();
-		let b1pos = this.b1_anchor.getPos();
-		let b2pos = this.b2_anchor.getPos();
+		let startPos = this.startHandle.getPos();
+		let endPos = this.endHandle.getPos();
+		let control1Pos = this.control1Handle.getPos();
+		let control2Pos = this.control2Handle.getPos();
 
-		switch (anchorType) {
+		switch (handleType) {
 			case "start":
-				this.curve.x1 = startpos[0];
-				this.curve.y1 = startpos[1];
+				this.curve.x1 = startPos[0];
+				this.curve.y1 = startPos[1];
 				this.curve.update();
 
-				this.b1_line.setAttribute("x1", startpos[0]);
-				this.b1_line.setAttribute("y1", startpos[1]);
+				this.b1_line.setAttribute("x1", startPos[0]);
+				this.b1_line.setAttribute("y1", startPos[1]);
 				break;
 			case "end":
-				this.curve.x4 = endpos[0];
-				this.curve.y4 = endpos[1];
+				this.curve.x4 = endPos[0];
+				this.curve.y4 = endPos[1];
 				this.curve.update();
 
 
-				this.b2_line.setAttribute("x1", endpos[0]);
-				this.b2_line.setAttribute("y1", endpos[1]);
+				this.b2_line.setAttribute("x1", endPos[0]);
+				this.b2_line.setAttribute("y1", endPos[1]);
 				break;
-			case "bezier1":
-					this.curve.x2 = b1pos[0];
-					this.curve.y2 = b1pos[1];
+			case "control1":
+					this.curve.x2 = control1Pos[0];
+					this.curve.y2 = control1Pos[1];
 					this.curve.update();
 
-					this.b1_line.setAttribute("x2", b1pos[0]);
-					this.b1_line.setAttribute("y2", b1pos[1]);
+					this.b1_line.setAttribute("x2", control1Pos[0]);
+					this.b1_line.setAttribute("y2", control1Pos[1]);
 
-					this.primitive.setAttribute("b1x", b1pos[0]);
-					this.primitive.setAttribute("b1y", b1pos[1]);
+					this.primitive.setAttribute("b1x", control1Pos[0]);
+					this.primitive.setAttribute("b1y", control1Pos[1]);
 				break;
-			case "bezier2":
-					this.curve.x3 = b2pos[0];
-					this.curve.y3 = b2pos[1];
+			case "control2":
+					this.curve.x3 = control2Pos[0];
+					this.curve.y3 = control2Pos[1];
 					this.curve.update();
 
-					this.b2_line.setAttribute("x2", b2pos[0]);
-					this.b2_line.setAttribute("y2", b2pos[1]);
+					this.b2_line.setAttribute("x2", control2Pos[0]);
+					this.b2_line.setAttribute("y2", control2Pos[1]);
 
-					this.primitive.setAttribute("b2x", b2pos[0]);
-					this.primitive.setAttribute("b2y", b2pos[1]);
+					this.primitive.setAttribute("b2x", control2Pos[0]);
+					this.primitive.setAttribute("b2y", control2Pos[1]);
 				break;
 		}
 		this.updateClickArea();
 	}
 	updateGraphics() {
 		// The arrow is pointed from the second bezier point to the end
-		let b2pos = this.b2_anchor.getPos();
+		let control2Pos = this.control2Handle.getPos();
 
-		let xdiff = this.endX - b2pos[0];
-		let ydiff = this.endY - b2pos[1];
+		let xdiff = this.endX - control2Pos[0];
+		let ydiff = this.endY - control2Pos[1];
 		let angle = Math.atan2(xdiff, -ydiff) * (180 / Math.PI);
 		SVG.transform(this.arrowHead, this.endX, this.endY, angle, 1);
 
@@ -296,47 +264,61 @@ class LinkVisual extends BaseConnection {
 		this.curve.y4 = this.endY;
 		this.curve.update();
 	}
+	/** Places each attached end on the edge of what it's attached to, facing its nearest control point. */
+	#mountEndsOnAttachments() {
+		const [, control1, control2] = this.path.points;
+		const startAttach = this.getStartAttach();
+		if (startAttach) {
+			this.path.movePoint(0, startAttach.getLinkMountPos(control1));
+		}
+		const endAttach = this.getEndAttach();
+		if (endAttach) {
+			this.path.movePoint(3, endAttach.getLinkMountPos(control2));
+		}
+	}
 	update() {
-		// This function is similar to TwoPointer::update but it takes attachments into account
-
-		// Get start position from attach
-		// _start_anchor is null if we are currently creating the connection
-		// _start_attach is null if we are not attached to anything
-
-		if (this.getStartAttach() != null && this.start_anchor != null) {
-			if (this.getStartAttach().getPos) {
-				let oldPos = this.start_anchor.getPos();
-				let newPos = this.getStartAttach().getLinkMountPos(this.b1_anchor.getPos());
-				// If start point have moved reset b1
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.start_anchor.setPos(newPos);
-				}
-			}
-		}
-		if (this.getEndAttach() != null && this.end_anchor != null) {
-			if (this.getEndAttach().getPos) {
-				let oldPos = this.end_anchor.getPos();
-				let newPos = this.getEndAttach().getLinkMountPos(this.b2_anchor.getPos());
-				// If end point have moved reset b2
-				if (oldPos[0] != newPos[0] || oldPos[1] != newPos[1]) {
-					this.end_anchor.setPos(newPos);
-				}
-			}
-		}
-		this.keepRelativeHandlePositions();
+		this.#mountEndsOnAttachments();
+		this.#syncHandles();
 		// update anchors 
-		this.getAnchors().map(anchor => anchor.updatePosition());
+		this.getHandles().map(anchor => anchor.updatePosition());
 		this.updateGraphics();
 	}
-	keepRelativeHandlePositions() {
-		this.b1_anchor.setPos(this.localToWorld(this.b1Local));
-		this.b2_anchor.setPos(this.localToWorld(this.b2Local));
+	/**
+	 * @param {Handle} handle
+	 * @param {[number, number]} position
+	 */
+	dragHandleTo(handle, position) {
+		const index = this.getHandles().indexOf(handle);
+		if (index == -1) return;
+
+		this.path.movePoint(index, position);
+		this.#syncHandles();
 	}
-	setHandle1Pos(newPos) {
-		this.b1Local = this.worldToLocal(newPos);
+	/**
+	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
+	 * @param {Handle[]} handles
+	 * @param {number} diffX
+	 * @param {number} diffY
+	 */
+	moveHandlesBy(handles, diffX, diffY) {
+		if (handles.length === this.getHandles().length) {
+			this.path.translate(diffX, diffY);
+			this.#syncHandles();
+			return;
+		}
+		// Targets are taken before moving, since moving an end also moves the control points
+		const targets = handles.map(handle => {
+			const [x, y] = handle.getPos();
+			return [x + diffX, y + diffY];
+		});
+		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
 	}
-	setHandle2Pos(newPos) {
-		this.b2Local = this.worldToLocal(newPos);
+	#syncHandles() {
+		const [start, control1, control2, end] = this.path.points
+		this.startHandle.setPos(start)
+		this.control1Handle.setPos(control1)
+		this.control2Handle.setPos(control2)
+		this.endHandle.setPos(end)
 	}
 }
 
