@@ -141,8 +141,11 @@ class History {
 			this.undoStates.push(state);
 			this.addUndoImage()
 		}
-		this.undoIndex = localStorage.getItem("undoIndex");
-		this.restoreUndoState();
+		this.undoIndex = Number(localStorage.getItem("undoIndex"));
+		// A model that was never changed has no undo states, and then the default model is kept
+		if (this.undoStates.length > 0) {
+			this.restoreUndoState();
+		}
 	}
 }
 History.init();
