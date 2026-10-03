@@ -126,7 +126,7 @@ class FlowVisual extends BaseConnection {
 	}
 	removeLastBend() {
 		if (this.handles.length <= 2) return;
-		this.path.removeBend(this.path.points.length - 2);
+		this.path.removeLastBend();
 		this.#syncHandles();
 	}
 
