@@ -1,4 +1,15 @@
 // @ts-check
+/**
+ * @typedef {(
+ *   typeof MouseTool | typeof DeleteTool | typeof UndoTool | typeof RedoTool | typeof StockTool |
+ *   typeof ConverterTool | typeof VariableTool | typeof ConstantTool | typeof FlowTool |
+ *   typeof LinkTool | typeof RotateNameTool | typeof MoveValveTool | typeof StraightenLinkTool |
+ *   typeof GhostTool | typeof TextAreaTool | typeof RectangleTool | typeof EllipseTool |
+ *   typeof LineTool | typeof TableTool | typeof TimePlotTool | typeof ComparePlotTool |
+ *   typeof XyPlotTool | typeof HistoPlotTool | typeof NumberboxTool | typeof RunTool |
+ *   typeof StepTool | typeof ResetTool
+ * )} ToolClass
+ */
 class ToolBox {
 	static init() {
 		this.tools = {
@@ -36,9 +47,9 @@ class ToolBox {
 			$(".tool-button").removeClass("pressed");
 			$("#btn_" + toolName).addClass("pressed");
 
-			currentTool.leaveTool();
-			currentTool = this.tools[toolName];
-			currentTool.enterTool(whichMouseButton);
+			CurrentTool.leaveTool();
+			CurrentTool = this.tools[toolName];
+			CurrentTool.enterTool(whichMouseButton);
 			ToolBox.updateButtons()
 		} else {
 			errorPopUp("The tool " + toolName + " does not exist");

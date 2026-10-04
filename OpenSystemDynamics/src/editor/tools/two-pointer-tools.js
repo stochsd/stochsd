@@ -471,6 +471,6 @@ function attachHandle(handle, shouldAttach = (attachTo) => true) {
 	parentConnection.update();
 	return true;
 }
-
-var currentTool = MouseTool;
+/** @type {ToolClass} */
+var CurrentTool = MouseTool;
 

@@ -1,8 +1,4 @@
-
-/** 
- * @typedef {[number, number]} Point 
- */
-
+// @ts-check
 class OrthogonalPath {
 
     /** @param {Point[]} points  */

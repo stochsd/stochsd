@@ -39,7 +39,9 @@ const type_size = {
 	"converter": [80, 60],
 	"text": [120, 60]
 }
-
+/** 
+ * @typedef {[number, number]} Point 
+ */
 /**
  * The type of a visual, i.e. visual.type
  * @typedef {"stock" | "variable" | "constant" | "converter" | "flow" | "link" | "numberbox"
