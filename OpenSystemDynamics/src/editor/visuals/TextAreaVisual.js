@@ -1,6 +1,10 @@
 class TextAreaVisual extends HtmlTwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "text";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 
 		this.primitive = findID(id);
 

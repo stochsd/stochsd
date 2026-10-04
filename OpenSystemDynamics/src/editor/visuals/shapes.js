@@ -1,6 +1,10 @@
 class RectangleVisual extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "rectangle";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.dialog = new RectangleDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
 			this.updateGraphics();
@@ -56,8 +60,12 @@ class RectangleVisual extends TwoPointer {
 
 
 class EllipseVisual extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "ellipse";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.dialog = new EllipseDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
 			this.updateGraphics();

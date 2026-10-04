@@ -228,10 +228,14 @@ class DataGenerations {
 }
 
 class ComparePlotVisual extends PlotVisual {
+	/** @returns {VisualType} */
+	get type() {
+		return "compareplot";
+	}
 	/** @type {DataGenerations} */
 	gens;
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.runHandler = () => {
 			this.fetchData();
 			this.render();

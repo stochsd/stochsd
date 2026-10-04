@@ -1,10 +1,14 @@
 class FlowVisual extends BaseConnection {
+	/** @returns {VisualType} */
+	get type() {
+		return "flow";
+	}
 	/** @type {StockVisual} */
 	_start_attach;
 	/** @type {StockVisual} */
 	_end_attach;
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 40], [31, 5], [0, -33], [-31, 5]]; 	// Textplacement when rotating text
 		

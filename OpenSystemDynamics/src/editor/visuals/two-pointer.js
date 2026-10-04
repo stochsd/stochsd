@@ -1,9 +1,7 @@
 class TwoPointer extends BaseVisual {
-	constructor(id, type, pos0, pos1) {
+	constructor(id, pos0, pos1) {
 		super(id, pos0, pos1);
 		this.id = id;
-		/** @type {VisualType} */
-		this.type = type;
 		this.selected = false;
 		this.superClass = "TwoPointer";
 		Visuals.addTwoPointer(this);
@@ -122,8 +120,8 @@ class TwoPointer extends BaseVisual {
 }
 
 class BaseConnection extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		/** @type {BaseVisual} */
 		this._start_attach = null;
 		/** @type {BaseVisual} */

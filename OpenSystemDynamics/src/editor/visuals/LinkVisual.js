@@ -1,6 +1,10 @@
 class LinkVisual extends BaseConnection {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "link";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 
 		// reload image of anchor to make sure anchor is ontop
 		this.control1Handle.reloadImage();

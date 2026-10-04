@@ -1,6 +1,10 @@
 class TableVisual extends HtmlTwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "table";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}

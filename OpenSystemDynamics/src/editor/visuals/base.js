@@ -188,15 +188,12 @@ class BaseVisual {
 class OnePointer extends BaseVisual {
 		/**
 	 * @param {string} id 
-	 * @param {VisualType} type 
 	 * @param {[number, number]} pos 
 	 */
-	constructor(id, type, pos, extras = false) {
+	constructor(id, pos, extras = false) {
 		super(id, pos);
 		Visuals.addOnePointer(this);
 		this.id = id;
-		/** @type {VisualType} */
-		this.type = type;
 		this.element_array = [];
 		this.selector_array = [];
 		this.group = null;
