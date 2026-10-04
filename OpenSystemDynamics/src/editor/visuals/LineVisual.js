@@ -15,15 +15,15 @@ class LineVisual extends TwoPointer {
 		this.arrowHeadStart.setTemplatePoints(arrowPathPoints);
 		this.arrowHeadEnd.setTemplatePoints(arrowPathPoints);
 
-		this.group = SVG.append(SVG.svgElement, 
+		this.#group = SVG.append(SVG.svgElement, 
 			SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine])
 		);
-		this.group.setAttribute("node_id", this.id);
+		this.#group.setAttribute("node_id", this.id);
 		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
 		for (let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id", this.id);
 		}
-		$(this.group).dblclick((event) => {
+		$(this.#group).dblclick((event) => {
 			this.doubleClick();
 		});
 	}

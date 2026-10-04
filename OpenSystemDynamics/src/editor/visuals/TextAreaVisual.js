@@ -47,8 +47,8 @@ class TextAreaVisual extends HtmlTwoPointer {
 			this.doubleClick();
 		});
 
-		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element]));
-		this.group.setAttribute("node_id", this.id);
+		this.#group = SVG.append(SVG.plotLayer, SVG.group([this.element]));
+		this.#group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
 		this.element_array = [this.htmlElement.contentDiv, this.element];

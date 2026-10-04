@@ -5,27 +5,33 @@ class Handle extends BaseVisual {
 	 * @param {string} type 
 	 * @param {[number, number]} pos 
 	 * @param {HandleType} handleType 
+     * @param {TwoPointer} parent 
 	 */
-	constructor(id, type, pos, handleType) {
+	constructor(id, type, pos, handleType, parent) {
 		super(id, type, pos);
-		Visuals.addHandle(handle)
+		Visuals.addHandle(this)
 		/** @type {HandleType} */
-		this.handleType = handleType;
+		this.#handleType = handleType;
+        /** @type {TwoPointer} */
+        this.#parent = parent
 		/** @type {boolean} */
-		this.isSquare = false;
+		this.#isSquare = false;
 		/** @type {SVGElement[]} */
-		this.elements = [];
+		this.#elements = [];
 		/** @type {SVGElement[]} */
-		this.selectElements = [];
+		this.#selectElements = [];
 		/** @type {SVGGElement} */
-		this.group;
+		this.#group;
 	}
+    getParent() {
+        return this.#parent
+    }
 	isAttached() {
 		let parent = this.getParent();
 		if (!parent.getStartAttach) {
 			return;
 		}
-		switch (this.handleType) {
+		switch (this.#handleType) {
 			case "start":
 				return !!parent.getStartAttach();
 			case "end":
@@ -54,7 +60,7 @@ class Handle extends BaseVisual {
 	}
 	/** @returns {HandleType} */
 	getHandleType() {
-		return this.handleType;
+		return this.#handleType;
 	}
 	setVisible(newVisible) {
 		if (newVisible) {
@@ -76,28 +82,28 @@ class Handle extends BaseVisual {
 		this.update();
 		let parent = this.getParent();
 		if (parent.startHandle && parent.endHandle) {
-			parent.syncHandleToPrimitive(this.handleType);
+			parent.syncHandleToPrimitive(this.#handleType);
 		}
 	}
 	loadImage() {
-		this.elements = this.getImage();
+		this.#elements = this.getImage();
 		for (let key in elements) {
 			if (elements[key].getAttribute("class") == "highlight") {
-				this.selectElements.push(elements[key]);
+				this.#selectElements.push(elements[key]);
 			}
 		}
-		this.group = SVG.append(this.getLayer(), SVG.group(this.elements));
-		this.group.setAttribute("node_id", this.id);
+		this.#group = SVG.append(this.getLayer(), SVG.group(this.#elements));
+		this.#group.setAttribute("node_id", this.id);
 		this.update();
-		for (let key in this.elements) {
-			let element = this.elements[key];
+		for (let key in this.#elements) {
+			let element = this.#elements[key];
 			$(element).on("mousedown", (event) => {
 				this.onMouseDown(event);
 			});
 		}
 	}
 	getImage() {
-		if (this.isSquare) {
+		if (this.#isSquare) {
 			return [
 				SVG.rect(-4, -4, 8, 8, this.color, "white", "element"),
 				SVG.rect(-4, -4, 8, 8, "none", this.color, "highlight")
@@ -114,7 +120,7 @@ class Handle extends BaseVisual {
 		return SVG.handleLayer;
 	}
 	makeSquare() {
-		this.isSquare = true;
+		this.#isSquare = true;
 		this.reloadImage();
 	}
 	reloadImage() {
@@ -123,17 +129,17 @@ class Handle extends BaseVisual {
 	}
 	select() {
 		this.selected = true;
-		for (let elem of this.selectElements) {
+		for (let elem of this.#selectElements) {
 			elem.setAttribute("visibility", "visible");
 		}
 	}
 	unselect() {
 		this.selected = false;
-		for (let elem of this.selectElements) {
+		for (let elem of this.#selectElements) {
 			elem.setAttribute("visibility", "hidden");
 		}
 	}
     update() {
-		this.group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
+		this.#group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
 	}
 }

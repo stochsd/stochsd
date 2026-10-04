@@ -128,7 +128,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
+		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend", this)
 	}
 	#syncHandles() {
 		const points = this.path.points
@@ -259,10 +259,10 @@ class FlowVisual extends BaseConnection {
 			this.nameDoubleClick();
 		});
 
-		this.group = SVG.append(SVG.flowLayer, SVG.group([this.flowPathGroup, this.valve, this.variable]));
-		this.group.setAttribute("node_id", this.id);
+		this.#group = SVG.append(SVG.flowLayer, SVG.group([this.flowPathGroup, this.valve, this.variable]));
+		this.#group.setAttribute("node_id", this.id);
 
-		$(this.group).dblclick(() => {
+		$(this.#group).dblclick(() => {
 			this.doubleClick(this.id);
 		});
 		this.updateGraphics();

@@ -11,7 +11,7 @@ class TwoPointer extends BaseVisual {
 		this.createInitialHandles(pos0, pos1);
 
 		this.makeGraphics();
-		$(this.group).on("mousedown", (event) => {
+		$(this.#group).on("mousedown", (event) => {
 			this.onMouseDown(event);
 		});
 
@@ -21,8 +21,8 @@ class TwoPointer extends BaseVisual {
 	}
 
 	createInitialHandles(pos0, pos1) {
-		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start");
-		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end");
+		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start", this);
+		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end", this);
 	}
 
 	getHandles() {

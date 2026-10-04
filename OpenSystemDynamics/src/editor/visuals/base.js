@@ -20,7 +20,7 @@ class BaseVisual {
 		/** @type {SVGGElement} */
 		this.icons; 	// SVG.group with icons such as ghost and questionmark
 		/** @type {SVGGElement} */
-		this.group = null;
+		this.#group = null;
 
 		this.namePosList = [[0, this.name_radius + 8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
 	}
@@ -131,9 +131,9 @@ class BaseVisual {
 		for (let key in this.element_array) {
 			this.element_array[key].remove();
 		}
-		if (!this.group)
+		if (!this.#group)
 			console.log(this.id, this.name, this.type);
-		this.group.remove();
+		this.#group.remove();
 	}
 	doubleClick() {
 		// This function has to be overriden
@@ -219,7 +219,7 @@ class OnePointer extends BaseVisual {
 		this.type = type;
 		this.element_array = [];
 		this.selector_array = [];
-		this.group = null;
+		this.#group = null;
 		this.superClass = "OnePointer";
 		this.draggable = true; // Default value, change it afterwords if you want
 		this.pos = pos;
@@ -304,10 +304,10 @@ class OnePointer extends BaseVisual {
 				});
 			}
 		}
-		this.group = SVG.append(this.getLayer(), SVG.group(this.element_array));
-		if (!this.group)
-			console.log("group", this.id, this.primitive, this.name, this.type, this.getLayer() ,this.group);
-		this.group.setAttribute("node_id", this.id);
+		this.#group = SVG.append(this.getLayer(), SVG.group(this.element_array));
+		if (!this.#group)
+			console.log("group", this.id, this.primitive, this.name, this.type, this.getLayer() ,this.#group);
+		this.#group.setAttribute("node_id", this.id);
 
 		this.update();
 
@@ -317,7 +317,7 @@ class OnePointer extends BaseVisual {
 				this.onMouseDown(event);
 			});
 		}
-		$(this.group).dblclick((event) => {
+		$(this.#group).dblclick((event) => {
 			if (!$(event.target).hasClass("name_element")) {
 				this.doubleClick(this.id);
 			}
@@ -346,7 +346,7 @@ class OnePointer extends BaseVisual {
 		}
 	}
 	update() {
-		this.group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
+		this.#group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
 
 		let prim = this.is_ghost ? findID(this.primitive.getAttribute("Source")) : this.primitive;
 		if (this.icons && prim) {

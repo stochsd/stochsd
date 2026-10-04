@@ -37,6 +37,7 @@ class Visuals {
 	static remove(id) {
 		delete this.#onePointers[id];
 		delete this.#twoPointers[id];
+		delete this.#handles[id];
 	}
 
 	/**
@@ -89,6 +90,12 @@ class Visuals {
 	/** @returns {(OnePointer | TwoPointer)[]} */
 	static selected() {
 		return this.all().filter(visual => visual.isSelected());
+	}
+	/** @returns {Handle | undefined} */
+	static selectedHandle() {
+		const selectedHandles = this.handles().filter(handle => handle.isSelected())
+		const selectedVisuals = this.selected()
+		return selectedHandles.length == 1 && selectedVisuals.every(visual => visual == selectedHandles[0].getParent()) ? selectedHandles[0] : undefined
 	}
 
 	/**
