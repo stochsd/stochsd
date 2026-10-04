@@ -1,3 +1,4 @@
+// @ts-check
 class CoordRect {
 	constructor() {
 		this.x1 = 0;
@@ -70,7 +71,7 @@ class RectSelector {
 		for (let key in handles) {
 			const handle = handles[key]
 			const parent = handle.getParent();
-			parent.select(false); // We also select the parent but not all of its anchors
+			parent.select(); // We also select the parent but not all of its anchors
 			handle.select();
 		}
 	}

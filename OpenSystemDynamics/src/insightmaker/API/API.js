@@ -2614,7 +2614,7 @@ function getPosition(primitive) {
 	});
 }
 
-
+/** @returns {[number, number]} */
 function getXmlPoint(xmlPoint) {
 	var x = xmlPoint.getAttribute("x");
 	var y = xmlPoint.getAttribute("y");

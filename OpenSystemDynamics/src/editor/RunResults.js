@@ -1,3 +1,4 @@
+// @ts-check
 class RunResults {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
 	static runState;
@@ -115,7 +116,7 @@ class RunResults {
 			let currentRunResults = [];
 			currentRunResults.push(time);
 			for (let key in this.varIdList) {
-				if (key == 0) {
+				if (key == "0") {
 					// On location 0 we always have time
 					continue;
 				}

@@ -1,10 +1,11 @@
+// @ts-check
 class TwoPointer extends BaseVisual {
 	/** @returns {VisualType} Must be overridden by each concrete visual */
 	get type() {
 		throw new Error(`${this.constructor.name} must define get type()`);
 	}
 	constructor(id, pos0, pos1) {
-		super(id, pos0, pos1);
+		super(id, pos0);
 		this.id = id;
 		this.selected = false;
 		this.superClass = "TwoPointer";
