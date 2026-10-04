@@ -386,11 +386,11 @@ class LinkTool extends TwoPointerTool {
 		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
-		let anchor = Visuals.getOnePointer(node_id);
+		const handle = Visuals.getHandle(node_id);
 		/** @type {LinkVisual} */
-		let parent = anchor.getParent();
-		parent.dragHandleTo(anchor, [x, y]);
-		parent.update();
+		const link = handle.getParent();
+		link.dragHandleTo(handle, [x, y]);
+		link.update();
 	}
 	static mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = Visuals.get(move_node_id).getPos();
@@ -399,18 +399,18 @@ class LinkTool extends TwoPointerTool {
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleHandle(x, y, shiftKey, node_id);
 		/** @type {Handle} */
-		const anchor = Visuals.getOnePointer(node_id);
-		/** @type {BaseConnection} */
-		const parent = anchor.getParent();
-		if (anchor.getHandleType() === "start" || anchor.getHandleType() === "end") {
-			attachHandle(anchor, (attachTo) => !(anchor.getHandleType() == "end" && attachTo.is_ghost));
-			parent.update();
-			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
+		const handle = Visuals.getHandle(node_id);
+		/** @type {LinkVisual} */
+		const link = handle.getParent();
+		if (handle.getHandleType() === "start" || handle.getHandleType() === "end") {
+			attachHandle(handle, (attachTo) => !(handle.getHandleType() == "end" && attachTo.is_ghost));
+			link.update();
+			if (link.getStartAttach() === null || link.getEndAttach() === null) {
 				// delete link is not attached at both ends 
 				Visuals.deleteSelected();
 			}
-		} else if (anchor.getHandleType() === "control1" || anchor.getHandleType() === "control2") {
-			parent.update();
+		} else if (handle.getHandleType() === "control1" || handle.getHandleType() === "control2") {
+			link.update();
 		}
 	}
 	static leftMouseUp(x, y, shiftKey) {
