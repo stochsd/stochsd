@@ -10,19 +10,19 @@ import { join } from "node:path";
 // Simulates using a tool that creates a primitive with one click, e.g. stock
 const clickTool = (tool, x, y) => `
 	ToolBox.setTool("${tool}", mouse.left);
-	currentTool.leftMouseDown(${x}, ${y});
-	currentTool.leftMouseUp(${x}, ${y});
+	CurrentTool.leftMouseDown(${x}, ${y});
+	CurrentTool.leftMouseUp(${x}, ${y});
 	UndoStack.storeState();
 `;
 
 // Simulates using a tool that is dragged from one point to another, e.g. flow
 const dragTool = (tool, [x1, y1], [x2, y2]) => `
 	ToolBox.setTool("${tool}", mouse.left);
-	currentTool.leftMouseDown(${x1}, ${y1});
-	currentTool.mouseMove(${x1}, ${y1}, false);
-	currentTool.mouseMove(${(x1 + x2) / 2}, ${(y1 + y2) / 2}, false);
-	currentTool.mouseMove(${x2}, ${y2}, false);
-	currentTool.leftMouseUp(${x2}, ${y2}, false);
+	CurrentTool.leftMouseDown(${x1}, ${y1});
+	CurrentTool.mouseMove(${x1}, ${y1}, false);
+	CurrentTool.mouseMove(${(x1 + x2) / 2}, ${(y1 + y2) / 2}, false);
+	CurrentTool.mouseMove(${x2}, ${y2}, false);
+	CurrentTool.leftMouseUp(${x2}, ${y2}, false);
 	UndoStack.storeState();
 `;
 
@@ -118,7 +118,7 @@ const simulate = `
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)
 const openModel = (fileName, xml) => `
-	UndoStack.forceCustomUndoState(${JSON.stringify(xml)});
+	UndoStack.resetTo(${JSON.stringify(xml)});
 	fileManager.fileName = ${JSON.stringify(fileName)};
 	preserveRestart();
 `;
@@ -131,7 +131,7 @@ export const scenarios = [
 		async run(page) {
 			return {
 				visuals: await page.run(visuals),
-				tool: await page.run(`return currentTool.name`),
+				tool: await page.run(`return CurrentTool.name`),
 				undo: await page.run(`return [UndoStack.undoIndex, UndoStack.undoStates.length]`),
 				xml: await page.run(modelXml),
 			};
@@ -473,7 +473,7 @@ export const scenarios = [
 			`);
 			const steps = {};
 			steps.linkEnds = await page.run(`const link = primitives("Link").at(-1); return [getName(link.source), getName(link.target)]`);
-			await page.run(`UndoStack.restoreLastState()`);
+			await page.run(`UndoStack.restoreCurrentState()`);
 			steps.afterUndoReload = await page.run(visuals);
 			await page.run(`
 				Visuals.unselectAll();
@@ -530,9 +530,9 @@ export const scenarios = [
 			steps.positions = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
 
 			const details = await page.run(visualDetails);
-			await page.run(`UndoStack.doUndo()`);
+			await page.run(`UndoStack.undo()`);
 			steps.afterUndo = await page.run(newPrimitives);
-			await page.run(`UndoStack.doRedo()`);
+			await page.run(`UndoStack.redo()`);
 			steps.sameAfterRedo = JSON.stringify(await page.run(visualDetails)) == JSON.stringify(details);
 
 			// Pasting again without moving the mouse puts the copies a bit further down

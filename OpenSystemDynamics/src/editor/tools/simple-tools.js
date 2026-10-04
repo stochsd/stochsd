@@ -85,7 +85,7 @@ DeleteTool.init();
 
 class UndoTool extends BaseTool {
 	static enterTool() {
-		UndoStack.doUndo();
+		UndoStack.undo();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -93,7 +93,7 @@ UndoTool.init();
 
 class RedoTool extends BaseTool {
 	static enterTool() {
-		UndoStack.doRedo();
+		UndoStack.redo();
 		ToolBox.setTool("mouse");
 	}
 }

@@ -2596,7 +2596,7 @@
            id="rect1213"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000" /></flowRegion><flowPara
          id="flowPara1219"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000">The History class is responsile for keeping track of undo and redo. It saves up to 10 versions of the file</flowPara></flowRoot>    <text
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#000000">The UndoStack class is responsible for keeping track of undo and redo. It saves up to 10 versions of the file</flowPara></flowRoot>    <text
        id="text1538"
        y="2082.7375"
        x="55.596691"

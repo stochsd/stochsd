@@ -58,7 +58,7 @@ class CrashRecoveryDialog extends jqDialog {
 			button.addEventListener("click", () => {
 				console.log("click restore", index)
 				UndoStack.undoIndex = index;
-				UndoStack.restoreLastState();
+				UndoStack.restoreCurrentState();
 				preserveRestart();
 			})
 		})

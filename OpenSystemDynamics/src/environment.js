@@ -257,7 +257,7 @@ class BaseFileManager {
 
       do_global_log("web load file call  back");
       var fileData = contents;
-      UndoStack.forceCustomUndoState(fileData);
+      UndoStack.resetTo(fileData);
       this.updateTitle();
       preserveRestart();
     }
@@ -334,7 +334,7 @@ class WebFileManagerBasic extends BaseFileManager {
 
         do_global_log("web load file call  back");
         var fileData = model.contents;
-        UndoStack.forceCustomUndoState(fileData);
+        UndoStack.resetTo(fileData);
         this.updateTitle();
         preserveRestart();
       },
@@ -517,7 +517,7 @@ class WebFileManagerModern extends BaseFileManager {
     const fileData = await file.text();
     this.fileName = file.name;
     await this.addToRecent();
-    UndoStack.forceCustomUndoState(fileData);
+    UndoStack.resetTo(fileData);
     this.updateTitle();
     preserveRestart();
   }
@@ -641,7 +641,7 @@ class NwFileManager extends BaseFileManager {
           reader.onload = (reader_event) => {
             do_global_log("NW: reader.onload callback");
             var fileData = reader_event.target.result;
-            UndoStack.forceCustomUndoState(fileData);
+            UndoStack.resetTo(fileData);
 
             this.addToRecent(this.fileName);
 
@@ -881,7 +881,7 @@ class NwFileManager extends BaseFileManager {
         return console.error(err);
       }
       this.fileName = absoluteFileName;
-      UndoStack.forceCustomUndoState(data);
+      UndoStack.resetTo(data);
       this.updateTitle();
       this.addToRecent(this.fileName);
       preserveRestart();

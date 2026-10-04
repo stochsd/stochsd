@@ -36,7 +36,7 @@ class UndoStack {
 		// If we are at the first step with no undo-states behind it is -1
 		this.undoStates = [];
 		this.undoIndex = -1;
-		this.lastUndoState = "";
+		this.currentState = "";
 		this.undoLimit = 10;
 
 		// Tells if the last state is saved to file
@@ -52,7 +52,7 @@ class UndoStack {
 		let undoState = InsightMakerDocumentWriter.getXmlString();
 
 		// Add to undo stack if it is different then previous state
-		if (this.lastUndoState != undoState) {
+		if (this.currentState != undoState) {
 			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex + 1);
 			this.undoImages.splice(this.undoIndex + 1);
@@ -60,7 +60,7 @@ class UndoStack {
 			this.undoStates.push(undoState);
 			this.#addUndoImage()
 			this.undoIndex = this.undoStates.length - 1;
-			this.lastUndoState = undoState;
+			this.currentState = undoState;
 			this.unsavedChanges = true;
 
 			if (this.undoLimit < this.undoStates.length) {
@@ -71,28 +71,28 @@ class UndoStack {
 		}
 	}
 
-	static forceCustomUndoState(newState) {
+	static resetTo(newState) {
 		this.undoStates = [];
 		this.undoStates.push(newState);
 		this.#addUndoImage()
 		this.undoIndex = 0;
-		this.lastUndoState = newState;
+		this.currentState = newState;
 		this.unsavedChanges = false;
 	}
 
-	static doUndo() {
+	static undo() {
 		if (this.undoIndex > 0) {
 			this.undoIndex--;
-			this.restoreLastState();
+			this.restoreCurrentState();
 		} else {
 			xAlert("No more undo");
 		}
 	}
 
-	static doRedo() {
+	static redo() {
 		if (this.undoIndex < this.undoStates.length - 1) {
 			this.undoIndex++;
-			this.restoreLastState();
+			this.restoreCurrentState();
 		} else {
 			xAlert("No more redo");
 		}
@@ -108,10 +108,10 @@ class UndoStack {
 		console.error(this.undoStates);
 	}
 
-	static restoreLastState() { 
+	static restoreCurrentState() { 
 		try {
-			this.lastUndoState = this.undoStates[this.undoIndex];
-			loadModelFromXml(this.lastUndoState);
+			this.currentState = this.undoStates[this.undoIndex];
+			loadModelFromXml(this.currentState);
 		} catch (err) {
 			handleCrash(err)
 		}
@@ -144,7 +144,7 @@ class UndoStack {
 		this.undoIndex = Number(localStorage.getItem("undoIndex"));
 		// A model that was never changed has no undo states, and then the default model is kept
 		if (this.undoStates.length > 0) {
-			this.restoreLastState();
+			this.restoreCurrentState();
 		}
 	}
 }

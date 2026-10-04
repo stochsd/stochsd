@@ -161,10 +161,10 @@ $(window).on("load", function () {
 				for (let visual of Visuals.twoPointers()) { visual.select(); }
 			}
 			if (event.key.toLowerCase() == "z") {
-				UndoStack.doUndo();
+				UndoStack.undo();
 			}
 			if (event.key.toLowerCase() == "y") {
-				UndoStack.doRedo();
+				UndoStack.redo();
 			}
 			// Ctrl+C and Ctrl+V in a text field copies and pastes text, not primitives
 			let inTextField = $(event.target).is(":input, [contenteditable]");
