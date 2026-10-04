@@ -128,7 +128,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend", this)
+		return new Handle(this.id + ".bend" + index, [0,0], "bend", this)
 	}
 	#syncHandles() {
 		const points = this.path.points

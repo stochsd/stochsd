@@ -13,14 +13,13 @@ class Handle extends BaseVisual {
 	/** @type {SVGGElement | undefined} */
 	group
 	/**
-	 * @param {string} id 
-	 * @param {string} type 
+	 * @param {string} id  
 	 * @param {[number, number]} pos 
 	 * @param {HandleType} handleType 
      * @param {TwoPointer} parent 
 	 */
-	constructor(id, type, pos, handleType, parent) {
-		super(id, type, pos);
+	constructor(id, pos, handleType, parent) {
+		super(id, "", pos);
 		Visuals.addHandle(this)
 		this.#handleType = handleType;
         this.#parent = parent

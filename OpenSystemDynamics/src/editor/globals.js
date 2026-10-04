@@ -44,8 +44,7 @@ const type_size = {
  * The type of a visual, i.e. visual.type
  * @typedef {"stock" | "variable" | "constant" | "converter" | "flow" | "link" | "numberbox"
  * 	| "text" | "rectangle" | "ellipse" | "line"
- * 	| "table" | "timeplot" | "compareplot" | "xyplot" | "histoplot" | "diagram"
- * 	| "dummy_anchor"} VisualType
+ * 	| "table" | "timeplot" | "compareplot" | "xyplot" | "histoplot" | "diagram"} VisualType
  */
 
 // Name type translations

@@ -21,8 +21,8 @@ class TwoPointer extends BaseVisual {
 	}
 
 	createInitialHandles(pos0, pos1) {
-		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start", this);
-		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end", this);
+		this.startHandle = new Handle(this.id + ".startHandle", pos0, "start", this);
+		this.endHandle = new Handle(this.id + ".endHandle", pos1, "end", this);
 	}
 
 	getHandles() {
