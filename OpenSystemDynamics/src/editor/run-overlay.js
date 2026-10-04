@@ -1,3 +1,5 @@
+// @ts-check
+
 class SubscribePool {
 	constructor() {
 		this.subscribers = [];
@@ -14,8 +16,8 @@ class SubscribePool {
 
 class runOverlay {
 	static init() {
-		$(document).ready(() => {
-			$("#svgBlockOverlay").mousedown(() => {
+		$(() => {
+			$("#svgBlockOverlay").on("mousedown", () => {
 				$("#svgBlockOverlay").css("opacity", 0.5);
 				yesNoAlert("Do you want to terminate the simulation now to change the model?", function (answer) {
 					$("#svgBlockOverlay").css("opacity", 0);

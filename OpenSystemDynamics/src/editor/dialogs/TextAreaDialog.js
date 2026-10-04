@@ -1,4 +1,6 @@
+// @ts-check
 class TextAreaDialog extends DisplayDialog {
+	/** @param {string} id  */
 	constructor(id) {
 		super(id);
 		this.setTitle("Text");

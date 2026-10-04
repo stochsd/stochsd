@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @typedef {Object} FunctionDetails
  * @property {string} name - The name of the function.

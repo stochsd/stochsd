@@ -1,3 +1,4 @@
+// @ts-check
 var Settings = {
 	fileExtension: ".ssd",
 	// Maximum recent files to be displayed in menu

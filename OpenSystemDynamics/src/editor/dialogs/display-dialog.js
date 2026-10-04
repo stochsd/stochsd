@@ -1,5 +1,7 @@
+// @ts-check
 // This is the super class dor ComparePlotDialog and TableDialog
 class DisplayDialog extends jqDialog {
+	/** @param {string} id  */
 	constructor(id) {
 		super();
 		this.primitive = findID(id);
@@ -27,18 +29,25 @@ class DisplayDialog extends jqDialog {
 		}
 		return results;
 	}
+	/** @param {string} id  */
 	acceptsId(id) {
 		let type = getType(findID(id));
 		return (this.acceptedPrimitveTypes.indexOf(type) != -1);
 	}
+	/** @param {string} id  */
 	removeIdToDisplay(id) {
 		let idxToRemove = this.displayIdList.indexOf(id);
 		idxToRemove !== -1 && this.displayIdList.splice(idxToRemove, 1);
 	}
+	/** @param {string} id  */
 	addIdToDisplay(id) {
 		let index = this.displayIdList.indexOf(id)
 		index === -1 && this.displayIdList.push(id)
 	}
+	/** 
+	 * @param {string} id  
+	 * @param {boolean} value  
+	 * */
 	setDisplayId(id, value) {
 		let oldIdIndex = this.displayIdList.indexOf(id);
 		switch (value) {
@@ -64,13 +73,15 @@ class DisplayDialog extends jqDialog {
 				break;
 		}
 	}
+	/** @param {string} id  */
 	getDisplayId(id) {
 		id = id.toString();
 		return this.displayIdList.indexOf(id) != -1
 	}
-	setIdsToDisplay(idList) {
+	/** @param {string[]} ids  */
+	setIdsToDisplay(ids) {
 		this.displayIdList = [];
-		idList.forEach((id) => this.setDisplayId(id, true))
+		ids.forEach((id) => this.setDisplayId(id, true))
 	}
 	getIdsToDisplay() {
 		this.clearRemovedIds();
