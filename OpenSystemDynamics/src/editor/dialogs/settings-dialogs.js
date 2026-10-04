@@ -326,7 +326,7 @@ class TimeUnitDialog extends jqDialog {
 					setTimeUnits(timeUnit);
 					$(this.dialog).dialog('close');
 					ToolBox.updateTimeUnitButton();
-					UndoStack.storeUndoState();
+					UndoStack.storeState();
 				} else {
 					this.showComplain(this.validName);
 				}

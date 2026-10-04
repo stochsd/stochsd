@@ -141,10 +141,10 @@ class BaseFileManager {
     applicationReload();
   }
   newModelOld() {
-    UndoStack.clearUndoStack();
+    UndoStack.clear();
     newModel();
     // Store an empty state as first state
-    UndoStack.storeUndoState();
+    UndoStack.storeState();
     // There is no last state is it could not be unsaved
     UndoStack.unsavedChanges = false;
     this.fileName = null;
@@ -207,10 +207,10 @@ class BaseFileManager {
     }
   }
   loadModelData(modelData) {
-    UndoStack.clearUndoStack();
+    UndoStack.clear();
     loadModelFromXml(modelData);
     // Store an empty state as first state
-    UndoStack.storeUndoState();
+    UndoStack.storeState();
     RunResults.resetSimulation();
   }
   updateSaveTime() {

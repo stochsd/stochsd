@@ -17,10 +17,10 @@ Sets attributes on primitives:
 this.primitive.setAttribute("AttributeName", value);
 ```
 ```javascript
-UndoStack.clearUndoStack();
+UndoStack.clear();
 loadModelFromXml(modelData);
 // Store an empty state as first state
-UndoStack.storeUndoState();
+UndoStack.storeState();
 RunResults.resetSimulation();
 ```
 

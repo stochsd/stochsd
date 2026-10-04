@@ -76,7 +76,7 @@ class DeleteTool extends BaseTool {
 			return;
 		}
 		Visuals.deleteSelected();
-		UndoStack.storeUndoState();
+		UndoStack.storeState();
 		InfoBar.update();
 		ToolBox.setTool("mouse");
 	}

@@ -173,7 +173,7 @@ $(window).on("load", function () {
 			}
 			if (event.key.toLowerCase() == "v" && !inTextField) {
 				Clipboard.paste();
-				UndoStack.storeUndoState();
+				UndoStack.storeState();
 			}
 		}
 		environment.keyDown(event);
@@ -202,11 +202,11 @@ $(window).on("load", function () {
 		});
 	});
 	$("#btn_save").click(function () {
-		UndoStack.storeUndoState();
+		UndoStack.storeState();
 		fileManager.saveModel();
 	});
 	$("#btn_save_as").click(function () {
-		UndoStack.storeUndoState();
+		UndoStack.storeState();
 		fileManager.saveModelAs();
 	});
 	$("#btn_recent_clear").click(function () {
@@ -247,7 +247,7 @@ $(window).on("load", function () {
 	for (let [button, color] of Object.entries(colorButtons)) {
 		$(`#btn_${button}`).click(() => {
 			Visuals.setSelectionColor(color);
-			UndoStack.storeUndoState();
+			UndoStack.storeState();
 		});
 	}
 	$("#btn_macro").click(function () {

@@ -78,7 +78,7 @@ function mouseUpHandler(event) {
 		CurrentTool.leftMouseUp(x, y, event.shiftKey);
 		mouse.isLeftDown = false;
 		InfoBar.update();
-		UndoStack.storeUndoState();
+		UndoStack.storeState();
 		ToolBox.updateButtons();
 	} else if (event.which == mouse.middle) {
 		event.preventDefault()

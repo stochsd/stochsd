@@ -22,7 +22,7 @@ class UndoStack {
 		$("#btn_undo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == 0)
 		$("#btn_redo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == this.undoStates.length - 1)
 	}
-	static addUndoImage() {
+	static #addUndoImage() {
 		const divBackground = $("#svgplanebackground")[0]
 		const width = divBackground.clientWidth
 		const height = divBackground.clientHeight
@@ -45,7 +45,7 @@ class UndoStack {
 
 	}
 
-	static storeUndoState() {
+	static storeState() {
 		// Create new XML for state
 		let InsightMakerDocumentWriter = new InsightMakerDocument();
 		InsightMakerDocumentWriter.appendPrimitives();
@@ -58,7 +58,7 @@ class UndoStack {
 			this.undoImages.splice(this.undoIndex + 1);
 
 			this.undoStates.push(undoState);
-			this.addUndoImage()
+			this.#addUndoImage()
 			this.undoIndex = this.undoStates.length - 1;
 			this.lastUndoState = undoState;
 			this.unsavedChanges = true;
@@ -74,7 +74,7 @@ class UndoStack {
 	static forceCustomUndoState(newState) {
 		this.undoStates = [];
 		this.undoStates.push(newState);
-		this.addUndoImage()
+		this.#addUndoImage()
 		this.undoIndex = 0;
 		this.lastUndoState = newState;
 		this.unsavedChanges = false;
@@ -83,7 +83,7 @@ class UndoStack {
 	static doUndo() {
 		if (this.undoIndex > 0) {
 			this.undoIndex--;
-			this.restoreUndoState();
+			this.restoreLastState();
 		} else {
 			xAlert("No more undo");
 		}
@@ -92,7 +92,7 @@ class UndoStack {
 	static doRedo() {
 		if (this.undoIndex < this.undoStates.length - 1) {
 			this.undoIndex++;
-			this.restoreUndoState();
+			this.restoreLastState();
 		} else {
 			xAlert("No more redo");
 		}
@@ -108,7 +108,7 @@ class UndoStack {
 		console.error(this.undoStates);
 	}
 
-	static restoreUndoState() { 
+	static restoreLastState() { 
 		try {
 			this.lastUndoState = this.undoStates[this.undoIndex];
 			loadModelFromXml(this.lastUndoState);
@@ -117,7 +117,7 @@ class UndoStack {
 		}
 	}
 
-	static clearUndoStack() {
+	static clear() {
 		this.undoStates = [];
 		this.undoIndex = -1;
 	}
@@ -134,17 +134,17 @@ class UndoStack {
 	}
 
 	static fromLocalStorage() {
-		this.clearUndoStack();
+		this.clear();
 		let undoState_length = localStorage.getItem("undoState_length");
 		for (let i = 0; i < undoState_length; i++) {
 			let state = localStorage.getItem("undoState_" + i);
 			this.undoStates.push(state);
-			this.addUndoImage()
+			this.#addUndoImage()
 		}
 		this.undoIndex = Number(localStorage.getItem("undoIndex"));
 		// A model that was never changed has no undo states, and then the default model is kept
 		if (this.undoStates.length > 0) {
-			this.restoreUndoState();
+			this.restoreLastState();
 		}
 	}
 }

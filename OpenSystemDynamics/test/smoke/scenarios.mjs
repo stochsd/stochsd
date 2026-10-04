@@ -12,7 +12,7 @@ const clickTool = (tool, x, y) => `
 	ToolBox.setTool("${tool}", mouse.left);
 	currentTool.leftMouseDown(${x}, ${y});
 	currentTool.leftMouseUp(${x}, ${y});
-	UndoStack.storeUndoState();
+	UndoStack.storeState();
 `;
 
 // Simulates using a tool that is dragged from one point to another, e.g. flow
@@ -23,7 +23,7 @@ const dragTool = (tool, [x1, y1], [x2, y2]) => `
 	currentTool.mouseMove(${(x1 + x2) / 2}, ${(y1 + y2) / 2}, false);
 	currentTool.mouseMove(${x2}, ${y2}, false);
 	currentTool.leftMouseUp(${x2}, ${y2}, false);
-	UndoStack.storeUndoState();
+	UndoStack.storeState();
 `;
 
 const selectOnly = primitiveExpression => `
@@ -64,7 +64,7 @@ export const buildModel = `
 	setValue2(parameter, "3");
 	setValue2(primitives("Converter")[0], "0,0;10,20");
 	syncAllVisuals();
-	UndoStack.storeUndoState();
+	UndoStack.storeState();
 	Visuals.unselectAll();
 `;
 
@@ -264,7 +264,7 @@ export const scenarios = [
 				Visuals.get(primitives("Stock")[1].id).select();
 				Visuals.get(primitives("Variable")[0].id).select();
 				Visuals.setSelectionColor("#ff0000");
-				UndoStack.storeUndoState();
+				UndoStack.storeState();
 			`);
 			steps.setColor = await page.run(`return primitives().map(p => getName(p) + ": " + p.getAttribute("Color"))`);
 
@@ -473,7 +473,7 @@ export const scenarios = [
 			`);
 			const steps = {};
 			steps.linkEnds = await page.run(`const link = primitives("Link").at(-1); return [getName(link.source), getName(link.target)]`);
-			await page.run(`UndoStack.restoreUndoState()`);
+			await page.run(`UndoStack.restoreLastState()`);
 			steps.afterUndoReload = await page.run(visuals);
 			await page.run(`
 				Visuals.unselectAll();
@@ -499,7 +499,7 @@ export const scenarios = [
 				// Recreates the visual so it shows the stocks
 				Visuals.get(timePlot.id).remove();
 				syncAllVisuals();
-				UndoStack.storeUndoState();
+				UndoStack.storeState();
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const ctrl = key => page.key(key, { code: "Key" + key.toUpperCase(), keyCode: key.toUpperCase().charCodeAt(0), modifiers: 2 });

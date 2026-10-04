@@ -136,7 +136,7 @@ class jqDialog {
 		// We add a delay to make sure we closed first
 
 		setTimeout(() => {
-			UndoStack.storeUndoState();
+			UndoStack.storeState();
 			InfoBar.update();
 			ToolBox.updateButtons();
 		}, 200);
