@@ -99,14 +99,6 @@ class Visuals {
 	}
 
 	/**
-	 * All top level visuals, i.e. everything except children such as anchors
-	 * @returns {(OnePointer | TwoPointer)[]}
-	 */
-	static parents() {
-		return this.all().filter(visual => Visuals.getParentId(visual.id) == visual.id);
-	}
-
-	/**
 	 * The parents of all selected visuals, each included once.
 	 * Selecting an anchor therefore counts as selecting its flow, link or plot.
 	 * @returns {(OnePointer | TwoPointer)[]}
