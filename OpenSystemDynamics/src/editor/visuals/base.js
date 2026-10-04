@@ -15,7 +15,7 @@ class BaseVisual {
 
 		this.elements = [];
 		this.selectElements = [];
-		/** @type {SVGGElement} */
+		/** @type {Icons} */
 		this.icons; 	// SVG.group with icons such as ghost and questionmark
 		/** @type {SVGGElement} */
 		this.group = null;
