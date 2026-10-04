@@ -2,6 +2,16 @@
 class Handle extends BaseVisual {
 	/** @type {HandleType} */
 	#handleType
+	/** @type {TwoPointer} */
+    #parent
+	/** @type {boolean} */
+	#isSquare
+	/** @type {SVGElement[]} */
+	#elements
+	/** @type {SVGElement[]} */
+	#selectElements
+	/** @type {SVGGElement | undefined} */
+	group
 	/**
 	 * @param {string} id 
 	 * @param {string} type 
@@ -13,16 +23,14 @@ class Handle extends BaseVisual {
 		super(id, type, pos);
 		Visuals.addHandle(this)
 		this.#handleType = handleType;
-        /** @type {TwoPointer} */
         this.#parent = parent
-		/** @type {boolean} */
 		this.#isSquare = false;
-		/** @type {SVGElement[]} */
 		this.#elements = [];
-		/** @type {SVGElement[]} */
 		this.#selectElements = [];
-		/** @type {SVGGElement} */
-		this.group;
+		this.group = undefined;
+		/** @type {[number, number]} */
+		this.pos = [pos[0], pos[1]];
+		this.loadImage();
 	}
 	/** @returns {TwoPointer} */
     getParent() {
@@ -66,7 +74,7 @@ class Handle extends BaseVisual {
 	}
 	setVisible(newVisible) {
 		if (newVisible) {
-			for (let element of this.element_array) {
+			for (let element of this.#elements) {
 				// Show all elements except for selectors
 				if (element.getAttribute("class") != "highlight") {
 					element.setAttribute("visibility", "visible");
@@ -75,7 +83,7 @@ class Handle extends BaseVisual {
 		}
 		else {
 			// Hide elements
-			for (let element of this.element_array) {
+			for (let element of this.#elements) {
 				element.setAttribute("visibility", "hidden");
 			}
 		}
@@ -89,11 +97,7 @@ class Handle extends BaseVisual {
 	}
 	loadImage() {
 		this.#elements = this.getImage();
-		for (let key in elements) {
-			if (elements[key].getAttribute("class") == "highlight") {
-				this.#selectElements.push(elements[key]);
-			}
-		}
+		this.#selectElements = this.#elements.filter(element => element.getAttribute("class") == "highlight");
 		this.group = SVG.append(this.getLayer(), SVG.group(this.#elements));
 		this.group.setAttribute("node_id", this.id);
 		this.update();
