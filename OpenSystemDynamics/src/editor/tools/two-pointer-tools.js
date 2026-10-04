@@ -48,8 +48,8 @@ class TwoPointerTool extends BaseTool {
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of handle 
-		const visualToMove = Visuals.get(node_id);
-		let parent = visualToMove.getParent();
+		const handleToMove = Visuals.getHandle(node_id);
+		let parent = handleToMove.getParent();
 		if (shiftKey) {
 			const [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.startHandle.id === node_id) {
@@ -60,9 +60,9 @@ class TwoPointerTool extends BaseTool {
 			const shortSideLength = Math.min(Math.abs(sideX), Math.abs(sideY));
 			const signX = Math.sign(sideX);
 			const signY = Math.sign(sideY);
-			visualToMove.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
+			handleToMove.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
 		} else {
-			visualToMove.setPos([x, y]);
+			handleToMove.setPos([x, y]);
 		}
 		parent.update();
 		Visuals.getHandle(node_id).updatePosition();
@@ -113,7 +113,7 @@ class FlowTool extends TwoPointerTool {
 	 * */
 	static mouseMoveSingleHandle(x, y, shiftKey, handleId) {
 		// Function used both during creation and later moving of handle
-		const mainHandle = Visuals.get(handleId);
+		const mainHandle = Visuals.getHandle(handleId);
 		/** @type {FlowVisual} */
 		const parent = mainHandle.getParent();
 
@@ -239,8 +239,8 @@ class LineTool extends TwoPointerTool {
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		// Function used both during creation and later moving of handle
-		let moveObject = Visuals.get(node_id);
-		let parent = moveObject.getParent();
+		let handle = Visuals.getHandle(node_id);
+		let parent = handle.getParent();
 		if (shiftKey) {
 			let [oppositeX, oppositeY] = [parent.startX, parent.startY];
 			if (parent.startHandle.id === node_id) {
@@ -254,19 +254,19 @@ class LineTool extends TwoPointerTool {
 				// Place Horizontal or vertical
 				if (Math.abs(sideX) < Math.abs(sideY)) {
 					// place vertical |
-					moveObject.setPos([oppositeX, y]);
+					handle.setPos([oppositeX, y]);
 				} else {
 					// place Horizontal -
-					moveObject.setPos([x, oppositeY]);
+					handle.setPos([x, oppositeY]);
 				}
 			} else {
 				// place at 45 degree angle 
 				let signX = Math.sign(sideX);
 				let signY = Math.sign(sideY);
-				moveObject.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
+				handle.setPos([oppositeX + signX * shortSideLength, oppositeY + signY * shortSideLength]);
 			}
 		} else {
-			moveObject.setPos([x, y]);
+			handle.setPos([x, y]);
 		}
 		parent.update();
 		Visuals.getHandle(node_id).updatePosition();
@@ -392,8 +392,8 @@ class LinkTool extends TwoPointerTool {
 		link.update();
 	}
 	static mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, move_node_id) {
-		let start_pos = Visuals.get(move_node_id).getPos();
-		this.mouseMoveSingleHandle(start_pos[0] + diff_x, start_pos[1] + diff_y, shiftKey, move_node_id);
+		let startPos = Visuals.getHandle(move_node_id).getPos();
+		this.mouseMoveSingleHandle(startPos[0] + diff_x, startPos[1] + diff_y, shiftKey, move_node_id);
 	}
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleHandle(x, y, shiftKey, node_id);

@@ -1,3 +1,4 @@
+// @ts-check
 class HistoPlotVisual extends PlotVisual {
 	/** @returns {VisualType} */
 	get type() {

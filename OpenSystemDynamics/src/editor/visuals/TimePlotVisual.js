@@ -1,3 +1,4 @@
+// @ts-check
 class TimePlotVisual extends PlotVisual {
 	/** @returns {VisualType} */
 	get type() {
@@ -51,10 +52,10 @@ class TimePlotVisual extends PlotVisual {
 			(node) => node.getAttribute("Color")
 		);
 
-		let types_to_display = idsToDisplay.map(findID).map(node => Visuals.get(node.id).type);
-		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
-		this.patternsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["pattern"] : [1]);
-		this.widthsToDisplay = types_to_display.map(type => line_options[type] ? line_options[type]["width"] : 2);
+		const typesToDisplay = idsToDisplay.map(findID).map(node => Visuals.get(node.id).type);
+		const lineOptions = JSON.parse(this.primitive.getAttribute("LineOptions"));
+		this.patternsToDisplay = typesToDisplay.map(type => lineOptions[type] ? lineOptions[type]["pattern"] : [1]);
+		this.widthsToDisplay = typesToDisplay.map(type => lineOptions[type] ? lineOptions[type]["width"] : 2);
 
 		if (this.data.results.length == 0) {
 			this.setEmptyPlot();
@@ -64,7 +65,7 @@ class TimePlotVisual extends PlotVisual {
 		let hasNumberedLines = (this.primitive.getAttribute("HasNumberedLines") === "true");
 
 		let makeSerie = (resultColumn, lineCount) => {
-			let serie = [];
+			const serie = [];
 			let plotPerIdx = Math.floor(this.data.results.length / 4);
 			for (let i = 0; i < this.data.results.length; i++) {
 				let row = this.data.results[i];

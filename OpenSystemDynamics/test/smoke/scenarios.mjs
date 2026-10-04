@@ -186,7 +186,7 @@ export const scenarios = [
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
 			const selection = () => page.run(`return [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
-			const positionOf = id => page.run(`return Visuals.get("${id}").getPos()`);
+			const positionOf = id => page.run(`return (Visuals.get("${id}") ?? Visuals.getHandle("${id}")).getPos()`);
 			const flowId = await page.run(`return primitives("Flow")[0].id`);
 			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
 			const steps = {};
