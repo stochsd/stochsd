@@ -1,7 +1,8 @@
 class TwoPointer extends BaseVisual {
 	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+		super(id, pos0, pos1);
 		this.id = id;
+		/** @type {VisualType} */
 		this.type = type;
 		this.selected = false;
 		this.superClass = "TwoPointer";
