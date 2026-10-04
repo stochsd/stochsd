@@ -25,15 +25,13 @@ class LinkVisual extends BaseConnection {
 
 	unselect() {
 		this.selected = false;
-		if (this.getChildren().some(child => child.isSelected())) {
+		if (this.getHandles().some(handle => handle.isSelected())) {
 			for (let i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}
 		} else {
-			for (let child of this.getChildren()) {
-				if ('setVisible' in child) {
-					child.setVisible(false);
-				}
+			for (let handle of this.getHandles()) {
+				handle.setVisible(false);
 			}
 		}
 
@@ -43,10 +41,8 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	select(selectChildren = true) {
-		for (let child of this.getChildren()) {
-			if ('setVisible' in child) {
-				child.setVisible(true);
-			}
+		for (let handle of this.getHandles()) {
+			handle.setVisible(true);
 		}
 		for (let i in this.highlight_on_select) {
 			this.highlight_on_select[i].setAttribute("stroke", "red");

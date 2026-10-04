@@ -139,15 +139,15 @@ class GhostTool extends OnePointCreateTool {
 	/** @returns {string | undefined} */
 	static getSelectionError() {
 		// filter out children, e.g. anchors
-		let selectedObjects = Visuals.selected().filter(visual => !visual.id.includes("."));
-		if (selectedObjects.length != 1) {
+		const selectedVisuals = Visuals.selected()
+		if (selectedVisuals.length != 1) {
 			return "You must first select exactly one primitive to ghost"
 		}
-		let selectedObject = selectedObjects[0];
-		if (selectedObject.is_ghost) {
+		const visual = selectedVisuals[0];
+		if (visual.is_ghost) {
 			return "You cannot ghost a ghost"
 		}
-		if (this.ghostable_primitives.indexOf(selectedObject.type) == -1) {
+		if (this.ghostable_primitives.indexOf(visual.type) == -1) {
 			return `This primitive is not ghostable`
 		}
 	}

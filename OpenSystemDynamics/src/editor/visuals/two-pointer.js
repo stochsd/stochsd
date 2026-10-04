@@ -189,6 +189,9 @@ class BaseConnection extends TwoPointer {
 	}
 	clean() {
 		this.triggerAttachEvents();
+		for (let handle of this.getHandles()) {
+			handle.remove();
+		}
 		super.clean();
 	}
 	updateGraphics() {

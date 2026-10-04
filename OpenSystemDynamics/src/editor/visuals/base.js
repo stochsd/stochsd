@@ -99,11 +99,6 @@ class BaseVisual {
 		return Visuals.get(Visuals.getParentId(this.id));
 	}
 
-	/** The visuals that belong to this, e.g. the anchors of a flow */
-	getChildren() {
-		return Visuals.all().filter(visual => Visuals.getParentId(visual.id) == this.id && visual.id != this.id);
-	}
-
 	/**
 	 * True once this visual has been removed from the diagram.
 	 * Connections can still refer to a removed visual while they are being removed themselves, e.g. during undo.
@@ -112,15 +107,12 @@ class BaseVisual {
 		return Visuals.get(this.id) !== this;
 	}
 
-	/** Removes this visual and its children from the diagram. The primitive in the model is not affected */
+	/** Removes this visual from the diagram. The primitive in the model is not affected */
 	remove() {
 		this.clean();
 		Visuals.remove(this.id);
 	}
 	clean() {
-		for (let child of this.getChildren()) {
-			child.remove();
-		}
 		this.clearImage();
 	}
 	clearImage() {

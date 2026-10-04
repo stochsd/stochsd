@@ -142,11 +142,11 @@ class Visuals {
 	 * @param {number} x @param {number} y
 	 */
 	static attachablesAt(x, y) {
-		let found = this.all().filter(visual => {
+		const found = this.all().filter(visual => {
 			if (!this.#attachableTypes.includes(visual.type)) {
 				return false;
 			}
-			let rect = visual.getBoundRect();
+			const rect = visual.getBoundRect();
 			return isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY);
 		});
 		do_global_log("found array(" + found.length + ") " + found.map(visual => visual.id).join(","));
