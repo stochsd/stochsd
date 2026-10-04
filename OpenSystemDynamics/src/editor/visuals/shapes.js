@@ -19,14 +19,14 @@ class RectangleVisual extends TwoPointer {
 		this.clickCoordRect = new CoordRect();
 		this.clickCoordRect.element = this.clickRect;
 
-		this.#group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickRect]));
-		this.#group.setAttribute("node_id", this.id);
+		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickRect]));
+		this.group.setAttribute("node_id", this.id);
 		this.element_array = [this.element];
 		for (let key in this.element_array) {
 			this.element_array[key].setAttribute("node_id", this.id);
 		}
 
-		$(this.#group).dblclick((event) => {
+		$(this.group).dblclick((event) => {
 			this.doubleClick();
 		});
 	}
@@ -75,10 +75,10 @@ class EllipseVisual extends TwoPointer {
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
 		this.element_array = [this.element];
-		this.#group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickEllipse, this.selector]));
-		this.#group.setAttribute("node_id", this.id);
+		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickEllipse, this.selector]));
+		this.group.setAttribute("node_id", this.id);
 
-		$(this.#group).dblclick(() => {
+		$(this.group).dblclick(() => {
 			this.doubleClick();
 		});
 	}

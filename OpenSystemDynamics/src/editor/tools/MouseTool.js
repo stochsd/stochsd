@@ -60,37 +60,35 @@ class MouseTool extends BaseTool {
 			this.defaultRelativeMove(Visuals.selected(), diff_x, diff_y);
 		}
 	}
-	/** @param {(OnePointer | TwoPointer)[]} move_objects */
-	static defaultRelativeMove(move_objects, diff_x, diff_y) {
-		let objectMoved = false;
-		/** @type {Map<FlowVisual | LinkVisual, Handle[]>} */
-		let connectionHandles = new Map();
-		for (let visual of move_objects) {
-			if (visual.draggable == undefined) {
+	/** 
+	 * @param {(OnePointer | TwoPointer)[]} visuals 
+	 * @param {number} diffX
+	 * @param {number} diffY
+	*/
+	static defaultRelativeMove(visuals, diffX, diffY) {
+		let visualsMoved = false;
+		for (let visual of visuals) {
+			if (visual instanceof TwoPointer) {
+				// TwoPointers are moved through their selected handles. A rect selection can select only some of them
+				const handles = visual.getHandles().filter(handle => handle.isSelected());
+				if (handles.length > 0) {
+					visual.moveHandlesBy(handles, diffX, diffY);
+					visualsMoved = true;
+				}
 				continue;
 			}
 			if (visual.draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
 			}
-
-			objectMoved = true;
-			// Flow and link handles are moved through their connection, which keeps the shape of its path
-			let parent = visual.getParent();
-			if (visual instanceof Handle && (parent instanceof FlowVisual || parent instanceof LinkVisual)) {
-				connectionHandles.set(parent, [...(connectionHandles.get(parent) ?? []), visual]);
-				continue;
-			}
+			visualsMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-			visual.moveBy(diff_x, diff_y);
+			visual.moveBy(diffX, diffY);
 		}
-		for (let [connection, handles] of connectionHandles) {
-			connection.moveHandlesBy(handles, diff_x, diff_y);
-		}
-		if (objectMoved) {
+		if (visualsMoved) {
 			// TwoPointer depend on OnePointer object (e.g. Handle, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
-			Visuals.updateAllExceptDisplays(move_objects.map(visual => visual.id));
+			Visuals.updateAllExceptDisplays(visuals.map(visual => visual.id));
 		}
 	}
 	static leftMouseUp(x, y) {

@@ -166,10 +166,10 @@ class LinkVisual extends BaseConnection {
 
 		// curve is not included in group since it is one-way and will therefore span an area
 		// The area will be clickable if included in the group 
-		this.#group = SVG.append(SVG.linkLayer, 
+		this.group = SVG.append(SVG.linkLayer, 
 			SVG.group([this.click_area, this.arrowHead])
 		);
-		this.#group.setAttribute("node_id", this.id);
+		this.group.setAttribute("node_id", this.id);
 
 		this.b1_line = SVG.append(SVG.linkLayer, SVG.line(x1, y1, x2, y2, "black", "black", "", { "stroke-dasharray": "5 5" }));
 		this.b2_line = SVG.append(SVG.linkLayer, SVG.line(x4, y4, x3, y3, "black", "black", "", { "stroke-dasharray": "5 5" }));

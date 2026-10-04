@@ -259,10 +259,10 @@ class FlowVisual extends BaseConnection {
 			this.nameDoubleClick();
 		});
 
-		this.#group = SVG.append(SVG.flowLayer, SVG.group([this.flowPathGroup, this.valve, this.variable]));
-		this.#group.setAttribute("node_id", this.id);
+		this.group = SVG.append(SVG.flowLayer, SVG.group([this.flowPathGroup, this.valve, this.variable]));
+		this.group.setAttribute("node_id", this.id);
 
-		$(this.#group).dblclick(() => {
+		$(this.group).dblclick(() => {
 			this.doubleClick(this.id);
 		});
 		this.updateGraphics();

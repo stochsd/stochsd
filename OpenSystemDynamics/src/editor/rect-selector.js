@@ -61,32 +61,45 @@ class RectSelector {
 		RectSelector.coordRect.y2 = y;
 		RectSelector.coordRect.update();
 		Visuals.unselectAll();
-		let select_array = RectSelector.getObjectsWithin();
-		for (let key in select_array) {
-			let parent = select_array[key].getParent();
+		let onePointers = RectSelector.getVisualsWithin();
+		for (let key in onePointers) {
+			const visual = onePointers[key]
+			visual.select();
+		}
+		let handles = RectSelector.getHandlesWithin();
+		for (let key in handles) {
+			const handle = handles[key]
+			const parent = handle.getParent();
 			parent.select(false); // We also select the parent but not all of its anchors
-			select_array[key].select();
+			handle.select();
 		}
 	}
 	static stop() {
 		RectSelector.coordRect.setVisible(false);
-		let select_array = RectSelector.getObjectsWithin();
-		for (let key in select_array) {
-			select_array[key].select();
-		}
 	}
-	static getObjectsWithin() {
-		let return_array = {};
+	static getVisualsWithin() {
+		/** @type {Record<string, OnePointer>} */
+		const result = {};
 		for (let visual of Visuals.onePointers()) {
 			if (RectSelector.isWithin(visual.id)) {
-				return_array[visual.id] = visual;
+				result[visual.id] = visual;
 			}
 		}
-		return return_array;
+		return result;
+	}
+	static getHandlesWithin() {
+		/** @type {Record<string, Handle>} */
+		const result = {};
+		for (let handle of Visuals.handles()) {
+			if (RectSelector.isWithin(handle.id)) {
+				result[handle.id] = handle;
+			}
+		}
+		return result;
 	}
 	/** @param {string} nodeId  */
 	static isWithin(nodeId) {
-		let [x, y] = Visuals.getOnePointer(nodeId).pos;
+		let [x, y] = Visuals.get(nodeId).getPos();
 		return (
 			x >= this.coordRect.xmin() &&
 			y >= this.coordRect.ymin() &&

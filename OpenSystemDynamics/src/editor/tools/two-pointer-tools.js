@@ -20,19 +20,19 @@ class TwoPointerTool extends BaseTool {
 	static leftMouseDown(x, y) {
 		Visuals.unselectAll();
 
-		// Looks for element under mouse. 
-		let start_element = Visuals.firstAttachableAt(x, y);
+		// Looks for visual under mouse. 
+		const startVisual = Visuals.firstAttachableAt(x, y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		let primitive_name = findFreeName(type_basename[this.getType()]);
-		this.createTwoPointer(x, y, primitive_name);
+		const primitiveName = findFreeName(type_basename[this.getType()]);
+		this.createTwoPointer(x, y, primitiveName);
 
-		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
+		// subscribes to changes in insight makers x and y positions. (these values are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
-		if (start_element != null && this.current_connection.getStartAttach) {
-			this.current_connection.setStartAttach(start_element.getParent());
+		if (startVisual != null && this.current_connection.getStartAttach) {
+			this.current_connection.setStartAttach(startVisual);
 		}
-		this.current_connection.setName(primitive_name);
+		this.current_connection.setName(primitiveName);
 
 		// make sure start anchor is synced with primitive 
 		this.current_connection.syncHandleToPrimitive("start");

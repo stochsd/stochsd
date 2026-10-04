@@ -211,7 +211,7 @@ class Visuals {
 	/** @param {string} color */
 	static setSelectionColor(color) {
 		for (let visual of this.selected()) {
-			visual.getParent().setColor(color);
+			visual.setColor(color);
 		}
 	}
 
@@ -256,6 +256,11 @@ class Visuals {
 
 	/** @param {string | null} id */
 	static unselectAllExcept(id) {
+		for (let visual of this.handles()) {
+			if (visual.id != id) {
+				visual.unselect();
+			}
+		}
 		for (let visual of this.onePointers()) {
 			if (visual.id != id) {
 				visual.unselect();

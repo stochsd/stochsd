@@ -11,7 +11,7 @@ class TwoPointer extends BaseVisual {
 		this.createInitialHandles(pos0, pos1);
 
 		this.makeGraphics();
-		$(this.#group).on("mousedown", (event) => {
+		$(this.group).on("mousedown", (event) => {
 			this.onMouseDown(event);
 		});
 
@@ -27,6 +27,18 @@ class TwoPointer extends BaseVisual {
 
 	getHandles() {
 		return [this.startHandle, this.endHandle];
+	}
+
+	/**
+	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
+	 * @param {Handle[]} handles
+	 * @param {number} diffX
+	 * @param {number} diffY
+	 */
+	moveHandlesBy(handles, diffX, diffY) {
+		for (let handle of handles) {
+			handle.moveBy(diffX, diffY);
+		}
 	}
 
 	/**

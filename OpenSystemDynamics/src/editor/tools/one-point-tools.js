@@ -112,9 +112,8 @@ class MoveValveTool extends BaseTool {
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
 		for (let visual of Visuals.selected()) {
-			let parent = visual.getParent();
-			if (parent.type == "link") {
-				parent.resetBezierPoints();
+			if (visual.type == "link") {
+				visual.resetBezierPoints();
 			}
 		}
 		ToolBox.setTool("mouse");

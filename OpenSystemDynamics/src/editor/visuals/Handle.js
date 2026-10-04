@@ -1,5 +1,7 @@
 /** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} HandleType */
 class Handle extends BaseVisual {
+	/** @type {HandleType} */
+	#handleType
 	/**
 	 * @param {string} id 
 	 * @param {string} type 
@@ -10,7 +12,6 @@ class Handle extends BaseVisual {
 	constructor(id, type, pos, handleType, parent) {
 		super(id, type, pos);
 		Visuals.addHandle(this)
-		/** @type {HandleType} */
 		this.#handleType = handleType;
         /** @type {TwoPointer} */
         this.#parent = parent
@@ -21,8 +22,9 @@ class Handle extends BaseVisual {
 		/** @type {SVGElement[]} */
 		this.#selectElements = [];
 		/** @type {SVGGElement} */
-		this.#group;
+		this.group;
 	}
+	/** @returns {TwoPointer} */
     getParent() {
         return this.#parent
     }
@@ -92,8 +94,8 @@ class Handle extends BaseVisual {
 				this.#selectElements.push(elements[key]);
 			}
 		}
-		this.#group = SVG.append(this.getLayer(), SVG.group(this.#elements));
-		this.#group.setAttribute("node_id", this.id);
+		this.group = SVG.append(this.getLayer(), SVG.group(this.#elements));
+		this.group.setAttribute("node_id", this.id);
 		this.update();
 		for (let key in this.#elements) {
 			let element = this.#elements[key];
@@ -140,6 +142,6 @@ class Handle extends BaseVisual {
 		}
 	}
     update() {
-		this.#group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
+		this.group.setAttribute("transform", "translate(" + this.pos[0] + "," + this.pos[1] + ")");
 	}
 }

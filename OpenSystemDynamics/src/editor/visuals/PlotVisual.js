@@ -37,8 +37,8 @@ class PlotVisual extends TwoPointer {
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.#group = SVG.append(SVG.plotLayer, SVG.group([this.element]));
-		this.#group.setAttribute("node_id", this.id);
+		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element]));
+		this.group.setAttribute("node_id", this.id);
 
 		this.element_array = [this.element];
 		for (let key in this.element_array) {
