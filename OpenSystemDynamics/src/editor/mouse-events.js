@@ -1,3 +1,4 @@
+// @ts-check
 class MousePan {
 	/** @type {{x: number, y: number}} */
 	static downAt;
@@ -34,7 +35,7 @@ function mouseDownHandler(event) {
 		case mouse.left:
 			// if left mouse button down
 			mouse.isLeftDown = true;
-			currentTool.leftMouseDown(x, y);
+			CurrentTool.leftMouseDown(x, y);
 			break;
 		case mouse.middle: 
 			event.preventDefault()
@@ -42,7 +43,7 @@ function mouseDownHandler(event) {
 			break;
 		case mouse.right:
 			// if right mouse button down
-			currentTool.rightMouseDown(x, y);
+			CurrentTool.rightMouseDown(x, y);
 			break;
 	}
 }
@@ -55,7 +56,7 @@ function mouseMoveHandler(event) {
 	mouse.y = y;
 
 	if (mouse.isLeftDown) {
-		currentTool.mouseMove(x, y, event.shiftKey);
+		CurrentTool.mouseMove(x, y, event.shiftKey);
 	}
 	if (MousePan.middleIsDown) {
 		event.preventDefault()
@@ -74,10 +75,10 @@ function mouseUpHandler(event) {
 		let x = event.pageX - offset.left;
 		let y = event.pageY - offset.top;
 
-		currentTool.leftMouseUp(x, y, event.shiftKey);
+		CurrentTool.leftMouseUp(x, y, event.shiftKey);
 		mouse.isLeftDown = false;
 		InfoBar.update();
-		History.storeUndoState();
+		UndoStack.storeState();
 		ToolBox.updateButtons();
 	} else if (event.which == mouse.middle) {
 		event.preventDefault()

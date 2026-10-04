@@ -1,3 +1,4 @@
+// @ts-check
 // Hold data for ComparePlots 
 class DataGenerations {
 	constructor() {

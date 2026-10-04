@@ -10,20 +10,20 @@ import { join } from "node:path";
 // Simulates using a tool that creates a primitive with one click, e.g. stock
 const clickTool = (tool, x, y) => `
 	ToolBox.setTool("${tool}", mouse.left);
-	currentTool.leftMouseDown(${x}, ${y});
-	currentTool.leftMouseUp(${x}, ${y});
-	History.storeUndoState();
+	CurrentTool.leftMouseDown(${x}, ${y});
+	CurrentTool.leftMouseUp(${x}, ${y});
+	UndoStack.storeState();
 `;
 
 // Simulates using a tool that is dragged from one point to another, e.g. flow
 const dragTool = (tool, [x1, y1], [x2, y2]) => `
 	ToolBox.setTool("${tool}", mouse.left);
-	currentTool.leftMouseDown(${x1}, ${y1});
-	currentTool.mouseMove(${x1}, ${y1}, false);
-	currentTool.mouseMove(${(x1 + x2) / 2}, ${(y1 + y2) / 2}, false);
-	currentTool.mouseMove(${x2}, ${y2}, false);
-	currentTool.leftMouseUp(${x2}, ${y2}, false);
-	History.storeUndoState();
+	CurrentTool.leftMouseDown(${x1}, ${y1});
+	CurrentTool.mouseMove(${x1}, ${y1}, false);
+	CurrentTool.mouseMove(${(x1 + x2) / 2}, ${(y1 + y2) / 2}, false);
+	CurrentTool.mouseMove(${x2}, ${y2}, false);
+	CurrentTool.leftMouseUp(${x2}, ${y2}, false);
+	UndoStack.storeState();
 `;
 
 const selectOnly = primitiveExpression => `
@@ -64,7 +64,7 @@ export const buildModel = `
 	setValue2(parameter, "3");
 	setValue2(primitives("Converter")[0], "0,0;10,20");
 	syncAllVisuals();
-	History.storeUndoState();
+	UndoStack.storeState();
 	Visuals.unselectAll();
 `;
 
@@ -118,7 +118,7 @@ const simulate = `
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)
 const openModel = (fileName, xml) => `
-	History.forceCustomUndoState(${JSON.stringify(xml)});
+	UndoStack.resetTo(${JSON.stringify(xml)});
 	fileManager.fileName = ${JSON.stringify(fileName)};
 	preserveRestart();
 `;
@@ -131,8 +131,8 @@ export const scenarios = [
 		async run(page) {
 			return {
 				visuals: await page.run(visuals),
-				tool: await page.run(`return currentTool.name`),
-				undo: await page.run(`return [History.undoIndex, History.undoStates.length]`),
+				tool: await page.run(`return CurrentTool.name`),
+				undo: await page.run(`return [UndoStack.undoIndex, UndoStack.undoStates.length]`),
 				xml: await page.run(modelXml),
 			};
 		},
@@ -186,7 +186,7 @@ export const scenarios = [
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
 			const selection = () => page.run(`return [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
-			const positionOf = id => page.run(`return Visuals.get("${id}").getPos()`);
+			const positionOf = id => page.run(`return (Visuals.get("${id}") ?? Visuals.getHandle("${id}")).getPos()`);
 			const flowId = await page.run(`return primitives("Flow")[0].id`);
 			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
 			const steps = {};
@@ -264,7 +264,7 @@ export const scenarios = [
 				Visuals.get(primitives("Stock")[1].id).select();
 				Visuals.get(primitives("Variable")[0].id).select();
 				Visuals.setSelectionColor("#ff0000");
-				History.storeUndoState();
+				UndoStack.storeState();
 			`);
 			steps.setColor = await page.run(`return primitives().map(p => getName(p) + ": " + p.getAttribute("Color"))`);
 
@@ -473,7 +473,7 @@ export const scenarios = [
 			`);
 			const steps = {};
 			steps.linkEnds = await page.run(`const link = primitives("Link").at(-1); return [getName(link.source), getName(link.target)]`);
-			await page.run(`History.restoreUndoState()`);
+			await page.run(`UndoStack.restoreCurrentState()`);
 			steps.afterUndoReload = await page.run(visuals);
 			await page.run(`
 				Visuals.unselectAll();
@@ -499,7 +499,7 @@ export const scenarios = [
 				// Recreates the visual so it shows the stocks
 				Visuals.get(timePlot.id).remove();
 				syncAllVisuals();
-				History.storeUndoState();
+				UndoStack.storeState();
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const ctrl = key => page.key(key, { code: "Key" + key.toUpperCase(), keyCode: key.toUpperCase().charCodeAt(0), modifiers: 2 });
@@ -530,9 +530,9 @@ export const scenarios = [
 			steps.positions = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
 
 			const details = await page.run(visualDetails);
-			await page.run(`History.doUndo()`);
+			await page.run(`UndoStack.undo()`);
 			steps.afterUndo = await page.run(newPrimitives);
-			await page.run(`History.doRedo()`);
+			await page.run(`UndoStack.redo()`);
 			steps.sameAfterRedo = JSON.stringify(await page.run(visualDetails)) == JSON.stringify(details);
 
 			// Pasting again without moving the mouse puts the copies a bit further down

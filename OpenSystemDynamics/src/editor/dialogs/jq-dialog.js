@@ -136,7 +136,7 @@ class jqDialog {
 		// We add a delay to make sure we closed first
 
 		setTimeout(() => {
-			History.storeUndoState();
+			UndoStack.storeState();
 			InfoBar.update();
 			ToolBox.updateButtons();
 		}, 200);
@@ -312,7 +312,7 @@ function yesNoCancelAlert(message, closeHandler) {
 
 function saveChangedAlert(continueHandler) {
 	// If we have no unsaved changes we just continue directly	
-	if (!History.unsavedChanges) {
+	if (!UndoStack.unsavedChanges) {
 		continueHandler();
 		return;
 	}

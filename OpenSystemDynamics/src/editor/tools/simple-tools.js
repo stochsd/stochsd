@@ -76,7 +76,7 @@ class DeleteTool extends BaseTool {
 			return;
 		}
 		Visuals.deleteSelected();
-		History.storeUndoState();
+		UndoStack.storeState();
 		InfoBar.update();
 		ToolBox.setTool("mouse");
 	}
@@ -85,7 +85,7 @@ DeleteTool.init();
 
 class UndoTool extends BaseTool {
 	static enterTool() {
-		History.doUndo();
+		UndoStack.undo();
 		ToolBox.setTool("mouse");
 	}
 }
@@ -93,7 +93,7 @@ UndoTool.init();
 
 class RedoTool extends BaseTool {
 	static enterTool() {
-		History.doRedo();
+		UndoStack.redo();
 		ToolBox.setTool("mouse");
 	}
 }

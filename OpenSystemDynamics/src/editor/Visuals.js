@@ -40,9 +40,9 @@ class Visuals {
 		delete this.#handles[id];
 	}
 
-	/** @param {string} id @returns {OnePointer | TwoPointer | Handle | undefined} */
+	/** @param {string} id @returns {OnePointer | TwoPointer | undefined} */
 	static get(id) {
-		return this.#onePointers[id] ?? this.#twoPointers[id] ?? this.#handles[id];
+		return this.#onePointers[id] ?? this.#twoPointers[id];
 	}
 	/** @param {string} id @returns {Handle | undefined} */
 	static getHandle(id) {

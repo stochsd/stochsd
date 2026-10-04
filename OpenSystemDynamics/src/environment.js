@@ -141,12 +141,12 @@ class BaseFileManager {
     applicationReload();
   }
   newModelOld() {
-    History.clearUndoHistory();
+    UndoStack.clear();
     newModel();
     // Store an empty state as first state
-    History.storeUndoState();
+    UndoStack.storeState();
     // There is no last state is it could not be unsaved
-    History.unsavedChanges = false;
+    UndoStack.unsavedChanges = false;
     this.fileName = null;
     this.lastSaved = null;
     this.updateTitle();
@@ -159,7 +159,7 @@ class BaseFileManager {
     // Only exportFile is implementation specific (different on nwjs and electron)
     this.exportFile(fileData, Settings.fileExtension, (filePath) => {
       this.fileName = filePath;
-      History.unsavedChanges = false;
+      UndoStack.unsavedChanges = false;
       this.updateSaveTime();
       this.updateTitle();
       if (this.finishedSaveHandler) {
@@ -207,10 +207,10 @@ class BaseFileManager {
     }
   }
   loadModelData(modelData) {
-    History.clearUndoHistory();
+    UndoStack.clear();
     loadModelFromXml(modelData);
     // Store an empty state as first state
-    History.storeUndoState();
+    UndoStack.storeState();
     RunResults.resetSimulation();
   }
   updateSaveTime() {
@@ -257,7 +257,7 @@ class BaseFileManager {
 
       do_global_log("web load file call  back");
       var fileData = contents;
-      History.forceCustomUndoState(fileData);
+      UndoStack.resetTo(fileData);
       this.updateTitle();
       preserveRestart();
     }
@@ -300,7 +300,7 @@ class WebFileManagerBasic extends BaseFileManager {
     this.exportFile(fileData, Settings.fileExtension, () => {
       this.updateSaveTime();
       this.updateTitle();
-      History.unsavedChanges = false;
+      UndoStack.unsavedChanges = false;
       if (this.finishedSaveHandler) {
         this.finishedSaveHandler();
       }
@@ -334,7 +334,7 @@ class WebFileManagerBasic extends BaseFileManager {
 
         do_global_log("web load file call  back");
         var fileData = model.contents;
-        History.forceCustomUndoState(fileData);
+        UndoStack.resetTo(fileData);
         this.updateTitle();
         preserveRestart();
       },
@@ -447,7 +447,7 @@ class WebFileManagerModern extends BaseFileManager {
   async updateUIAfterSave() {
     this.updateSaveTime();
     this.updateTitle();
-    History.unsavedChanges = false;
+    UndoStack.unsavedChanges = false;
     if (this.finishedSaveHandler) {
       this.finishedSaveHandler();
     }
@@ -517,7 +517,7 @@ class WebFileManagerModern extends BaseFileManager {
     const fileData = await file.text();
     this.fileName = file.name;
     await this.addToRecent();
-    History.forceCustomUndoState(fileData);
+    UndoStack.resetTo(fileData);
     this.updateTitle();
     preserveRestart();
   }
@@ -581,7 +581,7 @@ class ElectronFileManager extends BaseFileManager {
   async doSaveModel(fileName) {
     let fileData = createModelFileData();
     this.writeFile(this.fileName, fileData);
-    History.unsavedChanges = false;
+    UndoStack.unsavedChanges = false;
     this.updateSaveTime();
     this.updateTitle();
   }
@@ -641,7 +641,7 @@ class NwFileManager extends BaseFileManager {
           reader.onload = (reader_event) => {
             do_global_log("NW: reader.onload callback");
             var fileData = reader_event.target.result;
-            History.forceCustomUndoState(fileData);
+            UndoStack.resetTo(fileData);
 
             this.addToRecent(this.fileName);
 
@@ -830,7 +830,7 @@ class NwFileManager extends BaseFileManager {
     let fileData = createModelFileData();
     this.writeFilePromise(this.fileName, fileData)
       .then((filePath) => {
-        History.unsavedChanges = false;
+        UndoStack.unsavedChanges = false;
         this.updateSaveTime();
         this.updateTitle();
         this.addToRecent(filePath);
@@ -849,7 +849,7 @@ class NwFileManager extends BaseFileManager {
     // Only exportFile is implementation specific (different on nwjs and electron)
     this.exportFile(fileData, Settings.fileExtension, (filePath) => {
       this.fileName = filePath;
-      History.unsavedChanges = false;
+      UndoStack.unsavedChanges = false;
       this.addToRecent(this.fileName);
       this.updateSaveTime();
       this.updateTitle();
@@ -881,7 +881,7 @@ class NwFileManager extends BaseFileManager {
         return console.error(err);
       }
       this.fileName = absoluteFileName;
-      History.forceCustomUndoState(data);
+      UndoStack.resetTo(data);
       this.updateTitle();
       this.addToRecent(this.fileName);
       preserveRestart();
@@ -939,7 +939,7 @@ class WebEnvironment extends BaseEnvironment {
         // We only want to complain when the user is closing the page
         return null;
       }
-      if (History.unsavedChanges) {
+      if (UndoStack.unsavedChanges) {
         return 'You have unsaved changes. Are you sure you want to quit?';
       } else {
         return null;

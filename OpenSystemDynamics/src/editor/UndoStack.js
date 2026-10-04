@@ -1,4 +1,4 @@
-class History {
+class UndoStack {
 	/** @type {string[]} */
 	static undoImages = []
 	/** @type {string[]} */
@@ -22,7 +22,7 @@ class History {
 		$("#btn_undo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == 0)
 		$("#btn_redo").prop("disabled", this.undoStates.length == 0 || this.undoIndex == this.undoStates.length - 1)
 	}
-	static addUndoImage() {
+	static #addUndoImage() {
 		const divBackground = $("#svgplanebackground")[0]
 		const width = divBackground.clientWidth
 		const height = divBackground.clientHeight
@@ -36,31 +36,31 @@ class History {
 		// If we are at the first step with no undo-states behind it is -1
 		this.undoStates = [];
 		this.undoIndex = -1;
-		this.lastUndoState = "";
+		this.currentState = "";
 		this.undoLimit = 10;
 
 		// Tells if the last state is saved to file
 		// This is used for determining if the program should ask about saving
-		History.unsavedChanges = false;
+		UndoStack.unsavedChanges = false;
 
 	}
 
-	static storeUndoState() {
+	static storeState() {
 		// Create new XML for state
 		let InsightMakerDocumentWriter = new InsightMakerDocument();
 		InsightMakerDocumentWriter.appendPrimitives();
 		let undoState = InsightMakerDocumentWriter.getXmlString();
 
-		// Add to undo history if it is different then previous state
-		if (this.lastUndoState != undoState) {
+		// Add to undo stack if it is different then previous state
+		if (this.currentState != undoState) {
 			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex + 1);
 			this.undoImages.splice(this.undoIndex + 1);
 
 			this.undoStates.push(undoState);
-			this.addUndoImage()
+			this.#addUndoImage()
 			this.undoIndex = this.undoStates.length - 1;
-			this.lastUndoState = undoState;
+			this.currentState = undoState;
 			this.unsavedChanges = true;
 
 			if (this.undoLimit < this.undoStates.length) {
@@ -71,28 +71,28 @@ class History {
 		}
 	}
 
-	static forceCustomUndoState(newState) {
+	static resetTo(newState) {
 		this.undoStates = [];
 		this.undoStates.push(newState);
-		this.addUndoImage()
+		this.#addUndoImage()
 		this.undoIndex = 0;
-		this.lastUndoState = newState;
+		this.currentState = newState;
 		this.unsavedChanges = false;
 	}
 
-	static doUndo() {
+	static undo() {
 		if (this.undoIndex > 0) {
 			this.undoIndex--;
-			this.restoreUndoState();
+			this.restoreCurrentState();
 		} else {
 			xAlert("No more undo");
 		}
 	}
 
-	static doRedo() {
+	static redo() {
 		if (this.undoIndex < this.undoStates.length - 1) {
 			this.undoIndex++;
-			this.restoreUndoState();
+			this.restoreCurrentState();
 		} else {
 			xAlert("No more redo");
 		}
@@ -104,20 +104,20 @@ class History {
 
 	static debug() {
 		console.error("undo index " + this.undoIndex);
-		console.error("history length " + this.undoStates.length);
+		console.error("undoStack length " + this.undoStates.length);
 		console.error(this.undoStates);
 	}
 
-	static restoreUndoState() { 
+	static restoreCurrentState() { 
 		try {
-			this.lastUndoState = this.undoStates[this.undoIndex];
-			loadModelFromXml(this.lastUndoState);
+			this.currentState = this.undoStates[this.undoIndex];
+			loadModelFromXml(this.currentState);
 		} catch (err) {
 			handleCrash(err)
 		}
 	}
 
-	static clearUndoHistory() {
+	static clear() {
 		this.undoStates = [];
 		this.undoIndex = -1;
 	}
@@ -134,19 +134,19 @@ class History {
 	}
 
 	static fromLocalStorage() {
-		this.clearUndoHistory();
+		this.clear();
 		let undoState_length = localStorage.getItem("undoState_length");
 		for (let i = 0; i < undoState_length; i++) {
 			let state = localStorage.getItem("undoState_" + i);
 			this.undoStates.push(state);
-			this.addUndoImage()
+			this.#addUndoImage()
 		}
 		this.undoIndex = Number(localStorage.getItem("undoIndex"));
 		// A model that was never changed has no undo states, and then the default model is kept
 		if (this.undoStates.length > 0) {
-			this.restoreUndoState();
+			this.restoreCurrentState();
 		}
 	}
 }
-History.init();
+UndoStack.init();
 

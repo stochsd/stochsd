@@ -39,7 +39,9 @@ const type_size = {
 	"converter": [80, 60],
 	"text": [120, 60]
 }
-
+/** 
+ * @typedef {[number, number]} Point 
+ */
 /**
  * The type of a visual, i.e. visual.type
  * @typedef {"stock" | "variable" | "constant" | "converter" | "flow" | "link" | "numberbox"
@@ -103,7 +105,7 @@ function applicationReload() {
 }
 
 function preserveRestart() {
-	History.toLocalStorage();
+	UndoStack.toLocalStorage();
 	localStorage.setItem("fileName", fileManager.fileName);
 	localStorage.setItem("reloadPending", "1");
 	applicationReload();
@@ -138,8 +140,8 @@ function restoreAfterRestart() {
 	do_global_log("restore the file");
 	fileManager.fileName = localStorage.getItem("fileName");
 
-	// Read the history from localStorage
-	History.fromLocalStorage();
+	// Read the stack from localStorage
+	UndoStack.fromLocalStorage();
 
 	if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
 		// if opening new file without OK timeUnit => promt TimeUnitDialog

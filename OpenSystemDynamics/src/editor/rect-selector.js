@@ -82,7 +82,7 @@ class RectSelector {
 		/** @type {Record<string, OnePointer>} */
 		const result = {};
 		for (let visual of Visuals.onePointers()) {
-			if (RectSelector.isWithin(visual.id)) {
+			if (RectSelector.isWithin(visual)) {
 				result[visual.id] = visual;
 			}
 		}
@@ -92,15 +92,15 @@ class RectSelector {
 		/** @type {Record<string, Handle>} */
 		const result = {};
 		for (let handle of Visuals.handles()) {
-			if (RectSelector.isWithin(handle.id)) {
+			if (RectSelector.isWithin(handle)) {
 				result[handle.id] = handle;
 			}
 		}
 		return result;
 	}
-	/** @param {string} nodeId  */
-	static isWithin(nodeId) {
-		let [x, y] = Visuals.get(nodeId).getPos();
+	/** @param {OnePointer | Handle} visual */
+	static isWithin(visual) {
+		let [x, y] = visual.getPos();
 		return (
 			x >= this.coordRect.xmin() &&
 			y >= this.coordRect.ymin() &&
