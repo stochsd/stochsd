@@ -103,7 +103,7 @@ function syncVisual(primitive) {
 	} else if (primitiveType in shapeVisuals) {
 		syncShape(primitive, ...shapeVisuals[primitiveType]);
 	} else if (primitiveType == "Numberbox") {
-		let visual = new NumberboxVisual(primitive.id, "numberbox", getCenterPosition(primitive));
+		let visual = new NumberboxVisual(primitive.id, getCenterPosition(primitive));
 		visual.setColor(primitive.getAttribute("Color"));
 		visual.render();
 	} else if (primitiveType == "Flow") {

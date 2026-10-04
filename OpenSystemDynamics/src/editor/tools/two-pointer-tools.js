@@ -15,7 +15,7 @@ class TwoPointerTool extends BaseTool {
 	static createTwoPointer(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
-		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
+		// Example: this.current_connection = new FlowVisual(this.primitive.id,[x,y]);
 	}
 	static leftMouseDown(x, y) {
 		Visuals.unselectAll();
@@ -126,7 +126,7 @@ class FlowTool extends TwoPointerTool {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
 
-		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new FlowVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
 		this.current_connection.selectWithOnlyHandle(this.current_connection.endHandle);
@@ -196,7 +196,7 @@ class TextAreaTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		let primitive_name = findFreeName(type_basename["text"]);
 		this.primitive = createConnector(primitive_name, "TextArea", null, null);
-		this.current_connection = new TextAreaVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TextAreaVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -210,7 +210,7 @@ class TextAreaTool extends TwoPointerTool {
 class RectangleTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Rectangle", null, null);
-		this.current_connection = new RectangleVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new RectangleVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "rectangle";
@@ -222,7 +222,7 @@ RectangleTool.init();
 class EllipseTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Ellipse", null, null);
-		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new EllipseVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "ellipse";
@@ -232,7 +232,7 @@ class EllipseTool extends TwoPointerTool {
 class LineTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Line", null, null);
-		this.current_connection = new LineVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new LineVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "line";
@@ -277,7 +277,7 @@ LineTool.init();
 class TableTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Table", null, null);
-		this.current_connection = new TableVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TableVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -298,7 +298,7 @@ TableTool.init();
 class TimePlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "TimePlot", null, null);
-		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TimePlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -319,7 +319,7 @@ class TimePlotTool extends TwoPointerTool {
 class ComparePlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "ComparePlot", null, null);
-		this.current_connection = new ComparePlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new ComparePlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -340,7 +340,7 @@ ComparePlotTool.init();
 class XyPlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "XyPlot", null, null);
-		this.current_connection = new XyPlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new XyPlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -362,7 +362,7 @@ XyPlotTool.init();
 class HistoPlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "HistoPlot", null, null);
-		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -382,7 +382,7 @@ class HistoPlotTool extends TwoPointerTool {
 class LinkTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Link", null, null);
-		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new LinkVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
 		const handle = Visuals.getHandle(node_id);

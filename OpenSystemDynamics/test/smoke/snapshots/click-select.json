@@ -20,6 +20,7 @@
     "55.startHandle"
   ],
   "link": [
+    "50",
     "50.control1Handle",
     "50.control2Handle",
     "50.endHandle",

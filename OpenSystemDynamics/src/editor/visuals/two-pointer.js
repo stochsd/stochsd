@@ -28,6 +28,13 @@ class TwoPointer extends BaseVisual {
 		return [this.startHandle, this.endHandle];
 	}
 
+	clean() {
+		for (let handle of this.getHandles()) {
+			handle.remove();
+		}
+		super.clean();
+	}
+
 	/**
 	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
 	 * @param {Handle[]} handles
@@ -200,9 +207,6 @@ class BaseConnection extends TwoPointer {
 	}
 	clean() {
 		this.triggerAttachEvents();
-		for (let handle of this.getHandles()) {
-			handle.remove();
-		}
 		super.clean();
 	}
 	updateGraphics() {

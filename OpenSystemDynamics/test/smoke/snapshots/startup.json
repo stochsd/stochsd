@@ -1,7 +1,8 @@
 {
   "visuals": {
     "onePointers": [],
-    "twoPointers": []
+    "twoPointers": [],
+    "handles": []
   },
   "tool": "MouseTool",
   "undo": [

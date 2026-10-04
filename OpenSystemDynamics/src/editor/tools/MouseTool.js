@@ -73,9 +73,15 @@ class MouseTool extends BaseTool {
 				if (visual instanceof LinkVisual) {
 					// A link's ends follow what they are attached to, and its control points follow its ends.
 					// So its control points are only moved on their own when neither attachment moves
-					const attachmentMoves = visuals.includes(visual.getStartAttach()) || visuals.includes(visual.getEndAttach());
+					const movedEnds = [];
+					if (visuals.includes(visual.getStartAttach())) {
+						movedEnds.push(visual.startHandle);
+					}
+					if (visuals.includes(visual.getEndAttach())) {
+						movedEnds.push(visual.endHandle);
+					}
 					const controls = [visual.control1Handle, visual.control2Handle];
-					handles = attachmentMoves ? [] : handles.filter(handle => controls.includes(handle));
+					handles = movedEnds.length > 0 ? movedEnds : handles.filter(handle => controls.includes(handle));
 				}
 				if (handles.length > 0) {
 					visual.moveHandlesBy(handles, diffX, diffY);

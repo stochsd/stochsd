@@ -22,10 +22,12 @@
     "49",
     "49.endHandle",
     "49.startHandle",
+    "50",
     "50.control1Handle",
     "50.control2Handle",
     "50.endHandle",
     "50.startHandle",
+    "51",
     "51.control1Handle",
     "51.control2Handle",
     "51.endHandle",
@@ -54,7 +56,7 @@
       260
     ]
   ],
-  "ctrlA": 45,
+  "ctrlA": 47,
   "deleteAuxiliary": [
     null,
     "Default Display",
