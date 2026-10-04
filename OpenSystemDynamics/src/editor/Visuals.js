@@ -180,10 +180,7 @@ class Visuals {
 	 */
 	static updateAllExceptDisplays(displayIds = []) {
 		for (let visual of this.onePointers()) {
-			// dont update dummy_anchors, the twopointer parent of the dummy anchor has responsibility of the dummy_anchors 
-			if (visual.type !== "dummy_anchor") {
-				visual.update();
-			}
+			visual.update();
 		}
 		this.updateTwoPointers(displayIds);
 	}

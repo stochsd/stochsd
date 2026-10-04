@@ -36,6 +36,15 @@ class Handle extends BaseVisual {
     getParent() {
         return this.#parent
     }
+	/** Clicking a handle selects only it and its parent */
+	onMouseDown(event) {
+		mouse.lastClickedPrimitive = this;
+		if (event.which === mouse.left) {
+			Visuals.unselectAllExcept(this.#parent.id);
+			this.select();
+			mouse.clickedOnObject = true;
+		}
+	}
 	isAttached() {
 		let parent = this.getParent();
 		if (!parent.getStartAttach) {

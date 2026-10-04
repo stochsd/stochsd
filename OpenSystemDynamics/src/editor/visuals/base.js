@@ -70,11 +70,8 @@ class BaseVisual {
 	/** Updates the selection when this visual is clicked */
 	onMouseDown(event) {
 		mouse.lastClickedPrimitive = this;
-		// If we left click directly on the anchors we dont want anything but them selected
 		if (event.which === mouse.left) {
-			if (this.type == "dummy_anchor") {
-				Visuals.unselectAllExcept(this.getParent().id);
-			} else if (Visuals.selectedHandle()) {
+			if (Visuals.selectedHandle()) {
 				Visuals.unselectAll();
 			}
 			if (this.isSelected()) {
@@ -83,9 +80,7 @@ class BaseVisual {
 				}
 			} else {
 				if (!event.shiftKey) {
-					// We don't want to unselect an eventual parent
-					// As that will hide other anchors
-					Visuals.unselectAllExcept(this instanceof Handle ? this.getParent().id : this.id);
+					Visuals.unselectAllExcept(this.id);
 				}
 				this.select();
 			}
