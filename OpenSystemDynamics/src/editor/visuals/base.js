@@ -17,7 +17,9 @@ class BaseVisual {
 
 		this.element_array = [];
 		this.selector_array = [];
+		/** @type {SVGGElement} */
 		this.icons; 	// SVG.group with icons such as ghost and questionmark
+		/** @type {SVGGElement} */
 		this.group = null;
 
 		this.namePosList = [[0, this.name_radius + 8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
@@ -369,109 +371,20 @@ class OnePointer extends BaseVisual {
 	/** @param {number} diff_x @param {number} diff_y */
 	moveBy(diff_x, diff_y) {
 		let primitive = findID(this.id);
-		if (primitive != null) {
+		if (primitive) {
 			// If its a real primitive (stoch, variable etc) update it in the engine
 			let oldPos = getCenterPosition(primitive);
 			let newPos = [oldPos[0] + diff_x, oldPos[1] + diff_y];
 			setCenterPosition(primitive, newPos);
-		} else {
-			// If its not a real primtiive but rather an anchor point updated the position only graphically
-			this.pos[0] += diff_x;
-			this.pos[1] += diff_y;
+			this.updatePosition();
+			this.afterMove(diff_x, diff_y);
 		}
-		this.updatePosition();
-		this.afterMove(diff_x, diff_y);
 	}
 	getImage() {
 		return false;
 	}
 }
 
-/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} HandleType */
-class Handle extends OnePointer {
-	/**
-	 * @param {string} id 
-	 * @param {string} type 
-	 * @param {[number, number]} pos 
-	 * @param {HandleType} handleType 
-	 */
-	constructor(id, type, pos, handleType) {
-		super(id, type, pos);
-		this.handleType = handleType;
-		this.isSquare = false;
-	}
-	isAttached() {
-		let parent = this.getParent();
-		if (!parent.getStartAttach) {
-			return;
-		}
-		switch (this.handleType) {
-			case "start":
-				return !!parent.getStartAttach();
-			case "end":
-				return !!parent.getEndAttach()
-			default:
-				// It's not a start or end anchor so it cannot be attached
-				return false;
-		}
-	}
-	/** @param {HandleType} handleType  */
-	setAnchorType(handleType) {
-		this.handleType = handleType;
-	}
-	/** @returns {HandleType} */
-	getHandleType() {
-		return this.handleType;
-	}
-	setVisible(newVisible) {
-		if (newVisible) {
-			for (let element of this.element_array) {
-				// Show all elements except for selectors
-				if (element.getAttribute("class") != "highlight") {
-					element.setAttribute("visibility", "visible");
-				}
-			}
-		}
-		else {
-			// Hide elements
-			for (let element of this.element_array) {
-				element.setAttribute("visibility", "hidden");
-			}
-		}
-	}
-	updatePosition() {
-		this.update();
-		let parent = this.getParent();
-		if (parent.startHandle && parent.endHandle) {
-			parent.syncHandleToPrimitive(this.handleType);
-		}
-	}
-	getImage() {
-		if (this.isSquare) {
-			return [
-				SVG.rect(-4, -4, 8, 8, this.color, "white", "element"),
-				SVG.rect(-4, -4, 8, 8, "none", this.color, "highlight")
-			];
-		} else {
-			return [
-				SVG.circle(0, 0, 5, this.color, "white", "element"),
-				SVG.circle(0, 0, 5, "none", this.color, "highlight")
-			];
-		}
-
-	}
-	getLayer() {
-		return SVG.handleLayer;
-	}
-	makeSquare() {
-		this.isSquare = true;
-		this.reloadImage();
-	}
-	reloadImage() {
-		this.clearImage();
-		this.loadImage();
-	}
-}
 
 function safeDivision(nominator, denominator) {
 	// Make sure division by Zero does not happen 

@@ -6,6 +6,8 @@
 // A top level visual is its own parent. Children have ids like "<parent id>.startHandle".
 // Nothing outside this class should touch the maps directly.
 class Visuals {
+		/** @type {{ [id: string]: Handle }} */
+	static #handles = {}
 	/** @type {{ [id: string]: OnePointer }} */
 	static #onePointers = {};
 	/** @type {{ [id: string]: TwoPointer }} */
@@ -17,6 +19,10 @@ class Visuals {
 	/** @type {VisualType[]} */
 	static #attachableTypes = ["flow", "stock", "constant", "variable", "converter"];
 
+	/** @param {Handle} handle */
+	static addHandle(handle) {
+		this.#handles[handle.id] = handle;
+	}
 	/** @param {OnePointer} visual */
 	static addOnePointer(visual) {
 		this.#onePointers[visual.id] = visual;
@@ -40,12 +46,14 @@ class Visuals {
 	static getParentId(id) {
 		return id.toString().split(".")[0];
 	}
-
-	/** @param {string} id @returns {OnePointer | TwoPointer | undefined} */
+	/** @param {string} id @returns {OnePointer | TwoPointer | Handle | undefined} */
 	static get(id) {
-		return this.#onePointers[id] ?? this.#twoPointers[id];
+		return this.#onePointers[id] ?? this.#twoPointers[id] ?? this.#handles[id];
 	}
-
+	/** @param {string} id @returns {Handle | undefined} */
+	static getHandle(id) {
+		return this.#handles[id];
+	}
 	/** @param {string} id @returns {OnePointer | undefined} */
 	static getOnePointer(id) {
 		return this.#onePointers[id];
@@ -56,11 +64,14 @@ class Visuals {
 		return this.#twoPointers[id];
 	}
 
+	/** @returns {Handle[]} */
+	static handles() {
+		return Object.values(this.#handles);
+	}
 	/** @returns {OnePointer[]} */
 	static onePointers() {
 		return Object.values(this.#onePointers);
 	}
-
 	/** @returns {TwoPointer[]} */
 	static twoPointers() {
 		return Object.values(this.#twoPointers);

@@ -77,9 +77,9 @@ class TwoPointer extends BaseVisual {
 	}
 	select() {
 		this.selected = true;
-		for (let anchor of this.getHandles()) {
-			anchor.select();
-			anchor.setVisible(true);
+		for (let handle of this.getHandles()) {
+			handle.select();
+			handle.setVisible(true);
 		}
 	}
 
