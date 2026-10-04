@@ -1,4 +1,4 @@
-class History {
+class UndoStack {
 	/** @type {string[]} */
 	static undoImages = []
 	/** @type {string[]} */
@@ -41,7 +41,7 @@ class History {
 
 		// Tells if the last state is saved to file
 		// This is used for determining if the program should ask about saving
-		History.unsavedChanges = false;
+		UndoStack.unsavedChanges = false;
 
 	}
 
@@ -148,5 +148,5 @@ class History {
 		}
 	}
 }
-History.init();
+UndoStack.init();
 

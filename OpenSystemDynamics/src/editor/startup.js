@@ -161,10 +161,10 @@ $(window).on("load", function () {
 				for (let visual of Visuals.twoPointers()) { visual.select(); }
 			}
 			if (event.key.toLowerCase() == "z") {
-				History.doUndo();
+				UndoStack.doUndo();
 			}
 			if (event.key.toLowerCase() == "y") {
-				History.doRedo();
+				UndoStack.doRedo();
 			}
 			// Ctrl+C and Ctrl+V in a text field copies and pastes text, not primitives
 			let inTextField = $(event.target).is(":input, [contenteditable]");
@@ -173,7 +173,7 @@ $(window).on("load", function () {
 			}
 			if (event.key.toLowerCase() == "v" && !inTextField) {
 				Clipboard.paste();
-				History.storeUndoState();
+				UndoStack.storeUndoState();
 			}
 		}
 		environment.keyDown(event);
@@ -202,11 +202,11 @@ $(window).on("load", function () {
 		});
 	});
 	$("#btn_save").click(function () {
-		History.storeUndoState();
+		UndoStack.storeUndoState();
 		fileManager.saveModel();
 	});
 	$("#btn_save_as").click(function () {
-		History.storeUndoState();
+		UndoStack.storeUndoState();
 		fileManager.saveModelAs();
 	});
 	$("#btn_recent_clear").click(function () {
@@ -247,7 +247,7 @@ $(window).on("load", function () {
 	for (let [button, color] of Object.entries(colorButtons)) {
 		$(`#btn_${button}`).click(() => {
 			Visuals.setSelectionColor(color);
-			History.storeUndoState();
+			UndoStack.storeUndoState();
 		});
 	}
 	$("#btn_macro").click(function () {
@@ -327,7 +327,7 @@ $(window).on("load", function () {
 	RunResults.updateProgressBar();
 	ToolBox.updateTimeUnitButton();
 
-	History.unsavedChanges = false;
+	UndoStack.unsavedChanges = false;
 	InfoBar.init();
 });
 

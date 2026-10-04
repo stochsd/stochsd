@@ -15,8 +15,8 @@ class CrashRecoveryDialog extends jqDialog {
 				<div style="display: flex; gap: 1rem;">
 					<div style="display: flex; flex-direction: column; gap:0.5rem">
 						<div><b>STATES</b></div>
-						${History.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
-							const step = index - History.undoIndex
+						${UndoStack.undoStates.map((state, index) => ({state, index})).reverse().map(({state, index}) => {
+							const step = index - UndoStack.undoIndex
 							return `<div class="undo-state" data-index="${index}">
 								<button class="undo-state-btn" data-index="${index}">Restore</button>
 								${this.stepMessage(step)}
@@ -57,8 +57,8 @@ class CrashRecoveryDialog extends jqDialog {
 			const index = $(button).data("index")
 			button.addEventListener("click", () => {
 				console.log("click restore", index)
-				History.undoIndex = index;
-				History.restoreUndoState();
+				UndoStack.undoIndex = index;
+				UndoStack.restoreUndoState();
 				preserveRestart();
 			})
 		})
@@ -69,7 +69,7 @@ class CrashRecoveryDialog extends jqDialog {
 			const index = $(divElement).data("index")
 			divElement.addEventListener("mouseover", () => {
 				console.log("hover restore", index)
-				previewImage.src = History.undoImages[index]
+				previewImage.src = UndoStack.undoImages[index]
 			})
 		})
 	}
@@ -127,7 +127,7 @@ function errorDetails(error) {
 		`StochSD ${stochsd.version}`,
 		`Time: ${new Date().toISOString()}`,
 		`User agent: ${navigator.userAgent}`,
-		`Undo state: ${History.undoIndex + 1} of ${History.undoStates.length}`,
+		`Undo state: ${UndoStack.undoIndex + 1} of ${UndoStack.undoStates.length}`,
 		"",
 	];
 	const seen = new Set();

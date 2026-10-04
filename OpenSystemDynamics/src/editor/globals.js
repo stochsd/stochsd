@@ -105,7 +105,7 @@ function applicationReload() {
 }
 
 function preserveRestart() {
-	History.toLocalStorage();
+	UndoStack.toLocalStorage();
 	localStorage.setItem("fileName", fileManager.fileName);
 	localStorage.setItem("reloadPending", "1");
 	applicationReload();
@@ -141,7 +141,7 @@ function restoreAfterRestart() {
 	fileManager.fileName = localStorage.getItem("fileName");
 
 	// Read the history from localStorage
-	History.fromLocalStorage();
+	UndoStack.fromLocalStorage();
 
 	if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
 		// if opening new file without OK timeUnit => promt TimeUnitDialog

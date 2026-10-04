@@ -94,7 +94,7 @@ class RotateNameTool extends BaseTool {
 		ToolBox.setTool("mouse");
 	}
 	static leaveTool() {
-		History.storeUndoState();
+		UndoStack.storeUndoState();
 	}
 }
 

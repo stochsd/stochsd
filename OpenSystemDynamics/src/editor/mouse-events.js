@@ -1,3 +1,4 @@
+// @ts-check
 class MousePan {
 	/** @type {{x: number, y: number}} */
 	static downAt;
@@ -77,7 +78,7 @@ function mouseUpHandler(event) {
 		CurrentTool.leftMouseUp(x, y, event.shiftKey);
 		mouse.isLeftDown = false;
 		InfoBar.update();
-		History.storeUndoState();
+		UndoStack.storeUndoState();
 		ToolBox.updateButtons();
 	} else if (event.which == mouse.middle) {
 		event.preventDefault()
