@@ -51,7 +51,7 @@ class UndoStack {
 		InsightMakerDocumentWriter.appendPrimitives();
 		let undoState = InsightMakerDocumentWriter.getXmlString();
 
-		// Add to undo history if it is different then previous state
+		// Add to undo stack if it is different then previous state
 		if (this.lastUndoState != undoState) {
 			// Preserves only states from 0 to undoIndex
 			this.undoStates.splice(this.undoIndex + 1);
@@ -104,7 +104,7 @@ class UndoStack {
 
 	static debug() {
 		console.error("undo index " + this.undoIndex);
-		console.error("history length " + this.undoStates.length);
+		console.error("undoStack length " + this.undoStates.length);
 		console.error(this.undoStates);
 	}
 
@@ -117,7 +117,7 @@ class UndoStack {
 		}
 	}
 
-	static clearUndoHistory() {
+	static clearUndoStack() {
 		this.undoStates = [];
 		this.undoIndex = -1;
 	}
@@ -134,7 +134,7 @@ class UndoStack {
 	}
 
 	static fromLocalStorage() {
-		this.clearUndoHistory();
+		this.clearUndoStack();
 		let undoState_length = localStorage.getItem("undoState_length");
 		for (let i = 0; i < undoState_length; i++) {
 			let state = localStorage.getItem("undoState_" + i);

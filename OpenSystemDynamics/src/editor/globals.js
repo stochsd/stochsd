@@ -140,7 +140,7 @@ function restoreAfterRestart() {
 	do_global_log("restore the file");
 	fileManager.fileName = localStorage.getItem("fileName");
 
-	// Read the history from localStorage
+	// Read the stack from localStorage
 	UndoStack.fromLocalStorage();
 
 	if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
