@@ -41,6 +41,7 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	select(selectChildren = true) {
+		this.selected = true;
 		for (let handle of this.getHandles()) {
 			handle.setVisible(true);
 		}
@@ -302,12 +303,16 @@ class LinkVisual extends BaseConnection {
 			this.#syncHandles();
 			return;
 		}
-		// Targets are taken before moving, since moving an end also moves the control points
-		const targets = handles.map(handle => {
+		// Targets are taken before moving, since moving an end also moves the control points.
+		// The ends are moved first, since the control points are stored relative to the ends
+		const ends = handles.filter(handle => handle === this.startHandle || handle === this.endHandle);
+		const controls = handles.filter(handle => !ends.includes(handle));
+		const ordered = [...ends, ...controls];
+		const targets = ordered.map(handle => {
 			const [x, y] = handle.getPos();
 			return [x + diffX, y + diffY];
 		});
-		handles.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
+		ordered.forEach((handle, i) => this.dragHandleTo(handle, targets[i]));
 	}
 	#syncHandles() {
 		const [start, control1, control2, end] = this.path.points

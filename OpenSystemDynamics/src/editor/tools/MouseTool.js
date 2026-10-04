@@ -70,6 +70,15 @@ class MouseTool extends BaseTool {
 			if (visual instanceof TwoPointer) {
 				// TwoPointers are moved through their selected handles. A rect selection can select only some of them
 				const handles = visual.getHandles().filter(handle => handle.isSelected());
+				// An end attached to a moved visual moves with it, even when its handle is not selected
+				if (visual instanceof LinkVisual) {
+					if (visuals.includes(visual.getStartAttach()) && !handles.includes(visual.startHandle)) {
+						handles.push(visual.startHandle);
+					}
+					if (visuals.includes(visual.getEndAttach()) && !handles.includes(visual.endHandle)) {
+						handles.push(visual.endHandle);
+					}
+				}
 				if (handles.length > 0) {
 					visual.moveHandlesBy(handles, diffX, diffY);
 					visualsMoved = true;
