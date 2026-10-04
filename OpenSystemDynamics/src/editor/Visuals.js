@@ -40,13 +40,6 @@ class Visuals {
 		delete this.#handles[id];
 	}
 
-	/**
-	 * The id of the parent, e.g. "12" for "12.startHandle". A top level visual is its own parent.
-	 * @param {string} id
-	 */
-	static getParentId(id) {
-		return id.toString().split(".")[0];
-	}
 	/** @param {string} id @returns {OnePointer | TwoPointer | Handle | undefined} */
 	static get(id) {
 		return this.#onePointers[id] ?? this.#twoPointers[id] ?? this.#handles[id];

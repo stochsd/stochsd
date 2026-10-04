@@ -65,7 +65,7 @@ class TwoPointerTool extends BaseTool {
 			visualToMove.setPos([x, y]);
 		}
 		parent.update();
-		Visuals.getOnePointer(node_id).updatePosition();
+		Visuals.getHandle(node_id).updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.current_connection.update();
@@ -134,11 +134,10 @@ class FlowTool extends TwoPointerTool {
 	}
 	static rightMouseDown(x, y) {
 		if (mouse.isLeftDown) {
-			let onlySelectedHandle = getOnlySelectedHandleId();
-			if (onlySelectedHandle) {
+			const child = Visuals.selectedHandle();
+			if (child) {
 				/** @type {FlowVisual} */
-				let parent = Visuals.getTwoPointer(onlySelectedHandle["parent_id"]);
-				let child = Visuals.getOnePointer(onlySelectedHandle["child_id"]);
+				const parent = child.getParent();
 				if (parent.getType() === "flow" && child.getHandleType() === "end") {
 					let prevHandlePos = parent.getPreviousHandle(child.id).getPos();
 					if (distance(prevHandlePos, [x, y]) < 10) {
@@ -173,7 +172,7 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
-		attachHandle(Visuals.getOnePointer(node_id));
+		attachHandle(Visuals.getHandle(node_id));
 	}
 	static getType() {
 		return "flow";
@@ -270,7 +269,7 @@ class LineTool extends TwoPointerTool {
 			moveObject.setPos([x, y]);
 		}
 		parent.update();
-		Visuals.getOnePointer(node_id).updatePosition();
+		Visuals.getHandle(node_id).updatePosition();
 	}
 }
 LineTool.init();

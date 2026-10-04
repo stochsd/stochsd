@@ -73,8 +73,8 @@ class BaseVisual {
 		// If we left click directly on the anchors we dont want anything but them selected
 		if (event.which === mouse.left) {
 			if (this.type == "dummy_anchor") {
-				Visuals.unselectAllExcept(Visuals.getParentId(this.id));
-			} else if (getOnlySelectedHandleId()) {
+				Visuals.unselectAllExcept(this.getParent().id);
+			} else if (Visuals.selectedHandle()) {
 				Visuals.unselectAll();
 			}
 			if (this.isSelected()) {
@@ -85,7 +85,7 @@ class BaseVisual {
 				if (!event.shiftKey) {
 					// We don't want to unselect an eventual parent
 					// As that will hide other anchors
-					Visuals.unselectAllExcept(Visuals.getParentId(this.id));
+					Visuals.unselectAllExcept(this instanceof Handle ? this.getParent().id : this.id);
 				}
 				this.select();
 			}
@@ -173,7 +173,7 @@ class BaseVisual {
 			errorPopUp("You must rename a ghost by renaming the original.");
 			return;
 		}
-		let id = Visuals.getParentId(this.id)
+		let id = this.id
 		definitionEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
