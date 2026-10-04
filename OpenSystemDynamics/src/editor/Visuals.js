@@ -98,20 +98,6 @@ class Visuals {
 		return selectedHandles.length == 1 && selectedVisuals.every(visual => visual == selectedHandles[0].getParent()) ? selectedHandles[0] : undefined
 	}
 
-	/**
-	 * The parents of all selected visuals, each included once.
-	 * Selecting an anchor therefore counts as selecting its flow, link or plot.
-	 * @returns {(OnePointer | TwoPointer)[]}
-	 */
-	static selectedParents() {
-		let parents = {};
-		for (let visual of this.selected()) {
-			let parent = visual.getParent();
-			parents[parent.id] = parent;
-		}
-		return Object.values(parents);
-	}
-
 	/** @returns {TwoPointer[]} */
 	static displays() {
 		return this.twoPointers().filter(visual => this.#displayTypes.includes(visual.type));
@@ -231,7 +217,7 @@ class Visuals {
 
 	/** Deletes the primitives of the selected visuals from the model, which also removes their visuals */
 	static deleteSelected() {
-		for (let parent of this.selectedParents()) {
+		for (let parent of this.selected()) {
 			// check if object not already deleted
 			// e.i. link gets deleted automatically if any of it's attachments gets deleted
 			if (this.get(parent.id)) {

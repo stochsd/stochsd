@@ -44,7 +44,7 @@ class NumberboxTool extends OnePointCreateTool {
 	}
 	/** @returns { string | undefined } */
 	static getSelectionError() {
-		let selectedIds = Visuals.selectedParents().map(visual => visual.id);
+		let selectedIds = Visuals.selected().map(visual => visual.id);
 		if (selectedIds.length != 1) {
 			if (selectedIds.length == 0) {
 				return "You must first select a primitive for the Number Box.";
@@ -66,7 +66,7 @@ class NumberboxTool extends OnePointCreateTool {
 			ToolBox.setTool("mouse");
 			return
 		}
-		let selected_ids = Visuals.selectedParents().map(visual => visual.id);
+		let selected_ids = Visuals.selected().map(visual => visual.id);
 		if (isPrimitiveGhost(findID(selected_ids[0]))) {
 			this.targetPrimitive = findID(selected_ids[0]).getAttribute("Source");
 		} else {

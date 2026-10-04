@@ -525,7 +525,7 @@ export const scenarios = [
 			await page.mouse("mouseMoved", 450 + offsetX, 500 + offsetY);
 			await ctrl("v");
 			steps.pasted = await page.run(newPrimitives);
-			steps.selected = await page.run(`return Visuals.selectedParents().map(visual => visual.id).sort()`);
+			steps.selected = await page.run(`return Visuals.selected().map(visual => visual.id).sort()`);
 			steps.positions = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
 
 			const details = await page.run(visualDetails);

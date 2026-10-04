@@ -21,7 +21,7 @@ class InfoBar {
 		this.infoRestricted.html(isRestricted ? `(Restricted)` : "");
 	}
 	static update() {
-		let selection = Visuals.selectedParents();
+		let selection = Visuals.selected();
 
 		if (selection.length == 0) {
 			$(this.infoDefinitionElement).find(".CodeMirror").addClass("cm-comment")
