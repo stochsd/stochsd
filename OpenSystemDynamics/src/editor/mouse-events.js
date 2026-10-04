@@ -86,7 +86,7 @@ function mouseUpHandler(event) {
 }
 
 function stochsd_clear_sync() {
-	for (let parent of Visuals.parents()) {
+	for (let parent of Visuals.all()) {
 		if (findID(parent.id) == null) {
 			parent.remove();
 		}

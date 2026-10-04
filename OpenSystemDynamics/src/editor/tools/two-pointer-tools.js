@@ -15,24 +15,24 @@ class TwoPointerTool extends BaseTool {
 	static createTwoPointer(x, y, name) {
 		// Override this and do a for example: 
 		// Example: this.primitive = createConnector(name, "Flow", null,null);
-		// Example: this.current_connection = new FlowVisual(this.primitive.id,this.getType(),[x,y]);
+		// Example: this.current_connection = new FlowVisual(this.primitive.id,[x,y]);
 	}
 	static leftMouseDown(x, y) {
 		Visuals.unselectAll();
 
-		// Looks for element under mouse. 
-		let start_element = Visuals.firstAttachableAt(x, y);
+		// Looks for visual under mouse. 
+		const startVisual = Visuals.firstAttachableAt(x, y);
 
 		// Finds free name for primitive. e.g. "stock1", "stock2", "variable1" etc. (Visible to the user)
-		let primitive_name = findFreeName(type_basename[this.getType()]);
-		this.createTwoPointer(x, y, primitive_name);
+		const primitiveName = findFreeName(type_basename[this.getType()]);
+		this.createTwoPointer(x, y, primitiveName);
 
-		// subscribes to changes in insight makers x and y positions. (these valus are then saved)
+		// subscribes to changes in insight makers x and y positions. (these values are then saved)
 		this.primitive.subscribePosition(this.current_connection.positionUpdateHandler);
-		if (start_element != null && this.current_connection.getStartAttach) {
-			this.current_connection.setStartAttach(start_element.getParent());
+		if (startVisual != null && this.current_connection.getStartAttach) {
+			this.current_connection.setStartAttach(startVisual);
 		}
-		this.current_connection.setName(primitive_name);
+		this.current_connection.setName(primitiveName);
 
 		// make sure start anchor is synced with primitive 
 		this.current_connection.syncHandleToPrimitive("start");
@@ -65,7 +65,7 @@ class TwoPointerTool extends BaseTool {
 			visualToMove.setPos([x, y]);
 		}
 		parent.update();
-		Visuals.getOnePointer(node_id).updatePosition();
+		Visuals.getHandle(node_id).updatePosition();
 	}
 	static leftMouseUp(x, y, shiftKey) {
 		this.current_connection.update();
@@ -126,7 +126,7 @@ class FlowTool extends TwoPointerTool {
 		this.primitive = createConnector(name, "Flow", null, null);
 		setNonNegative(this.primitive, false); 			// What does this do?
 
-		this.current_connection = new FlowVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new FlowVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 		this.current_connection.name_pos = Number(this.primitive.getAttribute("RotateName"));
 
 		this.current_connection.selectWithOnlyHandle(this.current_connection.endHandle);
@@ -134,11 +134,10 @@ class FlowTool extends TwoPointerTool {
 	}
 	static rightMouseDown(x, y) {
 		if (mouse.isLeftDown) {
-			let onlySelectedHandle = getOnlySelectedHandleId();
-			if (onlySelectedHandle) {
+			const child = Visuals.selectedHandle();
+			if (child) {
 				/** @type {FlowVisual} */
-				let parent = Visuals.getTwoPointer(onlySelectedHandle["parent_id"]);
-				let child = Visuals.getOnePointer(onlySelectedHandle["child_id"]);
+				const parent = child.getParent();
 				if (parent.getType() === "flow" && child.getHandleType() === "end") {
 					let prevHandlePos = parent.getPreviousHandle(child.id).getPos();
 					if (distance(prevHandlePos, [x, y]) < 10) {
@@ -173,7 +172,7 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
-		attachHandle(Visuals.getOnePointer(node_id));
+		attachHandle(Visuals.getHandle(node_id));
 	}
 	static getType() {
 		return "flow";
@@ -197,7 +196,7 @@ class TextAreaTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		let primitive_name = findFreeName(type_basename["text"]);
 		this.primitive = createConnector(primitive_name, "TextArea", null, null);
-		this.current_connection = new TextAreaVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TextAreaVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
@@ -211,7 +210,7 @@ class TextAreaTool extends TwoPointerTool {
 class RectangleTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Rectangle", null, null);
-		this.current_connection = new RectangleVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new RectangleVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "rectangle";
@@ -223,7 +222,7 @@ RectangleTool.init();
 class EllipseTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Ellipse", null, null);
-		this.current_connection = new EllipseVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new EllipseVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "ellipse";
@@ -233,7 +232,7 @@ class EllipseTool extends TwoPointerTool {
 class LineTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Line", null, null);
-		this.current_connection = new LineVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new LineVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static getType() {
 		return "line";
@@ -270,7 +269,7 @@ class LineTool extends TwoPointerTool {
 			moveObject.setPos([x, y]);
 		}
 		parent.update();
-		Visuals.getOnePointer(node_id).updatePosition();
+		Visuals.getHandle(node_id).updatePosition();
 	}
 }
 LineTool.init();
@@ -278,14 +277,14 @@ LineTool.init();
 class TableTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Table", null, null);
-		this.current_connection = new TableVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TableVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
+		this.initialSelectedIds = Visuals.selected().map(visual => visual.id);
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -299,14 +298,14 @@ TableTool.init();
 class TimePlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "TimePlot", null, null);
-		this.current_connection = new TimePlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new TimePlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
+		this.initialSelectedIds = Visuals.selected().map(visual => visual.id);
 		let sides = this.initialSelectedIds.map(() => "L");
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds, sides);
@@ -320,14 +319,14 @@ class TimePlotTool extends TwoPointerTool {
 class ComparePlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "ComparePlot", null, null);
-		this.current_connection = new ComparePlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new ComparePlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
+		this.initialSelectedIds = Visuals.selected().map(visual => visual.id);
 		super.leftMouseDown(x, y)
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -341,14 +340,14 @@ ComparePlotTool.init();
 class XyPlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "XyPlot", null, null);
-		this.current_connection = new XyPlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new XyPlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
+		this.initialSelectedIds = Visuals.selected().map(visual => visual.id);
 		super.leftMouseDown(x, y)
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -363,14 +362,14 @@ XyPlotTool.init();
 class HistoPlotTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "HistoPlot", null, null);
-		this.current_connection = new HistoPlotVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new HistoPlotVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static init() {
 		this.initialSelectedIds = [];
 		super.init();
 	}
 	static leftMouseDown(x, y) {
-		this.initialSelectedIds = Visuals.selectedParents().map(visual => visual.id);
+		this.initialSelectedIds = Visuals.selected().map(visual => visual.id);
 		super.leftMouseDown(x, y);
 		setDisplayIds(this.primitive, this.initialSelectedIds);
 		this.current_connection.render();
@@ -383,14 +382,14 @@ class HistoPlotTool extends TwoPointerTool {
 class LinkTool extends TwoPointerTool {
 	static createTwoPointer(x, y, name) {
 		this.primitive = createConnector(name, "Link", null, null);
-		this.current_connection = new LinkVisual(this.primitive.id, this.getType(), [x, y], [x + 1, y + 1]);
+		this.current_connection = new LinkVisual(this.primitive.id, [x, y], [x + 1, y + 1]);
 	}
 	static mouseMoveSingleHandle(x, y, shiftKey, node_id) {
-		let anchor = Visuals.getOnePointer(node_id);
+		const handle = Visuals.getHandle(node_id);
 		/** @type {LinkVisual} */
-		let parent = anchor.getParent();
-		parent.dragHandleTo(anchor, [x, y]);
-		parent.update();
+		const link = handle.getParent();
+		link.dragHandleTo(handle, [x, y]);
+		link.update();
 	}
 	static mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, move_node_id) {
 		let start_pos = Visuals.get(move_node_id).getPos();
@@ -399,18 +398,18 @@ class LinkTool extends TwoPointerTool {
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
 		this.mouseMoveSingleHandle(x, y, shiftKey, node_id);
 		/** @type {Handle} */
-		const anchor = Visuals.getOnePointer(node_id);
-		/** @type {BaseConnection} */
-		const parent = anchor.getParent();
-		if (anchor.getHandleType() === "start" || anchor.getHandleType() === "end") {
-			attachHandle(anchor, (attachTo) => !(anchor.getHandleType() == "end" && attachTo.is_ghost));
-			parent.update();
-			if (parent.getStartAttach() === null || parent.getEndAttach() === null) {
+		const handle = Visuals.getHandle(node_id);
+		/** @type {LinkVisual} */
+		const link = handle.getParent();
+		if (handle.getHandleType() === "start" || handle.getHandleType() === "end") {
+			attachHandle(handle, (attachTo) => !(handle.getHandleType() == "end" && attachTo.is_ghost));
+			link.update();
+			if (link.getStartAttach() === null || link.getEndAttach() === null) {
 				// delete link is not attached at both ends 
 				Visuals.deleteSelected();
 			}
-		} else if (anchor.getHandleType() === "control1" || anchor.getHandleType() === "control2") {
-			parent.update();
+		} else if (handle.getHandleType() === "control1" || handle.getHandleType() === "control2") {
+			link.update();
 		}
 	}
 	static leftMouseUp(x, y, shiftKey) {

@@ -11,7 +11,7 @@ class Clipboard {
 	static #pastesAtSamePlace = 0;
 
 	static copy() {
-		let parents = Visuals.selectedParents().filter(visual => findID(visual.id));
+		let parents = Visuals.selected().filter(visual => findID(visual.id));
 		if (parents.length == 0) {
 			return;
 		}
@@ -182,7 +182,7 @@ class Clipboard {
 
 	// How far the pasted primitives, which are selected and still where they were copied from, must be moved
 	static #pasteOffset() {
-		let rects = Visuals.selectedParents().map(visual => visual.getBoundRect());
+		let rects = Visuals.selected().map(visual => visual.getBoundRect());
 		let minX = Math.min(...rects.map(rect => rect.minX));
 		let maxX = Math.max(...rects.map(rect => rect.maxX));
 		let minY = Math.min(...rects.map(rect => rect.minY));

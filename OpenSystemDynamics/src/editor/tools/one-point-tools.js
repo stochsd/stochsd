@@ -44,7 +44,7 @@ class NumberboxTool extends OnePointCreateTool {
 	}
 	/** @returns { string | undefined } */
 	static getSelectionError() {
-		let selectedIds = Visuals.selectedParents().map(visual => visual.id);
+		let selectedIds = Visuals.selected().map(visual => visual.id);
 		if (selectedIds.length != 1) {
 			if (selectedIds.length == 0) {
 				return "You must first select a primitive for the Number Box.";
@@ -66,7 +66,7 @@ class NumberboxTool extends OnePointCreateTool {
 			ToolBox.setTool("mouse");
 			return
 		}
-		let selected_ids = Visuals.selectedParents().map(visual => visual.id);
+		let selected_ids = Visuals.selected().map(visual => visual.id);
 		if (isPrimitiveGhost(findID(selected_ids[0]))) {
 			this.targetPrimitive = findID(selected_ids[0]).getAttribute("Source");
 		} else {
@@ -112,9 +112,8 @@ class MoveValveTool extends BaseTool {
 class StraightenLinkTool extends BaseTool {
 	static enterTool() {
 		for (let visual of Visuals.selected()) {
-			let parent = visual.getParent();
-			if (parent.type == "link") {
-				parent.resetBezierPoints();
+			if (visual.type == "link") {
+				visual.resetBezierPoints();
 			}
 		}
 		ToolBox.setTool("mouse");
@@ -139,15 +138,15 @@ class GhostTool extends OnePointCreateTool {
 	/** @returns {string | undefined} */
 	static getSelectionError() {
 		// filter out children, e.g. anchors
-		let selectedObjects = Visuals.selected().filter(visual => !visual.id.includes("."));
-		if (selectedObjects.length != 1) {
+		const selectedVisuals = Visuals.selected()
+		if (selectedVisuals.length != 1) {
 			return "You must first select exactly one primitive to ghost"
 		}
-		let selectedObject = selectedObjects[0];
-		if (selectedObject.is_ghost) {
+		const visual = selectedVisuals[0];
+		if (visual.is_ghost) {
 			return "You cannot ghost a ghost"
 		}
-		if (this.ghostable_primitives.indexOf(selectedObject.type) == -1) {
+		if (this.ghostable_primitives.indexOf(visual.type) == -1) {
 			return `This primitive is not ghostable`
 		}
 	}
@@ -202,59 +201,5 @@ class ConstantTool extends OnePointCreateTool {
 			{ "isConstant": true }
 		);
 	}
-}
-
-function getOnlySelectedHandleId() {
-	// returns null if more is selected than one anchor is selected, else returns object {parent_id: ... , child_id: ... }
-	let selection = Visuals.selected();
-	let keys = selection.map(visual => visual.id);
-	if (keys.length === 1 && selection[0].getType() === "dummy_anchor") {
-		// only one anchor in selection
-		return { "parent_id": Visuals.getParentId(keys[0]), "child_id": keys[0] };
-	} else if (keys.length === 2) {
-		if (Visuals.get(keys[0]).getType() === "dummy_anchor" && Visuals.get(keys[1]).getType() === "dummy_anchor") {
-			// both anchors are dummies 
-			return null;
-		} else if (Visuals.getParentId(keys[0]) === Visuals.getParentId(keys[1])) {
-			// one anchor and parent object selected 
-			let parent_id = null;
-			let child_id = null;
-			if (Visuals.getParentId(keys[0]) === keys[0]) {
-				child_id = keys[1];
-				parent_id = keys[0];
-			} else {
-				child_id = keys[0];
-				parent_id = keys[1];
-			}
-			return { "parent_id": parent_id, "child_id": child_id };
-		}
-	}
-	return null;
-}
-
-function get_single_primitive_id_selected() {
-	// will give object { "parent_id": ..., "children_ids": [...] } or null if more objects selected 
-	let keys = Visuals.selected().map(visual => visual.id);
-	let object_ids = { "children_ids": [] };
-	if (keys.length > 0) {
-		object_ids["parent_id"] = Visuals.getParentId(keys[0]);
-		for (let key of keys) {
-			if (Visuals.getParentId(key) !== object_ids["parent_id"]) {
-				return null;
-			} else if (Visuals.getParentId(key) !== key) {
-				object_ids["children_ids"].push(key);
-			}
-		}
-		return object_ids;
-	}
-	return null;
-}
-
-function get_only_link_selected() {
-	let object_ids = get_single_primitive_id_selected();
-	if (object_ids !== null && Visuals.get(object_ids["parent_id"]).getType() === "link") {
-		return object_ids;
-	}
-	return null;
 }
 

@@ -1,6 +1,10 @@
 class RectangleVisual extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "rectangle";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.dialog = new RectangleDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
 			this.updateGraphics();
@@ -21,9 +25,9 @@ class RectangleVisual extends TwoPointer {
 
 		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickRect]));
 		this.group.setAttribute("node_id", this.id);
-		this.element_array = [this.element];
-		for (let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id", this.id);
+		this.elements = [this.element];
+		for (let key in this.elements) {
+			this.elements[key].setAttribute("node_id", this.id);
 		}
 
 		$(this.group).dblclick((event) => {
@@ -56,8 +60,12 @@ class RectangleVisual extends TwoPointer {
 
 
 class EllipseVisual extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "ellipse";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.dialog = new EllipseDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
 			this.updateGraphics();
@@ -74,7 +82,7 @@ class EllipseVisual extends TwoPointer {
 
 		this.selectorCoordRect = new CoordRect();
 		this.selectorCoordRect.element = this.selector;
-		this.element_array = [this.element];
+		this.elements = [this.element];
 		this.group = SVG.append(SVG.plotLayer, SVG.group([this.element, this.clickEllipse, this.selector]));
 		this.group.setAttribute("node_id", this.id);
 

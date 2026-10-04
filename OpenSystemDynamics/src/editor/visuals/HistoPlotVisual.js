@@ -1,6 +1,10 @@
 class HistoPlotVisual extends PlotVisual {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "histoplot";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}

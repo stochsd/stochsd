@@ -1,6 +1,10 @@
 class LinkVisual extends BaseConnection {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "link";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 
 		// reload image of anchor to make sure anchor is ontop
 		this.control1Handle.reloadImage();
@@ -13,8 +17,8 @@ class LinkVisual extends BaseConnection {
 		this.path = new BezierPath(pos0, pos1);
 		super.createInitialHandles(pos0, pos1);
 		const [, control1, control2] = this.path.points;
-		this.control1Handle = new Handle(this.id + ".control1Handle", "dummy_anchor", control1, "control1");
-		this.control2Handle = new Handle(this.id + ".control2Handle", "dummy_anchor", control2, "control2");
+		this.control1Handle = new Handle(this.id + ".control1Handle", control1, "control1", this);
+		this.control2Handle = new Handle(this.id + ".control2Handle", control2, "control2", this);
 		this.control1Handle.makeSquare();
 		this.control2Handle.makeSquare();
 	}
@@ -25,15 +29,13 @@ class LinkVisual extends BaseConnection {
 
 	unselect() {
 		this.selected = false;
-		if (this.getChildren().some(child => child.isSelected())) {
+		if (this.getHandles().some(handle => handle.isSelected())) {
 			for (let i in this.highlight_on_select) {
 				this.highlight_on_select[i].setAttribute("stroke", "black");
 			}
 		} else {
-			for (let child of this.getChildren()) {
-				if ('setVisible' in child) {
-					child.setVisible(false);
-				}
+			for (let handle of this.getHandles()) {
+				handle.setVisible(false);
 			}
 		}
 
@@ -43,10 +45,9 @@ class LinkVisual extends BaseConnection {
 		}
 	}
 	select(selectChildren = true) {
-		for (let child of this.getChildren()) {
-			if ('setVisible' in child) {
-				child.setVisible(true);
-			}
+		this.selected = true;
+		for (let handle of this.getHandles()) {
+			handle.setVisible(true);
 		}
 		for (let i in this.highlight_on_select) {
 			this.highlight_on_select[i].setAttribute("stroke", "red");
@@ -180,7 +181,7 @@ class LinkVisual extends BaseConnection {
 
 		this.showOnlyOnSelect = [this.b1_line, this.b2_line];
 
-		this.element_array = this.element_array.concat([this.b1_line, this.b2_line]);
+		this.elements = this.elements.concat([this.b1_line, this.b2_line]);
 	}
 	dashLine() {
 		this.curve.setAttribute("stroke-dasharray", "6 4");

@@ -94,16 +94,16 @@ function syncVisual(primitive) {
 
 	let primitiveType = primitive.value.nodeName;
 	if (primitiveType == "Ghost") {
-		let [VisualClass, type] = namedVisualFor(findID(primitive.getAttribute("Source")));
-		syncNamedVisual(primitive, VisualClass, type, { is_ghost: true });
+		const VisualClass = namedVisualFor(findID(primitive.getAttribute("Source")));
+		syncNamedVisual(primitive, VisualClass, { is_ghost: true });
 	} else if (namedVisualFor(primitive)) {
-		syncNamedVisual(primitive, ...namedVisualFor(primitive));
+		syncNamedVisual(primitive, namedVisualFor(primitive));
 	} else if (primitiveType in displayVisuals) {
 		syncDisplay(primitive, ...displayVisuals[primitiveType]);
 	} else if (primitiveType in shapeVisuals) {
 		syncShape(primitive, ...shapeVisuals[primitiveType]);
 	} else if (primitiveType == "Numberbox") {
-		let visual = new NumberboxVisual(primitive.id, "numberbox", getCenterPosition(primitive));
+		let visual = new NumberboxVisual(primitive.id, getCenterPosition(primitive));
 		visual.setColor(primitive.getAttribute("Color"));
 		visual.render();
 	} else if (primitiveType == "Flow") {
@@ -114,24 +114,24 @@ function syncVisual(primitive) {
 }
 
 // The visual class and visual type for a stock, variable, constant or converter primitive
-/** @returns {[typeof BaseVisual, VisualType]} */
+/** @returns {typeof BaseVisual} */
 function namedVisualFor(primitive) {
 	switch (primitive.value.nodeName) {
 		case "Stock":
-			return [StockVisual, "stock"];
+			return StockVisual
 		case "Converter":
-			return [ConverterVisual, "converter"];
+			return ConverterVisual
 		case "Variable":
 			if (primitive.getAttribute("isConstant") == "true") {
-				return [ConstantVisual, "constant"];
+				return ConstantVisual
 			}
-			return [VariableVisual, "variable"];
+			return VariableVisual
 	}
 }
 
 // Stocks, variables, constants and converters, and ghosts of them
-function syncNamedVisual(primitive, VisualClass, type, extras) {
-	let visual = new VisualClass(primitive.id, type, getCenterPosition(primitive), extras);
+function syncNamedVisual(primitive, VisualClass, extras) {
+	let visual = new VisualClass(primitive.id, getCenterPosition(primitive), extras);
 	visual.setName(primitive.getAttribute("name"));
 	visual.setColor(primitive.getAttribute("Color"));
 	visual.name_pos = Number(primitive.getAttribute("RotateName"));
@@ -139,8 +139,8 @@ function syncNamedVisual(primitive, VisualClass, type, extras) {
 }
 
 // Plots and tables
-function syncDisplay(primitive, VisualClass, type) {
-	let visual = new VisualClass(primitive.id, type, getSourcePosition(primitive), getTargetPosition(primitive));
+function syncDisplay(primitive, VisualClass) {
+	let visual = new VisualClass(primitive.id, getSourcePosition(primitive), getTargetPosition(primitive));
 	visual.setColor(primitive.getAttribute("Color"));
 	let primitivesString = primitive.getAttribute("Primitives");
 	let idsToDisplay = primitivesString.split(",");
@@ -152,8 +152,8 @@ function syncDisplay(primitive, VisualClass, type) {
 }
 
 // Text, rectangles, ellipses and lines
-function syncShape(primitive, VisualClass, type) {
-	let visual = new VisualClass(primitive.id, type, getSourcePosition(primitive), getTargetPosition(primitive));
+function syncShape(primitive, VisualClass) {
+	let visual = new VisualClass(primitive.id, getSourcePosition(primitive), getTargetPosition(primitive));
 	visual.setColor(primitive.getAttribute("Color"));
 	visual.update();
 }
@@ -162,7 +162,7 @@ function syncFlow(primitive) {
 	let source_pos = getSourcePosition(primitive);
 	let target_pos = getTargetPosition(primitive);
 
-	let connection = new FlowVisual(primitive.id, "flow", source_pos, target_pos);
+	let connection = new FlowVisual(primitive.id, source_pos, target_pos);
 
 	connection.name_pos = Number(primitive.getAttribute("RotateName"));
 	connection.updateNamePosition();
@@ -190,7 +190,7 @@ function syncLink(primitive) {
 	let source_pos = getSourcePosition(primitive);
 	let target_pos = getTargetPosition(primitive);
 
-	let connection = new LinkVisual(primitive.id, "link", source_pos, target_pos);
+	let connection = new LinkVisual(primitive.id, source_pos, target_pos);
 
 	connection.setColor(primitive.getAttribute("Color"));
 

@@ -1,8 +1,12 @@
+// @ts-check
 class TwoPointer extends BaseVisual {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} Must be overridden by each concrete visual */
+	get type() {
+		throw new Error(`${this.constructor.name} must define get type()`);
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0);
 		this.id = id;
-		this.type = type;
 		this.selected = false;
 		this.superClass = "TwoPointer";
 		Visuals.addTwoPointer(this);
@@ -21,12 +25,31 @@ class TwoPointer extends BaseVisual {
 	}
 
 	createInitialHandles(pos0, pos1) {
-		this.startHandle = new Handle(this.id + ".startHandle", "dummy_anchor", pos0, "start");
-		this.endHandle = new Handle(this.id + ".endHandle", "dummy_anchor", pos1, "end");
+		this.startHandle = new Handle(this.id + ".startHandle", pos0, "start", this);
+		this.endHandle = new Handle(this.id + ".endHandle", pos1, "end", this);
 	}
 
 	getHandles() {
 		return [this.startHandle, this.endHandle];
+	}
+
+	clean() {
+		for (let handle of this.getHandles()) {
+			handle.remove();
+		}
+		super.clean();
+	}
+
+	/**
+	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
+	 * @param {Handle[]} handles
+	 * @param {number} diffX
+	 * @param {number} diffY
+	 */
+	moveHandlesBy(handles, diffX, diffY) {
+		for (let handle of handles) {
+			handle.moveBy(diffX, diffY);
+		}
 	}
 
 	/**
@@ -77,9 +100,9 @@ class TwoPointer extends BaseVisual {
 	}
 	select() {
 		this.selected = true;
-		for (let anchor of this.getHandles()) {
-			anchor.select();
-			anchor.setVisible(true);
+		for (let handle of this.getHandles()) {
+			handle.select();
+			handle.setVisible(true);
 		}
 	}
 
@@ -109,8 +132,8 @@ class TwoPointer extends BaseVisual {
 }
 
 class BaseConnection extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		/** @type {BaseVisual} */
 		this._start_attach = null;
 		/** @type {BaseVisual} */
@@ -125,12 +148,21 @@ class BaseConnection extends TwoPointer {
 		}
 	}
 
+	/**
+	 * Whether the start can attach to attachVisual. Must be overridden
+	 * @param {OnePointer | TwoPointer} attachVisual
+	 * @returns {boolean}
+	 */
 	isAcceptableStartAttach(attachVisual) {
-		// function to decide if attachVisual is OK allowed to attach start to 
-		return false;
+		throw new Error(`${this.constructor.name} must define isAcceptableStartAttach()`);
 	}
+	/**
+	 * Whether the end can attach to attachVisual. Must be overridden
+	 * @param {OnePointer | TwoPointer} attachVisual
+	 * @returns {boolean}
+	 */
 	isAcceptableEndAttach(attachVisual) {
-		return false;
+		throw new Error(`${this.constructor.name} must define isAcceptableEndAttach()`);
 	}
 	setStartAttach(new_start_attach) {
 		if (new_start_attach != null && this.getEndAttach() == new_start_attach) {

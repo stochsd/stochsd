@@ -1,12 +1,10 @@
 class BaseVisual {
 		/**
 	 * @param {string} id 
-	 * @param {VisualType} type 
 	 * @param {[number, number]} pos 
 	 */
-	constructor(id, type, pos) {
+	constructor(id, pos) {
 		this.id = id;
-		this.type = type;
 		this.selected = false;
 		this.name_radius = 30;
 		this.superClass = "baseobject";
@@ -15,9 +13,11 @@ class BaseVisual {
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
 
-		this.element_array = [];
-		this.selector_array = [];
+		this.elements = [];
+		this.selectElements = [];
+		/** @type {Icons} */
 		this.icons; 	// SVG.group with icons such as ghost and questionmark
+		/** @type {SVGGElement} */
 		this.group = null;
 
 		this.namePosList = [[0, this.name_radius + 8], [this.name_radius, 0], [0, -this.name_radius], [-this.name_radius, 0]];
@@ -25,7 +25,7 @@ class BaseVisual {
 
 	setColor(color) {
 		this.color = color;
-		for (let element of this.element_array) {
+		for (let element of this.elements) {
 			if (element.getAttribute("class") == "element") {
 				element.setAttribute("stroke", this.color);
 			} else if (element.getAttribute("class") == "name_element") {
@@ -51,10 +51,13 @@ class BaseVisual {
 		}
 	}
 
+	/**
+	 * The rect where the mouse can click to create connections, e.g. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}.
+	 * Must be overridden.
+	 * @returns {{ minX: number, maxX: number, minY: number, maxY: number }}
+	 */
 	getBoundRect() {
-		// Override this function
-		// This functions returns a hash map, e.i. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}
-		// The hashmap dictates in what rect mouse can click to create connections
+		throw new Error(`${this.constructor.name} must define getBoundRect()`);
 	}
 
 	getLinkMountPos(closeToPoint) {
@@ -68,11 +71,8 @@ class BaseVisual {
 	/** Updates the selection when this visual is clicked */
 	onMouseDown(event) {
 		mouse.lastClickedPrimitive = this;
-		// If we left click directly on the anchors we dont want anything but them selected
 		if (event.which === mouse.left) {
-			if (this.type == "dummy_anchor") {
-				Visuals.unselectAllExcept(Visuals.getParentId(this.id));
-			} else if (getOnlySelectedHandleId()) {
+			if (Visuals.selectedHandle()) {
 				Visuals.unselectAll();
 			}
 			if (this.isSelected()) {
@@ -81,25 +81,12 @@ class BaseVisual {
 				}
 			} else {
 				if (!event.shiftKey) {
-					// We don't want to unselect an eventual parent
-					// As that will hide other anchors
-					Visuals.unselectAllExcept(Visuals.getParentId(this.id));
+					Visuals.unselectAllExcept(this.id);
 				}
 				this.select();
 			}
 			mouse.clickedOnObject = true
 		}
-	}
-
-	/** The top level visual this belongs to, e.g. the flow of an anchor. A top level visual is its own parent. */
-	/** @returns {TwoPointer} */
-	getParent() {
-		return Visuals.get(Visuals.getParentId(this.id));
-	}
-
-	/** The visuals that belong to this, e.g. the anchors of a flow */
-	getChildren() {
-		return Visuals.all().filter(visual => Visuals.getParentId(visual.id) == this.id && visual.id != this.id);
 	}
 
 	/**
@@ -110,24 +97,21 @@ class BaseVisual {
 		return Visuals.get(this.id) !== this;
 	}
 
-	/** Removes this visual and its children from the diagram. The primitive in the model is not affected */
+	/** Removes this visual from the diagram. The primitive in the model is not affected */
 	remove() {
 		this.clean();
 		Visuals.remove(this.id);
 	}
 	clean() {
-		for (let child of this.getChildren()) {
-			child.remove();
-		}
 		this.clearImage();
 	}
 	clearImage() {
 		// Do the cleaning
-		for (let i in this.selector_array) {
-			this.selector_array[i].remove();
+		for (let i in this.selectElements) {
+			this.selectElements[i].remove();
 		}
-		for (let key in this.element_array) {
-			this.element_array[key].remove();
+		for (let key in this.elements) {
+			this.elements[key].remove();
 		}
 		if (!this.group)
 			console.log(this.id, this.name, this.type);
@@ -185,7 +169,7 @@ class BaseVisual {
 			errorPopUp("You must rename a ghost by renaming the original.");
 			return;
 		}
-		let id = Visuals.getParentId(this.id)
+		let id = this.id
 		definitionEditor.open(id, ".name-field");
 		event.stopPropagation();
 	}
@@ -205,18 +189,20 @@ class BaseVisual {
 }
 
 class OnePointer extends BaseVisual {
+	/** @returns {VisualType} Must be overridden by each concrete visual */
+	get type() {
+		throw new Error(`${this.constructor.name} must define get type()`);
+	}
 		/**
 	 * @param {string} id 
-	 * @param {VisualType} type 
 	 * @param {[number, number]} pos 
 	 */
-	constructor(id, type, pos, extras = false) {
-		super(id, type, pos);
+	constructor(id, pos, extras = false) {
+		super(id, pos);
 		Visuals.addOnePointer(this);
 		this.id = id;
-		this.type = type;
-		this.element_array = [];
-		this.selector_array = [];
+		this.elements = [];
+		this.selectElements = [];
 		this.group = null;
 		this.superClass = "OnePointer";
 		this.draggable = true; // Default value, change it afterwords if you want
@@ -267,50 +253,41 @@ class OnePointer extends BaseVisual {
 
 
 	loadImage() {
-		let element_array = this.getImage();
-		if (element_array == false) {
-			alert("getImage() must be overriden to add graphics to this object");
-		}
-
-		this.element_array = element_array;
-
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "highlight") {
-				this.selector_array.push(element_array[key]);
+		let elements = this.getImage();
+		this.elements = elements;
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "highlight") {
+				this.selectElements.push(elements[key]);
 			}
 		}
-
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "icons") {
-				this.icons = this.element_array[key]
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "icons") {
+				this.icons = this.elements[key]
 				break;
 			}
 		}
-
 		if (this.is_ghost && this.icons) {
 			this.icons.set("ghost", "visible");
 		}
-
-
 		// Set name element
 		this.name_element = null;
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "name_element") {
-				this.name_element = element_array[key];
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "name_element") {
+				this.name_element = elements[key];
 				$(this.name_element).dblclick((event) => {
 					this.nameDoubleClick();
 				});
 			}
 		}
-		this.group = SVG.append(this.getLayer(), SVG.group(this.element_array));
+		this.group = SVG.append(this.getLayer(), SVG.group(this.elements));
 		if (!this.group)
 			console.log("group", this.id, this.primitive, this.name, this.type, this.getLayer() ,this.group);
 		this.group.setAttribute("node_id", this.id);
 
 		this.update();
 
-		for (let key in this.element_array) {
-			let element = this.element_array[key];
+		for (let key in this.elements) {
+			let element = this.elements[key];
 			$(element).on("mousedown", (event) => {
 				this.onMouseDown(event);
 			});
@@ -321,14 +298,18 @@ class OnePointer extends BaseVisual {
 			}
 		});
 	}
+	/**
+	 * The layer the visual's group is appended to, e.g. SVG.stockLayer. Must be overridden
+	 * @returns {SVGGElement}
+	 */
 	getLayer() {
-		return false;
+		throw new Error(`${this.constructor.name} must define getLayer()`);
 	}
 
 	select() {
 		this.selected = true;
-		for (let i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility", "visible");
+		for (let i in this.selectElements) {
+			this.selectElements[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
 			this.icons.setColor("white");
@@ -336,8 +317,8 @@ class OnePointer extends BaseVisual {
 	}
 	unselect() {
 		this.selected = false;
-		for (let i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility", "hidden");
+		for (let i in this.selectElements) {
+			this.selectElements[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
 			this.icons.setColor(this.color);
@@ -369,109 +350,24 @@ class OnePointer extends BaseVisual {
 	/** @param {number} diff_x @param {number} diff_y */
 	moveBy(diff_x, diff_y) {
 		let primitive = findID(this.id);
-		if (primitive != null) {
+		if (primitive) {
 			// If its a real primitive (stoch, variable etc) update it in the engine
 			let oldPos = getCenterPosition(primitive);
 			let newPos = [oldPos[0] + diff_x, oldPos[1] + diff_y];
 			setCenterPosition(primitive, newPos);
-		} else {
-			// If its not a real primtiive but rather an anchor point updated the position only graphically
-			this.pos[0] += diff_x;
-			this.pos[1] += diff_y;
+			this.updatePosition();
+			this.afterMove(diff_x, diff_y);
 		}
-		this.updatePosition();
-		this.afterMove(diff_x, diff_y);
 	}
-	getImage() {
-		return false;
-	}
-}
-
-/** @typedef {"invalid" | "start" | "end" | "control1" | "control2" | "bend"} HandleType */
-class Handle extends OnePointer {
 	/**
-	 * @param {string} id 
-	 * @param {string} type 
-	 * @param {[number, number]} pos 
-	 * @param {HandleType} handleType 
+	 * The SVG elements the visual is drawn with. Must be overridden
+	 * @returns {SVGElement[]}
 	 */
-	constructor(id, type, pos, handleType) {
-		super(id, type, pos);
-		this.handleType = handleType;
-		this.isSquare = false;
-	}
-	isAttached() {
-		let parent = this.getParent();
-		if (!parent.getStartAttach) {
-			return;
-		}
-		switch (this.handleType) {
-			case "start":
-				return !!parent.getStartAttach();
-			case "end":
-				return !!parent.getEndAttach()
-			default:
-				// It's not a start or end anchor so it cannot be attached
-				return false;
-		}
-	}
-	/** @param {HandleType} handleType  */
-	setAnchorType(handleType) {
-		this.handleType = handleType;
-	}
-	/** @returns {HandleType} */
-	getHandleType() {
-		return this.handleType;
-	}
-	setVisible(newVisible) {
-		if (newVisible) {
-			for (let element of this.element_array) {
-				// Show all elements except for selectors
-				if (element.getAttribute("class") != "highlight") {
-					element.setAttribute("visibility", "visible");
-				}
-			}
-		}
-		else {
-			// Hide elements
-			for (let element of this.element_array) {
-				element.setAttribute("visibility", "hidden");
-			}
-		}
-	}
-	updatePosition() {
-		this.update();
-		let parent = this.getParent();
-		if (parent.startHandle && parent.endHandle) {
-			parent.syncHandleToPrimitive(this.handleType);
-		}
-	}
 	getImage() {
-		if (this.isSquare) {
-			return [
-				SVG.rect(-4, -4, 8, 8, this.color, "white", "element"),
-				SVG.rect(-4, -4, 8, 8, "none", this.color, "highlight")
-			];
-		} else {
-			return [
-				SVG.circle(0, 0, 5, this.color, "white", "element"),
-				SVG.circle(0, 0, 5, "none", this.color, "highlight")
-			];
-		}
-
-	}
-	getLayer() {
-		return SVG.handleLayer;
-	}
-	makeSquare() {
-		this.isSquare = true;
-		this.reloadImage();
-	}
-	reloadImage() {
-		this.clearImage();
-		this.loadImage();
+		throw new Error(`${this.constructor.name} must define getImage()`);
 	}
 }
+
 
 function safeDivision(nominator, denominator) {
 	// Make sure division by Zero does not happen 

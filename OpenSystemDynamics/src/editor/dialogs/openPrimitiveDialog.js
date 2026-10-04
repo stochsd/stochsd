@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Opens the dialog for editing a primitive: the converter dialog for converters, otherwise the definition editor.
  * A ghost opens the dialog of the primitive it is a ghost of.

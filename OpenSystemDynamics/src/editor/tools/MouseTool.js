@@ -8,12 +8,12 @@ class MouseTool extends BaseTool {
 			RectSelector.start(mouse.downX, mouse.downY);
 		}
 
-		let selectedHandle = getOnlySelectedHandleId();
-		// Only one anchor is selected AND that that anchor has attaching capabilities 
-		if (selectedHandle && Visuals.getTwoPointer(selectedHandle.parent_id).getStartAttach) {
-			let parent = Visuals.getTwoPointer(selectedHandle.parent_id);
-			// Detach handle 
-			switch (Visuals.getOnePointer(selectedHandle.child_id).getHandleType()) {
+		const selectedHandle = Visuals.selectedHandle();
+		// Only one anchor is selected AND that that anchor has attaching capabilities
+		if (selectedHandle && selectedHandle.getParent().getStartAttach) {
+			const parent = selectedHandle.getParent();
+			// Detach handle
+			switch (selectedHandle.getHandleType()) {
 				case "start":
 					parent.setStartAttach(null);
 					break;
@@ -38,21 +38,20 @@ class MouseTool extends BaseTool {
 		}
 		// We only come here if some object is being dragged
 		// Otherwise we will trigger mouse.emptyClickDown
-		const onlySelectedHandle = getOnlySelectedHandleId();
-		const onlySelectedLink = get_only_link_selected();
-		if (onlySelectedHandle) {
+		const selectedHandle = Visuals.selectedHandle();
+		const selection = Visuals.selected();
+		if (selectedHandle) {
 			// Use equivalent tool type
 			// 	RectangleVisual => RectangleTool
 			// 	LinkVisual => LinkTool
-			let parent = Visuals.getTwoPointer(onlySelectedHandle["parent_id"]);
+			const parent = selectedHandle.getParent();
 			/** @type {typeof TwoPointerTool} */
 			let tool = ToolBox.tools[parent.type];
-			tool.mouseMoveSingleHandle(x, y, shiftKey, onlySelectedHandle["child_id"]);
+			tool.mouseMoveSingleHandle(x, y, shiftKey, selectedHandle.id);
 			parent.update();
-		} else if (onlySelectedLink) {
-			// special exeption for links of links is being draged directly 
-			/** @type {LinkVisual} */
-			let link = Visuals.getTwoPointer(onlySelectedLink["parent_id"]);
+		} else if (selection.length === 1 && selection[0] instanceof LinkVisual) {
+			// special exeption for links of links is being draged directly
+			const link = selection[0];
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control1Handle.id);
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control2Handle.id);
 			link.update();
@@ -60,47 +59,57 @@ class MouseTool extends BaseTool {
 			this.defaultRelativeMove(Visuals.selected(), diff_x, diff_y);
 		}
 	}
-	/** @param {(OnePointer | TwoPointer)[]} move_objects */
-	static defaultRelativeMove(move_objects, diff_x, diff_y) {
-		let objectMoved = false;
-		/** @type {Map<FlowVisual | LinkVisual, Handle[]>} */
-		let connectionHandles = new Map();
-		for (let visual of move_objects) {
-			if (visual.draggable == undefined) {
+	/** 
+	 * @param {(OnePointer | TwoPointer)[]} visuals 
+	 * @param {number} diffX
+	 * @param {number} diffY
+	*/
+	static defaultRelativeMove(visuals, diffX, diffY) {
+		let visualsMoved = false;
+		for (let visual of visuals) {
+			if (visual instanceof TwoPointer) {
+				// TwoPointers are moved through their selected handles. A rect selection can select only some of them
+				let handles = visual.getHandles().filter(handle => handle.isSelected());
+				if (visual instanceof LinkVisual) {
+					// A link's ends follow what they are attached to, and its control points follow its ends.
+					// So its control points are only moved on their own when neither attachment moves
+					const movedEnds = [];
+					if (visuals.includes(visual.getStartAttach())) {
+						movedEnds.push(visual.startHandle);
+					}
+					if (visuals.includes(visual.getEndAttach())) {
+						movedEnds.push(visual.endHandle);
+					}
+					const controls = [visual.control1Handle, visual.control2Handle];
+					handles = movedEnds.length > 0 ? movedEnds : handles.filter(handle => controls.includes(handle));
+				}
+				if (handles.length > 0) {
+					visual.moveHandlesBy(handles, diffX, diffY);
+					visualsMoved = true;
+				}
 				continue;
 			}
 			if (visual.draggable == false) {
 				do_global_log("skipping because of no draggable");
 				continue;
 			}
-
-			objectMoved = true;
-			// Flow and link handles are moved through their connection, which keeps the shape of its path
-			let parent = visual.getParent();
-			if (visual instanceof Handle && (parent instanceof FlowVisual || parent instanceof LinkVisual)) {
-				connectionHandles.set(parent, [...(connectionHandles.get(parent) ?? []), visual]);
-				continue;
-			}
+			visualsMoved = true;
 			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
-			visual.moveBy(diff_x, diff_y);
+			visual.moveBy(diffX, diffY);
 		}
-		for (let [connection, handles] of connectionHandles) {
-			connection.moveHandlesBy(handles, diff_x, diff_y);
-		}
-		if (objectMoved) {
+		if (visualsMoved) {
 			// TwoPointer depend on OnePointer object (e.g. Handle, Stock, Auxiliary etc.)
 			// Therefore they must be updated seprately 
-			Visuals.updateAllExceptDisplays(move_objects.map(visual => visual.id));
+			Visuals.updateAllExceptDisplays(visuals.map(visual => visual.id));
 		}
 	}
 	static leftMouseUp(x, y) {
 		// Check if we selected only 1 handle element and in that case detach it;
-		const selectedHandle = getOnlySelectedHandleId();
+		const selectedHandle = Visuals.selectedHandle();
 
-		if (selectedHandle && Visuals.getTwoPointer(selectedHandle.parent_id).getStartAttach) {
-			const parent = Visuals.getTwoPointer(selectedHandle.parent_id);
-			const tool = ToolBox.tools[parent.getType()];
-			tool.mouseUpSingleHandle(x, y, false, selectedHandle.child_id);
+		if (selectedHandle && selectedHandle.getParent().getStartAttach) {
+			const tool = ToolBox.tools[selectedHandle.getParent().getType()];
+			tool.mouseUpSingleHandle(x, y, false, selectedHandle.id);
 		}
 
 		if (mouse.emptyClickDown) {
@@ -110,10 +119,10 @@ class MouseTool extends BaseTool {
 		}
 	}
 	static rightMouseDown(x, y) {
-		let onlySelectedHandle = getOnlySelectedHandleId();
-		if (onlySelectedHandle &&
-			Visuals.getTwoPointer(onlySelectedHandle["parent_id"]).getType() === "flow" &&
-			Visuals.getOnePointer(onlySelectedHandle["child_id"]).getHandleType() === "end") {
+		const selectedHandle = Visuals.selectedHandle();
+		if (selectedHandle &&
+			selectedHandle.getParent().getType() === "flow" &&
+			selectedHandle.getHandleType() === "end") {
 			FlowTool.rightMouseDown(x, y);
 		}
 	}

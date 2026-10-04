@@ -1,7 +1,11 @@
+// @ts-check
+
+/** @param {string} primitiveName  */
 function makePrimitiveName(primitiveName) {
 	return "[" + primitiveName + "]";
 }
 
+/** @param {string} primitiveName  */
 function stripBrackets(primitiveName) {
 	let cutFrom = primitiveName.lastIndexOf("[") + 1;
 	let cutTo = primitiveName.indexOf("]");
@@ -13,18 +17,21 @@ function stripBrackets(primitiveName) {
 	}
 	return primitiveName.slice(cutFrom, cutTo);
 }
-
+/** @param {string} message  */
 function warningHtml(message, specNotOk = false) {
 	let noChanges = "";
 	if (specNotOk) noChanges = "<br/><b>Your specification is not accepted!</b>";
 	return (`<span class="warning">${message} ${noChanges}</span>`);
 }
-
+/** @param {string} message  */
 function noteHtml(message) {
 	return (`<span class="note">Note:<br/>${message}</span>`);
 }
 
-// Param keys is array of string or a string 
+/**
+ * Param keys is array of string or a string 
+ * @param {string | string[]} keys  
+ * */
 function keyHtml(keys) {
 	return Array.isArray(keys)
 		? keys.map(key => `<kbd>${key}</kbd>`).join("+")

@@ -6,6 +6,8 @@
 // A top level visual is its own parent. Children have ids like "<parent id>.startHandle".
 // Nothing outside this class should touch the maps directly.
 class Visuals {
+		/** @type {{ [id: string]: Handle }} */
+	static #handles = {}
 	/** @type {{ [id: string]: OnePointer }} */
 	static #onePointers = {};
 	/** @type {{ [id: string]: TwoPointer }} */
@@ -17,6 +19,10 @@ class Visuals {
 	/** @type {VisualType[]} */
 	static #attachableTypes = ["flow", "stock", "constant", "variable", "converter"];
 
+	/** @param {Handle} handle */
+	static addHandle(handle) {
+		this.#handles[handle.id] = handle;
+	}
 	/** @param {OnePointer} visual */
 	static addOnePointer(visual) {
 		this.#onePointers[visual.id] = visual;
@@ -31,21 +37,17 @@ class Visuals {
 	static remove(id) {
 		delete this.#onePointers[id];
 		delete this.#twoPointers[id];
+		delete this.#handles[id];
 	}
 
-	/**
-	 * The id of the parent, e.g. "12" for "12.startHandle". A top level visual is its own parent.
-	 * @param {string} id
-	 */
-	static getParentId(id) {
-		return id.toString().split(".")[0];
-	}
-
-	/** @param {string} id @returns {OnePointer | TwoPointer | undefined} */
+	/** @param {string} id @returns {OnePointer | TwoPointer | Handle | undefined} */
 	static get(id) {
-		return this.#onePointers[id] ?? this.#twoPointers[id];
+		return this.#onePointers[id] ?? this.#twoPointers[id] ?? this.#handles[id];
 	}
-
+	/** @param {string} id @returns {Handle | undefined} */
+	static getHandle(id) {
+		return this.#handles[id];
+	}
 	/** @param {string} id @returns {OnePointer | undefined} */
 	static getOnePointer(id) {
 		return this.#onePointers[id];
@@ -56,11 +58,14 @@ class Visuals {
 		return this.#twoPointers[id];
 	}
 
+	/** @returns {Handle[]} */
+	static handles() {
+		return Object.values(this.#handles);
+	}
 	/** @returns {OnePointer[]} */
 	static onePointers() {
 		return Object.values(this.#onePointers);
 	}
-
 	/** @returns {TwoPointer[]} */
 	static twoPointers() {
 		return Object.values(this.#twoPointers);
@@ -79,27 +84,11 @@ class Visuals {
 	static selected() {
 		return this.all().filter(visual => visual.isSelected());
 	}
-
-	/**
-	 * All top level visuals, i.e. everything except children such as anchors
-	 * @returns {(OnePointer | TwoPointer)[]}
-	 */
-	static parents() {
-		return this.all().filter(visual => Visuals.getParentId(visual.id) == visual.id);
-	}
-
-	/**
-	 * The parents of all selected visuals, each included once.
-	 * Selecting an anchor therefore counts as selecting its flow, link or plot.
-	 * @returns {(OnePointer | TwoPointer)[]}
-	 */
-	static selectedParents() {
-		let parents = {};
-		for (let visual of this.selected()) {
-			let parent = visual.getParent();
-			parents[parent.id] = parent;
-		}
-		return Object.values(parents);
+	/** @returns {Handle | undefined} */
+	static selectedHandle() {
+		const selectedHandles = this.handles().filter(handle => handle.isSelected())
+		const selectedVisuals = this.selected()
+		return selectedHandles.length == 1 && selectedVisuals.every(visual => visual == selectedHandles[0].getParent()) ? selectedHandles[0] : undefined
 	}
 
 	/** @returns {TwoPointer[]} */
@@ -146,11 +135,11 @@ class Visuals {
 	 * @param {number} x @param {number} y
 	 */
 	static attachablesAt(x, y) {
-		let found = this.all().filter(visual => {
+		const found = this.all().filter(visual => {
 			if (!this.#attachableTypes.includes(visual.type)) {
 				return false;
 			}
-			let rect = visual.getBoundRect();
+			const rect = visual.getBoundRect();
 			return isInLimits(rect.minX, x, rect.maxX) && isInLimits(rect.minY, y, rect.maxY);
 		});
 		do_global_log("found array(" + found.length + ") " + found.map(visual => visual.id).join(","));
@@ -191,10 +180,7 @@ class Visuals {
 	 */
 	static updateAllExceptDisplays(displayIds = []) {
 		for (let visual of this.onePointers()) {
-			// dont update dummy_anchors, the twopointer parent of the dummy anchor has responsibility of the dummy_anchors 
-			if (visual.type !== "dummy_anchor") {
-				visual.update();
-			}
+			visual.update();
 		}
 		this.updateTwoPointers(displayIds);
 	}
@@ -215,13 +201,13 @@ class Visuals {
 	/** @param {string} color */
 	static setSelectionColor(color) {
 		for (let visual of this.selected()) {
-			visual.getParent().setColor(color);
+			visual.setColor(color);
 		}
 	}
 
 	/** Deletes the primitives of the selected visuals from the model, which also removes their visuals */
 	static deleteSelected() {
-		for (let parent of this.selectedParents()) {
+		for (let parent of this.selected()) {
 			// check if object not already deleted
 			// e.i. link gets deleted automatically if any of it's attachments gets deleted
 			if (this.get(parent.id)) {
@@ -260,6 +246,11 @@ class Visuals {
 
 	/** @param {string | null} id */
 	static unselectAllExcept(id) {
+		for (let visual of this.handles()) {
+			if (visual.id != id) {
+				visual.unselect();
+			}
+		}
 		for (let visual of this.onePointers()) {
 			if (visual.id != id) {
 				visual.unselect();

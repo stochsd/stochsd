@@ -1,3 +1,5 @@
+// @ts-check
+
 class GeometryDialog extends DisplayDialog {
 	renderStrokeHtml() {
 		let strokeWidths = ["1", "2", "3", "4", "5", "6"];
@@ -87,6 +89,7 @@ class LineDialog extends GeometryDialog {
 }
 
 class NumberboxDialog extends DisplayDialog {
+	/** @param {string} id  */
 	constructor(id) {
 		super(id);
 		this.setTitle("Number Box Properties");

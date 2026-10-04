@@ -1,6 +1,10 @@
 class StockVisual extends OnePointer {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
+	/** @returns {VisualType} */
+	get type() {
+		return "stock";
+	}
+	constructor(id, pos, extras) {
+		super(id, pos, extras);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 32], [27, 5], [0, -24], [-27, 5]];
 	}
@@ -110,8 +114,12 @@ class StockVisual extends OnePointer {
 }
 
 class NumberboxVisual extends OnePointer {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
+	/** @returns {VisualType} */
+	get type() {
+		return "numberbox";
+	}
+	constructor(id, pos, extras) {
+		super(id, pos, extras);
 		this.setSelectionSizeToText();
 
 		this.runHandler = () => {
@@ -129,8 +137,8 @@ class NumberboxVisual extends OnePointer {
 	}
 	setSelectionSizeToText() {
 		const boundingRect = this.name_element.getBoundingClientRect();
-		const elementRect = this.element_array[0];
-		const selectorRect = this.selector_array[0];
+		const elementRect = this.elements[0];
+		const selectorRect = this.selectElements[0];
 		const marginX = 10;
 		const marginY = 2;
 		for (let rect of [elementRect, selectorRect]) {
@@ -225,8 +233,12 @@ class NumberboxVisual extends OnePointer {
 }
 
 class VariableVisual extends OnePointer {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
+	/** @returns {VisualType} */
+	get type() {
+		return "variable";
+	}
+	constructor(id, pos, extras) {
+		super(id, pos, extras);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 34], [23, 5], [0, -25], [-23, 5]];
 	}
@@ -277,8 +289,12 @@ class VariableVisual extends OnePointer {
 }
 
 class ConstantVisual extends VariableVisual {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
+	/** @returns {VisualType} */
+	get type() {
+		return "constant";
+	}
+	constructor(id, pos, extras) {
+		super(id, pos, extras);
 		this.namePosList = [[0, 36], [25, 5], [0, -29], [-25, 5]];
 	}
 
@@ -321,8 +337,12 @@ class ConstantVisual extends VariableVisual {
 }
 
 class ConverterVisual extends OnePointer {
-	constructor(id, type, pos, extras) {
-		super(id, type, pos, extras);
+	/** @returns {VisualType} */
+	get type() {
+		return "converter";
+	}
+	constructor(id, pos, extras) {
+		super(id, pos, extras);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 29], [23, 5], [0, -21], [-23, 5]];
 	}

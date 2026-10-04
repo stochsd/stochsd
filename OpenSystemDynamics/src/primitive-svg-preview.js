@@ -1,4 +1,4 @@
-
+// @ts-check
 class PrimitiveSvgPreview {
    /**
     * Create a SVG preview of a primitive

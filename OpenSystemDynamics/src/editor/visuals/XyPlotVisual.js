@@ -1,6 +1,10 @@
 class XyPlotVisual extends PlotVisual {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "xyplot";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.runHandler = () => {
 			this.render();
 		}

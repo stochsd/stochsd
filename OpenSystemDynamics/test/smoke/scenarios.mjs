@@ -72,13 +72,14 @@ const visuals = `
 	return {
 		onePointers: Visuals.onePointers().map(o => o.id + ":" + o.type).sort(),
 		twoPointers: Visuals.twoPointers().map(o => o.id + ":" + o.type).sort(),
+		handles: Visuals.handles().map(o => o.id).sort(),
 	};
 `;
 
 // Everything about each visual that loading a model sets up, one line per visual
 const visualDetails = `
 	const round = values => values.map(value => Math.round(value * 10) / 10);
-	return Visuals.all().map(visual => {
+	return [...Visuals.all(), ...Visuals.handles()].map(visual => {
 		const parts = [visual.id, visual.constructor.name, visual.type, "color=" + visual.color];
 		if (visual.is_ghost) parts.push("ghost");
 		if (visual.name_element) parts.push("name=" + visual.name_element.textContent, "name_pos=" + visual.name_pos,
@@ -157,7 +158,7 @@ export const scenarios = [
 		name: "undo-redo-delete",
 		async run(page) {
 			await page.run(buildModel);
-			const count = `return Visuals.all().length`;
+			const count = `return [...Visuals.all(), ...Visuals.handles()].length`;
 			const steps = { built: await page.run(count) };
 			await page.run(`ToolBox.setTool("undo", mouse.left); ToolBox.setTool("undo", mouse.left);`);
 			steps.afterTwoUndos = await page.run(count);
@@ -184,7 +185,7 @@ export const scenarios = [
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const toPage = ([x, y]) => [x + offsetX, y + offsetY];
-			const selection = () => page.run(`return Visuals.selected().map(visual => visual.id).sort()`);
+			const selection = () => page.run(`return [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
 			const positionOf = id => page.run(`return Visuals.get("${id}").getPos()`);
 			const flowId = await page.run(`return primitives("Flow")[0].id`);
 			const stock2Id = await page.run(`return primitives("Stock")[1].id`);
@@ -294,7 +295,7 @@ export const scenarios = [
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const click = (x, y, modifiers = 0) => page.click(x + offsetX, y + offsetY, { modifiers });
-			const selection = () => page.run(`return Visuals.all().filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
+			const selection = () => page.run(`return [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
 			const shift = 8;
 			const steps = {};
 
@@ -351,7 +352,7 @@ export const scenarios = [
 				return {
 					anchors: flow.getHandles().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round)),
 					attached: [flow.getStartAttach()?.id ?? null, flow.getEndAttach()?.id ?? null],
-					selected: Visuals.all().filter(visual => visual.isSelected()).map(visual => visual.id).sort(),
+					selected: [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort(),
 				};
 			`);
 		},
@@ -389,7 +390,7 @@ export const scenarios = [
 			await move(350, 205);
 			await rightClick(350, 205);
 			steps.afterRemovingBend = await anchors();
-			steps.anchorVisualsLeft = await page.run(`return Visuals.onePointers().map(visual => visual.id).filter(id => id.startsWith(primitives("Flow")[0].id + ".")).sort()`);
+			steps.anchorVisualsLeft = await page.run(`return Visuals.handles().map(visual => visual.id).filter(id => id.startsWith(primitives("Flow")[0].id + ".")).sort()`);
 			steps.anchorElementsLeft = await page.run(`return $("#svgplane [node_id^='" + primitives("Flow")[0].id + ".']").length`);
 			await move(480, 400);
 			await page.mouse("mouseReleased", ...at(480, 400));
@@ -427,7 +428,7 @@ export const scenarios = [
 			`);
 			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
 			const at = (x, y) => [x + offsetX, y + offsetY];
-			const count = () => page.run(`return { links: primitives("Link").length, visuals: Visuals.all().map(visual => visual.id).sort() }`);
+			const count = () => page.run(`return { links: primitives("Link").length, visuals: [...Visuals.all(), ...Visuals.handles()].map(visual => visual.id).sort() }`);
 			const steps = {};
 
 			await page.run(`ToolBox.setTool("link", mouse.left);`);
@@ -525,7 +526,7 @@ export const scenarios = [
 			await page.mouse("mouseMoved", 450 + offsetX, 500 + offsetY);
 			await ctrl("v");
 			steps.pasted = await page.run(newPrimitives);
-			steps.selected = await page.run(`return Visuals.selectedParents().map(visual => visual.id).sort()`);
+			steps.selected = await page.run(`return [...Visuals.all(), ...Visuals.handles()].filter(visual => visual.isSelected()).map(visual => visual.id).sort()`);
 			steps.positions = await page.run(`return primitives("Stock").map(p => getName(p) + " " + Visuals.get(p.id).getPos())`);
 
 			const details = await page.run(visualDetails);

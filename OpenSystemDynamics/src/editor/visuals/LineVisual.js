@@ -1,6 +1,10 @@
 class LineVisual extends TwoPointer {
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	/** @returns {VisualType} */
+	get type() {
+		return "line";
+	}
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.dialog = new LineDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
 			this.updateGraphics();
@@ -19,9 +23,9 @@ class LineVisual extends TwoPointer {
 			SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine])
 		);
 		this.group.setAttribute("node_id", this.id);
-		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
-		for (let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id", this.id);
+		this.elements = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
+		for (let key in this.elements) {
+			this.elements[key].setAttribute("node_id", this.id);
 		}
 		$(this.group).dblclick((event) => {
 			this.doubleClick();

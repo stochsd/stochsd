@@ -1,10 +1,14 @@
 class FlowVisual extends BaseConnection {
+	/** @returns {VisualType} */
+	get type() {
+		return "flow";
+	}
 	/** @type {StockVisual} */
 	_start_attach;
 	/** @type {StockVisual} */
 	_end_attach;
-	constructor(id, type, pos0, pos1) {
-		super(id, type, pos0, pos1);
+	constructor(id, pos0, pos1) {
+		super(id, pos0, pos1);
 		this.updateDefinitionError();
 		this.namePosList = [[0, 40], [31, 5], [0, -33], [-31, 5]]; 	// Textplacement when rotating text
 		
@@ -128,7 +132,7 @@ class FlowVisual extends BaseConnection {
 		for (let i = 0; i < 4; i++) Visuals.updateTwoPointers();
 	}
 	#createBendHandle(index) {
-		return new Handle(this.id + ".bend" + index, "dummy_anchor", [0,0], "bend")
+		return new Handle(this.id + ".bend" + index, [0,0], "bend", this)
 	}
 	#syncHandles() {
 		const points = this.path.points
