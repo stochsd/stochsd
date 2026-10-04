@@ -1,4 +1,8 @@
 class TwoPointer extends BaseVisual {
+	/** @returns {VisualType} Must be overridden by each concrete visual */
+	get type() {
+		throw new Error(`${this.constructor.name} must define get type()`);
+	}
 	constructor(id, pos0, pos1) {
 		super(id, pos0, pos1);
 		this.id = id;
@@ -143,12 +147,21 @@ class BaseConnection extends TwoPointer {
 		}
 	}
 
+	/**
+	 * Whether the start can attach to attachVisual. Must be overridden
+	 * @param {OnePointer | TwoPointer} attachVisual
+	 * @returns {boolean}
+	 */
 	isAcceptableStartAttach(attachVisual) {
-		// function to decide if attachVisual is OK allowed to attach start to 
-		return false;
+		throw new Error(`${this.constructor.name} must define isAcceptableStartAttach()`);
 	}
+	/**
+	 * Whether the end can attach to attachVisual. Must be overridden
+	 * @param {OnePointer | TwoPointer} attachVisual
+	 * @returns {boolean}
+	 */
 	isAcceptableEndAttach(attachVisual) {
-		return false;
+		throw new Error(`${this.constructor.name} must define isAcceptableEndAttach()`);
 	}
 	setStartAttach(new_start_attach) {
 		if (new_start_attach != null && this.getEndAttach() == new_start_attach) {

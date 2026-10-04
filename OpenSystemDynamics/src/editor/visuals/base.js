@@ -51,10 +51,13 @@ class BaseVisual {
 		}
 	}
 
+	/**
+	 * The rect where the mouse can click to create connections, e.g. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}.
+	 * Must be overridden.
+	 * @returns {{ minX: number, maxX: number, minY: number, maxY: number }}
+	 */
 	getBoundRect() {
-		// Override this function
-		// This functions returns a hash map, e.i. {"minX": 10, "maxX": 20, "minY": 40, "maxY": 50}
-		// The hashmap dictates in what rect mouse can click to create connections
+		throw new Error(`${this.constructor.name} must define getBoundRect()`);
 	}
 
 	getLinkMountPos(closeToPoint) {
@@ -186,6 +189,10 @@ class BaseVisual {
 }
 
 class OnePointer extends BaseVisual {
+	/** @returns {VisualType} Must be overridden by each concrete visual */
+	get type() {
+		throw new Error(`${this.constructor.name} must define get type()`);
+	}
 		/**
 	 * @param {string} id 
 	 * @param {[number, number]} pos 
@@ -247,9 +254,6 @@ class OnePointer extends BaseVisual {
 
 	loadImage() {
 		let elements = this.getImage();
-		if (elements == false) {
-			alert("getImage() must be overriden to add graphics to this object");
-		}
 		this.elements = elements;
 		for (let key in elements) {
 			if (elements[key].getAttribute("class") == "highlight") {
@@ -294,8 +298,12 @@ class OnePointer extends BaseVisual {
 			}
 		});
 	}
+	/**
+	 * The layer the visual's group is appended to, e.g. SVG.stockLayer. Must be overridden
+	 * @returns {SVGGElement}
+	 */
 	getLayer() {
-		return false;
+		throw new Error(`${this.constructor.name} must define getLayer()`);
 	}
 
 	select() {
@@ -351,8 +359,12 @@ class OnePointer extends BaseVisual {
 			this.afterMove(diff_x, diff_y);
 		}
 	}
+	/**
+	 * The SVG elements the visual is drawn with. Must be overridden
+	 * @returns {SVGElement[]}
+	 */
 	getImage() {
-		return false;
+		throw new Error(`${this.constructor.name} must define getImage()`);
 	}
 }
 
