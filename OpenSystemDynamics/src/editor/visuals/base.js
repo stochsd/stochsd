@@ -13,8 +13,8 @@ class BaseVisual {
 		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
 
-		this.element_array = [];
-		this.selector_array = [];
+		this.elements = [];
+		this.selectElements = [];
 		/** @type {SVGGElement} */
 		this.icons; 	// SVG.group with icons such as ghost and questionmark
 		/** @type {SVGGElement} */
@@ -25,7 +25,7 @@ class BaseVisual {
 
 	setColor(color) {
 		this.color = color;
-		for (let element of this.element_array) {
+		for (let element of this.elements) {
 			if (element.getAttribute("class") == "element") {
 				element.setAttribute("stroke", this.color);
 			} else if (element.getAttribute("class") == "name_element") {
@@ -104,11 +104,11 @@ class BaseVisual {
 	}
 	clearImage() {
 		// Do the cleaning
-		for (let i in this.selector_array) {
-			this.selector_array[i].remove();
+		for (let i in this.selectElements) {
+			this.selectElements[i].remove();
 		}
-		for (let key in this.element_array) {
-			this.element_array[key].remove();
+		for (let key in this.elements) {
+			this.elements[key].remove();
 		}
 		if (!this.group)
 			console.log(this.id, this.name, this.type);
@@ -194,8 +194,8 @@ class OnePointer extends BaseVisual {
 		super(id, pos);
 		Visuals.addOnePointer(this);
 		this.id = id;
-		this.element_array = [];
-		this.selector_array = [];
+		this.elements = [];
+		this.selectElements = [];
 		this.group = null;
 		this.superClass = "OnePointer";
 		this.draggable = true; // Default value, change it afterwords if you want
@@ -246,50 +246,44 @@ class OnePointer extends BaseVisual {
 
 
 	loadImage() {
-		let element_array = this.getImage();
-		if (element_array == false) {
+		let elements = this.getImage();
+		if (elements == false) {
 			alert("getImage() must be overriden to add graphics to this object");
 		}
-
-		this.element_array = element_array;
-
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "highlight") {
-				this.selector_array.push(element_array[key]);
+		this.elements = elements;
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "highlight") {
+				this.selectElements.push(elements[key]);
 			}
 		}
-
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "icons") {
-				this.icons = this.element_array[key]
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "icons") {
+				this.icons = this.elements[key]
 				break;
 			}
 		}
-
 		if (this.is_ghost && this.icons) {
 			this.icons.set("ghost", "visible");
 		}
-
-
 		// Set name element
 		this.name_element = null;
-		for (let key in element_array) {
-			if (element_array[key].getAttribute("class") == "name_element") {
-				this.name_element = element_array[key];
+		for (let key in elements) {
+			if (elements[key].getAttribute("class") == "name_element") {
+				this.name_element = elements[key];
 				$(this.name_element).dblclick((event) => {
 					this.nameDoubleClick();
 				});
 			}
 		}
-		this.group = SVG.append(this.getLayer(), SVG.group(this.element_array));
+		this.group = SVG.append(this.getLayer(), SVG.group(this.elements));
 		if (!this.group)
 			console.log("group", this.id, this.primitive, this.name, this.type, this.getLayer() ,this.group);
 		this.group.setAttribute("node_id", this.id);
 
 		this.update();
 
-		for (let key in this.element_array) {
-			let element = this.element_array[key];
+		for (let key in this.elements) {
+			let element = this.elements[key];
 			$(element).on("mousedown", (event) => {
 				this.onMouseDown(event);
 			});
@@ -306,8 +300,8 @@ class OnePointer extends BaseVisual {
 
 	select() {
 		this.selected = true;
-		for (let i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility", "visible");
+		for (let i in this.selectElements) {
+			this.selectElements[i].setAttribute("visibility", "visible");
 		}
 		if (this.icons) {
 			this.icons.setColor("white");
@@ -315,8 +309,8 @@ class OnePointer extends BaseVisual {
 	}
 	unselect() {
 		this.selected = false;
-		for (let i in this.selector_array) {
-			this.selector_array[i].setAttribute("visibility", "hidden");
+		for (let i in this.selectElements) {
+			this.selectElements[i].setAttribute("visibility", "hidden");
 		}
 		if (this.icons) {
 			this.icons.setColor(this.color);

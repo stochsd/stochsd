@@ -23,9 +23,9 @@ class LineVisual extends TwoPointer {
 			SVG.group([this.line, this.arrowHeadStart, this.arrowHeadEnd, this.clickLine])
 		);
 		this.group.setAttribute("node_id", this.id);
-		this.element_array = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
-		for (let key in this.element_array) {
-			this.element_array[key].setAttribute("node_id", this.id);
+		this.elements = [this.line, this.arrowHeadStart, this.arrowHeadEnd];
+		for (let key in this.elements) {
+			this.elements[key].setAttribute("node_id", this.id);
 		}
 		$(this.group).dblclick((event) => {
 			this.doubleClick();

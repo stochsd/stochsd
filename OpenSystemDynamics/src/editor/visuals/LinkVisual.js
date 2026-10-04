@@ -181,7 +181,7 @@ class LinkVisual extends BaseConnection {
 
 		this.showOnlyOnSelect = [this.b1_line, this.b2_line];
 
-		this.element_array = this.element_array.concat([this.b1_line, this.b2_line]);
+		this.elements = this.elements.concat([this.b1_line, this.b2_line]);
 	}
 	dashLine() {
 		this.curve.setAttribute("stroke-dasharray", "6 4");

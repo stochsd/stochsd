@@ -137,8 +137,8 @@ class NumberboxVisual extends OnePointer {
 	}
 	setSelectionSizeToText() {
 		const boundingRect = this.name_element.getBoundingClientRect();
-		const elementRect = this.element_array[0];
-		const selectorRect = this.selector_array[0];
+		const elementRect = this.elements[0];
+		const selectorRect = this.selectElements[0];
 		const marginX = 10;
 		const marginY = 2;
 		for (let rect of [elementRect, selectorRect]) {
