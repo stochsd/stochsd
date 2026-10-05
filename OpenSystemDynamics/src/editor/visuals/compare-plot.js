@@ -116,7 +116,7 @@ class DataGenerations {
 							isRandom: this.isRandom[genIndex][index],
 							type: this.primitiveTypeGen[genIndex][index],
 							color: this.colorGen[genIndex][index],
-							patern: this.patternGen[genIndex][index],
+							pattern: this.patternGen[genIndex][index],
 							lineWidth: this.lineWidthGen[genIndex][index],
 						},
 						done: false
@@ -150,7 +150,7 @@ class DataGenerations {
 	*     isRandom: boolean;
 	*     type: any;
 	*     color: string;
-	*     patern: any;
+	*     pattern: any;
 	*     lineWidth: any;
 	*   }, 
 	*   index: number

@@ -10,7 +10,7 @@ class MacroDialog extends jqDialog {
 			</div>
 			<div style="padding:0; margin-left: 1em;">
 				${this.renderHelpButtonHtml("macro-help")}
-				<table class="modern-table zebra" title="SetRandSeed makes stochstics simulations reproducable." style="margin-top: 1em;">
+				<table class="modern-table zebra" title="SetRandSeed makes stochstics simulations reproducible." style="margin-top: 1em;">
 					<tr>	
 						<td style="padding:1px;">
 							Seed = <input class="seed-field" type="number" />

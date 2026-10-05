@@ -123,7 +123,7 @@ function restoreAfterRestart() {
 		fileManager.clean();
 
 		if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
-			// if creating new file without OK timeUnit => promt TimeUnitDialog
+			// if creating new file without OK timeUnit => prompt TimeUnitDialog
 			// prompt TimeUnitDialog is unit not set 
 			timeUnitDialog.show();
 		}
@@ -144,7 +144,7 @@ function restoreAfterRestart() {
 	UndoStack.fromLocalStorage();
 
 	if (Preferences.get("promptTimeUnitDialogOnStart") && isTimeUnitOk(getTimeUnits()) === false) {
-		// if opening new file without OK timeUnit => promt TimeUnitDialog
+		// if opening new file without OK timeUnit => prompt TimeUnitDialog
 		// prompt TimeUnitDialog is unit not set 
 		timeUnitDialog.show();
 	}

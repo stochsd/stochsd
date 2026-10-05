@@ -6,7 +6,7 @@ class LinkVisual extends BaseConnection {
 	constructor(id, pos0, pos1) {
 		super(id, pos0, pos1);
 
-		// reload image of anchor to make sure anchor is ontop
+		// reload image of anchor to make sure anchor is on top
 		this.control1Handle.reloadImage();
 		this.control2Handle.reloadImage();
 	}

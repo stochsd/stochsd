@@ -33,7 +33,7 @@ class TextAreaVisual extends HtmlTwoPointer {
 		this.coordRect = new CoordRect();
 		this.coordRect.element = this.element;
 
-		this.htmlElement = SVG.append(SVG.plotLayer, SVG.foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not renderd yet", "white"));
+		this.htmlElement = SVG.append(SVG.plotLayer, SVG.foreign(this.getMinX(), this.getMinY(), this.getWidth(), this.getHeight(), "Text not rendered yet", "white"));
 
 		$(this.htmlElement.cutDiv).mousedown((event) => {
 			// This is an alternative to having the htmlElement in the group

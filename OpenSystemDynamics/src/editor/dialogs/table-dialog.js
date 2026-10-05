@@ -295,7 +295,7 @@ class RoundToZeroComponent extends HtmlComponent {
 				this.setNumberboxWarning(true, `<b>${roundToZeroFieldValue}</b> is not a decimal number.`);
 				return false;
 			} else if (roundToZeroFieldValue == "") {
-				this.setNumberboxWarning(true, "No value choosen.");
+				this.setNumberboxWarning(true, "No value chosen.");
 				return false;
 			} else if (Number(roundToZeroFieldValue) >= 1) {
 				this.setNumberboxWarning(true, "Value must be less then 1.");

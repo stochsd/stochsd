@@ -21,7 +21,7 @@ defaultAttributeChangeHandler = function (primitive, attributeName, value) {
 	if (type == "Numberbox" && attributeName == "Target") {
 		let visualObject = Visuals.get(id);
 		// render() can only be done when the numberbox is fully loaded
-		// Therefor we have to check that visualObject is not null
+		// Therefore we have to check that visualObject is not null
 		if (visualObject) {
 			visualObject.render();
 		}

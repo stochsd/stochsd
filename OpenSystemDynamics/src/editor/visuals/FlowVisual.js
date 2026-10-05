@@ -15,7 +15,7 @@ class FlowVisual extends BaseConnection {
 		/** @type {OrthogonalPath} */
 		this.path = new OrthogonalPath(this.handles.map(h => h.getPos()));
 
-		this.valveIndex; 	// index to indicate what inbetween path valve is placed
+		this.valveIndex; 	// index to indicate what in-between path valve is placed
 		this.variableSide;	// bool to indicate what side of path variable is placed
 
 		this.startCloud;
@@ -243,11 +243,11 @@ class FlowVisual extends BaseConnection {
 		this.startCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
 		this.endCloud = SVG.cloud(this.color, defaultFill, { "class": "element" });
 		this.outerPath = SVG.widePath(5, this.color, { "class": "element" });
-		this.innerPath = SVG.widePath(3, "white"); // Must have white ohterwise path is black
+		this.innerPath = SVG.widePath(3, "white"); // Must have white otherwise path is black
 		this.arrowHeadPath = SVG.arrowHead(this.color, defaultFill, { "class": "element" });
 		this.flowPathGroup = SVG.group([this.startCloud, this.endCloud, this.outerPath, this.innerPath, this.arrowHeadPath]);
 		this.valve = SVG.path("M8,8 -8,-8 8,-8 -8,8 Z", this.color, defaultFill, "element");
-		this.name_element = SVG.text(0, -this.getRadius(), "vairable", "name_element");
+		this.name_element = SVG.text(0, -this.getRadius(), "variable", "name_element");
 		this.icons = SVG.icons(defaultStroke, defaultFill, "icons");
 		this.variable = SVG.group([
 			SVG.circle(0, 0, this.getRadius(), this.color, "white", "element"),

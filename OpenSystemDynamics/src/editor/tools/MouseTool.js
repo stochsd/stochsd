@@ -50,7 +50,7 @@ class MouseTool extends BaseTool {
 			tool.mouseMoveSingleHandle(x, y, shiftKey, selectedHandle.id);
 			parent.update();
 		} else if (selection.length === 1 && selection[0] instanceof LinkVisual) {
-			// special exeption for links of links is being draged directly
+			// special exception for links of links is being dragged directly
 			const link = selection[0];
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control1Handle.id);
 			LinkTool.mouseRelativeMoveSingleHandle(diff_x, diff_y, shiftKey, link.control2Handle.id);
@@ -94,12 +94,12 @@ class MouseTool extends BaseTool {
 				continue;
 			}
 			visualsMoved = true;
-			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursivly
+			// This code is not very optimised. If we want to optimise it we should just find the objects that needs to be updated recursively
 			visual.moveBy(diffX, diffY);
 		}
 		if (visualsMoved) {
 			// TwoPointer depend on OnePointer object (e.g. Handle, Stock, Auxiliary etc.)
-			// Therefore they must be updated seprately 
+			// Therefore they must be updated separately 
 			Visuals.updateAllExceptDisplays(visuals.map(visual => visual.id));
 		}
 	}

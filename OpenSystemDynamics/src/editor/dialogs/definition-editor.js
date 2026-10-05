@@ -1,5 +1,5 @@
 const functions = [
-	{ name: "PoFlow", arguments: [{ name: "Lambda" }], desc: "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span><br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transfered entities with the expected rate of Lambda entities per time unit." },
+	{ name: "PoFlow", arguments: [{ name: "Lambda" }], desc: "PoFlow(Lambda) is short for RandPoisson(DT()*Lambda)/DT(). <br/><span class='note'>This should only be used in flows.</span><br/><br/>PoFlow(Lambda) generates a Poisson distributed random number of transferred entities with the expected rate of Lambda entities per time unit." },
 	{ name: "Rand", arguments: [{ name: "Minimum", default: "0" }, { name: "Maximum", default: "1" }] },
 	{ name: "RandBernoulli", arguments: [{ name: "Probability", note: "min: 0, max: 1" }] },
 	{ name: "RandBinomial", arguments: [{ name: "Count" }, { name: "Probability" }] },
@@ -36,7 +36,7 @@ const functions = [
 	{ name: "Sign", arguments: [{ name: "value" }] },
 	{ name: "Abs", note: "absolute value", synonyms: "absolute", arguments: [{ name: "Value" }] },
 	{ name: "IfThenElse", arguments: [{ name: "Condition" }, { name: "Then Value", note: "value if true" }, { name: "Else Value", note: "value if false" }] },
-	{ name: "StopIf", arguments: [{ name: "Condidtion" }] },
+	{ name: "StopIf", arguments: [{ name: "Condition" }] },
 	{ name: "T", note: "Time", synonyms: "time" },
 	{ name: "DT", note: "Step Time", synonyms: "step time" },
 	{ name: "TS", note: "Start Time", synonyms: "start time" },
@@ -533,7 +533,7 @@ class DefinitionEditor extends jqDialog {
 	}
 	buildAccordion() {
 		// Uses the trick of creating multiple accordions
-		// So that they can be independetly opened and closed
+		// So that they can be independently opened and closed
 		// http://stackoverflow.com/questions/3479447/jquery-ui-accordion-that-keeps-multiple-sections-open
 		$(".accordion-cluster > div").accordion({
 			heightStyle: "content",
@@ -549,7 +549,7 @@ class DefinitionEditor extends jqDialog {
 	}
 	afterShow() {
 		// Building the accordion must be done while the window is visible for accordions to work correctly
-		// We therefor build it the first time the dialog is shown and store it in this.accordionBuilt
+		// We therefore build it the first time the dialog is shown and store it in this.accordionBuilt
 		if (!this.accordionBuilt) {
 			this.buildAccordion();
 			this.accordionBuilt = true;

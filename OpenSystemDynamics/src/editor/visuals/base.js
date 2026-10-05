@@ -10,7 +10,7 @@ class BaseVisual {
 		this.superClass = "baseobject";
 		this.color = defaultStroke;
 		// Warning: this.primitive can be null, since all DIM objects does not have a IM object such as anchors and flow_auxiliarys
-		// We should therefor check if this.primitive is null, in case we dont know which class we are dealing with
+		// We should therefore check if this.primitive is null, in case we dont know which class we are dealing with
 		this.primitive = findID(this.id);
 
 		this.elements = [];
@@ -118,7 +118,7 @@ class BaseVisual {
 		this.group.remove();
 	}
 	doubleClick() {
-		// This function has to be overriden
+		// This function has to be overridden
 	}
 	afterMove(diff_x, diff_y) {
 		// Override this		
@@ -205,7 +205,7 @@ class OnePointer extends BaseVisual {
 		this.selectElements = [];
 		this.group = null;
 		this.superClass = "OnePointer";
-		this.draggable = true; // Default value, change it afterwords if you want
+		this.draggable = true; // Default value, change it afterwards if you want
 		this.pos = pos;
 		this.is_ghost = false; // Default value
 		if (extras != false) {

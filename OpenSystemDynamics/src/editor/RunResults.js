@@ -13,7 +13,7 @@ class RunResults {
 		this.results = [];
 		this.runSubscribers = {};
 		this.updateFrequency = 100;
-		this.updateCounter = 0; // Updates everytime updateCounter goes down to zero
+		this.updateCounter = 0; // Updates every time updateCounter goes down to zero
 		this.simulationTime = 0;
 	}
 	static createHeader() {
@@ -35,9 +35,9 @@ class RunResults {
 	 */
 	static #formatNumber(number, tdecimals, roundToZeroAt) {
 		// tdecimals is optional and sets the number of decimals. It is rarly used (only in some tables)
-		// Since the numbers automaticly goes to e-format when low enought
+		// Since the numbers automatically goes to e-format when low enough
 
-		// Used when e.g. the actuall error is reseted to null
+		// Used when e.g. the actually error is reset to null
 		if (number == null) {
 			return "";
 		}
@@ -204,7 +204,7 @@ class RunResults {
 			onSuccess: (res) => {
 				// Run finished
 
-				// On especially longer simulation onSuccess is called multible times
+				// On especially longer simulation onSuccess is called multiple times
 				// This is a hack to get around that 
 				if (this.simulationDone === false) {
 					this.simulationDone = true;

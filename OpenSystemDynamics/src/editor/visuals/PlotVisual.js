@@ -90,20 +90,20 @@ class PlotVisual extends TwoPointer {
 	doubleClick() {
 		this.dialog.show();
 	}
-	getTicks(min, max, dimention = "width") {
+	getTicks(min, max, dimension = "width") {
 		let length = max - min;
 
 		// Calculate minTimeSubDivision
 		let tickSubDivStep = (10 ** Math.floor(Math.log10(length))) / 10;
 
 		// Measure in pixels 
-		let pxWidth = parseInt(this.chartDiv.style[dimention]) - 80;
+		let pxWidth = parseInt(this.chartDiv.style[dimension]) - 80;
 		let minPxStep = 50;
 		let maxSteps = Math.floor(pxWidth / minPxStep);
 
 		let viableMultiples = [1, 2, 5, 10, 20, 50];
-		let stepSizeList = viableMultiples.map(muliple => {
-			return muliple * tickSubDivStep;
+		let stepSizeList = viableMultiples.map(multiple => {
+			return multiple * tickSubDivStep;
 		})
 		let okStepSize = stepSizeList.find(step => {
 			return maxSteps >= length / step;
@@ -121,7 +121,7 @@ class PlotVisual extends TwoPointer {
 
 			if (tickStep * lowerIndex !== min) {
 				// Add empty tick if min is not included
-				// ticks can be formated as 2D array [[val,label],[val,label],...]
+				// ticks can be formatted as 2D array [[val,label],[val,label],...]
 				// see reference: http://www.music.mcgill.ca/~ich/classes/mumt301_11/js/jqPlot/docs/files/jqplot-core-js.html#Axis.ticks
 				ticks.push([min, ""]);
 			}

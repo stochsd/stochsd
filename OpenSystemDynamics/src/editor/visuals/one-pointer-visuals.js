@@ -326,7 +326,7 @@ class ConstantVisual extends VariableVisual {
 		// Where the line intercepts the x-axis ("m" in the formula: y = kx + m)
 		const edgeIntercept = this.getRadius() * sign(yTarget - yCenter);
 
-		// Relative coodinates relative center of ConstantVisual
+		// Relative coordinates relative center of ConstantVisual
 		const xEdgeRel = safeDivision(edgeIntercept, targetSlope - edgeSlope);
 		const yEdgeRel = edgeSlope * xEdgeRel + edgeIntercept;
 

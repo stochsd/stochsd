@@ -82,7 +82,7 @@ class FullPotentialCSSDialog extends CloseDialog {
 			<tr><td>Biology</td><td>Individual of a species</td><td>Ecological system</td></tr>
 			<tr><td>Traffic</td><td>Individual vehicles</td><td>Traffic flows</td></tr>
 		</table>
-		<p>Regardless of whether you choose a micro approach using <b>Discrete Event Simulation</b> (DES) or a macro approch using <b>Continuous System Simulation</b> (CSS), the results should be <b>consistent</b> (contradiction free), i.e. averages, variations, correlation, etc. should be the same. See the Figure.</p>
+		<p>Regardless of whether you choose a micro approach using <b>Discrete Event Simulation</b> (DES) or a macro approach using <b>Continuous System Simulation</b> (CSS), the results should be <b>consistent</b> (contradiction free), i.e. averages, variations, correlation, etc. should be the same. See the Figure.</p>
 		<img src="graphics/what_is_fp_css.png" style="display: block; max-width: 700px; margin: 0 auto;"/>
 		<p>Consistency is usually not obtained for <b>Classical CSS</b>. However, if the <b>Full Potential CSS</b> approach is followed, you can obtain results consistent with those from a micro model.</p>
 		<h3>Full Potential CSS requirements</h3>
