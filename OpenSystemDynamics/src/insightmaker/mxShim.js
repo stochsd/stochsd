@@ -21,6 +21,21 @@ var defaultPrimitiveCreatedHandler = function(primitive) {};
 var defaultPrimitiveBeforeDestroyHandler = function(primitive) {};
 
 class SimpleNode {
+	/** @type {Element} The primitive's XML element. Its node name is the primitive type */
+	value;
+	/** @type {string} */
+	id;
+	/** @type {SimpleNode} */
+	parent;
+	/** @type {SimpleNode} Same as parent */
+	parentNode;
+	/** @type {SimpleNode[] | undefined} Only set when the XML element has child nodes */
+	children;
+	/** @type {SimpleNode | null | undefined} Only set on flows, links and transitions */
+	source;
+	/** @type {SimpleNode | null | undefined} Only set on flows, links and transitions */
+	target;
+
 	constructor() {
 		this.attributeSubscribers=[];
 		this.positionSubscribers=[];
@@ -48,6 +63,8 @@ class SimpleNode {
 		this.positionSubscribers.push(handler);
 	}
 }
+
+/** @typedef {SimpleNode} Primitive */
 
 
 

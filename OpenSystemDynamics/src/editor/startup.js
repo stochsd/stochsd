@@ -169,10 +169,10 @@ $(window).on("load", function () {
 			// Ctrl+C and Ctrl+V in a text field copies and pastes text, not primitives
 			let inTextField = $(event.target).is(":input, [contenteditable]");
 			if (event.key.toLowerCase() == "c" && !inTextField) {
-				Clipboard.copy();
+				PasteBoard.copy();
 			}
 			if (event.key.toLowerCase() == "v" && !inTextField) {
-				Clipboard.paste();
+				PasteBoard.paste();
 				UndoStack.storeState();
 			}
 		}
