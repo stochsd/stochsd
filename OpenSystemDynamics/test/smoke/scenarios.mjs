@@ -386,15 +386,85 @@ export const scenarios = [
 			await move(350, 200);
 			await rightClick(350, 200);
 			await move(350, 300);
+			await rightClick(350, 300);
+			await move(420, 300);
 			steps.afterBend = await anchors();
-			await move(350, 205);
-			await rightClick(350, 205);
+			await rightClick(352, 302);
 			steps.afterRemovingBend = await anchors();
 			steps.anchorVisualsLeft = await page.run(`return Visuals.handles().map(visual => visual.id).filter(id => id.startsWith(primitives("Flow")[0].id + ".")).sort()`);
 			steps.anchorElementsLeft = await page.run(`return $("#svgplane [node_id^='" + primitives("Flow")[0].id + ".']").length`);
 			await move(480, 400);
 			await page.mouse("mouseReleased", ...at(480, 400));
 			steps.final = await anchors();
+			return steps;
+		},
+	},
+	{
+		// Flows from a stock get a bend when needed, and a bend pulled back in line is removed
+		name: "flow-auto-bend",
+		async run(page) {
+			await page.run(`
+				${clickTool("stock", 200, 200)}
+				${clickTool("stock", 500, 210)}
+				${clickTool("stock", 200, 400)}
+				${clickTool("stock", 500, 550)}
+				setTimeUnits("Year");
+				$(".ui-dialog-content").each(function () { try { $(this).dialog("close"); } catch (e) { } });
+			`);
+			const [offsetX, offsetY] = await page.run(`const o = $(SVG.svgElement).offset(); return [o.left, o.top];`);
+			const at = (x, y) => [x + offsetX, y + offsetY];
+			const move = (x, y) => page.mouse("mouseMoved", ...at(x, y));
+			const drag = async (points, whileDragging = async () => { }) => {
+				await move(...points[0]);
+				await page.mouse("mousePressed", ...at(...points[0]));
+				for (const point of points.slice(1)) {
+					await move(...point);
+				}
+				await whileDragging();
+				await page.mouse("mouseReleased", ...at(...points.at(-1)));
+			};
+			const flowState = index => page.run(`
+				const flow = Visuals.get(primitives("Flow")[${index}].id);
+				return {
+					anchors: flow.getHandles().map(anchor => anchor.id + ":" + anchor.getPos().map(Math.round)),
+					attached: [flow.getStartAttach()?.id ?? null, flow.getEndAttach()?.id ?? null],
+				};
+			`);
+			const steps = {};
+
+			// Beside the stock: straight
+			await page.run(`ToolBox.setTool("flow", mouse.left);`);
+			await drag([[220, 200], [215, 200], [300, 205], [480, 210]]);
+			steps.straightBetweenStocks = await flowState(0);
+
+			// Moving a stock away from in line with the other gives the flow a bend, moving it back removes it
+			await drag([[510, 210], [510, 250], [510, 330]]);
+			steps.stockMovedDown = await flowState(0);
+			await drag([[510, 330], [510, 250], [510, 215]]);
+			steps.stockMovedBack = await flowState(0);
+
+			// Diagonal from the stock: one bend
+			await page.run(`ToolBox.setTool("flow", mouse.left);`);
+			await drag([[220, 400], [215, 400], [300, 450], [480, 550]]);
+			steps.bentBetweenStocks = await flowState(1);
+
+			// Dragging the end back beside the stock removes the bend
+			await page.run(`ToolBox.setTool("flow", mouse.left);`);
+			await drag([[200, 410], [200, 412], [200, 430], [300, 500], [300, 405]]);
+			steps.endDraggedBack = await flowState(2);
+
+			// A bend dragged in line with its neighbor is removed when released
+			await page.run(`ToolBox.setTool("flow", mouse.left);`);
+			await drag([[650, 100], [660, 100], [850, 100]], async () => {
+				await page.mouse("mousePressed", ...at(850, 100), { button: "right" });
+				await page.mouse("mouseReleased", ...at(850, 100), { button: "right" });
+				await move(850, 250);
+			});
+			steps.cloudFlowWithBend = await flowState(3);
+			// Selects the flow by its valve, so its handles can be dragged
+			await page.click(...at(755, 100));
+			await drag([[850, 100], [750, 100], [664, 100]]);
+			steps.bendPulledBack = await flowState(3);
 			return steps;
 		},
 	},
