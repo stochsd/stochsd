@@ -198,15 +198,6 @@ class jqDialog {
 jqDialog.init();
 
 
-/** 
- * @typedef {Object} Primitive
- * @property {string} type - Type of primitive, e.g. "Stock", "Flow", "Variable", "Converter", "Ghost", "Link"
- * @property {string} id - Unique identifier for the primitive
- * @property {Element} value - The XML Element representing the primitive
- * @property {(name: string) => any} getAttribute - Function to get an attribute value by name
- * @property {(name: string, value: any) => void} setAttribute - Function to set an attribute value by name
- * */
-
 /**
  * @returns {Primitive[]} - Returns a list of all primitives of type "Stock", "Flow", "Variable", and "Converter"
  */

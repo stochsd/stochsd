@@ -1,3 +1,4 @@
+// @ts-check
 // Copies the selected primitives and pastes them as new primitives.
 // The pasteboard holds copies of the primitives' XML, so pasting still works after the originals are changed or deleted.
 // References between the copied primitives (flow and link ends, ghosts, numberboxes, plots and definitions)
@@ -64,15 +65,14 @@ class PasteBoard {
 		let [diffX, diffY] = this.#pasteOffset();
 		MouseTool.defaultRelativeMove(Visuals.selected(), diffX, diffY);
 		for (let [i, item] of items.entries()) {
-			let link = item.type == "Link" ? Visuals.getTwoPointer(pasted[i].id) : null;
-			if (!link) {
-				continue;
+			const visual = Visuals.getTwoPointer(pasted[i].id);
+			if (visual instanceof LinkVisual) {
+				// Links from primitives that were not copied are redrawn between their ends
+				if (!(item.sourceId in idMap)) {
+					visual.resetBezierPoints();
+				}
+				visual.update();
 			}
-			// Links from primitives that were not copied are redrawn between their ends
-			if (!(item.sourceId in idMap)) {
-				link.resetBezierPoints();
-			}
-			link.update();
 		}
 		InfoBar.update();
 	}
