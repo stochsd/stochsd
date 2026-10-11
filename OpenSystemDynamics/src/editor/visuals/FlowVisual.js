@@ -64,6 +64,78 @@ class FlowVisual extends BaseConnection {
 	}
 
 	/**
+	 * Drags the start or end handle the way the user does. When the other end is attached to a stock
+	 * and the flow has at most one bend, the flow is rerouted so the dragged end can go anywhere:
+	 * straight if it is beside the stock, otherwise with one bend.
+	 * @param {Handle} handle
+	 * @param {[number, number]} position
+	 */
+	dragEndTo(handle, position) {
+		if (!this.#rerouteFromOtherStock(handle, position)) {
+			this.dragHandleTo(handle, position);
+		}
+	}
+
+	/**
+	 * Moves an end along with the stock it is attached to. When the flow can be rerouted as in dragEndTo,
+	 * it is routed towards the stock's center, so it meets the middle of a side rather than a corner.
+	 * @param {Handle} handle
+	 * @param {[number, number]} position - where the end moves to otherwise
+	 * @param {[number, number]} stockCenter
+	 */
+	moveWithStock(handle, position, stockCenter) {
+		if (!this.#rerouteFromOtherStock(handle, stockCenter)) {
+			this.dragHandleTo(handle, position);
+		}
+	}
+
+	/**
+	 * @param {Handle} handle
+	 * @param {[number, number]} position
+	 * @returns {boolean} false if the flow cannot be rerouted, and was left as it was
+	 */
+	#rerouteFromOtherStock(handle, position) {
+		const isStart = handle === this.startHandle;
+		const stock = isStart ? this.getEndAttach() : this.getStartAttach();
+		const { minX, maxX, minY, maxY } = stock ? stock.getBoundRect() : {};
+		const [x, y] = position;
+		const isInsideStock = stock && isInLimits(minX, x, maxX) && isInLimits(minY, y, maxY);
+		if (!stock || isInsideStock || this.path.points.length > 3) {
+			return false;
+		}
+		const points = this.path.points;
+		const attachedEnd = isStart ? points[points.length - 1] : points[0];
+		/** @type {Point[]} */
+		let route;
+		if (isInLimits(minY, y, maxY) || isInLimits(minX, x, maxX)) {
+			route = [stock.getFlowMountPos(position), position];
+		} else {
+			// Keep the side the flow leaves the stock from, and where along it if there already is a bend
+			const hasBend = points.length === 3;
+			const [centerX, centerY] = stock.getPos();
+			let bend;
+			if (this.path.segmentAxis(isStart ? points.length - 2 : 0) === "horizontal") {
+				bend = [x, hasBend && isInLimits(minY, attachedEnd[1], maxY) ? attachedEnd[1] : centerY];
+			} else {
+				bend = [hasBend && isInLimits(minX, attachedEnd[0], maxX) ? attachedEnd[0] : centerX, y];
+			}
+			route = [stock.getFlowMountPos(bend), bend, position];
+		}
+		this.path = new OrthogonalPath(isStart ? route.reverse() : route);
+		this.#syncHandles();
+		return true;
+	}
+
+	/**
+	 * Removes bends that are (almost) in line with their neighbors, e.g. after a bend is pulled back.
+	 * @param {Handle} movedHandle - nudged into line, rather than the points on the other side
+	 */
+	removeBendsInLine(movedHandle) {
+		this.path.removeShortSegments(8, this.handles.indexOf(movedHandle));
+		this.#syncHandles();
+	}
+
+	/**
 	 * Moves some or all handles by the same amount, e.g. when a selection is dragged.
 	 * @param {Handle[]} handles
 	 * @param {number} diffX
@@ -143,6 +215,12 @@ class FlowVisual extends BaseConnection {
 			this.handles.splice(-2, 1)[0].remove()
 		}
 		points.forEach((point, i) => this.handles[i].setPos(point))
+		// The valve must stay on a segment that still exists
+		const lastSegmentIndex = this.handles.length - 2;
+		if (this.valveIndex > lastSegmentIndex) {
+			this.valveIndex = lastSegmentIndex;
+			this.primitive.setAttribute("ValveIndex", this.valveIndex);
+		}
 	}
 	addBend(pos) {
 		this.path.addBend(pos)

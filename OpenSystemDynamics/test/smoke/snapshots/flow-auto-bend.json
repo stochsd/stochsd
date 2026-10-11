@@ -1,0 +1,76 @@
+{
+  "straightBetweenStocks": {
+    "anchors": [
+      "48.startHandle:225,210",
+      "48.endHandle:475,210"
+    ],
+    "attached": [
+      "44",
+      "45"
+    ]
+  },
+  "stockMovedDown": {
+    "anchors": [
+      "48.startHandle:225,200",
+      "48.bend0:500,200",
+      "48.endHandle:500,311"
+    ],
+    "attached": [
+      "44",
+      "45"
+    ]
+  },
+  "stockMovedBack": {
+    "anchors": [
+      "48.startHandle:225,215",
+      "48.endHandle:475,215"
+    ],
+    "attached": [
+      "44",
+      "45"
+    ]
+  },
+  "bentBetweenStocks": {
+    "anchors": [
+      "49.startHandle:225,400",
+      "49.bend0:480,400",
+      "49.endHandle:480,531"
+    ],
+    "attached": [
+      "46",
+      "47"
+    ]
+  },
+  "endDraggedBack": {
+    "anchors": [
+      "50.startHandle:225,405",
+      "50.endHandle:300,405"
+    ],
+    "attached": [
+      "46",
+      null
+    ]
+  },
+  "cloudFlowWithBend": {
+    "anchors": [
+      "51.startHandle:660,100",
+      "51.bend0:850,100",
+      "51.endHandle:850,250"
+    ],
+    "attached": [
+      null,
+      null
+    ]
+  },
+  "bendPulledBack": {
+    "anchors": [
+      "51.startHandle:660,100",
+      "51.endHandle:660,250"
+    ],
+    "attached": [
+      null,
+      null
+    ]
+  },
+  "errors": []
+}

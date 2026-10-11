@@ -117,7 +117,11 @@ class FlowTool extends TwoPointerTool {
 		/** @type {FlowVisual} */
 		const parent = mainHandle.getParent();
 
-		parent.dragHandleTo(mainHandle, [x, y])
+		if (mainHandle.getHandleType() === "bend") {
+			parent.dragHandleTo(mainHandle, [x, y]);
+		} else {
+			parent.dragEndTo(mainHandle, [x, y]);
+		}
 		parent.update();
 		// update connecting links 
 		Visuals.connectionsAttachedTo(parent).forEach(conn => conn.update());
@@ -144,6 +148,8 @@ class FlowTool extends TwoPointerTool {
 						if (parent.handles.length > 2) {
 							// remove last middle anchor
 							parent.removeLastBend();
+							parent.dragEndTo(child, child.getPos());
+							parent.update();
 						}
 					} else {
 						// Add middle anchor 
@@ -172,7 +178,12 @@ class FlowTool extends TwoPointerTool {
 		}
 	}
 	static mouseUpSingleHandle(x, y, shiftKey, node_id) {
-		attachHandle(Visuals.getHandle(node_id));
+		const handle = Visuals.getHandle(node_id);
+		/** @type {FlowVisual} */
+		const flow = handle.getParent();
+		attachHandle(handle);
+		flow.removeBendsInLine(handle);
+		flow.update();
 	}
 	static getType() {
 		return "flow";

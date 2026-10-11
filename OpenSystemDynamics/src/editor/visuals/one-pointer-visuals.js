@@ -32,7 +32,7 @@ class StockVisual extends OnePointer {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldConnPos = conn.startHandle.getPos();
 				let newConnPos = translate(oldConnPos, diff);
-				conn.dragHandleTo(conn.startHandle, newConnPos);
+				conn.moveWithStock(conn.startHandle, newConnPos, pos);
 			}
 		}
 		let endConn = Visuals.connectionsTo(this);
@@ -40,7 +40,7 @@ class StockVisual extends OnePointer {
 			if (conn.type === "flow" && conn.isSelected() === false) {
 				let oldAnchorPos = conn.endHandle.getPos();
 				let newAnchorPos = translate(oldAnchorPos, diff);
-				conn.dragHandleTo(conn.endHandle, newAnchorPos);
+				conn.moveWithStock(conn.endHandle, newAnchorPos, pos);
 			}
 		}
 	}

@@ -2,20 +2,24 @@
   "afterBend": [
     "46.startHandle:225,200",
     "46.bend0:350,200",
-    "46.endHandle:350,300"
+    "46.bend1:350,300",
+    "46.endHandle:420,300"
   ],
   "afterRemovingBend": [
     "46.startHandle:225,200",
-    "46.endHandle:350,205"
+    "46.bend0:420,200",
+    "46.endHandle:420,300"
   ],
   "anchorVisualsLeft": [
+    "46.bend0",
     "46.endHandle",
     "46.startHandle"
   ],
-  "anchorElementsLeft": 2,
+  "anchorElementsLeft": 3,
   "final": [
-    "46.startHandle:225,219",
-    "46.endHandle:480,219"
+    "46.startHandle:225,200",
+    "46.bend0:480,200",
+    "46.endHandle:480,381"
   ],
   "errors": []
 }

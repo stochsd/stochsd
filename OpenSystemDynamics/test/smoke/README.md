@@ -33,6 +33,7 @@ The scenarios are in `scenarios.mjs`. Every scenario starts from a freshly loade
 - **click-select**: selecting by clicking tables, plots, text, shapes, links and stocks, with and without Shift.
 - **flow-with-bends**: draws a flow between two stocks with the mouse, right clicking while dragging to add two bends.
 - **flow-remove-bend**: while drawing a flow, right clicking close to the last bend removes it again.
+- **flow-auto-bend**: flows from a stock are straight when beside it and get a bend otherwise, also when a stock is moved, and a bend dragged in line is removed.
 - **delete-stock-with-ghost**: deleting a stock that has a ghost, a flow, a link and a numberbox.
 - **unattached-link**: a link drawn to empty space is deleted, one drawn to a variable is kept.
 - **rename**: renaming a primitive shown in a table and a time plot.
