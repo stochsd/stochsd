@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Crash Recover Dialog on undo/redo crash.
 - Working copy-paste.
 - Group Preferences into Categories.
+- Flows from a stock automatically get a bend when needed, also when a stock is moved, and bends pulled back in line are removed.
 
 ### Fixed
 - UI cleanup and style update for menu and tool-buttons.
