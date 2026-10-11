@@ -1,9 +1,9 @@
 // Copies the selected primitives and pastes them as new primitives.
-// The clipboard holds copies of the primitives' XML, so pasting still works after the originals are changed or deleted.
+// The pasteboard holds copies of the primitives' XML, so pasting still works after the originals are changed or deleted.
 // References between the copied primitives (flow and link ends, ghosts, numberboxes, plots and definitions)
 // are moved over to the pasted primitives. References to primitives that were not copied are kept if that
 // is harmless, otherwise the reference, or the pasted primitive, is dropped.
-class Clipboard {
+class PasteBoard {
 	/** @type {{ id: string, type: string, value: Element, sourceId: string | null, targetId: string | null }[]} */
 	static #items = [];
 	// Mouse position of the last paste, to spread out pastes that are made without moving the mouse
