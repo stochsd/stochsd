@@ -5,7 +5,7 @@
     "46 | VariableVisual | variable | color=black | name=Auxiliary1 | name_pos=0 | name_at=0,34,middle | pos=200,400",
     "47 | ConstantVisual | constant | color=black | name=Parameter1 | name_pos=0 | name_at=0,36,middle | pos=350,400",
     "48 | ConverterVisual | converter | color=black | name=Converter1 | name_pos=0 | name_at=0,29,middle | pos=500,400",
-    "49 | FlowVisual | flow | color=black | name=Flow1 | name_pos=0 | name_at=0,40,middle | from=225,200 | to=475,200 | attached=44,45 | valve=0,false",
+    "49 | FlowVisual | flow | color=black | name=Flow1 | name_pos=0 | name_at=0,34,middle | from=225,200 | to=475,200 | attached=44,45 | valve=0,false",
     "49.endHandle | Handle |  | color=black | pos=475,200",
     "49.startHandle | Handle |  | color=black | pos=225,200",
     "50 | LinkVisual | link | color=black | from=200,219 | to=200,380 | attached=44,46",

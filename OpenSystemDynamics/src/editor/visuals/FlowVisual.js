@@ -10,7 +10,6 @@ class FlowVisual extends BaseConnection {
 	constructor(id, pos0, pos1) {
 		super(id, pos0, pos1);
 		this.updateDefinitionError();
-		this.namePosList = [[0, 40], [31, 5], [0, -33], [-31, 5]]; 	// Textplacement when rotating text
 		
 		/** @type {OrthogonalPath} */
 		this.path = new OrthogonalPath(this.handles.map(h => h.getPos()));
@@ -302,7 +301,26 @@ class FlowVisual extends BaseConnection {
 		let [valveX, valveY] = this.getValvePos();
 		return [valveX + variableOffset[0], valveY + variableOffset[1]];
 	}
-
+	/**
+	 * Index into the name positions (below, right, above, left) of the side of the variable where the valve is
+	 * @returns {number}
+	 */
+	getValveSide() {
+		let [valveX, valveY] = this.getValvePos();
+		let [varX, varY] = this.getVariablePos();
+		if (valveY > varY) return 0; // below
+		if (valveX > varX) return 1; // right
+		if (valveY < varY) return 2; // above
+		return 3; // left
+	}
+	/** Places the name like for a variable, but further out on the side of the valve so it does not overlap it */
+	updateNamePosition() {
+		const namePosList = [[0, 34], [23, 5], [0, -25], [-23, 5]];
+		const valveNamePosList = [[0, 40], [31, 5], [0, -33], [-31, 5]];
+		const valveSide = this.getValveSide();
+		this.namePosList = namePosList.map((pos, i) => i === valveSide ? valveNamePosList[i] : pos);
+		super.updateNamePosition();
+	}
 	setColor(color) {
 		this.color = color;
 		this.primitive.setAttribute("Color", this.color);
@@ -429,6 +447,9 @@ class FlowVisual extends BaseConnection {
 		let [varX, varY] = this.getVariablePos();
 		SVG.transform(this.valve, valveX, valveY, valveRot, 1);
 		SVG.translate(this.variable, varX, varY);
+		if (this.name_pos !== undefined) {
+			this.updateNamePosition();
+		}
 		// Update
 		this.startCloud.update();
 		this.endCloud.update();

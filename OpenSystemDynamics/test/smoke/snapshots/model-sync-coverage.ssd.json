@@ -5,7 +5,7 @@
     "46 | VariableVisual | variable | color=blue | name=Rate | name_pos=2 | name_at=0,-25,middle | pos=150,350",
     "47 | ConstantVisual | constant | color=green | name=Factor | name_pos=3 | name_at=-25,5,end | pos=350,150",
     "48 | ConverterVisual | converter | color=purple | name=Lookup | name_pos=0 | name_at=0,29,middle | pos=350,450",
-    "49 | FlowVisual | flow | color=orange | name=Transfer | name_pos=1 | name_at=31,5,start | from=175,150 | to=525,350 | attached=44,45 | valve=0,true",
+    "49 | FlowVisual | flow | color=orange | name=Transfer | name_pos=1 | name_at=23,5,start | from=175,150 | to=525,350 | attached=44,45 | valve=0,true",
     "49.bend0 | Handle |  | color=orange | pos=300,150",
     "49.bend1 | Handle |  | color=orange | pos=300,350",
     "49.endHandle | Handle |  | color=orange | pos=525,350",

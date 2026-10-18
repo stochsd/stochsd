@@ -1,10 +1,10 @@
 {
   "visuals": [
     "44 | StockVisual | stock | color=black | name=Population | name_pos=0 | name_at=0,32,middle | pos=400,200",
-    "45 | FlowVisual | flow | color=black | name=Births | name_pos=0 | name_at=0,40,middle | from=150,200 | to=375,200 | attached=-,44 | valve=0,false",
+    "45 | FlowVisual | flow | color=black | name=Births | name_pos=0 | name_at=0,34,middle | from=150,200 | to=375,200 | attached=-,44 | valve=0,false",
     "45.endHandle | Handle |  | color=black | pos=375,200",
     "45.startHandle | Handle |  | color=black | pos=150,200",
-    "46 | FlowVisual | flow | color=black | name=Deaths | name_pos=0 | name_at=0,40,middle | from=425,200 | to=650,200 | attached=44,- | valve=0,false",
+    "46 | FlowVisual | flow | color=black | name=Deaths | name_pos=0 | name_at=0,34,middle | from=425,200 | to=650,200 | attached=44,- | valve=0,false",
     "46.endHandle | Handle |  | color=black | pos=650,200",
     "46.startHandle | Handle |  | color=black | pos=425,200",
     "47 | VariableVisual | variable | color=black | name=Noise | name_pos=0 | name_at=0,34,middle | pos=400,380",
