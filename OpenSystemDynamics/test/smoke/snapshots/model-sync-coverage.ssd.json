@@ -253,7 +253,7 @@
     ""
   ],
   "simulation": {
-    "runState": "stopped",
+    "status": "stopped",
     "csv": [
       "Time,Source,Target,Transfer,Rate,Factor,Lookup",
       "0,100,0,10,10,3,6",

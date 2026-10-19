@@ -177,7 +177,7 @@
     ""
   ],
   "simulation": {
-    "runState": "stopped",
+    "status": "stopped",
     "csv": [
       "Time,Population,Births,Deaths,Noise,BirthRate,DeathRate",
       "0,100,2,18,-3.685015,0.1,0.08",

@@ -110,7 +110,7 @@ const simulate = `
 	Math.resetTestSeed();
 	ToolBox.setTool("run", mouse.left);
 	const started = Date.now();
-	while (Simulation.runState !== "stopped" && Date.now() - started < 20000) {
+	while (Simulation.status !== "stopped" && Date.now() - started < 20000) {
 		await new Promise(resolve => setTimeout(resolve, 50));
 	}
 	// At most 6 decimals without trailing zeros, so tiny floating point differences don't show up in snapshots
@@ -122,7 +122,7 @@ const simulate = `
 	};
 	const names = SimulationResults.recordedIds.map(findID).filter(Boolean).map(getName);
 	const csv = [["Time", ...names].join(",")].concat(SimulationResults.results.map(row => row.map(format).join(",")));
-	return { runState: Simulation.runState, csv };
+	return { status: Simulation.status, csv };
 `;
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)

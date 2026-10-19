@@ -1,17 +1,17 @@
 // @ts-check
 class Simulation {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
-	static runState;
+	static status;
 	/** @type {PausedEngineResults | undefined} */
 	static simulationController
 
 	static init() {
-		this.runState = "none";
+		this.status = "none";
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates every time updateCounter goes down to zero
 	}
 	static toggle() {
-		switch (this.runState) {
+		switch (this.status) {
 			case "running":
 				this.pause();
 				break;
@@ -24,9 +24,9 @@ class Simulation {
 	}
 	static resume() {
 		RunToolbar.setMode("pause")
-		this.runState = "running";
+		this.status = "running";
 		// Simulation controller can only be undefined if the first pause event has never triggered
-		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
+		// In such a case it is enought to just change this.status, otherwise we also have to trigger the controllers resume() function.
 		if (this.simulationController) {
 			this.simulationController.resume();
 		}
@@ -42,7 +42,7 @@ class Simulation {
 			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
 			setPauseInterval(getTimeStep() * 1000);
 		}
-		this.runState = "running";
+		this.status = "running";
 		runOverlay.block();
 		runModel({
 			rate: -1,
@@ -52,7 +52,7 @@ class Simulation {
 				this.simulationController = res;
 
 				// If still running continue with next cycle
-				if (this.runState == "running") {
+				if (this.status == "running") {
 					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(false);
 					do_global_log("length " + SimulationResults.results.length)
@@ -93,10 +93,10 @@ class Simulation {
 	}
 	static step() {
 		/* experiment
-		if (this.runState == "running") {
+		if (this.status == "running") {
 			this.reset();
 			this.simulationController = undefined;
-			this.runState = "stepping";
+			this.status = "stepping";
 			return;
 		}
 		*/
@@ -134,7 +134,7 @@ class Simulation {
 		});
 	}
 	static pause() {
-		this.runState = "paused";
+		this.status = "paused";
 		RunToolbar.setMode("play")
 	}
 	static reset() {
@@ -146,7 +146,7 @@ class Simulation {
 	static stop() {
 		runOverlay.unblock();
 		endRunningSimulation();
-		this.runState = "stopped";
+		this.status = "stopped";
 		this.simulationController = undefined;
 		RunToolbar.setMode("play")
 		this.updateCounter = 0;
