@@ -113,7 +113,16 @@ const simulate = `
 	while (Simulation.runState !== "stopped" && Date.now() - started < 20000) {
 		await new Promise(resolve => setTimeout(resolve, 50));
 	}
-	return { runState: Simulation.runState, csv: Simulation.toCsv().trim().split("\\n") };
+	// At most 6 decimals without trailing zeros, so tiny floating point differences don't show up in snapshots
+	const format = number => {
+		if (number == null) return "";
+		if (number == 0) return "0";
+		if (Math.abs(number) < 1e-6 || 1e6 < Math.abs(number)) return number.toExponential(2);
+		return String(parseFloat(number.toFixed(6)));
+	};
+	const names = Simulation.recordedIds.map(findID).filter(Boolean).map(getName);
+	const csv = [["Time", ...names].join(",")].concat(Simulation.results.map(row => row.map(format).join(",")));
+	return { runState: Simulation.runState, csv };
 `;
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)
