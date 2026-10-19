@@ -156,7 +156,7 @@ class Simulation {
 		}
 	}
 	static resumeSimulation() {
-		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
+		RunToolbar.setMode("pause")
 		this.runState = "running";
 		// Simulation controller can only be undefined if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
@@ -167,7 +167,7 @@ class Simulation {
 	static runSimulation() {
 		this.simulationDone = false;
 		this.stopSimulation();
-		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
+		RunToolbar.setMode("pause")
 		this.createHeader();
 		if (getTimeLength() / getTimeStep() < 1000) {
 			setPauseInterval(getTimeLength() / 10);
@@ -290,7 +290,7 @@ class Simulation {
 	}
 	static pauseSimulation() {
 		this.runState = "paused";
-		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
+		RunToolbar.setMode("play")
 	}
 	static resetSimulation() {
 		this.stopSimulation();
@@ -303,7 +303,7 @@ class Simulation {
 		endRunningSimulation();
 		this.runState = "stopped";
 		this.simulationController = undefined;
-		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
+		RunToolbar.setMode("play")
 		this.updateCounter = 0;
 	}
 	/**
