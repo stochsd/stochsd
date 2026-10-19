@@ -7,7 +7,6 @@ class Simulation {
 
 	static init() {
 		this.runState = "none";
-		this.varnameList = [];
 		this.varIdList = [];
 		this.results = [];
 		this.runSubscribers = {};
@@ -21,9 +20,6 @@ class Simulation {
 
 		// Create list of ids, id0 is reserved for time 
 		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
-
-		// Create list of names
-		this.varnameList = ["Time"].concat(getName(primitive_array));
 
 		// Reset results
 		this.results = [];
@@ -134,9 +130,6 @@ class Simulation {
 			// remove id
 			this.varIdList.splice(index, 1);
 
-
-			// remove name
-			this.varnameList.splice(index, 1);
 
 			// remove data 
 			this.results.map(row => {

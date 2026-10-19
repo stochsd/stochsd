@@ -2,7 +2,6 @@
 
 ```
 Simulation.results // Show the value of the last run for all primitives.
-Simulation.varnameList // The names of the primitives that the result shows
 Simulation.varIdList // Id of primitives  
 ```
 
