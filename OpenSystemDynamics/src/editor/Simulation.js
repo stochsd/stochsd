@@ -203,7 +203,7 @@ class Simulation {
 					this.storeResults(res);
 					this.updateProgressBar();
 					this.setProgressStatus(true);
-					this.triggerRunFinished();
+					this.notifySubscribers();
 					this.stopSimulation();
 				} else {
 					console.log("Extra onSuccess call from IM-engine");
@@ -250,7 +250,7 @@ class Simulation {
 				this.storeResults(res);
 				this.updateProgressBar();
 				this.setProgressStatus(false);
-				this.triggerRunFinished();
+				this.notifySubscribers();
 				this.simulationController = res;
 			},
 			onSuccess: (res) => {
@@ -259,7 +259,7 @@ class Simulation {
 				this.storeResults(res);
 				this.updateProgressBar();
 				this.setProgressStatus(true);
-				this.triggerRunFinished();
+				this.notifySubscribers();
 			},
 			onError: (res) => {
 				this.stopSimulation();
@@ -296,7 +296,7 @@ class Simulation {
 		this.stopSimulation();
 		this.createHeader();
 		this.updateProgressBar();
-		this.triggerRunFinished();
+		this.notifySubscribers();
 	}
 	static stopSimulation() {
 		runOverlay.unblock();
@@ -420,7 +420,7 @@ class Simulation {
 		}
 		return filteredResults;
 	}
-	static triggerRunFinished() {
+	static notifySubscribers() {
 		for (let id in this.subscribers) {
 			if (findID(id)) {
 				this.subscribers[id]();
