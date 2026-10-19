@@ -1,5 +1,5 @@
 // @ts-check
-class RunResults {
+class Simulation {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
 	static runState;
 
@@ -436,5 +436,5 @@ class RunResults {
 		}
 	}
 }
-RunResults.init();
+Simulation.init();
 

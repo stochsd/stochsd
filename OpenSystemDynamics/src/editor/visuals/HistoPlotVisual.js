@@ -9,7 +9,7 @@ class HistoPlotVisual extends PlotVisual {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(id, this.runHandler);
+		Simulation.subscribeRun(id, this.runHandler);
 		this.plot = null;
 
 		this.dialog = new HistoPlotDialog(id);
@@ -76,7 +76,7 @@ class HistoPlotVisual extends PlotVisual {
 			this.setEmptyPlot();
 			return;
 		}
-		let results = RunResults.getSelectiveIdResults(idsToDisplay);
+		let results = Simulation.getSelectiveIdResults(idsToDisplay);
 
 		if (results.length === 0) {
 			this.setEmptyPlot();

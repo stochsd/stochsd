@@ -8,7 +8,7 @@ class XyPlotVisual extends PlotVisual {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(id, this.runHandler);
+		Simulation.subscribeRun(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
@@ -43,7 +43,7 @@ class XyPlotVisual extends PlotVisual {
 			plot_per = this.dialog.getDefaultPlotPeriod();
 			this.primitive.setAttribute("PlotPer", plot_per);
 		}
-		let results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
+		let results = Simulation.getFilteredSelectiveIdResults(IdsToDisplay, getTimeStart(), getTimeLength(), plot_per);
 		if (results.length == 0) {
 			this.setEmptyPlot();
 			return;

@@ -106,14 +106,14 @@ const modelXml = `
 `;
 
 const simulate = `
-	RunResults.resetSimulation();
+	Simulation.resetSimulation();
 	Math.resetTestSeed();
 	ToolBox.setTool("run", mouse.left);
 	const started = Date.now();
-	while (RunResults.runState !== "stopped" && Date.now() - started < 20000) {
+	while (Simulation.runState !== "stopped" && Date.now() - started < 20000) {
 		await new Promise(resolve => setTimeout(resolve, 50));
 	}
-	return { runState: RunResults.runState, csv: RunResults.toCsv().trim().split("\\n") };
+	return { runState: Simulation.runState, csv: Simulation.toCsv().trim().split("\\n") };
 `;
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)

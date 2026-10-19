@@ -22,7 +22,7 @@ class runOverlay {
 				yesNoAlert("Do you want to terminate the simulation now to change the model?", function (answer) {
 					$("#svgBlockOverlay").css("opacity", 0);
 					if (answer == "yes") {
-						RunResults.resetSimulation();
+						Simulation.resetSimulation();
 					}
 				});
 

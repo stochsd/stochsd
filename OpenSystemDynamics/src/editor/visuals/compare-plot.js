@@ -52,7 +52,7 @@ class DataGenerations {
 		}
 	}
 	append(ids, results, lineOptions) {
-		if (!RunResults.simulationDone || results.length == 0) return;
+		if (!Simulation.simulationDone || results.length == 0) return;
 		this.resultGen.push(results);
 		this.numGenerations++;
 		this.numLines += ids.length;
@@ -241,7 +241,7 @@ class ComparePlotVisual extends PlotVisual {
 			this.fetchData();
 			this.render();
 		}
-		RunResults.subscribeRun(id, this.runHandler);
+		Simulation.subscribeRun(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.gens = new DataGenerations();
@@ -269,7 +269,7 @@ class ComparePlotVisual extends PlotVisual {
 			plot_per = this.dialog.getDefaultPlotPeriod();
 			this.primitive.setAttribute("PlotPer", plot_per);
 		}
-		let results = RunResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
+		let results = Simulation.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 		let line_options = JSON.parse(this.primitive.getAttribute("LineOptions"));
 		// add generation 
 		this.gens.append(getDisplayIds(this.primitive), results, line_options);

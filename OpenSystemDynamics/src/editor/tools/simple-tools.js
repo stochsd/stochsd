@@ -47,7 +47,7 @@ class RunTool extends BaseTool {
 			InfoBar.update();
 			ToolBox.updateButtons();
 		} else {
-			RunResults.runPauseSimulation();
+			Simulation.runPauseSimulation();
 		}
 		ToolBox.setTool("mouse");
 	}
@@ -55,14 +55,14 @@ class RunTool extends BaseTool {
 
 class StepTool extends BaseTool {
 	static enterTool() {
-		RunResults.stepSimulation();
+		Simulation.stepSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
 
 class ResetTool extends BaseTool {
 	static enterTool() {
-		RunResults.resetSimulation();
+		Simulation.resetSimulation();
 		ToolBox.setTool("mouse");
 	}
 }
