@@ -109,8 +109,8 @@ class Simulation {
 
 				// If still running continue with next cycle
 				if (this.runState == "running") {
-					this.updateProgressBar();
-					this.setProgressStatus(false);
+					RunToolbar.updateProgressBar(this.getCurrentTime());
+					RunToolbar.setProgressStatus(false);
 					do_global_log("length " + this.results.length)
 					this.continueRunSimulation(res)
 				}
@@ -124,8 +124,8 @@ class Simulation {
 					this.simulationDone = true;
 					// In some cases onPause was never executed and in such cases we need to do store Result directly on res
 					this.storeResults(res);
-					this.updateProgressBar();
-					this.setProgressStatus(true);
+					RunToolbar.updateProgressBar(this.getCurrentTime());
+					RunToolbar.setProgressStatus(true);
 					this.notifySubscribers();
 					this.stopSimulation();
 				} else {
@@ -171,8 +171,8 @@ class Simulation {
 			onPause: (res) => {
 				this.simulationDone = false;
 				this.storeResults(res);
-				this.updateProgressBar();
-				this.setProgressStatus(false);
+				RunToolbar.updateProgressBar(this.getCurrentTime());
+				RunToolbar.setProgressStatus(false);
 				this.notifySubscribers();
 				this.simulationController = res;
 			},
@@ -180,36 +180,14 @@ class Simulation {
 				this.simulationDone = true;
 				runOverlay.unblock();
 				this.storeResults(res);
-				this.updateProgressBar();
-				this.setProgressStatus(true);
+				RunToolbar.updateProgressBar(this.getCurrentTime());
+				RunToolbar.setProgressStatus(true);
 				this.notifySubscribers();
 			},
 			onError: (res) => {
 				this.stopSimulation();
 			}
 		});
-	}
-	static setProgressStatus(done) {
-		done
-			? $("#progress-bar").attr("data-done", "")
-			: $("#progress-bar").removeAttr("data-done")
-	}
-	static updateProgressLength() {
-		let progress = clampValue(this.getRunProgressFraction(), 0, 1);
-		$("#progress-bar")[0].style.setProperty("--progress", `${100 * progress}%`)
-	}
-	static updateProgressText() {
-		let number_options = { precision: 3 };
-		let currentTime = format_number(this.getRunProgress(), number_options);
-		let startTime = format_number(this.getRunProgressMin(), number_options);
-		let endTime = format_number(this.getRunProgressMax(), number_options);
-		let timeStep = this.getTimeStep();
-		let alg_str = getAlgorithm() === "RK1" ? "Euler" : "RK4";
-		$("#progress-bar-text").html(`${startTime} / ${currentTime} / ${endTime} </br> ${alg_str}(DT = ${timeStep})`);
-	}
-	static updateProgressBar() {
-		this.updateProgressLength()
-		this.updateProgressText()
 	}
 	static pauseSimulation() {
 		this.runState = "paused";
@@ -218,7 +196,7 @@ class Simulation {
 	static resetSimulation() {
 		this.stopSimulation();
 		this.createHeader();
-		this.updateProgressBar();
+		RunToolbar.updateProgressBar(this.getCurrentTime());
 		this.notifySubscribers();
 	}
 	static stopSimulation() {
@@ -251,31 +229,9 @@ class Simulation {
 		let varIdIndex = this.recordedIds.indexOf(primitiveId);
 		return lastRow[varIdIndex];
 	}
-	static getTimeStep() {
-		if (primitives("Setting")[0]) {
-			return primitives("Setting")[0].getAttribute("TimeStep");
-		} else if (this.results && 1 < this.results.length) {
-			return `${this.results[1][0] - this.results[0][0]}`;
-		}
-		return "0";
-	}
-	static getRunProgress() {
-		let lastRow = this.getLastRow();
-		// If we have no last row return null
-		if (lastRow == null && primitives("Setting")[0]) {
-			return parseFloat(primitives("Setting")[0].getAttribute("TimeStart"));
-		}
-		// else return time
-		return lastRow[0];
-	}
-	static getRunProgressFraction() {
-		return (this.getRunProgress() - this.getRunProgressMin()) / (this.getRunProgressMax() - this.getRunProgressMin());
-	}
-	static getRunProgressMax() {
-		return getTimeStart() + getTimeLength()
-	}
-	static getRunProgressMin() {
-		return getTimeStart();
+	/** Time of the last stored result, or the start time if nothing has been simulated */
+	static getCurrentTime() {
+		return this.getLastRow()?.[0] ?? getTimeStart();
 	}
 	static getLastRow() {
 		//~ alert(this.results.length);

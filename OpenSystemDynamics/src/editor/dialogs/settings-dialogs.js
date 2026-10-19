@@ -258,7 +258,7 @@ class SimulationSettings extends jqDialog {
 			let method = $(".input-method :selected").val();
 			setAlgorithm(method);
 			if (Simulation.runState == "none" || Simulation.runState == "stopped") {
-				Simulation.updateProgressBar();
+				RunToolbar.updateProgressBar(Simulation.getCurrentTime());
 			}
 		}
 	}

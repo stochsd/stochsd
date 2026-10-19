@@ -324,7 +324,7 @@ $(window).on("load", function () {
 	environment.ready();
 	fileManager.ready();
 	restoreAfterRestart();
-	Simulation.updateProgressBar();
+	RunToolbar.updateProgressBar(Simulation.getCurrentTime());
 	ToolBox.updateTimeUnitButton();
 
 	UndoStack.unsavedChanges = false;
