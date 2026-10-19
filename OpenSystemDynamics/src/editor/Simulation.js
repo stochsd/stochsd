@@ -4,10 +4,12 @@ class Simulation {
 	static runState;
 	/** @type {PausedSimulationResults | undefined} */
 	static simulationController
+	/** @type {string[]} */
+	static recordedIds
 
 	static init() {
 		this.runState = "none";
-		this.varIdList = [];
+		this.recordedIds = [];
 		this.results = [];
 		this.runSubscribers = {};
 		this.updateFrequency = 100;
@@ -19,7 +21,7 @@ class Simulation {
 		let primitive_array = getPrimitiveList();
 
 		// Create list of ids, id0 is reserved for time 
-		this.varIdList = [0].concat(getID(primitive_array)).map(Number);
+		this.recordedIds = ["0"].concat(getID(primitive_array));
 
 		// Reset results
 		this.results = [];
@@ -78,7 +80,7 @@ class Simulation {
 		//~ let namesToDisplay = IdsToDisplay.map(findID).map(getName);
 		let first = true;
 		out += "Time"
-		for (let id of this.varIdList) {
+		for (let id of this.recordedIds) {
 			let primitive = findID(id);
 			if (primitive) {
 				out += "," + getName(primitive);
@@ -89,7 +91,7 @@ class Simulation {
 		for (let row_index in this.results) {
 			//~ for(let column_index in ["Time"].concat(namesToDisplay)) {
 			first = true;
-			for (let column_index in this.varIdList) {
+			for (let column_index in this.recordedIds) {
 				if (first) {
 					out += this.#formatNumber(this.results[row_index][column_index], 6);
 					first = false;
@@ -110,13 +112,13 @@ class Simulation {
 			this.simulationTime = res.times[index];
 			let currentRunResults = [];
 			currentRunResults.push(time);
-			for (let key in this.varIdList) {
+			for (let key in this.recordedIds) {
 				if (key == "0") {
 					// On location 0 we always have time
 					continue;
 				}
 				//~ do_global_log(JSON.stringify(res));
-				let value = res.value(findID(this.varIdList[key]))[index];
+				let value = res.value(findID(this.recordedIds[key]))[index];
 				currentRunResults.push(value);
 			}
 			this.push(currentRunResults);
@@ -125,10 +127,10 @@ class Simulation {
 		//~ this.triggerRunFinished();
 	}
 	static removeResultsForId(id) {
-		let index = this.varIdList.indexOf(parseInt(id));
+		let index = this.recordedIds.indexOf(id);
 		if (index !== -1) {
 			// remove id
-			this.varIdList.splice(index, 1);
+			this.recordedIds.splice(index, 1);
 
 
 			// remove data 
@@ -315,7 +317,7 @@ class Simulation {
 			//~ alert("early return");
 			return null;
 		}
-		let varIdIndex = this.varIdList.indexOf(Number(primitiveId));
+		let varIdIndex = this.recordedIds.indexOf(primitiveId);
 		return lastRow[varIdIndex];
 	}
 	static getTimeStep() {
@@ -352,17 +354,14 @@ class Simulation {
 			return null;
 		}
 	}
-	static getSelectiveIdResults(varIdList) {
-		// Make sure the varIdList stored as numbers and not strings
-		varIdList = varIdList.map(Number);
-
+	static getSelectiveIdResults(ids) {
 		// Contains the indexes from this.results that we want to return
 		let selectedVarIdIndexes = [0]; // The first index is always 0 for time
-		for (let i in varIdList) {
-			let varIdIndex = this.varIdList.indexOf(varIdList[i]);
+		for (let i in ids) {
+			let varIdIndex = this.recordedIds.indexOf(ids[i]);
 			selectedVarIdIndexes.push(varIdIndex);
 		}
-		do_global_log("this.varIdList " + JSON.stringify(this.varIdList) + " varIdList " + JSON.stringify(varIdList));
+		do_global_log("this.recordedIds " + JSON.stringify(this.recordedIds) + " ids " + JSON.stringify(ids));
 		let returnResults = [];
 		for (let row_index in this.results) {
 			let tmpRow = [];
@@ -378,8 +377,8 @@ class Simulation {
 		}
 		return returnResults;
 	}
-	static getFilteredSelectiveIdResults(varIdList, start, length, step) {
-		let unfilteredResults = this.getSelectiveIdResults(varIdList);
+	static getFilteredSelectiveIdResults(ids, start, length, step) {
+		let unfilteredResults = this.getSelectiveIdResults(ids);
 		let filteredResults = [];
 		let printInterval = step / getTimeStep();
 		let printCounter = 1;

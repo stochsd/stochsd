@@ -186,7 +186,7 @@ class NumberboxVisual extends OnePointer {
 
 	}
 	get targetID() {
-		return Number(this.primitive.getAttribute("Target"));
+		return this.primitive.getAttribute("Target");
 	}
 	set targetID(newTargetID) {
 		this.primitive.setAttribute("Target", newTargetID);

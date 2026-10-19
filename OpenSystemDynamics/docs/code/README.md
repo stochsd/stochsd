@@ -2,7 +2,7 @@
 
 ```
 Simulation.results // Show the value of the last run for all primitives.
-Simulation.varIdList // Id of primitives  
+Simulation.recordedIds // Id of primitives  
 ```
 
 ```javascript
