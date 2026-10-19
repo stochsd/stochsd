@@ -2,12 +2,11 @@
 class Simulation {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
 	static runState;
+	/** @type {PausedSimulationResults | undefined} */
+	static simulationController
 
 	static init() {
 		this.runState = "none";
-		// Is always null if simulation is not running
-		// Is a data structure returned from runModel if simulation is running it
-		this.simulationController = null;
 		this.varnameList = [];
 		this.varIdList = [];
 		this.results = [];
@@ -160,14 +159,10 @@ class Simulation {
 	static resumeSimulation() {
 		$("#imgRunPauseTool").attr("src", "graphics/pause.svg");
 		this.runState = "running";
-		// Simulation controller can only be null if the first pause event has never triggered
+		// Simulation controller can only be undefined if the first pause event has never triggered
 		// In such a case it is enought to just change this.runState, otherwise we also have to trigger the controllers resume() function.
-		if (this.simulationController != null) {
-
+		if (this.simulationController) {
 			this.simulationController.resume();
-			// We have a bug that happens some times on resume because simulationController is null
-			// Find out when it happens
-			//~ console.error(getStackTrace());
 		}
 	}
 	static runSimulation() {
@@ -183,7 +178,7 @@ class Simulation {
 		}
 		this.runState = "running";
 		runOverlay.block();
-		this.simulationController = runModel({
+		runModel({
 			rate: -1,
 			onPause: (res) => {
 				// We always need to do this, even if we paused the simulation, otherwise we cannot unpause
@@ -195,10 +190,7 @@ class Simulation {
 					this.updateProgressBar();
 					this.setProgressStatus(false);
 					do_global_log("length " + this.results.length)
-					if (this.simulationController == null) {
-						do_global_log("simulation controller is null")
-					}
-					this.continueRunSimulation()
+					this.continueRunSimulation(res)
 				}
 			},
 			onSuccess: (res) => {
@@ -224,25 +216,26 @@ class Simulation {
 			}
 		});
 	}
-	static continueRunSimulation() {
-		this.storeResults(this.simulationController);
+	/** @param {PausedSimulationResults} res */
+	static continueRunSimulation(res) {
+		this.storeResults(res);
 		if (this.updateCounter == 0) {
 			this.updateCounter = this.updateFrequency;
 		}
 		this.updateCounter -= 1;
-		this.simulationController.resume();
+		res.resume();
 	}
 	static stepSimulation() {
 		/* experiment
 		if (this.runState == "running") {
 			this.resetSimulation();
-			this.simulationController = null;
+			this.simulationController = undefined;
 			this.runState = "stepping";
 			return;
 		}
 		*/
 		// if stepping was already started
-		if (this.simulationController != null) {
+		if (this.simulationController) {
 			this.simulationController.resume();
 			return;
 		}
@@ -310,7 +303,7 @@ class Simulation {
 		runOverlay.unblock();
 		endRunningSimulation();
 		this.runState = "stopped";
-		this.simulationController = null;
+		this.simulationController = undefined;
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
 	}
