@@ -10,19 +10,19 @@ class Simulation {
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates every time updateCounter goes down to zero
 	}
-	static runPauseSimulation() {
+	static toggle() {
 		switch (this.runState) {
 			case "running":
-				this.pauseSimulation();
+				this.pause();
 				break;
 			case "paused":
-				this.resumeSimulation();
+				this.resume();
 				break;
 			default:
-				this.runSimulation();
+				this.run();
 		}
 	}
-	static resumeSimulation() {
+	static resume() {
 		RunToolbar.setMode("pause")
 		this.runState = "running";
 		// Simulation controller can only be undefined if the first pause event has never triggered
@@ -31,9 +31,9 @@ class Simulation {
 			this.simulationController.resume();
 		}
 	}
-	static runSimulation() {
+	static run() {
 		this.simulationDone = false;
-		this.stopSimulation();
+		this.stop();
 		RunToolbar.setMode("pause")
 		SimulationResults.createHeader();
 		if (getTimeLength() / getTimeStep() < 1000) {
@@ -56,7 +56,7 @@ class Simulation {
 					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(false);
 					do_global_log("length " + SimulationResults.results.length)
-					this.continueRunSimulation(res)
+					this.continue(res)
 				}
 			},
 			onSuccess: (res) => {
@@ -71,19 +71,19 @@ class Simulation {
 					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(true);
 					SimulationResults.notifySubscribers();
-					this.stopSimulation();
+					this.stop();
 				} else {
 					console.log("Extra onSuccess call from IM-engine");
 				}
 			},
 			onError: (res) => {
 				do_global_log("onError stop simulation");
-				this.stopSimulation();
+				this.stop();
 			}
 		});
 	}
 	/** @param {PausedEngineResults} res */
-	static continueRunSimulation(res) {
+	static continue(res) {
 		SimulationResults.storeResults(res);
 		if (this.updateCounter == 0) {
 			this.updateCounter = this.updateFrequency;
@@ -91,10 +91,10 @@ class Simulation {
 		this.updateCounter -= 1;
 		res.resume();
 	}
-	static stepSimulation() {
+	static step() {
 		/* experiment
 		if (this.runState == "running") {
-			this.resetSimulation();
+			this.reset();
 			this.simulationController = undefined;
 			this.runState = "stepping";
 			return;
@@ -106,7 +106,7 @@ class Simulation {
 			return;
 		}
 		// Else start the stepping
-		this.stopSimulation();
+		this.stop();
 		SimulationResults.createHeader();
 		//~ alert("stepping init");
 		setPauseInterval(getTimeStep());
@@ -129,21 +129,21 @@ class Simulation {
 				SimulationResults.notifySubscribers();
 			},
 			onError: (res) => {
-				this.stopSimulation();
+				this.stop();
 			}
 		});
 	}
-	static pauseSimulation() {
+	static pause() {
 		this.runState = "paused";
 		RunToolbar.setMode("play")
 	}
-	static resetSimulation() {
-		this.stopSimulation();
+	static reset() {
+		this.stop();
 		SimulationResults.createHeader();
 		RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 		SimulationResults.notifySubscribers();
 	}
-	static stopSimulation() {
+	static stop() {
 		runOverlay.unblock();
 		endRunningSimulation();
 		this.runState = "stopped";

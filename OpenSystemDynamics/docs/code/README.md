@@ -15,12 +15,12 @@ Sets attributes on primitives:
 ```javascript 
 this.primitive.setAttribute("AttributeName", value);
 ```
-```javascript
+```js
 UndoStack.clear();
 loadModelFromXml(modelData);
 // Store an empty state as first state
 UndoStack.storeState();
-Simulation.resetSimulation();
+Simulation.reset();
 ```
 
 

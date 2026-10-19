@@ -106,7 +106,7 @@ const modelXml = `
 `;
 
 const simulate = `
-	Simulation.resetSimulation();
+	Simulation.reset();
 	Math.resetTestSeed();
 	ToolBox.setTool("run", mouse.left);
 	const started = Date.now();
