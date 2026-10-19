@@ -120,8 +120,8 @@ const simulate = `
 		if (Math.abs(number) < 1e-6 || 1e6 < Math.abs(number)) return number.toExponential(2);
 		return String(parseFloat(number.toFixed(6)));
 	};
-	const names = Simulation.recordedIds.map(findID).filter(Boolean).map(getName);
-	const csv = [["Time", ...names].join(",")].concat(Simulation.results.map(row => row.map(format).join(",")));
+	const names = SimulationResults.recordedIds.map(findID).filter(Boolean).map(getName);
+	const csv = [["Time", ...names].join(",")].concat(SimulationResults.results.map(row => row.map(format).join(",")));
 	return { runState: Simulation.runState, csv };
 `;
 

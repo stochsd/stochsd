@@ -2,69 +2,13 @@
 class Simulation {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
 	static runState;
-	/** @type {PausedSimulationResults | undefined} */
+	/** @type {PausedEngineResults | undefined} */
 	static simulationController
-	/** @type {string[]} */
-	static recordedIds
-	/** @type {number[][]} */
-	static results
-	/** @type {{ [id: string]: () => void }} */
-	static subscribers;
 
 	static init() {
 		this.runState = "none";
-		this.recordedIds = [];
-		this.results = [];
-		this.subscribers = {};
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates every time updateCounter goes down to zero
-		this.simulationTime = 0;
-	}
-	static createHeader() {
-		// Get list of primitives that we want to observe from the model
-		let primitive_array = getPrimitiveList();
-
-		// Create list of ids, id0 is reserved for time 
-		this.recordedIds = ["0"].concat(getID(primitive_array));
-
-		// Reset results
-		this.results = [];
-	}
-	static storeResults(res) {
-		// This method is executed after the simulation is finished
-		// res is the result of the simulation
-		let index = this.results.length;
-		while (index < res.periods) {
-			let time = res.times[index];
-			this.simulationTime = res.times[index];
-			let currentRunResults = [];
-			currentRunResults.push(time);
-			for (let key in this.recordedIds) {
-				if (key == "0") {
-					// On location 0 we always have time
-					continue;
-				}
-				//~ do_global_log(JSON.stringify(res));
-				let value = res.value(findID(this.recordedIds[key]))[index];
-				currentRunResults.push(value);
-			}
-			this.push(currentRunResults);
-			index++;
-		}
-		//~ this.triggerRunFinished();
-	}
-	static removeResultsForId(id) {
-		let index = this.recordedIds.indexOf(id);
-		if (index !== -1) {
-			// remove id
-			this.recordedIds.splice(index, 1);
-
-
-			// remove data 
-			this.results.map(row => {
-				row.splice(index, 1);
-			});
-		}
 	}
 	static runPauseSimulation() {
 		switch (this.runState) {
@@ -91,7 +35,7 @@ class Simulation {
 		this.simulationDone = false;
 		this.stopSimulation();
 		RunToolbar.setMode("pause")
-		this.createHeader();
+		SimulationResults.createHeader();
 		if (getTimeLength() / getTimeStep() < 1000) {
 			setPauseInterval(getTimeLength() / 10);
 		} else {
@@ -109,9 +53,9 @@ class Simulation {
 
 				// If still running continue with next cycle
 				if (this.runState == "running") {
-					RunToolbar.updateProgressBar(this.getCurrentTime());
+					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(false);
-					do_global_log("length " + this.results.length)
+					do_global_log("length " + SimulationResults.results.length)
 					this.continueRunSimulation(res)
 				}
 			},
@@ -123,10 +67,10 @@ class Simulation {
 				if (this.simulationDone === false) {
 					this.simulationDone = true;
 					// In some cases onPause was never executed and in such cases we need to do store Result directly on res
-					this.storeResults(res);
-					RunToolbar.updateProgressBar(this.getCurrentTime());
+					SimulationResults.storeResults(res);
+					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(true);
-					this.notifySubscribers();
+					SimulationResults.notifySubscribers();
 					this.stopSimulation();
 				} else {
 					console.log("Extra onSuccess call from IM-engine");
@@ -138,9 +82,9 @@ class Simulation {
 			}
 		});
 	}
-	/** @param {PausedSimulationResults} res */
+	/** @param {PausedEngineResults} res */
 	static continueRunSimulation(res) {
-		this.storeResults(res);
+		SimulationResults.storeResults(res);
 		if (this.updateCounter == 0) {
 			this.updateCounter = this.updateFrequency;
 		}
@@ -163,26 +107,26 @@ class Simulation {
 		}
 		// Else start the stepping
 		this.stopSimulation();
-		this.createHeader();
+		SimulationResults.createHeader();
 		//~ alert("stepping init");
 		setPauseInterval(getTimeStep());
 		runOverlay.block();
 		runModel({
 			onPause: (res) => {
 				this.simulationDone = false;
-				this.storeResults(res);
-				RunToolbar.updateProgressBar(this.getCurrentTime());
+				SimulationResults.storeResults(res);
+				RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 				RunToolbar.setProgressStatus(false);
-				this.notifySubscribers();
+				SimulationResults.notifySubscribers();
 				this.simulationController = res;
 			},
 			onSuccess: (res) => {
 				this.simulationDone = true;
 				runOverlay.unblock();
-				this.storeResults(res);
-				RunToolbar.updateProgressBar(this.getCurrentTime());
+				SimulationResults.storeResults(res);
+				RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 				RunToolbar.setProgressStatus(true);
-				this.notifySubscribers();
+				SimulationResults.notifySubscribers();
 			},
 			onError: (res) => {
 				this.stopSimulation();
@@ -195,9 +139,9 @@ class Simulation {
 	}
 	static resetSimulation() {
 		this.stopSimulation();
-		this.createHeader();
-		RunToolbar.updateProgressBar(this.getCurrentTime());
-		this.notifySubscribers();
+		SimulationResults.createHeader();
+		RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
+		SimulationResults.notifySubscribers();
 	}
 	static stopSimulation() {
 		runOverlay.unblock();
@@ -206,107 +150,6 @@ class Simulation {
 		this.simulationController = undefined;
 		RunToolbar.setMode("play")
 		this.updateCounter = 0;
-	}
-	/**
-	 * @param {string} id 
-	 * @param {()=>void} handler 
-	 */
-	static subscribe(id, handler) {
-		this.subscribers[id] = handler;
-	}
-	static push(newRow) {
-		this.results.push(newRow);
-	}
-	static getResults() {
-		return this.results;
-	}
-	static getLastValue(primitiveId) {
-		let lastRow = this.getLastRow();
-		if (lastRow == null) {
-			//~ alert("early return");
-			return null;
-		}
-		let varIdIndex = this.recordedIds.indexOf(primitiveId);
-		return lastRow[varIdIndex];
-	}
-	/** Time of the last stored result, or the start time if nothing has been simulated */
-	static getCurrentTime() {
-		return this.getLastRow()?.[0] ?? getTimeStart();
-	}
-	static getLastRow() {
-		//~ alert(this.results.length);
-		if (this.results.length != 0) {
-			return this.results[this.results.length - 1];
-		} else {
-			return null;
-		}
-	}
-	/** @param {string[]} ids */
-	static getSelectiveIdResults(ids) {
-		// Contains the indexes from this.results that we want to return
-		let selectedVarIdIndexes = [0]; // The first index is always 0 for time
-		for (let i in ids) {
-			let varIdIndex = this.recordedIds.indexOf(ids[i]);
-			selectedVarIdIndexes.push(varIdIndex);
-		}
-		do_global_log("this.recordedIds " + JSON.stringify(this.recordedIds) + " ids " + JSON.stringify(ids));
-		const returnResults = [];
-		for (let row_index in this.results) {
-			let tmpRow = [];
-			for (let columnIndex in selectedVarIdIndexes) {
-				let wantedIndex = selectedVarIdIndexes[columnIndex];
-				if (wantedIndex != -1) {
-					tmpRow.push(this.results[row_index][wantedIndex]);
-				} else {
-					tmpRow.push(null);
-				}
-			}
-			returnResults.push(tmpRow);
-		}
-		return returnResults;
-	}
-	static getFilteredSelectiveIdResults(ids, start, length, step) {
-		let unfilteredResults = this.getSelectiveIdResults(ids);
-		let filteredResults = [];
-		let printInterval = step / getTimeStep();
-		let printCounter = 1;
-
-		for (let row_index in unfilteredResults) {
-			let time = unfilteredResults[row_index][0];
-			if (time < start) {
-				continue;
-			}
-			if (time == start) {
-				printCounter = printInterval;
-			}
-			if (time > start + length) {
-				// End of loop
-				return filteredResults;
-			}
-			if (printCounter < printInterval) {
-				printCounter++;
-				continue;
-			} else {
-				printCounter = 1;
-			}
-			filteredResults.push(unfilteredResults[row_index]);
-		}
-		// Make sure last value is added
-		if (filteredResults.length !== 0 && unfilteredResults.length !== 0) {
-			if (filteredResults[filteredResults.length - 1][0] !== unfilteredResults[unfilteredResults.length - 1][0]) {
-				filteredResults.push(unfilteredResults[unfilteredResults.length - 1]);
-			}
-		}
-		return filteredResults;
-	}
-	static notifySubscribers() {
-		for (let id in this.subscribers) {
-			if (findID(id)) {
-				this.subscribers[id]();
-			} else {
-				delete this.subscribers[id];
-			}
-		}
 	}
 }
 Simulation.init();

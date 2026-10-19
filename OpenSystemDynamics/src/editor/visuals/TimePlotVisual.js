@@ -9,7 +9,7 @@ class TimePlotVisual extends PlotVisual {
 		this.runHandler = () => {
 			this.render();
 		}
-		Simulation.subscribe(id, this.runHandler);
+		SimulationResults.subscribe(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];
@@ -39,7 +39,7 @@ class TimePlotVisual extends PlotVisual {
 			plot_per = this.dialog.getDefaultPlotPeriod();
 			this.primitive.setAttribute("PlotPer", plot_per);
 		}
-		this.data.results = Simulation.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
+		this.data.results = SimulationResults.getFilteredSelectiveIdResults(this.fetchedIds, getTimeStart(), getTimeLength(), plot_per);
 	}
 	render() {
 		this.fetchData();
