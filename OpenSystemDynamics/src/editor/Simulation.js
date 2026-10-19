@@ -3,7 +3,7 @@ class Simulation {
 	/** @type {"none" | "running" | "stopped" | "stepping" | "paused"} */
 	static status;
 	/** @type {PausedEngineResults | undefined} */
-	static simulationController
+	static pausedRun
 
 	static init() {
 		this.status = "none";
@@ -25,10 +25,10 @@ class Simulation {
 	static resume() {
 		RunToolbar.setMode("pause")
 		this.status = "running";
-		// Simulation controller can only be undefined if the first pause event has never triggered
-		// In such a case it is enought to just change this.status, otherwise we also have to trigger the controllers resume() function.
-		if (this.simulationController) {
-			this.simulationController.resume();
+		// pausedRun can only be undefined if the first pause event has never triggered
+		// In such a case it is enough to just change this.status, otherwise we also have to call pausedRun.resume().
+		if (this.pausedRun) {
+			this.pausedRun.resume();
 		}
 	}
 	static run() {
@@ -48,8 +48,8 @@ class Simulation {
 			rate: -1,
 			onPause: (res) => {
 				// We always need to do this, even if we paused the simulation, otherwise we cannot unpause
-				// Here is the only place we can get a handle to the simulationController
-				this.simulationController = res;
+				// Here is the only place we can get a handle to the pausedRun
+				this.pausedRun = res;
 
 				// If still running continue with next cycle
 				if (this.status == "running") {
@@ -95,14 +95,14 @@ class Simulation {
 		/* experiment
 		if (this.status == "running") {
 			this.reset();
-			this.simulationController = undefined;
+			this.pausedRun = undefined;
 			this.status = "stepping";
 			return;
 		}
 		*/
 		// if stepping was already started
-		if (this.simulationController) {
-			this.simulationController.resume();
+		if (this.pausedRun) {
+			this.pausedRun.resume();
 			return;
 		}
 		// Else start the stepping
@@ -118,7 +118,7 @@ class Simulation {
 				RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 				RunToolbar.setProgressStatus(false);
 				SimulationResults.notifySubscribers();
-				this.simulationController = res;
+				this.pausedRun = res;
 			},
 			onSuccess: (res) => {
 				this.simulationDone = true;
@@ -147,7 +147,7 @@ class Simulation {
 		runOverlay.unblock();
 		endRunningSimulation();
 		this.status = "stopped";
-		this.simulationController = undefined;
+		this.pausedRun = undefined;
 		RunToolbar.setMode("play")
 		this.updateCounter = 0;
 	}
