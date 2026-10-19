@@ -6,12 +6,16 @@ class Simulation {
 	static simulationController
 	/** @type {string[]} */
 	static recordedIds
+	/** @type {number[][]} */
+	static results
+	/** @type {{ [id: string]: () => void }} */
+	static subscribers;
 
 	static init() {
 		this.runState = "none";
 		this.recordedIds = [];
 		this.results = [];
-		this.runSubscribers = {};
+		this.subscribers = {};
 		this.updateFrequency = 100;
 		this.updateCounter = 0; // Updates every time updateCounter goes down to zero
 		this.simulationTime = 0;
@@ -302,8 +306,12 @@ class Simulation {
 		$("#imgRunPauseTool").attr("src", "graphics/run.svg");
 		this.updateCounter = 0;
 	}
+	/**
+	 * @param {string} id 
+	 * @param {()=>void} handler 
+	 */
 	static subscribeRun(id, handler) {
-		this.runSubscribers[id] = handler;
+		this.subscribers[id] = handler;
 	}
 	static push(newRow) {
 		this.results.push(newRow);
@@ -354,6 +362,7 @@ class Simulation {
 			return null;
 		}
 	}
+	/** @param {string[]} ids */
 	static getSelectiveIdResults(ids) {
 		// Contains the indexes from this.results that we want to return
 		let selectedVarIdIndexes = [0]; // The first index is always 0 for time
@@ -362,11 +371,11 @@ class Simulation {
 			selectedVarIdIndexes.push(varIdIndex);
 		}
 		do_global_log("this.recordedIds " + JSON.stringify(this.recordedIds) + " ids " + JSON.stringify(ids));
-		let returnResults = [];
+		const returnResults = [];
 		for (let row_index in this.results) {
 			let tmpRow = [];
-			for (let column_index in selectedVarIdIndexes) {
-				let wantedIndex = selectedVarIdIndexes[column_index];
+			for (let columnIndex in selectedVarIdIndexes) {
+				let wantedIndex = selectedVarIdIndexes[columnIndex];
 				if (wantedIndex != -1) {
 					tmpRow.push(this.results[row_index][wantedIndex]);
 				} else {
@@ -412,11 +421,11 @@ class Simulation {
 		return filteredResults;
 	}
 	static triggerRunFinished() {
-		for (let id in this.runSubscribers) {
+		for (let id in this.subscribers) {
 			if (findID(id)) {
-				this.runSubscribers[id]();
+				this.subscribers[id]();
 			} else {
-				delete this.runSubscribers[id];
+				delete this.subscribers[id];
 			}
 		}
 	}
