@@ -8,7 +8,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.runHandler = () => {
 			this.render();
 		}
-		Simulation.subscribeRun(id, this.runHandler);
+		Simulation.subscribe(id, this.runHandler);
 		this.data = new TableData();
 	}
 	removePlotReference(removeId) {

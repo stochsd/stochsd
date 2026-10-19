@@ -241,7 +241,7 @@ class ComparePlotVisual extends PlotVisual {
 			this.fetchData();
 			this.render();
 		}
-		Simulation.subscribeRun(id, this.runHandler);
+		Simulation.subscribe(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.gens = new DataGenerations();

@@ -125,7 +125,7 @@ class NumberboxVisual extends OnePointer {
 		this.runHandler = () => {
 			this.render();
 		}
-		Simulation.subscribeRun(id, this.runHandler);
+		Simulation.subscribe(id, this.runHandler);
 
 		this.dialog = new NumberboxDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {

@@ -9,7 +9,7 @@ class TimePlotVisual extends PlotVisual {
 		this.runHandler = () => {
 			this.render();
 		}
-		Simulation.subscribeRun(id, this.runHandler);
+		Simulation.subscribe(id, this.runHandler);
 		this.plot = null;
 		this.serieArray = null;
 		this.namesToDisplay = [];

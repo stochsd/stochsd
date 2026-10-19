@@ -310,7 +310,7 @@ class Simulation {
 	 * @param {string} id 
 	 * @param {()=>void} handler 
 	 */
-	static subscribeRun(id, handler) {
+	static subscribe(id, handler) {
 		this.subscribers[id] = handler;
 	}
 	static push(newRow) {
