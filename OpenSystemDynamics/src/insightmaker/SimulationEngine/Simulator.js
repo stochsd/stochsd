@@ -322,29 +322,44 @@ Simulator.prototype.progress  = function(){
 
 /** @param {DisplayedPrimitive[]} displayed */
 Simulator.prototype.printStates = function(displayed){
-	var t = parseFloat(this.time().value.toPrecision(20));
+	const t = parseFloat(this.time().value.toPrecision(20));
 
-	if(this.results.Time.indexOf(t) == -1){
-		// if t is not included in results.Time append latest time 
-		for(var i = this.results.Time.length; i > 0; i--) {
-			// add time and data to results in correct order 
-			// results.Time is sorted according to time 
-			if(this.results.Time[i-1]<t) {
-				this.results.Time.splice(i,0, t)
-				this.results.data.splice(i,0, {})
-				break;
+	// results.Time is sorted and t is almost always the last or a new last time,
+	// so check the end first to avoid searching the whole array on every step
+	const times = this.results.Time;
+	const last = times.length - 1;
+	let timeIndex;
+	if(last >= 0 && times[last] === t){
+		timeIndex = last;
+	}else if(last < 0 || times[last] < t){
+		times.push(t);
+		this.results.data.push({});
+		timeIndex = last + 1;
+	}else{
+		if(times.indexOf(t) == -1){
+			// if t is not included in results.Time append latest time
+			let i;
+			for(i = times.length; i > 0; i--) {
+				// add time and data to results in correct order
+				// results.Time is sorted according to time
+				if(times[i-1]<t) {
+					times.splice(i,0, t)
+					this.results.data.splice(i,0, {})
+					break;
+				}
+			}
+			if(i == 0){
+				// if first data point add it
+				times.splice(0,0, t)
+				this.results.data.splice(0,0, {})
 			}
 		}
-		if(i == 0){
-			// if first data point add it 
-			this.results.Time.splice(0,0, t)
-			this.results.data.splice(0,0, {})
-		}
+		timeIndex = times.indexOf(t);
 	}
 
-	var data = this.results.data[this.results.Time.indexOf(t)];
-	for(var i = 0; i < displayed.length; i++){
-		var v = displayed[i];
+	const data = this.results.data[timeIndex];
+	for(let i = 0; i < displayed.length; i++){
+		const v = displayed[i];
 		//console.log(v.dna.name);
 
 		if( !( (v instanceof State) && isDefined(data[v.id]) ) ){
@@ -352,13 +367,13 @@ Simulator.prototype.printStates = function(displayed){
 				this.results[v.id].dataMode = "agents";
 				data[v.id] = {current: v.collectData()};
 			}else{
-				var x = v.value();
+				const x = v.value();
 
 				if((x instanceof Vector) && (! x.names)){
 					data[v.id] = x;
 					this.results[v.id].dataMode = "auto";
 				}else if(x instanceof Vector){
-					var me = this;
+					const me = this;
 					x.recurseApply(function(x){
 						return me.adjustNum(v, x);
 					});
