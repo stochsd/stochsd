@@ -35,7 +35,7 @@ class Simulation {
 		this.simulationDone = false;
 		this.stop();
 		RunToolbar.setMode("pause")
-		SimulationResults.createHeader();
+		SimulationResults.reset();
 		if (getTimeLength() / getTimeStep() < 1000) {
 			setPauseInterval(getTimeLength() / 10);
 		} else {
@@ -55,7 +55,7 @@ class Simulation {
 				if (this.status == "running") {
 					RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 					RunToolbar.setProgressStatus(false);
-					do_global_log("length " + SimulationResults.results.length)
+					do_global_log("length " + SimulationResults.length)
 					this.continue(res)
 				}
 			},
@@ -107,7 +107,7 @@ class Simulation {
 		}
 		// Else start the stepping
 		this.stop();
-		SimulationResults.createHeader();
+		SimulationResults.reset();
 		//~ alert("stepping init");
 		setPauseInterval(getTimeStep());
 		runOverlay.block();
@@ -139,7 +139,7 @@ class Simulation {
 	}
 	static reset() {
 		this.stop();
-		SimulationResults.createHeader();
+		SimulationResults.reset();
 		RunToolbar.updateProgressBar(SimulationResults.getCurrentTime());
 		SimulationResults.notifySubscribers();
 	}
