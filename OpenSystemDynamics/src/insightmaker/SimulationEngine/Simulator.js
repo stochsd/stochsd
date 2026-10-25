@@ -28,6 +28,9 @@ function Simulator(config){
 
 	this.stochastic = false;
 
+	/** @type {RawEngineResults | EngineResults} Set in innerRunSimulation, raw during the run and replaced by formatSimResults when completed */
+	this.results;
+
 }
 
 Simulator.prototype.setup = function(config){
@@ -73,6 +76,21 @@ Simulator.prototype.timeProgressed = function(){
 	return minus(this.time(), this.timeStart);
 }
 
+/**
+ * Engine primitive with a value, i.e. everything except Action, Transition and Agents (see decodeDNA)
+ * @typedef {Stock | Flow | Variable | Converter | State} ValuedPrimitive
+ */
+
+/**
+ * Engine primitive whose values are recorded in the results (see innerRunSimulation)
+ * @typedef {ValuedPrimitive | Agents} DisplayedPrimitive
+ */
+
+/**
+ * Stores the current value of every valued primitive and records the displayed ones in the results
+ * @param {ValuedPrimitive[]} valued - solver.valued
+ * @param {DisplayedPrimitive[]} displayed - solver.displayed
+ */
 Simulator.prototype.frame = function(valued, displayed){
 	var l = valued.length;
 	for(var i = 0; i < l; i++){
@@ -302,6 +320,7 @@ Simulator.prototype.progress  = function(){
 	return div(minus(this.time(), this.timeStart), this.timeLength).value;
 }
 
+/** @param {DisplayedPrimitive[]} displayed */
 Simulator.prototype.printStates = function(displayed){
 	var t = parseFloat(this.time().value.toPrecision(20));
 

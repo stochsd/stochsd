@@ -718,6 +718,67 @@ function innerRunSimulation(config) {
 
 }
 
+/**
+ * A value recorded for one primitive at one time.
+ * In StochSD this is practically always a number. The engine also supports
+ * Vector values (e.g. an equation like {1, 2}) and agent populations.
+ * @typedef {number | any} EngineValue
+ */
+
+/**
+ * One row of recorded values, keyed by primitive id.
+ * @typedef {{ [primitiveId: string]: EngineValue }} EngineDataRow
+ */
+
+/**
+ * Per-primitive results, stored on the results object under the primitive's id.
+ * @typedef {object} PrimitiveResults
+ * @property {EngineValue[]} results - Values over time, same index as Time.
+ *   Filled lazily from data in Simulator.step, so it can lag behind Time during a run
+ * @property {"float" | "auto" | "agents"} dataMode - "float" for numbers, "auto" for vectors/agents, "agents" for agent populations
+ * @property {object} data - Agent population geometry (width, height, units, states), empty for other primitives
+ * @property {any[]} [states] - Agent state ids, only for agent populations
+ * @property {string[]} [indexedNames] - Vector element names joined with ", ", only for named vectors
+ * @property {string[][]} [indexedFullNames] - Vector element names, only for named vectors
+ */
+
+/**
+ * The raw results the engine fills during a run, in simulate.results.
+ * Besides the properties below it has one PrimitiveResults entry per
+ * recorded primitive id, e.g. simulate.results["12"].
+ * When the run completes, Simulator.run replaces it with formatSimResults(it).
+ * @typedef {object} RawEngineResults
+ * @property {number[]} Time - The time of each recorded period, sorted ascending
+ * @property {EngineDataRow[]} data - One row per period, same index as Time
+ */
+
+/**
+ * The results returned by formatSimResults, which is what runModel and its
+ * callbacks hand out. A copy of RawEngineResults where Vector values are
+ * converted to plain arrays/objects, with accessors and metadata added.
+ * It also has one PrimitiveResults entry per primitive id (copied, with converted values).
+ * @typedef {object} EngineResults
+ * @property {number[]} Time - The time of each period
+ * @property {EngineDataRow[]} data - One row per period, keyed by primitive id
+ * @property {number[]} times - Same array as Time
+ * @property {number} periods - Number of periods, same as Time.length
+ * @property {(primitive: Primitive | Primitive[]) => EngineValue[]} value - Values of a primitive over time,
+ *   for an array the first non-ghost primitive is used
+ * @property {(primitive: Primitive) => EngineValue} lastValue - Last value of a primitive
+ * @property {Object<string, string>} names - Primitive id by name, for the primitives in the model
+ * @property {string} error - "none" if no error occurred, otherwise the error message
+ * @property {Primitive | null} errorPrimitive - The primitive that caused the error
+ * @property {boolean} [stochastic] - True if the simulation contained randomness, set by Simulator.run when completed
+ * @property {any} [window] - The results window, set by Simulator.run if not silent
+ */
+
+/**
+ * Deep copies the raw results (3 levels deep), converts Vector values
+ * and adds value(), lastValue(), names, periods, times and error.
+ * Copies everything recorded so far, so the cost grows with the run length.
+ * @param {RawEngineResults} res
+ * @returns {EngineResults}
+ */
 function formatSimResults(res) {
 	var makeMap = function(returnNonVecs){
 		return function(x){
