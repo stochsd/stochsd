@@ -28,6 +28,9 @@ function Simulator(config){
 
 	this.stochastic = false;
 
+	/** @type {RawEngineResults | EngineResults} Set in innerRunSimulation, raw during the run and replaced by formatSimResults when completed */
+	this.results;
+
 }
 
 Simulator.prototype.setup = function(config){
@@ -73,6 +76,21 @@ Simulator.prototype.timeProgressed = function(){
 	return minus(this.time(), this.timeStart);
 }
 
+/**
+ * Engine primitive with a value, i.e. everything except Action, Transition and Agents (see decodeDNA)
+ * @typedef {Stock | Flow | Variable | Converter | State} ValuedPrimitive
+ */
+
+/**
+ * Engine primitive whose values are recorded in the results (see innerRunSimulation)
+ * @typedef {ValuedPrimitive | Agents} DisplayedPrimitive
+ */
+
+/**
+ * Stores the current value of every valued primitive and records the displayed ones in the results
+ * @param {ValuedPrimitive[]} valued - solver.valued
+ * @param {DisplayedPrimitive[]} displayed - solver.displayed
+ */
 Simulator.prototype.frame = function(valued, displayed){
 	var l = valued.length;
 	for(var i = 0; i < l; i++){
@@ -228,15 +246,7 @@ Simulator.prototype.run = function(config){
 						/*console.log(this);
 						console.log(this.results);
 						return;*/
-						var res = formatSimResults(this.results);
-						var l = res.data.length;
-						var data = res.data[l-1];
-						for(var key in data){
-							if(res[key].results.length < l){
-								res[key].results.push(data[key]);
-							}
-						}
-
+						const res = pausedResultsView(this.results);
 						res.resume = me.resume.bind(this);
 						res.setValue = function(cell, value){
 							var val = simpleEquation(""+value, {"-parent": varBank});
@@ -302,30 +312,46 @@ Simulator.prototype.progress  = function(){
 	return div(minus(this.time(), this.timeStart), this.timeLength).value;
 }
 
+/** @param {DisplayedPrimitive[]} displayed */
 Simulator.prototype.printStates = function(displayed){
-	var t = parseFloat(this.time().value.toPrecision(20));
+	const t = parseFloat(this.time().value.toPrecision(20));
 
-	if(this.results.Time.indexOf(t) == -1){
-		// if t is not included in results.Time append latest time 
-		for(var i = this.results.Time.length; i > 0; i--) {
-			// add time and data to results in correct order 
-			// results.Time is sorted according to time 
-			if(this.results.Time[i-1]<t) {
-				this.results.Time.splice(i,0, t)
-				this.results.data.splice(i,0, {})
-				break;
+	// results.Time is sorted and t is almost always the last or a new last time,
+	// so check the end first to avoid searching the whole array on every step
+	const times = this.results.Time;
+	const last = times.length - 1;
+	let timeIndex;
+	if(last >= 0 && times[last] === t){
+		timeIndex = last;
+	}else if(last < 0 || times[last] < t){
+		times.push(t);
+		this.results.data.push({});
+		timeIndex = last + 1;
+	}else{
+		if(times.indexOf(t) == -1){
+			// if t is not included in results.Time append latest time
+			let i;
+			for(i = times.length; i > 0; i--) {
+				// add time and data to results in correct order
+				// results.Time is sorted according to time
+				if(times[i-1]<t) {
+					times.splice(i,0, t)
+					this.results.data.splice(i,0, {})
+					break;
+				}
+			}
+			if(i == 0){
+				// if first data point add it
+				times.splice(0,0, t)
+				this.results.data.splice(0,0, {})
 			}
 		}
-		if(i == 0){
-			// if first data point add it 
-			this.results.Time.splice(0,0, t)
-			this.results.data.splice(0,0, {})
-		}
+		timeIndex = times.indexOf(t);
 	}
 
-	var data = this.results.data[this.results.Time.indexOf(t)];
-	for(var i = 0; i < displayed.length; i++){
-		var v = displayed[i];
+	const data = this.results.data[timeIndex];
+	for(let i = 0; i < displayed.length; i++){
+		const v = displayed[i];
 		//console.log(v.dna.name);
 
 		if( !( (v instanceof State) && isDefined(data[v.id]) ) ){
@@ -333,13 +359,13 @@ Simulator.prototype.printStates = function(displayed){
 				this.results[v.id].dataMode = "agents";
 				data[v.id] = {current: v.collectData()};
 			}else{
-				var x = v.value();
+				const x = v.value();
 
 				if((x instanceof Vector) && (! x.names)){
 					data[v.id] = x;
 					this.results[v.id].dataMode = "auto";
 				}else if(x instanceof Vector){
-					var me = this;
+					const me = this;
 					x.recurseApply(function(x){
 						return me.adjustNum(v, x);
 					});

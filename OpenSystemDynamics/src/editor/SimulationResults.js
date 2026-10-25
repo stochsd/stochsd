@@ -1,57 +1,68 @@
 // @ts-check
 class SimulationResults {
-	/** @type {string[]} */
-	static recordedIds = [];
-	/** @type {number[][]} */
-	static results = [];
-	/** @type {{ [id: string]: () => void }} */
+	/** Most rows to allocate before the run, so a very long run doesn't reserve all its memory up front */
+	static #maxInitialCapacity = 100_000;
+	/** Number of stored rows. The arrays have room for more, only indexes below length are valid */
+	static length = 0;
+	/** Time of each row */
+	static times = new Float64Array(0);
+	/**
+	 * Values of each row for every recorded primitive id, in the order of getPrimitiveList.
+	 * NaN means no value
+	 * @type {Map<string, Float64Array>}
+	 */
+	static valuesById = new Map();
+	/** @type {{ [plotId: string]: () => void }} */
 	static subscribers = {};
-	static simulationTime = 0;
 
-	static createHeader() {
-		// Get list of primitives that we want to observe from the model
-		let primitive_array = getPrimitiveList();
-
-		// Create list of ids, id0 is reserved for time 
-		this.recordedIds = ["0"].concat(getID(primitive_array));
-
-		// Reset results
-		this.results = [];
+	static reset() {
+		/** @type {string[]} */
+		const ids = getID(getPrimitiveList());
+		// Room for every time step, storeResults grows the arrays if the engine records more
+		const steps = Math.round(getTimeLength() / getTimeStep()) + 1;
+		const capacity = Number.isFinite(steps) && 0 < steps ? Math.min(steps, this.#maxInitialCapacity) : 1000;
+		this.length = 0;
+		this.times = new Float64Array(capacity);
+		this.valuesById = new Map(ids.map(id => [id, new Float64Array(capacity)]));
 	}
-	/** @param {EngineResults} result  */
-	static storeResults(result) {
-		// This method is executed after the simulation is finished
-		let index = this.results.length;
-		while (index < result.periods) {
-			let time = result.times[index];
-			this.simulationTime = result.times[index];
-			let currentRunResults = [];
-			currentRunResults.push(time);
-			for (let key in this.recordedIds) {
-				if (key == "0") {
-					// On location 0 we always have time
-					continue;
-				}
-				let value = result.value(findID(this.recordedIds[key]))[index];
-				currentRunResults.push(value);
-			}
-			this.push(currentRunResults);
-			index++;
+	/** @param {number} rows */
+	static #ensureCapacity(rows) {
+		if (rows <= this.times.length) {
+			return;
 		}
+		const capacity = Math.max(rows, this.times.length * 2);
+		/** @param {Float64Array} array */
+		const grow = array => {
+			const grown = new Float64Array(capacity);
+			grown.set(array.subarray(0, this.length));
+			return grown;
+		};
+		this.times = grow(this.times);
+		for (const [id, values] of this.valuesById) {
+			this.valuesById.set(id, grow(values));
+		}
+	}
+	/**
+	 * Copies the rows that are new since the last call, called on every pause and when the simulation is finished
+	 * @param {EngineResults} result
+	 */
+	static storeResults(result) {
+		this.#ensureCapacity(result.periods);
+		const ids = [...this.valuesById.keys()];
+		const columns = [...this.valuesById.values()];
+		// Look up each primitive's values once, findID walks the whole model
+		const engineValues = ids.map(id => result.value(findID(id)));
+		for (let index = this.length; index < result.periods; index++) {
+			this.times[index] = result.times[index];
+			for (let column = 0; column < columns.length; column++) {
+				columns[column][index] = engineValues[column][index] ?? NaN;
+			}
+		}
+		this.length = Math.max(this.length, result.periods);
 	}
 	/** @param {string} id  */
 	static removeResultsForId(id) {
-		let index = this.recordedIds.indexOf(id);
-		if (index !== -1) {
-			// remove id
-			this.recordedIds.splice(index, 1);
-
-
-			// remove data 
-			this.results.map(row => {
-				row.splice(index, 1);
-			});
-		}
+		this.valuesById.delete(id);
 	}
 	/**
 	 * @param {string} id 
@@ -60,57 +71,42 @@ class SimulationResults {
 	static subscribe(id, handler) {
 		this.subscribers[id] = handler;
 	}
-	/** @param {number[]} newRow  */
-	static push(newRow) {
-		this.results.push(newRow);
-	}
-	static getResults() {
-		return this.results;
-	}
+	/**
+	 * @param {string} primitiveId
+	 * @returns {number | null} null if nothing is simulated or the primitive has no value
+	 */
 	static getLastValue(primitiveId) {
-		let lastRow = this.getLastRow();
-		if (lastRow == null) {
-			//~ alert("early return");
+		const values = this.valuesById.get(primitiveId);
+		if (this.length == 0 || !values) {
 			return null;
 		}
-		let varIdIndex = this.recordedIds.indexOf(primitiveId);
-		return lastRow[varIdIndex];
+		return this.#toValue(values[this.length - 1]);
 	}
 	/** Time of the last stored result, or the start time if nothing has been simulated */
 	static getCurrentTime() {
-		return this.getLastRow()?.[0] ?? getTimeStart();
+		return this.length != 0 ? this.times[this.length - 1] : getTimeStart();
 	}
-	static getLastRow() {
-		//~ alert(this.results.length);
-		if (this.results.length != 0) {
-			return this.results[this.results.length - 1];
-		} else {
-			return null;
-		}
+	/** @param {number} value */
+	static #toValue(value) {
+		return Number.isNaN(value) ? null : value;
 	}
-	/** @param {string[]} ids */
+	/**
+	 * Rows of [time, value of ids[0], value of ids[1], ...], with null where there is no value
+	 * @param {string[]} ids
+	 * @returns {(number | null)[][]}
+	 */
 	static getSelectiveIdResults(ids) {
-		// Contains the indexes from this.results that we want to return
-		let selectedVarIdIndexes = [0]; // The first index is always 0 for time
-		for (let i in ids) {
-			let varIdIndex = this.recordedIds.indexOf(ids[i]);
-			selectedVarIdIndexes.push(varIdIndex);
-		}
-		do_global_log("this.recordedIds " + JSON.stringify(this.recordedIds) + " ids " + JSON.stringify(ids));
-		const returnResults = [];
-		for (let row_index in this.results) {
-			let tmpRow = [];
-			for (let columnIndex in selectedVarIdIndexes) {
-				let wantedIndex = selectedVarIdIndexes[columnIndex];
-				if (wantedIndex != -1) {
-					tmpRow.push(this.results[row_index][wantedIndex]);
-				} else {
-					tmpRow.push(null);
-				}
+		do_global_log("recorded ids " + JSON.stringify([...this.valuesById.keys()]) + " ids " + JSON.stringify(ids));
+		const columns = ids.map(id => this.valuesById.get(id));
+		const rows = [];
+		for (let index = 0; index < this.length; index++) {
+			const row = [this.times[index]];
+			for (const values of columns) {
+				row.push(values ? this.#toValue(values[index]) : null);
 			}
-			returnResults.push(tmpRow);
+			rows.push(row);
 		}
-		return returnResults;
+		return rows;
 	}
 	static getFilteredSelectiveIdResults(ids, start, length, step) {
 		let unfilteredResults = this.getSelectiveIdResults(ids);

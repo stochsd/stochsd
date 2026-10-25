@@ -1,8 +1,8 @@
 ## Simulation Time 
 
 ```
-Simulation.results // Show the value of the last run for all primitives.
-Simulation.recordedIds // Id of primitives  
+SimulationResults.valuesById // Values over time of the last run for every primitive id
+SimulationResults.times // Time of each value, only the first SimulationResults.length are used  
 ```
 
 ```javascript
