@@ -246,15 +246,7 @@ Simulator.prototype.run = function(config){
 						/*console.log(this);
 						console.log(this.results);
 						return;*/
-						var res = formatSimResults(this.results);
-						var l = res.data.length;
-						var data = res.data[l-1];
-						for(var key in data){
-							if(res[key].results.length < l){
-								res[key].results.push(data[key]);
-							}
-						}
-
+						const res = pausedResultsView(this.results);
 						res.resume = me.resume.bind(this);
 						res.setValue = function(cell, value){
 							var val = simpleEquation(""+value, {"-parent": varBank});

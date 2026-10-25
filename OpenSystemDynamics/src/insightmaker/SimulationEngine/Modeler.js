@@ -837,6 +837,58 @@ function formatSimResults(res) {
 	return res;
 }
 
+/**
+ * The results handed to onPause, with the same properties as formatSimResults returns.
+ * Unlike formatSimResults it doesn't deep copy the raw results, which made every pause
+ * slower than the one before. Instead it refers to the engine's own arrays, so they must not be changed.
+ * Vector values are not converted, StochSD doesn't use them.
+ * @param {RawEngineResults} raw
+ * @returns {EngineResults}
+ */
+function pausedResultsView(raw) {
+	const periods = raw.Time.length;
+	const lastRow = raw.data[periods - 1];
+
+	// The per-primitive arrays are filled in Simulator.step and can lag behind Time (e.g. with RK4).
+	// Then the last row is added, like the old onPause code did on its copy.
+	/** @type {Object<string, EngineValue[]>} */
+	const completed = {};
+	const valuesFor = (id) => {
+		if (!(id in completed)) {
+			const values = raw[id].results;
+			const lags = lastRow && values.length < periods && (id in lastRow);
+			completed[id] = lags ? values.concat([lastRow[id]]) : values;
+		}
+		return completed[id];
+	};
+
+	/** @type {Object<string, string>} */
+	const names = {};
+	for (const item of model.submodels["base"].agents[0].children) {
+		names[item.name] = item.id;
+	}
+
+	const hasError = !isUndefined(raw.error);
+	return Object.assign({}, raw, {
+		times: raw.Time,
+		periods: periods,
+		names: names,
+		error: hasError ? raw.error : "none",
+		errorPrimitive: hasError ? raw.errorPrimitive : null,
+		value: (item) => {
+			if (Array.isArray(item)) {
+				const notGhost = item.find(itm => itm.value.nodeName !== "Ghost");
+				return notGhost ? valuesFor(notGhost.id) : undefined;
+			}
+			return valuesFor(item.id);
+		},
+		lastValue: (item) => {
+			const values = valuesFor(item.id);
+			return values[values.length - 1];
+		}
+	});
+}
+
 function createUnitStore(u) {
 	if ((!u) || u.trim() == "" || u.trim().toLowerCase() == "unitless") {
 		return undefined;
