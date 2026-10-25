@@ -17,6 +17,7 @@ var strictAgentResolution = false;
 var strictLinks = false;
 
 
+/** @param {RunModelConfig} config */
 function runSimulation(config) {
 
 	try {
@@ -76,6 +77,7 @@ function checkErr(err, config, results) {
 
 var timeUnits = null;
 
+/** @param {RunModelConfig} config  */ 
 function innerRunSimulation(config) {
 
 	evaluatingLine = null;
@@ -149,8 +151,9 @@ function innerRunSimulation(config) {
 	model["timeLength"] = new Material(sn("#i" + setting.getAttribute("TimeLength")), u);
 	model["timeStart"] = new Material(sn("#i" + setting.getAttribute("TimeStart")), u);
 	model["timeStep"] = new Material(sn("#i" + setting.getAttribute("TimeStep")), u);
-	if (setting.getAttribute("TimePause") > 0) {
-		model["timePause"] = new Material(sn("#i" + setting.getAttribute("TimePause")), u);
+	// The TimePause setting saved in older models is ignored, the pause interval belongs to the run and not the model
+	if (config.pauseInterval > 0) {
+		model["timePause"] = new Material(sn("#i" + config.pauseInterval), u);
 	}
 	simulate.timeUnits = u;
 

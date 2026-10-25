@@ -36,15 +36,12 @@ class Simulation {
 		this.stop();
 		RunToolbar.setMode("pause")
 		SimulationResults.reset();
-		if (getTimeLength() / getTimeStep() < 1000) {
-			setPauseInterval(getTimeLength() / 10);
-		} else {
-			// We can only take 1000 iterations between every update to avoid the feeling of program freezing
-			setPauseInterval(getTimeStep() * 1000);
-		}
+		// We can only take 1000 iterations between every update to avoid the feeling of program freezing
+		const pauseInterval = getTimeLength() / getTimeStep() < 1000 ? getTimeLength() / 10 : getTimeStep() * 1000;
 		this.status = "running";
 		runOverlay.block();
 		runModel({
+			pauseInterval,
 			rate: -1,
 			onPause: (res) => {
 				// We always need to do this, even if we paused the simulation, otherwise we cannot unpause
@@ -109,9 +106,9 @@ class Simulation {
 		this.stop();
 		SimulationResults.reset();
 		//~ alert("stepping init");
-		setPauseInterval(getTimeStep());
 		runOverlay.block();
 		runModel({
+			pauseInterval: getTimeStep(),
 			onPause: (res) => {
 				this.simulationDone = false;
 				SimulationResults.storeResults(res);
