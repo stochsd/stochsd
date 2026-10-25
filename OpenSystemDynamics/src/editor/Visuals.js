@@ -224,7 +224,7 @@ class Visuals {
 		}
 		cleanUnconnectedLinks();
 		this.#detachFlowsFrom(id);
-		RunResults.removeResultsForId(id);
+		SimulationResults.removeResultsForId(id);
 	}
 
 	static #detachFlowsFrom(id) {

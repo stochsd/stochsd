@@ -8,7 +8,7 @@ class TableVisual extends HtmlTwoPointer {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(id, this.runHandler);
+		SimulationResults.subscribe(id, this.runHandler);
 		this.data = new TableData();
 	}
 	removePlotReference(removeId) {
@@ -34,7 +34,7 @@ class TableVisual extends HtmlTwoPointer {
 		limits.step.value = limits.step.auto ? this.dialog.getDefaultPlotPeriod() : limits.step.value;
 		let length = limits.end.value - limits.start.value;
 		this.primitive.setAttribute("TableLimits", JSON.stringify(limits));
-		this.data.results = RunResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
+		this.data.results = SimulationResults.getFilteredSelectiveIdResults(IdsToDisplay, limits.start.value, length, limits.step.value);
 
 		let time_step_str = `${getTimeStep()}`;
 		let time_decimals = decimals_in_value_string(time_step_str);

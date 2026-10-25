@@ -216,7 +216,7 @@
     ""
   ],
   "simulation": {
-    "runState": "stopped",
+    "status": "stopped",
     "csv": [
       "Time,Stock1,Stock2,Flow1,Auxiliary1,Parameter1,Converter1",
       "0,100,0,5,200,3,6",

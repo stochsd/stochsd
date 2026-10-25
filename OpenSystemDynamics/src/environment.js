@@ -152,7 +152,7 @@ class BaseFileManager {
     this.updateTitle();
     // Optional handler for when saving is finished
     this.finishedSaveHandler = null;
-    RunResults.resetSimulation();
+    Simulation.reset();
   }
   saveModelAs() {
     let fileData = createModelFileData();
@@ -211,7 +211,7 @@ class BaseFileManager {
     loadModelFromXml(modelData);
     // Store an empty state as first state
     UndoStack.storeState();
-    RunResults.resetSimulation();
+    Simulation.reset();
   }
   updateSaveTime() {
     this.lastSaved = new Date().toLocaleTimeString();

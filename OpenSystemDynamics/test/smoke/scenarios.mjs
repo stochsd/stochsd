@@ -106,14 +106,23 @@ const modelXml = `
 `;
 
 const simulate = `
-	RunResults.resetSimulation();
+	Simulation.reset();
 	Math.resetTestSeed();
 	ToolBox.setTool("run", mouse.left);
 	const started = Date.now();
-	while (RunResults.runState !== "stopped" && Date.now() - started < 20000) {
+	while (Simulation.status !== "stopped" && Date.now() - started < 20000) {
 		await new Promise(resolve => setTimeout(resolve, 50));
 	}
-	return { runState: RunResults.runState, csv: RunResults.toCsv().trim().split("\\n") };
+	// At most 6 decimals without trailing zeros, so tiny floating point differences don't show up in snapshots
+	const format = number => {
+		if (number == null) return "";
+		if (number == 0) return "0";
+		if (Math.abs(number) < 1e-6 || 1e6 < Math.abs(number)) return number.toExponential(2);
+		return String(parseFloat(number.toFixed(6)));
+	};
+	const names = SimulationResults.recordedIds.map(findID).filter(Boolean).map(getName);
+	const csv = [["Time", ...names].join(",")].concat(SimulationResults.results.map(row => row.map(format).join(",")));
+	return { status: Simulation.status, csv };
 `;
 
 // Opens a model the same way the app does when a file is opened (it reloads the page)

@@ -125,7 +125,7 @@ class NumberboxVisual extends OnePointer {
 		this.runHandler = () => {
 			this.render();
 		}
-		RunResults.subscribeRun(id, this.runHandler);
+		SimulationResults.subscribe(id, this.runHandler);
 
 		this.dialog = new NumberboxDialog(this.id);
 		this.dialog.subscribePool.subscribe(() => {
@@ -155,7 +155,7 @@ class NumberboxVisual extends OnePointer {
 			return;
 		}
 		let valueString = "";
-		let lastValue = RunResults.getLastValue(this.targetID);
+		let lastValue = SimulationResults.getLastValue(this.targetID);
 		if (lastValue || lastValue === 0) {
 			let roundToZero = this.primitive.getAttribute("RoundToZero");
 			let roundToZeroAtValue = -1;
@@ -186,7 +186,7 @@ class NumberboxVisual extends OnePointer {
 
 	}
 	get targetID() {
-		return Number(this.primitive.getAttribute("Target"));
+		return this.primitive.getAttribute("Target");
 	}
 	set targetID(newTargetID) {
 		this.primitive.setAttribute("Target", newTargetID);

@@ -47,7 +47,7 @@
   ],
   "pastedInTextField": 0,
   "simulation": {
-    "runState": "stopped",
+    "status": "stopped",
     "csv": [
       "Time,Stock1,Stock2,Stock1_1,Stock2_1,Stock1_2,Stock2_2,Flow1,Flow1_1,Flow1_2,Auxiliary1,Parameter1,Auxiliary1_1,Parameter1_1,Auxiliary1_2,Parameter1_2,Converter1",
       "0,100,0,100,0,100,0,5,5,5,200,3,200,3,200,3,6",

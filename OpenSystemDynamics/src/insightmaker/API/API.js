@@ -856,6 +856,49 @@ Examples:
 
 */
 
+/**
+ * @typedef {object} SimulationError
+ * @property {string} error - The error message
+ * @property {Primitive | null} errorPrimitive - The primitive that caused the error
+ */
+
+/**
+ * @typedef {object} EngineResults
+ * @property {number[]} times - The time of each period
+ * @property {number} periods - Number of periods, same as times.length
+ * @property {(primitive: Primitive | Primitive[]) => any[]} value - Values of a primitive over the simulation
+ * @property {(primitive: Primitive) => any} lastValue - Last value of a primitive
+ * @property {Object<string, string>} names - Primitive id by name
+ * @property {string} error - "none" if no error occurred, otherwise the error message
+ * @property {Primitive | null} errorPrimitive - The primitive that caused the error
+ * @property {boolean} [stochastic] - True if the simulation contained randomness, set when completed
+ * @property {any} [window] - The results window, if not silent
+ */
+
+/**
+ * @typedef {EngineResults & {
+ *   resume: () => void,
+ *   setValue: (primitive: Primitive, value: string | number) => void
+ * }} PausedEngineResults
+ * resume() continues the simulation, setValue() changes a primitive's value while paused
+ */
+
+/**
+ * @typedef {object} RunModelConfig
+ * @property {boolean} [silent] - If true, run without visible response and return the results
+ * @property {Primitive} [selectedDisplay] - The selected tab in the display
+ * @property {number} [rate] - Animation speed multiplier, -1 skips animation
+ * @property {any} [resultsWindow] - Results window to reuse
+ * @property {(results: EngineResults) => void} [onSuccess] - Called when the simulation completes
+ * @property {(error: SimulationError) => void} [onError] - Called when a simulation error occurs
+ * @property {(results: PausedEngineResults) => void} [onPause] - Called on every pause interval, makes the simulation asynchronous
+ */
+
+/**
+ * @param {RunModelConfig | boolean} [config] - A boolean is shorthand for {silent: config}
+ * @returns {EngineResults | SimulationError | undefined} Results only if silent and no onPause is set,
+ *   a SimulationError if silent and an error occurred, otherwise undefined
+ */
 function runModel(config) {
 	if (simulationRunning()) {
 		if( (!simulate.config.silent) && (! config.resultsWindow) ){

@@ -1,9 +1,8 @@
 ## Simulation Time 
 
 ```
-RunResults.results // Show the value of the last run for all primitives.
-RunResults.varnameList // The names of the primitives that the result shows
-RunResults.varIdList // Id of primitives  
+Simulation.results // Show the value of the last run for all primitives.
+Simulation.recordedIds // Id of primitives  
 ```
 
 ```javascript
@@ -16,12 +15,12 @@ Sets attributes on primitives:
 ```javascript 
 this.primitive.setAttribute("AttributeName", value);
 ```
-```javascript
+```js
 UndoStack.clear();
 loadModelFromXml(modelData);
 // Store an empty state as first state
 UndoStack.storeState();
-RunResults.resetSimulation();
+Simulation.reset();
 ```
 
 

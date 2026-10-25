@@ -127,7 +127,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 	<script type="text/javascript" src="editor/startup.js"></script>
 	<script type="text/javascript" src="editor/sync.js"></script>
 	<script type="text/javascript" src="editor/run-overlay.js"></script>
-	<script type="text/javascript" src="editor/RunResults.js"></script>
+	<script type="text/javascript" src="editor/RunToolbar.js"></script>
+	<script type="text/javascript" src="editor/SimulationResults.js"></script>
+	<script type="text/javascript" src="editor/Simulation.js"></script>
 	<script type="text/javascript" src="editor/dialogs/dialog-helpers.js"></script>
 	<script type="text/javascript" src="editor/dialogs/jq-dialog.js"></script>
 	<script type="text/javascript" src="editor/dialogs/CrashRecoveryDialog.js"></script>
@@ -511,9 +513,9 @@ terms of the Affero General Public License (http://www.gnu.org/licenses/agpl-3.0
 					<img src="graphics/histoplot.svg" />
 				</button>
 			</div>
-			<div class="tool-grouping" id="runControllerArea">
+			<div class="tool-grouping" id="run-toolbar">
 				<button id="btn_run" data-title="Run/Pause (Ctrl 1)" class="tool-button" data-tool="run">
-					<img id="imgRunPauseTool" src="graphics/run.svg" />
+					<img id="play-pause-image" src="graphics/play.svg" />
 				</button>
 				<button id="btn_step" data-title="Step (Ctrl 2)" class="tool-button" data-tool="step">
 					<img src="graphics/step.svg" />
