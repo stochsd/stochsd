@@ -172,6 +172,28 @@ Simulator.prototype.terminate = function(){
 	}
 }
 
+/**
+ * Lets the browser render and handle input, then calls callback.
+ * Unlike setTimeout there is no minimum delay, which added up to seconds of idle time on long runs.
+ * Uses scheduler.yield where available, otherwise a MessageChannel message.
+ * @param {() => void} callback
+ */
+function yieldToBrowser(callback) {
+	const yielded = globalThis.scheduler?.yield
+		? scheduler.yield()
+		: new Promise(resolve => {
+			const channel = new MessageChannel();
+			channel.port1.onmessage = () => resolve();
+			channel.port2.postMessage(null);
+		});
+	// Throw errors outside the promise, so they are reported as uncaught errors like they were with setTimeout
+	yielded.then(callback).catch(err => setTimeout(() => { throw err; }));
+}
+
+/**
+ * Runs the simulation until it completes or reaches a pause
+ * @param {RunModelConfig} [config] - Only given on the first call, resume() calls it without to continue a paused simulation
+ */
 Simulator.prototype.run = function(config){
 	var me = this;
 
@@ -242,7 +264,7 @@ Simulator.prototype.run = function(config){
 					this.shouldUpdateScripter = false;
 				}
 				if(this.config.onPause){
-					setTimeout((function(){
+					yieldToBrowser((function(){
 						/*console.log(this);
 						console.log(this.results);
 						return;*/
@@ -273,7 +295,7 @@ Simulator.prototype.run = function(config){
 						}.bind(this);
 
 						me.config.onPause(res);
-					}).bind(this), 10);
+					}).bind(this));
 				}
 
 				this.shouldSleep = false;

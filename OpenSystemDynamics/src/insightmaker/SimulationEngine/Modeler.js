@@ -17,6 +17,7 @@ var strictAgentResolution = false;
 var strictLinks = false;
 
 
+/** @param {RunModelConfig} config */
 function runSimulation(config) {
 
 	try {
@@ -76,6 +77,7 @@ function checkErr(err, config, results) {
 
 var timeUnits = null;
 
+/** @param {RunModelConfig} config  */ 
 function innerRunSimulation(config) {
 
 	evaluatingLine = null;

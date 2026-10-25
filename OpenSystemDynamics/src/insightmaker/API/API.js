@@ -879,6 +879,9 @@ Examples:
  * @property {(results: EngineResults) => void} [onSuccess] - Called when the simulation completes
  * @property {(error: SimulationError) => void} [onError] - Called when a simulation error occurs
  * @property {(results: PausedEngineResults) => void} [onPause] - Called on every pause interval, makes the simulation asynchronous
+ * @property {() => void} [onCompletedFirstPass] - Internal, set by innerRunSimulation for non-silent runs.
+ *   Called by Simulator.step when every solver has done its first step
+ * @property {(solver: any) => void} [onStep] - Internal, set by innerRunSimulation for non-silent runs. Called by Simulator.step after each solver step
  */
 
 /**
