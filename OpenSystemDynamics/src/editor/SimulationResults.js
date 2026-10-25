@@ -21,19 +21,17 @@ class SimulationResults {
 	/** @param {EngineResults} result  */
 	static storeResults(result) {
 		// This method is executed after the simulation is finished
+		// Look up each primitive's values once, findID walks the whole model.
+		// Location 0 is time, which is not a primitive
+		const valuesPerId = this.recordedIds.slice(1).map(id => result.value(findID(id)));
 		let index = this.results.length;
 		while (index < result.periods) {
 			let time = result.times[index];
 			this.simulationTime = result.times[index];
 			let currentRunResults = [];
 			currentRunResults.push(time);
-			for (let key in this.recordedIds) {
-				if (key == "0") {
-					// On location 0 we always have time
-					continue;
-				}
-				let value = result.value(findID(this.recordedIds[key]))[index];
-				currentRunResults.push(value);
+			for (const values of valuesPerId) {
+				currentRunResults.push(values[index]);
 			}
 			this.push(currentRunResults);
 			index++;
