@@ -879,6 +879,7 @@ Examples:
  * @property {(results: EngineResults) => void} [onSuccess] - Called when the simulation completes
  * @property {(error: SimulationError) => void} [onError] - Called when a simulation error occurs
  * @property {(results: PausedEngineResults) => void} [onPause] - Called on every pause interval, makes the simulation asynchronous
+ * @property {number} [pauseInterval] - Simulated time between pauses, in the model's time units. Without it the simulation never pauses
  * @property {() => void} [onCompletedFirstPass] - Internal, set by innerRunSimulation for non-silent runs.
  *   Called by Simulator.step when every solver has done its first step
  * @property {(solver: any) => void} [onStep] - Internal, set by innerRunSimulation for non-silent runs. Called by Simulator.step after each solver step
@@ -1178,46 +1179,6 @@ function setTimeLength(timeLength) {
 	setAttributeUndoable(
 		getSetting(), "TimeLength",
 		timeLength);
-}
-
-/*
-Method: getPauseInterval
-
-Gets the intervals at which to pause the simulation.
-
-Returns:
-
-The pause interval as a floating point number. Returns undefined if a pause interval has not been specified.
-
-See also:
-
-<setPauseInterval>
-*/
-
-function getPauseInterval() {
-	return parseFloat(getSetting().getAttribute("TimePause"));
-}
-
-
-/*
-Method: setPauseInterval
-
-Sets the intervals at which to pause the simulation.
-
-Parameters:
-
-pauseInterval - The pause interval for the simulation.
-
-See also:
-
-<setPauseInterval>
-*/
-
-
-function setPauseInterval(pauseInterval) {
-	setAttributeUndoable(
-		getSetting(), "TimePause",
-		pauseInterval);
 }
 
 /*
